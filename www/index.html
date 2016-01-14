@@ -21,14 +21,47 @@
     <!-- your app's js -->
     <script src="build/mobile.app.js"></script>
   </head>
-  <body ng-app="todo">
+  <body ng-app="todo" ng-controller="todoController as main">
 
+      <script id="new-task.html" type="text/ng-template">
+
+        <div class="modal">
+
+          <ion-header-bar class="bar-secondary">
+            <h1 class="title">New Task</h1>
+            <button class="button button-clear button-positive" ng-click="main.closeNewTask()">Cancel</button>
+          </ion-header-bar>
+
+          <ion-content>
+
+            <form ng-submit="main.createTask(main.task)">
+              <div class="list">
+                <label class="item item-input">
+                  <input type="text" placeholder="What do you need to do?" ng-model="main.task.name">
+                </label>
+              </div>
+              <div class="padding">
+                <button type="submit" class="button button-block button-positive">Create Task</button>
+              </div>
+            </form>
+
+          </ion-content>
+
+        </div>
+
+      </script>
     <ion-side-menus>
       <ion-side-menu-content>
         <ion-header-bar class="bar-dark">
           <h1 class="title">Todo</h1>
+          <button class="button button-icon" ng-click="main.newTask()">
+            <i class="icon ion-compose"></i>
+          </button>
         </ion-header-bar>
         <ion-content>
+            <ion-list ng-repeat="task in main.task">
+                {{task.name}}
+            </ion-list>
         </ion-content>
       </ion-side-menu-content>
       <ion-side-menu side="left">
