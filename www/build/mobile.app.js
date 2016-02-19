@@ -7,8 +7,59 @@
   'use strict';
 
   angular
-    .module('todo', ['ionic']);
+    .module('zaya', [
+      'ionic',
+    ]);
 
+})();
+
+(function() {
+  mainRoute.$inject = ["$stateProvider", "$urlRouterProvider"];
+  angular
+    .module('zaya')
+    .config(mainRoute);
+
+  function mainRoute($stateProvider, $urlRouterProvider) {
+
+    $stateProvider
+      .state('login', {
+        url: '/login',
+        templateUrl: '/template/login/login.view.html',
+        controller : 'authController as Auth'
+      })
+      .state('user',{
+        url :'/user',
+        abstract : true,
+        template: '<ui-view/>'
+      })
+      .state('user.main',{
+        url : '/main',
+        templateUrl : '/template/user/main.view.html',
+        controller : 'userMainController as UserMain'
+      })
+      .state('user.main.profile',{
+        url : '/profile',
+        templateUrl : '/template/profile/profile.view.html'
+      })
+      .state('user.main.playlist',{
+        url : '/playlist',
+        templateUrl : '/template/playlist/playlist.view.html'
+      })
+      .state('user.main.home',{
+        url : '/home',
+        templateUrl : '/template/home/home.view.html'
+      })
+      .state('user.main.result',{
+        url : '/result',
+        templateUrl : '/template/result/result.view.html'
+      })
+      .state('user.main.search',{
+        url : '/search',
+        templateUrl : '/template/search/search.view.html'
+      })
+
+    $urlRouterProvider.otherwise('/login');
+  }
 })();
 
 (function(){
@@ -16,7 +67,7 @@
 
   runConfig.$inject = ["$ionicPlatform"];
   angular
-    .module('todo')
+    .module('zaya')
     .run(runConfig);
 
   function runConfig($ionicPlatform) {
@@ -37,4 +88,38 @@
     });
   }
 
+})();
+
+(function(){
+  angular
+    .module('zaya')
+    .controller('authController', authController)
+
+    authController.$inject = ['$state'];
+
+  function authController($state) {
+    var auth = this;
+
+    auth.login = function (){
+      $state.go('user.main',{});
+    }
+  }
+})();
+
+(function(){
+  angular
+    .module('zaya')
+    .controller('userMainController',userMainController)
+
+  userMainController.$inject = ['$state'];
+
+  function userMainController($state) {
+    var UserMain = this;
+
+    UserMain.goToProfile = function(){ $state.go('user.main.profile',{})}
+    UserMain.goToPlaylist = function(){ $state.go('user.main.playlist',{})}
+    UserMain.goToHome = function(){ $state.go('user.main.home',{})}
+    UserMain.goToResult = function(){ $state.go('user.main.result',{})}
+    UserMain.goToSearch = function(){ $state.go('user.main.search',{})}
+  }
 })();

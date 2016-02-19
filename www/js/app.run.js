@@ -2,7 +2,7 @@
   'use strict';
 
   angular
-    .module('todo')
+    .module('zaya')
     .run(runConfig);
 
   function runConfig($ionicPlatform) {

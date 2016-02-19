@@ -7,6 +7,8 @@
   'use strict';
 
   angular
-    .module('todo', ['ionic']);
+    .module('zaya', [
+      'ionic',
+    ]);
 
 })();
