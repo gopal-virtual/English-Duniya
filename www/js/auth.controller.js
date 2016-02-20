@@ -1,4 +1,6 @@
 (function(){
+  'use strict';
+
   angular
     .module('zaya')
     .controller('authController', authController)
@@ -9,7 +11,7 @@
     var auth = this;
 
     auth.login = function (){
-      $state.go('user.main',{});
+      $state.go('user.main.home',{});
     }
   }
 })();
