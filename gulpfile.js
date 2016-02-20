@@ -17,7 +17,7 @@ var paths = {
 gulp.task('default', ['sass','watch']);
 
 gulp.task('scripts', function() {
-    gulp.src(['www/js/*.js'])
+    gulp.src(['www/js/app.module.js','www/js/*.js'])
         .pipe(plumber({
             handleError: function(err) {
                 console.log(err);
