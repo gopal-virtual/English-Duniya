@@ -9,6 +9,7 @@
   angular
     .module('zaya', [
       'ionic',
+      'restangular'
     ]);
 
 })();

@@ -1,0 +1,23 @@
+<div class="row">
+  <div class="col col-33 col-offset-33"><img src="img/zaya_logo.png" alt="" class="full-image"></div>
+</div>
+<div class="row">
+  <div class="col">
+    <form class="list list-inset">
+      {{authCtrl.user}}
+      <label for="" class="item item-input">
+        <input type="text" placeholder="username" ng-model="authCtrl.user.username">
+      </label>
+      <label for="" class="item item-input">
+        <input type="password" placeholder="password" ng-model="authCtrl.user.password">
+      </label>
+      <h5>
+        <a href="#/forgot">forgot your details?</a>
+      </h5>
+      <button class="button button-positive button-block " ng-click="authCtrl.login({'username':authCtrl.user.username, 'password':authCtrl.user.password})">SIGN IN</button>
+    </form>
+    <div class="text-center">
+      <a href="#/signup" >I'm new</a>
+    </div>
+  </div>
+</div>

@@ -3,14 +3,21 @@
 </div>
 <div class="row">
   <div class="col">
+    <div class="text-center"><span>Sign up and be a part of the personalised learning</span></div>
     <div class="list list-inset">
       <label for="" class="item item-input">
         <input type="text" placeholder="username">
       </label>
       <label for="" class="item item-input">
+        <input type="email" placeholder="email">
+      </label>
+      <label for="" class="item item-input">
         <input type="password" placeholder="password">
       </label>
-      <button class="button button-positive button-block " ng-click="Auth.login()">login</button>
+      <button class="button button-positive button-block " ng-click="authCtrl.signup()">SIGN UP</button>
+    </div>
+    <div class="text-center">
+      <a href="#/signin" >I'm already a member</a>
     </div>
   </div>
 </div>
