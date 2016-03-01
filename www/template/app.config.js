@@ -13,6 +13,7 @@
               config.headers.xsrfHeaderName = 'X-CSRFToken';
             return config;
           },
+          
           response : function(response){
             if(response.status==200 && response.data.hasOwnProperty('success')){
               $rootScope.success = $rootScope.success || [];

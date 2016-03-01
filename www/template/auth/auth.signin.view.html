@@ -12,12 +12,12 @@
         <input type="password" placeholder="password" ng-model="authCtrl.user.password">
       </label>
       <h5>
-        <a href="#/forgot">forgot your details?</a>
+        <a ui-sref="auth.forgot">forgot your details?</a>
       </h5>
       <button class="button button-positive button-block " ng-click="authCtrl.login({'username':authCtrl.user.username, 'password':authCtrl.user.password})">SIGN IN</button>
     </form>
     <div class="text-center">
-      <a href="#/signup" >I'm new</a>
+      <a ui-sref="auth.signup" >I'm new</a>
     </div>
   </div>
 </div>

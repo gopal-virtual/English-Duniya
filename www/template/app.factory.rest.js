@@ -6,15 +6,15 @@
         .factory('Rest', Rest)
         .factory('Auth', Auth)
 
-    function Rest(Restangular, BACKEND_SERVICE_DOMAIN) {
+    function Rest(Restangular, CONSTANT) {
         return Restangular.withConfig(function(RestangularConfigurer) {
-            RestangularConfigurer.setBaseUrl(BACKEND_SERVICE_DOMAIN+'/api/v1');
+            RestangularConfigurer.setBaseUrl(CONSTANT.BACKEND_SERVICE_DOMAIN+'/api/v1');
             RestangularConfigurer.setRequestSuffix('/');
         });
     }
-    function Auth(Restangular,BACKEND_SERVICE_DOMAIN){
+    function Auth(Restangular,CONSTANT){
       var rest_auth = Restangular.withConfig(function(RestangularConfigurer) {
-          RestangularConfigurer.setBaseUrl(BACKEND_SERVICE_DOMAIN+'/rest-auth');
+          RestangularConfigurer.setBaseUrl(CONSTANT.BACKEND_SERVICE_DOMAIN+'/rest-auth');
           RestangularConfigurer.setRequestSuffix('/');
           RestangularConfigurer.setDefaultHeaders({
             'Content-Type':'application/x-www-form-urlencoded',

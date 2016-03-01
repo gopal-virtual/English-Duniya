@@ -5,27 +5,39 @@
     .module('zaya')
     .config(mainRoute);
 
-  function mainRoute($stateProvider, $urlRouterProvider) {
+  function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
 
     $stateProvider
-      .state('main',{
+
+      //Authentication - > Main, Signin, Signup, Forgot
+      .state('auth',{
+        url : '/auth',
+        abstract : true,
+        template : '<ion-nav-view></ion-nav-view>'
+      })
+      .state('auth.main',{
         url : '/main',
-        templateUrl : "template/login/main.view.html"
+        templateUrl : CONSTANT.PATH.AUTH+"/auth.main."+CONSTANT.VIEW
       })
-      .state('signin', {
+      .state('auth.signin', {
         url: '/signin',
-        templateUrl: 'template/login/signin.view.html',
+        templateUrl: CONSTANT.PATH.AUTH+'/auth.signin.'+CONSTANT.VIEW,
         controller : 'authController as authCtrl'
       })
-      .state('signup',{
+      .state('auth.signup',{
         url : '/signup',
-        templateUrl : 'template/login/signup.view.html',
+        templateUrl : CONSTANT.PATH.AUTH+'/auth.signup.'+CONSTANT.VIEW,
         controller : 'authController as authCtrl'
       })
-      .state('forgot',{
+      .state('auth.forgot',{
         url : '/forgot',
-        templateUrl : 'template/login/forgot.view.html'
+        templateUrl : CONSTANT.PATH.AUTH+'/auth.forgot.'+CONSTANT.VIEW,
+        controller : 'authController as authCtrl'
       })
+      // end : Authentication
+
+
+      //landing
       .state('user',{
         url :'/user',
         abstract : true,
@@ -35,33 +47,33 @@
       .state('user.personalise',{
         url : '/personalise',
         abstract : true,
-        templateUrl : 'template/profile/personalise.view.html',
+        templateUrl : 'template/profile/personalise.'+CONSTANT.VIEW,
       })
       .state('user.personalise.usertype',{
         url : '/usertype',
-        templateUrl : 'template/profile/personalise.usertype.view.html'
+        templateUrl : 'template/profile/personalise.usertype.'+CONSTANT.VIEW
       })
       .state('user.personalise.usersubject',{
         url : '/usersubject',
-        templateUrl : 'template/profile/personalise.usersubject.view.html'
+        templateUrl : 'template/profile/personalise.usersubject.'+CONSTANT.VIEW
       })
       // learn app
       .state('user.main',{
         url : '/main',
         abstract : true,
-        templateUrl : 'template/user/main.view.html',
+        templateUrl : 'template/user/main.'+CONSTANT.VIEW,
         controller : 'userMainController as UserMain'
       })
       .state('user.main.profile',{
         url : '/profile',
         abstract : true,
-        templateUrl : 'template/profile/profile.view.html'
+        templateUrl : 'template/profile/profile.'+CONSTANT.VIEW
       })
       .state('user.main.profile.groups',{
         url : '/groups',
         views : {
           'group-tab' : {
-            templateUrl : 'template/profile/profile.group.view.html'
+            templateUrl : 'template/profile/profile.group.'+CONSTANT.VIEW
           }
         }
       })
@@ -69,27 +81,27 @@
         url : '/badges',
         views : {
           'badge-tab':{
-            templateUrl : 'template/profile/profile.badge.view.html'
+            templateUrl : 'template/profile/profile.badge.'+CONSTANT.VIEW
           }
         }
       })
       .state('user.main.playlist',{
         url : '/playlist',
-        templateUrl : 'template/playlist/playlist.view.html'
+        templateUrl : 'template/playlist/playlist.'+CONSTANT.VIEW
       })
       .state('user.main.home',{
         url : '/home',
-        templateUrl : 'template/home/home.view.html'
+        templateUrl : 'template/home/home.'+CONSTANT.VIEW
       })
       .state('user.main.result',{
         url : '/result',
-        templateUrl : 'template/result/result.view.html'
+        templateUrl : 'template/result/result.'+CONSTANT.VIEW
       })
       .state('user.main.search',{
         url : '/search',
-        templateUrl : 'template/search/search.view.html'
+        templateUrl : 'template/search/search.'+CONSTANT.VIEW
       })
 
-    $urlRouterProvider.otherwise('/main');
+    $urlRouterProvider.otherwise('/auth/main');
   }
 })();
