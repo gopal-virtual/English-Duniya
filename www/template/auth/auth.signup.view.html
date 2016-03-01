@@ -1,23 +1,21 @@
-<div class="row">
-  <div class="col col-33 col-offset-33"><img src="img/zaya_logo.png" alt="" class="full-image"></div>
-</div>
-<div class="row">
-  <div class="col">
-    <div class="text-center"><span>Sign up and be a part of the personalised learning</span></div>
-    <div class="list list-inset">
-      <label for="" class="item item-input">
-        <input type="text" placeholder="username">
-      </label>
-      <label for="" class="item item-input">
-        <input type="email" placeholder="email">
-      </label>
-      <label for="" class="item item-input">
-        <input type="password" placeholder="password">
-      </label>
-      <button class="button button-positive button-block " ng-click="authCtrl.signup()">SIGN UP</button>
-    </div>
-    <div class="text-center">
-      <a ui-sref="auth.signin" >I'm already a member</a>
+<ion-pane class="bg-assertive">
+  <div class="row">
+    <div class="col col-33 col-offset-33 padding"><img src="img/zaya_logo.png" alt="" class="full-image"></div>
+  </div>
+  <div class="row">
+    <div class="col padding">
+      <div class="text-center"><span class="text-white">Sign up and be a part of the personalised learning</span></div>
     </div>
   </div>
-</div>
+  <div class="row wrapper-bottom-fixed">
+    <div class="col padding">
+      <input class="input-default input-medium input-block" type="text" placeholder="username">
+      <input class="input-default input-medium input-block" type="email" placeholder="email">
+      <input class="input-default input-medium input-block" type="password" placeholder="password">
+      <button class="button button-positive button-block " ng-click="authCtrl.signup()">SIGN UP</button>
+      <div class="text-center">
+        <a class="text-white" ui-sref="auth.signin" >I'm already a member</a>
+      </div>
+    </div>
+  </div>
+</ion-pane>

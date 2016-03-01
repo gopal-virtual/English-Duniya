@@ -8,10 +8,11 @@ var ngAnnotate = require('gulp-ng-annotate');
 var sass = require('gulp-sass');
 var minifyCss = require('gulp-minify-css');
 var rename = require('gulp-rename');
+var autoprefixer = require('gulp-autoprefixer');
 var sh = require('shelljs');
 
 var paths = {
-  sass: ['./scss/**/*.scss'],
+  sass: ['./scss/**/*.scss','./scss/*.scss'],
   script : ['./www/template/app.module.js','./www/template/**/*.js']
 };
 
@@ -42,6 +43,10 @@ gulp.task('sass', function(done) {
   gulp.src('./scss/ionic.app.scss')
     .pipe(sass())
     .on('error', sass.logError)
+    .pipe(autoprefixer({
+			browsers: ['last 2 versions'],
+			cascade: false
+		}))
     .pipe(gulp.dest('./www/css/'))
     .pipe(minifyCss({
       keepSpecialComments: 0
