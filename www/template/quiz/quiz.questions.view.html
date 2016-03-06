@@ -1,0 +1,33 @@
+<ion-pane class="bg-neutral">
+  <div class="bar bar-header bar-transparent">
+    <button class="button button-clear button-icon icon ion-ios-close-empty"></button>
+    <div class="h1 title">Q {{quizCtrl.getCurrentIndex()+1}} / {{quizCtrl.quiz.questions.length}}</div>
+    <button class="button button-clear">HINT</button>
+  </div>
+  <ion-content class="has-header has-footer padding-x-20">
+    <div ng-repeat="question in quizCtrl.quiz.questions" ng-hide="!quizCtrl.isCurrentIndex($index)">
+      <div class="card card-transparent">
+        <p>
+          <strong>{{question.info.title}}</strong>
+        </p>
+        <p>
+          {{question.info.description}}
+        </p>
+      </div>
+      <div class="card padding-10" ng-repeat="option in question.info.question_type.choices">
+        {{option.option}}
+      </div>
+    </div>
+  </ion-content>
+  <div class="bar bar-footer bar-transparent">
+    <div class="button-bar">
+      <a class="button button-clear" ng-click="quizCtrl.prevQuestion()">
+        <i class="icon ion-ios-arrow-back"></i>
+      </a>
+      <a class="button button-calm" ng-click="quizCtrl.audio.play('water-drop')">SUBMIT</a>
+      <a class="button button-clear" ng-click="quizCtrl.nextQuestion()">
+        <i class="icon ion-ios-arrow-forward"></i>
+      </a>
+    </div>
+  </div>
+</ion-pane>

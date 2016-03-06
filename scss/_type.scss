@@ -1,3 +1,13 @@
 .text-white{
   color : $brand-white;
 }
+.text-positive{
+  color : darken($positive, 40%);
+}
+.title{
+  display: inline-block;
+  line-height: 70px;
+  font-size:5em;
+  font-weight: bold;
+  text-transform: uppercase;
+}

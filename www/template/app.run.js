@@ -5,7 +5,7 @@
     .module('zaya')
     .run(runConfig);
 
-  function runConfig($ionicPlatform) {
+  function runConfig($ionicPlatform,$cordovaNativeAudio) {
     $ionicPlatform.ready(function() {
       if(window.cordova && window.cordova.plugins.Keyboard) {
         // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -19,6 +19,13 @@
       }
       if(window.StatusBar) {
         StatusBar.styleDefault();
+      }
+      // load sound
+      try{
+        $cordovaNativeAudio.preloadSimple('water-drop', 'sound/water-drop.mp3');
+      }
+      catch(error){
+        console.log('native audio not supported');
       }
     });
   }

@@ -1,6 +1,32 @@
 .bg-assertive{
   background-color: $assertive;
 }
+.bg-balanced{
+  background-color: $balanced;
+}
+.bg-positive{
+  background-color: $positive;
+}
+.bg-dark{
+  background-color: $dark;
+}
+.bg-brand{
+  // background-color:
+}
+.bg-neutral {
+  background-color: $neutral;
+}
 .list-inset{
   background-color: transparent;
+}
+@each $size,$value in ('10':10px,'20':20px,'30':30px,'40':40px){
+  .padding-#{$size}{
+    padding : $value;
+  }
+  .padding-y-#{$size}{
+    padding : $value 0;
+  }
+  .padding-x-#{$size}{
+    padding : 0 $value;
+  }
 }

@@ -5,10 +5,12 @@
     .module('zaya')
     .controller('authController', authController)
 
-    authController.$inject = ['$state','Auth'];
+    authController.$inject = ['$state','Auth','audio'];
 
-  function authController($state,Auth) {
+  function authController($state,Auth,audio) {
     var authCtrl = this;
+
+    authCtrl.audio = audio;
 
     authCtrl.login = function(user_credentials) {
       console.log(user_credentials);

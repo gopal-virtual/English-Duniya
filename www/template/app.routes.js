@@ -8,7 +8,6 @@
   function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
 
     $stateProvider
-
       //Authentication - > Main, Signin, Signup, Forgot
       .state('auth',{
         url : '/auth',
@@ -35,6 +34,39 @@
         controller : 'authController as authCtrl'
       })
       // end : Authentication
+
+      // Practice
+      // end : Practice
+
+      // Quiz
+      .state('quiz',{
+        url : '/quiz/:id',
+        abstract : true,
+        template : '<ion-nav-view></ion-nav-view>',
+        resolve: {
+            quiz: ['$stateParams', 'Rest', function($stateParams, Rest) {
+                return Rest.one('assessments', $stateParams.id).get().then(function(quiz) {
+                    return quiz.plain();
+                })
+            }]
+        }
+      })
+      .state('quiz.start',{
+        url : '/start',
+        templateUrl : CONSTANT.PATH.QUIZ+'/quiz.start.'+CONSTANT.VIEW,
+        controller : 'QuizController as quizCtrl'
+      })
+      .state('quiz.questions',{
+        url : '/questions',
+        templateUrl : CONSTANT.PATH.QUIZ+'/quiz.questions.'+CONSTANT.VIEW,
+        controller : 'QuizController as quizCtrl'
+      })
+      .state('quiz.summary',{
+        url : '/summary',
+        templateUrl : CONSTANT.PATH.QUIZ+'/quiz.summary.'+CONSTANT.VIEW,
+        controller : 'QuizController as quizCtrl'
+      })
+      // end : Quiz
 
 
       //landing
@@ -91,7 +123,8 @@
       })
       .state('user.main.home',{
         url : '/home',
-        templateUrl : 'template/home/home.'+CONSTANT.VIEW
+        templateUrl : 'template/home/home.'+CONSTANT.VIEW,
+        controller : 'homeController as homeCtrl'
       })
       .state('user.main.result',{
         url : '/result',
@@ -103,5 +136,6 @@
       })
 
     $urlRouterProvider.otherwise('/auth/main');
+    // $urlRouterProvider.otherwise('/splash');
   }
 })();

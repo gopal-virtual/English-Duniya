@@ -9,7 +9,8 @@
   angular
     .module('zaya', [
       'ionic',
-      'restangular'
+      'restangular',
+      'ngCordova'
     ]);
 
 })();
@@ -71,9 +72,11 @@
   angular
     .module('zaya')
     .constant('CONSTANT',{
-      'BACKEND_SERVICE_DOMAIN' : 'http://gopal.zaya.in',
+      // 'BACKEND_SERVICE_DOMAIN' : 'http://gopal.zaya.in',
+      'BACKEND_SERVICE_DOMAIN' : 'http://192.168.1.5:9000',
       'PATH' : {
-        'AUTH' : ROOT+'/auth'
+        'AUTH' : ROOT+'/auth',
+        'QUIZ' : ROOT+'/quiz'
       },
       // 'CONTROLLER' : 'controller.js',
       'VIEW' : 'view.html'
@@ -151,7 +154,6 @@
   function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
 
     $stateProvider
-
       //Authentication - > Main, Signin, Signup, Forgot
       .state('auth',{
         url : '/auth',
@@ -178,6 +180,39 @@
         controller : 'authController as authCtrl'
       })
       // end : Authentication
+
+      // Practice
+      // end : Practice
+
+      // Quiz
+      .state('quiz',{
+        url : '/quiz/:id',
+        abstract : true,
+        template : '<ion-nav-view></ion-nav-view>',
+        resolve: {
+            quiz: ['$stateParams', 'Rest', function($stateParams, Rest) {
+                return Rest.one('assessments', $stateParams.id).get().then(function(quiz) {
+                    return quiz.plain();
+                })
+            }]
+        }
+      })
+      .state('quiz.start',{
+        url : '/start',
+        templateUrl : CONSTANT.PATH.QUIZ+'/quiz.start.'+CONSTANT.VIEW,
+        controller : 'QuizController as quizCtrl'
+      })
+      .state('quiz.questions',{
+        url : '/questions',
+        templateUrl : CONSTANT.PATH.QUIZ+'/quiz.questions.'+CONSTANT.VIEW,
+        controller : 'QuizController as quizCtrl'
+      })
+      .state('quiz.summary',{
+        url : '/summary',
+        templateUrl : CONSTANT.PATH.QUIZ+'/quiz.summary.'+CONSTANT.VIEW,
+        controller : 'QuizController as quizCtrl'
+      })
+      // end : Quiz
 
 
       //landing
@@ -234,7 +269,8 @@
       })
       .state('user.main.home',{
         url : '/home',
-        templateUrl : 'template/home/home.'+CONSTANT.VIEW
+        templateUrl : 'template/home/home.'+CONSTANT.VIEW,
+        controller : 'homeController as homeCtrl'
       })
       .state('user.main.result',{
         url : '/result',
@@ -246,18 +282,19 @@
       })
 
     $urlRouterProvider.otherwise('/auth/main');
+    // $urlRouterProvider.otherwise('/splash');
   }
 })();
 
 (function(){
   'use strict';
 
-  runConfig.$inject = ["$ionicPlatform"];
+  runConfig.$inject = ["$ionicPlatform", "$cordovaNativeAudio"];
   angular
     .module('zaya')
     .run(runConfig);
 
-  function runConfig($ionicPlatform) {
+  function runConfig($ionicPlatform,$cordovaNativeAudio) {
     $ionicPlatform.ready(function() {
       if(window.cordova && window.cordova.plugins.Keyboard) {
         // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -271,6 +308,13 @@
       }
       if(window.StatusBar) {
         StatusBar.styleDefault();
+      }
+      // load sound
+      try{
+        $cordovaNativeAudio.preloadSimple('water-drop', 'sound/water-drop.mp3');
+      }
+      catch(error){
+        console.log('native audio not supported');
       }
     });
   }
@@ -304,10 +348,12 @@
     .module('zaya')
     .controller('authController', authController)
 
-    authController.$inject = ['$state','Auth'];
+    authController.$inject = ['$state','Auth','audio'];
 
-  function authController($state,Auth) {
+  function authController($state,Auth,audio) {
     var authCtrl = this;
+
+    authCtrl.audio = audio;
 
     authCtrl.login = function(user_credentials) {
       console.log(user_credentials);
@@ -320,5 +366,119 @@
     authCtrl.signup = function () {
       $state.go('user.personalise.usertype',{});
     }
+  }
+})();
+
+(function() {
+  angular
+    .module('zaya')
+    .directive('widgetCarousel', widgetCarousel)
+    .directive('carouselItem', carouselItem);
+
+  function widgetCarousel() {
+    var carousel = {}
+    carousel.restrict = 'A';
+    carousel.link = function(scope) {
+      scope.initCarousel = function(element) {
+        // provide any default options you want
+        var defaultOptions = {};
+        var customOptions = scope.$eval($(element).attr('carousel-options'));
+        // combine the two options objects
+        for (var key in customOptions) {
+          if (customOptions.hasOwnProperty(key)) {
+            defaultOptions[key] = customOptions[key];
+          }
+        }
+        // init carousel
+        $(element).owlCarousel(defaultOptions);
+      };
+    }
+    return carousel;
+  }
+
+  function carouselItem() {
+    var carouselItem = {};
+    carouselItem.restrict = 'A';
+    carouselItem.transclude = false;
+    carouselItem.link = function(scope, element) {
+      // wait for the last item in the ng-repeat then call init
+      if (scope.$last) {
+        scope.initCarousel(element.parent());
+      }
+    }
+    return carouselItem;
+  }
+})();
+
+(function () {
+  'use strict';
+
+    audio.$inject = ["$cordovaNativeAudio"];
+  angular
+    .module('zaya')
+    .factory('audio',audio)
+
+    function audio($cordovaNativeAudio) {
+      return {
+        play : function (sound) {
+          $cordovaNativeAudio.play(sound);
+        }
+      };
+    }
+})();
+
+(function(){
+  'use strict';
+
+  angular
+    .module('zaya')
+    .controller('homeController',homeController)
+
+  homeController.$inject = ['$scope'];
+
+  function homeController($scope) {
+    var homeCtrl = this;
+    homeCtrl.carouselOptions = {
+        "loop": true,
+        "margin": 0,
+        "items": 1,
+        "stagePadding": 20,
+        "nav": false,
+        "autoplay": true,
+        "center" : true
+    };
+  }
+})();
+
+(function() {
+  angular
+    .module('zaya')
+    .controller('QuizController', QuizController)
+
+  QuizController.$inject = ['quiz','$stateParams', '$state', '$scope', 'audio'] ;
+
+  function QuizController(quiz, $stateParams, $state, $scope, audio) {
+    var quizCtrl = this;
+
+    quizCtrl.quiz = quiz;
+    quizCtrl.audio = audio;
+    var quizQuestions = quizCtrl.quiz.questions;
+
+    quizCtrl.isCurrentIndex = function(index) {
+      return quizCtrl.currentIndex == index;
+    }
+    quizCtrl.setCurrentIndex = function(index) {
+      quizCtrl.currentIndex = index;
+    }
+    quizCtrl.getCurrentIndex = function () {
+      return quizCtrl.currentIndex;
+    }
+    quizCtrl.prevQuestion = function() {
+      quizCtrl.currentIndex = (quizCtrl.currentIndex > 0) ? --quizCtrl.currentIndex : quizCtrl.currentIndex;
+    }
+    quizCtrl.nextQuestion = function() {
+      quizCtrl.currentIndex = (quizCtrl.currentIndex < quizQuestions.length - 1) ? ++quizCtrl.currentIndex : quizCtrl.currentIndex;
+    }
+    quizCtrl.setCurrentIndex(0);
   }
 })();

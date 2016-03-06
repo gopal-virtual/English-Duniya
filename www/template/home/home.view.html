@@ -1,10 +1,23 @@
 <ion-view>
   <ion-content class="has-header has-footer">
-    <div class="card">
-      <div class="item item-body">
-        <img src="img/subject.jpg" alt="" class="full-image">
-        <h2>Lorem ipsum dolor.</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Officia quas, facilis perspiciatis tempore praesentium voluptatibus sed? Expedita fugiat, excepturi pariatur!</p>
+    <div widget-carousel carousel-options="{{homeCtrl.carouselOptions}}">
+      <div carousel-item ng-repeat="item in ['balanced','positive','dark','assertive']" class="card padding-30 text-white bg-{{item}}">
+        <span class="title">Lorem ipsum.</span>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quo, sapiente!
+        </p>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <div class="text-center">
+          <a class="button button-stable" ui-sref="quiz.questions({id:1})">START</a>
+        </div>
       </div>
     </div>
   </ion-content>

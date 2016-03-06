@@ -9,7 +9,8 @@
   angular
     .module('zaya', [
       'ionic',
-      'restangular'
+      'restangular',
+      'ngCordova'
     ]);
 
 })();
