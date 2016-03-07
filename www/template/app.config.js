@@ -3,7 +3,7 @@
     .module('zaya')
     .config(AppConfig)
 
-    function AppConfig($httpProvider){
+    function AppConfig($httpProvider, $ionicConfigProvider){
       $httpProvider.interceptors.push(function ($rootScope,$q){
         return {
           request : function(config){
@@ -13,7 +13,7 @@
               config.headers.xsrfHeaderName = 'X-CSRFToken';
             return config;
           },
-          
+
           response : function(response){
             if(response.status==200 && response.data.hasOwnProperty('success')){
               $rootScope.success = $rootScope.success || [];
@@ -45,5 +45,8 @@
           }
         }
       })
+
+      $ionicConfigProvider.views.transition("android");
+
     }
 })();

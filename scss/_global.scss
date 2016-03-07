@@ -30,3 +30,16 @@
     padding : 0 $value;
   }
 }
+.selected.wrong-attempt,
+.wrong-attempt
+{
+  background-color: lighten($assertive, 20%);
+}
+.selected.correct-attempt,
+.correct-attempt
+{
+  background-color: lighten($balanced, 20%);
+}
+.selected{
+  background-color: lighten($dark, 60%);
+}

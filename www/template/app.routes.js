@@ -12,7 +12,7 @@
       .state('auth',{
         url : '/auth',
         abstract : true,
-        template : '<ion-nav-view></ion-nav-view>'
+        template : '<ion-nav-view animation="slide-left-right"></ion-nav-view>'
       })
       .state('auth.main',{
         url : '/main',
@@ -42,6 +42,7 @@
       .state('quiz',{
         url : '/quiz/:id',
         abstract : true,
+        cache: false,
         template : '<ion-nav-view></ion-nav-view>',
         resolve: {
             quiz: ['$stateParams', 'Rest', function($stateParams, Rest) {

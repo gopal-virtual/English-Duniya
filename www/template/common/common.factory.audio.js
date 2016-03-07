@@ -8,7 +8,12 @@
     function audio($cordovaNativeAudio) {
       return {
         play : function (sound) {
-          $cordovaNativeAudio.play(sound);
+          try{
+            $cordovaNativeAudio.play(sound);
+          }
+          catch(error){
+            console.log(error);
+          }
         }
       };
     }

@@ -9389,6 +9389,10 @@ input[class~="input-wrong"] {
   color: white;
   background-color: #b41b0f; }
 
+input[type=radio].hide {
+  position: absolute;
+  visibility: hidden; }
+
 .button {
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.5);
   vertical-align: center; }
@@ -9446,6 +9450,17 @@ input[class~="input-wrong"] {
 
 .padding-x-40 {
   padding: 0 40px; }
+
+.selected.wrong-attempt,
+.wrong-attempt {
+  background-color: #f79f98; }
+
+.selected.correct-attempt,
+.correct-attempt {
+  background-color: #85e19f; }
+
+.selected {
+  background-color: #dddddd; }
 
 .text-white {
   color: white; }

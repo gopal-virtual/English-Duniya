@@ -14,3 +14,7 @@ input[class~="input-wrong"]{
   color : $brand-white;
   background-color: darken($assertive,20%);
 }
+input[type=radio].hide{
+  position: absolute;
+  visibility: hidden;
+}

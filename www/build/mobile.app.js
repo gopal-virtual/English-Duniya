@@ -16,12 +16,12 @@
 })();
 
 (function(){
-    AppConfig.$inject = ["$httpProvider"];
+    AppConfig.$inject = ["$httpProvider", "$ionicConfigProvider"];
   angular
     .module('zaya')
     .config(AppConfig)
 
-    function AppConfig($httpProvider){
+    function AppConfig($httpProvider, $ionicConfigProvider){
       $httpProvider.interceptors.push(["$rootScope", "$q", function ($rootScope,$q){
         return {
           request : function(config){
@@ -31,7 +31,7 @@
               config.headers.xsrfHeaderName = 'X-CSRFToken';
             return config;
           },
-          
+
           response : function(response){
             if(response.status==200 && response.data.hasOwnProperty('success')){
               $rootScope.success = $rootScope.success || [];
@@ -63,6 +63,9 @@
           }
         }
       }])
+
+      $ionicConfigProvider.views.transition("android");
+
     }
 })();
 
@@ -73,7 +76,7 @@
     .module('zaya')
     .constant('CONSTANT',{
       // 'BACKEND_SERVICE_DOMAIN' : 'http://gopal.zaya.in',
-      'BACKEND_SERVICE_DOMAIN' : 'http://192.168.1.5:9000',
+      'BACKEND_SERVICE_DOMAIN' : 'http://192.168.1.4:9000',
       'PATH' : {
         'AUTH' : ROOT+'/auth',
         'QUIZ' : ROOT+'/quiz'
@@ -158,7 +161,7 @@
       .state('auth',{
         url : '/auth',
         abstract : true,
-        template : '<ion-nav-view></ion-nav-view>'
+        template : '<ion-nav-view animation="slide-left-right"></ion-nav-view>'
       })
       .state('auth.main',{
         url : '/main',
@@ -188,6 +191,7 @@
       .state('quiz',{
         url : '/quiz/:id',
         abstract : true,
+        cache: false,
         template : '<ion-nav-view></ion-nav-view>',
         resolve: {
             quiz: ['$stateParams', 'Rest', function($stateParams, Rest) {
@@ -312,6 +316,8 @@
       // load sound
       try{
         $cordovaNativeAudio.preloadSimple('water-drop', 'sound/water-drop.mp3');
+        $cordovaNativeAudio.preloadSimple('correct', 'sound/correct.mp3');
+        $cordovaNativeAudio.preloadSimple('wrong', 'sound/wrong.mp3');
       }
       catch(error){
         console.log('native audio not supported');
@@ -421,7 +427,12 @@
     function audio($cordovaNativeAudio) {
       return {
         play : function (sound) {
-          $cordovaNativeAudio.play(sound);
+          try{
+            $cordovaNativeAudio.play(sound);
+          }
+          catch(error){
+            console.log(error);
+          }
         }
       };
     }
@@ -464,6 +475,17 @@
     quizCtrl.audio = audio;
     var quizQuestions = quizCtrl.quiz.questions;
 
+    quizCtrl.init = function (quiz) {
+      // init report object
+      quizCtrl.report = {};
+      quizCtrl.report.quiz_id = quiz.info.id;
+      quizCtrl.report.attempts = {};
+      for (var i = 0; i < quiz.questions.length; i++) {
+        quizCtrl.report.attempts[quiz.questions[i].info.id] = [];
+      }
+    }
+
+    // traversing the question
     quizCtrl.isCurrentIndex = function(index) {
       return quizCtrl.currentIndex == index;
     }
@@ -479,6 +501,66 @@
     quizCtrl.nextQuestion = function() {
       quizCtrl.currentIndex = (quizCtrl.currentIndex < quizQuestions.length - 1) ? ++quizCtrl.currentIndex : quizCtrl.currentIndex;
     }
+
+    //log attempts & feedback
+    quizCtrl.submit = function () {
+      if(!quizCtrl.isCorrectAttempted(quizCtrl.quiz.questions[quizCtrl.currentIndex])){
+        quizCtrl.submitAttempt(
+          quizCtrl.quiz.questions[quizCtrl.currentIndex].info.id,
+          quizCtrl.quiz.questions[quizCtrl.currentIndex].attempted
+        );
+        quizCtrl.feedback(
+          quizCtrl.quiz.questions[quizCtrl.currentIndex],
+          quizCtrl.quiz.questions[quizCtrl.currentIndex].attempted
+        );
+      }
+      else{
+        quizCtrl.nextQuestion();
+      }
+    }
+    quizCtrl.feedback = function (question,attempt){
+      if(quizCtrl.isCorrect(question,attempt)){
+        quizCtrl.audio.play('correct');
+      }
+      else{
+        quizCtrl.audio.play('wrong');
+      }
+    }
+    quizCtrl.submitAttempt = function (question_id,attempt) {
+      quizCtrl.report.attempts[question_id].push(attempt);
+    }
+    quizCtrl.isAttempted = function (question_id) {
+      return quizCtrl.report.attempts[question_id].length ? true : false;
+    }
+    quizCtrl.isCorrect = function(question,attempt){
+      // multiple choice
+      if(question.info.content_type=='choice question' && question.info.question_type.is_multiple){
+        return angular.equals(attempt.sort(),question.info.answer.sort());
+      }
+      // single choice
+      if(question.info.content_type=='choice question' && !question.info.question_type.is_multiple){
+        return attempt == question.info.answer[0];
+      }
+    }
+    quizCtrl.isCorrectAttempted = function(question){
+      // multiple choice
+      if(question.info.content_type=='choice question' && question.info.question_type.is_multiple){
+        // return true;
+      }
+      // single choice
+      if(question.info.content_type=='choice question' && !question.info.question_type.is_multiple){
+        return quizCtrl.report.attempts[question.info.id].indexOf(question.info.answer[0])!=-1 ? true : false;
+      }
+    }
+    quizCtrl.isKeyCorrect = function(question,key,attempt){
+        return question.info.answer.indexOf(key)!=-1 ? true : false;
+    }
+    quizCtrl.isKeyAttempted = function(question_id,key){
+      return quizCtrl.report.attempts[question_id].indexOf(key)!=-1 ? true : false;
+    }
+
+    // initialisation call
     quizCtrl.setCurrentIndex(0);
+    quizCtrl.init(quizCtrl.quiz);
   }
 })();

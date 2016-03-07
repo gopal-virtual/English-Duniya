@@ -1,6 +1,6 @@
 <ion-pane class="bg-neutral">
   <div class="bar bar-header bar-transparent">
-    <button class="button button-clear button-icon icon ion-ios-close-empty"></button>
+    <a ui-sref="user.main.home" class="button button-clear button-icon icon ion-ios-close-empty"></a>
     <div class="h1 title">Q {{quizCtrl.getCurrentIndex()+1}} / {{quizCtrl.quiz.questions.length}}</div>
     <button class="button button-clear">HINT</button>
   </div>
@@ -14,9 +14,10 @@
           {{question.info.description}}
         </p>
       </div>
-      <div class="card padding-10" ng-repeat="option in question.info.question_type.choices">
-        {{option.option}}
-      </div>
+      <label ng-repeat="option in question.info.question_type.choices" class="card padding block" ng-class="{'wrong-attempt':quizCtrl.isAttempted(question.info.id) && quizCtrl.isKeyAttempted(question.info.id,option.key) && !quizCtrl.isKeyCorrect(question,option.key,question.attempted),'correct-attempt': quizCtrl.isAttempted(question.info.id) && quizCtrl.isKeyAttempted(question.info.id,option.key) && quizCtrl.isKeyCorrect(question,option.key,question.attempted),'selected':option.key==question.attempted}">
+        <input class="hide" type="radio" ng-model="question.attempted" ng-value="option.key" ng-disabled="quizCtrl.isCorrectAttempted(question)">
+          {{option.option}}
+      </label>
     </div>
   </ion-content>
   <div class="bar bar-footer bar-transparent">
@@ -24,7 +25,9 @@
       <a class="button button-clear" ng-click="quizCtrl.prevQuestion()">
         <i class="icon ion-ios-arrow-back"></i>
       </a>
-      <a class="button button-calm" ng-click="quizCtrl.audio.play('water-drop')">SUBMIT</a>
+      <button class="button button-calm" ng-click="quizCtrl.submit()" ng-disabled="!quizCtrl.quiz.questions[quizCtrl.currentIndex].attempted">
+        {{quizCtrl.isCorrectAttempted(quizCtrl.quiz.questions[quizCtrl.currentIndex])?'CONTINUE':'SUBMIT'}}
+      </button>
       <a class="button button-clear" ng-click="quizCtrl.nextQuestion()">
         <i class="icon ion-ios-arrow-forward"></i>
       </a>
