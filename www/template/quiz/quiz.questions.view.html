@@ -14,10 +14,22 @@
           {{question.info.description}}
         </p>
       </div>
-      <label ng-repeat="option in question.info.question_type.choices" class="card padding block" ng-class="{'wrong-attempt':quizCtrl.isAttempted(question.info.id) && quizCtrl.isKeyAttempted(question.info.id,option.key) && !quizCtrl.isKeyCorrect(question,option.key,question.attempted),'correct-attempt': quizCtrl.isAttempted(question.info.id) && quizCtrl.isKeyAttempted(question.info.id,option.key) && quizCtrl.isKeyCorrect(question,option.key,question.attempted),'selected':option.key==question.attempted}">
+      <!-- SCQ -->
+      <label ng-if="question.info.content_type=='choice question' && !question.info.question_type.is_multiple" ng-repeat="option in question.info.question_type.choices" class="card padding block" ng-class="{'wrong-attempt':quizCtrl.isAttempted(question.info.id) && quizCtrl.isKeyAttempted(question,option.key) && !quizCtrl.isKeyCorrect(question,option.key),'correct-attempt': quizCtrl.isAttempted(question.info.id) && quizCtrl.isKeyAttempted(question,option.key) && quizCtrl.isKeyCorrect(question,option.key),'selected':option.key==question.attempted}">
         <input class="hide" type="radio" ng-model="question.attempted" ng-value="option.key" ng-disabled="quizCtrl.isCorrectAttempted(question)">
           {{option.option}}
       </label>
+       <!-- MCQ options -->
+      <label ng-if="question.info.content_type=='choice question' && question.info.question_type.is_multiple" ng-repeat="option in question.info.question_type.choices" class="card padding block" ng-class="{'wrong-attempt':quizCtrl.isAttempted(question.info.id) && quizCtrl.isKeyAttempted(question,option.key) && !quizCtrl.isKeyCorrect(question,option.key),'correct-attempt': quizCtrl.isAttempted(question.info.id) && quizCtrl.isKeyAttempted(question,option.key) && quizCtrl.isKeyCorrect(question,option.key),'selected':question.attempted[option.key]}">
+        <input class="hide" type="checkbox" ng-model="question.attempted[$index+1]" ng-value="option.key" ng-disabled="quizCtrl.isCorrectAttempted(question)">
+          {{option.option}}
+      </label>
+      <!-- DR options-->
+      <div ng-if="question.info.content_type=='dr question'" class="row">
+        <div class="col">
+          <input type="text" class="input-block" placeholder="type your answer" ng-model="question.attempted" ng-class="{'wrong-attempt':quizCtrl.isAttempted(question.info.id) && !quizCtrl.isCorrectAttempted(question),'correct-attempt': quizCtrl.isAttempted(question.info.id)  && quizCtrl.isCorrectAttempted(question)}">
+        </div>
+      </div>
     </div>
   </ion-content>
   <div class="bar bar-footer bar-transparent">
@@ -25,7 +37,7 @@
       <a class="button button-clear" ng-click="quizCtrl.prevQuestion()">
         <i class="icon ion-ios-arrow-back"></i>
       </a>
-      <button class="button button-calm" ng-click="quizCtrl.submit()" ng-disabled="!quizCtrl.quiz.questions[quizCtrl.currentIndex].attempted">
+      <button class="button button-calm" ng-click="quizCtrl.submit()" ng-disabled="!quizCtrl.canSubmit()">
         {{quizCtrl.isCorrectAttempted(quizCtrl.quiz.questions[quizCtrl.currentIndex])?'CONTINUE':'SUBMIT'}}
       </button>
       <a class="button button-clear" ng-click="quizCtrl.nextQuestion()">

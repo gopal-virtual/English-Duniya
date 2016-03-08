@@ -41,5 +41,7 @@
   background-color: lighten($balanced, 20%);
 }
 .selected{
+  box-shadow: 0 0 10px $calm;
   background-color: lighten($dark, 60%);
+
 }

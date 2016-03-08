@@ -75,8 +75,8 @@
   angular
     .module('zaya')
     .constant('CONSTANT',{
-      // 'BACKEND_SERVICE_DOMAIN' : 'http://gopal.zaya.in',
-      'BACKEND_SERVICE_DOMAIN' : 'http://192.168.1.4:9000',
+      'BACKEND_SERVICE_DOMAIN' : 'http://gopal.zaya.in',
+      // 'BACKEND_SERVICE_DOMAIN' : 'http://192.168.1.34:9000',
       'PATH' : {
         'AUTH' : ROOT+'/auth',
         'QUIZ' : ROOT+'/quiz'
@@ -518,13 +518,21 @@
         quizCtrl.nextQuestion();
       }
     }
+    quizCtrl.canSubmit = function(){
+      // SCQ | DR
+      if((quizCtrl.quiz.questions[quizCtrl.currentIndex].info.content_type == "choice question" && !quizCtrl.quiz.questions[quizCtrl.currentIndex].info.question_type.is_multiple) || quizCtrl.quiz.questions[quizCtrl.currentIndex].info.content_type == "dr question"){
+        return quizCtrl.quiz.questions[quizCtrl.currentIndex].attempted;
+      }
+      // MCQ
+      if(quizCtrl.quiz.questions[quizCtrl.currentIndex].info.content_type == "choice question" && quizCtrl.quiz.questions[quizCtrl.currentIndex].info.question_type.is_multiple){
+        //removes false keys
+        quizCtrl.quiz.questions[quizCtrl.currentIndex].attempted = _.pick(quizCtrl.quiz.questions[quizCtrl.currentIndex].attempted, _.identity);
+        // true if attempted and key count is more than one
+        return quizCtrl.quiz.questions[quizCtrl.currentIndex].attempted && _.size(quizCtrl.quiz.questions[quizCtrl.currentIndex].attempted)>1;
+      }
+    }
     quizCtrl.feedback = function (question,attempt){
-      if(quizCtrl.isCorrect(question,attempt)){
-        quizCtrl.audio.play('correct');
-      }
-      else{
-        quizCtrl.audio.play('wrong');
-      }
+      return quizCtrl.isCorrect(question,attempt) ? quizCtrl.audio.play('correct') : quizCtrl.audio.play('wrong') ;
     }
     quizCtrl.submitAttempt = function (question_id,attempt) {
       quizCtrl.report.attempts[question_id].push(attempt);
@@ -535,10 +543,14 @@
     quizCtrl.isCorrect = function(question,attempt){
       // multiple choice
       if(question.info.content_type=='choice question' && question.info.question_type.is_multiple){
-        return angular.equals(attempt.sort(),question.info.answer.sort());
+        // return angular.equals(attempt.sort(),question.info.answer.sort());
       }
       // single choice
       if(question.info.content_type=='choice question' && !question.info.question_type.is_multiple){
+        return attempt == question.info.answer[0];
+      }
+      // dr
+      if(question.info.content_type=='dr question'){
         return attempt == question.info.answer[0];
       }
     }
@@ -546,17 +558,31 @@
       // multiple choice
       if(question.info.content_type=='choice question' && question.info.question_type.is_multiple){
         // return true;
+        for (var i = 0; i < quizCtrl.report.attempts[question.info.id].length; i++) {
+          if(_.chain(quizCtrl.report.attempts[question.info.id][i]).map(function(num,key){return parseInt(key);}).isEqual(question.info.answer).value())
+            return true;
+        }
+        return false;
       }
       // single choice
       if(question.info.content_type=='choice question' && !question.info.question_type.is_multiple){
         return quizCtrl.report.attempts[question.info.id].indexOf(question.info.answer[0])!=-1 ? true : false;
       }
+      // dr
+      if(question.info.content_type=='dr question'){
+        return quizCtrl.report.attempts[question.info.id].indexOf(question.info.answer[0].toLowerCase())!=-1 ? true : false;
+      }
     }
-    quizCtrl.isKeyCorrect = function(question,key,attempt){
+    quizCtrl.isKeyCorrect = function(question,key){
         return question.info.answer.indexOf(key)!=-1 ? true : false;
     }
-    quizCtrl.isKeyAttempted = function(question_id,key){
-      return quizCtrl.report.attempts[question_id].indexOf(key)!=-1 ? true : false;
+    quizCtrl.isKeyAttempted = function(question,key){
+      if(question.info.question_type.is_multiple){
+        return _.chain(quizCtrl.report.attempts[question.info.id]).last().has(key).value();
+      }
+      else{
+        return quizCtrl.report.attempts[question.info.id].indexOf(key)!=-1 ? true : false;
+      }
     }
 
     // initialisation call

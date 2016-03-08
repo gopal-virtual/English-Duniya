@@ -9460,6 +9460,7 @@ input[type=radio].hide {
   background-color: #85e19f; }
 
 .selected {
+  box-shadow: 0 0 10px #11c1f3;
   background-color: #dddddd; }
 
 .text-white {
