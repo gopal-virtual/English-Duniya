@@ -14,12 +14,18 @@
 
     quizCtrl.init = function (quiz) {
       // init report object
-      quizCtrl.report = {};
-      quizCtrl.report.quiz_id = quiz.info.id;
-      quizCtrl.report.attempts = {};
-      for (var i = 0; i < quiz.questions.length; i++) {
-        quizCtrl.report.attempts[quiz.questions[i].info.id] = [];
+      if($state.current.name=="quiz.summary"){
+        quizCtrl.report = $stateParams.report;
       }
+      else if($state.current.name=="quiz.questions"){
+        quizCtrl.report = {};
+        quizCtrl.report.quiz_id = quiz.info.id;
+        quizCtrl.report.attempts = {};
+        for (var i = 0; i < quiz.questions.length; i++) {
+          quizCtrl.report.attempts[quiz.questions[i].info.id] = [];
+        }
+      }
+      else{}
     }
 
     // traversing the question
@@ -51,8 +57,12 @@
           quizCtrl.quiz.questions[quizCtrl.currentIndex].attempted
         );
       }
-      else{
+      else if(quizCtrl.currentIndex < quizCtrl.quiz.questions.length - 1){
         quizCtrl.nextQuestion();
+      }
+      else {
+        // final question -> go to summary
+        $state.go('quiz.summary',{report : angular.copy(quizCtrl.report)});
       }
     }
     quizCtrl.canSubmit = function(){
@@ -80,7 +90,7 @@
     quizCtrl.isCorrect = function(question,attempt){
       // multiple choice
       if(question.info.content_type=='choice question' && question.info.question_type.is_multiple){
-        // return angular.equals(attempt.sort(),question.info.answer.sort());
+        return _.chain(attempt).map(function(num,key){return parseInt(key);}).isEqual(question.info.answer).value();
       }
       // single choice
       if(question.info.content_type=='choice question' && !question.info.question_type.is_multiple){
@@ -94,7 +104,6 @@
     quizCtrl.isCorrectAttempted = function(question){
       // multiple choice
       if(question.info.content_type=='choice question' && question.info.question_type.is_multiple){
-        // return true;
         for (var i = 0; i < quizCtrl.report.attempts[question.info.id].length; i++) {
           if(_.chain(quizCtrl.report.attempts[question.info.id][i]).map(function(num,key){return parseInt(key);}).isEqual(question.info.answer).value())
             return true;

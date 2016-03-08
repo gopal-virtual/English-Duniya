@@ -38,7 +38,7 @@
         <i class="icon ion-ios-arrow-back"></i>
       </a>
       <button class="button button-calm" ng-click="quizCtrl.submit()" ng-disabled="!quizCtrl.canSubmit()">
-        {{quizCtrl.isCorrectAttempted(quizCtrl.quiz.questions[quizCtrl.currentIndex])?'CONTINUE':'SUBMIT'}}
+        {{quizCtrl.isCorrectAttempted(quizCtrl.quiz.questions[quizCtrl.currentIndex]) ? quizCtrl.currentIndex < quizCtrl.quiz.questions.length - 1 ? 'CONTINUE' : 'DONE' : 'SUBMIT'}}
       </button>
       <a class="button button-clear" ng-click="quizCtrl.nextQuestion()">
         <i class="icon ion-ios-arrow-forward"></i>

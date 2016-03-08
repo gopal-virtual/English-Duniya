@@ -65,6 +65,9 @@
       .state('quiz.summary',{
         url : '/summary',
         templateUrl : CONSTANT.PATH.QUIZ+'/quiz.summary.'+CONSTANT.VIEW,
+        params: {
+          report: null
+        },
         controller : 'QuizController as quizCtrl'
       })
       // end : Quiz

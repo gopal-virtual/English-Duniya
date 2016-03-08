@@ -9489,6 +9489,9 @@ input[type=radio].hide {
   box-shadow: none;
   padding: 10px 0; }
 
+.card-dark {
+  background-color: #2b2b2b; }
+
 .bar-transparent {
   background-color: transparent;
   border: 0;

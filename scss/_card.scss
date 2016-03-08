@@ -3,3 +3,6 @@
   box-shadow: none;
   padding : $padding-y 0;
 }
+.card-dark{
+  background-color: darken($dark, 10%);
+}
