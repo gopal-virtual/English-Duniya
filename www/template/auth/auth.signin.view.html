@@ -1,25 +1,20 @@
-<ion-pane class="bg-assertive">
-  <div class="row">
+<ion-view class="bg-brand">
+  <div class="row margin-y-40 hide-on-keyboard-open">
     <div class="col col-33 col-offset-33"><img src="img/zaya_logo.png" alt="" class="full-image"></div>
   </div>
-  <div class="row wrapper-bottom-fixed">
+  <div class="row wrapper-bottom-fixed padding-30">
     <div class="col">
       <form class="list list-inset">
-        <input class="input-wrong input-medium input-block" type="text" placeholder="username" ng-model="authCtrl.user.username">
-        <input class="input-default input-medium input-block" type="password" placeholder="password" ng-model="authCtrl.user.password">
-        <!-- <label for="" class="item item-input">
-      </label>
-      <label for="" class="item item-input">
-    </label> -->
+        <input class="input-control input-wrong input-medium input-block" type="text" placeholder="username" ng-model="authCtrl.user.username">
+        <input class="input-control input-default input-medium input-block" type="password" placeholder="password" ng-model="authCtrl.user.password">
         <h5>
           <a class="text-white" ui-sref="auth.forgot">forgot your details?</a>
         </h5>
-        <button class="button button-positive button-block " ng-click="authCtrl.login({'username':authCtrl.user.username, 'password':authCtrl.user.password})">SIGN IN</button>
+        <button class="button button-calm button-block " ng-click="authCtrl.login({'username':authCtrl.user.username, 'password':authCtrl.user.password})">SIGN IN</button>
       </form>
       <div class="text-center">
-        <a class="text-white" ui-sref="auth.signup">I'm new</a>
+        <a class="text-white" ui-sref="auth.signup">SIGN UP</a>
       </div>
     </div>
   </div>
-
-</ion-pane>
+</ion-view>

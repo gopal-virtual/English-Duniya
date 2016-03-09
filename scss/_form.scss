@@ -1,6 +1,6 @@
-input[type=text],
-input[type=password],
-input[type=email]{
+input[type=text].input-control,
+input[type=password].input-control,
+input[type=email].input-control{
   border: 0;
   padding : $padding-x;
   margin : $margin-x 0;
@@ -17,4 +17,12 @@ input[class~="input-wrong"]{
 input[type=radio].hide{
   position: absolute;
   visibility: hidden;
+}
+.icon-inset > .icon{
+  position: absolute;
+  top : 20px;
+  left : 10px;
+}
+.icon-inset > input{
+  padding-left: 30px !important;
 }

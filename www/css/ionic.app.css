@@ -9373,9 +9373,9 @@ a.button {
     transform: scale(1);
     opacity: 1; } }
 
-input[type=text],
-input[type=password],
-input[type=email] {
+input[type=text].input-control,
+input[type=password].input-control,
+input[type=email].input-control {
   border: 0;
   padding: 10px;
   margin: 10px 0;
@@ -9393,6 +9393,14 @@ input[type=radio].hide {
   position: absolute;
   visibility: hidden; }
 
+.icon-inset > .icon {
+  position: absolute;
+  top: 20px;
+  left: 10px; }
+
+.icon-inset > input {
+  padding-left: 30px !important; }
+
 .button {
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.5);
   vertical-align: center; }
@@ -9408,6 +9416,9 @@ input[type=radio].hide {
 
 .bg-dark {
   background-color: #444; }
+
+.bg-brand {
+  background-color: #0D618A; }
 
 .bg-neutral {
   background-color: #e4eff2; }
@@ -9450,6 +9461,42 @@ input[type=radio].hide {
 
 .padding-x-40 {
   padding: 0 40px; }
+
+.margin-10 {
+  margin: 10px; }
+
+.margin-y-10 {
+  margin: 10px 0; }
+
+.margin-x-10 {
+  margin: 0 10px; }
+
+.margin-20 {
+  margin: 20px; }
+
+.margin-y-20 {
+  margin: 20px 0; }
+
+.margin-x-20 {
+  margin: 0 20px; }
+
+.margin-30 {
+  margin: 30px; }
+
+.margin-y-30 {
+  margin: 30px 0; }
+
+.margin-x-30 {
+  margin: 0 30px; }
+
+.margin-40 {
+  margin: 40px; }
+
+.margin-y-40 {
+  margin: 40px 0; }
+
+.margin-x-40 {
+  margin: 0 40px; }
 
 .selected.wrong-attempt,
 .wrong-attempt {

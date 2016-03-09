@@ -30,6 +30,10 @@
         console.log('native audio not supported');
       }
     });
+
+    window.addEventListener('native.keyboardshow', function(){
+      document.body.classList.add('keyboard-open');
+    });
   }
 
 })();

@@ -64,7 +64,7 @@
         }
       }])
 
-      $ionicConfigProvider.views.transition("android");
+      // $ionicConfigProvider.views.transition("android");
 
     }
 })();
@@ -76,7 +76,7 @@
     .module('zaya')
     .constant('CONSTANT',{
       'BACKEND_SERVICE_DOMAIN' : 'http://gopal.zaya.in',
-      // 'BACKEND_SERVICE_DOMAIN' : 'http://192.168.1.34:9000',
+      // 'BACKEND_SERVICE_DOMAIN' : 'http://192.168.1.4:9000',
       'PATH' : {
         'AUTH' : ROOT+'/auth',
         'QUIZ' : ROOT+'/quiz'
@@ -161,26 +161,42 @@
       .state('auth',{
         url : '/auth',
         abstract : true,
-        template : '<ion-nav-view animation="slide-left-right"></ion-nav-view>'
+        template : '<ion-nav-view name="state-auth"></ion-nav-view>'
       })
       .state('auth.main',{
         url : '/main',
-        templateUrl : CONSTANT.PATH.AUTH+"/auth.main."+CONSTANT.VIEW
+        views : {
+          'state-auth' : {
+            templateUrl : CONSTANT.PATH.AUTH+"/auth.main."+CONSTANT.VIEW
+          }
+        }
       })
       .state('auth.signin', {
         url: '/signin',
-        templateUrl: CONSTANT.PATH.AUTH+'/auth.signin.'+CONSTANT.VIEW,
-        controller : 'authController as authCtrl'
+        views : {
+          'state-auth' : {
+            templateUrl: CONSTANT.PATH.AUTH+'/auth.signin.'+CONSTANT.VIEW,
+            controller : 'authController as authCtrl'
+          }
+        }
       })
       .state('auth.signup',{
         url : '/signup',
-        templateUrl : CONSTANT.PATH.AUTH+'/auth.signup.'+CONSTANT.VIEW,
-        controller : 'authController as authCtrl'
+        views : {
+          'state-auth' : {
+            templateUrl : CONSTANT.PATH.AUTH+'/auth.signup.'+CONSTANT.VIEW,
+            controller : 'authController as authCtrl'
+          }
+        }
       })
       .state('auth.forgot',{
         url : '/forgot',
-        templateUrl : CONSTANT.PATH.AUTH+'/auth.forgot.'+CONSTANT.VIEW,
-        controller : 'authController as authCtrl'
+        views : {
+          'state-auth' : {
+            templateUrl : CONSTANT.PATH.AUTH+'/auth.forgot.'+CONSTANT.VIEW,
+            controller : 'authController as authCtrl'
+          }
+        }
       })
       // end : Authentication
 
@@ -192,7 +208,7 @@
         url : '/quiz/:id',
         abstract : true,
         cache: false,
-        template : '<ion-nav-view></ion-nav-view>',
+        template : '<ion-nav-view name="state-quiz"></ion-nav-view>',
         resolve: {
             quiz: ['$stateParams', 'Rest', function($stateParams, Rest) {
                 return Rest.one('assessments', $stateParams.id).get().then(function(quiz) {
@@ -203,21 +219,33 @@
       })
       .state('quiz.start',{
         url : '/start',
-        templateUrl : CONSTANT.PATH.QUIZ+'/quiz.start.'+CONSTANT.VIEW,
-        controller : 'QuizController as quizCtrl'
+        views : {
+          'state-quiz' : {
+            templateUrl : CONSTANT.PATH.QUIZ+'/quiz.start.'+CONSTANT.VIEW,
+            controller : 'QuizController as quizCtrl'
+          }
+        }
       })
       .state('quiz.questions',{
         url : '/questions',
-        templateUrl : CONSTANT.PATH.QUIZ+'/quiz.questions.'+CONSTANT.VIEW,
-        controller : 'QuizController as quizCtrl'
+        views : {
+          'state-quiz' : {
+            templateUrl : CONSTANT.PATH.QUIZ+'/quiz.questions.'+CONSTANT.VIEW,
+            controller : 'QuizController as quizCtrl'
+          }
+        }
       })
       .state('quiz.summary',{
         url : '/summary',
-        templateUrl : CONSTANT.PATH.QUIZ+'/quiz.summary.'+CONSTANT.VIEW,
         params: {
           report: null
         },
-        controller : 'QuizController as quizCtrl'
+        views : {
+          'state-quiz' : {
+            templateUrl : CONSTANT.PATH.QUIZ+'/quiz.summary.'+CONSTANT.VIEW,
+            controller : 'QuizController as quizCtrl'
+          }
+        }
       })
       // end : Quiz
 
@@ -325,6 +353,10 @@
       catch(error){
         console.log('native audio not supported');
       }
+    });
+
+    window.addEventListener('native.keyboardshow', function(){
+      document.body.classList.add('keyboard-open');
     });
   }
 

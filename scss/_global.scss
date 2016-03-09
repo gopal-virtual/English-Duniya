@@ -11,7 +11,7 @@
   background-color: $dark;
 }
 .bg-brand{
-  // background-color:
+  background-color: $brand;
 }
 .bg-neutral {
   background-color: $neutral;
@@ -28,6 +28,17 @@
   }
   .padding-x-#{$size}{
     padding : 0 $value;
+  }
+}
+@each $size,$value in ('10':10px,'20':20px,'30':30px,'40':40px){
+  .margin-#{$size}{
+    margin : $value;
+  }
+  .margin-y-#{$size}{
+    margin : $value 0;
+  }
+  .margin-x-#{$size}{
+    margin : 0 $value;
   }
 }
 .selected.wrong-attempt,
