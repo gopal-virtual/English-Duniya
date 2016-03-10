@@ -6,3 +6,8 @@
 .card-dark{
   background-color: darken($dark, 10%);
 }
+.card-brand{
+  background-color: lighten($brand, 10%);
+}
+.card-collapsed{
+}

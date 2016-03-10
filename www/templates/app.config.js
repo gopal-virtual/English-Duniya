@@ -46,7 +46,7 @@
         }
       })
 
-      // $ionicConfigProvider.views.transition("android");
+      $ionicConfigProvider.views.transition("android");
 
     }
 })();

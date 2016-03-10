@@ -10,7 +10,8 @@
     .module('zaya', [
       'ionic',
       'restangular',
-      'ngCordova'
+      'ngCordova',
+      'ionic-native-transitions'
     ]);
 
 })();

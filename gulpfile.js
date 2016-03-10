@@ -13,7 +13,7 @@ var sh = require('shelljs');
 
 var paths = {
   sass: ['./scss/**/*.scss','./scss/*.scss'],
-  script : ['./www/template/app.module.js','./www/template/**/*.js']
+  script : ['./www/templates/app.module.js','./www/templates/**/*.js']
 };
 
 gulp.task('default', ['sass','watch']);
