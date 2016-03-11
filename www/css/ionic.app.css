@@ -9621,7 +9621,7 @@ input[type=radio].hide {
 
 @-webkit-keyframes stack-in {
   0% {
-    -webkit-transform: translate3d(-100px, 100px, 0) rotateZ(20deg);
+    -webkit-transform: translate3d(0, 100px, 0) rotateZ(10deg);
     opacity: 0; }
   100% {
     -webkit-transform: translate3d(0, 0, 0) rotateZ(0);
@@ -9629,8 +9629,28 @@ input[type=radio].hide {
 
 @keyframes stack-in {
   0% {
-    -webkit-transform: translate3d(-100px, 100px, 0) rotateZ(20deg);
+    -webkit-transform: translate3d(0, 100px, 0) rotateZ(10deg);
     opacity: 0; }
   100% {
     -webkit-transform: translate3d(0, 0, 0) rotateZ(0);
     opacity: 1; } }
+
+.animation-question-slide.ng-enter {
+  -webkit-animation-name: question-slide-enter;
+  -webkit-animation-duration: 500ms; }
+
+@-webkit-keyframes question-slide-enter {
+  0% {
+    opacity: 0;
+    -webkit-transform: translate3d(0, 100px, 0); }
+  100% {
+    opacity: 1;
+    -webkit-transform: translate3d(0, 0, 0); } }
+
+@keyframes question-slide-enter {
+  0% {
+    opacity: 0;
+    -webkit-transform: translate3d(0, 100px, 0); }
+  100% {
+    opacity: 1;
+    -webkit-transform: translate3d(0, 0, 0); } }

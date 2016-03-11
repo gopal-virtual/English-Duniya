@@ -1,3 +1,25 @@
 <!-- <div ng-include="'template/common/header.view.html'"></div> -->
-<ion-nav-view name="state-user-sections"></ion-nav-view>
-<div ng-include="'templates/common/footer.view.html'"></div>
+
+<!-- <ion-nav-view name="state-user-sections"></ion-nav-view> -->
+<ion-tabs class="tabs-icon-top tabs-positive">
+  <!-- <ion-tab title="Profile" icon="ion-person" ui-sref="user.main.profile.groups">
+    <ion-nav-view name="profile-tab"></ion-nav-view>
+  </ion-tab> -->
+
+  <ion-tab title="Playlist" icon="ion-ios-list-outline" ui-sref="user.main.playlist">
+    <ion-nav-view name="playlist-tab"></ion-nav-view>
+  </ion-tab>
+
+  <ion-tab title="Home" icon="ion-ios-home-outline" ui-sref="user.main.home">
+    <ion-nav-view name="home-tab"></ion-nav-view>
+  </ion-tab>
+
+  <ion-tab title="Result" icon="ion-stats-bars" ui-sref="user.main.result">
+    <ion-nav-view name="result-tab"></ion-nav-view>
+  </ion-tab>
+
+  <ion-tab title="Search" icon="ion-ios-search" ui-sref="user.main.search">
+    <ion-nav-view name="search-tab"></ion-nav-view>
+  </ion-tab>
+</ion-tabs>
+<!-- <div ng-include="'templates/common/footer.view.html'"></div> -->

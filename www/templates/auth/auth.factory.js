@@ -2,16 +2,9 @@
     'use strict';
 
     angular
-        .module('zaya')
-        .factory('Rest', Rest)
+        .module('zaya-auth')
         .factory('Auth', Auth)
 
-    function Rest(Restangular, CONSTANT) {
-        return Restangular.withConfig(function(RestangularConfigurer) {
-            RestangularConfigurer.setBaseUrl(CONSTANT.BACKEND_SERVICE_DOMAIN+'/api/v1');
-            RestangularConfigurer.setRequestSuffix('/');
-        });
-    }
     function Auth(Restangular,CONSTANT){
       var rest_auth = Restangular.withConfig(function(RestangularConfigurer) {
           RestangularConfigurer.setBaseUrl(CONSTANT.BACKEND_SERVICE_DOMAIN+'/rest-auth');

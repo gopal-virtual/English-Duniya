@@ -10,8 +10,12 @@
     .module('zaya', [
       'ionic',
       'restangular',
-      'ngCordova',
-      'ionic-native-transitions'
+      'ionic-native-transitions',
+
+      // core
+      'zaya-auth',
+      'zaya-user',
+      'zaya-quiz'
     ]);
 
 })();

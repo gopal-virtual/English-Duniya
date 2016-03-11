@@ -1,6 +1,6 @@
 (function() {
   angular
-    .module('zaya')
+    .module('zaya-quiz')
     .controller('QuizController', QuizController)
 
   QuizController.$inject = ['quiz','$stateParams', '$state', '$scope', 'audio'] ;
@@ -10,9 +10,31 @@
 
     quizCtrl.quiz = quiz;
     quizCtrl.audio = audio;
-    var quizQuestions = quizCtrl.quiz.questions;
+    quizCtrl.init = init;
 
-    quizCtrl.init = function (quiz) {
+    // traversing the question
+    quizCtrl.isCurrentIndex = isCurrentIndex;
+    quizCtrl.setCurrentIndex = setCurrentIndex;
+    quizCtrl.getCurrentIndex = getCurrentIndex;
+    quizCtrl.prevQuestion = prevQuestion;
+    quizCtrl.nextQuestion = nextQuestion;
+
+    //log attempts & feedback
+    quizCtrl.submit = submit;
+    quizCtrl.canSubmit = canSubmit;
+    quizCtrl.feedback = feedback;
+    quizCtrl.submitAttempt = submitAttempt;
+    quizCtrl.isAttempted = isAttempted;
+    quizCtrl.isCorrect = isCorrect;
+    quizCtrl.isCorrectAttempted = isCorrectAttempted;
+    quizCtrl.isKeyCorrect = isKeyCorrect;
+    quizCtrl.isKeyAttempted = isKeyAttempted;
+
+    // initialisation call
+    quizCtrl.setCurrentIndex(0);
+    quizCtrl.init(quizCtrl.quiz);
+
+    function init (quiz) {
       // init report object
       if($state.current.name=="quiz.summary"){
         quizCtrl.report = $stateParams.report;
@@ -28,25 +50,27 @@
       else{}
     }
 
-    // traversing the question
-    quizCtrl.isCurrentIndex = function(index) {
+    function isCurrentIndex (index) {
       return quizCtrl.currentIndex == index;
     }
-    quizCtrl.setCurrentIndex = function(index) {
+
+    function setCurrentIndex(index) {
       quizCtrl.currentIndex = index;
     }
-    quizCtrl.getCurrentIndex = function () {
+
+    function getCurrentIndex() {
       return quizCtrl.currentIndex;
     }
-    quizCtrl.prevQuestion = function() {
+
+    function prevQuestion() {
       quizCtrl.currentIndex = (quizCtrl.currentIndex > 0) ? --quizCtrl.currentIndex : quizCtrl.currentIndex;
     }
-    quizCtrl.nextQuestion = function() {
-      quizCtrl.currentIndex = (quizCtrl.currentIndex < quizQuestions.length - 1) ? ++quizCtrl.currentIndex : quizCtrl.currentIndex;
+
+    function nextQuestion() {
+      quizCtrl.currentIndex = (quizCtrl.currentIndex < quizCtrl.quiz.questions.length - 1) ? ++quizCtrl.currentIndex : quizCtrl.currentIndex;
     }
 
-    //log attempts & feedback
-    quizCtrl.submit = function () {
+    function submit() {
       if(!quizCtrl.isCorrectAttempted(quizCtrl.quiz.questions[quizCtrl.currentIndex])){
         quizCtrl.submitAttempt(
           quizCtrl.quiz.questions[quizCtrl.currentIndex].info.id,
@@ -65,7 +89,8 @@
         $state.go('quiz.summary',{report : angular.copy(quizCtrl.report)});
       }
     }
-    quizCtrl.canSubmit = function(){
+
+    function canSubmit(){
       // SCQ | DR
       if((quizCtrl.quiz.questions[quizCtrl.currentIndex].info.content_type == "choice question" && !quizCtrl.quiz.questions[quizCtrl.currentIndex].info.question_type.is_multiple) || quizCtrl.quiz.questions[quizCtrl.currentIndex].info.content_type == "dr question"){
         return quizCtrl.quiz.questions[quizCtrl.currentIndex].attempted;
@@ -78,16 +103,20 @@
         return quizCtrl.quiz.questions[quizCtrl.currentIndex].attempted && _.size(quizCtrl.quiz.questions[quizCtrl.currentIndex].attempted)>1;
       }
     }
-    quizCtrl.feedback = function (question,attempt){
+
+    function feedback (question,attempt){
       return quizCtrl.isCorrect(question,attempt) ? quizCtrl.audio.play('correct') : quizCtrl.audio.play('wrong') ;
     }
-    quizCtrl.submitAttempt = function (question_id,attempt) {
+
+    function submitAttempt (question_id,attempt) {
       quizCtrl.report.attempts[question_id].push(attempt);
     }
-    quizCtrl.isAttempted = function (question_id) {
+
+    function isAttempted (question_id) {
       return quizCtrl.report.attempts[question_id].length ? true : false;
     }
-    quizCtrl.isCorrect = function(question,attempt){
+
+    function isCorrect(question,attempt){
       // multiple choice
       if(question.info.content_type=='choice question' && question.info.question_type.is_multiple){
         return _.chain(attempt).map(function(num,key){return parseInt(key);}).isEqual(question.info.answer).value();
@@ -101,7 +130,8 @@
         return attempt == question.info.answer[0];
       }
     }
-    quizCtrl.isCorrectAttempted = function(question){
+
+    function isCorrectAttempted (question){
       // multiple choice
       if(question.info.content_type=='choice question' && question.info.question_type.is_multiple){
         for (var i = 0; i < quizCtrl.report.attempts[question.info.id].length; i++) {
@@ -119,10 +149,12 @@
         return quizCtrl.report.attempts[question.info.id].indexOf(question.info.answer[0].toLowerCase())!=-1 ? true : false;
       }
     }
-    quizCtrl.isKeyCorrect = function(question,key){
+
+    function isKeyCorrect (question,key){
         return question.info.answer.indexOf(key)!=-1 ? true : false;
     }
-    quizCtrl.isKeyAttempted = function(question,key){
+
+    function isKeyAttempted (question,key){
       if(question.info.question_type.is_multiple){
         return _.chain(quizCtrl.report.attempts[question.info.id]).last().has(key).value();
       }
@@ -130,9 +162,5 @@
         return quizCtrl.report.attempts[question.info.id].indexOf(key)!=-1 ? true : false;
       }
     }
-
-    // initialisation call
-    quizCtrl.setCurrentIndex(0);
-    quizCtrl.init(quizCtrl.quiz);
   }
 })();

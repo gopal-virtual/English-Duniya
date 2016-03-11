@@ -2,7 +2,7 @@
   'use strict';
 
   angular
-    .module('zaya')
+    .module('zaya-auth')
     .controller('authController', authController)
 
     authController.$inject = ['$state','Auth','audio'];

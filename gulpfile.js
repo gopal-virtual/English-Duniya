@@ -12,8 +12,18 @@ var autoprefixer = require('gulp-autoprefixer');
 var sh = require('shelljs');
 
 var paths = {
-  sass: ['./scss/**/*.scss','./scss/*.scss'],
-  script : ['./www/templates/app.module.js','./www/templates/**/*.js']
+  sass: [
+    './scss/**/*.scss',
+    './scss/*.scss'
+  ],
+  script : [
+    './www/templates/common/common.module.js',
+    './www/templates/auth/auth.module.js',
+    './www/templates/user/user.module.js',
+    './www/templates/quiz/quiz.module.js',
+    './www/templates/app.module.js',
+    './www/templates/**/*.js'
+  ]
 };
 
 gulp.task('default', ['sass','watch']);

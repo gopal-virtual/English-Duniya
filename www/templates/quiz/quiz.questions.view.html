@@ -5,7 +5,7 @@
     <button class="button button-clear">HINT</button>
   </div>
   <ion-content class="has-header has-footer padding-x-20">
-    <div ng-repeat="question in quizCtrl.quiz.questions" ng-hide="!quizCtrl.isCurrentIndex($index)">
+    <div ng-repeat="question in quizCtrl.quiz.questions" ng-if="quizCtrl.isCurrentIndex($index)" ng-class="{'animation-question-slide':quizCtrl.isCurrentIndex($index)}">
       <div class="card card-transparent">
         <p>
           <strong>{{question.info.title}}</strong>
@@ -27,7 +27,7 @@
       <!-- DR options-->
       <div ng-if="question.info.content_type=='dr question'" class="row">
         <div class="col">
-          <input type="text" class="input-block" placeholder="type your answer" ng-model="question.attempted" ng-class="{'wrong-attempt':quizCtrl.isAttempted(question.info.id) && !quizCtrl.isCorrectAttempted(question),'correct-attempt': quizCtrl.isAttempted(question.info.id)  && quizCtrl.isCorrectAttempted(question)}">
+          <input type="text" class="input-control input-block" placeholder="type your answer" ng-model="question.attempted" ng-class="{'wrong-attempt':quizCtrl.isAttempted(question.info.id) && !quizCtrl.isCorrectAttempted(question),'correct-attempt': quizCtrl.isAttempted(question.info.id)  && quizCtrl.isCorrectAttempted(question)}">
         </div>
       </div>
     </div>
