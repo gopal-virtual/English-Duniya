@@ -2,7 +2,5 @@
     'use strict';
 
     angular
-        .module('zaya-auth', [
-          'common'
-        ]);
+        .module('zaya-auth', []);
 })();

@@ -1,20 +1,12 @@
-.bg-assertive{
-  background-color: $assertive;
+@each $name, $color in $color-list{
+  .bg-#{$name}{
+    background-color : $color;
+  }
 }
-.bg-balanced{
-  background-color: $balanced;
-}
-.bg-positive{
-  background-color: $positive;
-}
-.bg-dark{
-  background-color: $dark;
-}
-.bg-brand{
-  background-color: $brand;
-}
-.bg-neutral {
-  background-color: $neutral;
+@each $name, $color in $color-list{
+  .color-#{$name}{
+    color : $color;
+  }
 }
 .list-inset{
   background-color: transparent;

@@ -1,23 +1,13 @@
-<ion-content>
-  <div class="list card">
-    <a href="" class="item item-thumbnail-left">
-      <img src="img/thumb.jpg" alt="">
-      <h2>Lorem ipsum.</h2>
-      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veniam, facere!</p>
-    </a>
+<ion-scroll direction="y">
+  <div class="row">
+    <div class="col">
+      <div class="list card" ng-repeat="a in [1,2,3,4]">
+        <a href="" class="item item-thumbnail-left">
+          <img src="img/thumb.jpg" alt="">
+          <h2>Lorem ipsum.</h2>
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veniam, facere!</p>
+        </a>
+      </div>
+    </div>
   </div>
-  <div class="list card">
-    <a href="" class="item item-thumbnail-left">
-      <img src="img/thumb.jpg" alt="">
-      <h2>Lorem ipsum.</h2>
-      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veniam, facere!</p>
-    </a>
-  </div>
-  <div class="list card">
-    <a href="" class="item item-thumbnail-left">
-      <img src="img/thumb.jpg" alt="">
-      <h2>Lorem ipsum.</h2>
-      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veniam, facere!</p>
-    </a>
-  </div>
-</ion-content>
+</ion-scroll>

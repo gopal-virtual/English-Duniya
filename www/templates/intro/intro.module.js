@@ -2,5 +2,5 @@
     'use strict';
 
     angular
-        .module('zaya-quiz', []);
+        .module('zaya-intro', []);
 })();

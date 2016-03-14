@@ -48,57 +48,85 @@
           }
         }
       })
-      // .state('user.main.profile',{
-      //   url : '/profile',
-      //   abstract : true,
-      //   templateUrl : CONSTANT.PATH.AUTH+'/profile.'+CONSTANT.VIEW
-      // })
-      // .state('user.main.profile.groups',{
-      //   url : '/groups',
-      //   views : {
-      //     'group-tab' : {
-      //       templateUrl : CONSTANT.PATH.AUTH+'/profile.group.'+CONSTANT.VIEW
-      //     }
-      //   }
-      // })
-      // .state('user.main.profile.badges',{
-      //   url : '/badges',
-      //   views : {
-      //     'badge-tab':{
-      //       templateUrl : CONSTANT.PATH.AUTH+'/profile.badge.'+CONSTANT.VIEW
-      //     }
-      //   }
-      // })
+      .state('user.main.profile',{
+        url : '/profile',
+        abstract : true,
+        views : {
+          'profile-tab' : {
+            templateUrl : CONSTANT.PATH.PROFILE+'/profile.'+CONSTANT.VIEW
+          }
+        }
+      })
+      .state('user.main.profile.groups',{
+        url : '/groups',
+        nativeTransitions: {
+            "type": "fade",
+            "duration" :  200
+        },
+        views : {
+          'state-profile-tab' : {
+            templateUrl : CONSTANT.PATH.PROFILE+'/profile.group.'+CONSTANT.VIEW
+          }
+        }
+      })
+      .state('user.main.profile.badges',{
+        url : '/badges',
+        nativeTransitions: {
+            "type": "fade",
+            "duration" :  200
+        },
+        views : {
+          'state-profile-tab':{
+            templateUrl : CONSTANT.PATH.PROFILE+'/profile.badge.'+CONSTANT.VIEW
+          }
+        }
+      })
       .state('user.main.playlist',{
         url : '/playlist',
+        nativeTransitions: {
+            "type": "fade",
+            "duration" :  200
+        },
         views : {
           'playlist-tab':{
-            templateUrl : 'templates/playlist/playlist.'+CONSTANT.VIEW
+            templateUrl : CONSTANT.PATH.PLAYLIST+'/playlist.'+CONSTANT.VIEW
           }
         }
       })
       .state('user.main.home',{
         url : '/home',
+        nativeTransitions: {
+            "type": "fade",
+            "duration" :  200
+        },
         views : {
           'home-tab':{
-            templateUrl : 'templates/home/home.'+CONSTANT.VIEW,
+            templateUrl : CONSTANT.PATH.HOME+'/home.'+CONSTANT.VIEW,
             controller : 'homeController as homeCtrl'
           }
         }
       })
       .state('user.main.result',{
         url : '/result',
+        nativeTransitions: {
+            "type": "fade",
+            "duration" :  200
+        },
         views : {
           'result-tab':{
-            templateUrl : 'templates/result/result.'+CONSTANT.VIEW
+            templateUrl : CONSTANT.PATH.RESULT+'/result.'+CONSTANT.VIEW
           }
         }
       })
       .state('user.main.search',{
         url : '/search',
+        nativeTransitions: {
+            "type": "fade",
+            "duration" :  200
+        },
         views : {
           'search-tab':{
-            templateUrl : 'templates/search/search.'+CONSTANT.VIEW
+            templateUrl : CONSTANT.PATH.SEARCH+'/search.'+CONSTANT.VIEW
           }
         }
       })

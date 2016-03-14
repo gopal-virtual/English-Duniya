@@ -12,9 +12,14 @@
     'use strict';
 
     angular
-        .module('zaya-auth', [
-          'common'
-        ]);
+        .module('zaya-intro', []);
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('zaya-auth', []);
 })();
 
 (function() {
@@ -28,29 +33,33 @@
     'use strict';
 
     angular
-        .module('zaya-quiz', [
-          'common'
-        ]);
+        .module('zaya-quiz', []);
 })();
 
-// Ionic Starter App
+(function() {
+    'use strict';
 
-// angular.module is a global place for creating, registering and retrieving Angular modules
-// 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
-// the 2nd parameter is an array of 'requires'
+    angular
+        .module('zaya-group', []);
+})();
+
 (function () {
   'use strict';
 
   angular
     .module('zaya', [
+      // external
       'ionic',
       'restangular',
       'ionic-native-transitions',
 
       // core
-      'zaya-auth',
+      'common',
       'zaya-user',
-      'zaya-quiz'
+      'zaya-intro',
+      'zaya-auth',
+      'zaya-quiz',
+      'zaya-group'
     ]);
 
 })();
@@ -104,19 +113,8 @@
         }
       }])
       $ionicConfigProvider.views.maxCache(0);
+      $ionicConfigProvider.tabs.position('bottom');
     }
-})();
-
-(function(){
-  var ROOT = 'templates';
-
-  angular
-    .module('zaya')
-    .constant('CONSTANT',{
-      // 'BACKEND_SERVICE_DOMAIN' : 'http://gopal.zaya.in',
-      'BACKEND_SERVICE_DOMAIN' : 'http://192.168.10.121:9000',
-      'VIEW' : 'view.html'
-    })
 })();
 
 (function() {
@@ -180,19 +178,6 @@
     });
   }
 
-})();
-
-(function(){
-  var ROOT = 'templates';
-
-  angular
-    .module('zaya-auth')
-    .constant('CONSTANT',{
-      'PATH' : {
-        'AUTH' : ROOT+'/auth'
-      },
-      'VIEW' : 'view.html'
-    })
 })();
 
 (function(){
@@ -300,6 +285,11 @@
       })
       .state('auth.signin', {
         url: '/signin',
+        nativeTransitions: {
+          "type": "slide",
+          "direction": "left",
+          "duration" :  400
+        },
         views: {
           'state-auth': {
             templateUrl: CONSTANT.PATH.AUTH + '/auth.signin.' + CONSTANT.VIEW,
@@ -309,6 +299,11 @@
       })
       .state('auth.signup', {
         url: '/signup',
+        nativeTransitions: {
+          "type": "slide",
+          "direction": "left",
+          "duration" :  400
+        },
         views: {
           'state-auth': {
             templateUrl: CONSTANT.PATH.AUTH + '/auth.signup.' + CONSTANT.VIEW,
@@ -320,7 +315,8 @@
         url: '/forgot',
         nativeTransitions: {
           "type": "slide",
-          "direction": "up"
+          "direction": "up",
+          "duration" :  400
         },
         views: {
           'state-auth': {
@@ -330,6 +326,29 @@
         }
       })
   }
+})();
+
+(function(){
+  var ROOT = 'templates';
+
+  angular
+    .module('common')
+    .constant('CONSTANT',{
+      'BACKEND_SERVICE_DOMAIN' : 'http://192.168.10.121:9000',
+      'PATH' : {
+        'INTRO' : ROOT+'/intro',
+        'AUTH' : ROOT+'/auth',
+        'QUIZ' : ROOT+'/quiz',
+        'PROFILE' : ROOT+'/profile',
+        'USER' : ROOT+'/user',
+        'PLAYLIST' : ROOT+'/playlist',
+        'HOME' : ROOT+'/home',
+        'RESULT' : ROOT+'/result',
+        'SEARCH' : ROOT+'/search',
+        'GROUP' : ROOT+'/group'
+      },
+      'VIEW' : 'view.html',
+    })
 })();
 
 (function() {
@@ -419,6 +438,63 @@
 
 })();
 
+(function() {
+    'use strict';
+
+    angular
+        .module('zaya-group')
+        .controller('Controller', Controller);
+
+    Controller.$inject = [];
+
+    /* @ngInject */
+    function Controller() {
+        var groupCtrl = this;
+
+        groupCtrl.activate();
+
+        function activate() {
+
+        }
+    }
+})();
+
+(function() {
+  'use strict';
+
+  authRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
+  angular
+    .module('zaya-auth')
+    .config(authRoute);
+
+  function authRoute($stateProvider, $urlRouterProvider, CONSTANT) {
+    $stateProvider
+      .state('group',{
+        url : '/group',
+        abstract : true,
+        template : '<ion-nav-view name="state-group-admin"></ion-nav-view><ion-nav-view name="state-group-student"></ion-nav-view>'
+      })
+      .state('group.admin',{
+        url : '/admin',
+        views : {
+          'state-group-admin' : {
+            templateUrl : CONSTANT.PATH.GROUP + '/group.admin.' + CONSTANT.VIEW,
+            controller : 'groupController as groupCtrl'
+          }
+        }
+      })
+      .state('group.student',{
+        url : '/student',
+        views : {
+          'state-group-student' : {
+            templateUrl : CONSTANT.PATH.GROUP + '/group.student.' + CONSTANT.VIEW,
+            controller : 'groupController as groupCtrl'
+          }
+        }
+      })
+  }
+})();
+
 (function(){
   'use strict';
 
@@ -442,17 +518,21 @@
   }
 })();
 
-(function(){
-  var ROOT = 'templates';
+(function() {
+  'use strict';
 
+  mainRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
   angular
-    .module('zaya-quiz')
-    .constant('CONSTANT',{
-      'PATH' : {
-        'QUIZ' : ROOT+'/quiz'
-      },
-      'VIEW' : 'view.html'
-    })
+    .module('zaya-intro')
+    .config(mainRoute);
+
+  function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
+    $stateProvider
+      .state('intro',{
+        url : '/intro',
+        templateUrl : CONSTANT.PATH.INTRO+'/intro.'+CONSTANT.VIEW,
+      })
+  }
 })();
 
 (function() {
@@ -679,20 +759,6 @@
   }
 })();
 
-(function(){
-  var ROOT = 'templates';
-
-  angular
-    .module('zaya-user')
-    .constant('CONSTANT',{
-      'PATH' : {
-        'PROFILE' : ROOT+'/profile',
-        'USER' : ROOT+'/user',
-      },
-      'VIEW' : 'view.html'
-    })
-})();
-
 (function() {
   'use strict';
 
@@ -744,57 +810,85 @@
           }
         }
       })
-      // .state('user.main.profile',{
-      //   url : '/profile',
-      //   abstract : true,
-      //   templateUrl : CONSTANT.PATH.AUTH+'/profile.'+CONSTANT.VIEW
-      // })
-      // .state('user.main.profile.groups',{
-      //   url : '/groups',
-      //   views : {
-      //     'group-tab' : {
-      //       templateUrl : CONSTANT.PATH.AUTH+'/profile.group.'+CONSTANT.VIEW
-      //     }
-      //   }
-      // })
-      // .state('user.main.profile.badges',{
-      //   url : '/badges',
-      //   views : {
-      //     'badge-tab':{
-      //       templateUrl : CONSTANT.PATH.AUTH+'/profile.badge.'+CONSTANT.VIEW
-      //     }
-      //   }
-      // })
+      .state('user.main.profile',{
+        url : '/profile',
+        abstract : true,
+        views : {
+          'profile-tab' : {
+            templateUrl : CONSTANT.PATH.PROFILE+'/profile.'+CONSTANT.VIEW
+          }
+        }
+      })
+      .state('user.main.profile.groups',{
+        url : '/groups',
+        nativeTransitions: {
+            "type": "fade",
+            "duration" :  200
+        },
+        views : {
+          'state-profile-tab' : {
+            templateUrl : CONSTANT.PATH.PROFILE+'/profile.group.'+CONSTANT.VIEW
+          }
+        }
+      })
+      .state('user.main.profile.badges',{
+        url : '/badges',
+        nativeTransitions: {
+            "type": "fade",
+            "duration" :  200
+        },
+        views : {
+          'state-profile-tab':{
+            templateUrl : CONSTANT.PATH.PROFILE+'/profile.badge.'+CONSTANT.VIEW
+          }
+        }
+      })
       .state('user.main.playlist',{
         url : '/playlist',
+        nativeTransitions: {
+            "type": "fade",
+            "duration" :  200
+        },
         views : {
           'playlist-tab':{
-            templateUrl : 'templates/playlist/playlist.'+CONSTANT.VIEW
+            templateUrl : CONSTANT.PATH.PLAYLIST+'/playlist.'+CONSTANT.VIEW
           }
         }
       })
       .state('user.main.home',{
         url : '/home',
+        nativeTransitions: {
+            "type": "fade",
+            "duration" :  200
+        },
         views : {
           'home-tab':{
-            templateUrl : 'templates/home/home.'+CONSTANT.VIEW,
+            templateUrl : CONSTANT.PATH.HOME+'/home.'+CONSTANT.VIEW,
             controller : 'homeController as homeCtrl'
           }
         }
       })
       .state('user.main.result',{
         url : '/result',
+        nativeTransitions: {
+            "type": "fade",
+            "duration" :  200
+        },
         views : {
           'result-tab':{
-            templateUrl : 'templates/result/result.'+CONSTANT.VIEW
+            templateUrl : CONSTANT.PATH.RESULT+'/result.'+CONSTANT.VIEW
           }
         }
       })
       .state('user.main.search',{
         url : '/search',
+        nativeTransitions: {
+            "type": "fade",
+            "duration" :  200
+        },
         views : {
           'search-tab':{
-            templateUrl : 'templates/search/search.'+CONSTANT.VIEW
+            templateUrl : CONSTANT.PATH.SEARCH+'/search.'+CONSTANT.VIEW
           }
         }
       })

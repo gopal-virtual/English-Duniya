@@ -1,24 +1,25 @@
-<ion-view>
-  <ion-pane class="has-header has-footer has-tabs">
-    <ion-tabs class="tabs-calm tabs-top">
-      <ion-tab href="#/user/main/profile/groups" icon="ion-person-stalker">
-        <ion-nav-view name="group-tab"></ion-nav-view>
-      </ion-tab>
-      <ion-tab href="#/user/main/profile/badges" icon="ion-trophy">
-        <ion-nav-view name="badge-tab"></ion-nav-view>
-      </ion-tab>
-    </ion-tabs>
-    <!-- <div class="row">
-      <div class="col">
-        <div class="list card">
-          <div class="item item-image"><img src="img/cover.jpg" alt="cover picture"></div>
-          <div class="item item-avatar">
-            <img src="img/profile.jpg" alt="profile picture">
-            <h2>Haba baba ba</h2>
-            <p>Lorem ipsum dolor sit amet.</p>
-          </div>
-        </div>
-      </div>
-    </div> -->
-  </ion-pane>
-</ion-view>
+<div class="cover cover-brand">
+  <div class="toolbox">
+    <i class="icon ion-android-settings"></i>
+  </div>
+  <div class="avatar">
+    <img src="img/profile.jpg" alt="profile image">
+  </div>
+  <h3 class="name">
+    Lorem ipsum dolor.
+  </h3>
+  <!-- <p class="desc">
+    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Suscipit, accusamus.
+  </p> -->
+</div>
+<div class="tabs-striped tabs-top tabs-background-light tabs-color-dark">
+  <div class="tabs">
+    <a ui-sref="user.main.profile.groups" class="tab-item" ui-sref-active="active">
+      <i class="icon ion-person-stalker"></i>
+    </a>
+    <a ui-sref="user.main.profile.badges" class="tab-item" ui-sref-active="active">
+      <i class="icon ion-trophy"></i>
+    </a>
+  </div>
+</div>
+<ion-nav-view name="state-profile-tab"></ion-nav-view>

@@ -22,6 +22,11 @@
       })
       .state('auth.signin', {
         url: '/signin',
+        nativeTransitions: {
+          "type": "slide",
+          "direction": "left",
+          "duration" :  400
+        },
         views: {
           'state-auth': {
             templateUrl: CONSTANT.PATH.AUTH + '/auth.signin.' + CONSTANT.VIEW,
@@ -31,6 +36,11 @@
       })
       .state('auth.signup', {
         url: '/signup',
+        nativeTransitions: {
+          "type": "slide",
+          "direction": "left",
+          "duration" :  400
+        },
         views: {
           'state-auth': {
             templateUrl: CONSTANT.PATH.AUTH + '/auth.signup.' + CONSTANT.VIEW,
@@ -42,7 +52,8 @@
         url: '/forgot',
         nativeTransitions: {
           "type": "slide",
-          "direction": "up"
+          "direction": "up",
+          "duration" :  400
         },
         views: {
           'state-auth': {

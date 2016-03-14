@@ -9405,14 +9405,29 @@ input[type=radio].hide {
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.5);
   vertical-align: center; }
 
-.bg-assertive {
-  background-color: #ef473a; }
+.bg-light {
+  background-color: #fff; }
+
+.bg-stable {
+  background-color: #f8f8f8; }
+
+.bg-positive {
+  background-color: #387ef5; }
+
+.bg-calm {
+  background-color: #11c1f3; }
 
 .bg-balanced {
   background-color: #33cd5f; }
 
-.bg-positive {
-  background-color: #387ef5; }
+.bg-energised {
+  background-color: #ffc900; }
+
+.bg-assertive {
+  background-color: #ef473a; }
+
+.bg-royal {
+  background-color: #886aea; }
 
 .bg-dark {
   background-color: #444; }
@@ -9422,6 +9437,39 @@ input[type=radio].hide {
 
 .bg-neutral {
   background-color: #e4eff2; }
+
+.color-light {
+  color: #fff; }
+
+.color-stable {
+  color: #f8f8f8; }
+
+.color-positive {
+  color: #387ef5; }
+
+.color-calm {
+  color: #11c1f3; }
+
+.color-balanced {
+  color: #33cd5f; }
+
+.color-energised {
+  color: #ffc900; }
+
+.color-assertive {
+  color: #ef473a; }
+
+.color-royal {
+  color: #886aea; }
+
+.color-dark {
+  color: #444; }
+
+.color-brand {
+  color: #0D618A; }
+
+.color-neutral {
+  color: #e4eff2; }
 
 .list-inset {
   background-color: transparent; }
@@ -9536,11 +9584,38 @@ input[type=radio].hide {
   box-shadow: none;
   padding: 10px 0; }
 
+.card-light {
+  background-color: #fff; }
+
+.card-stable {
+  background-color: #f8f8f8; }
+
+.card-positive {
+  background-color: #387ef5; }
+
+.card-calm {
+  background-color: #11c1f3; }
+
+.card-balanced {
+  background-color: #33cd5f; }
+
+.card-energised {
+  background-color: #ffc900; }
+
+.card-assertive {
+  background-color: #ef473a; }
+
+.card-royal {
+  background-color: #886aea; }
+
 .card-dark {
-  background-color: #2b2b2b; }
+  background-color: #444; }
 
 .card-brand {
-  background-color: #1182b9; }
+  background-color: #0D618A; }
+
+.card-neutral {
+  background-color: #e4eff2; }
 
 .bar-transparent {
   background-color: transparent;
@@ -9558,8 +9633,8 @@ input[type=radio].hide {
 .animation-fade-in-from-top,
 .animation-stack-in {
   -webkit-animation-fill-mode: backwards;
-  -webkit-animation-duration: 600ms;
-  -webkit-animation-delay: 500ms; }
+  -webkit-animation-duration: 300ms;
+  -webkit-animation-delay: 400ms; }
 
 .animation-fade-in-from-bottom {
   -webkit-animation-name: fade-in-from-bottom; }
@@ -9654,3 +9729,33 @@ input[type=radio].hide {
   100% {
     opacity: 1;
     -webkit-transform: translate3d(0, 0, 0); } }
+
+.cover {
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+  padding: 20px;
+  height: 250px; }
+
+.cover > .toolbox {
+  text-align: right;
+  font-size: 1.5em;
+  color: #777777; }
+
+.cover > .avatar,
+.cover > .name,
+.cover > .desc {
+  text-align: center; }
+
+.cover > .avatar > img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 5px solid rgba(217, 217, 217, 0.66); }
+
+.cover + .tabs-striped > .tabs {
+  top: 201px; }
+
+.cover ~ ion-nav-view ion-scroll {
+  height: calc(100% - 299px);
+  width: 100%; }
