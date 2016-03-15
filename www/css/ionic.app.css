@@ -9373,6 +9373,66 @@ a.button {
     transform: scale(1);
     opacity: 1; } }
 
+ion-slide {
+  background-color: #f0f0f0; }
+  ion-slide:nth-child(2n) {
+    background-color: #fff; }
+
+.slider {
+  height: 100%; }
+
+.slidingTabs {
+  height: 48px;
+  z-index: 10; }
+  .slidingTabs .scroll {
+    height: auto;
+    min-width: 100%; }
+  .slidingTabs ul {
+    background-color: #387ef5;
+    height: 48px; }
+    .slidingTabs ul li {
+      height: 48px;
+      line-height: 48px;
+      text-align: center;
+      float: left;
+      margin: 0;
+      padding: 0 12px 20px 12px;
+      font-size: 11px;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.6);
+      transition: color 0.25s ease-in-out;
+      position: relative;
+      overflow: hidden; }
+      .slidingTabs ul li.tab-active {
+        color: #fff; }
+      .slidingTabs ul li .ink {
+        display: block;
+        position: absolute;
+        background: rgba(56, 147, 245, 0.8);
+        border-radius: 100%;
+        -webkit-transform: scale(0);
+        transform: scale(0); }
+      .slidingTabs ul li .ink.animate {
+        -webkit-animation: ripple 0.65s linear;
+        animation: ripple 0.65s linear; }
+  .slidingTabs .tab-indicator-wrapper {
+    width: 100%;
+    height: 2px;
+    background-color: rgba(255, 255, 255, 0.2);
+    -webkit-transform: translateY(-2px);
+    position: absolute; }
+    .slidingTabs .tab-indicator-wrapper .tab-indicator {
+      height: 100%;
+      background-color: #fff;
+      width: 70px;
+      position: relative; }
+
+@-webkit-keyframes ripple {
+  100% {
+    opacity: 0;
+    -webkit-transform: scale(2.5);
+    transform: scale(2.5); } }
+
 input[type=text].input-control,
 input[type=password].input-control,
 input[type=email].input-control {
@@ -9438,6 +9498,72 @@ input[type=radio].hide {
 .bg-neutral {
   background-color: #e4eff2; }
 
+.bg-light-light {
+  background-color: white; }
+
+.bg-stable-light {
+  background-color: white; }
+
+.bg-positive-light {
+  background-color: #699df7; }
+
+.bg-calm-light {
+  background-color: #42cef5; }
+
+.bg-balanced-light {
+  background-color: #5cd77f; }
+
+.bg-energised-light {
+  background-color: #ffd433; }
+
+.bg-assertive-light {
+  background-color: #f37369; }
+
+.bg-royal-light {
+  background-color: #ac97f0; }
+
+.bg-dark-light {
+  background-color: #5e5e5e; }
+
+.bg-brand-light {
+  background-color: #1182b9; }
+
+.bg-neutral-light {
+  background-color: white; }
+
+.bg-light-dark {
+  background-color: dark(#fff, 10%); }
+
+.bg-stable-dark {
+  background-color: dark(#f8f8f8, 10%); }
+
+.bg-positive-dark {
+  background-color: dark(#387ef5, 10%); }
+
+.bg-calm-dark {
+  background-color: dark(#11c1f3, 10%); }
+
+.bg-balanced-dark {
+  background-color: dark(#33cd5f, 10%); }
+
+.bg-energised-dark {
+  background-color: dark(#ffc900, 10%); }
+
+.bg-assertive-dark {
+  background-color: dark(#ef473a, 10%); }
+
+.bg-royal-dark {
+  background-color: dark(#886aea, 10%); }
+
+.bg-dark-dark {
+  background-color: dark(#444, 10%); }
+
+.bg-brand-dark {
+  background-color: dark(#0D618A, 10%); }
+
+.bg-neutral-dark {
+  background-color: dark(#e4eff2, 10%); }
+
 .color-light {
   color: #fff; }
 
@@ -9470,6 +9596,72 @@ input[type=radio].hide {
 
 .color-neutral {
   color: #e4eff2; }
+
+.color-light-light {
+  color: white; }
+
+.color-stable-light {
+  color: white; }
+
+.color-positive-light {
+  color: #699df7; }
+
+.color-calm-light {
+  color: #42cef5; }
+
+.color-balanced-light {
+  color: #5cd77f; }
+
+.color-energised-light {
+  color: #ffd433; }
+
+.color-assertive-light {
+  color: #f37369; }
+
+.color-royal-light {
+  color: #ac97f0; }
+
+.color-dark-light {
+  color: #5e5e5e; }
+
+.color-brand-light {
+  color: #1182b9; }
+
+.color-neutral-light {
+  color: white; }
+
+.color-light-dark {
+  color: #e6e6e6; }
+
+.color-stable-dark {
+  color: #dfdfdf; }
+
+.color-positive-dark {
+  color: #0c60ee; }
+
+.color-calm-dark {
+  color: #0a9dc7; }
+
+.color-balanced-dark {
+  color: #28a54c; }
+
+.color-energised-dark {
+  color: #cca100; }
+
+.color-assertive-dark {
+  color: #e42112; }
+
+.color-royal-dark {
+  color: #643de4; }
+
+.color-dark-dark {
+  color: #2b2b2b; }
+
+.color-brand-dark {
+  color: #09405b; }
+
+.color-neutral-dark {
+  color: #c2dbe1; }
 
 .list-inset {
   background-color: transparent; }
@@ -9559,6 +9751,16 @@ input[type=radio].hide {
 .selected {
   box-shadow: 0 0 10px #11c1f3;
   background-color: #dddddd; }
+
+.slider {
+  height: 100%; }
+
+.scroll {
+  height: 100%; }
+
+.box {
+  width: 100%;
+  height: 100%; }
 
 .text-white {
   color: white; }

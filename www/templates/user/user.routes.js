@@ -11,7 +11,7 @@
       .state('user',{
         url :'/user',
         abstract : true,
-        templateUrl: CONSTANT.PATH.USER+'/user.'+CONSTANT.VIEW,
+        templateUrl: CONSTANT.PATH.USER+'/user'+CONSTANT.VIEW,
       })
       // personalisation for all
       .state('user.personalise',{
@@ -19,7 +19,7 @@
         abstract : true,
         views : {
           'state-user':{
-            templateUrl : CONSTANT.PATH.PROFILE+'/personalise.'+CONSTANT.VIEW,
+            templateUrl : CONSTANT.PATH.PROFILE+'/personalise'+CONSTANT.VIEW,
           }
         }
       })
@@ -27,7 +27,7 @@
         url : '/usertype',
         views : {
           'state-personalise':{
-            templateUrl : CONSTANT.PATH.PROFILE+'/personalise.usertype.'+CONSTANT.VIEW
+            templateUrl : CONSTANT.PATH.PROFILE+'/personalise.usertype'+CONSTANT.VIEW
           }
         }
       })
@@ -35,7 +35,7 @@
         url : '/usersubject',
         views : {
           'state-personalise':{
-            templateUrl : CONSTANT.PATH.PROFILE+'/personalise.usersubject.'+CONSTANT.VIEW
+            templateUrl : CONSTANT.PATH.PROFILE+'/personalise.usersubject'+CONSTANT.VIEW
           }
         }
       })
@@ -44,7 +44,7 @@
         abstract : true,
         views : {
           'state-user':{
-            templateUrl : CONSTANT.PATH.USER+'/main.'+CONSTANT.VIEW,
+            templateUrl : CONSTANT.PATH.USER+'/main'+CONSTANT.VIEW,
           }
         }
       })
@@ -53,7 +53,7 @@
         abstract : true,
         views : {
           'profile-tab' : {
-            templateUrl : CONSTANT.PATH.PROFILE+'/profile.'+CONSTANT.VIEW
+            templateUrl : CONSTANT.PATH.PROFILE+'/profile'+CONSTANT.VIEW
           }
         }
       })
@@ -65,7 +65,7 @@
         },
         views : {
           'state-profile-tab' : {
-            templateUrl : CONSTANT.PATH.PROFILE+'/profile.group.'+CONSTANT.VIEW
+            templateUrl : CONSTANT.PATH.PROFILE+'/profile.group'+CONSTANT.VIEW
           }
         }
       })
@@ -77,7 +77,7 @@
         },
         views : {
           'state-profile-tab':{
-            templateUrl : CONSTANT.PATH.PROFILE+'/profile.badge.'+CONSTANT.VIEW
+            templateUrl : CONSTANT.PATH.PROFILE+'/profile.badge'+CONSTANT.VIEW
           }
         }
       })
@@ -89,7 +89,7 @@
         },
         views : {
           'playlist-tab':{
-            templateUrl : CONSTANT.PATH.PLAYLIST+'/playlist.'+CONSTANT.VIEW
+            templateUrl : CONSTANT.PATH.PLAYLIST+'/playlist'+CONSTANT.VIEW
           }
         }
       })
@@ -101,7 +101,7 @@
         },
         views : {
           'home-tab':{
-            templateUrl : CONSTANT.PATH.HOME+'/home.'+CONSTANT.VIEW,
+            templateUrl : CONSTANT.PATH.HOME+'/home'+CONSTANT.VIEW,
             controller : 'homeController as homeCtrl'
           }
         }
@@ -114,19 +114,7 @@
         },
         views : {
           'result-tab':{
-            templateUrl : CONSTANT.PATH.RESULT+'/result.'+CONSTANT.VIEW
-          }
-        }
-      })
-      .state('user.main.search',{
-        url : '/search',
-        nativeTransitions: {
-            "type": "fade",
-            "duration" :  200
-        },
-        views : {
-          'search-tab':{
-            templateUrl : CONSTANT.PATH.SEARCH+'/search.'+CONSTANT.VIEW
+            templateUrl : CONSTANT.PATH.RESULT+'/result'+CONSTANT.VIEW
           }
         }
       })

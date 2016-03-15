@@ -19,6 +19,13 @@
     'use strict';
 
     angular
+        .module('zaya-search', []);
+})();
+
+(function() {
+    'use strict';
+
+    angular
         .module('zaya-auth', []);
 })();
 
@@ -61,6 +68,7 @@
       'zaya-intro',
       'zaya-auth',
       'zaya-quiz',
+      'zaya-search',
       'zaya-group'
     ]);
 
@@ -281,7 +289,7 @@
         url: '/main',
         views: {
           'state-auth': {
-            templateUrl: CONSTANT.PATH.AUTH + "/auth.main." + CONSTANT.VIEW
+            templateUrl: CONSTANT.PATH.AUTH + "/auth.main" + CONSTANT.VIEW
           }
         }
       })
@@ -294,7 +302,7 @@
         },
         views: {
           'state-auth': {
-            templateUrl: CONSTANT.PATH.AUTH + '/auth.signin.' + CONSTANT.VIEW,
+            templateUrl: CONSTANT.PATH.AUTH + '/auth.signin' + CONSTANT.VIEW,
             controller: 'authController as authCtrl'
           }
         }
@@ -308,7 +316,7 @@
         },
         views: {
           'state-auth': {
-            templateUrl: CONSTANT.PATH.AUTH + '/auth.signup.' + CONSTANT.VIEW,
+            templateUrl: CONSTANT.PATH.AUTH + '/auth.signup' + CONSTANT.VIEW,
             controller: 'authController as authCtrl'
           }
         }
@@ -322,7 +330,7 @@
         },
         views: {
           'state-auth': {
-            templateUrl: CONSTANT.PATH.AUTH + '/auth.forgot.' + CONSTANT.VIEW,
+            templateUrl: CONSTANT.PATH.AUTH + '/auth.forgot' + CONSTANT.VIEW,
             controller: 'authController as authCtrl'
           }
         }
@@ -349,7 +357,7 @@
         'SEARCH' : ROOT+'/search',
         'GROUP' : ROOT+'/group'
       },
-      'VIEW' : 'view.html',
+      'VIEW' : '.view.html',
     })
 })();
 
@@ -480,7 +488,7 @@
         url : '/admin',
         views : {
           'state-group-admin' : {
-            templateUrl : CONSTANT.PATH.GROUP + '/group.admin.' + CONSTANT.VIEW,
+            templateUrl : CONSTANT.PATH.GROUP + '/group.admin' + CONSTANT.VIEW,
             controller : 'groupController as groupCtrl'
           }
         }
@@ -489,7 +497,7 @@
         url : '/student',
         views : {
           'state-group-student' : {
-            templateUrl : CONSTANT.PATH.GROUP + '/group.student.' + CONSTANT.VIEW,
+            templateUrl : CONSTANT.PATH.GROUP + '/group.student' + CONSTANT.VIEW,
             controller : 'groupController as groupCtrl'
           }
         }
@@ -532,7 +540,7 @@
     $stateProvider
       .state('intro',{
         url : '/intro',
-        templateUrl : CONSTANT.PATH.INTRO+'/intro.'+CONSTANT.VIEW,
+        templateUrl : CONSTANT.PATH.INTRO+'/intro'+CONSTANT.VIEW,
       })
   }
 })();
@@ -759,7 +767,7 @@
         url : '/start',
         views : {
           'state-quiz' : {
-            templateUrl : CONSTANT.PATH.QUIZ+'/quiz.start.'+CONSTANT.VIEW,
+            templateUrl : CONSTANT.PATH.QUIZ+'/quiz.start'+CONSTANT.VIEW,
             controller : 'QuizController as quizCtrl'
           }
         }
@@ -768,7 +776,7 @@
         url : '/questions',
         views : {
           'state-quiz' : {
-            templateUrl : CONSTANT.PATH.QUIZ+'/quiz.questions.'+CONSTANT.VIEW,
+            templateUrl : CONSTANT.PATH.QUIZ+'/quiz.questions'+CONSTANT.VIEW,
             controller : 'QuizController as quizCtrl'
           }
         }
@@ -780,8 +788,94 @@
         },
         views : {
           'state-quiz' : {
-            templateUrl : CONSTANT.PATH.QUIZ+'/quiz.summary.'+CONSTANT.VIEW,
+            templateUrl : CONSTANT.PATH.QUIZ+'/quiz.summary'+CONSTANT.VIEW,
             controller : 'QuizController as quizCtrl'
+          }
+        }
+      })
+  }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('zaya-search')
+        .controller('Controller', Controller);
+
+    Controller.$inject = [];
+
+    /* @ngInject */
+    function Controller() {
+        var searchCtrl = this;
+    }
+})();
+
+(function() {
+  'use strict';
+
+  mainRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
+  angular
+    .module('zaya-quiz')
+    .config(mainRoute);
+
+  function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
+
+    $stateProvider
+      .state('tabslide',{
+        url : '/tabslide',
+        templateUrl : CONSTANT.PATH.SEARCH + '/search.tabslide' + CONSTANT.VIEW
+      })
+      .state('search',{
+        url : '/search',
+        abstract : true,
+        template : '<ion-nav-view name="state-search"></ion-nav-view>'
+      })
+      .state('search.main',{
+        url : '/main',
+        abstract : true,
+        views : {
+          'state-search' : {
+            templateUrl : CONSTANT.PATH.SEARCH + '/search' + CONSTANT.VIEW
+          }
+        }
+      })
+      .state('search.main.nodes',{
+        url : '/nodes',
+        nativeTransitions: {
+          "type": "slide",
+          "direction": "up",
+          "duration" :  400
+        },
+        views : {
+          'state-search-tab' : {
+            templateUrl : CONSTANT.PATH.SEARCH + '/search.nodes' + CONSTANT.VIEW
+          }
+        }
+      })
+      .state('search.main.groups',{
+        url : '/groups',
+        nativeTransitions: {
+          "type": "slide",
+          "direction": "up",
+          "duration" :  400
+        },
+        views : {
+          'state-search-tab' : {
+            templateUrl : CONSTANT.PATH.SEARCH + '/search.groups' + CONSTANT.VIEW
+          }
+        }
+      })
+      .state('search.main.users',{
+        url : '/users',
+        nativeTransitions: {
+          "type": "slide",
+          "direction": "up",
+          "duration" :  400
+        },
+        views : {
+          'state-search-tab' : {
+            templateUrl : CONSTANT.PATH.SEARCH + '/search.users' + CONSTANT.VIEW
           }
         }
       })
@@ -802,7 +896,7 @@
       .state('user',{
         url :'/user',
         abstract : true,
-        templateUrl: CONSTANT.PATH.USER+'/user.'+CONSTANT.VIEW,
+        templateUrl: CONSTANT.PATH.USER+'/user'+CONSTANT.VIEW,
       })
       // personalisation for all
       .state('user.personalise',{
@@ -810,7 +904,7 @@
         abstract : true,
         views : {
           'state-user':{
-            templateUrl : CONSTANT.PATH.PROFILE+'/personalise.'+CONSTANT.VIEW,
+            templateUrl : CONSTANT.PATH.PROFILE+'/personalise'+CONSTANT.VIEW,
           }
         }
       })
@@ -818,7 +912,7 @@
         url : '/usertype',
         views : {
           'state-personalise':{
-            templateUrl : CONSTANT.PATH.PROFILE+'/personalise.usertype.'+CONSTANT.VIEW
+            templateUrl : CONSTANT.PATH.PROFILE+'/personalise.usertype'+CONSTANT.VIEW
           }
         }
       })
@@ -826,7 +920,7 @@
         url : '/usersubject',
         views : {
           'state-personalise':{
-            templateUrl : CONSTANT.PATH.PROFILE+'/personalise.usersubject.'+CONSTANT.VIEW
+            templateUrl : CONSTANT.PATH.PROFILE+'/personalise.usersubject'+CONSTANT.VIEW
           }
         }
       })
@@ -835,7 +929,7 @@
         abstract : true,
         views : {
           'state-user':{
-            templateUrl : CONSTANT.PATH.USER+'/main.'+CONSTANT.VIEW,
+            templateUrl : CONSTANT.PATH.USER+'/main'+CONSTANT.VIEW,
           }
         }
       })
@@ -844,7 +938,7 @@
         abstract : true,
         views : {
           'profile-tab' : {
-            templateUrl : CONSTANT.PATH.PROFILE+'/profile.'+CONSTANT.VIEW
+            templateUrl : CONSTANT.PATH.PROFILE+'/profile'+CONSTANT.VIEW
           }
         }
       })
@@ -856,7 +950,7 @@
         },
         views : {
           'state-profile-tab' : {
-            templateUrl : CONSTANT.PATH.PROFILE+'/profile.group.'+CONSTANT.VIEW
+            templateUrl : CONSTANT.PATH.PROFILE+'/profile.group'+CONSTANT.VIEW
           }
         }
       })
@@ -868,7 +962,7 @@
         },
         views : {
           'state-profile-tab':{
-            templateUrl : CONSTANT.PATH.PROFILE+'/profile.badge.'+CONSTANT.VIEW
+            templateUrl : CONSTANT.PATH.PROFILE+'/profile.badge'+CONSTANT.VIEW
           }
         }
       })
@@ -880,7 +974,7 @@
         },
         views : {
           'playlist-tab':{
-            templateUrl : CONSTANT.PATH.PLAYLIST+'/playlist.'+CONSTANT.VIEW
+            templateUrl : CONSTANT.PATH.PLAYLIST+'/playlist'+CONSTANT.VIEW
           }
         }
       })
@@ -892,7 +986,7 @@
         },
         views : {
           'home-tab':{
-            templateUrl : CONSTANT.PATH.HOME+'/home.'+CONSTANT.VIEW,
+            templateUrl : CONSTANT.PATH.HOME+'/home'+CONSTANT.VIEW,
             controller : 'homeController as homeCtrl'
           }
         }
@@ -905,19 +999,7 @@
         },
         views : {
           'result-tab':{
-            templateUrl : CONSTANT.PATH.RESULT+'/result.'+CONSTANT.VIEW
-          }
-        }
-      })
-      .state('user.main.search',{
-        url : '/search',
-        nativeTransitions: {
-            "type": "fade",
-            "duration" :  200
-        },
-        views : {
-          'search-tab':{
-            templateUrl : CONSTANT.PATH.SEARCH+'/search.'+CONSTANT.VIEW
+            templateUrl : CONSTANT.PATH.RESULT+'/result'+CONSTANT.VIEW
           }
         }
       })

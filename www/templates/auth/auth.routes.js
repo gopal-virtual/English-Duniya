@@ -16,7 +16,7 @@
         url: '/main',
         views: {
           'state-auth': {
-            templateUrl: CONSTANT.PATH.AUTH + "/auth.main." + CONSTANT.VIEW
+            templateUrl: CONSTANT.PATH.AUTH + "/auth.main" + CONSTANT.VIEW
           }
         }
       })
@@ -29,7 +29,7 @@
         },
         views: {
           'state-auth': {
-            templateUrl: CONSTANT.PATH.AUTH + '/auth.signin.' + CONSTANT.VIEW,
+            templateUrl: CONSTANT.PATH.AUTH + '/auth.signin' + CONSTANT.VIEW,
             controller: 'authController as authCtrl'
           }
         }
@@ -43,7 +43,7 @@
         },
         views: {
           'state-auth': {
-            templateUrl: CONSTANT.PATH.AUTH + '/auth.signup.' + CONSTANT.VIEW,
+            templateUrl: CONSTANT.PATH.AUTH + '/auth.signup' + CONSTANT.VIEW,
             controller: 'authController as authCtrl'
           }
         }
@@ -57,7 +57,7 @@
         },
         views: {
           'state-auth': {
-            templateUrl: CONSTANT.PATH.AUTH + '/auth.forgot.' + CONSTANT.VIEW,
+            templateUrl: CONSTANT.PATH.AUTH + '/auth.forgot' + CONSTANT.VIEW,
             controller: 'authController as authCtrl'
           }
         }

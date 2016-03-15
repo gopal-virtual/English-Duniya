@@ -25,7 +25,7 @@
         url : '/start',
         views : {
           'state-quiz' : {
-            templateUrl : CONSTANT.PATH.QUIZ+'/quiz.start.'+CONSTANT.VIEW,
+            templateUrl : CONSTANT.PATH.QUIZ+'/quiz.start'+CONSTANT.VIEW,
             controller : 'QuizController as quizCtrl'
           }
         }
@@ -34,7 +34,7 @@
         url : '/questions',
         views : {
           'state-quiz' : {
-            templateUrl : CONSTANT.PATH.QUIZ+'/quiz.questions.'+CONSTANT.VIEW,
+            templateUrl : CONSTANT.PATH.QUIZ+'/quiz.questions'+CONSTANT.VIEW,
             controller : 'QuizController as quizCtrl'
           }
         }
@@ -46,7 +46,7 @@
         },
         views : {
           'state-quiz' : {
-            templateUrl : CONSTANT.PATH.QUIZ+'/quiz.summary.'+CONSTANT.VIEW,
+            templateUrl : CONSTANT.PATH.QUIZ+'/quiz.summary'+CONSTANT.VIEW,
             controller : 'QuizController as quizCtrl'
           }
         }

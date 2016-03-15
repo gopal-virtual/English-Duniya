@@ -4,8 +4,28 @@
   }
 }
 @each $name, $color in $color-list{
+  .bg-#{$name}-light{
+    background-color : lighten($color, 10%);
+  }
+}
+@each $name, $color in $color-list{
+  .bg-#{$name}-dark{
+    background-color : dark($color, 10%);
+  }
+}
+@each $name, $color in $color-list{
   .color-#{$name}{
     color : $color;
+  }
+}
+@each $name, $color in $color-list{
+  .color-#{$name}-light{
+    color : lighten($color, 10%);
+  }
+}
+@each $name, $color in $color-list{
+  .color-#{$name}-dark{
+    color : darken($color, 10%);
   }
 }
 .list-inset{
@@ -49,4 +69,10 @@
   box-shadow: 0 0 10px $calm;
   background-color: lighten($dark, 60%);
 
+}
+.slider { height: 100%; }
+.scroll { height: 100%; }
+.box{
+  width : 100%;
+  height : 100%;
 }

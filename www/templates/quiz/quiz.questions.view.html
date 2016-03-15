@@ -15,7 +15,7 @@
         </p>
         <div ng-if="question.info.content_type=='sentence ordering' || question.info.content_type=='sentence structuring'">
           <div class="text-center">drop here</div>
-          <div class="card block padding card-stable dropzone" ui-sortable="{cancel : '.correct-attempt'}" ng-model="question.attempted">
+          <div class="card block padding card-stable dropzone" ui-sortable="{cancel : '.correct-attempt', containment: 'parent'}" ng-model="question.attempted">
             <div class="card card-brand padding text-white" ng-class="{'float-left':question.info.content_type=='sentence structuring','wrong-attempt':quizCtrl.isAttempted(question.info.id) && !quizCtrl.isCorrectAttempted(question),'correct-attempt': quizCtrl.isAttempted(question.info.id) && quizCtrl.isCorrectAttempted(question)}" ng-repeat="option in question.attempted">
               {{option}}
             </div>
@@ -39,7 +39,7 @@
         </div>
       </div>
       <!-- SOR | SST opitons-->
-      <div ng-if="question.info.content_type=='sentence ordering' || question.info.content_type=='sentence structuring'" ui-sortable="{connectWith : '.dropzone'}" ng-model="question.info.question_type.shuffle">
+      <div ng-if="question.info.content_type=='sentence ordering' || question.info.content_type=='sentence structuring'" ui-sortable="{connectWith : '.dropzone',containment: 'ion-content'}" ng-model="question.info.question_type.shuffle">
         <div class="card card-brand padding text-white" ng-class="{'float-left' : question.info.content_type=='sentence structuring'}" ng-repeat="option in question.info.question_type.shuffle">
           {{option}}
         </div>

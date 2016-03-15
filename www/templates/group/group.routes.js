@@ -16,7 +16,7 @@
         url : '/admin',
         views : {
           'state-group-admin' : {
-            templateUrl : CONSTANT.PATH.GROUP + '/group.admin.' + CONSTANT.VIEW,
+            templateUrl : CONSTANT.PATH.GROUP + '/group.admin' + CONSTANT.VIEW,
             controller : 'groupController as groupCtrl'
           }
         }
@@ -25,7 +25,7 @@
         url : '/student',
         views : {
           'state-group-student' : {
-            templateUrl : CONSTANT.PATH.GROUP + '/group.student.' + CONSTANT.VIEW,
+            templateUrl : CONSTANT.PATH.GROUP + '/group.student' + CONSTANT.VIEW,
             controller : 'groupController as groupCtrl'
           }
         }

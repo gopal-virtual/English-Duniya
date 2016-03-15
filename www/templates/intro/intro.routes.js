@@ -9,7 +9,7 @@
     $stateProvider
       .state('intro',{
         url : '/intro',
-        templateUrl : CONSTANT.PATH.INTRO+'/intro.'+CONSTANT.VIEW,
+        templateUrl : CONSTANT.PATH.INTRO+'/intro'+CONSTANT.VIEW,
       })
   }
 })();

@@ -14,6 +14,7 @@
       'zaya-intro',
       'zaya-auth',
       'zaya-quiz',
+      'zaya-search',
       'zaya-group'
     ]);
 

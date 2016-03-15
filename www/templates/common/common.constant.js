@@ -17,6 +17,6 @@
         'SEARCH' : ROOT+'/search',
         'GROUP' : ROOT+'/group'
       },
-      'VIEW' : 'view.html',
+      'VIEW' : '.view.html',
     })
 })();
