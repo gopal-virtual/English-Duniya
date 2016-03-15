@@ -34,11 +34,13 @@
   }
 }
 .selected.wrong-attempt,
+.card-brand.wrong-attempt,
 .wrong-attempt
 {
   background-color: lighten($assertive, 20%);
 }
 .selected.correct-attempt,
+.card-brand.correct-attempt,
 .correct-attempt
 {
   background-color: lighten($balanced, 20%);

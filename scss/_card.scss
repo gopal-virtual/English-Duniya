@@ -8,3 +8,13 @@
     background-color: $color;
   }
 }
+@each $name , $color in $color-list{
+  .card-#{$name}-light{
+    background-color: lighten($color,10%);
+  }
+}
+@each $name , $color in $color-list{
+  .card-#{$name}-dark{
+    background-color: darken($color,10%);
+  }
+}

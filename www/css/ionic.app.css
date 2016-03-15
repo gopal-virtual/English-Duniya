@@ -9547,10 +9547,12 @@ input[type=radio].hide {
   margin: 0 40px; }
 
 .selected.wrong-attempt,
+.card-brand.wrong-attempt,
 .wrong-attempt {
   background-color: #f79f98; }
 
 .selected.correct-attempt,
+.card-brand.correct-attempt,
 .correct-attempt {
   background-color: #85e19f; }
 
@@ -9617,10 +9619,85 @@ input[type=radio].hide {
 .card-neutral {
   background-color: #e4eff2; }
 
+.card-light-light {
+  background-color: white; }
+
+.card-stable-light {
+  background-color: white; }
+
+.card-positive-light {
+  background-color: #699df7; }
+
+.card-calm-light {
+  background-color: #42cef5; }
+
+.card-balanced-light {
+  background-color: #5cd77f; }
+
+.card-energised-light {
+  background-color: #ffd433; }
+
+.card-assertive-light {
+  background-color: #f37369; }
+
+.card-royal-light {
+  background-color: #ac97f0; }
+
+.card-dark-light {
+  background-color: #5e5e5e; }
+
+.card-brand-light {
+  background-color: #1182b9; }
+
+.card-neutral-light {
+  background-color: white; }
+
+.card-light-dark {
+  background-color: #e6e6e6; }
+
+.card-stable-dark {
+  background-color: #dfdfdf; }
+
+.card-positive-dark {
+  background-color: #0c60ee; }
+
+.card-calm-dark {
+  background-color: #0a9dc7; }
+
+.card-balanced-dark {
+  background-color: #28a54c; }
+
+.card-energised-dark {
+  background-color: #cca100; }
+
+.card-assertive-dark {
+  background-color: #e42112; }
+
+.card-royal-dark {
+  background-color: #643de4; }
+
+.card-dark-dark {
+  background-color: #2b2b2b; }
+
+.card-brand-dark {
+  background-color: #09405b; }
+
+.card-neutral-dark {
+  background-color: #c2dbe1; }
+
 .bar-transparent {
   background-color: transparent;
   border: 0;
   box-shadow: none; }
+
+.dropzone {
+  min-height: 100px; }
+
+.inline-block {
+  display: inline-block; }
+
+.float-left {
+  float: left; }
 
 .animation-delay {
   -webkit-animation-delay: 1s; }

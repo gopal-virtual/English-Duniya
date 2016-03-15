@@ -20,7 +20,7 @@
     quizCtrl.nextQuestion = nextQuestion;
 
     //log attempts & feedback
-    quizCtrl.submit = submit;
+    quizCtrl.decide = decide;
     quizCtrl.canSubmit = canSubmit;
     quizCtrl.feedback = feedback;
     quizCtrl.submitAttempt = submitAttempt;
@@ -46,6 +46,19 @@
         for (var i = 0; i < quiz.questions.length; i++) {
           quizCtrl.report.attempts[quiz.questions[i].info.id] = [];
         }
+        // init attempted
+        for (var i = 0; i < quizCtrl.quiz.questions.length; i++) {
+          if((quizCtrl.quiz.questions[i].info.content_type=='choice question' && !quizCtrl.quiz.questions[i].info.question_type.is_multiple) || quizCtrl.quiz.questions[i].info.content_type=='dr question'){
+            quizCtrl.quiz.questions[i].attempted = "";
+          }
+          else if(quizCtrl.quiz.questions[i].info.content_type=='choice question' && quizCtrl.quiz.questions[i].info.question_type.is_multiple){
+            quizCtrl.quiz.questions[i].attempted = {};
+          }
+          else if(quizCtrl.quiz.questions[i].info.content_type=='sentence ordering' || quizCtrl.quiz.questions[i].info.content_type=='sentence structuring'){
+            quizCtrl.quiz.questions[i].attempted = [];
+          }
+          else{}
+        }
       }
       else{}
     }
@@ -70,7 +83,7 @@
       quizCtrl.currentIndex = (quizCtrl.currentIndex < quizCtrl.quiz.questions.length - 1) ? ++quizCtrl.currentIndex : quizCtrl.currentIndex;
     }
 
-    function submit() {
+    function decide() {
       if(!quizCtrl.isCorrectAttempted(quizCtrl.quiz.questions[quizCtrl.currentIndex])){
         quizCtrl.submitAttempt(
           quizCtrl.quiz.questions[quizCtrl.currentIndex].info.id,
@@ -102,6 +115,9 @@
         // true if attempted and key count is more than one
         return quizCtrl.quiz.questions[quizCtrl.currentIndex].attempted && _.size(quizCtrl.quiz.questions[quizCtrl.currentIndex].attempted)>1;
       }
+      if(quizCtrl.quiz.questions[quizCtrl.currentIndex].info.content_type == "sentence ordering" || quizCtrl.quiz.questions[quizCtrl.currentIndex].info.content_type == "sentence structuring"){
+        return quizCtrl.quiz.questions[quizCtrl.currentIndex].attempted.length ? true : false;
+      }
     }
 
     function feedback (question,attempt){
@@ -109,7 +125,7 @@
     }
 
     function submitAttempt (question_id,attempt) {
-      quizCtrl.report.attempts[question_id].push(attempt);
+      quizCtrl.report.attempts[question_id].push(angular.copy(attempt));
     }
 
     function isAttempted (question_id) {
@@ -129,6 +145,10 @@
       if(question.info.content_type=='dr question'){
         return attempt == question.info.answer[0];
       }
+      // sor | sst
+      if(question.info.content_type=='sentence ordering' || question.info.content_type=='sentence structuring'){
+        return angular.equals(question.info.answer,attempt);
+      }
     }
 
     function isCorrectAttempted (question){
@@ -147,6 +167,13 @@
       // dr
       if(question.info.content_type=='dr question'){
         return quizCtrl.report.attempts[question.info.id].indexOf(question.info.answer[0].toLowerCase())!=-1 ? true : false;
+      }
+      if(question.info.content_type=='sentence ordering' || question.info.content_type=='sentence structuring'){
+        for (var i = 0; i < quizCtrl.report.attempts[question.info.id].length; i++) {
+          if(angular.equals(quizCtrl.report.attempts[question.info.id][i],question.info.answer))
+            return true;
+        }
+        return false;
       }
     }
 

@@ -2,5 +2,7 @@
     'use strict';
 
     angular
-        .module('zaya-quiz', []);
+        .module('zaya-quiz', [
+          'ui.sortable'
+        ]);
 })();
