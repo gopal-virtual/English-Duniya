@@ -10,14 +10,56 @@
     </div>
   </ion-content>
   <div class="row wrapper-bottom-fixed padding-30 animation-fade-in-from-bottom">
-    <div class="col padding">
-      <input class="input-control input-default input-medium input-block" type="text" placeholder="username">
-      <input class="input-control input-default input-medium input-block" type="email" placeholder="email">
-      <input class="input-control input-default input-medium input-block" type="password" placeholder="password">
-      <button class="button button-calm button-block " ng-click="authCtrl.audio.play('water-drop');authCtrl.signup()">SIGN UP</button>
+    <form name="authForm" class="col padding" novalidate ng-submit="authForm.$valid && authCtrl.signup({'username':authCtrl.user.username,'password1':authCtrl.user.password,'password2':authCtrl.user.password,'email':authCtrl.user.email})">
+      <widget-error></widget-error>
+      <input
+        name="username"
+        type="text"
+        placeholder="username"
+        class="input-control input-default input-medium input-block"
+        ng-class="{'input-wrong':authForm.username.$touched && !authForm.username.$valid}"
+        ng-model="authCtrl.user.username"
+        required
+        ng-minlength='5'
+        ng-maxlength='10'
+        ng-pattern="/^[a-z0-9]*$/"
+        tabindex="1"
+      >
+      <div ng-messages="authForm.username.$error" ng-show="authForm.username.$touched">
+          <div ng-messages-include="templates/common/common.error-msg.view.html"></div>
+      </div>
+      <input
+        name="email"
+        type="email"
+        placeholder="email"
+        class="input-control input-default input-medium input-block"
+        ng-class="{'input-wrong':authForm.email.$touched && !authForm.email.$valid}"
+        ng-model="authCtrl.user.email"
+        required
+        tabindex="2"
+      >
+      <div ng-messages="authForm.email.$error" ng-show="authForm.email.$touched">
+        <div ng-messages-include="templates/common/common.error-msg.view.html"></div>
+      </div>
+    <input
+      type="password"
+      name="password"
+      placeholder="password"
+      class="input-control input-default input-medium input-block"
+      ng-class="{'input-wrong':authForm.password.$touched && !authForm.password.$valid}"
+      ng-model="authCtrl.user.password"
+      required
+      ng-minlength="6"
+      ng-maxlength="20"
+      tabindex="3"
+    >
+      <div ng-messages="authForm.password.$error" ng-show="authForm.password.$touched">
+        <div ng-messages-include="templates/common/common.error-msg.view.html"></div>
+      </div>
+      <button type="submit" class="button button-calm button-block" ng-disabled="authForm.$invalid" tabindex="4">SIGN UP</button>
       <div class="text-center">
         <a class="text-white" ui-sref="auth.signin" >SIGN IN</a>
       </div>
-    </div>
+    </form>
   </div>
 </ion-view>

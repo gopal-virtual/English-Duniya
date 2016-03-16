@@ -1,0 +1,13 @@
+.alert{
+  display: block;
+  width : 100%;
+  padding : $padding-x;
+  border-radius: 3px;
+  margin: $margin-y 0;
+}
+@each $name,$color in $color-list{
+  .alert-#{$name}{
+    background-color: $color;
+    color : set-text-color($color);
+  }
+}

@@ -7,6 +7,7 @@
       'ionic',
       'restangular',
       'ionic-native-transitions',
+      'ngMessages',
 
       // core
       'common',

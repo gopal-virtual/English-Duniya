@@ -17,14 +17,26 @@
       </div>
   </ion-content>
   <div class="row wrapper-bottom-fixed padding-30 animation-fade-in-from-bottom">
-    <div class="col">
+    <form name="authForm" class="col" ng-submit="authForm.$valid">
       <div class="list list-inset">
         <label class="icon-inset">
-          <i class="icon ion-ios-email placeholder-icon"></i>
-          <input class="input-control input-block" type="email" placeholder="email">
+          <i class="icon icon-left ion-ios-email placeholder-icon"></i>
+          <input
+            name="email"
+            type="email"
+            placeholder="email"
+            class="input-control input-default input-medium input-block"
+            ng-class="{'input-wrong':authForm.email.$touched && !authForm.email.$valid}"
+            ng-model="authCtrl.user.email"
+            required
+            tabindex="2"
+          >
         </label>
-        <button class="button button-calm button-block ">SEND</button>
+        <div ng-messages="authForm.email.$error" ng-show="authForm.email.$touched">
+          <div ng-messages-include="templates/common/common.error-msg.view.html"></div>
+        </div>
+        <button type="submit" class="button button-calm button-block" ng-disabled="!authForm.$valid">SEND</button>
       </div>
-    </div>
+    </form>
   </div>
 </ion-view>

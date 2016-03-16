@@ -2,7 +2,7 @@ input[type=text].input-control,
 input[type=password].input-control,
 input[type=email].input-control{
   border: 0;
-  padding : $padding-x;
+  padding : $padding-x * 2;
   margin : $margin-x 0;
   border-radius : $border-radius;
   box-shadow : inset 1px 1px 5px rgba(0,0,0,0.3);
@@ -12,7 +12,7 @@ input[type=email].input-control{
 }
 input[class~="input-wrong"]{
   color : $brand-white;
-  background-color: darken($assertive,20%);
+  background-color: lighten($assertive,20%);
 }
 input[type=radio].hide{
   position: absolute;
@@ -20,9 +20,46 @@ input[type=radio].hide{
 }
 .icon-inset > .icon{
   position: absolute;
-  top : 20px;
-  left : 10px;
+  font-size : 2em;
 }
-.icon-inset > input{
-  padding-left: 30px !important;
+.icon-inset > .icon.icon-left{
+  top : 12%;
+  left : 15px;
+}
+.icon-inset > .icon.icon-right{
+  top : 12%;
+  right : 15px;
+}
+.icon-inset > .icon-right + input{
+  padding-right: 45px !important;
+}
+.icon-inset > .icon-left + input{
+  padding-left: 45px !important;
+}
+.input-group{
+  display: flex;
+  margin : $margin-y 0;
+}
+.input-group > .input-group-item{
+  margin : 0 !important;
+  flex-grow: 1;
+}
+.input-group > .input-group-addon{
+  border : 0;
+  font-size : 1.8em;
+}
+@each $name, $color in $color-list{
+  .input-group > .input-group-addon-#{$name}{
+    background-color: $color;
+    color : set-text-color($color);
+  }
+}
+.input-group > .input-group-item:first-child{
+  border-radius: $border-radius 0 0 $border-radius !important;
+}
+.input-group > .input-group-item:not(:first-child):not(:last-child){
+  border-radius : 0 !important;
+}
+.input-group > .input-group-item:last-child{
+  border-radius: 0 $border-radius $border-radius 0 !important;
 }

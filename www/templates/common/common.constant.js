@@ -4,7 +4,7 @@
   angular
     .module('common')
     .constant('CONSTANT',{
-      'BACKEND_SERVICE_DOMAIN' : 'http://192.168.10.121:9000',
+      'BACKEND_SERVICE_DOMAIN' : 'http://192.168.1.7:9000',
       'PATH' : {
         'INTRO' : ROOT+'/intro',
         'AUTH' : ROOT+'/auth',
@@ -15,7 +15,8 @@
         'HOME' : ROOT+'/home',
         'RESULT' : ROOT+'/result',
         'SEARCH' : ROOT+'/search',
-        'GROUP' : ROOT+'/group'
+        'GROUP' : ROOT+'/group',
+        'COMMON' : ROOT + '/common'
       },
       'VIEW' : '.view.html',
     })
