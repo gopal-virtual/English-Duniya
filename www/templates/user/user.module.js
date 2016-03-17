@@ -2,5 +2,8 @@
     'use strict';
 
     angular
-        .module('zaya-user', []);
+        .module('zaya-user', [
+          'ionic',
+          'ionic-native-transitions',
+        ]);
 })();

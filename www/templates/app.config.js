@@ -3,7 +3,7 @@
     .module('zaya')
     .config(AppConfig)
 
-    function AppConfig($httpProvider, $ionicConfigProvider){
+    function AppConfig($httpProvider, $ionicConfigProvider, $ionicNativeTransitionsProvider){
       $httpProvider.interceptors.push(function ($rootScope,$q){
         return {
           request : function(config){
@@ -47,5 +47,6 @@
       })
       $ionicConfigProvider.views.maxCache(0);
       $ionicConfigProvider.tabs.position('bottom');
+      $ionicNativeTransitionsProvider.enable(true, false);
     }
 })();

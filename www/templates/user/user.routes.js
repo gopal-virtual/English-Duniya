@@ -50,43 +50,20 @@
       })
       .state('user.main.profile',{
         url : '/profile',
-        abstract : true,
+        nativeTransitions: {
+          "type": "slide",
+          "direction" : "right",
+          // "duration" :  200
+        },
         views : {
           'profile-tab' : {
-            templateUrl : CONSTANT.PATH.PROFILE+'/profile'+CONSTANT.VIEW
-          }
-        }
-      })
-      .state('user.main.profile.groups',{
-        url : '/groups',
-        nativeTransitions: {
-            "type": "fade",
-            "duration" :  200
-        },
-        views : {
-          'state-profile-tab' : {
-            templateUrl : CONSTANT.PATH.PROFILE+'/profile.group'+CONSTANT.VIEW
-          }
-        }
-      })
-      .state('user.main.profile.badges',{
-        url : '/badges',
-        nativeTransitions: {
-            "type": "fade",
-            "duration" :  200
-        },
-        views : {
-          'state-profile-tab':{
-            templateUrl : CONSTANT.PATH.PROFILE+'/profile.badge'+CONSTANT.VIEW
+            templateUrl : CONSTANT.PATH.PROFILE+'/profile'+CONSTANT.VIEW,
+            controller : 'profileController as profileCtrl'
           }
         }
       })
       .state('user.main.playlist',{
         url : '/playlist',
-        nativeTransitions: {
-            "type": "fade",
-            "duration" :  200
-        },
         views : {
           'playlist-tab':{
             templateUrl : CONSTANT.PATH.PLAYLIST+'/playlist'+CONSTANT.VIEW
@@ -95,10 +72,6 @@
       })
       .state('user.main.home',{
         url : '/home',
-        nativeTransitions: {
-            "type": "fade",
-            "duration" :  200
-        },
         views : {
           'home-tab':{
             templateUrl : CONSTANT.PATH.HOME+'/home'+CONSTANT.VIEW,
@@ -108,10 +81,6 @@
       })
       .state('user.main.result',{
         url : '/result',
-        nativeTransitions: {
-            "type": "fade",
-            "duration" :  200
-        },
         views : {
           'result-tab':{
             templateUrl : CONSTANT.PATH.RESULT+'/result'+CONSTANT.VIEW

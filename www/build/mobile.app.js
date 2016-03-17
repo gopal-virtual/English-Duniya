@@ -33,7 +33,17 @@
     'use strict';
 
     angular
-        .module('zaya-user', []);
+        .module('zaya-user', [
+          'ionic',
+          'ionic-native-transitions',
+        ]);
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('zaya-profile', []);
 })();
 
 (function() {
@@ -66,6 +76,7 @@
       // core
       'common',
       'zaya-user',
+      'zaya-profile',
       'zaya-intro',
       'zaya-auth',
       'zaya-quiz',
@@ -76,12 +87,12 @@
 })();
 
 (function(){
-    AppConfig.$inject = ["$httpProvider", "$ionicConfigProvider"];
+    AppConfig.$inject = ["$httpProvider", "$ionicConfigProvider", "$ionicNativeTransitionsProvider"];
   angular
     .module('zaya')
     .config(AppConfig)
 
-    function AppConfig($httpProvider, $ionicConfigProvider){
+    function AppConfig($httpProvider, $ionicConfigProvider, $ionicNativeTransitionsProvider){
       $httpProvider.interceptors.push(["$rootScope", "$q", function ($rootScope,$q){
         return {
           request : function(config){
@@ -125,6 +136,7 @@
       }])
       $ionicConfigProvider.views.maxCache(0);
       $ionicConfigProvider.tabs.position('bottom');
+      $ionicNativeTransitionsProvider.enable(true, false);
     }
 })();
 
@@ -352,7 +364,7 @@
   angular
     .module('common')
     .constant('CONSTANT',{
-      'BACKEND_SERVICE_DOMAIN' : 'http://192.168.1.7:9000',
+      'BACKEND_SERVICE_DOMAIN' : 'http://192.168.10.134:9000',
       'PATH' : {
         'INTRO' : ROOT+'/intro',
         'AUTH' : ROOT+'/auth',
@@ -571,6 +583,35 @@
         templateUrl : CONSTANT.PATH.INTRO+'/intro'+CONSTANT.VIEW,
       })
   }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('zaya-profile')
+        .controller('profileController', profileController);
+
+    profileController.$inject = ['CONSTANT'];
+
+    function profileController(CONSTANT) {
+        var profileCtrl = this;
+
+        profileCtrl.tabIndex = 0;
+        profileCtrl.tab = [
+          {
+            type : 'group',
+            path : CONSTANT.PATH.PROFILE + '/profile.groups' + CONSTANT.VIEW,
+            icon : 'ion-person-stalker'
+          },
+          {
+            type : 'badge',
+            path : CONSTANT.PATH.PROFILE + '/profile.badges' + CONSTANT.VIEW,
+            icon : 'ion-person-add'
+          }
+        ]
+
+    }
 })();
 
 (function() {
@@ -829,13 +870,31 @@
 
     angular
         .module('zaya-search')
-        .controller('Controller', Controller);
+        .controller('searchController', searchController);
 
-    Controller.$inject = [];
+    searchController.$inject = ['CONSTANT'];
 
-    /* @ngInject */
-    function Controller() {
+    function searchController(CONSTANT) {
         var searchCtrl = this;
+
+        searchCtrl.tabIndex = 0;
+        searchCtrl.tab = [
+          {
+            type : 'node',
+            path : CONSTANT.PATH.SEARCH + '/search.nodes' + CONSTANT.VIEW,
+            icon : 'ion-ios-book'
+          },
+          {
+            type : 'group',
+            path : CONSTANT.PATH.SEARCH + '/search.groups' + CONSTANT.VIEW,
+            icon : 'ion-person-stalker'
+          },
+          {
+            type : 'user',
+            path : CONSTANT.PATH.SEARCH + '/search.users' + CONSTANT.VIEW,
+            icon : 'ion-person-add'
+          }
+        ]
     }
 })();
 
@@ -850,10 +909,6 @@
   function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
 
     $stateProvider
-      .state('tabslide',{
-        url : '/tabslide',
-        templateUrl : CONSTANT.PATH.SEARCH + '/search.tabslide' + CONSTANT.VIEW
-      })
       .state('search',{
         url : '/search',
         abstract : true,
@@ -861,49 +916,14 @@
       })
       .state('search.main',{
         url : '/main',
-        abstract : true,
+        nativeTransitions : {
+          "type" : 'slide',
+          "direction" : 'up',
+        },
         views : {
           'state-search' : {
-            templateUrl : CONSTANT.PATH.SEARCH + '/search' + CONSTANT.VIEW
-          }
-        }
-      })
-      .state('search.main.nodes',{
-        url : '/nodes',
-        nativeTransitions: {
-          "type": "slide",
-          "direction": "up",
-          "duration" :  400
-        },
-        views : {
-          'state-search-tab' : {
-            templateUrl : CONSTANT.PATH.SEARCH + '/search.nodes' + CONSTANT.VIEW
-          }
-        }
-      })
-      .state('search.main.groups',{
-        url : '/groups',
-        nativeTransitions: {
-          "type": "slide",
-          "direction": "up",
-          "duration" :  400
-        },
-        views : {
-          'state-search-tab' : {
-            templateUrl : CONSTANT.PATH.SEARCH + '/search.groups' + CONSTANT.VIEW
-          }
-        }
-      })
-      .state('search.main.users',{
-        url : '/users',
-        nativeTransitions: {
-          "type": "slide",
-          "direction": "up",
-          "duration" :  400
-        },
-        views : {
-          'state-search-tab' : {
-            templateUrl : CONSTANT.PATH.SEARCH + '/search.users' + CONSTANT.VIEW
+            templateUrl : CONSTANT.PATH.SEARCH + '/search' + CONSTANT.VIEW,
+            controller : "searchController as searchCtrl"
           }
         }
       })
@@ -963,43 +983,20 @@
       })
       .state('user.main.profile',{
         url : '/profile',
-        abstract : true,
+        nativeTransitions: {
+          "type": "slide",
+          "direction" : "right",
+          // "duration" :  200
+        },
         views : {
           'profile-tab' : {
-            templateUrl : CONSTANT.PATH.PROFILE+'/profile'+CONSTANT.VIEW
-          }
-        }
-      })
-      .state('user.main.profile.groups',{
-        url : '/groups',
-        nativeTransitions: {
-            "type": "fade",
-            "duration" :  200
-        },
-        views : {
-          'state-profile-tab' : {
-            templateUrl : CONSTANT.PATH.PROFILE+'/profile.group'+CONSTANT.VIEW
-          }
-        }
-      })
-      .state('user.main.profile.badges',{
-        url : '/badges',
-        nativeTransitions: {
-            "type": "fade",
-            "duration" :  200
-        },
-        views : {
-          'state-profile-tab':{
-            templateUrl : CONSTANT.PATH.PROFILE+'/profile.badge'+CONSTANT.VIEW
+            templateUrl : CONSTANT.PATH.PROFILE+'/profile'+CONSTANT.VIEW,
+            controller : 'profileController as profileCtrl'
           }
         }
       })
       .state('user.main.playlist',{
         url : '/playlist',
-        nativeTransitions: {
-            "type": "fade",
-            "duration" :  200
-        },
         views : {
           'playlist-tab':{
             templateUrl : CONSTANT.PATH.PLAYLIST+'/playlist'+CONSTANT.VIEW
@@ -1008,10 +1005,6 @@
       })
       .state('user.main.home',{
         url : '/home',
-        nativeTransitions: {
-            "type": "fade",
-            "duration" :  200
-        },
         views : {
           'home-tab':{
             templateUrl : CONSTANT.PATH.HOME+'/home'+CONSTANT.VIEW,
@@ -1021,10 +1014,6 @@
       })
       .state('user.main.result',{
         url : '/result',
-        nativeTransitions: {
-            "type": "fade",
-            "duration" :  200
-        },
         views : {
           'result-tab':{
             templateUrl : CONSTANT.PATH.RESULT+'/result'+CONSTANT.VIEW

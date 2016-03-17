@@ -5,6 +5,11 @@
   padding : $padding-x*2;
   height : $cover-height;
 }
+@each $name, $color in $color-list{
+  .cover-#{$name}{
+    background-color: $color;
+  }
+}
 .cover > .toolbox{
   text-align: right;
   font-size : 1.5em;
@@ -22,9 +27,12 @@
   border: 5px solid rgba(217, 217, 217, 0.66);
 }
 .cover + .tabs-striped > .tabs{
-  top : $cover-height - 49;
+  top : $cover-height - 1px;
 }
-.cover ~ ion-nav-view ion-scroll{
-  height: calc(100% - #{$cover-height + 49});
-  width : 100%;
+// .cover ~ ion-nav-view ion-scroll{
+//   height: calc(100% - #{$cover-height + 49});
+//   width : 100%;
+// }
+.has-cover-tabs{
+  top : $cover-height + $tabs-height - 1px;
 }

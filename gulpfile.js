@@ -22,6 +22,7 @@ var paths = {
     './www/templates/search/search.module.js',
     './www/templates/auth/auth.module.js',
     './www/templates/user/user.module.js',
+    './www/templates/profile/profile.module.js',
     './www/templates/quiz/quiz.module.js',
     './www/templates/group/group.module.js',
     './www/templates/app.module.js',

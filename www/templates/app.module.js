@@ -12,6 +12,7 @@
       // core
       'common',
       'zaya-user',
+      'zaya-profile',
       'zaya-intro',
       'zaya-auth',
       'zaya-quiz',
