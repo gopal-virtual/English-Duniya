@@ -3,3 +3,8 @@
   position: absolute;
   bottom : 0;
 }
+.wrapper-bottom-fixed.has-footer{
+  width: 100%;
+  position: absolute;
+  bottom : $bar-height !important;
+}

@@ -37,12 +37,12 @@ input[type=radio].hide{
   padding-left: 45px !important;
 }
 .input-group{
-  display: flex;
+  @include display-flex();
   margin : $margin-y 0;
 }
 .input-group > .input-group-item{
   margin : 0 !important;
-  flex-grow: 1;
+  @include flex(1);
 }
 .input-group > .input-group-addon{
   border : 0;

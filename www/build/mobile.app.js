@@ -43,6 +43,13 @@
     'use strict';
 
     angular
+        .module('zaya-playlist', []);
+})();
+
+(function() {
+    'use strict';
+
+    angular
         .module('zaya-profile', []);
 })();
 
@@ -76,6 +83,7 @@
       // core
       'common',
       'zaya-user',
+      'zaya-playlist',
       'zaya-profile',
       'zaya-intro',
       'zaya-auth',
@@ -149,7 +157,6 @@
 
     Rest.$inject = ['Restangular','CONSTANT'];
 
-    /* @ngInject */
     function Rest(Restangular, CONSTANT) {
         return Restangular.withConfig(function(RestangularConfigurer) {
             RestangularConfigurer.setBaseUrl(CONSTANT.BACKEND_SERVICE_DOMAIN+'/api/v1');
@@ -589,6 +596,175 @@
     'use strict';
 
     angular
+        .module('zaya-playlist')
+        .controller('playlistController', playlistController);
+
+    playlistController.$inject = ['$ionicScrollDelegate','$timeout','$stateParams','playlistData'];
+
+    function playlistController($ionicScrollDelegate,$timeout,$stateParams,playlistData) {
+        var playlistCtrl = this;
+        playlistCtrl.playlist = playlistData.playlist;
+        playlistCtrl.playlistId = $stateParams.playlistId;
+
+        $timeout(function() {
+            $ionicScrollDelegate.$getByHandle('playlistScrollBottom').scrollBottom();
+        });
+
+
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('zaya-playlist')
+        .factory('playlistData', playlistData);
+
+    playlistData.$inject = [];
+
+    function playlistData() {
+        var playlist = {
+          playlist : {
+              id : 100,
+              title : "Root",
+              description : "Root",
+              root : true,
+              children : [
+                {
+                  id : 1,
+                  title : "English",
+                  description : "lorem some desction for the subjjectt lorem some desction for the subjjecttlorem some desction for the subjjecttlorem some desction for the subjjecttlorem some desction for the subjjecttlorem some desction for the subjjecttlorem some desction for the subjjecttlorem some desction for the subjjectt",
+                  image : "path",
+                  children : [
+                    {
+                      id : 10,
+                      title : "Lorem ipsum dolor sit amet",
+                      description : "Lorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit amet",
+                      children : [
+                        {
+                          id : 2,
+                          title : "dolor sit amet",
+                          description : "ipsum dolor sit ametLorem ipsum dolor sit amet",
+                        },
+                      ]
+                    },
+                    {
+                      id : 11,
+                      title : "Lorem hello are you",
+                      description : "dolor sit ametLorem ipsum olor sit ametLorem ipsum dolor sit amet",
+                      children : [
+                        {
+                          id : 111,
+                          title : "Lorsdlfkj sdlfkj",
+                          description : "dolor sdlfkjsdf sdflskdjfsd s",
+                          children : []
+                        },
+                        {
+                          id : 111,
+                          title : "sdflksf sdlfsdk",
+                          description : "dolor sdlscfsdf dffkjsdf sdflskdjfsd s",
+                          children : []
+                        },
+                        {
+                          id : 111,
+                          title : "sdfsdf fsdf dsfj",
+                          description : "dolor sdlsdffsfsd sdflskdjfsd s",
+                          children : []
+                        },
+                        {
+                          id : 111,
+                          title : "dfd dfdf",
+                          description : "ddsfsf sdflskdjfsd",
+                          children : []
+                        },
+                      ]
+                    },
+                    {
+                      id : 12,
+                      title : "Lorem ipsum dolor sit amet",
+                      description : "Lorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit amet",
+                      children : []
+                    }
+                  ]
+                },
+                {
+                  id : 2,
+                  title : "Math",
+                  description : "lorem some desction for the subjjectt",
+                  image : "path",
+                  children : []
+                },
+                {
+                  id : 2,
+                  title : "Geography",
+                  description : "lorem some desction for the subjjectt",
+                  image : "path",
+                  children : []
+                },
+                {
+                  id : 4,
+                  title : "Science",
+                  description : "lorem some desction for the subjjectt",
+                  image : "path",
+                  children : []
+                },
+                {
+                  id : 4,
+                  title : "Biology",
+                  description : "lorem some desction for the subjjectt",
+                  image : "path",
+                  children : []
+                },
+                {
+                  id : 4,
+                  title : "Bio technology",
+                  description : "lorem some desction for the subjjectt",
+                  image : "path",
+                  children : []
+                },
+                {
+                  id : 4,
+                  title : "Linkin Park",
+                  description : "lorem some desction for the subjjectt",
+                  image : "path",
+                  children : []
+                }
+              ]
+          }
+        };
+
+        return playlist;
+
+    }
+})();
+
+(function() {
+  'use strict';
+
+  mainRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
+  angular
+    .module('zaya-playlist')
+    .config(mainRoute);
+
+  function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
+    // $stateProvider
+    //   .state('playlist',{
+    //     url : '/playlist',
+    //     views : {
+    //       'playlist-tab':{
+    //         templateUrl : CONSTANT.PATH.PLAYLIST+'/playlist'+CONSTANT.VIEW,
+    //         controller : 'playlistController as playlistCtrl'
+    //       }
+    //     }
+    //   })
+  }
+})();
+
+(function() {
+    'use strict';
+
+    angular
         .module('zaya-profile')
         .controller('profileController', profileController);
 
@@ -607,7 +783,7 @@
           {
             type : 'badge',
             path : CONSTANT.PATH.PROFILE + '/profile.badges' + CONSTANT.VIEW,
-            icon : 'ion-person-add'
+            icon : 'ion-trophy'
           }
         ]
 
@@ -996,15 +1172,18 @@
         }
       })
       .state('user.main.playlist',{
-        url : '/playlist',
+        url : '/playlist/:playlistId',
+        nativeTransitions : null,
         views : {
           'playlist-tab':{
-            templateUrl : CONSTANT.PATH.PLAYLIST+'/playlist'+CONSTANT.VIEW
+            templateUrl : CONSTANT.PATH.PLAYLIST+'/playlist'+CONSTANT.VIEW,
+            controller : 'playlistController as playlistCtrl'
           }
         }
       })
       .state('user.main.home',{
         url : '/home',
+        nativeTransitions : null,
         views : {
           'home-tab':{
             templateUrl : CONSTANT.PATH.HOME+'/home'+CONSTANT.VIEW,
@@ -1014,6 +1193,7 @@
       })
       .state('user.main.result',{
         url : '/result',
+        nativeTransitions : null,
         views : {
           'result-tab':{
             templateUrl : CONSTANT.PATH.RESULT+'/result'+CONSTANT.VIEW

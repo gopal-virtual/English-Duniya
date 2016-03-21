@@ -63,15 +63,18 @@
         }
       })
       .state('user.main.playlist',{
-        url : '/playlist',
+        url : '/playlist/:playlistId',
+        nativeTransitions : null,
         views : {
           'playlist-tab':{
-            templateUrl : CONSTANT.PATH.PLAYLIST+'/playlist'+CONSTANT.VIEW
+            templateUrl : CONSTANT.PATH.PLAYLIST+'/playlist'+CONSTANT.VIEW,
+            controller : 'playlistController as playlistCtrl'
           }
         }
       })
       .state('user.main.home',{
         url : '/home',
+        nativeTransitions : null,
         views : {
           'home-tab':{
             templateUrl : CONSTANT.PATH.HOME+'/home'+CONSTANT.VIEW,
@@ -81,6 +84,7 @@
       })
       .state('user.main.result',{
         url : '/result',
+        nativeTransitions : null,
         views : {
           'result-tab':{
             templateUrl : CONSTANT.PATH.RESULT+'/result'+CONSTANT.VIEW

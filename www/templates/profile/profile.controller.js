@@ -20,7 +20,7 @@
           {
             type : 'badge',
             path : CONSTANT.PATH.PROFILE + '/profile.badges' + CONSTANT.VIEW,
-            icon : 'ion-person-add'
+            icon : 'ion-trophy'
           }
         ]
 

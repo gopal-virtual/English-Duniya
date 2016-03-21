@@ -22,6 +22,7 @@ var paths = {
     './www/templates/search/search.module.js',
     './www/templates/auth/auth.module.js',
     './www/templates/user/user.module.js',
+    './www/templates/playlist/playlist.module.js',
     './www/templates/profile/profile.module.js',
     './www/templates/quiz/quiz.module.js',
     './www/templates/group/group.module.js',
@@ -57,10 +58,10 @@ gulp.task('sass', function(done) {
   gulp.src('./scss/ionic.app.scss')
     .pipe(sass())
     .on('error', sass.logError)
-    .pipe(autoprefixer({
-			browsers: ['last 2 versions'],
-			cascade: false
-		}))
+    // .pipe(autoprefixer({
+		// 	browsers: ['last 2 versions'],
+		// 	cascade: false
+		// }))
     .pipe(gulp.dest('./www/css/'))
     .pipe(minifyCss({
       keepSpecialComments: 0
