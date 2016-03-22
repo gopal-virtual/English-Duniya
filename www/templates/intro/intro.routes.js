@@ -10,6 +10,7 @@
       .state('intro',{
         url : '/intro',
         templateUrl : CONSTANT.PATH.INTRO+'/intro'+CONSTANT.VIEW,
+        controller : "introController as introCtrl"
       })
   }
 })();

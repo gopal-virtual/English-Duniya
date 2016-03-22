@@ -1,3 +1,9 @@
 .tabs-top + ion-content > .slider{
   top : $tabs-height + $bar-height;
 }
+
+.tabs-brand > .tabs,
+.tabs.tabs-brand {
+  @include tab-style($brand, $brand, white);
+  @include tab-badge-style($brand, white);
+}

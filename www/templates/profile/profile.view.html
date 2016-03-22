@@ -1,16 +1,16 @@
-<ion-view>
-  <div class="cover cover-light">
+<ion-view class="bg-brand">
+  <div class="cover cover-brand">
     <div class="toolbox">
-      <i class="icon ion-android-settings"></i>
+      <i class="icon ion-android-settings text-white"></i>
     </div>
     <div class="avatar">
       <img src="img/profile.jpg" alt="profile image">
     </div>
-    <h3 class="name">
+    <h3 class="name text-white">
       Lorem ipsum dolor.
     </h3>
   </div>
-  <div class="tabs-striped tabs-top tabs-background-light tabs-color-assertive">
+  <div class="tabs-striped tabs-top tabs-brand tabs-color-light">
     <div class="tabs">
       <a class="tab-item" ng-click="profileCtrl.tabIndex=$index" ng-repeat="tab in profileCtrl.tab" ng-class="{'active':profileCtrl.tabIndex==$index}">
         <i class="icon" ng-class="tab.icon"></i>

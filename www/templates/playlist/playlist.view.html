@@ -1,8 +1,8 @@
-<ion-view view-title="playlist" ng-init="t=600;collapsed=true">
+<ion-view view-title="playlist" ng-init="t=600;collapsed=true" class="bg-brand">
   <ion-content delegate-handle="playlistScrollBottom">
     <div class="row" >
       <div class="col padding-10">
-        <div ng-click="collapsed=!collapsed" class="card card-assertive-light text-white padding-20 animation-stack-in animation-wait" style="-webkit-animation-delay:{{t - (t/(playlist.length-1))*$index}}ms" ng-repeat="node in playlistCtrl.playlist.children as playlist" >
+        <div ng-click="collapsed=!collapsed" class="list card text-dark padding-20 animation-stack-in animation-wait" style="-webkit-animation-delay:{{t - (t/(playlist.length-1))*$index}}ms" ng-repeat="node in playlistCtrl.playlist.children as playlist" >
           {{node.title}}
           <p ng-if="!collapsed">
             {{node.description}}
@@ -11,7 +11,7 @@
       </div>
     </div>
   </ion-content>
-  <div class="wrapper-bottom-fixed has-footer bg-light padding-20 text-center">
+  <div class="wrapper-bottom-fixed has-footer bg-brand padding-20 text-center text-white">
     This is parent
   </div>
 </ion-view>

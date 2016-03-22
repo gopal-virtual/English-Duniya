@@ -1,34 +1,34 @@
-<ion-pane class="bg-neutral">
+<ion-pane class="bg-brand">
   <div class="bar bar-header bar-transparent">
     <a ui-sref="user.main.home" class="button button-clear button-icon icon ion-ios-close-empty"></a>
-    <div class="h1 title">Q {{quizCtrl.getCurrentIndex()+1}} / {{quizCtrl.quiz.questions.length}}</div>
+    <div class="h1 title color-stable">Q {{quizCtrl.getCurrentIndex()+1}} / {{quizCtrl.quiz.questions.length}}</div>
     <button class="button button-clear">HINT</button>
   </div>
   <ion-content class="has-header has-footer padding-x-20">
     <div ng-repeat="question in quizCtrl.quiz.questions" ng-if="quizCtrl.isCurrentIndex($index)" ng-class="{'animation-question-slide':quizCtrl.isCurrentIndex($index)}">
       <div class="card card-transparent">
         <p>
-          <strong>{{question.info.title}}</strong>
+          <strong class="text-white">{{question.info.title}}</strong>
         </p>
-        <p>
+        <p class="text-white">
           {{question.info.description}}
         </p>
         <div ng-if="question.info.content_type=='sentence ordering' || question.info.content_type=='sentence structuring'">
-          <div class="text-center">drop here</div>
-          <div class="card block padding card-stable dropzone" ui-sortable="{cancel : '.correct-attempt', containment: 'parent'}" ng-model="question.attempted">
-            <div class="card card-brand padding text-white" ng-class="{'float-left':question.info.content_type=='sentence structuring','wrong-attempt':quizCtrl.isAttempted(question.info.id) && !quizCtrl.isCorrectAttempted(question),'correct-attempt': quizCtrl.isAttempted(question.info.id) && quizCtrl.isCorrectAttempted(question)}" ng-repeat="option in question.attempted">
+          <div class="text-center color-light">drop here</div>
+          <div class="list card block padding card-brand-light dropzone" ui-sortable="{cancel : '.correct-attempt', containment: 'parent'}" ng-model="question.attempted">
+            <div class="list card padding text-dark" ng-class="{'float-left':question.info.content_type=='sentence structuring','wrong-attempt':quizCtrl.isAttempted(question.info.id) && !quizCtrl.isCorrectAttempted(question),'correct-attempt': quizCtrl.isAttempted(question.info.id) && quizCtrl.isCorrectAttempted(question)}" ng-repeat="option in question.attempted">
               {{option}}
             </div>
           </div>
         </div>
       </div>
       <!-- SCQ -->
-      <label ng-if="question.info.content_type=='choice question' && !question.info.question_type.is_multiple" ng-repeat="option in question.info.question_type.choices" class="card padding block" ng-class="{'wrong-attempt':quizCtrl.isAttempted(question.info.id) && quizCtrl.isKeyAttempted(question,option.key) && !quizCtrl.isKeyCorrect(question,option.key),'correct-attempt': quizCtrl.isAttempted(question.info.id) && quizCtrl.isKeyAttempted(question,option.key) && quizCtrl.isKeyCorrect(question,option.key),'selected':option.key==question.attempted}">
+      <label ng-if="question.info.content_type=='choice question' && !question.info.question_type.is_multiple" ng-repeat="option in question.info.question_type.choices" class="list card padding block" ng-class="{'wrong-attempt':quizCtrl.isAttempted(question.info.id) && quizCtrl.isKeyAttempted(question,option.key) && !quizCtrl.isKeyCorrect(question,option.key),'correct-attempt': quizCtrl.isAttempted(question.info.id) && quizCtrl.isKeyAttempted(question,option.key) && quizCtrl.isKeyCorrect(question,option.key),'selected':option.key==question.attempted}">
         <input class="hide" type="radio" ng-model="question.attempted" ng-value="option.key" ng-disabled="quizCtrl.isCorrectAttempted(question)">
           {{option.option}}
       </label>
        <!-- MCQ options -->
-      <label ng-if="question.info.content_type=='choice question' && question.info.question_type.is_multiple" ng-repeat="option in question.info.question_type.choices" class="card padding block" ng-class="{'wrong-attempt':quizCtrl.isAttempted(question.info.id) && quizCtrl.isKeyAttempted(question,option.key) && !quizCtrl.isKeyCorrect(question,option.key),'correct-attempt': quizCtrl.isAttempted(question.info.id) && quizCtrl.isKeyAttempted(question,option.key) && quizCtrl.isKeyCorrect(question,option.key),'selected':question.attempted[option.key]}">
+      <label ng-if="question.info.content_type=='choice question' && question.info.question_type.is_multiple" ng-repeat="option in question.info.question_type.choices" class="list card padding block" ng-class="{'wrong-attempt':quizCtrl.isAttempted(question.info.id) && quizCtrl.isKeyAttempted(question,option.key) && !quizCtrl.isKeyCorrect(question,option.key),'correct-attempt': quizCtrl.isAttempted(question.info.id) && quizCtrl.isKeyAttempted(question,option.key) && quizCtrl.isKeyCorrect(question,option.key),'selected':question.attempted[option.key]}">
         <input class="hide" type="checkbox" ng-model="question.attempted[$index+1]" ng-value="option.key" ng-disabled="quizCtrl.isCorrectAttempted(question)">
           {{option.option}}
       </label>
@@ -40,7 +40,7 @@
       </div>
       <!-- SOR | SST opitons-->
       <div ng-if="question.info.content_type=='sentence ordering' || question.info.content_type=='sentence structuring'" ui-sortable="{connectWith : '.dropzone',containment: 'ion-content'}" ng-model="question.info.question_type.shuffle">
-        <div class="card card-brand padding text-white" ng-class="{'float-left' : question.info.content_type=='sentence structuring'}" ng-repeat="option in question.info.question_type.shuffle">
+        <div class="list card card-light padding color-dark" ng-class="{'float-left' : question.info.content_type=='sentence structuring'}" ng-repeat="option in question.info.question_type.shuffle">
           {{option}}
         </div>
       </div>

@@ -1,14 +1,35 @@
-<ion-view view-title="Home">
+<ion-view view-title="Home" class="bg-brand">
   <ion-content class="margin-y-20" scroll="false">
     <div widget-carousel carousel-options="{{homeCtrl.carouselOptions}}">
-      <div carousel-item ng-repeat="item in ['balanced','positive','dark','assertive']" class="card padding-30 text-white bg-{{item}}">
-        <span class="title">Lorem ipsum.</span>
+      <div carousel-item ng-repeat="item in ['balanced','positive','dark','assertive']" class="list card">
+        <div class="item item-image">
+          <img src="img/cover.jpg">
+        </div>
+        <div class="item item-body">
+          <strong>
+            <h1 class="color-dark-light">English Grade 2</h1>
+          </strong>
+          <p>
+            This is a "Facebook" styled Card. The header is created from a Thumbnail List item.
+          </p>
+          <p>
+            <a href="#" class="subdued">
+              <i class="icon ion-heart color-assertive-light"></i>
+              1 Like
+            </a>
+            <a href="#" class="subdued">
+              5 Comments
+            </a>
+          </p>
+          <button class="button button-assertive button-block" ui-sref="quiz.questions({id:1})">START</button>
+        </div>
+        <!-- <span class="title">Lorem ipsum.</span>
         <p>
           Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quo, sapiente!
         </p>
         <div class="text-center">
           <button class="button button-stable" ui-sref="quiz.questions({id:1})">START</button>
-        </div>
+        </div> -->
       </div>
     </div>
   </ion-content>

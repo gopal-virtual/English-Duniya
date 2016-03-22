@@ -1,6 +1,20 @@
+.list.card
+{
+  border-radius: $border-radius !important;
+  box-shadow: 0 0 10px transparentize(black, 0.8);
+}
+.list.card > .item:first-child{
+  border-radius: $border-radius $border-radius 0 0 !important;
+}
+.list.card > .item:last-child{
+  border-radius: 0 0 $border-radius $border-radius !important;
+}
+.list.card > .item:not(:last-child):not(:first-child){
+  border-radius: 0 !important;
+}
 .card-transparent{
   background-color: transparent;
-  box-shadow: none;
+  box-shadow: none !important;
   padding : $padding-y 0;
 }
 @each $name , $color in $color-list{

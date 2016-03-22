@@ -6,6 +6,6 @@
     .config(mainRoute);
 
   function mainRoute($urlRouterProvider) {
-    $urlRouterProvider.otherwise('/auth/main');
+    $urlRouterProvider.otherwise('/intro');
   }
 })();
