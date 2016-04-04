@@ -1,20 +1,30 @@
 <ion-view>
   <ion-content>
-    <ion-slide-box>
+    <ion-slide-box class="has-tab-bottom">
       <ion-slide ng-repeat="slide in introCtrl.slides" active-slide="introCtrl.tabIndex">
         <div class="box {{slide.color}}">
           <div class="row">
-            <div class="col text-center"><img width="80%" src="{{slide.img}}" alt=""></div>
+            <div class="col text-center"><img height="auto" width="70%" ng-src="{{slide.img}}" alt=""></div>
           </div>
           <div class="text-center padding-30">
             <strong>
               <h1 class="text-white">{{slide.title}}</h1>
               <p class="text-white">{{slide.description}}</p>
             </strong>
-            <button type="button" name="button" class="button button-dark" ui-sref="auth.main">SKIP</button>
+            <!-- <button type="button" name="button" class="button button-dark" ui-sref="auth.main">SKIP</button> -->
           </div>
         </div>
       </ion-slide>
     </ion-slide-box>
+    <div class="tabs-brand tabs-color-light">
+      <div class="tabs">
+        <a class="tab-item" ui-sref="auth.signup">
+          SIGN UP
+        </a>
+        <a class="tab-item" ui-sref="auth.signin">
+          SIGN IN
+        </a>
+      </div>
+    </div>
   </ion-content>
 </ion-view>

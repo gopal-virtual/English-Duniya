@@ -12,6 +12,13 @@
     'use strict';
 
     angular
+        .module('zaya-map', []);
+})();
+
+(function() {
+    'use strict';
+
+    angular
         .module('zaya-intro', []);
 })();
 
@@ -83,6 +90,7 @@
       // core
       'common',
       'zaya-user',
+      'zaya-map',
       'zaya-playlist',
       'zaya-profile',
       'zaya-intro',
@@ -181,12 +189,38 @@
 (function(){
   'use strict';
 
-  runConfig.$inject = ["$ionicPlatform"];
+  runConfig.$inject = ["$ionicPlatform", "$rootScope", "$timeout"];
   angular
     .module('zaya')
     .run(runConfig);
 
-  function runConfig($ionicPlatform) {
+  function runConfig($ionicPlatform,$rootScope, $timeout) {
+    $rootScope.$on('$stateChangeStart',function(event, toState, toParams, fromState, fromParams){
+        if(toState.name!='user.main.playlist'){
+          try {
+            var canvas = document.querySelector('#map_canvas');
+            canvas.parentNode.removeChild(canvas);
+          }
+          catch(e){
+
+          }
+        }
+        //if not authenticated, redirect to login page
+        // if(!Auth.isAuthorised() && toState.name!='authenticate.signin' && toState.name!='authenticate.signup' && toState.name!='authenticate.recover'){
+        //   event.preventDefault();
+        //   $state.go('authenticate.signin');
+        // }
+        //if authenticated, redirect to userpage
+        // if(Auth.isAuthorised() && (toState.name=='authenticate.signin' || toState.name=='authenticate.signup')){
+        //   event.preventDefault();
+        //   $state.go('view.user');
+        // }
+        //
+        // if(toState.name == 'view.quiz.summary' && !toParams.quizSummary){
+        //     event.preventDefault();
+        // }
+
+    })
     $ionicPlatform.ready(function() {
       if(window.cordova && window.cordova.plugins.Keyboard) {
         // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -201,10 +235,6 @@
       if(window.StatusBar) {
         StatusBar.styleDefault();
       }
-    });
-
-    window.addEventListener('native.keyboardshow', function(){
-      document.body.classList.add('keyboard-open');
     });
   }
 
@@ -383,7 +413,8 @@
         'RESULT' : ROOT+'/result',
         'SEARCH' : ROOT+'/search',
         'GROUP' : ROOT+'/group',
-        'COMMON' : ROOT + '/common'
+        'COMMON' : ROOT + '/common',
+        'MAP' : ROOT + '/map'
       },
       'VIEW' : '.view.html',
     })
@@ -600,12 +631,14 @@
             title : "Hello this Title",
             description : "some description is theresome description is theresome description is there",
             img : "img/02.png",
+            // color : "bg-brand-light"
             color : "bg-assertive-light"
           },
           {
             title : "Hello this Title",
             description : "some description is theresome description is theresome description is there",
             img : "img/03.png",
+            // color : "bg-brand-light"
             color : "bg-royal-light"
           }
         ];
@@ -626,6 +659,166 @@
         url : '/intro',
         templateUrl : CONSTANT.PATH.INTRO+'/intro'+CONSTANT.VIEW,
         controller : "introController as introCtrl"
+      })
+  }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('zaya-map')
+        .controller('mapController', mapController);
+
+    mapController.$inject = [];
+
+    function mapController() {
+        var zayaCtrl = this;
+    }
+})();
+
+(function() {
+    'use strict';
+
+    mapCanvas.$inject = ["$injector", "$timeout"];
+    angular
+        .module('zaya-map')
+        .directive('mapCanvas', mapCanvas)
+
+    /* @ngInject */
+    function mapCanvas($injector, $timeout) {
+        var mapCanvas = {
+            restrict: 'A',
+            template: '<div id="map_canvas"></div>',
+            scope: {
+              // 'players' : '=',
+              // 'mapId' : '='
+            },
+            link: linkFunc,
+            // controller: Controller,
+            // controllerAs: 'vm',
+            // bindToController: true
+        };
+
+        return mapCanvas;
+
+        function linkFunc(scope, el, attr, ctrl) {
+          // createGame(scope, scope.players, scope.mapId, $injector)
+          console.log('its called');
+          $timeout(createGame(scope, $injector));
+        }
+    }
+
+    // Controller.$inject = ['dependencies'];
+
+    /* @ngInject */
+    // function Controller(dependencies) {
+    //     var vm = this;
+    //
+    //     activate();
+    //
+    //     function activate() {
+    //
+    //     }
+    // }
+})();
+
+window.createGame = function(scope, injector) {
+  'use strict';
+
+  console.log(document.querySelector('#map_canvas'));
+  var game = new Phaser.Game("100%", "100%", Phaser.AUTO, 'map_canvas', {
+    preload: preload,
+    create: create,
+    update: update
+  })
+
+  function preload() {
+    game.load.image('cloud1', 'img/cloud1.png');
+    game.load.image('cloud2', 'img/cloud2.png');
+    game.load.image('cloud3', 'img/cloud3.png');
+    game.load.image('cloud4', 'img/cloud4.png');
+    game.load.image('cloud5', 'img/cloud5.png');
+    game.load.image('cloud6', 'img/cloud6.png');
+    game.load.image('cloud7', 'img/cloud7.png');
+    game.load.image('path', 'img/path.png');
+    game.load.image('node', 'img/node.png');
+  }
+
+  function create() {
+    game.stage.backgroundColor = "#AAD9E8";
+    game.world.setBounds(0, 0, game.width, game.height * 3);
+    init();
+    var cloudCount = 20;
+    for (var i = 0; i < cloudCount; i++) {
+      var cloud = game.add.sprite(game.world.randomX, game.world.randomY, 'cloud' + game.rnd.between(1, 7));
+      var scaleFactor = game.rnd.between(3,6)/10;
+      cloud.scale.setTo(scaleFactor, scaleFactor);
+      game.physics.arcade.enable(cloud);
+      cloud.body.velocity.x = game.rnd.between(-5, -75);
+      cloud.autoCull = true;
+      cloud.checkWorldBounds = true;
+      cloud.events.onOutOfBounds.add(resetSprite, this);
+    }
+
+    // game.add.sprite(game.width / 2, 0, 'path').scale.setTo(0.5, 0.5);
+
+    var nodeCount = 20
+    for (var i = 0; i < nodeCount; i++) {
+      var node = game.add.sprite((i*10)+50, i * (game.world.height / nodeCount), 'node');
+      node.scale.setTo(0.5, 0.5);
+    }
+
+  }
+  function resetSprite(sprite) {
+    sprite.x = game.world.bounds.right;
+  }
+
+  function init() {
+    game.camera.y = game.height * 2;
+  }
+
+  function update() {
+    dragMap(this);
+  }
+
+  function dragMap(ref) {
+    if (ref.game.input.activePointer.isDown) {
+      if (ref.game.origDragPoint) {
+        // move the camera by the amount the mouse has moved since last update
+        ref.game.camera.x += ref.game.origDragPoint.x - ref.game.input.activePointer.position.x;
+        ref.game.camera.y += ref.game.origDragPoint.y - ref.game.input.activePointer.position.y;
+      }
+      // set new drag origin to current position
+      ref.game.origDragPoint = ref.game.input.activePointer.position.clone();
+    } else {
+      ref.game.origDragPoint = null;
+    }
+  }
+
+  function render() {
+  }
+  scope.$on('$destroy', function() {
+    // phaser destroy is broken, check for fix
+    // game.destroy(); // Clean up the game when we leave this scope
+  });
+};
+
+(function() {
+  'use strict';
+
+  mainRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
+  angular
+    .module('zaya-map')
+    .config(mainRoute);
+
+  function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
+
+    $stateProvider
+      .state('map',{
+        url : '/map',
+        templateUrl : CONSTANT.PATH.MAP + '/map' + CONSTANT.VIEW,
+        controller : 'mapController as mapCtrl'
       })
   }
 })();

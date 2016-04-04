@@ -16,7 +16,8 @@
         'RESULT' : ROOT+'/result',
         'SEARCH' : ROOT+'/search',
         'GROUP' : ROOT+'/group',
-        'COMMON' : ROOT + '/common'
+        'COMMON' : ROOT + '/common',
+        'MAP' : ROOT + '/map'
       },
       'VIEW' : '.view.html',
     })

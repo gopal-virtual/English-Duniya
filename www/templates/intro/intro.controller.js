@@ -23,12 +23,14 @@
             title : "Hello this Title",
             description : "some description is theresome description is theresome description is there",
             img : "img/02.png",
+            // color : "bg-brand-light"
             color : "bg-assertive-light"
           },
           {
             title : "Hello this Title",
             description : "some description is theresome description is theresome description is there",
             img : "img/03.png",
+            // color : "bg-brand-light"
             color : "bg-royal-light"
           }
         ];

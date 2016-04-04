@@ -7,3 +7,6 @@
   @include tab-style($brand, $brand, white);
   @include tab-badge-style($brand, white);
 }
+.slider.has-tab-bottom > .slider-pager {
+  bottom : 100px;
+}

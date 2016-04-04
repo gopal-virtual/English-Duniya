@@ -31,9 +31,9 @@
             <i class="icon ion-ios-help-outline"></i>
           </button>
         </div>
-        <div ng-messages="authForm.username.$error" ng-show="authForm.username.$touched">
+        <!-- <div ng-messages="authForm.username.$error" ng-show="authForm.username.$touched">
             <div ng-messages-include="templates/common/common.error-msg.view.html"></div>
-        </div>
+        </div> -->
         <div class="input-group" ng-init="showPassword=false">
           <input
             name="password"
@@ -50,9 +50,9 @@
             <i class="icon" ng-class="{'ion-ios-glasses':!showPassword,'ion-ios-glasses-outline':showPassword}"></i>
           </button>
         </div>
-        <div ng-messages="authForm.password.$error" ng-show="authForm.password.$touched">
+        <!-- <div ng-messages="authForm.password.$error" ng-show="authForm.password.$touched">
             <div ng-messages-include="templates/common/common.error-msg.view.html"></div>
-        </div>
+        </div> -->
         <button type="submit" class="button button-calm button-block " tabindex="3" ng-disabled="authForm.$invalid">SIGN IN</button>
       </form>
       <div class="text-center">

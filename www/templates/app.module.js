@@ -12,6 +12,7 @@
       // core
       'common',
       'zaya-user',
+      'zaya-map',
       'zaya-playlist',
       'zaya-profile',
       'zaya-intro',
