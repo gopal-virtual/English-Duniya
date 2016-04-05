@@ -3,7 +3,11 @@
     .module('zaya')
     .config(AppConfig)
 
-    function AppConfig($httpProvider, $ionicConfigProvider, $ionicNativeTransitionsProvider){
+    function AppConfig($httpProvider, $ionicConfigProvider, $ionicNativeTransitionsProvider, $logProvider){
+      // global debug log
+      $logProvider.debugEnabled(true);
+
+      // request/response interceptors
       $httpProvider.interceptors.push(function ($rootScope,$q){
         return {
           request : function(config){

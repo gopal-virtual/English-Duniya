@@ -5,31 +5,34 @@
     .module('zaya')
     .run(runConfig);
 
-  function runConfig($ionicPlatform,$rootScope, $timeout) {
+  function runConfig($ionicPlatform, $rootScope, $timeout, $log, $state, Auth) {
     $rootScope.$on('$stateChangeStart',function(event, toState, toParams, fromState, fromParams){
+        // alternative to phaser destroy() ; phaser destroy doesn't remove canvas element
         if(toState.name!='user.main.playlist'){
           try {
             var canvas = document.querySelector('#map_canvas');
             canvas.parentNode.removeChild(canvas);
+            $log.debug("Canvas Removed");
           }
-          catch(e){
-
-          }
+          catch(e){}
         }
         //if not authenticated, redirect to login page
-        // if(!Auth.isAuthorised() && toState.name!='authenticate.signin' && toState.name!='authenticate.signup' && toState.name!='authenticate.recover'){
-        //   event.preventDefault();
-        //   $state.go('authenticate.signin');
-        // }
+        if(!Auth.isAuthorised() && toState.name!='auth.signin' && toState.name!='auth.signup' && toState.name!='auth.forgot'){
+          $log.debug("You are not authorized");
+          event.preventDefault();
+          $state.go('auth.signin');
+        }
         //if authenticated, redirect to userpage
-        // if(Auth.isAuthorised() && (toState.name=='authenticate.signin' || toState.name=='authenticate.signup')){
-        //   event.preventDefault();
-        //   $state.go('view.user');
-        // }
-        //
-        // if(toState.name == 'view.quiz.summary' && !toParams.quizSummary){
-        //     event.preventDefault();
-        // }
+        if(Auth.isAuthorised() && (toState.name=='auth.signin' || toState.name=='auth.signup' || toState.name=='intro')){
+          $log.debug("You are authorized");
+          event.preventDefault();
+          $state.go('user.main.home');
+        }
+        // block access to quiz summary page if there is no quiz data
+        if(toState.name == 'quiz.summary' && !toParams.quizSummary){
+            $log.debug("Quiz summary page cannot be accessed : No quiz data present");
+            event.preventDefault();
+        }
 
     })
     $ionicPlatform.ready(function() {

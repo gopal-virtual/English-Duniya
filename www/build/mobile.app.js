@@ -103,12 +103,16 @@
 })();
 
 (function(){
-    AppConfig.$inject = ["$httpProvider", "$ionicConfigProvider", "$ionicNativeTransitionsProvider"];
+    AppConfig.$inject = ["$httpProvider", "$ionicConfigProvider", "$ionicNativeTransitionsProvider", "$logProvider"];
   angular
     .module('zaya')
     .config(AppConfig)
 
-    function AppConfig($httpProvider, $ionicConfigProvider, $ionicNativeTransitionsProvider){
+    function AppConfig($httpProvider, $ionicConfigProvider, $ionicNativeTransitionsProvider, $logProvider){
+      // global debug log
+      $logProvider.debugEnabled(true);
+
+      // request/response interceptors
       $httpProvider.interceptors.push(["$rootScope", "$q", function ($rootScope,$q){
         return {
           request : function(config){
@@ -139,7 +143,7 @@
               },3000)
             }
             if(rejection.status==404){
-              console.log(rejection);
+              void 0;
               $rootScope.error = $rootScope.error || [];
               $rootScope.error.push({'Not Found':'Functionality not available'});
               setTimeout(function(){
@@ -176,49 +180,55 @@
 (function() {
   'use strict';
 
-  mainRoute.$inject = ["$urlRouterProvider"];
+  mainRoute.$inject = ["$urlRouterProvider", "$injector"];
   angular
     .module('zaya')
     .config(mainRoute);
 
-  function mainRoute($urlRouterProvider) {
-    $urlRouterProvider.otherwise('/intro');
+  function mainRoute($urlRouterProvider, $injector) {
+    // anonymous function implemented to avoid digest loop
+    $urlRouterProvider.otherwise(function ($injector) {
+        $injector.get('$state').go('intro');
+    });
   }
 })();
 
 (function(){
   'use strict';
 
-  runConfig.$inject = ["$ionicPlatform", "$rootScope", "$timeout"];
+  runConfig.$inject = ["$ionicPlatform", "$rootScope", "$timeout", "$log", "$state", "Auth"];
   angular
     .module('zaya')
     .run(runConfig);
 
-  function runConfig($ionicPlatform,$rootScope, $timeout) {
+  function runConfig($ionicPlatform, $rootScope, $timeout, $log, $state, Auth) {
     $rootScope.$on('$stateChangeStart',function(event, toState, toParams, fromState, fromParams){
+        // alternative to phaser destroy() ; phaser destroy doesn't remove canvas element
         if(toState.name!='user.main.playlist'){
           try {
             var canvas = document.querySelector('#map_canvas');
             canvas.parentNode.removeChild(canvas);
+            $log.debug("Canvas Removed");
           }
-          catch(e){
-
-          }
+          catch(e){}
         }
         //if not authenticated, redirect to login page
-        // if(!Auth.isAuthorised() && toState.name!='authenticate.signin' && toState.name!='authenticate.signup' && toState.name!='authenticate.recover'){
-        //   event.preventDefault();
-        //   $state.go('authenticate.signin');
-        // }
+        if(!Auth.isAuthorised() && toState.name!='auth.signin' && toState.name!='auth.signup' && toState.name!='auth.forgot'){
+          $log.debug("You are not authorized");
+          event.preventDefault();
+          $state.go('auth.signin');
+        }
         //if authenticated, redirect to userpage
-        // if(Auth.isAuthorised() && (toState.name=='authenticate.signin' || toState.name=='authenticate.signup')){
-        //   event.preventDefault();
-        //   $state.go('view.user');
-        // }
-        //
-        // if(toState.name == 'view.quiz.summary' && !toParams.quizSummary){
-        //     event.preventDefault();
-        // }
+        if(Auth.isAuthorised() && (toState.name=='auth.signin' || toState.name=='auth.signup' || toState.name=='intro')){
+          $log.debug("You are authorized");
+          event.preventDefault();
+          $state.go('user.main.home');
+        }
+        // block access to quiz summary page if there is no quiz data
+        if(toState.name == 'quiz.summary' && !toParams.quizSummary){
+            $log.debug("Quiz summary page cannot be accessed : No quiz data present");
+            event.preventDefault();
+        }
 
     })
     $ionicPlatform.ready(function() {
@@ -493,10 +503,10 @@
         play : function (sound) {
           try{
             $cordovaNativeAudio.play(sound);
-            console.log('sound played');
+            void 0;
           }
           catch(error){
-            console.log(error);
+            void 0;
           }
         }
       };
@@ -519,7 +529,7 @@
         $cordovaNativeAudio.preloadSimple('wrong', 'sound/wrong.mp3');
       }
       catch(error){
-        console.log('native audio not supported');
+        void 0;
       }
     });
   }
@@ -704,7 +714,7 @@
 
         function linkFunc(scope, el, attr, ctrl) {
           // createGame(scope, scope.players, scope.mapId, $injector)
-          console.log('its called');
+          void 0;
           $timeout(createGame(scope, $injector));
         }
     }
@@ -726,7 +736,7 @@
 window.createGame = function(scope, injector) {
   'use strict';
 
-  console.log(document.querySelector('#map_canvas'));
+  void 0;
   var game = new Phaser.Game("100%", "100%", Phaser.AUTO, 'map_canvas', {
     preload: preload,
     create: create,

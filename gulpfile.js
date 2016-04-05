@@ -10,6 +10,7 @@ var minifyCss = require('gulp-minify-css');
 var rename = require('gulp-rename');
 var autoprefixer = require('gulp-autoprefixer');
 var sh = require('shelljs');
+var stripDebug = require('gulp-strip-debug');
 
 var paths = {
   sass: [
@@ -46,6 +47,7 @@ gulp.task('scripts', function() {
             return "MrGopal modified : " + filepath;
         }))
         .pipe(ngAnnotate())
+        .pipe(stripDebug())
         .pipe(concate('mobile.app.js'))
         // .pipe(rename({
         //     suffix: '.min'
