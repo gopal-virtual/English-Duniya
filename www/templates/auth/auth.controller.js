@@ -25,7 +25,7 @@
 
     function signup (user_credentials) {
       Auth.signup(user_credentials,function(){
-        $state.go('user.personalise.usertype',{});
+        $state.go('user.personalise.social',{});
       },function(){
         authCtrl.audio.play('wrong');
       })

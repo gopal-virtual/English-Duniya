@@ -23,6 +23,14 @@
           }
         }
       })
+      .state('user.personalise.social',{
+        url : '/social',
+        views : {
+          'state-personalise':{
+            templateUrl : CONSTANT.PATH.PROFILE+'/personalise.social'+CONSTANT.VIEW
+          }
+        }
+      })
       .state('user.personalise.usertype',{
         url : '/usertype',
         views : {

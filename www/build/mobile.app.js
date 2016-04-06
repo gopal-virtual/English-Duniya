@@ -223,8 +223,8 @@
         //if authenticated, redirect to userpage
         if(Auth.isAuthorised() && (toState.name=='auth.signin' || toState.name=='auth.signup' || toState.name=='intro')){
           $log.debug("You are authorized");
-          // event.preventDefault();
-          // $state.go('user.main.home');
+          event.preventDefault();
+          $state.go('user.main.home');
         }
         // block access to quiz summary page if there is no quiz data
         if(toState.name == 'quiz.summary' && !toParams.quizSummary){
@@ -279,7 +279,7 @@
 
     function signup (user_credentials) {
       Auth.signup(user_credentials,function(){
-        $state.go('user.personalise.usertype',{});
+        $state.go('user.personalise.social',{});
       },function(){
         authCtrl.audio.play('wrong');
       })
@@ -419,7 +419,7 @@
   angular
     .module('common')
     .constant('CONSTANT',{
-      'BACKEND_SERVICE_DOMAIN' : 'http://192.168.10.134:9000',
+      'BACKEND_SERVICE_DOMAIN' : 'http://192.168.10.194:9000',
       'PATH' : {
         'INTRO' : ROOT+'/intro',
         'AUTH' : ROOT+'/auth',
@@ -1387,6 +1387,14 @@ window.createGame = function(scope, injector) {
         views : {
           'state-user':{
             templateUrl : CONSTANT.PATH.PROFILE+'/personalise'+CONSTANT.VIEW,
+          }
+        }
+      })
+      .state('user.personalise.social',{
+        url : '/social',
+        views : {
+          'state-personalise':{
+            templateUrl : CONSTANT.PATH.PROFILE+'/personalise.social'+CONSTANT.VIEW
           }
         }
       })
