@@ -223,8 +223,8 @@
         //if authenticated, redirect to userpage
         if(Auth.isAuthorised() && (toState.name=='auth.signin' || toState.name=='auth.signup' || toState.name=='intro')){
           $log.debug("You are authorized");
-          event.preventDefault();
-          $state.go('user.main.home');
+          // event.preventDefault();
+          // $state.go('user.main.home');
         }
         // block access to quiz summary page if there is no quiz data
         if(toState.name == 'quiz.summary' && !toParams.quizSummary){
@@ -253,12 +253,173 @@
 })();
 
 (function(){
+  'use strict';
+
+  angular
+    .module('zaya-auth')
+    .controller('authController', authController)
+
+    authController.$inject = ['$state','Auth','audio','$rootScope'];
+
+  function authController($state,Auth,audio,$rootScope) {
+    var authCtrl = this;
+
+    authCtrl.audio = audio;
+    authCtrl.login = login;
+    authCtrl.signup = signup;
+    authCtrl.rootScope = $rootScope;
+
+    function login (user_credentials) {
+        Auth.login(user_credentials,function(){
+          $state.go('user.main.home',{});
+        },function(){
+          authCtrl.audio.play('wrong');
+        })
+    }
+
+    function signup (user_credentials) {
+      Auth.signup(user_credentials,function(){
+        $state.go('user.personalise.usertype',{});
+      },function(){
+        authCtrl.audio.play('wrong');
+      })
+    }
+
+  }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('zaya-auth')
+        .factory('Auth', Auth)
+
+    Auth.$inject = ['Restangular','CONSTANT', '$cookies'];
+
+    function Auth(Restangular,CONSTANT, $cookies){
+      var rest_auth = Restangular.withConfig(function(RestangularConfigurer) {
+          RestangularConfigurer.setBaseUrl(CONSTANT.BACKEND_SERVICE_DOMAIN+'/rest-auth');
+          RestangularConfigurer.setRequestSuffix('/');
+          RestangularConfigurer.setDefaultHeaders({
+            'Content-Type':'application/x-www-form-urlencoded',
+          });
+      });
+      return {
+        login : function(user_credentials, success, failure){
+          rest_auth.all('login').post($.param(user_credentials)).then(function(response){
+            localStorage.setItem('Authorization',response.key);
+            success();
+          },function(){
+            failure();
+          })
+        },
+        logout : function(success,failure){
+          rest_auth.all('logout').post().then(function(response){
+            localStorage.removeItem('Authorization');
+            success();
+          },function(error){
+            failure();
+          })
+        },
+        signup : function(user_credentials,success,failure){
+          rest_auth.all('registration').post($.param(user_credentials),success,failure).then(function(response){
+            localStorage.setItem('Authorization',response.key);
+            success();
+          },function(response){
+            failure();
+          })
+        },
+        reset : function (email,type,success,failure) {
+          type=='password' && rest_auth.all('password').all('reset').post(email);
+          type=='username' && rest_auth.all('username').all('reset').post(email);
+        },
+        isAuthorised : function(){
+          return localStorage.Authorization;
+        }
+      }
+    }
+})();
+
+(function() {
+  'use strict';
+
+  authRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
+  angular
+    .module('zaya-auth')
+    .config(authRoute);
+
+  function authRoute($stateProvider, $urlRouterProvider, CONSTANT) {
+    $stateProvider
+    .state('auth', {
+        url: '/auth',
+        abstract: true,
+        template: "<ion-nav-view name='state-auth'></ion-nav-view>",
+      })
+      // intro is now the main screen
+      // .state('auth.main', {
+      //   url: '/main',
+      //   views: {
+      //     'state-auth': {
+      //       templateUrl: CONSTANT.PATH.AUTH + "/auth.main" + CONSTANT.VIEW
+      //     }
+      //   }
+      // })
+      .state('auth.signin', {
+        url: '/signin',
+        nativeTransitions: {
+          "type": "slide",
+          "direction": "left",
+          "duration" :  400
+        },
+        views: {
+          'state-auth': {
+            // templateUrl: CONSTANT.PATH.AUTH + '/auth.signin' + CONSTANT.VIEW,
+            templateUrl: CONSTANT.PATH.AUTH + '/auth.signin.social' + CONSTANT.VIEW,
+            controller: 'authController as authCtrl'
+          }
+        }
+      })
+      .state('auth.signup', {
+        url: '/signup',
+        nativeTransitions: {
+          "type": "slide",
+          "direction": "left",
+          "duration" :  400
+        },
+        views: {
+          'state-auth': {
+            // templateUrl: CONSTANT.PATH.AUTH + '/auth.signup' + CONSTANT.VIEW,
+            templateUrl: CONSTANT.PATH.AUTH + '/auth.signup.social' + CONSTANT.VIEW,
+            controller: 'authController as authCtrl'
+          }
+        }
+      })
+      .state('auth.forgot', {
+        url: '/forgot',
+        nativeTransitions: {
+          "type": "slide",
+          "direction": "up",
+          "duration" :  400
+        },
+        views: {
+          'state-auth': {
+            // templateUrl: CONSTANT.PATH.AUTH + '/auth.forgot' + CONSTANT.VIEW,
+            templateUrl: CONSTANT.PATH.AUTH + '/auth.forgot.social' + CONSTANT.VIEW,
+            controller: 'authController as authCtrl'
+          }
+        }
+      })
+  }
+})();
+
+(function(){
   var ROOT = 'templates';
 
   angular
     .module('common')
     .constant('CONSTANT',{
-      'BACKEND_SERVICE_DOMAIN' : 'http://192.168.1.7:9000',
+      'BACKEND_SERVICE_DOMAIN' : 'http://192.168.10.134:9000',
       'PATH' : {
         'INTRO' : ROOT+'/intro',
         'AUTH' : ROOT+'/auth',
@@ -1303,167 +1464,6 @@ window.createGame = function(scope, injector) {
         views : {
           'result-tab':{
             templateUrl : CONSTANT.PATH.RESULT+'/result'+CONSTANT.VIEW
-          }
-        }
-      })
-  }
-})();
-
-(function(){
-  'use strict';
-
-  angular
-    .module('zaya-auth')
-    .controller('authController', authController)
-
-    authController.$inject = ['$state','Auth','audio','$rootScope'];
-
-  function authController($state,Auth,audio,$rootScope) {
-    var authCtrl = this;
-
-    authCtrl.audio = audio;
-    authCtrl.login = login;
-    authCtrl.signup = signup;
-    authCtrl.rootScope = $rootScope;
-
-    function login (user_credentials) {
-        Auth.login(user_credentials,function(){
-          $state.go('user.main.home',{});
-        },function(){
-          authCtrl.audio.play('wrong');
-        })
-    }
-
-    function signup (user_credentials) {
-      Auth.signup(user_credentials,function(){
-        $state.go('user.personalise.usertype',{});
-      },function(){
-        authCtrl.audio.play('wrong');
-      })
-    }
-
-  }
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('zaya-auth')
-        .factory('Auth', Auth)
-
-    Auth.$inject = ['Restangular','CONSTANT', '$cookies'];
-
-    function Auth(Restangular,CONSTANT, $cookies){
-      var rest_auth = Restangular.withConfig(function(RestangularConfigurer) {
-          RestangularConfigurer.setBaseUrl(CONSTANT.BACKEND_SERVICE_DOMAIN+'/rest-auth');
-          RestangularConfigurer.setRequestSuffix('/');
-          RestangularConfigurer.setDefaultHeaders({
-            'Content-Type':'application/x-www-form-urlencoded',
-          });
-      });
-      return {
-        login : function(user_credentials, success, failure){
-          rest_auth.all('login').post($.param(user_credentials)).then(function(response){
-            localStorage.setItem('Authorization',response.key);
-            success();
-          },function(){
-            failure();
-          })
-        },
-        logout : function(success,failure){
-          rest_auth.all('logout').post().then(function(response){
-            localStorage.removeItem('Authorization');
-            success();
-          },function(error){
-            failure();
-          })
-        },
-        signup : function(user_credentials,success,failure){
-          rest_auth.all('registration').post($.param(user_credentials),success,failure).then(function(response){
-            localStorage.setItem('Authorization',response.key);
-            success();
-          },function(response){
-            failure();
-          })
-        },
-        reset : function (email,type,success,failure) {
-          type=='password' && rest_auth.all('password').all('reset').post(email);
-          type=='username' && rest_auth.all('username').all('reset').post(email);
-        },
-        isAuthorised : function(){
-          return localStorage.Authorization;
-        }
-      }
-    }
-})();
-
-(function() {
-  'use strict';
-
-  authRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
-  angular
-    .module('zaya-auth')
-    .config(authRoute);
-
-  function authRoute($stateProvider, $urlRouterProvider, CONSTANT) {
-    $stateProvider
-    .state('auth', {
-        url: '/auth',
-        abstract: true,
-        template: "<ion-nav-view name='state-auth'></ion-nav-view>",
-      })
-      // intro is now the main screen
-      // .state('auth.main', {
-      //   url: '/main',
-      //   views: {
-      //     'state-auth': {
-      //       templateUrl: CONSTANT.PATH.AUTH + "/auth.main" + CONSTANT.VIEW
-      //     }
-      //   }
-      // })
-      .state('auth.signin', {
-        url: '/signin',
-        nativeTransitions: {
-          "type": "slide",
-          "direction": "left",
-          "duration" :  400
-        },
-        views: {
-          'state-auth': {
-            // templateUrl: CONSTANT.PATH.AUTH + '/auth.signin' + CONSTANT.VIEW,
-            templateUrl: CONSTANT.PATH.AUTH + '/auth.signin.social' + CONSTANT.VIEW,
-            controller: 'authController as authCtrl'
-          }
-        }
-      })
-      .state('auth.signup', {
-        url: '/signup',
-        nativeTransitions: {
-          "type": "slide",
-          "direction": "left",
-          "duration" :  400
-        },
-        views: {
-          'state-auth': {
-            // templateUrl: CONSTANT.PATH.AUTH + '/auth.signup' + CONSTANT.VIEW,
-            templateUrl: CONSTANT.PATH.AUTH + '/auth.signup.social' + CONSTANT.VIEW,
-            controller: 'authController as authCtrl'
-          }
-        }
-      })
-      .state('auth.forgot', {
-        url: '/forgot',
-        nativeTransitions: {
-          "type": "slide",
-          "direction": "up",
-          "duration" :  400
-        },
-        views: {
-          'state-auth': {
-            // templateUrl: CONSTANT.PATH.AUTH + '/auth.forgot' + CONSTANT.VIEW,
-            templateUrl: CONSTANT.PATH.AUTH + '/auth.forgot.social' + CONSTANT.VIEW,
-            controller: 'authController as authCtrl'
           }
         }
       })

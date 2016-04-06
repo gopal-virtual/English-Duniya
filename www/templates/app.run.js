@@ -26,8 +26,8 @@
         //if authenticated, redirect to userpage
         if(Auth.isAuthorised() && (toState.name=='auth.signin' || toState.name=='auth.signup' || toState.name=='intro')){
           $log.debug("You are authorized");
-          event.preventDefault();
-          $state.go('user.main.home');
+          // event.preventDefault();
+          // $state.go('user.main.home');
         }
         // block access to quiz summary page if there is no quiz data
         if(toState.name == 'quiz.summary' && !toParams.quizSummary){
