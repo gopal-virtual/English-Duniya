@@ -12,14 +12,15 @@
         abstract: true,
         template: "<ion-nav-view name='state-auth'></ion-nav-view>",
       })
-      .state('auth.main', {
-        url: '/main',
-        views: {
-          'state-auth': {
-            templateUrl: CONSTANT.PATH.AUTH + "/auth.main" + CONSTANT.VIEW
-          }
-        }
-      })
+      // intro is now the main screen
+      // .state('auth.main', {
+      //   url: '/main',
+      //   views: {
+      //     'state-auth': {
+      //       templateUrl: CONSTANT.PATH.AUTH + "/auth.main" + CONSTANT.VIEW
+      //     }
+      //   }
+      // })
       .state('auth.signin', {
         url: '/signin',
         nativeTransitions: {
@@ -29,7 +30,8 @@
         },
         views: {
           'state-auth': {
-            templateUrl: CONSTANT.PATH.AUTH + '/auth.signin' + CONSTANT.VIEW,
+            // templateUrl: CONSTANT.PATH.AUTH + '/auth.signin' + CONSTANT.VIEW,
+            templateUrl: CONSTANT.PATH.AUTH + '/auth.signin.social' + CONSTANT.VIEW,
             controller: 'authController as authCtrl'
           }
         }
@@ -43,7 +45,8 @@
         },
         views: {
           'state-auth': {
-            templateUrl: CONSTANT.PATH.AUTH + '/auth.signup' + CONSTANT.VIEW,
+            // templateUrl: CONSTANT.PATH.AUTH + '/auth.signup' + CONSTANT.VIEW,
+            templateUrl: CONSTANT.PATH.AUTH + '/auth.signup.social' + CONSTANT.VIEW,
             controller: 'authController as authCtrl'
           }
         }
@@ -57,7 +60,8 @@
         },
         views: {
           'state-auth': {
-            templateUrl: CONSTANT.PATH.AUTH + '/auth.forgot' + CONSTANT.VIEW,
+            // templateUrl: CONSTANT.PATH.AUTH + '/auth.forgot' + CONSTANT.VIEW,
+            templateUrl: CONSTANT.PATH.AUTH + '/auth.forgot.social' + CONSTANT.VIEW,
             controller: 'authController as authCtrl'
           }
         }

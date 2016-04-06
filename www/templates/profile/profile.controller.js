@@ -5,10 +5,11 @@
         .module('zaya-profile')
         .controller('profileController', profileController);
 
-    profileController.$inject = ['CONSTANT'];
+    profileController.$inject = ['CONSTANT','$state','Auth'];
 
-    function profileController(CONSTANT) {
+    function profileController(CONSTANT, $state, Auth) {
         var profileCtrl = this;
+        profileCtrl.logout = logout;
 
         profileCtrl.tabIndex = 0;
         profileCtrl.tab = [
@@ -23,6 +24,14 @@
             icon : 'ion-trophy'
           }
         ]
+
+        function logout() {
+          Auth.logout(function () {
+            $state.go('auth.signin',{})
+          },function () {
+            // body...
+          })
+        }
 
     }
 })();

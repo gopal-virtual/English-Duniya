@@ -5,7 +5,9 @@
         .module('zaya-auth')
         .factory('Auth', Auth)
 
-    function Auth(Restangular,CONSTANT){
+    Auth.$inject = ['Restangular','CONSTANT', '$cookies'];
+
+    function Auth(Restangular,CONSTANT, $cookies){
       var rest_auth = Restangular.withConfig(function(RestangularConfigurer) {
           RestangularConfigurer.setBaseUrl(CONSTANT.BACKEND_SERVICE_DOMAIN+'/rest-auth');
           RestangularConfigurer.setRequestSuffix('/');

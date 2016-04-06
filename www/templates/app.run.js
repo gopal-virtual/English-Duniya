@@ -5,7 +5,8 @@
     .module('zaya')
     .run(runConfig);
 
-  function runConfig($ionicPlatform, $rootScope, $timeout, $log, $state, Auth) {
+  function runConfig($ionicPlatform, $rootScope, $timeout, $log, $state,$http,$cookies, Auth) {
+    $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
     $rootScope.$on('$stateChangeStart',function(event, toState, toParams, fromState, fromParams){
         // alternative to phaser destroy() ; phaser destroy doesn't remove canvas element
         if(toState.name!='user.main.playlist'){

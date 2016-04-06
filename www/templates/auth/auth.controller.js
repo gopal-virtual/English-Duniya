@@ -30,5 +30,6 @@
         authCtrl.audio.play('wrong');
       })
     }
+
   }
 })();

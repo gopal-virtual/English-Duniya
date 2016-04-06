@@ -8,6 +8,7 @@
       'restangular',
       'ionic-native-transitions',
       'ngMessages',
+      'ngCookies',
 
       // core
       'common',

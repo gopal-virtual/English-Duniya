@@ -62,6 +62,15 @@
           }
         }
       })
+      .state('user.main.settings',{
+        url : '/settings',
+        views : {
+          'profile-tab' : {
+            templateUrl : CONSTANT.PATH.PROFILE+'/profile.settings'+CONSTANT.VIEW,
+            controller : 'profileController as profileCtrl'
+          }
+        }
+      })
       .state('user.main.playlist',{
         url : '/playlist/:playlistId',
         nativeTransitions : null,

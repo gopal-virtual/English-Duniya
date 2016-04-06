@@ -13,8 +13,8 @@
           request : function(config){
             if(localStorage.Authorization)
               config.headers.Authorization = 'Token '+localStorage.Authorization;
-              config.headers.xsrfCookieName = 'csrftoken';
-              config.headers.xsrfHeaderName = 'X-CSRFToken';
+            config.headers.xsrfCookieName = 'csrftoken';
+            config.headers.xsrfHeaderName = 'X-CSRFToken';
             return config;
           },
 
