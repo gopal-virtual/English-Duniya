@@ -11,7 +11,7 @@
   </ion-content>
   <div class="row wrapper-bottom-fixed padding-30 animation-fade-in-from-bottom">
     <div class="col">
-      <form name="authForm" novalidate ng-submit="authForm.$valid && authCtrl.signup({'username':authCtrl.user.username,'password1':authCtrl.user.password,'password2':authCtrl.user.password,'email':authCtrl.user.email})">
+      <form name="authForm" novalidate ng-submit="authForm.$valid && authCtrl.signup({'username':authCtrl.user.username,'password1':authCtrl.user.password,'password2':authCtrl.user.password})">
         <widget-error></widget-error>
         <input name="username" type="text" placeholder="username" class="input-control input-default input-medium input-block" ng-class="{'input-wrong':authForm.username.$touched && !authForm.username.$valid}" ng-model="authCtrl.user.username" required ng-minlength='5'
         ng-maxlength='10' ng-pattern="/^[a-z0-9]*$/" tabindex="1">

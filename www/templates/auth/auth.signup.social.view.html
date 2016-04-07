@@ -1,17 +1,17 @@
 <ion-view>
   <ion-content>
     <div class="row">
-      <form name="authForm" class="col padding-30" ng-submit="authForm.$valid && authCtrl.signup({'username':authCtrl.user.username,'password1':authCtrl.user.password,'password2':authCtrl.user.password,'email':authCtrl.user.email})">
+      <form novalidate name="authForm" class="col padding-30" ng-submit="authCtrl.validCredential(authForm) && authCtrl.signup({'useridentity':authCtrl.user.useridentity,'password1':authCtrl.user.password,'password2':authCtrl.user.password,'email':authCtrl.user.email})">
         <h4 class="text-right"><a ui-sref="auth.signin">ALREADY EXIST</a></h4>
         <div class="list">
           <label for="" class="item item-input item-floating-label"><span class="input-label">USERNAME / PHONE NUMBER</span>
-            <input type="text" placeholder="USERNAME / PHONE NUMBER" ng-model="authCtrl.user.username">
+            <input name="useridentity" type="text" placeholder="USERNAME / PHONE NUMBER" ng-model="authCtrl.user.useridentity">
           </label>
           <label for="" class="item item-input item-floating-label"><span class="input-label">EMAIL</span>
-            <input type="email" placeholder="EMAIL" ng-model="authCtrl.user.email">
+            <input name="email" type="email" placeholder="EMAIL" ng-model="authCtrl.user.email">
           </label>
           <label for="" class="item item-input item-floating-label"><span class="input-label">PASSWORD</span>
-            <input type="password" placeholder="PASSWORD" ng-model="authCtrl.user.password">
+            <input name="password" type="password" placeholder="PASSWORD" ng-model="authCtrl.user.password">
           </label>
         </div>
         <button class="button button-block button-positive">SIGN UP</button>

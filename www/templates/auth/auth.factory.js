@@ -19,9 +19,9 @@
         login : function(user_credentials, success, failure){
           rest_auth.all('login').post($.param(user_credentials)).then(function(response){
             localStorage.setItem('Authorization',response.key);
-            success();
-          },function(){
-            failure();
+            success(response);
+          },function(response){
+            failure(response);
           })
         },
         logout : function(success,failure){
@@ -35,9 +35,9 @@
         signup : function(user_credentials,success,failure){
           rest_auth.all('registration').post($.param(user_credentials),success,failure).then(function(response){
             localStorage.setItem('Authorization',response.key);
-            success();
+            success(response);
           },function(response){
-            failure();
+            failure(response);
           })
         },
         reset : function (email,type,success,failure) {

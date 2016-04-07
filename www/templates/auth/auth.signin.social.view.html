@@ -1,15 +1,15 @@
 <ion-view>
   <ion-content>
     <div class="row">
-      <form name="authForm" class="col padding-30" ng-submit="authForm.$valid && authCtrl.login({'username':authCtrl.user.username, 'password':authCtrl.user.password})">
+      <form name="authForm" class="col padding-30" ng-submit="authCtrl.validCredential(authForm) && authCtrl.login({'useridentity':authCtrl.user.useridentity, 'password':authCtrl.user.password})">
         <h4 class="text-right"><a ui-sref="auth.signup">NEW USER</a></h4>
         <h4 class="text-right"><a ui-sref="auth.forgot">FORGOT PASSWORD?</a></h4>
         <div class="list">
           <label for="" class="item item-input item-floating-label"><span class="input-label">USERNAME / EMAIL / PHONE NO.</span>
-            <input type="text" placeholder="USERNAME / EMAIL / PHONE NO." ng-model="authCtrl.user.username">
+            <input name="useridentity" type="text" placeholder="USERNAME / EMAIL / PHONE NO." ng-model="authCtrl.user.useridentity">
           </label>
           <label for="" class="item item-input item-floating-label"><span class="input-label">PASSWORD</span>
-            <input type="password" placeholder="PASSWORD" ng-model="authCtrl.user.password">
+            <input name="password" type="password" placeholder="PASSWORD" ng-model="authCtrl.user.password">
           </label>
         </div>
         <button type="submit" class="button button-positive button-block">SIGN IN</button>
