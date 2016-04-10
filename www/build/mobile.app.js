@@ -87,6 +87,7 @@
       'ionic-native-transitions',
       'ngMessages',
       'ngCookies',
+      'ngCordovaOauth',
 
       // core
       'common',
@@ -259,9 +260,9 @@
     .module('zaya-auth')
     .controller('authController', authController)
 
-  authController.$inject = ['$state', 'Auth', 'audio', '$rootScope', '$ionicPopup','$log'];
+  authController.$inject = ['$state', 'Auth', 'audio', '$rootScope', '$ionicPopup','$log','$cordovaOauth', 'CONSTANT'];
 
-  function authController($state, Auth, audio, $rootScope, $ionicPopup, $log) {
+  function authController($state, Auth, audio, $rootScope, $ionicPopup, $log, $cordovaOauth, CONSTANT) {
     var authCtrl = this;
     var email_regex = /\S+@\S+/;
     var indian_phone_regex = /^[7-9][0-9]{9}$/;
@@ -275,6 +276,7 @@
     authCtrl.rootScope = $rootScope;
     authCtrl.validCredential = validCredential;
     authCtrl.showError = showError;
+    authCtrl.getToken = getToken;
 
     function validEmail(email) {
       return email_regex.test(email);
@@ -286,14 +288,30 @@
       return username_regex.test(username);
     }
 
-    function login(user_credentials) {
-      user_credentials = cleanCredentials(user_credentials);
-      Auth.login(user_credentials, function(response) {
+    function login(url, user_credentials) {
+      user_credentials = ( url == 'login' )? cleanCredentials(user_credentials) : user_credentials;
+      Auth.login(url, user_credentials, function(response) {
         $state.go('user.main.home', {});
       }, function(response) {
         authCtrl.showError(_.chain(response.data).keys().first(),response.data[_.chain(response.data).keys().first()].toString());
         authCtrl.audio.play('wrong');
       })
+    }
+    function getToken(webservice) {
+      if(webservice=='facebook'){
+        $cordovaOauth.facebook(CONSTANT.CLIENTID.FACEBOOK, ["email"]).then(function(result) {
+            authCtrl.login('facebook',{"access_token" : result.access_token});
+        }, function(error) {
+            authCtrl.showError("Error", error);
+        });
+      }
+      if(webservice == 'google'){
+        $cordovaOauth.google(CONSTANT.CLIENTID.GOOGLE, ["email"]).then(function(result) {
+          authCtrl.login('google',{"access_token" : result.access_token});
+        }, function(error) {
+          authCtrl.showError("Error", error);
+        });
+      }
     }
 
     function signup(user_credentials) {
@@ -387,9 +405,9 @@
         .module('zaya-auth')
         .factory('Auth', Auth)
 
-    Auth.$inject = ['Restangular','CONSTANT', '$cookies'];
+    Auth.$inject = ['Restangular','CONSTANT', '$cookies','$log'];
 
-    function Auth(Restangular,CONSTANT, $cookies){
+    function Auth(Restangular,CONSTANT, $cookies, $log){
       var rest_auth = Restangular.withConfig(function(RestangularConfigurer) {
           RestangularConfigurer.setBaseUrl(CONSTANT.BACKEND_SERVICE_DOMAIN+'/rest-auth');
           RestangularConfigurer.setRequestSuffix('/');
@@ -398,9 +416,9 @@
           });
       });
       return {
-        login : function(user_credentials, success, failure){
-          rest_auth.all('login').post($.param(user_credentials)).then(function(response){
-            localStorage.setItem('Authorization',response.key);
+        login : function(url, user_credentials, success, failure){
+          rest_auth.all(url).post($.param(user_credentials)).then(function(response){
+            localStorage.setItem('Authorization',response.key || response.token);
             success(response);
           },function(response){
             failure(response);
@@ -511,7 +529,7 @@
   angular
     .module('common')
     .constant('CONSTANT',{
-      'BACKEND_SERVICE_DOMAIN' : 'http://192.168.10.194:9000',
+      'BACKEND_SERVICE_DOMAIN' : 'http://192.168.1.7:9000',
       'PATH' : {
         'INTRO' : ROOT+'/intro',
         'AUTH' : ROOT+'/auth',
@@ -527,6 +545,10 @@
         'MAP' : ROOT + '/map'
       },
       'VIEW' : '.view.html',
+      'CLIENTID' : {
+        'FACEBOOK' : '1159750564044149',
+        'GOOGLE' : '1011514043276-7q3kvn29jkegl2d1v7dtlbtipqqgo1rr.apps.googleusercontent.com'
+      }
     })
 })();
 

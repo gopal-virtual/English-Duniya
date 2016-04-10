@@ -1,22 +1,24 @@
 <ion-view>
   <ion-content>
     <div class="row">
-      <form name="authForm" class="col padding-30" ng-submit="authCtrl.validCredential(authForm) && authCtrl.login({'useridentity':authCtrl.user.useridentity, 'password':authCtrl.user.password})">
-        <h4 class="text-right"><a ui-sref="auth.signup">NEW USER</a></h4>
-        <h4 class="text-right"><a ui-sref="auth.forgot">FORGOT PASSWORD?</a></h4>
-        <div class="list">
-          <label for="" class="item item-input item-floating-label"><span class="input-label">USERNAME / EMAIL / PHONE NO.</span>
-            <input name="useridentity" type="text" placeholder="USERNAME / EMAIL / PHONE NO." ng-model="authCtrl.user.useridentity">
-          </label>
-          <label for="" class="item item-input item-floating-label"><span class="input-label">PASSWORD</span>
-            <input name="password" type="password" placeholder="PASSWORD" ng-model="authCtrl.user.password">
-          </label>
-        </div>
-        <button type="submit" class="button button-positive button-block">SIGN IN</button>
-        <br><hr><br>
-        <button type="button" class="button button-assertive button-block icon-left ion-social-facebook">SIGNIN WITH GMAIL</button>
-        <button type="button" class="button bg-brand text-white button-block icon-left ion-social-google">SIGNIN WITH FACEBOOK</button>
-      </form>
+      <div class="col padding-30" >
+        <form name="authForm" ng-submit="authCtrl.validCredential(authForm) && authCtrl.login('login',{'useridentity':authCtrl.user.useridentity, 'password':authCtrl.user.password})">
+          <h4 class="text-right"><a ui-sref="auth.signup">NEW USER</a></h4>
+          <h4 class="text-right"><a ui-sref="auth.forgot">FORGOT PASSWORD?</a></h4>
+          <div class="list">
+            <label for="" class="item item-input item-floating-label"><span class="input-label">USERNAME / EMAIL / PHONE NO.</span>
+              <input name="useridentity" type="text" placeholder="USERNAME / EMAIL / PHONE NO." ng-model="authCtrl.user.useridentity">
+            </label>
+            <label for="" class="item item-input item-floating-label"><span class="input-label">PASSWORD</span>
+              <input name="password" type="password" placeholder="PASSWORD" ng-model="authCtrl.user.password">
+            </label>
+          </div>
+          <button type="submit" class="button button-positive button-block">SIGN IN</button>
+          <br><hr><br>
+        </form>
+        <button type="button" ng-click="authCtrl.getToken('google')" class="button button-assertive button-block icon-left ion-social-facebook">SIGNIN WITH GMAIL</button>
+        <button type="button" ng-click="authCtrl.getToken('facebook')" class="button button-positive button-block icon-left ion-social-google">SIGNIN WITH FACEBOOK</button>
+      </div>
     </div>
   </ion-content>
 </ion-view>

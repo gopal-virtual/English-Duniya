@@ -5,9 +5,9 @@
     .module('zaya-auth')
     .controller('authController', authController)
 
-  authController.$inject = ['$state', 'Auth', 'audio', '$rootScope', '$ionicPopup','$log'];
+  authController.$inject = ['$state', 'Auth', 'audio', '$rootScope', '$ionicPopup','$log','$cordovaOauth', 'CONSTANT'];
 
-  function authController($state, Auth, audio, $rootScope, $ionicPopup, $log) {
+  function authController($state, Auth, audio, $rootScope, $ionicPopup, $log, $cordovaOauth, CONSTANT) {
     var authCtrl = this;
     var email_regex = /\S+@\S+/;
     var indian_phone_regex = /^[7-9][0-9]{9}$/;
@@ -21,6 +21,7 @@
     authCtrl.rootScope = $rootScope;
     authCtrl.validCredential = validCredential;
     authCtrl.showError = showError;
+    authCtrl.getToken = getToken;
 
     function validEmail(email) {
       return email_regex.test(email);
@@ -32,14 +33,30 @@
       return username_regex.test(username);
     }
 
-    function login(user_credentials) {
-      user_credentials = cleanCredentials(user_credentials);
-      Auth.login(user_credentials, function(response) {
+    function login(url, user_credentials) {
+      user_credentials = ( url == 'login' )? cleanCredentials(user_credentials) : user_credentials;
+      Auth.login(url, user_credentials, function(response) {
         $state.go('user.main.home', {});
       }, function(response) {
         authCtrl.showError(_.chain(response.data).keys().first(),response.data[_.chain(response.data).keys().first()].toString());
         authCtrl.audio.play('wrong');
       })
+    }
+    function getToken(webservice) {
+      if(webservice=='facebook'){
+        $cordovaOauth.facebook(CONSTANT.CLIENTID.FACEBOOK, ["email"]).then(function(result) {
+            authCtrl.login('facebook',{"access_token" : result.access_token});
+        }, function(error) {
+            authCtrl.showError("Error", error);
+        });
+      }
+      if(webservice == 'google'){
+        $cordovaOauth.google(CONSTANT.CLIENTID.GOOGLE, ["email"]).then(function(result) {
+          authCtrl.login('google',{"access_token" : result.access_token});
+        }, function(error) {
+          authCtrl.showError("Error", error);
+        });
+      }
     }
 
     function signup(user_credentials) {

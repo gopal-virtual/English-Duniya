@@ -9,6 +9,7 @@
       'ionic-native-transitions',
       'ngMessages',
       'ngCookies',
+      'ngCordovaOauth',
 
       // core
       'common',
