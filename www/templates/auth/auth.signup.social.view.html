@@ -1,11 +1,11 @@
 <ion-view>
   <ion-content>
     <div class="row">
-      <form novalidate name="authForm" class="col padding-30" ng-submit="authCtrl.validCredential(authForm) && authCtrl.signup({'useridentity':authCtrl.user.useridentity,'password1':authCtrl.user.password,'password2':authCtrl.user.password,'email':authCtrl.user.email})">
+      <form novalidate name="authForm" class="col padding-30" ng-submit="authCtrl.validCredential(authForm) && authCtrl.signup({'phone_number':authCtrl.user.phone_number,'password1':authCtrl.user.password,'password2':authCtrl.user.password,'email':authCtrl.user.email})">
         <h4 class="text-right"><a ui-sref="auth.signin">ALREADY EXIST</a></h4>
         <div class="list">
-          <label for="" class="item item-input item-floating-label"><span class="input-label">USERNAME / PHONE NUMBER</span>
-            <input name="useridentity" type="text" placeholder="USERNAME / PHONE NUMBER" ng-model="authCtrl.user.useridentity">
+          <label for="" class="item item-input item-floating-label"><span class="input-label">PHONE NUMBER</span>
+            <input name="phone_number" type="number" placeholder="PHONE NUMBER" ng-model="authCtrl.user.phone_number">
           </label>
           <label for="" class="item item-input item-floating-label"><span class="input-label">EMAIL</span>
             <input name="email" type="email" placeholder="EMAIL" ng-model="authCtrl.user.email">

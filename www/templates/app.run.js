@@ -18,7 +18,7 @@
           catch(e){}
         }
         //if not authenticated, redirect to login page
-        if(!Auth.isAuthorised() && toState.name!='auth.signin' && toState.name!='auth.signup' && toState.name!='auth.forgot'){
+        if(!Auth.isAuthorised() && toState.name!='auth.signin' && toState.name!='auth.signup' && toState.name!='auth.forgot'  && toState.name!='auth.verify_phone_number'){
           $log.debug("You are not authorized");
           event.preventDefault();
           $state.go('auth.signin');

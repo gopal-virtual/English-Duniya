@@ -66,5 +66,20 @@
           }
         }
       })
+      .state('auth.verify_phone_number', {
+        url: '/verify/phone_number',
+        nativeTransitions: {
+          "type": "slide",
+          "direction": "left",
+          "duration" :  400
+        },
+        views: {
+          'state-auth': {
+            // templateUrl: CONSTANT.PATH.AUTH + '/auth.signup' + CONSTANT.VIEW,
+            templateUrl: CONSTANT.PATH.AUTH + '/auth.verify.phonenumber' + CONSTANT.VIEW,
+            controller: 'authController as authCtrl'
+          }
+        }
+      })
   }
 })();

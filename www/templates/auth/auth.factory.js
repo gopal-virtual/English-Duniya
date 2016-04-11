@@ -40,13 +40,20 @@
             failure(response);
           })
         },
-        reset : function (email,type,success,failure) {
+        reset : function (email,atype,success,failure) {
           type=='password' && rest_auth.all('password').all('reset').post(email);
           type=='username' && rest_auth.all('username').all('reset').post(email);
         },
         isAuthorised : function(){
           return localStorage.Authorization;
-        }
+        },
+        verifyOtp : function(verification_credentials,success,failure){
+          rest_auth.all('sms-verification').post($.param(verification_credentials),success,failure).then(function(response){
+            success(response);
+          },function(response){
+            failure(response);
+          })
+        },
       }
     }
 })();
