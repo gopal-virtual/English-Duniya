@@ -14,7 +14,7 @@
     //var username_regex = /^[a-z0-9]*$/;
     var min = 5;
     var max = 50;
-    var country_code;
+    var country_code = '+91';
     authCtrl.audio = audio;
     authCtrl.login = login;
     authCtrl.signup = signup;
@@ -65,7 +65,7 @@
     function signup(user_credentials) {
       user_credentials = cleanCredentials(user_credentials);
       Auth.signup(user_credentials, function (response) {
-        $state.go('auth.verify_phone_number', {});
+        $state.go('auth.verify.phone', {});
       }, function (response) {
         authCtrl.showError(_.chain(response.data).keys().first(), response.data[_.chain(response.data).keys().first()].toString());
         authCtrl.audio.play('wrong');
@@ -77,7 +77,7 @@
         user_credentials['email'] = user_credentials.useridentity;
       }
       else if (!isNaN(parseInt(user_credentials.useridentity, 10)) && validPhoneNumber(parseInt(user_credentials.useridentity, 10))) {
-        user_credentials['phone_number'] = country_code + parseInt(user_credentials.useridentity, 10);
+        user_credentials['phone_number'] = country_code + user_credentials.useridentity;
       }
       delete user_credentials['useridentity'];
       return user_credentials;
@@ -85,12 +85,16 @@
 
     function validCredential(formData) {
       $log.debug(formData);
-      if (!formData.phone_number.$viewValue) {
-        authCtrl.showError("Phone Number", "Its empty! Enter a valid phone number");
+      if (!formData.useridentity.$viewValue) {
+        authCtrl.showError("Empty", "Its empty! Enter a valid phone number or email");
         return false;
       }
-      else if (formData.phone_number.$viewValue && !isNaN(parseInt(formData.phone_number.$viewValue, 10)) && !validPhoneNumber(formData.phone_number.$viewValue)) {
-        authCtrl.showError("Phone", "Enter a Indian valid phone number");
+      else if (formData.useridentity.$viewValue && !isNaN(parseInt(formData.useridentity.$viewValue, 10)) && !validPhoneNumber(formData.useridentity.$viewValue)) {
+        authCtrl.showError("Phone", "Oops! Please enter a valid mobile no.");
+        return false;
+      }
+      else if(formData.useridentity.$viewValue && formData.useridentity.$viewValue.indexOf('@')!=-1 && !validEmail(formData.useridentity.$viewValue)){
+        authCtrl.showError("Email","Oops! Please enter a valid email");
         return false;
       }
       else if (!formData.password.$viewValue) {
@@ -106,7 +110,7 @@
         return false;
       }
       else if (formData.email && formData.email.$viewValue && !formData.email.$valid) {
-        authCtrl.showError("Email", "Enter a valid email");
+        authCtrl.showError("Email", "Oops! Please enter a valid email");
         return false;
       }
       return true;

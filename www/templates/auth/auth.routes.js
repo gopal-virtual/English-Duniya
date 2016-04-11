@@ -66,16 +66,24 @@
           }
         }
       })
-      .state('auth.verify_phone_number', {
-        url: '/verify/phone_number',
+      .state('auth.verify',{
+        abstract : true,
+        url : '/verify',
+        views : {
+          "state-auth" : {
+            template : "<ion-nav-view name='state-auth-verify'></ion-nav-view>"
+          }
+        }
+      })
+      .state('auth.verify.phone', {
+        url: '/phone',
         nativeTransitions: {
           "type": "slide",
           "direction": "left",
           "duration" :  400
         },
         views: {
-          'state-auth': {
-            // templateUrl: CONSTANT.PATH.AUTH + '/auth.signup' + CONSTANT.VIEW,
+          'state-auth-verify': {
             templateUrl: CONSTANT.PATH.AUTH + '/auth.verify.phonenumber' + CONSTANT.VIEW,
             controller: 'authController as authCtrl'
           }
