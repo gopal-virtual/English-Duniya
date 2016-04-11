@@ -5,9 +5,9 @@
         .module('zaya-auth')
         .factory('Auth', Auth)
 
-    Auth.$inject = ['Restangular','CONSTANT', '$cookies'];
+    Auth.$inject = ['Restangular','CONSTANT', '$cookies','$log'];
 
-    function Auth(Restangular,CONSTANT, $cookies){
+    function Auth(Restangular,CONSTANT, $cookies, $log){
       var rest_auth = Restangular.withConfig(function(RestangularConfigurer) {
           RestangularConfigurer.setBaseUrl(CONSTANT.BACKEND_SERVICE_DOMAIN+'/rest-auth');
           RestangularConfigurer.setRequestSuffix('/');
@@ -16,9 +16,9 @@
           });
       });
       return {
-        login : function(user_credentials, success, failure){
-          rest_auth.all('login').post($.param(user_credentials)).then(function(response){
-            localStorage.setItem('Authorization',response.key);
+        login : function(url, user_credentials, success, failure){
+          rest_auth.all(url).post($.param(user_credentials)).then(function(response){
+            localStorage.setItem('Authorization',response.key || response.token);
             success(response);
           },function(response){
             failure(response);

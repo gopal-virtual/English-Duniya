@@ -87,6 +87,7 @@
       'ionic-native-transitions',
       'ngMessages',
       'ngCookies',
+      'ngCordovaOauth',
 
       // core
       'common',
@@ -259,9 +260,9 @@
     .module('zaya-auth')
     .controller('authController', authController)
 
-  authController.$inject = ['$state', 'Auth', 'audio', '$rootScope', '$ionicPopup','$log'];
+  authController.$inject = ['$state', 'Auth', 'audio', '$rootScope', '$ionicPopup','$log','$cordovaOauth', 'CONSTANT'];
 
-  function authController($state, Auth, audio, $rootScope, $ionicPopup, $log) {
+  function authController($state, Auth, audio, $rootScope, $ionicPopup, $log, $cordovaOauth, CONSTANT) {
     var authCtrl = this;
     var email_regex = /\S+@\S+/;
     var indian_phone_regex = /^[7-9][0-9]{9}$/;
@@ -269,7 +270,6 @@
     var min = 5;
     var max = 50;
     var country_code;
-
     authCtrl.audio = audio;
     authCtrl.login = login;
     authCtrl.signup = signup;
@@ -278,46 +278,61 @@
     authCtrl.showError = showError;
     authCtrl.verifyOtpValidations = verifyOtpValidations;
     authCtrl.verifyOtp = verifyOtp;
-
-
+    authCtrl.getToken = getToken;
     function validEmail(email) {
       return email_regex.test(email);
     }
-    function validPhoneNumber(number){
+
+    function validPhoneNumber(number) {
       return indian_phone_regex.test(number);
     }
+
     //function validUsername(username) {
     //  return username_regex.test(username);
     //}
-
-    function login(user_credentials) {
-      user_credentials = cleanCredentials(user_credentials);
-      Auth.login(user_credentials, function(response) {
+    function login(url, user_credentials) {
+      user_credentials = ( url == 'login' ) ? cleanCredentials(user_credentials) : user_credentials;
+      Auth.login(url, user_credentials, function (response) {
         $state.go('user.main.home', {});
-      }, function(response) {
-        authCtrl.showError(_.chain(response.data).keys().first(),response.data[_.chain(response.data).keys().first()].toString());
+      }, function (response) {
+        authCtrl.showError(_.chain(response.data).keys().first(), response.data[_.chain(response.data).keys().first()].toString());
         authCtrl.audio.play('wrong');
       })
     }
 
+    function getToken(webservice) {
+      if (webservice == 'facebook') {
+        $cordovaOauth.facebook(CONSTANT.CLIENTID.FACEBOOK, ["email"]).then(function (result) {
+          authCtrl.login('facebook', {"access_token": result.access_token});
+        }, function (error) {
+          authCtrl.showError("Error", error);
+        });
+      }
+      if (webservice == 'google') {
+        $cordovaOauth.google(CONSTANT.CLIENTID.GOOGLE, ["email"]).then(function (result) {
+          authCtrl.login('google', {"access_token": result.access_token});
+        }, function (error) {
+          authCtrl.showError("Error", error);
+        });
+      }
+    }
+
     function signup(user_credentials) {
       user_credentials = cleanCredentials(user_credentials);
-      Auth.signup(user_credentials, function(response) {
+      Auth.signup(user_credentials, function (response) {
         $state.go('auth.verify_phone_number', {});
-      }, function(response) {
-        authCtrl.showError(_.chain(response.data).keys().first(),response.data[_.chain(response.data).keys().first()].toString());
+      }, function (response) {
+        authCtrl.showError(_.chain(response.data).keys().first(), response.data[_.chain(response.data).keys().first()].toString());
         authCtrl.audio.play('wrong');
       })
     }
 
     function cleanCredentials(user_credentials) {
-      if(validEmail(user_credentials.useridentity))
-      {
+      if (validEmail(user_credentials.useridentity)) {
         user_credentials['email'] = user_credentials.useridentity;
       }
-      else if(!isNaN(parseInt(user_credentials.useridentity,10)) && validPhoneNumber(parseInt(user_credentials.useridentity,10)))
-      {
-        user_credentials['phone_number'] = country_code+parseInt(user_credentials.useridentity,10);
+      else if (!isNaN(parseInt(user_credentials.useridentity, 10)) && validPhoneNumber(parseInt(user_credentials.useridentity, 10))) {
+        user_credentials['phone_number'] = country_code + parseInt(user_credentials.useridentity, 10);
       }
       delete user_credentials['useridentity'];
       return user_credentials;
@@ -325,28 +340,28 @@
 
     function validCredential(formData) {
       $log.debug(formData);
-      if(!formData.phone_number.$viewValue){
-        authCtrl.showError("Phone Number","Its empty! Enter a valid phone number");
+      if (!formData.phone_number.$viewValue) {
+        authCtrl.showError("Phone Number", "Its empty! Enter a valid phone number");
         return false;
       }
-      else if(formData.phone_number.$viewValue && !isNaN(parseInt(formData.phone_number.$viewValue,10)) && !validPhoneNumber(formData.phone_number.$viewValue)){
-        authCtrl.showError("Phone","Enter a Indian valid phone number");
+      else if (formData.phone_number.$viewValue && !isNaN(parseInt(formData.phone_number.$viewValue, 10)) && !validPhoneNumber(formData.phone_number.$viewValue)) {
+        authCtrl.showError("Phone", "Enter a Indian valid phone number");
         return false;
       }
-      else if(!formData.password.$viewValue){
-        authCtrl.showError("Password","Its empty! Enter a valid password");
+      else if (!formData.password.$viewValue) {
+        authCtrl.showError("Password", "Its empty! Enter a valid password");
         return false;
       }
-      else if(formData.password.$viewValue.length < min){
-        authCtrl.showError("Password","Minimum "+min+" characters required");
+      else if (formData.password.$viewValue.length < min) {
+        authCtrl.showError("Password", "Minimum " + min + " characters required");
         return false;
       }
-      else if(formData.password.$viewValue.length > max){
-        authCtrl.showError("Password","Maximum "+max+" can be used");
+      else if (formData.password.$viewValue.length > max) {
+        authCtrl.showError("Password", "Maximum " + max + " can be used");
         return false;
       }
-      else if(formData.email && formData.email.$viewValue && !formData.email.$valid){
-        authCtrl.showError("Email","Enter a valid email");
+      else if (formData.email && formData.email.$viewValue && !formData.email.$valid) {
+        authCtrl.showError("Email", "Enter a valid email");
         return false;
       }
       return true;
@@ -360,22 +375,22 @@
       });
     }
 
-    function verifyOtpValidations(formData){
-      if(!formData.otp.$viewValue){
-        authCtrl.showError("OTP","Its empty! Enter the one time password");
+    function verifyOtpValidations(formData) {
+      if (!formData.otp.$viewValue) {
+        authCtrl.showError("OTP", "Its empty! Enter the one time password");
         return false;
       }
       $log.debug("OTP validations passed");
       return true;
     }
 
-    function verifyOtp(otp_credentials){
+    function verifyOtp(otp_credentials) {
       $log.debug(JSON.stringify(otp_credentials));
-      Auth.verifyOtp(otp_credentials,function(success){
+      Auth.verifyOtp(otp_credentials, function (success) {
         $log.debug("OTP verified");
         $state.go('user.personalise.social', {});
-      },function(error){
-        authCtrl.showError("Incorrect OTP!","The one time password you entered is incorrect!");
+      }, function (error) {
+        authCtrl.showError("Incorrect OTP!", "The one time password you entered is incorrect!");
       })
     }
   }
@@ -388,9 +403,9 @@
         .module('zaya-auth')
         .factory('Auth', Auth)
 
-    Auth.$inject = ['Restangular','CONSTANT', '$cookies'];
+    Auth.$inject = ['Restangular','CONSTANT', '$cookies','$log'];
 
-    function Auth(Restangular,CONSTANT, $cookies){
+    function Auth(Restangular,CONSTANT, $cookies, $log){
       var rest_auth = Restangular.withConfig(function(RestangularConfigurer) {
           RestangularConfigurer.setBaseUrl(CONSTANT.BACKEND_SERVICE_DOMAIN+'/rest-auth');
           RestangularConfigurer.setRequestSuffix('/');
@@ -399,9 +414,9 @@
           });
       });
       return {
-        login : function(user_credentials, success, failure){
-          rest_auth.all('login').post($.param(user_credentials)).then(function(response){
-            localStorage.setItem('Authorization',response.key);
+        login : function(url, user_credentials, success, failure){
+          rest_auth.all(url).post($.param(user_credentials)).then(function(response){
+            localStorage.setItem('Authorization',response.key || response.token);
             success(response);
           },function(response){
             failure(response);
@@ -534,7 +549,7 @@
   angular
     .module('common')
     .constant('CONSTANT',{
-      'BACKEND_SERVICE_DOMAIN' : 'http://192.168.10.194:9000',
+      'BACKEND_SERVICE_DOMAIN' : 'http://192.168.1.7:9000',
       'PATH' : {
         'INTRO' : ROOT+'/intro',
         'AUTH' : ROOT+'/auth',
@@ -550,6 +565,10 @@
         'MAP' : ROOT + '/map'
       },
       'VIEW' : '.view.html',
+      'CLIENTID' : {
+        'FACEBOOK' : '1159750564044149',
+        'GOOGLE' : '1011514043276-7q3kvn29jkegl2d1v7dtlbtipqqgo1rr.apps.googleusercontent.com'
+      }
     })
 })();
 

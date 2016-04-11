@@ -4,7 +4,7 @@
   angular
     .module('common')
     .constant('CONSTANT',{
-      'BACKEND_SERVICE_DOMAIN' : 'http://192.168.10.194:9000',
+      'BACKEND_SERVICE_DOMAIN' : 'http://192.168.1.7:9000',
       'PATH' : {
         'INTRO' : ROOT+'/intro',
         'AUTH' : ROOT+'/auth',
@@ -20,5 +20,9 @@
         'MAP' : ROOT + '/map'
       },
       'VIEW' : '.view.html',
+      'CLIENTID' : {
+        'FACEBOOK' : '1159750564044149',
+        'GOOGLE' : '1011514043276-7q3kvn29jkegl2d1v7dtlbtipqqgo1rr.apps.googleusercontent.com'
+      }
     })
 })();
