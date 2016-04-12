@@ -31,6 +31,7 @@
     authCtrl.counter = 10;
     authCtrl.startCounter = startCounter;
     authCtrl.stopCounter = stopCounter;
+    authCtrl.signUpDisabled = false;
     function validEmail(email) {
       return email_regex.test(email);
     }
@@ -71,11 +72,14 @@
 
     function signup(user_credentials) {
       user_credentials = cleanCredentials(user_credentials);
+      authCtrl.signUpDisabled = true;
       Auth.signup(user_credentials, function (response) {
         $state.go('auth.verify.phone', {});
+        authCtrl.signUpDisabled = false;
       }, function (response) {
         authCtrl.showError(_.chain(response.data).keys().first(), response.data[_.chain(response.data).keys().first()].toString());
         authCtrl.audio.play('wrong');
+        authCtrl.signUpDisabled = false;
       })
     }
     function cleanCredentials(user_credentials) {

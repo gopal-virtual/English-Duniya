@@ -17,7 +17,7 @@
             <ion-checkbox ng-model="show_password">Show Password</ion-checkbox>
           </ion-list>
         </div>
-        <button tabindex="4" class="button button-block button-positive">SIGN UP</button>
+        <button ng-disabled="authCtrl.signUpDisabled" tabindex="4" class="button button-block button-positive">SIGN UP</button>
         <br><hr><br>
         </form>
     </div>
