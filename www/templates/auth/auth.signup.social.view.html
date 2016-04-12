@@ -3,7 +3,7 @@
     <div class="row">
       <form novalidate name="authForm" class="col padding-30" ng-submit="authCtrl.validCredential(authForm) && authCtrl.signup({'useridentity':authCtrl.user.useridentity,'password1':authCtrl.user.password,'password2':authCtrl.user.password,'email':authCtrl.user.email})">
         <h4 class="text-right"><a ui-sref="auth.signin">ALREADY EXIST</a></h4>
-        <div class="list">
+        <div class="list" ng-init="show_password = false">
           <label for="" class="item item-input item-floating-label"><span class="input-label">PHONE NUMBER</span>
             <input tabindex="1" name="useridentity" type="number" placeholder="PHONE NUMBER" ng-model="authCtrl.user.useridentity">
           </label>
@@ -11,14 +11,21 @@
             <input tabindex="2" name="email" type="email" placeholder="EMAIL" ng-model="authCtrl.user.email">
           </label>
           <label for="" class="item item-input item-floating-label"><span class="input-label">PASSWORD</span>
-            <input tabindex="3" name="password" type="password" placeholder="PASSWORD" ng-model="authCtrl.user.password">
+            <input tabindex="3" name="password"  type="{{show_password==false?'password':'text'}}" placeholder="PASSWORD" ng-model="authCtrl.user.password">
           </label>
+          <ion-list>
+            <ion-checkbox ng-model="show_password">Show Password</ion-checkbox>
+          </ion-list>
         </div>
         <button tabindex="4" class="button button-block button-positive">SIGN UP</button>
         <br><hr><br>
-        <button tabindex="5" class="button button-block button-assertive icon-left ion-social-google">SIGNUP WITH GOOGLE</button>
-        <button tabindex="6" class="button button-block bg-brand text-white icon-left ion-social-facebook">SIGNUP WITH FACEBOOK</button>
-      </form>
+        </form>
     </div>
+    <div class="row padding-30">
+      <div class="col">
+        <button tabindex="5" ng-click="authCtrl.getToken('google')" class="button button-block button-assertive icon-left ion-social-google">SIGNUP WITH GOOGLE</button>
+        <button tabindex="6" ng-click="authCtrl.getToken('facebook')" class="button button-block bg-brand text-white icon-left ion-social-facebook">SIGNUP WITH FACEBOOK</button>
+      </div>
+      </div>
   </ion-content>
 </ion-view>

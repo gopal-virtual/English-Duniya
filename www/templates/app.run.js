@@ -17,12 +17,21 @@
           }
           catch(e){}
         }
+
         //if not authenticated, redirect to login page
         if(!Auth.isAuthorised() && toState.name!='auth.signin' && toState.name!='auth.signup' && toState.name!='auth.forgot'  && toState.name!='auth.verify_phone_number'){
           $log.debug("You are not authorized");
           event.preventDefault();
           $state.go('auth.signin');
         }
+        // if authenticated but not verified redirect to OTP page
+          if(Auth.isAuthorised() && !Auth.isVerified() && toState.name!= 'auth.verify.phone')
+          {
+            $log.debug("User account not verified");
+            event.preventDefault();
+            $state.go('auth.verify.phone');
+          }
+
         //if authenticated, redirect to userpage
         if(Auth.isAuthorised() && (toState.name=='auth.signin' || toState.name=='auth.signup' || toState.name=='intro')){
           $log.debug("You are authorized");
