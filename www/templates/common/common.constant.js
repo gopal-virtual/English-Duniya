@@ -4,7 +4,7 @@
   angular
     .module('common')
     .constant('CONSTANT',{
-      'BACKEND_SERVICE_DOMAIN' : 'http://192.168.10.121:9000',
+      'BACKEND_SERVICE_DOMAIN' : 'http://192.168.10.194:9000',
       'PATH' : {
         'INTRO' : ROOT+'/intro',
         'AUTH' : ROOT+'/auth',

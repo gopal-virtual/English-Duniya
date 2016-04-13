@@ -12,8 +12,8 @@
     var email_regex = /\S+@\S+/;
     var indian_phone_regex = /^[7-9][0-9]{9}$/;
     //var username_regex = /^[a-z0-9]*$/;
-    var min = 5;
-    var max = 50;
+    var min = 6;
+    var max = 15;
     var country_code = '+91';
     authCtrl.audio = audio;
     authCtrl.login = login;
