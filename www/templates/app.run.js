@@ -39,6 +39,12 @@
           event.preventDefault();
           $state.go('user.main.home');
         }
+        //if authenticated and verified, redirect to userpage
+        if(Auth.isAuthorised() && Auth.isVerified() && (toState.name=='auth.verfy.phone')){
+          $log.debug("You are authorized and verified");
+          event.preventDefault();
+          $state.go('user.main.home');
+      }
         // block access to quiz summary page if there is no quiz data
         if(toState.name == 'quiz.summary' && !toParams.quizSummary){
             $log.debug("Quiz summary page cannot be accessed : No quiz data present");
