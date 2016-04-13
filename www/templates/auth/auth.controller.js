@@ -5,9 +5,9 @@
     .module('zaya-auth')
     .controller('authController', authController)
 
-  authController.$inject = ['$state', 'Auth', 'audio', '$rootScope', '$ionicPopup','$log','$cordovaOauth', 'CONSTANT'];
+  authController.$inject = ['$state', 'Auth', 'audio', '$rootScope', '$ionicPopup','$log','$cordovaOauth', 'CONSTANT','$interval'];
 
-  function authController($state, Auth, audio, $rootScope, $ionicPopup, $log, $cordovaOauth, CONSTANT) {
+  function authController($state, Auth, audio, $rootScope, $ionicPopup, $log, $cordovaOauth, CONSTANT, $interval) {
     var authCtrl = this;
     var email_regex = /\S+@\S+/;
     var indian_phone_regex = /^[7-9][0-9]{9}$/;
@@ -21,9 +21,17 @@
     authCtrl.rootScope = $rootScope;
     authCtrl.validCredential = validCredential;
     authCtrl.showError = showError;
+    authCtrl.showAlert = showAlert;
     authCtrl.verifyOtpValidations = verifyOtpValidations;
     authCtrl.verifyOtp = verifyOtp;
     authCtrl.getToken = getToken;
+    authCtrl.passwordResetRequest = passwordResetRequest;
+    authCtrl.validateForgotPasswordForm = validateForgotPasswordForm;
+    authCtrl.resendOTP = resendOTP;
+    authCtrl.counter = 60;
+    authCtrl.startCounter = startCounter;
+    authCtrl.stopCounter = stopCounter;
+    authCtrl.signUpDisabled = false;
     function validEmail(email) {
       return email_regex.test(email);
     }
@@ -64,14 +72,16 @@
 
     function signup(user_credentials) {
       user_credentials = cleanCredentials(user_credentials);
+      authCtrl.signUpDisabled = true;
       Auth.signup(user_credentials, function (response) {
         $state.go('auth.verify.phone', {});
+        authCtrl.signUpDisabled = false;
       }, function (response) {
         authCtrl.showError(_.chain(response.data).keys().first(), response.data[_.chain(response.data).keys().first()].toString());
         authCtrl.audio.play('wrong');
+        authCtrl.signUpDisabled = false;
       })
     }
-
     function cleanCredentials(user_credentials) {
       if (validEmail(user_credentials.useridentity)) {
         user_credentials['email'] = user_credentials.useridentity;
@@ -124,6 +134,14 @@
       });
     }
 
+    function showAlert(title, msg) {
+      $log.debug(title, msg);
+      $ionicPopup.alert({
+        title: title,
+        template: msg
+      });
+    }
+
     function verifyOtpValidations(formData) {
       if (!formData.otp.$viewValue) {
         authCtrl.showError("OTP", "Its empty! Enter the one time password");
@@ -136,11 +154,67 @@
     function verifyOtp(otp_credentials) {
       $log.debug(JSON.stringify(otp_credentials));
       Auth.verifyOtp(otp_credentials, function (success) {
-        $log.debug("OTP verified");
-        $state.go('user.personalise.social', {});
+        authCtrl.showAlert("Correct!", "Phone Number verified!");
+        Auth.getUser(function(success){
+          $state.go('user.personalise.social', {});
+        },function(error){
+          authCtrl.showError("Error","Could not verify OTP. Try again");
+        });
       }, function (error) {
         authCtrl.showError("Incorrect OTP!", "The one time password you entered is incorrect!");
       })
     }
+
+    function passwordResetRequest(useridentity) {
+      Auth.resetPassword(useridentity,function(success){
+        authCtrl.showAlert("Reset Password","We have send a link to your email");
+      },function(error){
+
+      })
+    }
+
+    function validateForgotPasswordForm(formData){
+      $log.debug(formData);
+      if (!formData.useridentity.$viewValue) {
+        authCtrl.showError("Empty", "Its empty! Enter a valid phone number or email");
+        return false;
+      }
+      //else if (formData.useridentity.$viewValue && !isNaN(parseInt(formData.useridentity.$viewValue, 10)) && !validPhoneNumber(formData.useridentity.$viewValue)) {
+      //  authCtrl.showError("Phone", "Oops! Please enter a valid mobile no.");
+      //  return false;
+      //}
+      else if(formData.useridentity.$viewValue && formData.useridentity.$viewValue.indexOf('@')==-1 && !validEmail(formData.useridentity.$viewValue)){
+        authCtrl.showError("Email","Oops! Please enter a valid email");
+        return false;
+      }
+      return true;
+    }
+
+    function resendOTP(){
+      Auth.resendOTP(function (success) {
+        authCtrl.showAlert("OTP Sent","We have sent you otp again");
+        authCtrl.startCounter();
+      }, function (error) {
+        authCtrl.showError(error);
+      })
+    }
+
+    function startCounter(){
+      authCtrl.counter = 10;
+      authCtrl.start = $interval(function() {
+        if (authCtrl.counter > 0) {
+          authCtrl.counter--;
+        } else {
+          authCtrl.stopCounter();
+        }
+      }, 1000);
+    }
+
+    function stopCounter(){
+      if (angular.isDefined(authCtrl.start)) {
+        $interval.cancel(authCtrl.start);
+      }
+    }
+
   }
 })();

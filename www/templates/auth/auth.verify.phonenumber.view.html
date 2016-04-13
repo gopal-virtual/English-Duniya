@@ -1,4 +1,4 @@
-<ion-view>
+<ion-view ng-init="authCtrl.startCounter()">
   <ion-content>
     <div class="row">
       <form name="verifyOtpForm" class="col padding-30" ng-submit="authCtrl.verifyOtpValidations(verifyOtpForm) && authCtrl.verifyOtp({'code':authCtrl.verification.otp})">
@@ -11,6 +11,11 @@
         <button type="submit" class="button button-positive button-block">SUBMIT</button>
         <br><hr><br>
       </form>
+
+    </div>
+    <div class="row padding-30">
+      <button ng-disabled="authCtrl.counter > 0" ng-click="authCtrl.resendOTP()" class="button button-positive button-block">DIDN'T RECEIVE YET? RESEND OTP<span ng-if="authCtrl.counter > 0"> IN {{authCtrl.counter}}s</span>
+      </button>
     </div>
   </ion-content>
 </ion-view>

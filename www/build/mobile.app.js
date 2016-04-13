@@ -205,6 +205,7 @@
 
   function runConfig($ionicPlatform, $rootScope, $timeout, $log, $state,$http,$cookies, Auth) {
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
+    //$http.defaults.headers.common['Access-Control-Request-Headers'] = 'accept, auth-token, content-type, xsrfcookiename';
     $rootScope.$on('$stateChangeStart',function(event, toState, toParams, fromState, fromParams){
         // alternative to phaser destroy() ; phaser destroy doesn't remove canvas element
         if(toState.name!='user.main.playlist'){
@@ -215,12 +216,21 @@
           }
           catch(e){}
         }
+
         //if not authenticated, redirect to login page
         if(!Auth.isAuthorised() && toState.name!='auth.signin' && toState.name!='auth.signup' && toState.name!='auth.forgot'  && toState.name!='auth.verify_phone_number'){
           $log.debug("You are not authorized");
           event.preventDefault();
           $state.go('auth.signin');
         }
+        // if authenticated but not verified redirect to OTP page
+          if(Auth.isAuthorised() && !Auth.isVerified() && toState.name!= 'auth.verify.phone')
+          {
+            $log.debug("User account not verified");
+            event.preventDefault();
+            $state.go('auth.verify.phone');
+          }
+
         //if authenticated, redirect to userpage
         if(Auth.isAuthorised() && (toState.name=='auth.signin' || toState.name=='auth.signup' || toState.name=='intro')){
           $log.debug("You are authorized");
@@ -260,9 +270,9 @@
     .module('zaya-auth')
     .controller('authController', authController)
 
-  authController.$inject = ['$state', 'Auth', 'audio', '$rootScope', '$ionicPopup','$log','$cordovaOauth', 'CONSTANT'];
+  authController.$inject = ['$state', 'Auth', 'audio', '$rootScope', '$ionicPopup','$log','$cordovaOauth', 'CONSTANT','$interval'];
 
-  function authController($state, Auth, audio, $rootScope, $ionicPopup, $log, $cordovaOauth, CONSTANT) {
+  function authController($state, Auth, audio, $rootScope, $ionicPopup, $log, $cordovaOauth, CONSTANT, $interval) {
     var authCtrl = this;
     var email_regex = /\S+@\S+/;
     var indian_phone_regex = /^[7-9][0-9]{9}$/;
@@ -276,9 +286,17 @@
     authCtrl.rootScope = $rootScope;
     authCtrl.validCredential = validCredential;
     authCtrl.showError = showError;
+    authCtrl.showAlert = showAlert;
     authCtrl.verifyOtpValidations = verifyOtpValidations;
     authCtrl.verifyOtp = verifyOtp;
     authCtrl.getToken = getToken;
+    authCtrl.passwordResetRequest = passwordResetRequest;
+    authCtrl.validateForgotPasswordForm = validateForgotPasswordForm;
+    authCtrl.resendOTP = resendOTP;
+    authCtrl.counter = 60;
+    authCtrl.startCounter = startCounter;
+    authCtrl.stopCounter = stopCounter;
+    authCtrl.signUpDisabled = false;
     function validEmail(email) {
       return email_regex.test(email);
     }
@@ -319,14 +337,16 @@
 
     function signup(user_credentials) {
       user_credentials = cleanCredentials(user_credentials);
+      authCtrl.signUpDisabled = true;
       Auth.signup(user_credentials, function (response) {
         $state.go('auth.verify.phone', {});
+        authCtrl.signUpDisabled = false;
       }, function (response) {
         authCtrl.showError(_.chain(response.data).keys().first(), response.data[_.chain(response.data).keys().first()].toString());
         authCtrl.audio.play('wrong');
+        authCtrl.signUpDisabled = false;
       })
     }
-
     function cleanCredentials(user_credentials) {
       if (validEmail(user_credentials.useridentity)) {
         user_credentials['email'] = user_credentials.useridentity;
@@ -379,6 +399,14 @@
       });
     }
 
+    function showAlert(title, msg) {
+      $log.debug(title, msg);
+      $ionicPopup.alert({
+        title: title,
+        template: msg
+      });
+    }
+
     function verifyOtpValidations(formData) {
       if (!formData.otp.$viewValue) {
         authCtrl.showError("OTP", "Its empty! Enter the one time password");
@@ -391,73 +419,157 @@
     function verifyOtp(otp_credentials) {
       $log.debug(JSON.stringify(otp_credentials));
       Auth.verifyOtp(otp_credentials, function (success) {
-        $log.debug("OTP verified");
-        $state.go('user.personalise.social', {});
+        authCtrl.showAlert("Correct!", "Phone Number verified!");
+        Auth.getUser(function(success){
+          $state.go('user.personalise.social', {});
+        },function(error){
+          authCtrl.showError("Error","Could not verify OTP. Try again");
+        });
       }, function (error) {
         authCtrl.showError("Incorrect OTP!", "The one time password you entered is incorrect!");
       })
     }
+
+    function passwordResetRequest(useridentity) {
+      Auth.resetPassword(useridentity,function(success){
+        authCtrl.showAlert("Reset Password","We have send a link to your email");
+      },function(error){
+
+      })
+    }
+
+    function validateForgotPasswordForm(formData){
+      $log.debug(formData);
+      if (!formData.useridentity.$viewValue) {
+        authCtrl.showError("Empty", "Its empty! Enter a valid phone number or email");
+        return false;
+      }
+      //else if (formData.useridentity.$viewValue && !isNaN(parseInt(formData.useridentity.$viewValue, 10)) && !validPhoneNumber(formData.useridentity.$viewValue)) {
+      //  authCtrl.showError("Phone", "Oops! Please enter a valid mobile no.");
+      //  return false;
+      //}
+      else if(formData.useridentity.$viewValue && formData.useridentity.$viewValue.indexOf('@')==-1 && !validEmail(formData.useridentity.$viewValue)){
+        authCtrl.showError("Email","Oops! Please enter a valid email");
+        return false;
+      }
+      return true;
+    }
+
+    function resendOTP(){
+      Auth.resendOTP(function (success) {
+        authCtrl.showAlert("OTP Sent","We have sent you otp again");
+        authCtrl.startCounter();
+      }, function (error) {
+        authCtrl.showError(error);
+      })
+    }
+
+    function startCounter(){
+      authCtrl.counter = 10;
+      authCtrl.start = $interval(function() {
+        if (authCtrl.counter > 0) {
+          authCtrl.counter--;
+        } else {
+          authCtrl.stopCounter();
+        }
+      }, 1000);
+    }
+
+    function stopCounter(){
+      if (angular.isDefined(authCtrl.start)) {
+        $interval.cancel(authCtrl.start);
+      }
+    }
+
   }
 })();
 
-(function() {
-    'use strict';
-
-    angular
-        .module('zaya-auth')
-        .factory('Auth', Auth)
-
-    Auth.$inject = ['Restangular','CONSTANT', '$cookies','$log'];
-
-    function Auth(Restangular,CONSTANT, $cookies, $log){
-      var rest_auth = Restangular.withConfig(function(RestangularConfigurer) {
-          RestangularConfigurer.setBaseUrl(CONSTANT.BACKEND_SERVICE_DOMAIN+'/rest-auth');
-          RestangularConfigurer.setRequestSuffix('/');
-          RestangularConfigurer.setDefaultHeaders({
-            'Content-Type':'application/x-www-form-urlencoded',
-          });
+(function () {
+  'use strict';
+  angular
+    .module('zaya-auth')
+    .factory('Auth', Auth)
+  Auth.$inject = ['Restangular', 'CONSTANT', '$cookies', '$log'];
+  function Auth(Restangular, CONSTANT, $cookies, $log) {
+    var rest_auth = Restangular.withConfig(function (RestangularConfigurer) {
+      RestangularConfigurer.setBaseUrl(CONSTANT.BACKEND_SERVICE_DOMAIN + '/rest-auth');
+      RestangularConfigurer.setRequestSuffix('/');
+      RestangularConfigurer.setDefaultHeaders({
+        'Content-Type': 'application/x-www-form-urlencoded',
       });
-      return {
-        login : function(url, user_credentials, success, failure){
-          rest_auth.all(url).post($.param(user_credentials)).then(function(response){
-            localStorage.setItem('Authorization',response.key || response.token);
-            success(response);
-          },function(response){
-            failure(response);
-          })
-        },
-        logout : function(success,failure){
-          rest_auth.all('logout').post().then(function(response){
-            localStorage.removeItem('Authorization');
-            success();
-          },function(error){
-            failure();
-          })
-        },
-        signup : function(user_credentials,success,failure){
-          rest_auth.all('registration').post($.param(user_credentials),success,failure).then(function(response){
-            localStorage.setItem('Authorization',response.key);
-            success(response);
-          },function(response){
-            failure(response);
-          })
-        },
-        reset : function (email,atype,success,failure) {
-          type=='password' && rest_auth.all('password').all('reset').post(email);
-          type=='username' && rest_auth.all('username').all('reset').post(email);
-        },
-        isAuthorised : function(){
-          return localStorage.Authorization;
-        },
-        verifyOtp : function(verification_credentials,success,failure){
-          rest_auth.all('sms-verification').post($.param(verification_credentials),success,failure).then(function(response){
-            success(response);
-          },function(response){
-            failure(response);
-          })
-        },
+    });
+    return {
+      login: function (url, user_credentials, success, failure) {
+        rest_auth.all(url).post($.param(user_credentials)).then(function (response) {
+          localStorage.setItem('Authorization', response.key || response.token);
+          success(response);
+        }, function (response) {
+          failure(response);
+        })
+      },
+      logout: function (success, failure) {
+        rest_auth.all('logout').post().then(function (response) {
+          localStorage.removeItem('Authorization');
+          success();
+        }, function (error) {
+          failure();
+        })
+      },
+      signup: function (user_credentials, success, failure) {
+        rest_auth.all('registration').post($.param(user_credentials), success, failure).then(function (response) {
+          localStorage.setItem('Authorization', response.key);
+          success(response);
+        }, function (response) {
+          failure(response);
+        })
+      },
+      reset: function (email, atype, success, failure) {
+        type == 'password' && rest_auth.all('password').all('reset').post(email);
+        type == 'username' && rest_auth.all('username').all('reset').post(email);
+      },
+      isAuthorised: function () {
+        return localStorage.Authorization;
+      },
+      verifyOtp: function (verification_credentials, success, failure) {
+        rest_auth.all('sms-verification').post($.param(verification_credentials), success, failure).then(function (response) {
+          success(response);
+        }, function (response) {
+          failure(response);
+        })
+      },
+      resetPassword: function (reset_password_credentials, success, failure) {
+        rest_auth.all('password/reset').post($.param(reset_password_credentials), success, failure).then(function (response) {
+          success(response);
+        }, function (response) {
+          failure(response);
+        })
+      },
+      resendOTP: function (success, failure) {
+        rest_auth.all('resend-sms-verification').post('', success, failure).then(function (response) {
+          success(response);
+        }, function (response) {
+          failure(response);
+        })
+      },
+      getUser: function (success, failure) {
+        Restangular.oneUrl('user_details', CONSTANT.BACKEND_SERVICE_DOMAIN + 'rest-auth/user/').get().then(function (response) {
+          localStorage.setItem('user_details', JSON.stringify(response));
+          success(response);
+        }, function (response) {
+          failure(response);
+        });
+      },
+      isVerified: function () {
+        var user_details = JSON.parse(localStorage.getItem('user_details'));
+        if (user_details) {
+          return user_details.is_verified;
+        }
+        else {
+          return false;
+        }
       }
     }
+  }
 })();
 
 (function() {
@@ -561,7 +673,7 @@
   angular
     .module('common')
     .constant('CONSTANT',{
-      'BACKEND_SERVICE_DOMAIN' : 'http://192.168.10.194:9000',
+      'BACKEND_SERVICE_DOMAIN' : 'http://cc-test.zaya.in/',
       'PATH' : {
         'INTRO' : ROOT+'/intro',
         'AUTH' : ROOT+'/auth',
@@ -1189,44 +1301,6 @@ window.createGame = function(scope, injector) {
 })();
 
 (function() {
-    'use strict';
-
-    angular
-        .module('zaya-profile')
-        .controller('profileController', profileController);
-
-    profileController.$inject = ['CONSTANT','$state','Auth'];
-
-    function profileController(CONSTANT, $state, Auth) {
-        var profileCtrl = this;
-        profileCtrl.logout = logout;
-
-        profileCtrl.tabIndex = 0;
-        profileCtrl.tab = [
-          {
-            type : 'group',
-            path : CONSTANT.PATH.PROFILE + '/profile.groups' + CONSTANT.VIEW,
-            icon : 'ion-person-stalker'
-          },
-          {
-            type : 'badge',
-            path : CONSTANT.PATH.PROFILE + '/profile.badges' + CONSTANT.VIEW,
-            icon : 'ion-trophy'
-          }
-        ]
-
-        function logout() {
-          Auth.logout(function () {
-            $state.go('auth.signin',{})
-          },function () {
-            // body...
-          })
-        }
-
-    }
-})();
-
-(function() {
   angular
     .module('zaya-quiz')
     .controller('QuizController', QuizController)
@@ -1475,6 +1549,44 @@ window.createGame = function(scope, injector) {
         }
       })
   }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('zaya-profile')
+        .controller('profileController', profileController);
+
+    profileController.$inject = ['CONSTANT','$state','Auth'];
+
+    function profileController(CONSTANT, $state, Auth) {
+        var profileCtrl = this;
+        profileCtrl.logout = logout;
+
+        profileCtrl.tabIndex = 0;
+        profileCtrl.tab = [
+          {
+            type : 'group',
+            path : CONSTANT.PATH.PROFILE + '/profile.groups' + CONSTANT.VIEW,
+            icon : 'ion-person-stalker'
+          },
+          {
+            type : 'badge',
+            path : CONSTANT.PATH.PROFILE + '/profile.badges' + CONSTANT.VIEW,
+            icon : 'ion-trophy'
+          }
+        ]
+
+        function logout() {
+          Auth.logout(function () {
+            $state.go('auth.signin',{})
+          },function () {
+            // body...
+          })
+        }
+
+    }
 })();
 
 (function() {
