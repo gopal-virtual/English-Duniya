@@ -2,6 +2,9 @@
   "name": "zaya-mobile",
   "version": "1.1.1",
   "description": "zaya-mobile: An Ionic project",
+  "scripts": {
+    "deploy": "bash deploy.sh"
+  },
   "dependencies": {
     "gulp": "^3.5.6",
     "gulp-concat": "^2.2.0",
