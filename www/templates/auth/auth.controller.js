@@ -17,6 +17,7 @@
     var country_code = '+91';
     authCtrl.audio = audio;
     authCtrl.login = login;
+    authCtrl.logout = logout;
     authCtrl.signup = signup;
     authCtrl.rootScope = $rootScope;
     authCtrl.validCredential = validCredential;
@@ -48,8 +49,17 @@
       Auth.login(url, user_credentials, function (response) {
         $state.go('user.main.home', {});
       }, function (response) {
-        authCtrl.showError(_.chain(response.data).keys().first(), response.data[_.chain(response.data).keys().first()].toString());
+        if(response.data)
+          authCtrl.showError(_.chain(response.data).keys().first(), response.data[_.chain(response.data).keys().first()].toString());
+        authCtrl.showError("Server Error", "Cannot process your request");
         authCtrl.audio.play('wrong');
+      })
+    }
+    function logout(path) {
+      Auth.logout(function () {
+        $state.go(path,{})
+      },function () {
+        // body...
       })
     }
 
@@ -77,7 +87,9 @@
         $state.go('auth.verify.phone', {});
         authCtrl.signUpDisabled = false;
       }, function (response) {
-        authCtrl.showError(_.chain(response.data).keys().first(), response.data[_.chain(response.data).keys().first()].toString());
+        if(response.data)
+          authCtrl.showError(_.chain(response.data).keys().first(), response.data[_.chain(response.data).keys().first()].toString());
+        authCtrl.showError("Server Error", "Cannot process your request");
         authCtrl.audio.play('wrong');
         authCtrl.signUpDisabled = false;
       })
