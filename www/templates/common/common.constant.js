@@ -4,7 +4,7 @@
   angular
     .module('common')
     .constant('CONSTANT',{
-      'BACKEND_SERVICE_DOMAIN' : 'http://127.0.0.1:9000/',
+      'BACKEND_SERVICE_DOMAIN' : 'http://cc-test.zaya.in/',
       'PATH' : {
         'INTRO' : ROOT+'/intro',
         'AUTH' : ROOT+'/auth',

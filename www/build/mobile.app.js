@@ -205,6 +205,7 @@
 
   function runConfig($ionicPlatform, $rootScope, $timeout, $log, $state,$http,$cookies, Auth) {
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
+    //$http.defaults.headers.common['Access-Control-Request-Headers'] = 'accept, auth-token, content-type, xsrfcookiename';
     $rootScope.$on('$stateChangeStart',function(event, toState, toParams, fromState, fromParams){
         // alternative to phaser destroy() ; phaser destroy doesn't remove canvas element
         if(toState.name!='user.main.playlist'){
@@ -292,7 +293,7 @@
     authCtrl.passwordResetRequest = passwordResetRequest;
     authCtrl.validateForgotPasswordForm = validateForgotPasswordForm;
     authCtrl.resendOTP = resendOTP;
-    authCtrl.counter = 10;
+    authCtrl.counter = 60;
     authCtrl.startCounter = startCounter;
     authCtrl.stopCounter = stopCounter;
     authCtrl.signUpDisabled = false;
@@ -420,11 +421,10 @@
       Auth.verifyOtp(otp_credentials, function (success) {
         authCtrl.showAlert("Correct!", "Phone Number verified!");
         Auth.getUser(function(success){
-          $log.debug("ok");
+          $state.go('user.personalise.social', {});
         },function(error){
-          $log.debug("error");
+          authCtrl.showError("Error","Could not verify OTP. Try again");
         });
-        $state.go('user.personalise.social', {});
       }, function (error) {
         authCtrl.showError("Incorrect OTP!", "The one time password you entered is incorrect!");
       })
@@ -673,7 +673,7 @@
   angular
     .module('common')
     .constant('CONSTANT',{
-      'BACKEND_SERVICE_DOMAIN' : 'http://127.0.0.1:9000/',
+      'BACKEND_SERVICE_DOMAIN' : 'http://cc-test.zaya.in/',
       'PATH' : {
         'INTRO' : ROOT+'/intro',
         'AUTH' : ROOT+'/auth',

@@ -28,7 +28,7 @@
     authCtrl.passwordResetRequest = passwordResetRequest;
     authCtrl.validateForgotPasswordForm = validateForgotPasswordForm;
     authCtrl.resendOTP = resendOTP;
-    authCtrl.counter = 10;
+    authCtrl.counter = 60;
     authCtrl.startCounter = startCounter;
     authCtrl.stopCounter = stopCounter;
     authCtrl.signUpDisabled = false;
@@ -156,11 +156,10 @@
       Auth.verifyOtp(otp_credentials, function (success) {
         authCtrl.showAlert("Correct!", "Phone Number verified!");
         Auth.getUser(function(success){
-          $log.debug("ok");
+          $state.go('user.personalise.social', {});
         },function(error){
-          $log.debug("error");
+          authCtrl.showError("Error","Could not verify OTP. Try again");
         });
-        $state.go('user.personalise.social', {});
       }, function (error) {
         authCtrl.showError("Incorrect OTP!", "The one time password you entered is incorrect!");
       })
