@@ -9,7 +9,7 @@
             <input valid-input ng-trim="false" tabindex="1" name="useridentity" type="text" placeholder="PHONE NO. / EMAIL" ng-model="authCtrl.user.useridentity">
           </label>
           <label for="" class="item item-input item-floating-label"><span class="input-label">PASSWORD</span>
-            <input tabindex="2" name="password" type="{{show_password==false?'password':'text'}}" placeholder="PASSWORD" ng-model="authCtrl.user.password">
+            <input tabindex="2" onPaste="return false" autocomplete="off" name="password" type="{{show_password==false?'password':'text'}}" placeholder="PASSWORD" ng-model="authCtrl.user.password">
           </label>
           <ion-list>
             <ion-checkbox ng-model="show_password">Show Password</ion-checkbox>

@@ -29,10 +29,13 @@
     authCtrl.passwordResetRequest = passwordResetRequest;
     authCtrl.validateForgotPasswordForm = validateForgotPasswordForm;
     authCtrl.resendOTP = resendOTP;
-    authCtrl.counter = 60;
+    authCtrl.max_counter = 1;
     authCtrl.startCounter = startCounter;
     authCtrl.stopCounter = stopCounter;
     authCtrl.signUpDisabled = false;
+    authCtrl.resendOTPCount = 0;
+    authCtrl.resendOTPDate = null;
+    authCtrl.maxOTPsendCountperDay = 5;
     function validEmail(email) {
       return email_regex.test(email);
     }
@@ -47,7 +50,11 @@
     function login(url, user_credentials) {
       user_credentials = ( url == 'login' ) ? cleanCredentials(user_credentials) : user_credentials;
       Auth.login(url, user_credentials, function (response) {
-        $state.go('user.main.home', {});
+        Auth.getUser(function(success){
+          $state.go('user.main.home', {});
+        },function(){
+          authCtrl.showError("Error Login","Couldn't log you in");
+        });
       }, function (response) {
         if(response.data)
           authCtrl.showError(_.chain(response.data).keys().first(), response.data[_.chain(response.data).keys().first()].toString());
@@ -146,11 +153,15 @@
       });
     }
 
-    function showAlert(title, msg) {
+    function showAlert(title, msg, success) {
       $log.debug(title, msg);
       $ionicPopup.alert({
         title: title,
         template: msg
+      }).then(function(response){
+        if(success){
+          success()
+        }
       });
     }
 
@@ -166,12 +177,14 @@
     function verifyOtp(otp_credentials) {
       $log.debug(JSON.stringify(otp_credentials));
       Auth.verifyOtp(otp_credentials, function (success) {
-        authCtrl.showAlert("Correct!", "Phone Number verified!");
-        Auth.getUser(function(success){
-          $state.go('user.personalise.social', {});
-        },function(error){
-          authCtrl.showError("Error","Could not verify OTP. Try again");
+        authCtrl.showAlert("Correct!", "Phone Number verified!").then(function(success){
+          Auth.getUser(function(success){
+            $state.go('user.personalise.social', {});
+          },function(error){
+            authCtrl.showError("Error","Could not verify OTP. Try again");
+          });
         });
+
       }, function (error) {
         authCtrl.showError("Incorrect OTP!", "The one time password you entered is incorrect!");
       })
@@ -203,16 +216,23 @@
     }
 
     function resendOTP(){
-      Auth.resendOTP(function (success) {
-        authCtrl.showAlert("OTP Sent","We have sent you otp again");
-        authCtrl.startCounter();
-      }, function (error) {
-        authCtrl.showError(error);
-      })
+      if(Auth.canSendOtp(authCtrl.maxOTPsendCountperDay)){
+        Auth.resendOTP(function (success) {
+          authCtrl.showAlert("OTP Sent","We have sent you otp again");
+          authCtrl.startCounter();
+        }, function (error) {
+          authCtrl.showError(error);
+        })
+      }
+      else{
+        authCtrl.showAlert("OTP Resend count exceed", "Sorry you cant send more otps try again tomorrow");
+      }
     }
 
+
+
     function startCounter(){
-      authCtrl.counter = 10;
+      authCtrl.counter = authCtrl.max_counter;
       authCtrl.start = $interval(function() {
         if (authCtrl.counter > 0) {
           authCtrl.counter--;

@@ -11,7 +11,7 @@
             <input tabindex="2" name="email" type="email" placeholder="EMAIL" ng-model="authCtrl.user.email">
           </label>
           <label for="" class="item item-input item-floating-label"><span class="input-label">PASSWORD</span>
-            <input tabindex="3" name="password"  type="{{show_password==false?'password':'text'}}" placeholder="PASSWORD" ng-model="authCtrl.user.password">
+            <input tabindex="3" onPaste="return false" autocomplete="off" name="password"  type="{{show_password==false?'password':'text'}}" placeholder="PASSWORD" ng-model="authCtrl.user.password">
           </label>
           <ion-list>
             <ion-checkbox ng-model="show_password">Show Password</ion-checkbox>

@@ -24,6 +24,7 @@
       logout: function (success, failure) {
         rest_auth.all('logout').post().then(function (response) {
           localStorage.removeItem('Authorization');
+          localStorage.removeItem('user_details');
           success();
         }, function (error) {
           failure();
@@ -43,6 +44,41 @@
       },
       isAuthorised: function () {
         return localStorage.Authorization;
+      },
+      canSendOtp: function (max_otp_send_count) {
+        var last_otp_date = localStorage.getItem('last_otp_date');
+        var otp_sent_count = localStorage.getItem('otp_sent_count');
+        if (last_otp_date && otp_sent_count) {
+          if (this.dateCompare(new Date(), new Date((last_otp_date)))) {
+            localStorage.setItem('last_otp_date', new Date());
+            localStorage.setItem('otp_sent_count', 1);
+            return true;
+          } else {
+            if (otp_sent_count < max_otp_send_count) {
+              localStorage.setItem('last_otp_date', new Date());
+              localStorage.setItem('otp_sent_count', ++otp_sent_count);
+              return true;
+            } else {
+              return false;
+            }
+          }
+        }
+        else {
+          localStorage.setItem('last_otp_date', new Date());
+          localStorage.setItem('otp_sent_count', 1);
+          return true;
+        }
+      },
+      dateCompare: function (date_1, date_2) { // Checks if date_1 > date_2
+        var month_1 = date_1.getMonth();
+        var month_2 = date_2.getMonth();
+        var day_1 = date_1.getDate();
+        var day_2 = date_2.getDate();
+        if (month_1 > month_2) {
+          return true;
+        } else if (month_1 == month_2) {
+          return day_1 > day_2;
+        } else return false;
       },
       verifyOtp: function (verification_credentials, success, failure) {
         rest_auth.all('sms-verification').post($.param(verification_credentials), success, failure).then(function (response) {
