@@ -691,7 +691,7 @@
   angular
     .module('common')
     .constant('CONSTANT',{
-      'BACKEND_SERVICE_DOMAIN' : 'http://cc-test.zaya.in/',
+      'BACKEND_SERVICE_DOMAIN' : 'http://192.168.10.121:9000/',
       'PATH' : {
         'INTRO' : ROOT+'/intro',
         'AUTH' : ROOT+'/auth',
@@ -996,103 +996,86 @@
         .module('zaya-map')
         .controller('mapController', mapController);
 
-    mapController.$inject = [];
+    mapController.$inject = ['$scope','$log','$ionicPopup'];
 
-    function mapController() {
-        var zayaCtrl = this;
+    function mapController($scope,$log, $ionicPopup) {
+        var mapCtrl = this;
+        mapCtrl.nodeDetails = [
+          { name : 'Video', icon : 'video', type : 'video'},
+          { name : 'Quiz', icon : 'quiz' , type : 'quiz'},
+          { name : 'Practice', icon : 'practice', type : 'practice'},
+        ]
+        $scope.$on('openNode',function (arg) {
+          $ionicPopup.show({
+            title: "<strong>Node Name</strong>",
+            scope: $scope,
+            template: '<button class="button button-energized button-block" ng-repeat="node in mapCtrl.nodeDetails">{{node.name}}</button>',
+            buttons : [
+              { text : 'Cancel'}
+            ]
+          });
+        })
     }
 })();
 
 (function() {
     'use strict';
 
-    mapCanvas.$inject = ["$injector", "$timeout"];
+    mapCanvas.$inject = ["$injector", "$timeout", "$log"];
     angular
         .module('zaya-map')
         .directive('mapCanvas', mapCanvas)
 
     /* @ngInject */
-    function mapCanvas($injector, $timeout) {
+    function mapCanvas($injector, $timeout, $log) {
         var mapCanvas = {
             restrict: 'A',
             template: '<div id="map_canvas"></div>',
-            scope: {
-              // 'players' : '=',
-              // 'mapId' : '='
-            },
+            scope: {},
             link: linkFunc,
-            // controller: Controller,
-            // controllerAs: 'vm',
-            // bindToController: true
         };
 
         return mapCanvas;
 
         function linkFunc(scope, el, attr, ctrl) {
-          // createGame(scope, scope.players, scope.mapId, $injector)
           void 0;
-          $timeout(createGame(scope, $injector));
+          $timeout(createGame(scope, $injector, $log));
         }
     }
 
-    // Controller.$inject = ['dependencies'];
-
-    /* @ngInject */
-    // function Controller(dependencies) {
-    //     var vm = this;
-    //
-    //     activate();
-    //
-    //     function activate() {
-    //
-    //     }
-    // }
 })();
 
-window.createGame = function(scope, injector) {
+window.createGame = function(scope, injector, log) {
   'use strict';
 
-  var game = new Phaser.Game("100%", "100%", Phaser.AUTO, 'map_canvas');
+  var game = new Phaser.Game("100", "100" , Phaser.AUTO, 'map_canvas');
 
   var playState = {
     preload : function () {
-      this.load.image('cloud1', 'img/cloud1.png');
-      this.load.image('cloud2', 'img/cloud2.png');
-      this.load.image('cloud3', 'img/cloud3.png');
-      this.load.image('cloud4', 'img/cloud4.png');
-      this.load.image('cloud5', 'img/cloud5.png');
-      this.load.image('cloud6', 'img/cloud6.png');
-      this.load.image('cloud7', 'img/cloud7.png');
-      this.load.image('path', 'img/path.png');
-      this.load.image('node', 'img/node.png');
+      this.load.image('desert', 'img/assets_v0.0.2/desert_bg.png');
+      this.load.image('cactus', 'img/assets_v0.0.2/cactus.png');
+      this.load.image('node', 'img/assets_v0.0.2/node.png');
+      // debug value
+      this.game.time.advancedTiming = true;
     },
     create : function() {
-      this.game.stage.backgroundColor = "#AAD9E8";
-      this.game.world.setBounds(0, 0, this.game.width, this.game.height * 3);
-      this.init();
-      var cloudCount = 20;
-      for (var i = 0; i < cloudCount; i++) {
-        var cloud = this.game.add.sprite(this.game.world.randomX, this.game.world.randomY, 'cloud' + this.game.rnd.between(1, 7));
-        var scaleFactor = this.game.rnd.between(3,6)/10;
-        cloud.scale.setTo(scaleFactor, scaleFactor);
-        this.game.physics.arcade.enable(cloud);
-        cloud.body.velocity.x = this.game.rnd.between(-5, -75);
-        cloud.autoCull = true;
-        cloud.checkWorldBounds = true;
-        cloud.events.onOutOfBounds.add(this.resetSprite, this);
+      this.game.world.setBounds(0, 0, this.game.width, this.game.height * 2);
+
+      for (var i = 0; i < 2; i++) {
+        this.game.add.sprite(0,this.game.height * i,'desert');
       }
-      var nodeCount = 20
+      for (var i = 0; i < 10; i++) {
+        var cactus = this.game.add.sprite(this.game.rnd.between(10,this.game.world.width-10), this.game.rnd.between(0,this.game.world.height),'cactus');
+      }
+      var nodeCount = 15
       for (var i = 0; i < nodeCount; i++) {
-        var node = this.game.add.sprite((i*10)+50, i * (this.game.world.height / nodeCount), 'node');
-        node.scale.setTo(0.5, 0.5);
+        var node = this.game.add.button(this.game.world.centerX - 27, i * (this.game.world.height / nodeCount), 'node', function () {
+          scope.$emit('openNode',node);
+        }, this, 2, 1, 0);
+        node.scale.setTo(0.6,0.6);
       }
-
+      this.init();
     },
-
-    resetSprite : function(sprite) {
-      sprite.x = this.game.world.bounds.right;
-    },
-
     init : function() {
       this.game.camera.y = this.game.height * 2;
     },
@@ -1114,15 +1097,18 @@ window.createGame = function(scope, injector) {
         ref.game.origDragPoint = null;
       }
     },
+    render : function(){
+      this.game.debug.text("fps : "+game.time.fps || '--', 2, 14, "#00ff00");
+    }
   }
 
   game.state.add('play',playState);
   game.state.start('play');
 
-  // phaser destroy is broken, check for fix
-  // scope.$on('$destroy', function() {
-    // game.destroy(); // Clean up the game when we leave this scope
-  // });
+  // phaser destroy doesn't remove canvas element --> removed manually in app run
+  scope.$on('$destroy', function() {
+    game.destroy(); // Clean up the game when we leave this scope
+  });
 };
 
 (function() {
