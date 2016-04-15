@@ -195,78 +195,100 @@
   }
 })();
 
-(function(){
+(function () {
   'use strict';
-
   runConfig.$inject = ["$ionicPlatform", "$rootScope", "$timeout", "$log", "$state", "$http", "$cookies", "Auth"];
   angular
     .module('zaya')
     .run(runConfig);
-
-  function runConfig($ionicPlatform, $rootScope, $timeout, $log, $state,$http,$cookies, Auth) {
+  function runConfig($ionicPlatform, $rootScope, $timeout, $log, $state, $http, $cookies, Auth) {
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
     //$http.defaults.headers.common['Access-Control-Request-Headers'] = 'accept, auth-token, content-type, xsrfcookiename';
-    $rootScope.$on('$stateChangeStart',function(event, toState, toParams, fromState, fromParams){
-        // alternative to phaser destroy() ; phaser destroy doesn't remove canvas element
-        if(toState.name!='user.main.playlist'){
-          try {
-            var canvas = document.querySelector('#map_canvas');
-            canvas.parentNode.removeChild(canvas);
-            $log.debug("Canvas Removed");
-          }
-          catch(e){}
+    $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
+      // alternative to phaser destroy() ; phaser destroy doesn't remove canvas element
+      if (toState.name != 'user.main.playlist') {
+        try {
+          var canvas = document.querySelector('#map_canvas');
+          canvas.parentNode.removeChild(canvas);
+          $log.debug("Canvas Removed");
         }
-
-        //if not authenticated, redirect to login page
-        if(!Auth.isAuthorised() && toState.name!='auth.signin' && toState.name!='auth.signup' && toState.name!='auth.forgot'  && toState.name!='auth.verify_phone_number'){
-          $log.debug("You are not authorized");
-          event.preventDefault();
-          $state.go('auth.signin');
+        catch (e) {
         }
-        // if authenticated but not verified redirect to OTP page
-          if(Auth.isAuthorised() && !Auth.isVerified() && toState.name!= 'auth.verify.phone')
-          {
-            $log.debug("User account not verified");
-            event.preventDefault();
-            $state.go('auth.verify.phone');
-          }
-
-        //if authenticated, redirect to userpage
-        if(Auth.isAuthorised() && (toState.name=='auth.signin' || toState.name=='auth.signup' || toState.name=='intro')){
-          $log.debug("You are authorized");
-          event.preventDefault();
-          $state.go('user.main.home');
-        }
-        //if authenticated and verified, redirect to userpage
-        if(Auth.isAuthorised() && Auth.isVerified() && (toState.name=='auth.verfy.phone')){
-          $log.debug("You are authorized and verified");
-          event.preventDefault();
-          $state.go('user.main.home');
       }
-        // block access to quiz summary page if there is no quiz data
-        if(toState.name == 'quiz.summary' && !toParams.quizSummary){
-            $log.debug("Quiz summary page cannot be accessed : No quiz data present");
-            event.preventDefault();
-        }
 
-    })
-    $ionicPlatform.ready(function() {
-      if(window.cordova && window.cordova.plugins.Keyboard) {
+      //if not authenticated, redirect to login page
+      if (!Auth.isAuthorised() && toState.name != 'auth.signin' && toState.name != 'auth.signup' && toState.name != 'auth.forgot' && toState.name != 'auth.verify_phone_number') {
+        $log.debug("You are not authorized");
+        event.preventDefault();
+        $state.go('auth.signin');
+      }
+      // if authenticated but not verified redirect to OTP page
+      if (Auth.isAuthorised() && !Auth.isVerified() && toState.name != 'auth.verify.phone') {
+        $log.debug("User account not verified");
+        event.preventDefault();
+        $state.go('auth.verify.phone');
+      }
+      //if authenticated, redirect to userpage
+      if (Auth.isAuthorised() && (toState.name == 'auth.signin' || toState.name == 'auth.signup' || toState.name == 'intro')) {
+        $log.debug("You are authorized");
+        event.preventDefault();
+        $state.go('user.main.home');
+      }
+      //if authenticated and verified, redirect to userpage
+      if (Auth.isAuthorised() && Auth.isVerified() && (toState.name == 'auth.verfy.phone')) {
+        $log.debug("You are authorized and verified");
+        event.preventDefault();
+        $state.go('user.main.home');
+      }
+      // block access to quiz summary page if there is no quiz data
+      if (toState.name == 'quiz.summary' && !toParams.quizSummary) {
+        $log.debug("Quiz summary page cannot be accessed : No quiz data present");
+        event.preventDefault();
+      }
+      //// if going to otp state start watching for sms
+      //if (toState.name == 'auth.verify.phone') {
+      //  $ionicPlatform.ready(function () {
+      //    if (SMS) {
+      //      SMS.startWatch(function () {
+      //        $log.debug('In otp state start watching sms');
+      //      }, function () {
+      //        $log.debug('Failed to start sms watching');
+      //      });
+      //
+      //    }
+      //  });
+      //}
+      // if going to otp state start watching for sms
+      if (fromState.name == 'auth.verify.phone') {
+        $ionicPlatform.ready(function () {
+          //if (SMS) {
+          //  SMS.stopWatch(function () {
+          //    $log.debug("Going out of otp state. Stopped watching sms");
+          //  }, function () {
+          //    $log.debug("failed to stop sms watch")
+          //  });
+          //}
+        })
+      }
+    });
+    $ionicPlatform.ready(function () {
+      //$rootScope.$on("otpSent",function(event,args){
+      $log.debug();
+      //});
+      if (window.cordova && window.cordova.plugins.Keyboard) {
         // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
         // for form inputs)
         cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-
         // Don't remove this line unless you know what you are doing. It stops the viewport
         // from snapping when text inputs are focused. Ionic handles this internally for
         // a much nicer keyboard experience.
         cordova.plugins.Keyboard.disableScroll(true);
       }
-      if(window.StatusBar) {
+      if (window.StatusBar) {
         StatusBar.styleDefault();
       }
     });
   }
-
 })();
 
 (function() {
@@ -276,9 +298,9 @@
     .module('zaya-auth')
     .controller('authController', authController)
 
-  authController.$inject = ['$state', 'Auth', 'audio', '$rootScope', '$ionicPopup','$log','$cordovaOauth', 'CONSTANT','$interval'];
+  authController.$inject = ['$state', 'Auth', 'audio', '$rootScope', '$ionicPopup','$log','$cordovaOauth', 'CONSTANT','$interval','$scope'];
 
-  function authController($state, Auth, audio, $rootScope, $ionicPopup, $log, $cordovaOauth, CONSTANT, $interval) {
+  function authController($state, Auth, audio, $rootScope, $ionicPopup, $log, $cordovaOauth, CONSTANT, $interval,$scope) {
     var authCtrl = this;
     var email_regex = /\S+@\S+/;
     var indian_phone_regex = /^[7-9][0-9]{9}$/;
@@ -300,13 +322,15 @@
     authCtrl.passwordResetRequest = passwordResetRequest;
     authCtrl.validateForgotPasswordForm = validateForgotPasswordForm;
     authCtrl.resendOTP = resendOTP;
-    authCtrl.max_counter = 1;
+    authCtrl.max_counter = 10;
     authCtrl.startCounter = startCounter;
     authCtrl.stopCounter = stopCounter;
     authCtrl.signUpDisabled = false;
     authCtrl.resendOTPCount = 0;
     authCtrl.resendOTPDate = null;
-    authCtrl.maxOTPsendCountperDay = 5;
+    authCtrl.maxOTPsendCountperDay = 50;
+    authCtrl.OTPAddress = "+12023353814";
+    //authCtrl.addSmsListener = addSmsListener;
     function validEmail(email) {
       return email_regex.test(email);
     }
@@ -448,7 +472,7 @@
     function verifyOtp(otp_credentials) {
       $log.debug(JSON.stringify(otp_credentials));
       Auth.verifyOtp(otp_credentials, function (success) {
-        authCtrl.showAlert("Correct!", "Phone Number verified!").then(function(success){
+        authCtrl.showAlert("Correct!", "Phone Number verified!",function(success){
           Auth.getUser(function(success){
             $state.go('user.personalise.social', {});
           },function(error){
@@ -488,6 +512,7 @@
 
     function resendOTP(){
       if(Auth.canSendOtp(authCtrl.maxOTPsendCountperDay)){
+
         Auth.resendOTP(function (success) {
           authCtrl.showAlert("OTP Sent","We have sent you otp again");
           authCtrl.startCounter();
@@ -511,6 +536,7 @@
           authCtrl.stopCounter();
         }
       }, 1000);
+      return true;
     }
 
     function stopCounter(){
@@ -519,6 +545,79 @@
       }
     }
 
+    function smsArrvied(e){
+        $log.debug(JSON.stringify(e));
+        //authCtrl.verification.otp = Number(Auth.getOTPFromSMS(e.data.body));
+        //return;
+        if(e.data.address == authCtrl.OTPAddress)
+        {
+          Auth.autoVerifyOTPFromSMS(e.data.body, function (success) {
+            return;
+            authCtrl.showAlert("Correct!", "Phone Number verified!",function(success){
+              Auth.getUser(function(success){
+
+                $state.go('user.personalise.social', {});
+              },function(error){
+                authCtrl.showError("Error","Could not verify OTP. Try again");
+              });
+            });
+
+          }, function (error) {
+            authCtrl.showError("Incorrect OTP!", "The one time password you entered is incorrect!");
+          });
+          return true;
+        }
+    }
+    //authCtrl.verification = {};
+    //if(document.body.removeEventListener){
+    //  $log.debug("ok");
+    //  document.removeEventListener('onSMSArrive',smsArrvied,false);
+    //}
+    //    $rootScope.$on('onSMSArrive',function(e,d){
+    //      $log.debug("a");
+    //    });
+        //document.addEventListener('onSMSArrive', smsArrvied,false);
+    var smsInboxPlugin = cordova.require('cordova/plugin/smsinboxplugin');
+    smsInboxPlugin.isSupported ((function(supported) {
+      if(supported)
+        $log.debug("SMS supported !");
+      else
+        $log.debug("SMS not supported");
+    }), function(e) {
+      $log.debug(e);
+      $log.debug("Error while checking the SMS support");
+    });
+   //authCtrl.numberOfWatches =  function () {
+   //   var root = angular.element(document.getElementsByTagName('body'));
+   //
+   //   var watchers = [];
+   //
+   //   var f = function (element) {
+   //     angular.forEach(['$scope', '$isolateScope'], function (scopeProperty) {
+   //       if (element.data() && element.data().hasOwnProperty(scopeProperty)) {
+   //         angular.forEach(element.data()[scopeProperty].$$watchers, function (watcher) {
+   //           watchers.push(watcher);
+   //         });
+   //       }
+   //     });
+   //
+   //     angular.forEach(element.children(), function (childElement) {
+   //       f(angular.element(childElement));
+   //     });
+   //   };
+   //
+   //   f(root);
+   //
+   //   // Remove duplicate watchers
+   //   var watchersWithoutDuplicates = [];
+   //   angular.forEach(watchers, function(item) {
+   //     if(watchersWithoutDuplicates.indexOf(item) < 0) {
+   //       watchersWithoutDuplicates.push(item);
+   //     }
+   //   });
+   //
+   //   $log.debug(watchersWithoutDuplicates);
+   // };
   }
 })();
 
@@ -605,6 +704,7 @@
         } else return false;
       },
       verifyOtp: function (verification_credentials, success, failure) {
+        $log.debug(JSON.stringify(verification_credentials));
         rest_auth.all('sms-verification').post($.param(verification_credentials), success, failure).then(function (response) {
           success(response);
         }, function (response) {
@@ -641,6 +741,18 @@
         else {
           return false;
         }
+      },
+      autoVerifyOTPFromSMS: function (string, success, failure) {
+        var otp = this.getOTPFromSMS(string);
+        $log.debug(otp);
+        success();
+        return;
+        this.verifyOtp({"code": otp}, success, failure);
+      },
+      getOTPFromSMS: function (string) {
+        var e_position = string.indexOf("Enter");
+        var o_position = string.indexOf("on");
+        return string.substring(e_position + 6, o_position - 1);
       }
     }
   }

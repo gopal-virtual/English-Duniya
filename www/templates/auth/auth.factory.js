@@ -81,6 +81,7 @@
         } else return false;
       },
       verifyOtp: function (verification_credentials, success, failure) {
+        $log.debug(JSON.stringify(verification_credentials));
         rest_auth.all('sms-verification').post($.param(verification_credentials), success, failure).then(function (response) {
           success(response);
         }, function (response) {
@@ -117,6 +118,18 @@
         else {
           return false;
         }
+      },
+      autoVerifyOTPFromSMS: function (string, success, failure) {
+        var otp = this.getOTPFromSMS(string);
+        $log.debug(otp);
+        success();
+        return;
+        this.verifyOtp({"code": otp}, success, failure);
+      },
+      getOTPFromSMS: function (string) {
+        var e_position = string.indexOf("Enter");
+        var o_position = string.indexOf("on");
+        return string.substring(e_position + 6, o_position - 1);
       }
     }
   }

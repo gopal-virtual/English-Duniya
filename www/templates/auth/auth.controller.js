@@ -5,9 +5,9 @@
     .module('zaya-auth')
     .controller('authController', authController)
 
-  authController.$inject = ['$state', 'Auth', 'audio', '$rootScope', '$ionicPopup','$log','$cordovaOauth', 'CONSTANT','$interval'];
+  authController.$inject = ['$state', 'Auth', 'audio', '$rootScope', '$ionicPopup','$log','$cordovaOauth', 'CONSTANT','$interval','$scope'];
 
-  function authController($state, Auth, audio, $rootScope, $ionicPopup, $log, $cordovaOauth, CONSTANT, $interval) {
+  function authController($state, Auth, audio, $rootScope, $ionicPopup, $log, $cordovaOauth, CONSTANT, $interval,$scope) {
     var authCtrl = this;
     var email_regex = /\S+@\S+/;
     var indian_phone_regex = /^[7-9][0-9]{9}$/;
@@ -29,13 +29,15 @@
     authCtrl.passwordResetRequest = passwordResetRequest;
     authCtrl.validateForgotPasswordForm = validateForgotPasswordForm;
     authCtrl.resendOTP = resendOTP;
-    authCtrl.max_counter = 1;
+    authCtrl.max_counter = 10;
     authCtrl.startCounter = startCounter;
     authCtrl.stopCounter = stopCounter;
     authCtrl.signUpDisabled = false;
     authCtrl.resendOTPCount = 0;
     authCtrl.resendOTPDate = null;
-    authCtrl.maxOTPsendCountperDay = 5;
+    authCtrl.maxOTPsendCountperDay = 50;
+    authCtrl.OTPAddress = "+12023353814";
+    //authCtrl.addSmsListener = addSmsListener;
     function validEmail(email) {
       return email_regex.test(email);
     }
@@ -177,7 +179,7 @@
     function verifyOtp(otp_credentials) {
       $log.debug(JSON.stringify(otp_credentials));
       Auth.verifyOtp(otp_credentials, function (success) {
-        authCtrl.showAlert("Correct!", "Phone Number verified!").then(function(success){
+        authCtrl.showAlert("Correct!", "Phone Number verified!",function(success){
           Auth.getUser(function(success){
             $state.go('user.personalise.social', {});
           },function(error){
@@ -217,6 +219,7 @@
 
     function resendOTP(){
       if(Auth.canSendOtp(authCtrl.maxOTPsendCountperDay)){
+
         Auth.resendOTP(function (success) {
           authCtrl.showAlert("OTP Sent","We have sent you otp again");
           authCtrl.startCounter();
@@ -240,6 +243,7 @@
           authCtrl.stopCounter();
         }
       }, 1000);
+      return true;
     }
 
     function stopCounter(){
@@ -248,5 +252,78 @@
       }
     }
 
+    function smsArrvied(e){
+        $log.debug(JSON.stringify(e));
+        //authCtrl.verification.otp = Number(Auth.getOTPFromSMS(e.data.body));
+        //return;
+        if(e.data.address == authCtrl.OTPAddress)
+        {
+          Auth.autoVerifyOTPFromSMS(e.data.body, function (success) {
+            return;
+            authCtrl.showAlert("Correct!", "Phone Number verified!",function(success){
+              Auth.getUser(function(success){
+
+                $state.go('user.personalise.social', {});
+              },function(error){
+                authCtrl.showError("Error","Could not verify OTP. Try again");
+              });
+            });
+
+          }, function (error) {
+            authCtrl.showError("Incorrect OTP!", "The one time password you entered is incorrect!");
+          });
+          return true;
+        }
+    }
+    //authCtrl.verification = {};
+    //if(document.body.removeEventListener){
+    //  $log.debug("ok");
+    //  document.removeEventListener('onSMSArrive',smsArrvied,false);
+    //}
+    //    $rootScope.$on('onSMSArrive',function(e,d){
+    //      $log.debug("a");
+    //    });
+        //document.addEventListener('onSMSArrive', smsArrvied,false);
+    var smsInboxPlugin = cordova.require('cordova/plugin/smsinboxplugin');
+    smsInboxPlugin.isSupported ((function(supported) {
+      if(supported)
+        $log.debug("SMS supported !");
+      else
+        $log.debug("SMS not supported");
+    }), function(e) {
+      $log.debug(e);
+      $log.debug("Error while checking the SMS support");
+    });
+   //authCtrl.numberOfWatches =  function () {
+   //   var root = angular.element(document.getElementsByTagName('body'));
+   //
+   //   var watchers = [];
+   //
+   //   var f = function (element) {
+   //     angular.forEach(['$scope', '$isolateScope'], function (scopeProperty) {
+   //       if (element.data() && element.data().hasOwnProperty(scopeProperty)) {
+   //         angular.forEach(element.data()[scopeProperty].$$watchers, function (watcher) {
+   //           watchers.push(watcher);
+   //         });
+   //       }
+   //     });
+   //
+   //     angular.forEach(element.children(), function (childElement) {
+   //       f(angular.element(childElement));
+   //     });
+   //   };
+   //
+   //   f(root);
+   //
+   //   // Remove duplicate watchers
+   //   var watchersWithoutDuplicates = [];
+   //   angular.forEach(watchers, function(item) {
+   //     if(watchersWithoutDuplicates.indexOf(item) < 0) {
+   //       watchersWithoutDuplicates.push(item);
+   //     }
+   //   });
+   //
+   //   $log.debug(watchersWithoutDuplicates);
+   // };
   }
 })();
