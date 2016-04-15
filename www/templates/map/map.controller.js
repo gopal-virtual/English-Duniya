@@ -20,7 +20,7 @@
             scope: $scope,
             template: '<button class="button button-energized button-block" ng-repeat="node in mapCtrl.nodeDetails">{{node.name}}</button>',
             buttons : [
-              { text : 'Cancel'}
+              { text : 'Cancel', type: 'button-assertive'}
             ]
           });
         })
