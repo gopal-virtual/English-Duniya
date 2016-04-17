@@ -679,7 +679,7 @@ window.ionic.version = '1.2.4';
   // hammer document where the base events are added at
   ionic.Gestures.DOCUMENT = window.document;
 
-  // plugins namespace
+  // plugin namespace
   ionic.Gestures.plugins = {};
 
   // if the window events are set...
@@ -3562,7 +3562,7 @@ ionic.DomUtil.ready(function() {
  * which can cause layout issues such as pushing headers up and out of view.
  *
  * The keyboard fixes work best in conjunction with the
- * [Ionic Keyboard Plugin](https://github.com/driftyco/ionic-plugins-keyboard),
+ * [Ionic Keyboard Plugin](https://github.com/driftyco/ionic-plugin-keyboard),
  * although it will perform reasonably well without.  However, if you are using
  * Cordova there is no reason not to use the plugin.
  *
@@ -3593,7 +3593,7 @@ ionic.DomUtil.ready(function() {
  *
  * ### Plugin Usage
  * Information on using the plugin can be found at
- * [https://github.com/driftyco/ionic-plugins-keyboard](https://github.com/driftyco/ionic-plugins-keyboard).
+ * [https://github.com/driftyco/ionic-plugin-keyboard](https://github.com/driftyco/ionic-plugin-keyboard).
  *
  * ----------
  *
@@ -3616,7 +3616,7 @@ ionic.DomUtil.ready(function() {
  *
  * ### iOS Notes
  * - If the content of your app (including the header) is being pushed up and
- *   out of view on input focus, try setting `cordova.plugins.Keyboard.disableScroll(true)`.
+ *   out of view on input focus, try setting `cordova.plugin.Keyboard.disableScroll(true)`.
  *   This does **not** disable scrolling in the Ionic scroll view, rather it
  *   disables the native overflow scrolling that happens automatically as a
  *   result of focusing on inputs below the keyboard.
@@ -3744,7 +3744,7 @@ ionic.keyboard = {
   },
 
   /**
-   * An alias for cordova.plugins.Keyboard.show(). If the keyboard plugin
+   * An alias for cordova.plugin.Keyboard.show(). If the keyboard plugin
    * is installed, show the keyboard.
    */
   show: function() {
@@ -9167,7 +9167,7 @@ ionic.views.Slider = ionic.views.View.inherit({
         // Classname
         s.classNames = [];
         /*=========================
-          Dom Library and plugins
+          Dom Library and plugin
           ===========================*/
         if (typeof $ !== 'undefined' && typeof Dom7 !== 'undefined'){
             $ = Dom7;
@@ -12045,14 +12045,14 @@ ionic.views.Slider = ionic.views.View.inherit({
 
 
         /*=========================
-          Plugins API. Collect all and init all plugins
+          Plugins API. Collect all and init all plugin
           ===========================*/
         s._plugins = [];
         for (var plugin in s.plugins) {
             var p = s.plugins[plugin](s, s.params[plugin]);
             if (p) s._plugins.push(p);
         }
-        // Method to call all plugins event/method
+        // Method to call all plugin event/method
         s.callPlugins = function (eventName) {
             for (var i = 0; i < s._plugins.length; i++) {
                 if (eventName in s._plugins[i]) {
@@ -12090,7 +12090,7 @@ ionic.views.Slider = ionic.views.View.inherit({
                     s.emitterEventListeners[eventName][i](arguments[1], arguments[2], arguments[3], arguments[4], arguments[5]);
                 }
             }
-            // Trigger plugins
+            // Trigger plugin
             if (s.callPlugins) s.callPlugins(eventName, arguments[1], arguments[2], arguments[3], arguments[4], arguments[5]);
         };
         s.on = function (eventName, handler) {

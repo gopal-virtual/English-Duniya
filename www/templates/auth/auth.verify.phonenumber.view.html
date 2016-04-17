@@ -1,17 +1,20 @@
-<ion-view ng-init="authCtrl.startCounter()">
+<ion-view>
   <ion-content>
     <div class="row">
       <form name="verifyOtpForm" class="col padding-30" ng-submit="authCtrl.verifyOtpValidations(verifyOtpForm) && authCtrl.verifyOtp({'code':authCtrl.verification.otp})">
 
         <div class="list">
           <label for="" class="item item-input item-floating-label"><span class="input-label">OTP</span>
-            <input name="otp" type="number" placeholder="ENTER OTP" ng-model="authCtrl.verification.otp">
+            <input max="999999" name="otp" type="number" placeholder="ENTER OTP" ng-model="authCtrl.verification.otp">
           </label>
         </div>
         <button type="submit" class="button button-positive button-block">SUBMIT</button>
         <br><hr><br>
       </form>
-
+    </div>
+    <div class="row padding-30">
+       <span ng-if="authCtrl.autoVerifyPhoneStatus">{{authCtrl.autoVerifyPhoneStatus}}</span>
+      </div>
     </div>
     <div class="row padding-30">
       <div class="col">

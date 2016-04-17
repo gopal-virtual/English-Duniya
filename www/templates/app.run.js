@@ -30,14 +30,8 @@
         event.preventDefault();
         $state.go('auth.verify.phone');
       }
-      //if authenticated, redirect to userpage
-      if (Auth.isAuthorised() && (toState.name == 'auth.signin' || toState.name == 'auth.signup' || toState.name == 'intro')) {
-        $log.debug("You are authorized");
-        event.preventDefault();
-        $state.go('user.main.home');
-      }
       //if authenticated and verified, redirect to userpage
-      if (Auth.isAuthorised() && Auth.isVerified() && (toState.name == 'auth.verfy.phone')) {
+      if (Auth.isAuthorised() && Auth.isVerified() && (toState.name == 'auth.signin' || toState.name == 'auth.signup' || toState.name == 'intro' || toState.name == 'auth.verify.phone')) {
         $log.debug("You are authorized and verified");
         event.preventDefault();
         $state.go('user.main.home');
@@ -47,36 +41,26 @@
         $log.debug("Quiz summary page cannot be accessed : No quiz data present");
         event.preventDefault();
       }
-      //// if going to otp state start watching for sms
-      //if (toState.name == 'auth.verify.phone') {
-      //  $ionicPlatform.ready(function () {
-      //    if (SMS) {
-      //      SMS.startWatch(function () {
-      //        $log.debug('In otp state start watching sms');
-      //      }, function () {
-      //        $log.debug('Failed to start sms watching');
-      //      });
-      //
-      //    }
-      //  });
-      //}
-      // if going to otp state start watching for sms
-      if (fromState.name == 'auth.verify.phone') {
-        $ionicPlatform.ready(function () {
-          //if (SMS) {
-          //  SMS.stopWatch(function () {
-          //    $log.debug("Going out of otp state. Stopped watching sms");
-          //  }, function () {
-          //    $log.debug("failed to stop sms watch")
-          //  });
-          //}
-        })
+
+      if(toState.name == 'auth.verify.phone'){
+        $log.debug("verify");
+        document.addEventListener('onSMSArrive',function(e){
+          $rootScope.$broadcast('smsArrived',{'message':e})
+        });
+
       }
+
     });
     $ionicPlatform.ready(function () {
-      //$rootScope.$on("otpSent",function(event,args){
-      $log.debug();
-      //});
+
+      if (SMS) {
+        SMS.startWatch(function () {
+          $log.debug('start watching sms');
+        }, function () {
+          $log.debug('Failed to start sms watching');
+        });
+
+      }
       if (window.cordova && window.cordova.plugins.Keyboard) {
         // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
         // for form inputs)

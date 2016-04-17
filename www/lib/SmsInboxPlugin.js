@@ -22,7 +22,7 @@ THE SOFTWARE.
 
 cordova.define("cordova/plugin/smsinboxplugin", function(require, exports, module) {
   var exec = require('cordova/exec');
-  
+
   var SmsInboxPlugin = function() {};
 
 

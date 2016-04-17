@@ -8,7 +8,7 @@
             <input tabindex="1" name="useridentity" type="number" placeholder="PHONE NUMBER" ng-model="authCtrl.user.useridentity">
           </label>
           <label for="" class="item item-input item-floating-label"><span class="input-label">EMAIL</span>
-            <input tabindex="2" name="email" type="email" placeholder="EMAIL" ng-model="authCtrl.user.email">
+            <input tabindex="2" ng-trim="true" name="email" type="email" placeholder="EMAIL" ng-model="authCtrl.user.email">
           </label>
           <label for="" class="item item-input item-floating-label"><span class="input-label">PASSWORD</span>
             <input tabindex="3" onPaste="return false" autocomplete="off" name="password"  type="{{show_password==false?'password':'text'}}" placeholder="PASSWORD" ng-model="authCtrl.user.password">

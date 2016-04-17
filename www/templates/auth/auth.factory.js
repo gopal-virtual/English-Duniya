@@ -119,18 +119,41 @@
           return false;
         }
       },
-      autoVerifyOTPFromSMS: function (string, success, failure) {
-        var otp = this.getOTPFromSMS(string);
-        $log.debug(otp);
-        success();
-        return;
-        this.verifyOtp({"code": otp}, success, failure);
+      getOTPFromSMS: function (message,success,failure) {
+        var string = message.data.body;
+        if(message.data.address == '+12023353814')
+        {
+          var e_position = string.indexOf("Enter");
+          var o_position = string.indexOf("on");
+          success(string.substring(e_position + 6, o_position - 1));
+        }
+        else{
+          failure();
+        }
+
       },
-      getOTPFromSMS: function (string) {
-        var e_position = string.indexOf("Enter");
-        var o_position = string.indexOf("on");
-        return string.substring(e_position + 6, o_position - 1);
+      smsArrived: function(e){
+      $log.debug(JSON.stringify(e));
+      var otp = this.getOTPFromSMS(e.data.body);
+        return otp;
+      if(true)
+      {
+        this.autoVerifyOTPFromSMS(e.data.body, function (success) {
+          authCtrl.showAlert("Correct!", "Phone Number verified!",function(success){
+            Auth.getUser(function(success){
+
+              $state.go('user.personalise.social', {});
+            },function(error){
+              authCtrl.showError("Error","Could not verify OTP. Try again");
+            });
+          });
+
+        }, function (error) {
+          authCtrl.showError("Incorrect OTP!", "The one time password you entered is incorrect!");
+        });
+        return true;
       }
+    }
     }
   }
 })();

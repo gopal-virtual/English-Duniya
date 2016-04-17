@@ -79,3 +79,7 @@
 .box.has-footer{
   height: calc(100% - #{$bar-height-large});
 }
+
+.scroll-bar-indicator{
+  display: none;
+}

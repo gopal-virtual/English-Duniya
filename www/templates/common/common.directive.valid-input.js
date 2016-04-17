@@ -18,7 +18,7 @@
             return;
           }
           ngModelCtrl.$parsers.push(function(val) {
-            var clean = val.replace( /[^a-zA-Z0-9@.]+/g, '');
+            var clean = val.replace( /[^a-zA-Z0-9@.!#$%&'*+-/=?^_`{|}~]+/g, '');
             clean = clean.toLowerCase();
             if (val !== clean) {
               ngModelCtrl.$setViewValue(clean);
