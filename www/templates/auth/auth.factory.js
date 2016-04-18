@@ -131,29 +131,7 @@
           failure();
         }
 
-      },
-      smsArrived: function(e){
-      $log.debug(JSON.stringify(e));
-      var otp = this.getOTPFromSMS(e.data.body);
-        return otp;
-      if(true)
-      {
-        this.autoVerifyOTPFromSMS(e.data.body, function (success) {
-          authCtrl.showAlert("Correct!", "Phone Number verified!",function(success){
-            Auth.getUser(function(success){
-
-              $state.go('user.personalise.social', {});
-            },function(error){
-              authCtrl.showError("Error","Could not verify OTP. Try again");
-            });
-          });
-
-        }, function (error) {
-          authCtrl.showError("Incorrect OTP!", "The one time password you entered is incorrect!");
-        });
-        return true;
       }
-    }
     }
   }
 })();

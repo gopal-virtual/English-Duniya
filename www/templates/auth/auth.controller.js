@@ -37,6 +37,7 @@
     authCtrl.resendOTPDate = null;
     authCtrl.maxOTPsendCountperDay = 50;
     authCtrl.autoVerifyPhoneStatus = false;
+    authCtrl.resetPasswordLinkSent = false;
     function validEmail(email) {
       return email_regex.test(email);
     }
@@ -49,17 +50,23 @@
     //  return username_regex.test(username);
     //}
     function login(url, user_credentials) {
+      $ionicLoading.show({
+        template: 'Logging in...'
+      });
       user_credentials = ( url == 'login' ) ? cleanCredentials(user_credentials) : user_credentials;
       Auth.login(url, user_credentials, function (response) {
         Auth.getUser(function(success){
+          $ionicLoading.hide();
           $state.go('user.main.home', {});
         },function(){
-          authCtrl.showError("Error Login","Couldn't log you in");
+          $ionicLoading.hide();
+          authCtrl.showError("Error Login","Please enter a valid mobile no./Email ID and password");
         });
       }, function (response) {
+        $ionicLoading.hide();
         if(response.data)
           authCtrl.showError(_.chain(response.data).keys().first(), response.data[_.chain(response.data).keys().first()].toString());
-        authCtrl.showError("Server Error", "Cannot process your request");
+        authCtrl.showError("Error Login","Please enter a valid mobile no./Email ID and password");
         authCtrl.audio.play('wrong');
       })
     }
@@ -89,12 +96,17 @@
     }
 
     function signup(user_credentials) {
+      $ionicLoading.show({
+        template: 'Signing up...'
+      });
       user_credentials = cleanCredentials(user_credentials);
       authCtrl.signUpDisabled = true;
       Auth.signup(user_credentials, function (response) {
         $state.go('auth.verify.phone', {});
+        $ionicLoading.hide();
         authCtrl.signUpDisabled = false;
       }, function (response) {
+        $ionicLoading.hide();
         if(response.data)
           authCtrl.showError(_.chain(response.data).keys().first(), response.data[_.chain(response.data).keys().first()].toString());
         authCtrl.showError("Server Error", "Cannot process your request");
@@ -110,13 +122,10 @@
         user_credentials['phone_number'] = country_code + user_credentials.useridentity;
       }
       delete user_credentials['useridentity'];
-      $log.debug("cleaned");
-      $log.debug(JSON.stringify(user_credentials));
       return user_credentials;
     }
 
     function validCredential(formData) {
-      $log.debug(validEmail(formData.useridentity.$viewValue));
       if (!formData.useridentity.$viewValue) {
         authCtrl.showError("Empty", "Its empty! Enter a valid phone number or email");
         return false;
@@ -169,6 +178,7 @@
     }
 
     function verifyOtpValidations(formData) {
+
       if (!formData.otp.$viewValue) {
         authCtrl.showError("OTP", "Its empty! Enter the one time password");
         return false;
@@ -178,16 +188,25 @@
     }
 
     function verifyOtp(otp_credentials) {
+      $ionicLoading.show({
+        template: 'Verifying...'
+      });
       Auth.verifyOtp(otp_credentials, otpVerifiedSuccessHandler, function (error) {
+        $ionicLoading.hide();
         authCtrl.showError("Incorrect OTP!", "The one time password you entered is incorrect!");
       })
     }
 
     function passwordResetRequest(useridentity) {
+      $ionicLoading.show({
+        template: 'Requesting...'
+      });
       Auth.resetPassword(useridentity,function(success){
         authCtrl.showAlert("Reset Password","We have send a link to your email");
+        authCtrl.resetPasswordLinkSent = true;
+        $ionicLoading.hide();
       },function(error){
-
+        $ionicLoading.hide();
       })
     }
 
@@ -214,6 +233,7 @@
         Auth.resendOTP(function (success) {
           authCtrl.showAlert("OTP Sent","We have sent you otp again");
           authCtrl.startCounter();
+
           authCtrl.autoVerifyPhoneStatus = 'Waiting For SMS';
         }, function (error) {
           authCtrl.showError(error);
@@ -248,16 +268,25 @@
 
 
     $scope.$on('smsArrived',function(event,data){
+      $ionicLoading.show({
+        template: 'Getting OTP From SMS'
+      });
       authCtrl.autoVerifyPhoneStatus = 'Getting OTP From SMS';
       Auth.getOTPFromSMS(data.message,function(otp){
+        $ionicLoading.show({
+          template: 'OTP received. Verifying..'
+        });
         authCtrl.autoVerifyPhoneStatus = 'OTP received. Verifying..';
         Auth.verifyOtp({'code':otp},function(success){
+          $ionicLoading.hide();
           authCtrl.autoVerifyPhoneStatus = 'Verified';
           otpVerifiedSuccessHandler(success);
         },function(){
+          $ionicLoading.hide();
           authCtrl.autoVerifyPhoneStatus = 'Error Verifying OTP';
         });
       },function(){
+        $ionicLoading.hide();
         authCtrl.autoVerifyPhoneStatus = 'Error Getting OTP From SMS';
         authCtrl.showError("Could not get OTP","Error fetching OTP");
       });
@@ -266,8 +295,10 @@
     function otpVerifiedSuccessHandler(success){
         authCtrl.showAlert("Correct!", "Phone Number verified!",function(success){
           Auth.getUser(function(success){
+            $ionicLoading.hide();
             $state.go('user.personalise.social', {});
           },function(error){
+            $ionicLoading.hide();
             authCtrl.showError("Error","Could not verify OTP. Try again");
           });
         });
