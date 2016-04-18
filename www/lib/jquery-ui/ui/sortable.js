@@ -1251,7 +1251,7 @@ return $.widget("ui.sortable", $.ui.mouse, {
 			}
 		}
 
-		//Do what was originally in plugins
+		//Do what was originally in plugin
 		if ( this.storedCursor ) {
 			this.document.find( "body" ).css( "cursor", this.storedCursor );
 			this.storedStylesheet.remove();

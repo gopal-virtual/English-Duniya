@@ -11,7 +11,8 @@
             </label>
           </div>
           <button type="submit" class="button button-positive button-block">SEND</button>
-          <h4>We will send a reset password link to your email or phone no.</h4>
+          <h4 ng-if="authCtrl.resetPasswordLinkSent == false">We will send a reset password link to your email or phone no.</h4>
+          <h4 ng-if="authCtrl.resetPasswordLinkSent == true">We have sent a reset password link to your email or phone no.</h4>
         </div>
       </form>
     </div>

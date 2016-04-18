@@ -10059,6 +10059,9 @@ input[type=radio].hide {
 .box.has-footer {
   height: calc(100% - 60px); }
 
+.scroll-bar-indicator {
+  display: none; }
+
 .text-white {
   color: white; }
 

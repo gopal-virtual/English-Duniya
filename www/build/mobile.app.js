@@ -195,78 +195,84 @@
   }
 })();
 
-(function(){
+(function () {
   'use strict';
-
   runConfig.$inject = ["$ionicPlatform", "$rootScope", "$timeout", "$log", "$state", "$http", "$cookies", "Auth"];
   angular
     .module('zaya')
     .run(runConfig);
-
-  function runConfig($ionicPlatform, $rootScope, $timeout, $log, $state,$http,$cookies, Auth) {
+  function runConfig($ionicPlatform, $rootScope, $timeout, $log, $state, $http, $cookies, Auth) {
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
     //$http.defaults.headers.common['Access-Control-Request-Headers'] = 'accept, auth-token, content-type, xsrfcookiename';
-    $rootScope.$on('$stateChangeStart',function(event, toState, toParams, fromState, fromParams){
-        // alternative to phaser destroy() ; phaser destroy doesn't remove canvas element
-        if(toState.name!='user.main.playlist'){
-          try {
-            var canvas = document.querySelector('#map_canvas');
-            canvas.parentNode.removeChild(canvas);
-            $log.debug("Canvas Removed");
-          }
-          catch(e){}
+    $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
+      // alternative to phaser destroy() ; phaser destroy doesn't remove canvas element
+      if (toState.name != 'user.main.playlist') {
+        try {
+          var canvas = document.querySelector('#map_canvas');
+          canvas.parentNode.removeChild(canvas);
+          $log.debug("Canvas Removed");
         }
-
-        //if not authenticated, redirect to login page
-        if(!Auth.isAuthorised() && toState.name!='auth.signin' && toState.name!='auth.signup' && toState.name!='auth.forgot'  && toState.name!='auth.verify_phone_number'){
-          $log.debug("You are not authorized");
-          event.preventDefault();
-          $state.go('auth.signin');
+        catch (e) {
         }
-        // if authenticated but not verified redirect to OTP page
-          if(Auth.isAuthorised() && !Auth.isVerified() && toState.name!= 'auth.verify.phone')
-          {
-            $log.debug("User account not verified");
-            event.preventDefault();
-            $state.go('auth.verify.phone');
-          }
-
-        //if authenticated, redirect to userpage
-        if(Auth.isAuthorised() && (toState.name=='auth.signin' || toState.name=='auth.signup' || toState.name=='intro')){
-          $log.debug("You are authorized");
-          event.preventDefault();
-          $state.go('user.main.home');
-        }
-        //if authenticated and verified, redirect to userpage
-        if(Auth.isAuthorised() && Auth.isVerified() && (toState.name=='auth.verfy.phone')){
-          $log.debug("You are authorized and verified");
-          event.preventDefault();
-          $state.go('user.main.home');
       }
-        // block access to quiz summary page if there is no quiz data
-        if(toState.name == 'quiz.summary' && !toParams.quizSummary){
-            $log.debug("Quiz summary page cannot be accessed : No quiz data present");
-            event.preventDefault();
-        }
 
-    })
-    $ionicPlatform.ready(function() {
-      if(window.cordova && window.cordova.plugins.Keyboard) {
+      //if not authenticated, redirect to login page
+      if (!Auth.isAuthorised() && toState.name != 'auth.signin' && toState.name != 'auth.signup' && toState.name != 'auth.forgot' && toState.name != 'auth.verify_phone_number') {
+        $log.debug("You are not authorized");
+        event.preventDefault();
+        $state.go('auth.signin');
+      }
+      // if authenticated but not verified redirect to OTP page
+      if (Auth.isAuthorised() && !Auth.isVerified() && toState.name != 'auth.verify.phone') {
+        $log.debug("User account not verified");
+        event.preventDefault();
+        $state.go('auth.verify.phone');
+      }
+      //if authenticated and verified, redirect to userpage
+      if (Auth.isAuthorised() && Auth.isVerified() && (toState.name == 'auth.signin' || toState.name == 'auth.signup' || toState.name == 'intro' || toState.name == 'auth.verify.phone')) {
+        $log.debug("You are authorized and verified");
+        event.preventDefault();
+        $state.go('user.main.home');
+      }
+      // block access to quiz summary page if there is no quiz data
+      if (toState.name == 'quiz.summary' && !toParams.quizSummary) {
+        $log.debug("Quiz summary page cannot be accessed : No quiz data present");
+        event.preventDefault();
+      }
+
+      if(toState.name == 'auth.verify.phone'){
+        $log.debug("verify");
+        document.addEventListener('onSMSArrive',function(e){
+          $rootScope.$broadcast('smsArrived',{'message':e})
+        });
+
+      }
+
+    });
+    $ionicPlatform.ready(function () {
+
+      if (SMS) {
+        SMS.startWatch(function () {
+          $log.debug('start watching sms');
+        }, function () {
+          $log.debug('Failed to start sms watching');
+        });
+
+      }
+      if (window.cordova && window.cordova.plugins.Keyboard) {
         // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
         // for form inputs)
         cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-
         // Don't remove this line unless you know what you are doing. It stops the viewport
         // from snapping when text inputs are focused. Ionic handles this internally for
         // a much nicer keyboard experience.
         cordova.plugins.Keyboard.disableScroll(true);
       }
-      if(window.StatusBar) {
+      if (window.StatusBar) {
         StatusBar.styleDefault();
       }
     });
   }
-
 })();
 
 (function() {
@@ -276,11 +282,11 @@
     .module('zaya-auth')
     .controller('authController', authController)
 
-  authController.$inject = ['$state', 'Auth', 'audio', '$rootScope', '$ionicPopup','$log','$cordovaOauth', 'CONSTANT','$interval'];
+  authController.$inject = ['$state', 'Auth', 'audio', '$rootScope', '$ionicPopup','$log','$cordovaOauth', 'CONSTANT','$interval','$scope','$ionicLoading'];
 
-  function authController($state, Auth, audio, $rootScope, $ionicPopup, $log, $cordovaOauth, CONSTANT, $interval) {
+  function authController($state, Auth, audio, $rootScope, $ionicPopup, $log, $cordovaOauth, CONSTANT, $interval,$scope,$ionicLoading) {
     var authCtrl = this;
-    var email_regex = /\S+@\S+/;
+    var email_regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     var indian_phone_regex = /^[7-9][0-9]{9}$/;
     //var username_regex = /^[a-z0-9]*$/;
     var min = 6;
@@ -300,10 +306,15 @@
     authCtrl.passwordResetRequest = passwordResetRequest;
     authCtrl.validateForgotPasswordForm = validateForgotPasswordForm;
     authCtrl.resendOTP = resendOTP;
-    authCtrl.counter = 60;
+    authCtrl.max_counter = 60;
     authCtrl.startCounter = startCounter;
     authCtrl.stopCounter = stopCounter;
     authCtrl.signUpDisabled = false;
+    authCtrl.resendOTPCount = 0;
+    authCtrl.resendOTPDate = null;
+    authCtrl.maxOTPsendCountperDay = 50;
+    authCtrl.autoVerifyPhoneStatus = false;
+    authCtrl.resetPasswordLinkSent = false;
     function validEmail(email) {
       return email_regex.test(email);
     }
@@ -316,13 +327,23 @@
     //  return username_regex.test(username);
     //}
     function login(url, user_credentials) {
+      $ionicLoading.show({
+        template: 'Logging in...'
+      });
       user_credentials = ( url == 'login' ) ? cleanCredentials(user_credentials) : user_credentials;
       Auth.login(url, user_credentials, function (response) {
-        $state.go('user.main.home', {});
+        Auth.getUser(function(success){
+          $ionicLoading.hide();
+          $state.go('user.main.home', {});
+        },function(){
+          $ionicLoading.hide();
+          authCtrl.showError("Error Login","Please enter a valid mobile no./Email ID and password");
+        });
       }, function (response) {
+        $ionicLoading.hide();
         if(response.data)
           authCtrl.showError(_.chain(response.data).keys().first(), response.data[_.chain(response.data).keys().first()].toString());
-        authCtrl.showError("Server Error", "Cannot process your request");
+        authCtrl.showError("Error Login","Please enter a valid mobile no./Email ID and password");
         authCtrl.audio.play('wrong');
       })
     }
@@ -352,12 +373,17 @@
     }
 
     function signup(user_credentials) {
+      $ionicLoading.show({
+        template: 'Signing up...'
+      });
       user_credentials = cleanCredentials(user_credentials);
       authCtrl.signUpDisabled = true;
       Auth.signup(user_credentials, function (response) {
         $state.go('auth.verify.phone', {});
+        $ionicLoading.hide();
         authCtrl.signUpDisabled = false;
       }, function (response) {
+        $ionicLoading.hide();
         if(response.data)
           authCtrl.showError(_.chain(response.data).keys().first(), response.data[_.chain(response.data).keys().first()].toString());
         authCtrl.showError("Server Error", "Cannot process your request");
@@ -377,17 +403,16 @@
     }
 
     function validCredential(formData) {
-      $log.debug(formData);
       if (!formData.useridentity.$viewValue) {
         authCtrl.showError("Empty", "Its empty! Enter a valid phone number or email");
         return false;
       }
-      else if (formData.useridentity.$viewValue && !isNaN(parseInt(formData.useridentity.$viewValue, 10)) && !validPhoneNumber(formData.useridentity.$viewValue)) {
-        authCtrl.showError("Phone", "Oops! Please enter a valid mobile no.");
-        return false;
-      }
       else if(formData.useridentity.$viewValue && formData.useridentity.$viewValue.indexOf('@')!=-1 && !validEmail(formData.useridentity.$viewValue)){
         authCtrl.showError("Email","Oops! Please enter a valid email");
+        return false;
+      }
+      else if (formData.useridentity.$viewValue && !isNaN(parseInt(formData.useridentity.$viewValue, 10)) && !validPhoneNumber(formData.useridentity.$viewValue) && !validEmail(formData.useridentity.$viewValue)) {
+        authCtrl.showError("Phone", "Oops! Please enter a valid mobile no.");
         return false;
       }
       else if (!formData.password.$viewValue) {
@@ -417,15 +442,20 @@
       });
     }
 
-    function showAlert(title, msg) {
+    function showAlert(title, msg, success) {
       $log.debug(title, msg);
       $ionicPopup.alert({
         title: title,
         template: msg
+      }).then(function(response){
+        if(success){
+          success()
+        }
       });
     }
 
     function verifyOtpValidations(formData) {
+
       if (!formData.otp.$viewValue) {
         authCtrl.showError("OTP", "Its empty! Enter the one time password");
         return false;
@@ -435,24 +465,25 @@
     }
 
     function verifyOtp(otp_credentials) {
-      $log.debug(JSON.stringify(otp_credentials));
-      Auth.verifyOtp(otp_credentials, function (success) {
-        authCtrl.showAlert("Correct!", "Phone Number verified!");
-        Auth.getUser(function(success){
-          $state.go('user.personalise.social', {});
-        },function(error){
-          authCtrl.showError("Error","Could not verify OTP. Try again");
-        });
-      }, function (error) {
+      $ionicLoading.show({
+        template: 'Verifying...'
+      });
+      Auth.verifyOtp(otp_credentials, otpVerifiedSuccessHandler, function (error) {
+        $ionicLoading.hide();
         authCtrl.showError("Incorrect OTP!", "The one time password you entered is incorrect!");
       })
     }
 
     function passwordResetRequest(useridentity) {
+      $ionicLoading.show({
+        template: 'Requesting...'
+      });
       Auth.resetPassword(useridentity,function(success){
         authCtrl.showAlert("Reset Password","We have send a link to your email");
+        authCtrl.resetPasswordLinkSent = true;
+        $ionicLoading.hide();
       },function(error){
-
+        $ionicLoading.hide();
       })
     }
 
@@ -474,16 +505,26 @@
     }
 
     function resendOTP(){
-      Auth.resendOTP(function (success) {
-        authCtrl.showAlert("OTP Sent","We have sent you otp again");
-        authCtrl.startCounter();
-      }, function (error) {
-        authCtrl.showError(error);
-      })
+      if(Auth.canSendOtp(authCtrl.maxOTPsendCountperDay)){
+
+        Auth.resendOTP(function (success) {
+          authCtrl.showAlert("OTP Sent","We have sent you otp again");
+          authCtrl.startCounter();
+
+          authCtrl.autoVerifyPhoneStatus = 'Waiting For SMS';
+        }, function (error) {
+          authCtrl.showError(error);
+        })
+      }
+      else{
+        authCtrl.showAlert("OTP Resend count exceed", "Sorry you cant send more otps try again tomorrow");
+      }
     }
 
+
+
     function startCounter(){
-      authCtrl.counter = 10;
+      authCtrl.counter = authCtrl.max_counter;
       authCtrl.start = $interval(function() {
         if (authCtrl.counter > 0) {
           authCtrl.counter--;
@@ -491,6 +532,7 @@
           authCtrl.stopCounter();
         }
       }, 1000);
+      return true;
     }
 
     function stopCounter(){
@@ -499,6 +541,119 @@
       }
     }
 
+
+
+
+    $scope.$on('smsArrived',function(event,data){
+      $ionicLoading.show({
+        template: 'Getting OTP From SMS'
+      });
+      authCtrl.autoVerifyPhoneStatus = 'Getting OTP From SMS';
+      Auth.getOTPFromSMS(data.message,function(otp){
+        $ionicLoading.show({
+          template: 'OTP received. Verifying..'
+        });
+        authCtrl.autoVerifyPhoneStatus = 'OTP received. Verifying..';
+        Auth.verifyOtp({'code':otp},function(success){
+          $ionicLoading.hide();
+          authCtrl.autoVerifyPhoneStatus = 'Verified';
+          otpVerifiedSuccessHandler(success);
+        },function(){
+          $ionicLoading.hide();
+          authCtrl.autoVerifyPhoneStatus = 'Error Verifying OTP';
+        });
+      },function(){
+        $ionicLoading.hide();
+        authCtrl.autoVerifyPhoneStatus = 'Error Getting OTP From SMS';
+        authCtrl.showError("Could not get OTP","Error fetching OTP");
+      });
+    });
+
+    function otpVerifiedSuccessHandler(success){
+        authCtrl.showAlert("Correct!", "Phone Number verified!",function(success){
+          Auth.getUser(function(success){
+            $ionicLoading.hide();
+            $state.go('user.personalise.social', {});
+          },function(error){
+            $ionicLoading.hide();
+            authCtrl.showError("Error","Could not verify OTP. Try again");
+          });
+        });
+    }
+   authCtrl.numberOfWatches =  function () {
+      var root = angular.element(document.getElementsByTagName('body'));
+
+      var watchers = [];
+
+      var f = function (element) {
+        angular.forEach(['$scope', '$isolateScope'], function (scopeProperty) {
+          if (element.data() && element.data().hasOwnProperty(scopeProperty)) {
+            angular.forEach(element.data()[scopeProperty].$$watchers, function (watcher) {
+              watchers.push(watcher);
+            });
+          }
+        });
+
+        angular.forEach(element.children(), function (childElement) {
+          f(angular.element(childElement));
+        });
+      };
+
+      f(root);
+
+      // Remove duplicate watchers
+      var watchersWithoutDuplicates = [];
+      angular.forEach(watchers, function(item) {
+        if(watchersWithoutDuplicates.indexOf(item) < 0) {
+          watchersWithoutDuplicates.push(item);
+        }
+      });
+
+      $log.debug(watchersWithoutDuplicates);
+    };
+    authCtrl.googleSignIn = function() {
+      $ionicLoading.show({
+        template: 'Logging in...'
+      });
+
+      window.plugins.googleplus.login(
+        {
+          'webClientId':'306430510808-515d8ep1tvv8ar9bo7rl42rsu85nnpoi.apps.googleusercontent.com',
+        },
+        function (user_data) {
+          $log.debug(JSON.stringify(user_data));
+          // For the purpose of this example I will store user data on local storage
+          //UserService.setUser({
+          //  userID: user_data.userId,
+          //  name: user_data.displayName,
+          //  email: user_data.email,
+          //  picture: user_data.imageUrl,
+          //  accessToken: user_data.accessToken,
+          //  idToken: user_data.idToken
+          //});
+
+          $ionicLoading.hide();
+          //$state.go('app.home');
+        },
+        function (msg) {
+          $log.debug(JSON.stringify(msg));
+          $ionicLoading.hide();
+        }
+      );
+    };
+    authCtrl.googleSignOut = function() {
+      window.plugins.googleplus.logout(
+        function (msg) {
+          void 0;
+        }
+      );
+    };
+
+    authCtrl.facebookSignIn = function() {
+      facebookConnectPlugin.login(['email', 'public_profile'],function(success){
+        $log.debug(JSON.stringify(success));
+      },function(){
+      })}
   }
 })();
 
@@ -528,6 +683,7 @@
       logout: function (success, failure) {
         rest_auth.all('logout').post().then(function (response) {
           localStorage.removeItem('Authorization');
+          localStorage.removeItem('user_details');
           success();
         }, function (error) {
           failure();
@@ -548,7 +704,43 @@
       isAuthorised: function () {
         return localStorage.Authorization;
       },
+      canSendOtp: function (max_otp_send_count) {
+        var last_otp_date = localStorage.getItem('last_otp_date');
+        var otp_sent_count = localStorage.getItem('otp_sent_count');
+        if (last_otp_date && otp_sent_count) {
+          if (this.dateCompare(new Date(), new Date((last_otp_date)))) {
+            localStorage.setItem('last_otp_date', new Date());
+            localStorage.setItem('otp_sent_count', 1);
+            return true;
+          } else {
+            if (otp_sent_count < max_otp_send_count) {
+              localStorage.setItem('last_otp_date', new Date());
+              localStorage.setItem('otp_sent_count', ++otp_sent_count);
+              return true;
+            } else {
+              return false;
+            }
+          }
+        }
+        else {
+          localStorage.setItem('last_otp_date', new Date());
+          localStorage.setItem('otp_sent_count', 1);
+          return true;
+        }
+      },
+      dateCompare: function (date_1, date_2) { // Checks if date_1 > date_2
+        var month_1 = date_1.getMonth();
+        var month_2 = date_2.getMonth();
+        var day_1 = date_1.getDate();
+        var day_2 = date_2.getDate();
+        if (month_1 > month_2) {
+          return true;
+        } else if (month_1 == month_2) {
+          return day_1 > day_2;
+        } else return false;
+      },
       verifyOtp: function (verification_credentials, success, failure) {
+        $log.debug(JSON.stringify(verification_credentials));
         rest_auth.all('sms-verification').post($.param(verification_credentials), success, failure).then(function (response) {
           success(response);
         }, function (response) {
@@ -585,6 +777,19 @@
         else {
           return false;
         }
+      },
+      getOTPFromSMS: function (message,success,failure) {
+        var string = message.data.body;
+        if(message.data.address == '+12023353814')
+        {
+          var e_position = string.indexOf("Enter");
+          var o_position = string.indexOf("on");
+          success(string.substring(e_position + 6, o_position - 1));
+        }
+        else{
+          failure();
+        }
+
       }
     }
   }
@@ -691,7 +896,7 @@
   angular
     .module('common')
     .constant('CONSTANT',{
-      'BACKEND_SERVICE_DOMAIN' : 'http://192.168.10.121:9000/',
+      'BACKEND_SERVICE_DOMAIN' : 'http://cc-test.zaya.in/',
       'PATH' : {
         'INTRO' : ROOT+'/intro',
         'AUTH' : ROOT+'/auth',
@@ -794,7 +999,7 @@
             return;
           }
           ngModelCtrl.$parsers.push(function(val) {
-            var clean = val.replace( /[^a-zA-Z0-9@.]+/g, '');
+            var clean = val.replace( /[^a-zA-Z0-9@.!#$%&'*+-/=?^_`{|}~]+/g, '');
             clean = clean.toLowerCase();
             if (val !== clean) {
               ngModelCtrl.$setViewValue(clean);

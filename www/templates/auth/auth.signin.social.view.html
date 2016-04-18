@@ -8,8 +8,8 @@
           <label for="" class="item item-input item-floating-label"><span class="input-label">PHONE NO. / EMAIL</span>
             <input valid-input ng-trim="false" tabindex="1" name="useridentity" type="text" placeholder="PHONE NO. / EMAIL" ng-model="authCtrl.user.useridentity">
           </label>
-          <label for="" class="item item-input item-floating-label"><span class="input-label">PASSWORD</span>
-            <input tabindex="2" name="password" type="{{show_password==false?'password':'text'}}" placeholder="PASSWORD" ng-model="authCtrl.user.password">
+          <label for="" class="item item-input item-floating-label"><span class="input-Nlabel">PASSWORD</span>
+            <input tabindex="2" onPaste="return false" autocomplete="off" name="password" type="{{show_password==false?'password':'text'}}" placeholder="PASSWORD" ng-model="authCtrl.user.password">
           </label>
           <ion-list>
             <ion-checkbox ng-model="show_password">Show Password</ion-checkbox>
@@ -17,8 +17,9 @@
         </div>
         <button tabindex="3" type="submit" class="button button-positive button-block">SIGN IN</button>
         <br><hr><br>
-        <button tabindex="4" type="button" ng-click="authCtrl.getToken('google')" class="button button-assertive button-block icon-left ion-social-google">SIGNIN WITH GMAIL</button>
-        <button tabindex="5" type="button" ng-click="authCtrl.getToken('facebook')" class="button button-positive button-block icon-left ion-social-facebook">SIGNIN WITH FACEBOOK</button>
+        <button tabindex="4" type="button" ng-click="authCtrl.googleSignIn()" class="button button-assertive button-block icon-left ion-social-google">SIGNIN WITH GMAIL</button>
+        <button tabindex="5" type="button" ng-click="authCtrl.facebookSignIn()" class="button button-positive button-block icon-left ion-social-facebook">SIGNIN WITH FACEBOOK</button>
+
       </form>
     </div>
   </ion-content>

@@ -105,7 +105,7 @@
 		this.e = $.extend({}, e);
 
 		/**
-		 * References to the running plugins of this carousel.
+		 * References to the running plugin of this carousel.
 		 * @protected
 		 */
 		this._plugins = {};
@@ -256,7 +256,7 @@
 	};
 
 	/**
-	 * Contains all registered plugins.
+	 * Contains all registered plugin.
 	 * @public
 	 */
 	Owl.Plugins = {};

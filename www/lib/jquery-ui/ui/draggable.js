@@ -258,7 +258,7 @@ $.widget("ui.draggable", $.ui.mouse, {
 		this.position = this._generatePosition( event, true );
 		this.positionAbs = this._convertPositionTo("absolute");
 
-		//Call plugins and callbacks and use the resulting position if something is returned
+		//Call plugin and callbacks and use the resulting position if something is returned
 		if (!noPropagation) {
 			var ui = this._uiHash();
 			if (this._trigger("drag", event, ui) === false) {
@@ -682,7 +682,7 @@ $.widget("ui.draggable", $.ui.mouse, {
 		ui = ui || this._uiHash();
 		$.ui.plugin.call( this, type, [ event, ui, this ], true );
 
-		// Absolute position and offset (see #6884 ) have to be recalculated after plugins
+		// Absolute position and offset (see #6884 ) have to be recalculated after plugin
 		if ( /^(drag|start|stop)/.test( type ) ) {
 			this.positionAbs = this._convertPositionTo( "absolute" );
 			ui.offset = this.positionAbs;
