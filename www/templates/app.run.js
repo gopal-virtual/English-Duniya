@@ -33,7 +33,8 @@
       if (Auth.isAuthorised() && !Auth.isVerified() && toState.name != 'auth.verify.phone' && toState.name != 'auth.forgot_verify_otp' && toState.name != 'auth.change_password' ) {
         $log.debug("User account not verified");
         event.preventDefault();
-        $state.go('auth.verify.phone');
+        localStorage.clear();
+        $state.go('auth.signin');
       }
       //if authenticated and verified, redirect to userpage
       if (Auth.isAuthorised() && Auth.isVerified() && (toState.name == 'auth.signin' || toState.name == 'auth.signup' || toState.name == 'intro' || toState.name == 'auth.verify.phone' || toState.name == 'auth.forgot' || toState.name == 'auth.change_password' || toState.name == 'auth.forgot_verify_otp')) {

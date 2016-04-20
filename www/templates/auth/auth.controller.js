@@ -410,13 +410,11 @@
           authCtrl.showAlert("Correct!", "OTP verified!");
           $state.go('auth.change_password', {});
         },function(error){
+          authCtrl.showAlert("InCorrect!", "You entered wrong OTP!");
           $log.debug(error);
         })
     }
     function validCredentialChangePassword(formData) {
-      $log.debug(formData.password1.$viewValue);
-      $log.debug(formData.password2.$viewValue);
-      $log.debug(formData);
       if (!formData.password1.$viewValue) {
         authCtrl.showError("Enter Password", "Its empty! Enter a password");
         return false;
@@ -425,7 +423,7 @@
         authCtrl.showError("Password too small", "Password must be 6 characters long");
         return false;
       }
-      else if(!formData.password2.$viewValue){
+      else if(typeof(formData.password2.$viewValue) == 'undefined' || !angular.equals(formData.password2.$viewValue,formData.password1.$viewValue)){
         authCtrl.showError("Confirm Password", "Please confirm your password");
         return false;
       }
@@ -438,6 +436,8 @@
           $log.debug(success);
           $state.go('auth.signin', {});
         })
+      },function(error){
+        $log.debug(error);
       })
     }
     function cancelOTP(){

@@ -231,7 +231,8 @@
       if (Auth.isAuthorised() && !Auth.isVerified() && toState.name != 'auth.verify.phone' && toState.name != 'auth.forgot_verify_otp' && toState.name != 'auth.change_password' ) {
         $log.debug("User account not verified");
         event.preventDefault();
-        $state.go('auth.verify.phone');
+        localStorage.clear();
+        $state.go('auth.signin');
       }
       //if authenticated and verified, redirect to userpage
       if (Auth.isAuthorised() && Auth.isVerified() && (toState.name == 'auth.signin' || toState.name == 'auth.signup' || toState.name == 'intro' || toState.name == 'auth.verify.phone' || toState.name == 'auth.forgot' || toState.name == 'auth.change_password' || toState.name == 'auth.forgot_verify_otp')) {
@@ -692,13 +693,11 @@
           authCtrl.showAlert("Correct!", "OTP verified!");
           $state.go('auth.change_password', {});
         },function(error){
+          authCtrl.showAlert("InCorrect!", "You entered wrong OTP!");
           $log.debug(error);
         })
     }
     function validCredentialChangePassword(formData) {
-      $log.debug(formData.password1.$viewValue);
-      $log.debug(formData.password2.$viewValue);
-      $log.debug(formData);
       if (!formData.password1.$viewValue) {
         authCtrl.showError("Enter Password", "Its empty! Enter a password");
         return false;
@@ -707,7 +706,7 @@
         authCtrl.showError("Password too small", "Password must be 6 characters long");
         return false;
       }
-      else if(!formData.password2.$viewValue){
+      else if(typeof(formData.password2.$viewValue) == 'undefined' || !angular.equals(formData.password2.$viewValue,formData.password1.$viewValue)){
         authCtrl.showError("Confirm Password", "Please confirm your password");
         return false;
       }
@@ -720,6 +719,8 @@
           $log.debug(success);
           $state.go('auth.signin', {});
         })
+      },function(error){
+        $log.debug(error);
       })
     }
     function cancelOTP(){
@@ -1027,8 +1028,8 @@
   angular
     .module('common')
     .constant('CONSTANT',{
-      //'BACKEND_SERVICE_DOMAIN' : 'http://cc-test.zaya.in/',
-      'BACKEND_SERVICE_DOMAIN' : 'http://192.168.10.159:8000/',
+      'BACKEND_SERVICE_DOMAIN' : 'http://cc-test.zaya.in/',
+      //'BACKEND_SERVICE_DOMAIN' : 'http://192.168.10.159:8000/',
       'PATH' : {
         'INTRO' : ROOT+'/intro',
         'AUTH' : ROOT+'/auth',
