@@ -12,6 +12,13 @@
     'use strict';
 
     angular
+        .module('zaya-content', []);
+})();
+
+(function() {
+    'use strict';
+
+    angular
         .module('zaya-map', []);
 })();
 
@@ -91,8 +98,9 @@
 
       // core
       'common',
-      'zaya-user',
+      'zaya-content',
       'zaya-map',
+      'zaya-user',
       'zaya-playlist',
       'zaya-profile',
       'zaya-intro',
@@ -190,7 +198,7 @@
   function mainRoute($urlRouterProvider, $injector) {
     // anonymous function implemented to avoid digest loop
     $urlRouterProvider.otherwise(function ($injector) {
-        $injector.get('$state').go('intro');
+        $injector.get('$state').go('map.navigate');
     });
   }
 })();
@@ -223,11 +231,11 @@
         $state.go('auth.signin');
       }
       // if authenticated but not verified redirect to OTP page
-      if (Auth.isAuthorised() && !Auth.isVerified() && toState.name != 'auth.verify.phone') {
-        $log.debug("User account not verified");
-        event.preventDefault();
-        $state.go('auth.verify.phone');
-      }
+      // if (Auth.isAuthorised() && !Auth.isVerified() && toState.name != 'auth.verify.phone') {
+      //   $log.debug("User account not verified");
+      //   event.preventDefault();
+      //   $state.go('auth.verify.phone');
+      // }
       //if authenticated and verified, redirect to userpage
       if (Auth.isAuthorised() && Auth.isVerified() && (toState.name == 'auth.signin' || toState.name == 'auth.signup' || toState.name == 'intro' || toState.name == 'auth.verify.phone')) {
         $log.debug("You are authorized and verified");
@@ -251,14 +259,17 @@
     });
     $ionicPlatform.ready(function () {
 
-      if (SMS) {
-        SMS.startWatch(function () {
+      try{
+        SMS && SMS.startWatch(function () {
           $log.debug('start watching sms');
         }, function () {
           $log.debug('Failed to start sms watching');
         });
-
       }
+      catch(error){
+        $log.debug(error);
+      }
+
       if (window.cordova && window.cordova.plugins.Keyboard) {
         // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
         // for form inputs)
@@ -896,7 +907,7 @@
   angular
     .module('common')
     .constant('CONSTANT',{
-      'BACKEND_SERVICE_DOMAIN' : 'http://cc-test.zaya.in/',
+      'BACKEND_SERVICE_DOMAIN' : 'http://192.168.10.194:9000/',
       'PATH' : {
         'INTRO' : ROOT+'/intro',
         'AUTH' : ROOT+'/auth',
@@ -909,12 +920,14 @@
         'SEARCH' : ROOT+'/search',
         'GROUP' : ROOT+'/group',
         'COMMON' : ROOT + '/common',
-        'MAP' : ROOT + '/map'
+        'MAP' : ROOT + '/map',
+        'CONTENT' : ROOT + '/content'
       },
       'VIEW' : '.view.html',
       'CLIENTID' : {
         'FACEBOOK' : '1159750564044149',
-        'GOOGLE' : '1011514043276-7q3kvn29jkegl2d1v7dtlbtipqqgo1rr.apps.googleusercontent.com'
+        'GOOGLE' : '1011514043276-7q3kvn29jkegl2d1v7dtlbtipqqgo1rr.apps.googleusercontent.com',
+        'ELL' : '1e7aa89f-3f50-433a-90ca-e485a92bbda6',
       }
     })
 })();
@@ -1058,6 +1071,34 @@
 })();
 
 (function() {
+  'use strict';
+
+  mainRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
+  angular
+    .module('zaya-content')
+    .config(mainRoute);
+
+  function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
+
+    $stateProvider
+      .state('content',{
+        url : '/content',
+        abstract : true,
+        template : '<ion-nav-view name="state-content"></ion-nav-view>'
+      })
+      .state('content.video',{
+        url : '/video',
+        views : {
+          'state-content' : {
+            templateUrl : CONSTANT.PATH.CONTENT + '/content.video' + CONSTANT.VIEW,
+            // controller : 'contentController as contentCtrl'
+          }
+        }
+      })
+  }
+})();
+
+(function() {
     'use strict';
 
     angular
@@ -1195,32 +1236,58 @@
 })();
 
 (function() {
-    'use strict';
+  'use strict';
 
-    angular
-        .module('zaya-map')
-        .controller('mapController', mapController);
+  angular
+    .module('zaya-map')
+    .controller('mapController', mapController);
 
-    mapController.$inject = ['$scope','$log','$ionicPopup'];
+  mapController.$inject = ['$scope', '$log', '$ionicModal', '$state', 'lessons', 'Rest', 'CONSTANT', '$sce'];
 
-    function mapController($scope,$log, $ionicPopup) {
-        var mapCtrl = this;
-        mapCtrl.nodeDetails = [
-          { name : 'Video', icon : 'video', type : 'video'},
-          { name : 'Quiz', icon : 'quiz' , type : 'quiz'},
-          { name : 'Practice', icon : 'practice', type : 'practice'},
-        ]
-        $scope.$on('openNode',function (arg) {
-          $ionicPopup.show({
-            title: "<strong>Node Name</strong>",
-            scope: $scope,
-            template: '<button class="button button-energized button-block" ng-repeat="node in mapCtrl.nodeDetails">{{node.name}}</button>',
-            buttons : [
-              { text : 'Cancel', type: 'button-assertive'}
-            ]
-          });
-        })
+  function mapController($scope, $log, $ionicModal, $state, lessons, Rest, CONSTANT, $sce) {
+    var mapCtrl = this;
+    mapCtrl.lessons = lessons;
+    mapCtrl.playVideo = playVideo;
+    mapCtrl.getLesson = getLesson;
+    mapCtrl.getSrc = getSrc;
+    // mapCtrl.openModal = openModal;
+    // mapCtrl.closeModal = closeModal;
+
+    function getSrc(src){
+      return $sce.trustAsResourceUrl('http://192.168.10.194:9000'+src);
     }
+    $scope.$on('openNode', function(event, node) {
+      $scope.openModal();
+      $log.debug(mapCtrl.getLesson(node.id));
+    })
+    $scope.openModal = function() {
+      $scope.modal.show();
+    }
+    $scope.closeModal = function() {
+      $scope.modal.hide();
+    }
+    $scope.$on('$destroy', function() {
+      $scope.modal.remove();
+    });
+
+    $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal' + CONSTANT.VIEW, {
+      scope: $scope,
+      animation: 'slide-in-up'
+    }).then(function(modal) {
+      $scope.modal = modal;
+    });
+
+    function getLesson(id) {
+      Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('lessons', id).get().then(function(response) {
+        $log.debug(response.plain());
+        mapCtrl.selectedNode = response.plain();
+      })
+    }
+
+    function playVideo() {
+      $state.go('content.video');
+    }
+  }
 })();
 
 (function() {
@@ -1236,25 +1303,26 @@
         var mapCanvas = {
             restrict: 'A',
             template: '<div id="map_canvas"></div>',
-            scope: {},
+            scope: {
+              lessons : '='
+            },
             link: linkFunc,
         };
 
         return mapCanvas;
 
         function linkFunc(scope, el, attr, ctrl) {
-          void 0;
-          $timeout(createGame(scope, $injector, $log));
+          $timeout(createGame(scope, scope.lessons, $injector, $log));
         }
     }
 
 })();
 
-window.createGame = function(scope, injector, log) {
+window.createGame = function(scope, lessons, injector, log) {
   'use strict';
 
+  var lessons = lessons;
   var game = new Phaser.Game("100", "100" , Phaser.AUTO, 'map_canvas');
-
   var playState = {
     preload : function () {
       this.load.image('desert', 'img/assets_v0.0.2/desert_bg.png');
@@ -1278,11 +1346,12 @@ window.createGame = function(scope, injector, log) {
         var walk = cactus_animation.animations.add('walk');
         cactus_animation.animations.play('walk', 10, true);
       }
-      var nodeCount = 15
-      for (var i = 0; i < nodeCount; i++) {
-        var node = this.game.add.button(this.game.world.centerX - 27, i * (this.game.world.height / nodeCount), 'node', function () {
+      log.debug(lessons);
+      for (var i = 0, nodeCount = lessons.length ; i < nodeCount ; i++) {
+        var node = this.game.add.button(this.game.world.centerX - 27, i * (this.game.world.height / nodeCount), 'node', function (node) {
           scope.$emit('openNode',node);
         }, this, 2, 1, 0);
+        node.id = lessons[i].id;
         node.scale.setTo(0.6,0.6);
       }
       this.init();
@@ -1335,8 +1404,25 @@ window.createGame = function(scope, injector, log) {
     $stateProvider
       .state('map',{
         url : '/map',
-        templateUrl : CONSTANT.PATH.MAP + '/map' + CONSTANT.VIEW,
-        controller : 'mapController as mapCtrl'
+        abstract : true,
+          resolve : {
+            lessons : ['Rest','$log',function(Rest, $log){
+              return Rest.one('accounts', CONSTANT.CLIENTID.ELL).getList('lessons').then(function(lessons) {
+                $log.debug(lessons.plain());
+                return lessons.plain();
+              })
+            }]
+          },
+        template : '<ion-nav-view name="state-map"></ion-nav-view>'
+      })
+      .state('map.navigate',{
+        url : '/navigate',
+        views : {
+          'state-map' : {
+            templateUrl : CONSTANT.PATH.MAP + '/map' + CONSTANT.VIEW,
+            controller : 'mapController as mapCtrl'
+          }
+        }
       })
   }
 })();
@@ -1517,11 +1603,14 @@ window.createGame = function(scope, injector, log) {
         .module('zaya-profile')
         .controller('profileController', profileController);
 
-    profileController.$inject = ['CONSTANT','$state','Auth'];
+    profileController.$inject = ['CONSTANT','$state','Auth','Rest','$log','$ionicPopup'];
 
-    function profileController(CONSTANT, $state, Auth) {
+    function profileController(CONSTANT, $state, Auth, Rest, $log, $ionicPopup) {
         var profileCtrl = this;
+        profileCtrl.createProfile = createProfile;
+        profileCtrl.updateProfile = updateProfile;
         profileCtrl.logout = logout;
+        profileCtrl.calcAge = calcAge;
 
         profileCtrl.tabIndex = 0;
         profileCtrl.tab = [
@@ -1536,6 +1625,26 @@ window.createGame = function(scope, injector, log) {
             icon : 'ion-trophy'
           }
         ]
+
+        function calcAge(dateString) {
+          var birthday = +new Date(dateString);
+          return ~~((Date.now() - birthday) / (31557600000));
+        }
+
+        function createProfile (userdata) {
+          Rest.all('profiles').post(userdata).then(function(response){
+            $state.go('map.navigate',{});
+          },function(error){
+            $ionicPopup.alert({
+              title : _.chain(error.data).keys().first(),
+              template : error.data[_.chain(error.data).keys().first()].toString(),
+            });
+          })
+        }
+
+        function updateProfile(userdata) {
+          // body...
+        }
 
         function logout() {
           Auth.logout(function () {
@@ -1875,11 +1984,21 @@ window.createGame = function(scope, injector, log) {
   function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
 
     $stateProvider
+      // parent state after authentication
       .state('user',{
         url :'/user',
         abstract : true,
-        templateUrl: CONSTANT.PATH.USER+'/user'+CONSTANT.VIEW,
+        template: '<ion-nav-view name="state-user"></ion-nav-view>',
       })
+      // content - Video, Image, Game, Pdf etc
+      // .state('user.content',{
+      //   url : '/content/:content_type/:content_id',
+      //   views : {
+      //     'state-user' : {
+      //       templateUrl : CONSTANT.PATH.CONTENT+'/content'+CONSTANT.VIEW,
+      //     }
+      //   }
+      // })
       // personalisation for all
       .state('user.personalise',{
         url : '/personalise',
@@ -1894,7 +2013,8 @@ window.createGame = function(scope, injector, log) {
         url : '/social',
         views : {
           'state-personalise':{
-            templateUrl : CONSTANT.PATH.PROFILE+'/personalise.social'+CONSTANT.VIEW
+            templateUrl : CONSTANT.PATH.PROFILE+'/personalise.social'+CONSTANT.VIEW,
+            controller : 'profileController as profileCtrl'
           }
         }
       })

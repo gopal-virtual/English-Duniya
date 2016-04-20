@@ -10,15 +10,16 @@
         var mapCanvas = {
             restrict: 'A',
             template: '<div id="map_canvas"></div>',
-            scope: {},
+            scope: {
+              lessons : '='
+            },
             link: linkFunc,
         };
 
         return mapCanvas;
 
         function linkFunc(scope, el, attr, ctrl) {
-          console.log('its called');
-          $timeout(createGame(scope, $injector, $log));
+          $timeout(createGame(scope, scope.lessons, $injector, $log));
         }
     }
 

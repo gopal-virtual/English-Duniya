@@ -1,0 +1,33 @@
+<ion-modal-view style="background:url('img/interlink.png') rgba(0,0,0,0.7) repeat-y center center;" ng-click="closeModal()">
+  <ion-content class="padding" ng-init="mapCtrl.selected=false">
+    <div class="row">
+      <div class="col">
+        <div class="text-center">
+          <img src="img/assets_v0.0.2/video.png" alt="video icon" ng-hide="mapCtrl.selected" ng-click="mapCtrl.selected=true;mapCtrl.showVideo=true;$event.stopPropagation();"/>
+          <video ng-show="mapCtrl.showVideo" ng-src="{{mapCtrl.getSrc(mapCtrl.selectedNode.objects[0].node.type.path)}}" width="320" height="240" controls type="video/mp4"></video>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <div class="text-center">
+          <img src="img/assets_v0.0.2/practice.png" alt="practice icon" />
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <div class="text-center">
+          <img src="img/assets_v0.0.2/quiz.png" alt="practice icon"/>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <div class="text-center">
+          <img src="img/assets_v0.0.2/node.png" alt="practice icon" />
+        </div>
+      </div>
+    </div>
+  </ion-content>
+</ion-modal-view>

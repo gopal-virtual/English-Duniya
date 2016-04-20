@@ -8,11 +8,21 @@
   function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
 
     $stateProvider
+      // parent state after authentication
       .state('user',{
         url :'/user',
         abstract : true,
-        templateUrl: CONSTANT.PATH.USER+'/user'+CONSTANT.VIEW,
+        template: '<ion-nav-view name="state-user"></ion-nav-view>',
       })
+      // content - Video, Image, Game, Pdf etc
+      // .state('user.content',{
+      //   url : '/content/:content_type/:content_id',
+      //   views : {
+      //     'state-user' : {
+      //       templateUrl : CONSTANT.PATH.CONTENT+'/content'+CONSTANT.VIEW,
+      //     }
+      //   }
+      // })
       // personalisation for all
       .state('user.personalise',{
         url : '/personalise',
@@ -27,7 +37,8 @@
         url : '/social',
         views : {
           'state-personalise':{
-            templateUrl : CONSTANT.PATH.PROFILE+'/personalise.social'+CONSTANT.VIEW
+            templateUrl : CONSTANT.PATH.PROFILE+'/personalise.social'+CONSTANT.VIEW,
+            controller : 'profileController as profileCtrl'
           }
         }
       })

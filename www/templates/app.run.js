@@ -25,11 +25,11 @@
         $state.go('auth.signin');
       }
       // if authenticated but not verified redirect to OTP page
-      if (Auth.isAuthorised() && !Auth.isVerified() && toState.name != 'auth.verify.phone') {
-        $log.debug("User account not verified");
-        event.preventDefault();
-        $state.go('auth.verify.phone');
-      }
+      // if (Auth.isAuthorised() && !Auth.isVerified() && toState.name != 'auth.verify.phone') {
+      //   $log.debug("User account not verified");
+      //   event.preventDefault();
+      //   $state.go('auth.verify.phone');
+      // }
       //if authenticated and verified, redirect to userpage
       if (Auth.isAuthorised() && Auth.isVerified() && (toState.name == 'auth.signin' || toState.name == 'auth.signup' || toState.name == 'intro' || toState.name == 'auth.verify.phone')) {
         $log.debug("You are authorized and verified");
@@ -53,14 +53,17 @@
     });
     $ionicPlatform.ready(function () {
 
-      if (SMS) {
-        SMS.startWatch(function () {
+      try{
+        SMS && SMS.startWatch(function () {
           $log.debug('start watching sms');
         }, function () {
           $log.debug('Failed to start sms watching');
         });
-
       }
+      catch(error){
+        $log.debug(error);
+      }
+
       if (window.cordova && window.cordova.plugins.Keyboard) {
         // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
         // for form inputs)

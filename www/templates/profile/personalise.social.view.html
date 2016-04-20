@@ -2,30 +2,34 @@
   <ion-content>
     <div class="row">
       <div class="col padding-30">
-        <div class="list">
+        <form name="personaliseForm" class="list" novalidate ng-submit="personaliseForm.$valid && profileCtrl.createProfile({name : profileCtrl.user.name, age : profileCtrl.calcAge(profileCtrl.user.dob), grade : profileCtrl.user.grade, language : profileCtrl.user.language})">
           <label for="" class="item item-input item-floating-label"><span class="input-label">Child's name</span>
-            <input type="text" placeholder="Child's name">
+            <input name="username" type="text" placeholder="Child's name" ng-model="profileCtrl.user.name" required>
           </label>
           <label for="" class="item item-input"><span class="input-label">Date of Birth</span>
-            <input type="date" placeholder="Date of birth">
+            <input name="dob" type="date" placeholder="Date of birth" ng-model="profileCtrl.user.dob" required>
           </label>
           <label for="" class="item item-input item-select">
             <span class="input-label">Grade</span>
-            <select name="" id="">
-              <option value="">grade1</option>
-              <option value="">grade2</option>
-              <option value="">grade3</option>
+            <select name="grade" ng-model="profileCtrl.user.grade" required>
+              <option value="1">Grade 1</option>
+              <option value="2">Grade 2</option>
+              <option value="3">Grade 3</option>
             </select>
           </label>
           <label for="" class="item item-input item-select">
-            <span class="input-label">Language</span><select name="" id="">
-              <option value="">English</option>
-              <option value="">Bengali</option>
-              <option value="">Marathi</option>
+            <span class="input-label">Language</span>
+            <select name="language" ng-model="profileCtrl.user.language" required>
+              <option value="en">English</option>
+              <option value="ben">Bengali</option>
+              <option value="mar">Marathi</option>
             </select>
           </label>
-          <div class="item"><button class="button button-positive button-block" ui-sref="user.main.home">CONTINUE</button></div>
-        </div>
+          <div class="item">
+            <button type="submit" ng-disabled="personaliseForm.$invalid" class="button button-positive button-block">CONTINUE</button>
+            <button type="button" class="button button-positive button-block" ui-sref="map.navigate">go to map</button>
+          </div>
+        </form>
       </div>
     </div>
   </ion-content>

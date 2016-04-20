@@ -1,8 +1,8 @@
-window.createGame = function(scope, injector, log) {
+window.createGame = function(scope, lessons, injector, log) {
   'use strict';
 
+  var lessons = lessons;
   var game = new Phaser.Game("100", "100" , Phaser.AUTO, 'map_canvas');
-
   var playState = {
     preload : function () {
       this.load.image('desert', 'img/assets_v0.0.2/desert_bg.png');
@@ -26,11 +26,12 @@ window.createGame = function(scope, injector, log) {
         var walk = cactus_animation.animations.add('walk');
         cactus_animation.animations.play('walk', 10, true);
       }
-      var nodeCount = 15
-      for (var i = 0; i < nodeCount; i++) {
-        var node = this.game.add.button(this.game.world.centerX - 27, i * (this.game.world.height / nodeCount), 'node', function () {
+      log.debug(lessons);
+      for (var i = 0, nodeCount = lessons.length ; i < nodeCount ; i++) {
+        var node = this.game.add.button(this.game.world.centerX - 27, i * (this.game.world.height / nodeCount), 'node', function (node) {
           scope.$emit('openNode',node);
         }, this, 2, 1, 0);
+        node.id = lessons[i].id;
         node.scale.setTo(0.6,0.6);
       }
       this.init();
