@@ -3,7 +3,7 @@
   angular
     .module('zaya')
     .run(runConfig);
-  function runConfig($ionicPlatform, $rootScope, $timeout, $log, $state, $http, $cookies, Auth) {
+  function runConfig($ionicPlatform, $rootScope, $timeout, $log, $state, $http, $cookies, Auth, $window) {
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
     //$http.defaults.headers.common['Access-Control-Request-Headers'] = 'accept, auth-token, content-type, xsrfcookiename';
     $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
@@ -19,19 +19,24 @@
       }
 
       //if not authenticated, redirect to login page
-      if (!Auth.isAuthorised() && toState.name != 'auth.signin' && toState.name != 'auth.signup' && toState.name != 'auth.forgot' && toState.name != 'auth.verify_phone_number') {
+      if (!Auth.isAuthorised() && toState.name != 'auth.signin' && toState.name != 'auth.signup' && toState.name != 'auth.forgot') {
         $log.debug("You are not authorized");
         event.preventDefault();
         $state.go('auth.signin');
       }
+       //if authenticated but not verified redirect to OTP page
+      //if (Auth.isAuthorised() && !Auth.isVerified() && (toState.name == 'auth.forgot.verify_otp' || toState.name == 'auth.verify.phone') ) {
+      //  $log.debug("User account not verified");
+      //  return true;
+      //}
       // if authenticated but not verified redirect to OTP page
-      if (Auth.isAuthorised() && !Auth.isVerified() && toState.name != 'auth.verify.phone') {
+      if (Auth.isAuthorised() && !Auth.isVerified() && toState.name != 'auth.verify.phone' && toState.name != 'auth.forgot_verify_otp' && toState.name != 'auth.change_password' ) {
         $log.debug("User account not verified");
         event.preventDefault();
         $state.go('auth.verify.phone');
       }
       //if authenticated and verified, redirect to userpage
-      if (Auth.isAuthorised() && Auth.isVerified() && (toState.name == 'auth.signin' || toState.name == 'auth.signup' || toState.name == 'intro' || toState.name == 'auth.verify.phone')) {
+      if (Auth.isAuthorised() && Auth.isVerified() && (toState.name == 'auth.signin' || toState.name == 'auth.signup' || toState.name == 'intro' || toState.name == 'auth.verify.phone' || toState.name == 'auth.forgot' || toState.name == 'auth.change_password' || toState.name == 'auth.forgot_verify_otp')) {
         $log.debug("You are authorized and verified");
         event.preventDefault();
         $state.go('user.main.home');

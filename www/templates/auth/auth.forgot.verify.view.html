@@ -1,0 +1,25 @@
+<ion-view>
+  <ion-content>
+    <div class="row">
+      <form name="verifyOtpForm" class="col padding-30" ng-submit="authCtrl.closeKeyboard() && authCtrl.verifyOtpValidations(verifyOtpForm) && authCtrl.verifyOtpResetPassword({'code':authCtrl.forgot.otp})">
+
+        <div class="list">
+          <label for="" class="item item-input item-floating-label"><span class="input-label">OTP</span>
+            <input valid-otp name="otp" type="number" placeholder="ENTER OTP" ng-model="authCtrl.forgot.otp">
+          </label>
+        </div>
+        <button type="submit" class="button button-positive button-block">SUBMIT</button>
+        <br><hr><br>
+      </form>
+    </div>
+    <div class="row padding-30">
+       <!--<span ng-if="authCtrl.autoVerifyPhoneStatus">{{authCtrl.autoVerifyPhoneStatus}}</span>-->
+      </div>
+    </div>
+    <div class="row padding-30">
+      <div class="col">
+      </div>
+    </div>
+
+  </ion-content>
+</ion-view>

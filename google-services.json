@@ -1,0 +1,52 @@
+{
+  "project_info": {
+    "project_id": "angryape-1284",
+    "project_number": "306430510808",
+    "name": "angryape"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:306430510808:android:2328f3c9532d1cec",
+        "client_id": "android:com.ionicframework.zayamobile694033",
+        "client_type": 1,
+        "android_client_info": {
+          "package_name": "com.ionicframework.zayamobile694033",
+          "certificate_hash": []
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "306430510808-515d8ep1tvv8ar9bo7rl42rsu85nnpoi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ionicframework.zayamobile694033",
+            "certificate_hash": "71D2F2362DD1A72F7C3D2E33054B46EF9E99CED5"
+          }
+        }
+      ],
+      "api_key": [],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "cloud_messaging_service": {
+          "status": 1,
+          "apns_config": []
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "google_signin_service": {
+          "status": 2
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "client_info": [],
+  "ARTIFACT_VERSION": "1"
+}

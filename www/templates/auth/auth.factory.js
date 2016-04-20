@@ -3,8 +3,8 @@
   angular
     .module('zaya-auth')
     .factory('Auth', Auth)
-  Auth.$inject = ['Restangular', 'CONSTANT', '$cookies', '$log'];
-  function Auth(Restangular, CONSTANT, $cookies, $log) {
+  Auth.$inject = ['Restangular', 'CONSTANT', '$cookies', '$log', '$window'];
+  function Auth(Restangular, CONSTANT, $cookies, $log, $window) {
     var rest_auth = Restangular.withConfig(function (RestangularConfigurer) {
       RestangularConfigurer.setBaseUrl(CONSTANT.BACKEND_SERVICE_DOMAIN + '/rest-auth');
       RestangularConfigurer.setRequestSuffix('/');
@@ -23,8 +23,17 @@
       },
       logout: function (success, failure) {
         rest_auth.all('logout').post().then(function (response) {
+          if(localStorage.getItem('authProvider') == 'google')
+          {
+            window.plugins.googleplus.logout();
+          }
+          if(localStorage.getItem('authProvider') == 'facebook')
+          {
+            facebookConnectPlugin.logout();
+          }
           localStorage.removeItem('Authorization');
           localStorage.removeItem('user_details');
+          localStorage.removeItem('authProvider');
           success();
         }, function (error) {
           failure();
@@ -131,6 +140,25 @@
           failure();
         }
 
+      },
+      setAuthProvider: function (authProvider){
+        localStorage.setItem('authProvider',authProvider);
+        return authProvider;
+      },
+      verifyOtpResetPassword: function(otp,success,failure){
+        rest_auth.all('password/reset/sms-verification').post($.param(otp), success, failure).then(function (response) {
+          success(response);
+        }, function (response) {
+          failure(response);
+        })
+      },
+      changePassword: function (credentials, success, failure) {
+        rest_auth.all('password/change').post($.param(credentials), success, failure).then(function (response) {
+          localStorage.removeItem('Authorization');
+          success(response);
+        }, function (response) {
+          failure(response);
+        })
       }
     }
   }

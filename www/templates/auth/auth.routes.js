@@ -66,6 +66,36 @@
           }
         }
       })
+      .state('auth.forgot_verify_otp', {
+        url: '/verifyotp',
+        nativeTransitions: {
+          "type": "slide",
+          "direction": "up",
+          "duration" :  400
+        },
+        views: {
+          'state-auth': {
+            // templateUrl: CONSTANT.PATH.AUTH + '/auth.forgot' + CONSTANT.VIEW,
+            templateUrl: CONSTANT.PATH.AUTH + '/auth.forgot.verify' + CONSTANT.VIEW,
+            controller: 'authController as authCtrl'
+          }
+        }
+      })
+      .state('auth.change_password', {
+        url: '/changepassword',
+        nativeTransitions: {
+          "type": "slide",
+          "direction": "up",
+          "duration" :  400
+        },
+        views: {
+          'state-auth': {
+            // templateUrl: CONSTANT.PATH.AUTH + '/auth.forgot' + CONSTANT.VIEW,
+            templateUrl: CONSTANT.PATH.AUTH + '/auth.changepassword' + CONSTANT.VIEW,
+            controller: 'authController as authCtrl'
+          }
+        }
+      })
       .state('auth.verify',{
         abstract : true,
         url : '/verify',

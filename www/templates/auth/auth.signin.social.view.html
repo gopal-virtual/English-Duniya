@@ -1,7 +1,7 @@
 <ion-view>
   <ion-content>
     <div class="row">
-      <form name="authForm" class="col padding-30" ng-submit="authCtrl.validCredential(authForm) && authCtrl.login('login',{'useridentity':authCtrl.user.useridentity, 'password':authCtrl.user.password})">
+      <form name="authForm" class="col padding-30" ng-submit="authCtrl.closeKeyboard() && authCtrl.validCredential(authForm) && authCtrl.login('login',{'useridentity':authCtrl.user.useridentity, 'password':authCtrl.user.password})">
         <h4 class="text-right"><a ui-sref="auth.signup">NEW USER</a></h4>
         <h4 class="text-right"><a ui-sref="auth.forgot">FORGOT PASSWORD?</a></h4>
         <div class="list" ng-init="show_password = false">
@@ -19,7 +19,6 @@
         <br><hr><br>
         <button tabindex="4" type="button" ng-click="authCtrl.googleSignIn()" class="button button-assertive button-block icon-left ion-social-google">SIGNIN WITH GMAIL</button>
         <button tabindex="5" type="button" ng-click="authCtrl.facebookSignIn()" class="button button-positive button-block icon-left ion-social-facebook">SIGNIN WITH FACEBOOK</button>
-
       </form>
     </div>
   </ion-content>

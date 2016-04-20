@@ -1,11 +1,11 @@
 <ion-view>
   <ion-content>
     <div class="row">
-      <form name="verifyOtpForm" class="col padding-30" ng-submit="authCtrl.verifyOtpValidations(verifyOtpForm) && authCtrl.verifyOtp({'code':authCtrl.verification.otp})">
+      <form name="verifyOtpForm" class="col padding-30" ng-submit="authCtrl.closeKeyboard() && authCtrl.verifyOtpValidations(verifyOtpForm) && authCtrl.verifyOtp({'code':authCtrl.verification.otp})">
 
         <div class="list">
           <label for="" class="item item-input item-floating-label"><span class="input-label">OTP</span>
-            <input max="999999" name="otp" type="number" placeholder="ENTER OTP" ng-model="authCtrl.verification.otp">
+            <input valid-otp name="otp" type="number" placeholder="ENTER OTP" ng-model="authCtrl.verification.otp">
           </label>
         </div>
         <button type="submit" class="button button-positive button-block">SUBMIT</button>
@@ -13,13 +13,13 @@
       </form>
     </div>
     <div class="row padding-30">
-       <span ng-if="authCtrl.autoVerifyPhoneStatus">{{authCtrl.autoVerifyPhoneStatus}}</span>
+       <!--<span ng-if="authCtrl.autoVerifyPhoneStatus">{{authCtrl.autVerifyPhoneStatus}}</span>-->
       </div>
     </div>
     <div class="row padding-30">
       <div class="col">
-        <button ng-disabled="authCtrl.counter > 0" ng-click="authCtrl.resendOTP()" class="button button-positive button-block">DIDN'T RECEIVE YET? RESEND OTP<span ng-if="authCtrl.counter > 0"> IN {{authCtrl.counter}}s</span></button>
-        <button class="button button-block button-assertive" ng-click="authCtrl.logout('auth.signup')">Cancel</button>
+        <button ng-disabled="authCtrl.counter > 0" ng-click="authCtrl.resendOTP()" class="button button-positive button-block">RESEND OTP<span ng-if="authCtrl.counter > 0"> IN {{authCtrl.counter}}s</span></button>
+        <button class="button button-block button-assertive" ng-click="authCtrl.cancelOTP()">Cancel</button>
       </div>
     </div>
 

@@ -8,7 +8,7 @@
     function validInput() {
         var validInput = {
             require: '?ngModel',
-            link: linkFunc,
+            link: linkFunc
         };
 
         return validInput;

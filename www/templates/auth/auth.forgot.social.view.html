@@ -2,7 +2,7 @@
   <ion-content>
     <div class="row">
       <form novalidate name="forgotPasswordForm" class="col padding-30"
-            ng-submit="authCtrl.validateForgotPasswordForm(forgotPasswordForm) && authCtrl.passwordResetRequest({'email':authCtrl.password_reset_credentials.useridentity})">
+            ng-submit="authCtrl.closeKeyboard() && authCtrl.validateForgotPasswordForm(forgotPasswordForm) && authCtrl.passwordResetRequest({'useridentity':authCtrl.password_reset_credentials.useridentity})">
         <div class="col padding-30">
           <div class="list">
             <label for="" class="item item-input item-floating-label">
