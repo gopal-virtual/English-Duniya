@@ -13,8 +13,9 @@
 
       // core
       'common',
-      'zaya-user',
+      'zaya-content',
       'zaya-map',
+      'zaya-user',
       'zaya-playlist',
       'zaya-profile',
       'zaya-intro',

@@ -12,6 +12,13 @@
     'use strict';
 
     angular
+        .module('zaya-content', []);
+})();
+
+(function() {
+    'use strict';
+
+    angular
         .module('zaya-map', []);
 })();
 
@@ -91,8 +98,9 @@
 
       // core
       'common',
-      'zaya-user',
+      'zaya-content',
       'zaya-map',
+      'zaya-user',
       'zaya-playlist',
       'zaya-profile',
       'zaya-intro',
@@ -190,7 +198,7 @@
   function mainRoute($urlRouterProvider, $injector) {
     // anonymous function implemented to avoid digest loop
     $urlRouterProvider.otherwise(function ($injector) {
-        $injector.get('$state').go('intro');
+        $injector.get('$state').go('map.navigate');
     });
   }
 })();
@@ -257,14 +265,17 @@
     });
     $ionicPlatform.ready(function () {
 
-      if (SMS) {
-        SMS.startWatch(function () {
+      try{
+        SMS && SMS.startWatch(function () {
           $log.debug('start watching sms');
         }, function () {
           $log.debug('Failed to start sms watching');
         });
-
       }
+      catch(error){
+        $log.debug(error);
+      }
+
       if (window.cordova && window.cordova.plugins.Keyboard) {
         // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
         // for form inputs)
@@ -1042,12 +1053,19 @@
         'SEARCH' : ROOT+'/search',
         'GROUP' : ROOT+'/group',
         'COMMON' : ROOT + '/common',
-        'MAP' : ROOT + '/map'
+        'MAP' : ROOT + '/map',
+        'CONTENT' : ROOT + '/content'
       },
       'VIEW' : '.view.html',
       'CLIENTID' : {
         'FACEBOOK' : '1159750564044149',
-        'GOOGLE' : '1011514043276-7q3kvn29jkegl2d1v7dtlbtipqqgo1rr.apps.googleusercontent.com'
+        'GOOGLE' : '1011514043276-7q3kvn29jkegl2d1v7dtlbtipqqgo1rr.apps.googleusercontent.com',
+        'ELL' : '1e7aa89f-3f50-433a-90ca-e485a92bbda6',
+      },
+      'ASSETS' : {
+        'IMG' : {
+          'ICON' : '/img/icons'
+        }
       }
     })
 })();
@@ -1224,6 +1242,34 @@
 })();
 
 (function() {
+  'use strict';
+
+  mainRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
+  angular
+    .module('zaya-content')
+    .config(mainRoute);
+
+  function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
+
+    $stateProvider
+      .state('content',{
+        url : '/content',
+        abstract : true,
+        template : '<ion-nav-view name="state-content"></ion-nav-view>'
+      })
+      .state('content.video',{
+        url : '/video',
+        views : {
+          'state-content' : {
+            templateUrl : CONSTANT.PATH.CONTENT + '/content.video' + CONSTANT.VIEW,
+            // controller : 'contentController as contentCtrl'
+          }
+        }
+      })
+  }
+})();
+
+(function() {
     'use strict';
 
     angular
@@ -1361,139 +1407,234 @@
 })();
 
 (function() {
-    'use strict';
+  'use strict';
 
-    angular
-        .module('zaya-map')
-        .controller('mapController', mapController);
+  angular
+    .module('zaya-map')
+    .controller('mapController', mapController);
 
-    mapController.$inject = [];
+  mapController.$inject = ['$scope', '$log', '$ionicModal', '$state', 'lessons', 'Rest', 'CONSTANT', '$sce'];
 
-    function mapController() {
-        var zayaCtrl = this;
+  function mapController($scope, $log, $ionicModal, $state, lessons, Rest, CONSTANT, $sce) {
+    var mapCtrl = this;
+    mapCtrl.lessons = lessons;
+    mapCtrl.getLesson = getLesson;
+    mapCtrl.getSrc = getSrc;
+    mapCtrl.resetNode = resetNode;
+    mapCtrl.getIcon = getIcon;
+    mapCtrl.resourceType = resourceType;
+    // mapCtrl.openModal = openModal;
+    // mapCtrl.closeModal = closeModal;
+
+    function resourceType (resource){
+      if(resource.node.content_type_name == 'assessment'){
+        return 'assessment';
+      }
+      else if(resource.node.content_type_name == 'resource'){
+        if(resource.node.type.file_type.substring(0,resource.node.type.file_type.indexOf('/')) == 'video'){
+          return 'video';
+        }
+      }
+      else {}
     }
+    function getSrc(src){
+      return $sce.trustAsResourceUrl('http://192.168.10.194:9000'+src);
+    }
+    function getIcon(resource){
+      if(resource.node.content_type_name == 'assessment'){
+        return CONSTANT.ASSETS.IMG.ICON + '/quiz.png';
+      }
+      else if(resource.node.content_type_name == 'resource'){
+        if(resource.node.type.file_type.substring(0,resource.node.type.file_type.indexOf('/')) == 'video'){
+          return CONSTANT.ASSETS.IMG.ICON + '/video.png';
+        }
+      }
+      else {
+
+      }
+    }
+    $scope.$on('openNode', function(event, node) {
+      $scope.openModal();
+      $log.debug('lesson id : ',node.id);
+      $log.debug(mapCtrl.getLesson(node.id));
+    })
+    $scope.$on('$destroy', function() {
+      $scope.modal.remove();
+    });
+    $scope.openModal = function() {
+      $scope.modal.show();
+    }
+    $scope.closeModal = function() {
+      $scope.modal.hide();
+    }
+
+    $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal' + CONSTANT.VIEW, {
+      scope: $scope,
+      animation: 'slide-in-up'
+    }).then(function(modal) {
+      $scope.modal = modal;
+    });
+
+    function resetNode(){
+        mapCtrl.selectedNode = {};
+    }
+
+    function getLesson(id) {
+      Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('lessons', id).get().then(function(response) {
+        $log.debug('lesson details : ',response.plain());
+        mapCtrl.selectedNode = response.plain();
+        $log.debug('selected node : ', mapCtrl.selectedNode);
+      })
+    }
+  }
 })();
 
 (function() {
     'use strict';
 
-    mapCanvas.$inject = ["$injector", "$timeout"];
+    mapCanvas.$inject = ["$injector", "$timeout", "$log"];
     angular
         .module('zaya-map')
         .directive('mapCanvas', mapCanvas)
 
     /* @ngInject */
-    function mapCanvas($injector, $timeout) {
+    function mapCanvas($injector, $timeout, $log) {
         var mapCanvas = {
             restrict: 'A',
             template: '<div id="map_canvas"></div>',
             scope: {
-              // 'players' : '=',
-              // 'mapId' : '='
+              lessons : '='
             },
             link: linkFunc,
-            // controller: Controller,
-            // controllerAs: 'vm',
-            // bindToController: true
         };
 
         return mapCanvas;
 
         function linkFunc(scope, el, attr, ctrl) {
-          // createGame(scope, scope.players, scope.mapId, $injector)
-          void 0;
-          $timeout(createGame(scope, $injector));
+          $timeout(createGame(scope, scope.lessons, $injector, $log));
         }
     }
 
-    // Controller.$inject = ['dependencies'];
-
-    /* @ngInject */
-    // function Controller(dependencies) {
-    //     var vm = this;
-    //
-    //     activate();
-    //
-    //     function activate() {
-    //
-    //     }
-    // }
 })();
 
-window.createGame = function(scope, injector) {
+window.createGame = function(scope, lessons, injector, log) {
   'use strict';
 
-  var game = new Phaser.Game("100%", "100%", Phaser.AUTO, 'map_canvas');
-
+  var lessons = lessons;
+  var game = new Phaser.Game("100", "100" , Phaser.AUTO, 'map_canvas');
   var playState = {
     preload : function () {
-      this.load.image('cloud1', 'img/cloud1.png');
-      this.load.image('cloud2', 'img/cloud2.png');
-      this.load.image('cloud3', 'img/cloud3.png');
-      this.load.image('cloud4', 'img/cloud4.png');
-      this.load.image('cloud5', 'img/cloud5.png');
-      this.load.image('cloud6', 'img/cloud6.png');
-      this.load.image('cloud7', 'img/cloud7.png');
-      this.load.image('path', 'img/path.png');
-      this.load.image('node', 'img/node.png');
+      this.load.image('desert', 'img/assets_v0.0.3/desert_bg.png');
+      this.load.image('cactus', 'img/assets_v0.0.3/cactus.png');
+      this.load.image('tent', 'img/assets_v0.0.3/tent_fire.png');
+      // this.load.spritesheet('cactus_animation', 'img/assets_v0.0.2/cactus_sprite.png', 15, 17, 8);
+      this.load.image('node', 'img/assets_v0.0.3/node.png');
+      // debug value
+      this.game.time.advancedTiming = true;
     },
     create : function() {
-      this.game.stage.backgroundColor = "#AAD9E8";
-      this.game.world.setBounds(0, 0, this.game.width, this.game.height * 3);
+      var desert = this.game.add.sprite(0,this.game.height * i,'desert');
+      desert.scale.setTo(game.world.width/desert.width, 1);
+
+      this.game.world.setBounds(0, 0, this.game.width, desert.height);
+
+      // place tent
+      for (var i = 0; i < 3; i++) {
+        var tent = this.game.add.sprite(this.game.rnd.between(10,this.game.world.width-10), this.game.rnd.between(0,this.game.world.height),'tent');
+      }
+      // place cactus
+      for (var i = 0; i < 20; i++) {
+        var cactus = this.game.add.sprite(this.game.rnd.between(50,this.game.world.width-50), this.game.rnd.between(50,this.game.world.height-50),'cactus');
+        // catcus animation
+        // var cactus_animation = this.game.add.sprite(this.game.rnd.between(10,this.game.world.width-10), this.game.rnd.between(0,this.game.world.height), 'cactus_animation');
+        // cactus_animation.scale.setTo(3,3);
+        // var walk = cactus_animation.animations.add('walk');
+        // cactus_animation.animations.play('walk', 10, true);
+      }
+
+      // placing lesson node
+      // 1. lesson node count
+      // 2. Node should follow a particular path
+      // path
+      this.points = {
+        'x': [100, 200, 100, game.world.centerX, game.world.centerX],
+        'y': [0, 400, 800, 1300, game.world.height]
+      };
+      this.increment = 1 / game.world.height;
+
+      // Somewhere to draw to
+      this.bmd = this.add.bitmapData(this.game.width, this.game.world.height);
+      this.bmd.addToWorld();
+      // Draw the path
+      for (var j = 0; j < 1; j += this.increment) {
+        var posx = this.math.catmullRomInterpolation(this.points.x, j);
+        var posy = this.math.catmullRomInterpolation(this.points.y, j);
+        this.bmd.rect(posx, posy, 4, 4, '#219C7F');
+      }
+      // Place nodes
+      for (var j = 0, i = lessons.length-1, nodeCount = 1/lessons.length; j < 1; j += nodeCount, i--) {
+        var posx = this.math.catmullRomInterpolation(this.points.x, j);
+        var posy = this.math.catmullRomInterpolation(this.points.y, j);
+        var node = this.game.add.button(posx, posy, 'node', function (node) {
+          scope.$emit('openNode',node);
+        }, this, 2, 1, 0);
+        node.anchor.setTo(0.5, 0.5);
+        node.id = lessons[i].id;
+      }
+
       this.init();
-      var cloudCount = 20;
-      for (var i = 0; i < cloudCount; i++) {
-        var cloud = this.game.add.sprite(this.game.world.randomX, this.game.world.randomY, 'cloud' + this.game.rnd.between(1, 7));
-        var scaleFactor = this.game.rnd.between(3,6)/10;
-        cloud.scale.setTo(scaleFactor, scaleFactor);
-        this.game.physics.arcade.enable(cloud);
-        cloud.body.velocity.x = this.game.rnd.between(-5, -75);
-        cloud.autoCull = true;
-        cloud.checkWorldBounds = true;
-        cloud.events.onOutOfBounds.add(this.resetSprite, this);
-      }
-      var nodeCount = 20
-      for (var i = 0; i < nodeCount; i++) {
-        var node = this.game.add.sprite((i*10)+50, i * (this.game.world.height / nodeCount), 'node');
-        node.scale.setTo(0.5, 0.5);
-      }
-
+      this.game.kineticScrolling.start();
     },
-
-    resetSprite : function(sprite) {
-      sprite.x = this.game.world.bounds.right;
-    },
-
     init : function() {
-      this.game.camera.y = this.game.height * 2;
+      this.game.kineticScrolling = this.game.plugins.add(Phaser.Plugin.KineticScrolling);
+      this.game.kineticScrolling.configure({
+        kineticMovement: true,
+        timeConstantScroll: 325, //really mimic iOS
+        horizontalScroll: false,
+        verticalScroll: true,
+        horizontalWheel: false,
+        verticalWheel: true,
+        deltaWheel: 40
+    });
+      this.game.camera.y = ((~~this.world.height/this.game.height)-1) * this.game.height;
     },
 
     update : function() {
-      this.dragMap(this);
+      // this.dragMap();
     },
 
-    dragMap : function(ref) {
-      if (ref.game.input.activePointer.isDown) {
-        if (ref.game.origDragPoint) {
+    dragMap : function() {
+      if (this.game.input.activePointer.isDown) {
+        if (this.game.origDragPoint) {
           // move the camera by the amount the mouse has moved since last update
-          ref.game.camera.x += ref.game.origDragPoint.x - ref.game.input.activePointer.position.x;
-          ref.game.camera.y += ref.game.origDragPoint.y - ref.game.input.activePointer.position.y;
+          this.game.camera.x += this.game.origDragPoint.x - this.game.input.activePointer.position.x;
+          this.game.camera.y += this.game.origDragPoint.y - this.game.input.activePointer.position.y;
+          // tween
+          // var cx = (this.game.origDragPoint.x - this.game.input.activePointer.position.x);
+          // var cy = (this.game.origDragPoint.y - this.game.input.activePointer.position.y)
+          // this.game.add.tween(this.game.camera).to({
+          //   x : +cx,
+          //   y : +cy
+          // },300, Phaser.Easing.Linear.None, true)
         }
         // set new drag origin to current position
-        ref.game.origDragPoint = ref.game.input.activePointer.position.clone();
+        this.game.origDragPoint = this.game.input.activePointer.position.clone();
       } else {
-        ref.game.origDragPoint = null;
+        this.game.origDragPoint = null;
       }
     },
+    render : function(){
+      this.game.debug.text("fps : "+game.time.fps || '--', 2, 14, "#00ff00");
+    }
   }
 
   game.state.add('play',playState);
   game.state.start('play');
 
-  // phaser destroy is broken, check for fix
-  // scope.$on('$destroy', function() {
-    // game.destroy(); // Clean up the game when we leave this scope
-  // });
+  // phaser destroy doesn't remove canvas element --> removed manually in app run
+  scope.$on('$destroy', function() {
+    this.game.destroy(); // Clean up the game when we leave this scope
+  });
 };
 
 (function() {
@@ -1509,8 +1650,25 @@ window.createGame = function(scope, injector) {
     $stateProvider
       .state('map',{
         url : '/map',
-        templateUrl : CONSTANT.PATH.MAP + '/map' + CONSTANT.VIEW,
-        controller : 'mapController as mapCtrl'
+        abstract : true,
+          resolve : {
+            lessons : ['Rest','$log',function(Rest, $log){
+              return Rest.one('accounts', CONSTANT.CLIENTID.ELL).getList('lessons').then(function(lessons) {
+                $log.debug(lessons.plain());
+                return lessons.plain();
+              })
+            }]
+          },
+        template : '<ion-nav-view name="state-map"></ion-nav-view>'
+      })
+      .state('map.navigate',{
+        url : '/navigate',
+        views : {
+          'state-map' : {
+            templateUrl : CONSTANT.PATH.MAP + '/map' + CONSTANT.VIEW,
+            controller : 'mapController as mapCtrl'
+          }
+        }
       })
   }
 })();
@@ -1691,11 +1849,14 @@ window.createGame = function(scope, injector) {
         .module('zaya-profile')
         .controller('profileController', profileController);
 
-    profileController.$inject = ['CONSTANT','$state','Auth'];
+    profileController.$inject = ['CONSTANT','$state','Auth','Rest','$log','$ionicPopup'];
 
-    function profileController(CONSTANT, $state, Auth) {
+    function profileController(CONSTANT, $state, Auth, Rest, $log, $ionicPopup) {
         var profileCtrl = this;
+        profileCtrl.createProfile = createProfile;
+        profileCtrl.updateProfile = updateProfile;
         profileCtrl.logout = logout;
+        profileCtrl.calcAge = calcAge;
 
         profileCtrl.tabIndex = 0;
         profileCtrl.tab = [
@@ -1710,6 +1871,26 @@ window.createGame = function(scope, injector) {
             icon : 'ion-trophy'
           }
         ]
+
+        function calcAge(dateString) {
+          var birthday = +new Date(dateString);
+          return ~~((Date.now() - birthday) / (31557600000));
+        }
+
+        function createProfile (userdata) {
+          Rest.all('profiles').post(userdata).then(function(response){
+            $state.go('map.navigate',{});
+          },function(error){
+            $ionicPopup.alert({
+              title : _.chain(error.data).keys().first(),
+              template : error.data[_.chain(error.data).keys().first()].toString(),
+            });
+          })
+        }
+
+        function updateProfile(userdata) {
+          // body...
+        }
 
         function logout() {
           Auth.logout(function () {
@@ -2049,11 +2230,21 @@ window.createGame = function(scope, injector) {
   function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
 
     $stateProvider
+      // parent state after authentication
       .state('user',{
         url :'/user',
         abstract : true,
-        templateUrl: CONSTANT.PATH.USER+'/user'+CONSTANT.VIEW,
+        template: '<ion-nav-view name="state-user"></ion-nav-view>',
       })
+      // content - Video, Image, Game, Pdf etc
+      // .state('user.content',{
+      //   url : '/content/:content_type/:content_id',
+      //   views : {
+      //     'state-user' : {
+      //       templateUrl : CONSTANT.PATH.CONTENT+'/content'+CONSTANT.VIEW,
+      //     }
+      //   }
+      // })
       // personalisation for all
       .state('user.personalise',{
         url : '/personalise',
@@ -2068,7 +2259,8 @@ window.createGame = function(scope, injector) {
         url : '/social',
         views : {
           'state-personalise':{
-            templateUrl : CONSTANT.PATH.PROFILE+'/personalise.social'+CONSTANT.VIEW
+            templateUrl : CONSTANT.PATH.PROFILE+'/personalise.social'+CONSTANT.VIEW,
+            controller : 'profileController as profileCtrl'
           }
         }
       })
