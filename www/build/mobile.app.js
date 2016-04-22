@@ -217,29 +217,29 @@
       }
 
       //if not authenticated, redirect to login page
-      if (!Auth.isAuthorised() && toState.name != 'auth.signin' && toState.name != 'auth.signup' && toState.name != 'auth.forgot') {
-        $log.debug("You are not authorized");
-        event.preventDefault();
-        $state.go('auth.signin');
-      }
+      //if (!Auth.isAuthorised() && toState.name != 'auth.signin' && toState.name != 'auth.signup' && toState.name != 'auth.forgot') {
+      //  $log.debug("You are not authorized");
+      //  event.preventDefault();
+      //  $state.go('auth.signin');
+      //}
        //if authenticated but not verified redirect to OTP page
       //if (Auth.isAuthorised() && !Auth.isVerified() && (toState.name == 'auth.forgot.verify_otp' || toState.name == 'auth.verify.phone') ) {
       //  $log.debug("User account not verified");
       //  return true;
       //}
       // if authenticated but not verified redirect to OTP page
-      if (Auth.isAuthorised() && !Auth.isVerified() && toState.name != 'auth.verify.phone' && toState.name != 'auth.forgot_verify_otp' && toState.name != 'auth.change_password' ) {
-        $log.debug("User account not verified");
-        event.preventDefault();
-        localStorage.clear();
-        $state.go('auth.signin');
-      }
+      //if (Auth.isAuthorised() && !Auth.isVerified() && toState.name != 'auth.verify.phone' && toState.name != 'auth.forgot_verify_otp' && toState.name != 'auth.change_password' ) {
+      //  $log.debug("User account not verified");
+      //  event.preventDefault();
+      //  localStorage.clear();
+      //  $state.go('auth.signin');
+      //}
       //if authenticated and verified, redirect to userpage
-      if (Auth.isAuthorised() && Auth.isVerified() && (toState.name == 'auth.signin' || toState.name == 'auth.signup' || toState.name == 'intro' || toState.name == 'auth.verify.phone' || toState.name == 'auth.forgot' || toState.name == 'auth.change_password' || toState.name == 'auth.forgot_verify_otp')) {
-        $log.debug("You are authorized and verified");
-        event.preventDefault();
-        $state.go('user.main.home');
-      }
+      //if (Auth.isAuthorised() && Auth.isVerified() && (toState.name == 'auth.signin' || toState.name == 'auth.signup' || toState.name == 'intro' || toState.name == 'auth.verify.phone' || toState.name == 'auth.forgot' || toState.name == 'auth.change_password' || toState.name == 'auth.forgot_verify_otp')) {
+      //  $log.debug("You are authorized and verified");
+      //  event.preventDefault();
+      //  $state.go('user.main.home');
+      //}
       // block access to quiz summary page if there is no quiz data
       if (toState.name == 'quiz.summary' && !toParams.quizSummary) {
         $log.debug("Quiz summary page cannot be accessed : No quiz data present");
@@ -1022,6 +1022,63 @@
   }
 })();
 
+(function() {
+    'use strict';
+
+    angular
+        .module('zaya-intro')
+        .controller('introController', introController);
+
+    introController.$inject = [];
+
+    /* @ngInject */
+    function introController() {
+        var introCtrl = this;
+
+        introCtrl.tabIndex = 0;
+        introCtrl.slides = [
+          {
+            title : "Hello this Title",
+            description : "some description is theresome description is theresome description is there",
+            img : "img/01.png",
+            color : "bg-brand-light"
+          },
+          {
+            title : "Hello this Title",
+            description : "some description is theresome description is theresome description is there",
+            img : "img/02.png",
+            // color : "bg-brand-light"
+            color : "bg-assertive-light"
+          },
+          {
+            title : "Hello this Title",
+            description : "some description is theresome description is theresome description is there",
+            img : "img/03.png",
+            // color : "bg-brand-light"
+            color : "bg-royal-light"
+          }
+        ];
+    }
+})();
+
+(function() {
+  'use strict';
+
+  mainRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
+  angular
+    .module('zaya-intro')
+    .config(mainRoute);
+
+  function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
+    $stateProvider
+      .state('intro',{
+        url : '/intro',
+        templateUrl : CONSTANT.PATH.INTRO+'/intro'+CONSTANT.VIEW,
+        controller : "introController as introCtrl"
+      })
+  }
+})();
+
 (function(){
   var ROOT = 'templates';
 
@@ -1227,298 +1284,6 @@
     'use strict';
 
     angular
-        .module('zaya-group')
-        .controller('Controller', Controller);
-
-    Controller.$inject = [];
-
-    /* @ngInject */
-    function Controller() {
-        var groupCtrl = this;
-
-        groupCtrl.activate();
-
-        function activate() {
-
-        }
-    }
-})();
-
-(function() {
-  'use strict';
-
-  authRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
-  angular
-    .module('zaya-auth')
-    .config(authRoute);
-
-  function authRoute($stateProvider, $urlRouterProvider, CONSTANT) {
-    $stateProvider
-      .state('group',{
-        url : '/group',
-        abstract : true,
-        template : '<ion-nav-view name="state-group-admin"></ion-nav-view><ion-nav-view name="state-group-student"></ion-nav-view>'
-      })
-      .state('group.admin',{
-        url : '/admin',
-        views : {
-          'state-group-admin' : {
-            templateUrl : CONSTANT.PATH.GROUP + '/group.admin' + CONSTANT.VIEW,
-            controller : 'groupController as groupCtrl'
-          }
-        }
-      })
-      .state('group.student',{
-        url : '/student',
-        views : {
-          'state-group-student' : {
-            templateUrl : CONSTANT.PATH.GROUP + '/group.student' + CONSTANT.VIEW,
-            controller : 'groupController as groupCtrl'
-          }
-        }
-      })
-  }
-})();
-
-(function(){
-  'use strict';
-
-  angular
-    .module('zaya')
-    .controller('homeController',homeController)
-
-  homeController.$inject = ['$scope'];
-
-  function homeController($scope) {
-    var homeCtrl = this;
-    homeCtrl.carouselOptions = {
-        "loop": false,
-        "margin": 0,
-        "items": 1,
-        "stagePadding": 20,
-        "nav": false,
-        "autoplay": false,
-        "center" : true
-    };
-  }
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('zaya-intro')
-        .controller('introController', introController);
-
-    introController.$inject = [];
-
-    /* @ngInject */
-    function introController() {
-        var introCtrl = this;
-
-        introCtrl.tabIndex = 0;
-        introCtrl.slides = [
-          {
-            title : "Hello this Title",
-            description : "some description is theresome description is theresome description is there",
-            img : "img/01.png",
-            color : "bg-brand-light"
-          },
-          {
-            title : "Hello this Title",
-            description : "some description is theresome description is theresome description is there",
-            img : "img/02.png",
-            // color : "bg-brand-light"
-            color : "bg-assertive-light"
-          },
-          {
-            title : "Hello this Title",
-            description : "some description is theresome description is theresome description is there",
-            img : "img/03.png",
-            // color : "bg-brand-light"
-            color : "bg-royal-light"
-          }
-        ];
-    }
-})();
-
-(function() {
-  'use strict';
-
-  mainRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
-  angular
-    .module('zaya-intro')
-    .config(mainRoute);
-
-  function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
-    $stateProvider
-      .state('intro',{
-        url : '/intro',
-        templateUrl : CONSTANT.PATH.INTRO+'/intro'+CONSTANT.VIEW,
-        controller : "introController as introCtrl"
-      })
-  }
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('zaya-map')
-        .controller('mapController', mapController);
-
-    mapController.$inject = [];
-
-    function mapController() {
-        var zayaCtrl = this;
-    }
-})();
-
-(function() {
-    'use strict';
-
-    mapCanvas.$inject = ["$injector", "$timeout"];
-    angular
-        .module('zaya-map')
-        .directive('mapCanvas', mapCanvas)
-
-    /* @ngInject */
-    function mapCanvas($injector, $timeout) {
-        var mapCanvas = {
-            restrict: 'A',
-            template: '<div id="map_canvas"></div>',
-            scope: {
-              // 'players' : '=',
-              // 'mapId' : '='
-            },
-            link: linkFunc,
-            // controller: Controller,
-            // controllerAs: 'vm',
-            // bindToController: true
-        };
-
-        return mapCanvas;
-
-        function linkFunc(scope, el, attr, ctrl) {
-          // createGame(scope, scope.players, scope.mapId, $injector)
-          void 0;
-          $timeout(createGame(scope, $injector));
-        }
-    }
-
-    // Controller.$inject = ['dependencies'];
-
-    /* @ngInject */
-    // function Controller(dependencies) {
-    //     var vm = this;
-    //
-    //     activate();
-    //
-    //     function activate() {
-    //
-    //     }
-    // }
-})();
-
-window.createGame = function(scope, injector) {
-  'use strict';
-
-  var game = new Phaser.Game("100%", "100%", Phaser.AUTO, 'map_canvas');
-
-  var playState = {
-    preload : function () {
-      this.load.image('cloud1', 'img/cloud1.png');
-      this.load.image('cloud2', 'img/cloud2.png');
-      this.load.image('cloud3', 'img/cloud3.png');
-      this.load.image('cloud4', 'img/cloud4.png');
-      this.load.image('cloud5', 'img/cloud5.png');
-      this.load.image('cloud6', 'img/cloud6.png');
-      this.load.image('cloud7', 'img/cloud7.png');
-      this.load.image('path', 'img/path.png');
-      this.load.image('node', 'img/node.png');
-    },
-    create : function() {
-      this.game.stage.backgroundColor = "#AAD9E8";
-      this.game.world.setBounds(0, 0, this.game.width, this.game.height * 3);
-      this.init();
-      var cloudCount = 20;
-      for (var i = 0; i < cloudCount; i++) {
-        var cloud = this.game.add.sprite(this.game.world.randomX, this.game.world.randomY, 'cloud' + this.game.rnd.between(1, 7));
-        var scaleFactor = this.game.rnd.between(3,6)/10;
-        cloud.scale.setTo(scaleFactor, scaleFactor);
-        this.game.physics.arcade.enable(cloud);
-        cloud.body.velocity.x = this.game.rnd.between(-5, -75);
-        cloud.autoCull = true;
-        cloud.checkWorldBounds = true;
-        cloud.events.onOutOfBounds.add(this.resetSprite, this);
-      }
-      var nodeCount = 20
-      for (var i = 0; i < nodeCount; i++) {
-        var node = this.game.add.sprite((i*10)+50, i * (this.game.world.height / nodeCount), 'node');
-        node.scale.setTo(0.5, 0.5);
-      }
-
-    },
-
-    resetSprite : function(sprite) {
-      sprite.x = this.game.world.bounds.right;
-    },
-
-    init : function() {
-      this.game.camera.y = this.game.height * 2;
-    },
-
-    update : function() {
-      this.dragMap(this);
-    },
-
-    dragMap : function(ref) {
-      if (ref.game.input.activePointer.isDown) {
-        if (ref.game.origDragPoint) {
-          // move the camera by the amount the mouse has moved since last update
-          ref.game.camera.x += ref.game.origDragPoint.x - ref.game.input.activePointer.position.x;
-          ref.game.camera.y += ref.game.origDragPoint.y - ref.game.input.activePointer.position.y;
-        }
-        // set new drag origin to current position
-        ref.game.origDragPoint = ref.game.input.activePointer.position.clone();
-      } else {
-        ref.game.origDragPoint = null;
-      }
-    },
-  }
-
-  game.state.add('play',playState);
-  game.state.start('play');
-
-  // phaser destroy is broken, check for fix
-  // scope.$on('$destroy', function() {
-    // game.destroy(); // Clean up the game when we leave this scope
-  // });
-};
-
-(function() {
-  'use strict';
-
-  mainRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
-  angular
-    .module('zaya-map')
-    .config(mainRoute);
-
-  function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
-
-    $stateProvider
-      .state('map',{
-        url : '/map',
-        templateUrl : CONSTANT.PATH.MAP + '/map' + CONSTANT.VIEW,
-        controller : 'mapController as mapCtrl'
-      })
-  }
-})();
-
-(function() {
-    'use strict';
-
-    angular
         .module('zaya-playlist')
         .controller('playlistController', playlistController);
 
@@ -1688,38 +1453,57 @@ window.createGame = function(scope, injector) {
     'use strict';
 
     angular
-        .module('zaya-profile')
-        .controller('profileController', profileController);
+        .module('zaya-group')
+        .controller('Controller', Controller);
 
-    profileController.$inject = ['CONSTANT','$state','Auth'];
+    Controller.$inject = [];
 
-    function profileController(CONSTANT, $state, Auth) {
-        var profileCtrl = this;
-        profileCtrl.logout = logout;
+    /* @ngInject */
+    function Controller() {
+        var groupCtrl = this;
 
-        profileCtrl.tabIndex = 0;
-        profileCtrl.tab = [
-          {
-            type : 'group',
-            path : CONSTANT.PATH.PROFILE + '/profile.groups' + CONSTANT.VIEW,
-            icon : 'ion-person-stalker'
-          },
-          {
-            type : 'badge',
-            path : CONSTANT.PATH.PROFILE + '/profile.badges' + CONSTANT.VIEW,
-            icon : 'ion-trophy'
-          }
-        ]
+        groupCtrl.activate();
 
-        function logout() {
-          Auth.logout(function () {
-            $state.go('auth.signin',{})
-          },function () {
-            // body...
-          })
+        function activate() {
+
         }
-
     }
+})();
+
+(function() {
+  'use strict';
+
+  authRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
+  angular
+    .module('zaya-auth')
+    .config(authRoute);
+
+  function authRoute($stateProvider, $urlRouterProvider, CONSTANT) {
+    $stateProvider
+      .state('group',{
+        url : '/group',
+        abstract : true,
+        template : '<ion-nav-view name="state-group-admin"></ion-nav-view><ion-nav-view name="state-group-student"></ion-nav-view>'
+      })
+      .state('group.admin',{
+        url : '/admin',
+        views : {
+          'state-group-admin' : {
+            templateUrl : CONSTANT.PATH.GROUP + '/group.admin' + CONSTANT.VIEW,
+            controller : 'groupController as groupCtrl'
+          }
+        }
+      })
+      .state('group.student',{
+        url : '/student',
+        views : {
+          'state-group-student' : {
+            templateUrl : CONSTANT.PATH.GROUP + '/group.student' + CONSTANT.VIEW,
+            controller : 'groupController as groupCtrl'
+          }
+        }
+      })
+  }
 })();
 
 (function() {
@@ -1727,9 +1511,9 @@ window.createGame = function(scope, injector) {
     .module('zaya-quiz')
     .controller('QuizController', QuizController)
 
-  QuizController.$inject = ['quiz','$stateParams', '$state', '$scope', 'audio'] ;
+  QuizController.$inject = ['quiz','$stateParams', '$state', '$scope', 'audio','$log'] ;
 
-  function QuizController(quiz, $stateParams, $state, $scope, audio) {
+  function QuizController(quiz, $stateParams, $state, $scope, audio, $log) {
     var quizCtrl = this;
 
     quizCtrl.quiz = quiz;
@@ -1754,10 +1538,13 @@ window.createGame = function(scope, injector) {
     quizCtrl.isKeyCorrect = isKeyCorrect;
     quizCtrl.isKeyAttempted = isKeyAttempted;
 
+
     // initialisation call
     quizCtrl.setCurrentIndex(0);
     quizCtrl.init(quizCtrl.quiz);
 
+    //audio
+    quizCtrl.playAudio = playAudio;
     function init (quiz) {
       // init report object
       if($state.current.name=="quiz.summary"){
@@ -1765,14 +1552,15 @@ window.createGame = function(scope, injector) {
       }
       else if($state.current.name=="quiz.questions"){
         quizCtrl.report = {};
-        quizCtrl.report.quiz_id = quiz.info.id;
+        quizCtrl.report.quiz_id =  quiz.info.id;
         quizCtrl.report.attempts = {};
         for (var i = 0; i < quiz.questions.length; i++) {
-          quizCtrl.report.attempts[quiz.questions[i].info.id] = [];
+          $log.debug(quiz.questions[i].id);
+          quizCtrl.report.attempts[quiz.questions[i].id] = [];
         }
         // init attempted
         for (var i = 0; i < quizCtrl.quiz.questions.length; i++) {
-          if((quizCtrl.quiz.questions[i].info.content_type=='choice question' && !quizCtrl.quiz.questions[i].info.question_type.is_multiple) || quizCtrl.quiz.questions[i].info.content_type=='dr question'){
+          if((quizCtrl.quiz.questions[i].content_type=='choice question' && !quizCtrl.quiz.questions[i].info.question_type.is_multiple) || quizCtrl.quiz.questions[i].info.content_type=='dr question'){
             quizCtrl.quiz.questions[i].attempted = "";
           }
           else if(quizCtrl.quiz.questions[i].info.content_type=='choice question' && quizCtrl.quiz.questions[i].info.question_type.is_multiple){
@@ -1783,6 +1571,7 @@ window.createGame = function(scope, injector) {
           }
           else{}
         }
+        $log.debug(quizCtrl.report);
       }
       else{}
     }
@@ -1913,6 +1702,19 @@ window.createGame = function(scope, injector) {
         return quizCtrl.report.attempts[question.info.id].indexOf(key)!=-1 ? true : false;
       }
     }
+
+    function playAudio(key){
+      angular.element("#audioplayer")[0].pause();
+      if(key)
+      {
+      angular.element("#audioSource")[0].src = 'sound/hello.mp3';
+      }
+      else{
+        angular.element("#audioSource")[0].src = 'sound/water-drop.mp3';
+      }
+      angular.element("#audioplayer")[0].load();
+      angular.element("#audioplayer")[0].play();
+    }
   }
 })();
 
@@ -1934,9 +1736,7 @@ window.createGame = function(scope, injector) {
         template : '<ion-nav-view name="state-quiz"></ion-nav-view>',
         resolve: {
             quiz: ['$stateParams', 'Rest', function($stateParams, Rest) {
-                return Rest.one('assessments', $stateParams.id).get().then(function(quiz) {
-                    return quiz.plain();
-                })
+                return {"node_id":2,"parent":1,"info":{"score":160,"id":1,"title":"english quiz","description":"","content_type":21},"questions":[{"id":1,"node_id":3,"parent":2,"info":{"question_type":"audio_to_pic_long","id":1,"title":null,"description":"Lorem ipsum dolor sit amet","image":{"url":null,"key":null},"audio":{"url":"http://soundbible.com/grab.php?id=769&type=mp3","key":"5719c8fdd50d193f2dd37736"},"is_critical_thinking":false,"level":2,"microstandard":"a.a","answer":[2],"is_multiple":false,"score":30,"choices":[{"option":null,"key":1,"image":{"url":"http://lorempixel.com/100/100/","key":"5719c8fd70e1c5181b81f2ed"},"audio":{"url":null,"key":null}},{"option":null,"key":2,"image":{"url":"http://lorempixel.com/100/100/","key":"5719c8fd70e1c5181b81f2ed"},"audio":{"url":null,"key":null}},{"option":null,"key":3,"image":{"url":"http://lorempixel.com/100/100/","key":"5719c8fd70e1c5181b81f2ed"},"audio":{"url":null,"key":null}},{"option":null,"key":4,"image":{"url":"http://lorempixel.com/100/100/","key":"5719c8fd70e1c5181b81f2ed"},"audio":{"url":null,"key":null}}],"content_type":"choice question","content_type_id":26}},{"node_id":3,"parent":2,"id":2,"info":{"question_type":"audio_to_pic","id":2,"title":null,"description":"Lorem ipsum dolor sit amet","image":{"url":null,"key":null},"audio":{"url":"http://soundbible.com/grab.php?id=769&type=mp3","key":"5719c8fdd50d193f2dd37736"},"is_critical_thinking":false,"level":2,"microstandard":"a.a","answer":[2],"score":30,"is_multiple":false,"choices":[{"option":null,"key":1,"image":{"url":"http://lorempixel.com/100/100/","key":"5719c8fdd50d193f2dd37736"},"audio":{"url":null,"key":null}},{"option":null,"key":2,"image":{"url":"http://lorempixel.com/100/100/","key":"5719c8fd796627380ae47676"},"audio":{"url":null,"key":null}},{"option":null,"key":3,"image":{"url":"http://lorempixel.com/100/100/","key":"5719c8fd482db5bf7abdbcba"},"audio":{"url":null,"key":null}},{"option":null,"key":4,"image":{"url":"http://lorempixel.com/100/100/","key":"5719c8fd70e1c5181b81f2ed"},"audio":{"url":null,"key":null}}],"content_type":"choice question","content_type_id":26}},{"node_id":3,"parent":2,"id":3,"info":{"question_type":"audio_to_text","id":3,"title":null,"description":"Lorem ipsum dolor sit amet","image":{"url":null,"key":null},"audio":{"url":"http://soundbible.com/grab.php?id=769&type=mp3","key":"5719c8fdd50d193f2dd37736"},"is_critical_thinking":false,"level":2,"microstandard":"a.a","answer":[2],"score":30,"is_multiple":false,"choices":[{"option":"Lorem Ipsum","key":1,"image":{"url":null,"key":null},"audio":{"url":null,"key":null}},{"option":"Lorem Ipsum","key":2,"image":{"url":null,"key":null},"audio":{"url":null,"key":null}},{"option":"Lorem Ipsum","key":3,"image":{"url":null,"key":null},"audio":{"url":null,"key":null}},{"option":"Lorem Ipsum","key":4,"image":{"url":null,"key":null},"audio":{"url":null,"key":null}}],"content_type":"choice question","content_type_id":26}},{"node_id":3,"parent":2,"id":4,"info":{"question_type":"pic_to_audio","id":4,"title":null,"description":"Lorem ipsum dolor sit amet","image":{"url":"http://lorempixel.com/100/100/","key":"5719c8fdd50d193f2dd37736"},"audio":{"url":null,"key":null},"is_critical_thinking":false,"level":2,"microstandard":"a.a","answer":[2],"score":30,"is_multiple":false,"choices":[{"option":null,"image":{"url":null,"key":null},"audio":{"url":"http://soundbible.com/grab.php?id=769&type=mp3","key":"5719c8fdd50d193f2dd37736"}},{"option":null,"key":2,"image":{"url":null,"key":null},"audio":{"url":"http://soundbible.com/grab.php?id=769&type=mp3","key":"5719c8fdd50d193f2dd37736"}},{"option":null,"key":3,"image":{"url":null,"key":null},"audio":{"url":"http://soundbible.com/grab.php?id=769&type=mp3","key":"5719c8fdd50d193f2dd37736"}},{"option":null,"key":4,"image":{"url":null,"key":null},"audio":{"url":"http://soundbible.com/grab.php?id=769&type=mp3","key":"5719c8fdd50d193f2dd37736"}}],"content_type":"choice question","content_type_id":26}},{"node_id":4,"parent":2,"id":5,"info":{"question_type":"pic_to_text_long","id":5,"title":null,"description":null,"image":{"url":"http://lorempixel.com/100/100/","key":"5719c8fdd50d193f2dd37736"},"audio":{"url":null,"key":null},"is_critical_thinking":false,"level":2,"microstandard":"a.a","answer":[2],"score":30,"is_multiple":false,"choices":[{"option":"Lorem ipsum","key":1,"image":{"url":null,"key":null},"audio":{"url":null,"key":null}},{"option":"Lorem ipsum","key":2,"image":{"url":null,"key":null},"audio":{"url":null,"key":null}},{"option":"Lorem ipsum","key":3,"image":{"url":null,"key":null},"audio":{"url":null,"key":null}},{"option":"Lorem ipsum","key":4,"image":{"url":null,"key":null},"audio":{"url":null,"key":null}}],"content_type":"choice question","content_type_id":26}},{"node_id":5,"parent":2,"id":6,"info":{"question_type":"pic_to_text","id":6,"title":null,"description":"Lorem ipsum dolor sit amet","image":{"url":"http://lorempixel.com/100/100/","key":"5719c8fdd50d193f2dd37736"},"audio":{"url":null,"key":null},"is_critical_thinking":false,"level":2,"microstandard":"a.a","answer":[2],"score":30,"is_multiple":false,"choices":[{"option":"Lorem ipsum","key":1,"image":{"url":null,"key":null},"audio":{"url":null,"key":null}},{"option":"Lorem ipsum","key":2,"image":{"url":null,"key":null},"audio":{"url":null,"key":null}},{"option":"Lorem ipsum","key":3,"image":{"url":null,"key":null},"audio":{"url":null,"key":null}},{"option":"Lorem ipsum","key":4,"image":{"url":null,"key":null},"audio":{"url":null,"key":null}}],"content_type":"choice question","content_type_id":26}},{"node_id":6,"parent":2,"id":7,"info":{"question_type":"text_to_pic_long","id":7,"title":"Lorem ipsum dolor sit amet","description":"Lorem ipsum dolor sit amet","image":{"url":null,"key":null},"audio":{"url":null,"key":null},"is_critical_thinking":false,"level":2,"microstandard":"a.a","answer":[2],"score":30,"is_multiple":false,"choices":[{"option":null,"key":1,"image":{"url":"http://lorempixel.com/100/100/","key":"5719c8fdd50d193f2dd37736"},"audio":{"url":null,"key":null}},{"option":null,"key":2,"image":{"url":"http://lorempixel.com/100/100/","key":"5719c8fdd50d193f2dd37736"},"audio":{"url":null,"key":null}},{"option":null,"key":3,"image":{"url":"http://lorempixel.com/100/100/","key":"5719c8fdd50d193f2dd37736"},"audio":{"url":null,"key":null}},{"option":null,"key":4,"image":{"url":"http://lorempixel.com/100/100/","key":"5719c8fdd50d193f2dd37736"},"audio":{"url":null,"key":null}}],"content_type":"choice question","content_type_id":26}},{"node_id":7,"parent":2,"id":8,"info":{"question_type":"text_to_pic","id":8,"title":"Lorem ipsum dolor sit amet","description":"Lorem ipsum dolor sit amet","image":{"url":null,"key":null},"audio":{"url":null,"key":null},"is_critical_thinking":false,"level":2,"microstandard":"a.a","answer":[2],"score":30,"is_multiple":false,"choices":[{"option":null,"key":1,"image":{"url":"http://lorempixel.com/100/100/","key":"5719c8fdd50d193f2dd37736"},"audio":{"url":null,"key":null}},{"option":null,"key":2,"image":{"url":"http://lorempixel.com/100/100/","key":"5719c8fdd50d193f2dd37736"},"audio":{"url":null,"key":null}},{"option":null,"key":3,"image":{"url":"http://lorempixel.com/100/100/","key":"5719c8fdd50d193f2dd37736"},"audio":{"url":null,"key":null}},{"option":null,"key":4,"image":{"url":"http://lorempixel.com/100/100/","key":"5719c8fdd50d193f2dd37736"},"audio":{"url":null,"key":null}}],"content_type":"choice question","content_type_id":26}}]};
             }]
         }
       })
@@ -2035,6 +1835,29 @@ window.createGame = function(scope, injector) {
           }
         }
       })
+  }
+})();
+
+(function(){
+  'use strict';
+
+  angular
+    .module('zaya')
+    .controller('homeController',homeController)
+
+  homeController.$inject = ['$scope'];
+
+  function homeController($scope) {
+    var homeCtrl = this;
+    homeCtrl.carouselOptions = {
+        "loop": false,
+        "margin": 0,
+        "items": 1,
+        "stagePadding": 20,
+        "nav": false,
+        "autoplay": false,
+        "center" : true
+    };
   }
 })();
 
@@ -2150,4 +1973,197 @@ window.createGame = function(scope, injector) {
         }
       })
   }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('zaya-map')
+        .controller('mapController', mapController);
+
+    mapController.$inject = [];
+
+    function mapController() {
+        var zayaCtrl = this;
+    }
+})();
+
+(function() {
+    'use strict';
+
+    mapCanvas.$inject = ["$injector", "$timeout"];
+    angular
+        .module('zaya-map')
+        .directive('mapCanvas', mapCanvas)
+
+    /* @ngInject */
+    function mapCanvas($injector, $timeout) {
+        var mapCanvas = {
+            restrict: 'A',
+            template: '<div id="map_canvas"></div>',
+            scope: {
+              // 'players' : '=',
+              // 'mapId' : '='
+            },
+            link: linkFunc,
+            // controller: Controller,
+            // controllerAs: 'vm',
+            // bindToController: true
+        };
+
+        return mapCanvas;
+
+        function linkFunc(scope, el, attr, ctrl) {
+          // createGame(scope, scope.players, scope.mapId, $injector)
+          void 0;
+          $timeout(createGame(scope, $injector));
+        }
+    }
+
+    // Controller.$inject = ['dependencies'];
+
+    /* @ngInject */
+    // function Controller(dependencies) {
+    //     var vm = this;
+    //
+    //     activate();
+    //
+    //     function activate() {
+    //
+    //     }
+    // }
+})();
+
+window.createGame = function(scope, injector) {
+  'use strict';
+
+  var game = new Phaser.Game("100%", "100%", Phaser.AUTO, 'map_canvas');
+
+  var playState = {
+    preload : function () {
+      this.load.image('cloud1', 'img/cloud1.png');
+      this.load.image('cloud2', 'img/cloud2.png');
+      this.load.image('cloud3', 'img/cloud3.png');
+      this.load.image('cloud4', 'img/cloud4.png');
+      this.load.image('cloud5', 'img/cloud5.png');
+      this.load.image('cloud6', 'img/cloud6.png');
+      this.load.image('cloud7', 'img/cloud7.png');
+      this.load.image('path', 'img/path.png');
+      this.load.image('node', 'img/node.png');
+    },
+    create : function() {
+      this.game.stage.backgroundColor = "#AAD9E8";
+      this.game.world.setBounds(0, 0, this.game.width, this.game.height * 3);
+      this.init();
+      var cloudCount = 20;
+      for (var i = 0; i < cloudCount; i++) {
+        var cloud = this.game.add.sprite(this.game.world.randomX, this.game.world.randomY, 'cloud' + this.game.rnd.between(1, 7));
+        var scaleFactor = this.game.rnd.between(3,6)/10;
+        cloud.scale.setTo(scaleFactor, scaleFactor);
+        this.game.physics.arcade.enable(cloud);
+        cloud.body.velocity.x = this.game.rnd.between(-5, -75);
+        cloud.autoCull = true;
+        cloud.checkWorldBounds = true;
+        cloud.events.onOutOfBounds.add(this.resetSprite, this);
+      }
+      var nodeCount = 20
+      for (var i = 0; i < nodeCount; i++) {
+        var node = this.game.add.sprite((i*10)+50, i * (this.game.world.height / nodeCount), 'node');
+        node.scale.setTo(0.5, 0.5);
+      }
+
+    },
+
+    resetSprite : function(sprite) {
+      sprite.x = this.game.world.bounds.right;
+    },
+
+    init : function() {
+      this.game.camera.y = this.game.height * 2;
+    },
+
+    update : function() {
+      this.dragMap(this);
+    },
+
+    dragMap : function(ref) {
+      if (ref.game.input.activePointer.isDown) {
+        if (ref.game.origDragPoint) {
+          // move the camera by the amount the mouse has moved since last update
+          ref.game.camera.x += ref.game.origDragPoint.x - ref.game.input.activePointer.position.x;
+          ref.game.camera.y += ref.game.origDragPoint.y - ref.game.input.activePointer.position.y;
+        }
+        // set new drag origin to current position
+        ref.game.origDragPoint = ref.game.input.activePointer.position.clone();
+      } else {
+        ref.game.origDragPoint = null;
+      }
+    },
+  }
+
+  game.state.add('play',playState);
+  game.state.start('play');
+
+  // phaser destroy is broken, check for fix
+  // scope.$on('$destroy', function() {
+    // game.destroy(); // Clean up the game when we leave this scope
+  // });
+};
+
+(function() {
+  'use strict';
+
+  mainRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
+  angular
+    .module('zaya-map')
+    .config(mainRoute);
+
+  function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
+
+    $stateProvider
+      .state('map',{
+        url : '/map',
+        templateUrl : CONSTANT.PATH.MAP + '/map' + CONSTANT.VIEW,
+        controller : 'mapController as mapCtrl'
+      })
+  }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('zaya-profile')
+        .controller('profileController', profileController);
+
+    profileController.$inject = ['CONSTANT','$state','Auth'];
+
+    function profileController(CONSTANT, $state, Auth) {
+        var profileCtrl = this;
+        profileCtrl.logout = logout;
+
+        profileCtrl.tabIndex = 0;
+        profileCtrl.tab = [
+          {
+            type : 'group',
+            path : CONSTANT.PATH.PROFILE + '/profile.groups' + CONSTANT.VIEW,
+            icon : 'ion-person-stalker'
+          },
+          {
+            type : 'badge',
+            path : CONSTANT.PATH.PROFILE + '/profile.badges' + CONSTANT.VIEW,
+            icon : 'ion-trophy'
+          }
+        ]
+
+        function logout() {
+          Auth.logout(function () {
+            $state.go('auth.signin',{})
+          },function () {
+            // body...
+          })
+        }
+
+    }
 })();

@@ -10062,6 +10062,9 @@ input[type=radio].hide {
 .scroll-bar-indicator {
   display: none; }
 
+.center {
+  text-align: center; }
+
 .text-white {
   color: white; }
 

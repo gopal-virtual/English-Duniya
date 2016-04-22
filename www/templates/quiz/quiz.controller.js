@@ -3,9 +3,9 @@
     .module('zaya-quiz')
     .controller('QuizController', QuizController)
 
-  QuizController.$inject = ['quiz','$stateParams', '$state', '$scope', 'audio'] ;
+  QuizController.$inject = ['quiz','$stateParams', '$state', '$scope', 'audio','$log'] ;
 
-  function QuizController(quiz, $stateParams, $state, $scope, audio) {
+  function QuizController(quiz, $stateParams, $state, $scope, audio, $log) {
     var quizCtrl = this;
 
     quizCtrl.quiz = quiz;
@@ -30,10 +30,13 @@
     quizCtrl.isKeyCorrect = isKeyCorrect;
     quizCtrl.isKeyAttempted = isKeyAttempted;
 
+
     // initialisation call
     quizCtrl.setCurrentIndex(0);
     quizCtrl.init(quizCtrl.quiz);
 
+    //audio
+    quizCtrl.playAudio = playAudio;
     function init (quiz) {
       // init report object
       if($state.current.name=="quiz.summary"){
@@ -41,14 +44,15 @@
       }
       else if($state.current.name=="quiz.questions"){
         quizCtrl.report = {};
-        quizCtrl.report.quiz_id = quiz.info.id;
+        quizCtrl.report.quiz_id =  quiz.info.id;
         quizCtrl.report.attempts = {};
         for (var i = 0; i < quiz.questions.length; i++) {
-          quizCtrl.report.attempts[quiz.questions[i].info.id] = [];
+          $log.debug(quiz.questions[i].id);
+          quizCtrl.report.attempts[quiz.questions[i].id] = [];
         }
         // init attempted
         for (var i = 0; i < quizCtrl.quiz.questions.length; i++) {
-          if((quizCtrl.quiz.questions[i].info.content_type=='choice question' && !quizCtrl.quiz.questions[i].info.question_type.is_multiple) || quizCtrl.quiz.questions[i].info.content_type=='dr question'){
+          if((quizCtrl.quiz.questions[i].content_type=='choice question' && !quizCtrl.quiz.questions[i].info.question_type.is_multiple) || quizCtrl.quiz.questions[i].info.content_type=='dr question'){
             quizCtrl.quiz.questions[i].attempted = "";
           }
           else if(quizCtrl.quiz.questions[i].info.content_type=='choice question' && quizCtrl.quiz.questions[i].info.question_type.is_multiple){
@@ -59,6 +63,7 @@
           }
           else{}
         }
+        $log.debug(quizCtrl.report);
       }
       else{}
     }
@@ -188,6 +193,19 @@
       else{
         return quizCtrl.report.attempts[question.info.id].indexOf(key)!=-1 ? true : false;
       }
+    }
+
+    function playAudio(key){
+      angular.element("#audioplayer")[0].pause();
+      if(key)
+      {
+      angular.element("#audioSource")[0].src = 'sound/hello.mp3';
+      }
+      else{
+        angular.element("#audioSource")[0].src = 'sound/water-drop.mp3';
+      }
+      angular.element("#audioplayer")[0].load();
+      angular.element("#audioplayer")[0].play();
     }
   }
 })();
