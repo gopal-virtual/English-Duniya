@@ -401,7 +401,12 @@
       })
     };
     function closeKeyboard() {
-      cordova.plugins.Keyboard.close();
+      try{
+        cordova.plugins.Keyboard.close();
+      }
+      catch(e){
+        $log.debug(e);
+      }
       return true;
     }
     function verifyOtpResetPassword(otp){

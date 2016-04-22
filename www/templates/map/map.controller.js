@@ -30,7 +30,7 @@
       else {}
     }
     function getSrc(src){
-      return $sce.trustAsResourceUrl('http://192.168.10.194:9000'+src);
+      return $sce.trustAsResourceUrl(CONSTANT.BACKEND_SERVICE_DOMAIN + src);
     }
     function getIcon(resource){
       if(resource.node.content_type_name == 'assessment'){
