@@ -928,6 +928,11 @@
         'FACEBOOK' : '1159750564044149',
         'GOOGLE' : '1011514043276-7q3kvn29jkegl2d1v7dtlbtipqqgo1rr.apps.googleusercontent.com',
         'ELL' : '1e7aa89f-3f50-433a-90ca-e485a92bbda6',
+      },
+      'ASSETS' : {
+        'IMG' : {
+          'ICON' : '/img/icons'
+        }
       }
     })
 })();
@@ -1247,28 +1252,55 @@
   function mapController($scope, $log, $ionicModal, $state, lessons, Rest, CONSTANT, $sce) {
     var mapCtrl = this;
     mapCtrl.lessons = lessons;
-    mapCtrl.playVideo = playVideo;
     mapCtrl.getLesson = getLesson;
     mapCtrl.getSrc = getSrc;
+    mapCtrl.resetNode = resetNode;
+    mapCtrl.getIcon = getIcon;
+    mapCtrl.resourceType = resourceType;
     // mapCtrl.openModal = openModal;
     // mapCtrl.closeModal = closeModal;
 
+    function resourceType (resource){
+      if(resource.node.content_type_name == 'assessment'){
+        return 'assessment';
+      }
+      else if(resource.node.content_type_name == 'resource'){
+        if(resource.node.type.file_type.substring(0,resource.node.type.file_type.indexOf('/')) == 'video'){
+          return 'video';
+        }
+      }
+      else {}
+    }
     function getSrc(src){
       return $sce.trustAsResourceUrl('http://192.168.10.194:9000'+src);
     }
+    function getIcon(resource){
+      if(resource.node.content_type_name == 'assessment'){
+        return CONSTANT.ASSETS.IMG.ICON + '/quiz.png';
+      }
+      else if(resource.node.content_type_name == 'resource'){
+        if(resource.node.type.file_type.substring(0,resource.node.type.file_type.indexOf('/')) == 'video'){
+          return CONSTANT.ASSETS.IMG.ICON + '/video.png';
+        }
+      }
+      else {
+
+      }
+    }
     $scope.$on('openNode', function(event, node) {
       $scope.openModal();
+      $log.debug('lesson id : ',node.id);
       $log.debug(mapCtrl.getLesson(node.id));
     })
+    $scope.$on('$destroy', function() {
+      $scope.modal.remove();
+    });
     $scope.openModal = function() {
       $scope.modal.show();
     }
     $scope.closeModal = function() {
       $scope.modal.hide();
     }
-    $scope.$on('$destroy', function() {
-      $scope.modal.remove();
-    });
 
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal' + CONSTANT.VIEW, {
       scope: $scope,
@@ -1277,15 +1309,16 @@
       $scope.modal = modal;
     });
 
-    function getLesson(id) {
-      Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('lessons', id).get().then(function(response) {
-        $log.debug(response.plain());
-        mapCtrl.selectedNode = response.plain();
-      })
+    function resetNode(){
+        mapCtrl.selectedNode = {};
     }
 
-    function playVideo() {
-      $state.go('content.video');
+    function getLesson(id) {
+      Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('lessons', id).get().then(function(response) {
+        $log.debug('lesson details : ',response.plain());
+        mapCtrl.selectedNode = response.plain();
+        $log.debug('selected node : ', mapCtrl.selectedNode);
+      })
     }
   }
 })();
@@ -1325,56 +1358,103 @@ window.createGame = function(scope, lessons, injector, log) {
   var game = new Phaser.Game("100", "100" , Phaser.AUTO, 'map_canvas');
   var playState = {
     preload : function () {
-      this.load.image('desert', 'img/assets_v0.0.2/desert_bg.png');
-      this.load.image('cactus', 'img/assets_v0.0.2/cactus.png');
-      this.load.spritesheet('cactus_animation', 'img/assets_v0.0.2/cactus_sprite.png', 15, 17, 8);
-      this.load.image('node', 'img/assets_v0.0.2/node.png');
+      this.load.image('desert', 'img/assets_v0.0.3/desert_bg.png');
+      this.load.image('cactus', 'img/assets_v0.0.3/cactus.png');
+      this.load.image('tent', 'img/assets_v0.0.3/tent_fire.png');
+      // this.load.spritesheet('cactus_animation', 'img/assets_v0.0.2/cactus_sprite.png', 15, 17, 8);
+      this.load.image('node', 'img/assets_v0.0.3/node.png');
       // debug value
       this.game.time.advancedTiming = true;
     },
     create : function() {
-      this.game.world.setBounds(0, 0, this.game.width, this.game.height * 2);
+      var desert = this.game.add.sprite(0,this.game.height * i,'desert');
+      desert.scale.setTo(game.world.width/desert.width, 1);
 
-      for (var i = 0; i < 2; i++) {
-        var desert = this.game.add.sprite(0,this.game.height * i,'desert');
-        desert.scale.setTo(game.world.width/desert.width, 1);
+      this.game.world.setBounds(0, 0, this.game.width, desert.height);
+
+      // place tent
+      for (var i = 0; i < 3; i++) {
+        var tent = this.game.add.sprite(this.game.rnd.between(10,this.game.world.width-10), this.game.rnd.between(0,this.game.world.height),'tent');
       }
-      for (var i = 0; i < 10; i++) {
-        // var cactus = this.game.add.sprite(this.game.rnd.between(10,this.game.world.width-10), this.game.rnd.between(0,this.game.world.height),'cactus');
-        var cactus_animation = this.game.add.sprite(this.game.rnd.between(10,this.game.world.width-10), this.game.rnd.between(0,this.game.world.height), 'cactus_animation');
-        cactus_animation.scale.setTo(3,3);
-        var walk = cactus_animation.animations.add('walk');
-        cactus_animation.animations.play('walk', 10, true);
+      // place cactus
+      for (var i = 0; i < 20; i++) {
+        var cactus = this.game.add.sprite(this.game.rnd.between(50,this.game.world.width-50), this.game.rnd.between(50,this.game.world.height-50),'cactus');
+        // catcus animation
+        // var cactus_animation = this.game.add.sprite(this.game.rnd.between(10,this.game.world.width-10), this.game.rnd.between(0,this.game.world.height), 'cactus_animation');
+        // cactus_animation.scale.setTo(3,3);
+        // var walk = cactus_animation.animations.add('walk');
+        // cactus_animation.animations.play('walk', 10, true);
       }
-      log.debug(lessons);
-      for (var i = 0, nodeCount = lessons.length ; i < nodeCount ; i++) {
-        var node = this.game.add.button(this.game.world.centerX - 27, i * (this.game.world.height / nodeCount), 'node', function (node) {
+
+      // placing lesson node
+      // 1. lesson node count
+      // 2. Node should follow a particular path
+      // path
+      this.points = {
+        'x': [100, 200, 100, game.world.centerX, game.world.centerX],
+        'y': [0, 400, 800, 1300, game.world.height]
+      };
+      this.increment = 1 / game.world.height;
+
+      // Somewhere to draw to
+      this.bmd = this.add.bitmapData(this.game.width, this.game.world.height);
+      this.bmd.addToWorld();
+      // Draw the path
+      for (var j = 0; j < 1; j += this.increment) {
+        var posx = this.math.catmullRomInterpolation(this.points.x, j);
+        var posy = this.math.catmullRomInterpolation(this.points.y, j);
+        this.bmd.rect(posx, posy, 4, 4, '#219C7F');
+      }
+      // Place nodes
+      for (var j = 0, i = lessons.length-1, nodeCount = 1/lessons.length; j < 1; j += nodeCount, i--) {
+        var posx = this.math.catmullRomInterpolation(this.points.x, j);
+        var posy = this.math.catmullRomInterpolation(this.points.y, j);
+        var node = this.game.add.button(posx, posy, 'node', function (node) {
           scope.$emit('openNode',node);
         }, this, 2, 1, 0);
+        node.anchor.setTo(0.5, 0.5);
         node.id = lessons[i].id;
-        node.scale.setTo(0.6,0.6);
       }
+
       this.init();
+      this.game.kineticScrolling.start();
     },
     init : function() {
-      this.game.camera.y = this.game.height * 2;
+      this.game.kineticScrolling = this.game.plugins.add(Phaser.Plugin.KineticScrolling);
+      this.game.kineticScrolling.configure({
+        kineticMovement: true,
+        timeConstantScroll: 325, //really mimic iOS
+        horizontalScroll: false,
+        verticalScroll: true,
+        horizontalWheel: false,
+        verticalWheel: true,
+        deltaWheel: 40
+    });
+      this.game.camera.y = ((~~this.world.height/this.game.height)-1) * this.game.height;
     },
 
     update : function() {
-      this.dragMap(this);
+      // this.dragMap();
     },
 
-    dragMap : function(ref) {
-      if (ref.game.input.activePointer.isDown) {
-        if (ref.game.origDragPoint) {
+    dragMap : function() {
+      if (this.game.input.activePointer.isDown) {
+        if (this.game.origDragPoint) {
           // move the camera by the amount the mouse has moved since last update
-          ref.game.camera.x += ref.game.origDragPoint.x - ref.game.input.activePointer.position.x;
-          ref.game.camera.y += ref.game.origDragPoint.y - ref.game.input.activePointer.position.y;
+          this.game.camera.x += this.game.origDragPoint.x - this.game.input.activePointer.position.x;
+          this.game.camera.y += this.game.origDragPoint.y - this.game.input.activePointer.position.y;
+          // tween
+          // var cx = (this.game.origDragPoint.x - this.game.input.activePointer.position.x);
+          // var cy = (this.game.origDragPoint.y - this.game.input.activePointer.position.y)
+          // this.game.add.tween(this.game.camera).to({
+          //   x : +cx,
+          //   y : +cy
+          // },300, Phaser.Easing.Linear.None, true)
         }
         // set new drag origin to current position
-        ref.game.origDragPoint = ref.game.input.activePointer.position.clone();
+        this.game.origDragPoint = this.game.input.activePointer.position.clone();
       } else {
-        ref.game.origDragPoint = null;
+        this.game.origDragPoint = null;
       }
     },
     render : function(){
@@ -1387,7 +1467,7 @@ window.createGame = function(scope, lessons, injector, log) {
 
   // phaser destroy doesn't remove canvas element --> removed manually in app run
   scope.$on('$destroy', function() {
-    game.destroy(); // Clean up the game when we leave this scope
+    this.game.destroy(); // Clean up the game when we leave this scope
   });
 };
 
