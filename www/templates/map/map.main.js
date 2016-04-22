@@ -1,75 +1,119 @@
-window.createGame = function(scope, injector) {
+window.createGame = function(scope, lessons, injector, log) {
   'use strict';
 
-  var game = new Phaser.Game("100%", "100%", Phaser.AUTO, 'map_canvas');
-
+  var lessons = lessons;
+  var game = new Phaser.Game("100", "100" , Phaser.AUTO, 'map_canvas');
   var playState = {
     preload : function () {
-      this.load.image('cloud1', 'img/cloud1.png');
-      this.load.image('cloud2', 'img/cloud2.png');
-      this.load.image('cloud3', 'img/cloud3.png');
-      this.load.image('cloud4', 'img/cloud4.png');
-      this.load.image('cloud5', 'img/cloud5.png');
-      this.load.image('cloud6', 'img/cloud6.png');
-      this.load.image('cloud7', 'img/cloud7.png');
-      this.load.image('path', 'img/path.png');
-      this.load.image('node', 'img/node.png');
+      this.load.image('desert', 'img/assets_v0.0.3/desert_bg.png');
+      this.load.image('cactus', 'img/assets_v0.0.3/cactus.png');
+      this.load.image('tent', 'img/assets_v0.0.3/tent_fire.png');
+      // this.load.spritesheet('cactus_animation', 'img/assets_v0.0.2/cactus_sprite.png', 15, 17, 8);
+      this.load.image('node', 'img/assets_v0.0.3/node.png');
+      // debug value
+      this.game.time.advancedTiming = true;
     },
     create : function() {
-      this.game.stage.backgroundColor = "#AAD9E8";
-      this.game.world.setBounds(0, 0, this.game.width, this.game.height * 3);
+      var desert = this.game.add.sprite(0,this.game.height * i,'desert');
+      desert.scale.setTo(game.world.width/desert.width, 1);
+
+      this.game.world.setBounds(0, 0, this.game.width, desert.height);
+
+      // place tent
+      for (var i = 0; i < 3; i++) {
+        var tent = this.game.add.sprite(this.game.rnd.between(10,this.game.world.width-10), this.game.rnd.between(0,this.game.world.height),'tent');
+      }
+      // place cactus
+      for (var i = 0; i < 20; i++) {
+        var cactus = this.game.add.sprite(this.game.rnd.between(50,this.game.world.width-50), this.game.rnd.between(50,this.game.world.height-50),'cactus');
+        // catcus animation
+        // var cactus_animation = this.game.add.sprite(this.game.rnd.between(10,this.game.world.width-10), this.game.rnd.between(0,this.game.world.height), 'cactus_animation');
+        // cactus_animation.scale.setTo(3,3);
+        // var walk = cactus_animation.animations.add('walk');
+        // cactus_animation.animations.play('walk', 10, true);
+      }
+
+      // placing lesson node
+      // 1. lesson node count
+      // 2. Node should follow a particular path
+      // path
+      this.points = {
+        'x': [100, 200, 100, game.world.centerX, game.world.centerX],
+        'y': [0, 400, 800, 1300, game.world.height]
+      };
+      this.increment = 1 / game.world.height;
+
+      // Somewhere to draw to
+      this.bmd = this.add.bitmapData(this.game.width, this.game.world.height);
+      this.bmd.addToWorld();
+      // Draw the path
+      for (var j = 0; j < 1; j += this.increment) {
+        var posx = this.math.catmullRomInterpolation(this.points.x, j);
+        var posy = this.math.catmullRomInterpolation(this.points.y, j);
+        this.bmd.rect(posx, posy, 4, 4, '#219C7F');
+      }
+      // Place nodes
+      for (var j = 0, i = lessons.length-1, nodeCount = 1/lessons.length; j < 1; j += nodeCount, i--) {
+        var posx = this.math.catmullRomInterpolation(this.points.x, j);
+        var posy = this.math.catmullRomInterpolation(this.points.y, j);
+        var node = this.game.add.button(posx, posy, 'node', function (node) {
+          scope.$emit('openNode',node);
+        }, this, 2, 1, 0);
+        node.anchor.setTo(0.5, 0.5);
+        node.id = lessons[i].id;
+      }
+
       this.init();
-      var cloudCount = 20;
-      for (var i = 0; i < cloudCount; i++) {
-        var cloud = this.game.add.sprite(this.game.world.randomX, this.game.world.randomY, 'cloud' + this.game.rnd.between(1, 7));
-        var scaleFactor = this.game.rnd.between(3,6)/10;
-        cloud.scale.setTo(scaleFactor, scaleFactor);
-        this.game.physics.arcade.enable(cloud);
-        cloud.body.velocity.x = this.game.rnd.between(-5, -75);
-        cloud.autoCull = true;
-        cloud.checkWorldBounds = true;
-        cloud.events.onOutOfBounds.add(this.resetSprite, this);
-      }
-      var nodeCount = 20
-      for (var i = 0; i < nodeCount; i++) {
-        var node = this.game.add.sprite((i*10)+50, i * (this.game.world.height / nodeCount), 'node');
-        node.scale.setTo(0.5, 0.5);
-      }
-
+      this.game.kineticScrolling.start();
     },
-
-    resetSprite : function(sprite) {
-      sprite.x = this.game.world.bounds.right;
-    },
-
     init : function() {
-      this.game.camera.y = this.game.height * 2;
+      this.game.kineticScrolling = this.game.plugins.add(Phaser.Plugin.KineticScrolling);
+      this.game.kineticScrolling.configure({
+        kineticMovement: true,
+        timeConstantScroll: 325, //really mimic iOS
+        horizontalScroll: false,
+        verticalScroll: true,
+        horizontalWheel: false,
+        verticalWheel: true,
+        deltaWheel: 40
+    });
+      this.game.camera.y = ((~~this.world.height/this.game.height)-1) * this.game.height;
     },
 
     update : function() {
-      this.dragMap(this);
+      // this.dragMap();
     },
 
-    dragMap : function(ref) {
-      if (ref.game.input.activePointer.isDown) {
-        if (ref.game.origDragPoint) {
+    dragMap : function() {
+      if (this.game.input.activePointer.isDown) {
+        if (this.game.origDragPoint) {
           // move the camera by the amount the mouse has moved since last update
-          ref.game.camera.x += ref.game.origDragPoint.x - ref.game.input.activePointer.position.x;
-          ref.game.camera.y += ref.game.origDragPoint.y - ref.game.input.activePointer.position.y;
+          this.game.camera.x += this.game.origDragPoint.x - this.game.input.activePointer.position.x;
+          this.game.camera.y += this.game.origDragPoint.y - this.game.input.activePointer.position.y;
+          // tween
+          // var cx = (this.game.origDragPoint.x - this.game.input.activePointer.position.x);
+          // var cy = (this.game.origDragPoint.y - this.game.input.activePointer.position.y)
+          // this.game.add.tween(this.game.camera).to({
+          //   x : +cx,
+          //   y : +cy
+          // },300, Phaser.Easing.Linear.None, true)
         }
         // set new drag origin to current position
-        ref.game.origDragPoint = ref.game.input.activePointer.position.clone();
+        this.game.origDragPoint = this.game.input.activePointer.position.clone();
       } else {
-        ref.game.origDragPoint = null;
+        this.game.origDragPoint = null;
       }
     },
+    render : function(){
+      this.game.debug.text("fps : "+game.time.fps || '--', 2, 14, "#00ff00");
+    }
   }
 
   game.state.add('play',playState);
   game.state.start('play');
 
-  // phaser destroy is broken, check for fix
-  // scope.$on('$destroy', function() {
-    // game.destroy(); // Clean up the game when we leave this scope
-  // });
+  // phaser destroy doesn't remove canvas element --> removed manually in app run
+  scope.$on('$destroy', function() {
+    this.game.destroy(); // Clean up the game when we leave this scope
+  });
 };

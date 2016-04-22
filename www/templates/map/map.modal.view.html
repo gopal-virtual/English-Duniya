@@ -1,0 +1,25 @@
+<ion-modal-view style="background:url('img/interlink.png') rgba(0,0,0,0.7) repeat-y center center;" ng-click="closeModal();mapCtrl.resetNode()">
+  <ion-content class="padding" ng-init="mapCtrl.selected=false">
+    <div class="row" ng-repeat="resource in mapCtrl.selectedNode.objects">
+      <div class="col" ng-init="selected=false">
+        <div class="text-center">
+          <img
+          ng-src="{{mapCtrl.getIcon(resource)}}"
+          width="40%" height="auto" alt="resource icon"
+          ng-hide="mapCtrl.resourceType(resource) == 'video' && selected"
+          ng-click="selected=true;$event.stopPropagation();"/>
+          <video
+          ng-if="mapCtrl.resourceType(resource) == 'video' && selected"
+          ng-src="{{mapCtrl.getSrc(resource.node.type.path)}}" width="320" height="240" controls></video>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <div class="text-center">
+          <img src="img/assets_v0.0.3/node.png" alt="practice icon" ng-click="$event.stopPropagation();"/>
+        </div>
+      </div>
+    </div>
+  </ion-content>
+</ion-modal-view>
