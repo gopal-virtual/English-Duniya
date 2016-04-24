@@ -56,15 +56,15 @@
         // init attempted
 
         for (var i = 0; i < quizCtrl.quiz.objects.length; i++) {
-          if((quizCtrl.quiz.objects[i].content_type=='choicequestion' && !quizCtrl.quiz.objects[i].node.type.is_multiple) || quizCtrl.quiz.objects[i].node.content_type=='dr question'){
+          if((quizCtrl.quiz.objects[i].node.type.type=='choicequestion' && !quizCtrl.quiz.objects[i].node.type.content.is_multiple) /*|| quizCtrl.quiz.objects[i].node.content_type=='dr question'*/){
             quizCtrl.quiz.objects[i].attempted = "";
           }
-          else if(quizCtrl.quiz.objects[i].node.content_type=='choicequestion' && quizCtrl.quiz.objects[i].node.type.is_multiple){
+          else if(quizCtrl.quiz.objects[i].node.type.type=='choicequestion' && quizCtrl.quiz.objects[i].node.type.content.is_multiple){
             quizCtrl.quiz.objects[i].attempted = {};
           }
-          else if(quizCtrl.quiz.objects[i].node.content_type=='sentence ordering' || quizCtrl.quiz.objects[i].node.content_type=='sentence structuring'){
-            quizCtrl.quiz.objects[i].attempted = [];
-          }
+          //else if(quizCtrl.quiz.objects[i].node.content_type=='sentence ordering' || quizCtrl.quiz.objects[i].node.content_type=='sentence structuring'){
+          //  quizCtrl.quiz.objects[i].attempted = [];
+          //}
           else{}
         }
       }
@@ -98,7 +98,9 @@
     }
 
     function decide() {
+      $log.debug("decide");
       if(!quizCtrl.isCorrectAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex])){
+        $log.debug("!quizCtrl.isCorrectAttempted");
         quizCtrl.submitAttempt(
           quizCtrl.quiz.objects[quizCtrl.currentIndex].node.id,
           quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted
@@ -107,6 +109,7 @@
           quizCtrl.quiz.objects[quizCtrl.currentIndex],
           quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted
         );
+        $log.debug("decided");
       }
       else if(quizCtrl.currentIndex < quizCtrl.quiz.objects.length - 1){
         quizCtrl.nextQuestion();
@@ -145,7 +148,6 @@
     }
 
     function isAttempted (question_id) {
-
       return quizCtrl.report.attempts[question_id].length ? true : false;
     }
 
@@ -171,28 +173,30 @@
 
     function isCorrectAttempted (question){
       // multiple choice
-      if(question.node.type.type=='choicequestion' && question.node.type.is_multiple){
+
+      if(question.node.type.type=='choicequestion' && question.node.type.content.is_multiple){
         for (var i = 0; i < quizCtrl.report.attempts[question.node.id].length; i++) {
-          if(_.chain(quizCtrl.report.attempts[question.node.id][i]).map(function(num,key){return parseInt(key);}).isEqual(question.node.type.answer).value())
+            if(_.chain(quizCtrl.report.attempts[question.node.id][i]).map(function(num,key){return num?parseInt(key):false;}).reject(function(num){ return !num; }).isEqual(question.node.type.answer).value())
             return true;
         }
         return false;
       }
       // single choice
-      if(question.node.type.type=='choicequestion' && !question.node.type.is_multiple){
+      if(question.node.type.type=='choicequestion' && !question.node.type.content.is_multiple){
         return quizCtrl.report.attempts[question.node.id].indexOf(question.node.type.answer[0])!=-1 ?(true) : false;
       }
+      // to be tested for new api
       // dr
-      if(question.node.type.type=='dr question'){
-        return quizCtrl.report.attempts[question.node.id].indexOf(question.node.type.answer[0].toLowerCase())!=-1 ? true : false;
-      }
-      if(question.node.type.type=='sentence ordering' || question.node.type.type=='sentence structuring'){
-        for (var i = 0; i < quizCtrl.report.attempts[question.node.id].length; i++) {
-          if(angular.equals(quizCtrl.report.attempts[question.node.id][i],question.node.type.answer))
-            return true;
-        }
-        return false;
-      }
+      //if(question.node.type.type=='dr question'){
+      //  return quizCtrl.report.attempts[question.node.id].indexOf(question.node.type.answer[0].toLowerCase())!=-1 ? true : false;
+      //}
+      //if(question.node.type.type=='sentence ordering' || question.node.type.type=='sentence structuring'){
+      //  for (var i = 0; i < quizCtrl.report.attempts[question.node.id].length; i++) {
+      //    if(angular.equals(quizCtrl.report.attempts[question.node.id][i],question.node.type.answer))
+      //      return true;
+      //  }
+      //  return false;
+      //}
     }
 
     function isKeyCorrect (question,key){

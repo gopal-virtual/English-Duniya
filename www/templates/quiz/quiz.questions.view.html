@@ -17,8 +17,8 @@
       </div>
       <ion-content class="has-header has-question-subheader has-footer padding-x-20 center">
       <!-- SCQ -->
-      <div  ng-class="{'wrong-attempt':quizCtrl.isAttempted(question.node.id) && quizCtrl.isKeyAttempted(question,option.key) && !quizCtrl.isKeyCorrect(question,option.key),'correct-attempt': quizCtrl.isAttempted(question.node.id) && quizCtrl.isKeyAttempted(question,option.key) && quizCtrl.isKeyCorrect(question,option.key),'selected':option.key==question.attempted}" class="card padding center card-list card-pale card-radius" ng-repeat="option in question.node.type.content.choices">
-        <label  ng-if="question.node.type.type=='choicequestion' && !question.info.question_type.is_multiple"  ng-click="quizCtrl.playAudio(option.audio.key)" >
+      <div ng-if="question.node.type.type=='choicequestion' && !question.node.type.content.is_multiple" ng-class="{'wrong-attempt':quizCtrl.isAttempted(question.node.id) && quizCtrl.isKeyAttempted(question,option.key) && !quizCtrl.isKeyCorrect(question,option.key),'correct-attempt': quizCtrl.isAttempted(question.node.id) && quizCtrl.isKeyAttempted(question,option.key) && quizCtrl.isKeyCorrect(question,option.key),'selected':option.key==question.attempted}" class="card padding center card-list card-pale card-radius" ng-repeat="option in question.node.type.content.choices">
+        <label    ng-click="quizCtrl.playAudio(option.audio.key)" >
           <input class="hide" type="radio" ng-model="question.attempted" ng-value="option.key" ng-disabled="quizCtrl.isCorrectAttempted(question)">
           <div ng-if="option.option">{{option.option}}</div>
           <div ng-if="option.image.key"><img ng-src="{{'img/quiz/1.jpg'}}"></div>
@@ -26,12 +26,20 @@
         </label>
       </div>
        <!-- MCQ options -->
-      <label ng-if="question.info.content_type=='choice question' && question.info.question_type.is_multiple" ng-repeat="option in question.info.question_type.choices" class="list card padding block" ng-class="{'wrong-attempt':quizCtrl.isAttempted(question.node.id) && quizCtrl.isKeyAttempted(question,option.key) && !quizCtrl.isKeyCorrect(question,option.key),'correct-attempt': quizCtrl.isAttempted(question.info.id) && quizCtrl.isKeyAttempted(question,option.key) && quizCtrl.isKeyCorrect(question,option.key),'selected':question.attempted[option.key]}">
-        <input class="hide" type="checkbox" ng-model="question.attempted[$index+1]" ng-value="option.key" ng-disabled="quizCtrl.isCorrectAttempted(question)">
-        <div ng-if="option.option">{{option.option}}</div>
-        <div ng-if="option.image.key"><img ng-src="{{'img/quiz/1.jpg'}}"></div>
-        <div ng-if="!option.option && !option.image.key"><img height="100" width="100" ng-src="img/speaker.png"> </div>
-      </label>
+        <div ng-if="question.node.type.type=='choicequestion' && question.node.type.content.is_multiple" ng-class="{'wrong-attempt':quizCtrl.isAttempted(question.node.id) && quizCtrl.isKeyAttempted(question,option.key) && !quizCtrl.isKeyCorrect(question,option.key),'correct-attempt': quizCtrl.isAttempted(question.node.id) && quizCtrl.isKeyAttempted(question,option.key) && quizCtrl.isKeyCorrect(question,option.key),'selected':question.attempted[option.key]}" class="card padding center card-list card-pale card-radius" ng-repeat="option in question.node.type.content.choices">
+          <label ng-click="quizCtrl.playAudio(option.audio.key)" >
+            <input class="hide" type="checkbox" ng-model="question.attempted[$index+1]" ng-value="option.key" ng-disabled="quizCtrl.isCorrectAttempted(question)">
+            <div ng-if="option.option">{{option.option}}</div>
+            <div ng-if="option.image.key"><img ng-src="{{'img/quiz/1.jpg'}}"></div>
+            <div ng-if="!option.option && !option.image.key"><img height="100" width="100" ng-src="img/speaker.png"> </div>
+          </label>
+        </div>
+      <!--<label ng-if="question.node.type.type=='choicequestion' && question.node.type.content.is_multiple" ng-repeat="option in question.info.question_type.choices" class="list card padding block" >-->
+        <!--<input class="hide" type="checkbox" ng-model="question.attempted[$index+1]" ng-value="option.key" ng-disabled="quizCtrl.isCorrectAttempted(question)">-->
+        <!--<div ng-if="option.option">{{option.option}}</div>-->
+        <!--<div ng-if="option.image.key"><img ng-src="{{'img/quiz/1.jpg'}}"></div>-->
+        <!--<div ng-if="!option.option && !option.image.key"><img height="100" width="100" ng-src="img/speaker.png"> </div>-->
+      <!--</label>-->
       </ion-content>
 
     </div>
