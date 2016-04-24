@@ -6,8 +6,11 @@ $border-radius : 5px;
 // color
 $brand : #0D618A;
 $brand-white : rgb(255,255,255);
+$brand-green : #39B89A;
+$pale : #FCF3D8;
 $neutral : #e4eff2;
-$color-list : ("light" : $light, "stable" : $stable, "positive" : $positive, "calm" : $calm, "balanced" : $balanced, "energised" : $energized, "assertive" :$assertive, "royal" : $royal, "dark" :$dark, "brand" : $brand, "neutral" : $neutral);
+$brand-yellow : #FFBC1D;
+$color-list : ("light" : $light, "stable" : $stable, "positive" : $positive, "calm" : $calm, "balanced" : $balanced, "energised" : $energized, "assertive" :$assertive, "royal" : $royal, "dark" :$dark, "brand" : $brand, "neutral" : $neutral, "green" : $brand-green, "pale" : $pale, "brand-yellow": $brand-yellow);
 // $brand-color :
 
 // size

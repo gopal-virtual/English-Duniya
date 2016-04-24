@@ -68,7 +68,15 @@
 .selected{
   box-shadow: 0 0 10px $calm;
   background-color: lighten($dark, 60%);
-
+  border: 2px solid #06e9ff;
+}
+.correct{
+  background: url('../img/correct.png') no-repeat center center;
+  background-size: auto 70%;
+}
+.wrong{
+  background: url('../img/wrong.png') no-repeat center center;
+  background-size: auto 70%;
 }
 .slider { height: 100%; }
 .scroll { height: 100%; }
@@ -84,6 +92,18 @@
   display: none;
 }
 
-.center{
-  text-align: center;
+.question-subheader{
+  height: 190px !important;
+  top : 43px !important;
+}
+.has-question-subheader{
+  top: 260px !important;
+}
+
+.bar-footer-large{
+  height:60px;
+}
+
+.feedback-modal{
+  background: transparent;
 }

@@ -15,9 +15,14 @@
     mapCtrl.resetNode = resetNode;
     mapCtrl.getIcon = getIcon;
     mapCtrl.resourceType = resourceType;
+    mapCtrl.playResource = playResource;
     // mapCtrl.openModal = openModal;
     // mapCtrl.closeModal = closeModal;
 
+    function playResource (resource) {
+      $log.debug('quiz resource', resource);
+      $state.go('quiz.questions',{id : resource.node.id});
+    }
     function resourceType (resource){
       if(resource.node.content_type_name == 'assessment'){
         return 'assessment';
