@@ -12,13 +12,6 @@
     'use strict';
 
     angular
-        .module('zaya-content', []);
-})();
-
-(function() {
-    'use strict';
-
-    angular
         .module('zaya-map', []);
 })();
 
@@ -27,13 +20,6 @@
 
     angular
         .module('zaya-intro', []);
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('zaya-search', []);
 })();
 
 (function() {
@@ -57,13 +43,6 @@
     'use strict';
 
     angular
-        .module('zaya-playlist', []);
-})();
-
-(function() {
-    'use strict';
-
-    angular
         .module('zaya-profile', []);
 })();
 
@@ -74,13 +53,6 @@
         .module('zaya-quiz', [
           'ui.sortable'
         ]);
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('zaya-group', []);
 })();
 
 (function () {
@@ -98,16 +70,12 @@
 
       // core
       'common',
-      'zaya-content',
       'zaya-map',
       'zaya-user',
-      'zaya-playlist',
       'zaya-profile',
       'zaya-intro',
       'zaya-auth',
       'zaya-quiz',
-      'zaya-search',
-      'zaya-group'
     ]);
 
 })();
@@ -1347,114 +1315,6 @@
 })();
 
 (function() {
-  'use strict';
-
-  mainRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
-  angular
-    .module('zaya-content')
-    .config(mainRoute);
-
-  function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
-
-    $stateProvider
-      .state('content',{
-        url : '/content',
-        abstract : true,
-        template : '<ion-nav-view name="state-content"></ion-nav-view>'
-      })
-      .state('content.video',{
-        url : '/video',
-        views : {
-          'state-content' : {
-            templateUrl : CONSTANT.PATH.CONTENT + '/content.video' + CONSTANT.VIEW,
-            // controller : 'contentController as contentCtrl'
-          }
-        }
-      })
-  }
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('zaya-group')
-        .controller('Controller', Controller);
-
-    Controller.$inject = [];
-
-    /* @ngInject */
-    function Controller() {
-        var groupCtrl = this;
-
-        groupCtrl.activate();
-
-        function activate() {
-
-        }
-    }
-})();
-
-(function() {
-  'use strict';
-
-  authRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
-  angular
-    .module('zaya-auth')
-    .config(authRoute);
-
-  function authRoute($stateProvider, $urlRouterProvider, CONSTANT) {
-    $stateProvider
-      .state('group',{
-        url : '/group',
-        abstract : true,
-        template : '<ion-nav-view name="state-group-admin"></ion-nav-view><ion-nav-view name="state-group-student"></ion-nav-view>'
-      })
-      .state('group.admin',{
-        url : '/admin',
-        views : {
-          'state-group-admin' : {
-            templateUrl : CONSTANT.PATH.GROUP + '/group.admin' + CONSTANT.VIEW,
-            controller : 'groupController as groupCtrl'
-          }
-        }
-      })
-      .state('group.student',{
-        url : '/student',
-        views : {
-          'state-group-student' : {
-            templateUrl : CONSTANT.PATH.GROUP + '/group.student' + CONSTANT.VIEW,
-            controller : 'groupController as groupCtrl'
-          }
-        }
-      })
-  }
-})();
-
-(function(){
-  'use strict';
-
-  angular
-    .module('zaya')
-    .controller('homeController',homeController)
-
-  homeController.$inject = ['$scope'];
-
-  function homeController($scope) {
-    var homeCtrl = this;
-    homeCtrl.carouselOptions = {
-        "loop": false,
-        "margin": 0,
-        "items": 1,
-        "stagePadding": 20,
-        "nav": false,
-        "autoplay": false,
-        "center" : true
-    };
-  }
-})();
-
-(function() {
     'use strict';
 
     angular
@@ -1722,26 +1582,6 @@ window.createGame = function(scope, lessons, injector, log) {
       // this.dragMap();
     },
 
-    dragMap : function() {
-      if (this.game.input.activePointer.isDown) {
-        if (this.game.origDragPoint) {
-          // move the camera by the amount the mouse has moved since last update
-          this.game.camera.x += this.game.origDragPoint.x - this.game.input.activePointer.position.x;
-          this.game.camera.y += this.game.origDragPoint.y - this.game.input.activePointer.position.y;
-          // tween
-          // var cx = (this.game.origDragPoint.x - this.game.input.activePointer.position.x);
-          // var cy = (this.game.origDragPoint.y - this.game.input.activePointer.position.y)
-          // this.game.add.tween(this.game.camera).to({
-          //   x : +cx,
-          //   y : +cy
-          // },300, Phaser.Easing.Linear.None, true)
-        }
-        // set new drag origin to current position
-        this.game.origDragPoint = this.game.input.activePointer.position.clone();
-      } else {
-        this.game.origDragPoint = null;
-      }
-    },
     render : function(){
       this.game.debug.text("fps : "+game.time.fps || '--', 2, 14, "#00ff00");
     }
@@ -1789,175 +1629,6 @@ window.createGame = function(scope, lessons, injector, log) {
           }
         }
       })
-  }
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('zaya-playlist')
-        .controller('playlistController', playlistController);
-
-    playlistController.$inject = ['$ionicScrollDelegate','$timeout','$stateParams','playlistData'];
-
-    function playlistController($ionicScrollDelegate,$timeout,$stateParams,playlistData) {
-        var playlistCtrl = this;
-        playlistCtrl.playlist = playlistData.playlist;
-        playlistCtrl.playlistId = $stateParams.playlistId;
-
-        $timeout(function() {
-            $ionicScrollDelegate.$getByHandle('playlistScrollBottom').scrollBottom();
-        });
-
-
-    }
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('zaya-playlist')
-        .factory('playlistData', playlistData);
-
-    playlistData.$inject = [];
-
-    function playlistData() {
-        var playlist = {
-          playlist : {
-              id : 100,
-              title : "Root",
-              description : "Root",
-              root : true,
-              children : [
-                {
-                  id : 1,
-                  title : "English",
-                  description : "lorem some desction for the subjjectt lorem some desction for the subjjecttlorem some desction for the subjjecttlorem some desction for the subjjecttlorem some desction for the subjjecttlorem some desction for the subjjecttlorem some desction for the subjjecttlorem some desction for the subjjectt",
-                  image : "path",
-                  children : [
-                    {
-                      id : 10,
-                      title : "Lorem ipsum dolor sit amet",
-                      description : "Lorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit amet",
-                      children : [
-                        {
-                          id : 2,
-                          title : "dolor sit amet",
-                          description : "ipsum dolor sit ametLorem ipsum dolor sit amet",
-                        },
-                      ]
-                    },
-                    {
-                      id : 11,
-                      title : "Lorem hello are you",
-                      description : "dolor sit ametLorem ipsum olor sit ametLorem ipsum dolor sit amet",
-                      children : [
-                        {
-                          id : 111,
-                          title : "Lorsdlfkj sdlfkj",
-                          description : "dolor sdlfkjsdf sdflskdjfsd s",
-                          children : []
-                        },
-                        {
-                          id : 111,
-                          title : "sdflksf sdlfsdk",
-                          description : "dolor sdlscfsdf dffkjsdf sdflskdjfsd s",
-                          children : []
-                        },
-                        {
-                          id : 111,
-                          title : "sdfsdf fsdf dsfj",
-                          description : "dolor sdlsdffsfsd sdflskdjfsd s",
-                          children : []
-                        },
-                        {
-                          id : 111,
-                          title : "dfd dfdf",
-                          description : "ddsfsf sdflskdjfsd",
-                          children : []
-                        },
-                      ]
-                    },
-                    {
-                      id : 12,
-                      title : "Lorem ipsum dolor sit amet",
-                      description : "Lorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit amet",
-                      children : []
-                    }
-                  ]
-                },
-                {
-                  id : 2,
-                  title : "Math",
-                  description : "lorem some desction for the subjjectt",
-                  image : "path",
-                  children : []
-                },
-                {
-                  id : 2,
-                  title : "Geography",
-                  description : "lorem some desction for the subjjectt",
-                  image : "path",
-                  children : []
-                },
-                {
-                  id : 4,
-                  title : "Science",
-                  description : "lorem some desction for the subjjectt",
-                  image : "path",
-                  children : []
-                },
-                {
-                  id : 4,
-                  title : "Biology",
-                  description : "lorem some desction for the subjjectt",
-                  image : "path",
-                  children : []
-                },
-                {
-                  id : 4,
-                  title : "Bio technology",
-                  description : "lorem some desction for the subjjectt",
-                  image : "path",
-                  children : []
-                },
-                {
-                  id : 4,
-                  title : "Linkin Park",
-                  description : "lorem some desction for the subjjectt",
-                  image : "path",
-                  children : []
-                }
-              ]
-          }
-        };
-
-        return playlist;
-
-    }
-})();
-
-(function() {
-  'use strict';
-
-  mainRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
-  angular
-    .module('zaya-playlist')
-    .config(mainRoute);
-
-  function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
-    // $stateProvider
-    //   .state('playlist',{
-    //     url : '/playlist',
-    //     views : {
-    //       'playlist-tab':{
-    //         templateUrl : CONSTANT.PATH.PLAYLIST+'/playlist'+CONSTANT.VIEW,
-    //         controller : 'playlistController as playlistCtrl'
-    //       }
-    //     }
-    //   })
   }
 })();
 
@@ -2329,71 +2000,6 @@ window.createGame = function(scope, lessons, injector, log) {
 })();
 
 (function() {
-    'use strict';
-
-    angular
-        .module('zaya-search')
-        .controller('searchController', searchController);
-
-    searchController.$inject = ['CONSTANT'];
-
-    function searchController(CONSTANT) {
-        var searchCtrl = this;
-
-        searchCtrl.tabIndex = 0;
-        searchCtrl.tab = [
-          {
-            type : 'node',
-            path : CONSTANT.PATH.SEARCH + '/search.nodes' + CONSTANT.VIEW,
-            icon : 'ion-ios-book'
-          },
-          {
-            type : 'group',
-            path : CONSTANT.PATH.SEARCH + '/search.groups' + CONSTANT.VIEW,
-            icon : 'ion-person-stalker'
-          },
-          {
-            type : 'user',
-            path : CONSTANT.PATH.SEARCH + '/search.users' + CONSTANT.VIEW,
-            icon : 'ion-person-add'
-          }
-        ]
-    }
-})();
-
-(function() {
-  'use strict';
-
-  mainRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
-  angular
-    .module('zaya-quiz')
-    .config(mainRoute);
-
-  function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
-
-    $stateProvider
-      .state('search',{
-        url : '/search',
-        abstract : true,
-        template : '<ion-nav-view name="state-search"></ion-nav-view>'
-      })
-      .state('search.main',{
-        url : '/main',
-        nativeTransitions : {
-          "type" : 'slide',
-          "direction" : 'up',
-        },
-        views : {
-          'state-search' : {
-            templateUrl : CONSTANT.PATH.SEARCH + '/search' + CONSTANT.VIEW,
-            controller : "searchController as searchCtrl"
-          }
-        }
-      })
-  }
-})();
-
-(function() {
   'use strict';
 
   mainRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
@@ -2410,15 +2016,6 @@ window.createGame = function(scope, lessons, injector, log) {
         abstract : true,
         template: '<ion-nav-view name="state-user"></ion-nav-view>',
       })
-      // content - Video, Image, Game, Pdf etc
-      // .state('user.content',{
-      //   url : '/content/:content_type/:content_id',
-      //   views : {
-      //     'state-user' : {
-      //       templateUrl : CONSTANT.PATH.CONTENT+'/content'+CONSTANT.VIEW,
-      //     }
-      //   }
-      // })
       // personalisation for all
       .state('user.personalise',{
         url : '/personalise',
@@ -2435,22 +2032,6 @@ window.createGame = function(scope, lessons, injector, log) {
           'state-personalise':{
             templateUrl : CONSTANT.PATH.PROFILE+'/personalise.social'+CONSTANT.VIEW,
             controller : 'profileController as profileCtrl'
-          }
-        }
-      })
-      .state('user.personalise.usertype',{
-        url : '/usertype',
-        views : {
-          'state-personalise':{
-            templateUrl : CONSTANT.PATH.PROFILE+'/personalise.usertype'+CONSTANT.VIEW
-          }
-        }
-      })
-      .state('user.personalise.usersubject',{
-        url : '/usersubject',
-        views : {
-          'state-personalise':{
-            templateUrl : CONSTANT.PATH.PROFILE+'/personalise.usersubject'+CONSTANT.VIEW
           }
         }
       })
@@ -2483,26 +2064,6 @@ window.createGame = function(scope, lessons, injector, log) {
           'profile-tab' : {
             templateUrl : CONSTANT.PATH.PROFILE+'/profile.settings'+CONSTANT.VIEW,
             controller : 'profileController as profileCtrl'
-          }
-        }
-      })
-      .state('user.main.playlist',{
-        url : '/playlist/:playlistId',
-        nativeTransitions : null,
-        views : {
-          'playlist-tab':{
-            templateUrl : CONSTANT.PATH.PLAYLIST+'/playlist'+CONSTANT.VIEW,
-            controller : 'playlistController as playlistCtrl'
-          }
-        }
-      })
-      .state('user.main.home',{
-        url : '/home',
-        nativeTransitions : null,
-        views : {
-          'home-tab':{
-            templateUrl : CONSTANT.PATH.HOME+'/home'+CONSTANT.VIEW,
-            controller : 'homeController as homeCtrl'
           }
         }
       })

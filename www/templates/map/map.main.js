@@ -84,26 +84,6 @@ window.createGame = function(scope, lessons, injector, log) {
       // this.dragMap();
     },
 
-    dragMap : function() {
-      if (this.game.input.activePointer.isDown) {
-        if (this.game.origDragPoint) {
-          // move the camera by the amount the mouse has moved since last update
-          this.game.camera.x += this.game.origDragPoint.x - this.game.input.activePointer.position.x;
-          this.game.camera.y += this.game.origDragPoint.y - this.game.input.activePointer.position.y;
-          // tween
-          // var cx = (this.game.origDragPoint.x - this.game.input.activePointer.position.x);
-          // var cy = (this.game.origDragPoint.y - this.game.input.activePointer.position.y)
-          // this.game.add.tween(this.game.camera).to({
-          //   x : +cx,
-          //   y : +cy
-          // },300, Phaser.Easing.Linear.None, true)
-        }
-        // set new drag origin to current position
-        this.game.origDragPoint = this.game.input.activePointer.position.clone();
-      } else {
-        this.game.origDragPoint = null;
-      }
-    },
     render : function(){
       this.game.debug.text("fps : "+game.time.fps || '--', 2, 14, "#00ff00");
     }
