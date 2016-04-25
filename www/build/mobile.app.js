@@ -1518,9 +1518,9 @@
     .module('zaya-map')
     .controller('mapController', mapController);
 
-  mapController.$inject = ['$scope','$rootScope', '$log', '$ionicModal', '$state', 'lessons', 'Rest', 'CONSTANT', '$sce'];
+  mapController.$inject = ['$scope','$rootScope', '$log', '$ionicModal', '$state', 'lessons', 'Rest', 'CONSTANT', '$sce', 'orientation'];
 
-  function mapController($scope, $rootScope, $log, $ionicModal, $state, lessons, Rest, CONSTANT, $sce) {
+  function mapController($scope, $rootScope, $log, $ionicModal, $state, lessons, Rest, CONSTANT, $sce, orientation) {
     var mapCtrl = this;
     mapCtrl.lessons = lessons;
     mapCtrl.getLesson = getLesson;
@@ -1532,9 +1532,16 @@
     // mapCtrl.openModal = openModal;
     // mapCtrl.closeModal = closeModal;
 
-    function playResource (resource) {
-      $log.debug('quiz resource', resource);
-      $state.go('quiz.questions',{id : resource.node.id});
+    orientation.setPortrait();
+    function playResource (resource, event) {
+      if(mapCtrl.resourceType(resource) != 'video'){
+        $scope.closeModal();
+        $state.go('quiz.questions',{id : resource.node.id});
+      }
+      else{
+        event.stopPropagation();
+      }
+
     }
     function resourceType (resource){
       if(resource.node.content_type_name == 'assessment'){
@@ -1581,7 +1588,8 @@
 
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal' + CONSTANT.VIEW, {
       scope: $scope,
-      animation: 'slide-in-up'
+      animation: 'slide-in-up',
+      hardwareBackButtonClose : false
     }).then(function(modal) {
       $scope.modal = modal;
     });
