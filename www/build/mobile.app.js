@@ -1065,7 +1065,7 @@
       'CLIENTID' : {
         'FACEBOOK' : '1159750564044149',
         'GOOGLE' : '1011514043276-7q3kvn29jkegl2d1v7dtlbtipqqgo1rr.apps.googleusercontent.com',
-        'ELL' : '1e7aa89f-3f50-433a-90ca-e485a92bbda6',
+        'ELL' : '1e7aa89f-3f50-433a-90ca-e485a92bbda6'
       },
       'ASSETS' : {
         'IMG' : {
@@ -1528,9 +1528,14 @@
     mapCtrl.resetNode = resetNode;
     mapCtrl.getIcon = getIcon;
     mapCtrl.resourceType = resourceType;
+    mapCtrl.playResource = playResource;
     // mapCtrl.openModal = openModal;
     // mapCtrl.closeModal = closeModal;
-    
+
+    function playResource (resource) {
+      $log.debug('quiz resource', resource);
+      $state.go('quiz.questions',{id : resource.node.id});
+    }
     function resourceType (resource){
       if(resource.node.content_type_name == 'assessment'){
         return 'assessment';
@@ -2014,9 +2019,9 @@ window.createGame = function(scope, lessons, injector, log) {
     .module('zaya-quiz')
     .controller('QuizController', QuizController)
 
-  QuizController.$inject = ['quiz','$stateParams', '$state', '$scope', 'audio'] ;
+  QuizController.$inject = ['quiz','$stateParams', '$state', '$scope', 'audio','$log','$ionicModal', 'CONSTANT'] ;
 
-  function QuizController(quiz, $stateParams, $state, $scope, audio) {
+  function QuizController(quiz, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT) {
     var quizCtrl = this;
 
     quizCtrl.quiz = quiz;
@@ -2041,71 +2046,88 @@ window.createGame = function(scope, lessons, injector, log) {
     quizCtrl.isKeyCorrect = isKeyCorrect;
     quizCtrl.isKeyAttempted = isKeyAttempted;
 
+
     // initialisation call
     quizCtrl.setCurrentIndex(0);
     quizCtrl.init(quizCtrl.quiz);
 
+    //audio
+    quizCtrl.playAudio = playAudio;
+
+    $scope.modal = {};
+
     function init (quiz) {
+
       // init report object
       if($state.current.name=="quiz.summary"){
         quizCtrl.report = $stateParams.report;
       }
       else if($state.current.name=="quiz.questions"){
         quizCtrl.report = {};
-        quizCtrl.report.quiz_id = quiz.info.id;
+        quizCtrl.report.quiz_id =  quiz.node.id;
         quizCtrl.report.attempts = {};
-        for (var i = 0; i < quiz.questions.length; i++) {
-          quizCtrl.report.attempts[quiz.questions[i].info.id] = [];
+        for (var i = 0; i < quiz.objects.length; i++) {
+          quizCtrl.report.attempts[quiz.objects[i].node.id] = [];
         }
         // init attempted
-        for (var i = 0; i < quizCtrl.quiz.questions.length; i++) {
-          if((quizCtrl.quiz.questions[i].info.content_type=='choice question' && !quizCtrl.quiz.questions[i].info.question_type.is_multiple) || quizCtrl.quiz.questions[i].info.content_type=='dr question'){
-            quizCtrl.quiz.questions[i].attempted = "";
+
+        for (var i = 0; i < quizCtrl.quiz.objects.length; i++) {
+          if((quizCtrl.quiz.objects[i].node.type.type=='choicequestion' && !quizCtrl.quiz.objects[i].node.type.content.is_multiple) /*|| quizCtrl.quiz.objects[i].node.content_type=='dr question'*/){
+            quizCtrl.quiz.objects[i].attempted = "";
           }
-          else if(quizCtrl.quiz.questions[i].info.content_type=='choice question' && quizCtrl.quiz.questions[i].info.question_type.is_multiple){
-            quizCtrl.quiz.questions[i].attempted = {};
+          else if(quizCtrl.quiz.objects[i].node.type.type=='choicequestion' && quizCtrl.quiz.objects[i].node.type.content.is_multiple){
+            quizCtrl.quiz.objects[i].attempted = {};
           }
-          else if(quizCtrl.quiz.questions[i].info.content_type=='sentence ordering' || quizCtrl.quiz.questions[i].info.content_type=='sentence structuring'){
-            quizCtrl.quiz.questions[i].attempted = [];
-          }
+          //else if(quizCtrl.quiz.objects[i].node.content_type=='sentence ordering' || quizCtrl.quiz.objects[i].node.content_type=='sentence structuring'){
+          //  quizCtrl.quiz.objects[i].attempted = [];
+          //}
           else{}
         }
       }
       else{}
+
     }
 
     function isCurrentIndex (index) {
+
       return quizCtrl.currentIndex == index;
     }
 
     function setCurrentIndex(index) {
+
       quizCtrl.currentIndex = index;
     }
 
     function getCurrentIndex() {
+
       return quizCtrl.currentIndex;
     }
 
     function prevQuestion() {
+
       quizCtrl.currentIndex = (quizCtrl.currentIndex > 0) ? --quizCtrl.currentIndex : quizCtrl.currentIndex;
     }
 
     function nextQuestion() {
-      quizCtrl.currentIndex = (quizCtrl.currentIndex < quizCtrl.quiz.questions.length - 1) ? ++quizCtrl.currentIndex : quizCtrl.currentIndex;
+
+      quizCtrl.currentIndex = (quizCtrl.currentIndex < quizCtrl.quiz.objects.length - 1) ? ++quizCtrl.currentIndex : quizCtrl.currentIndex;
     }
 
     function decide() {
-      if(!quizCtrl.isCorrectAttempted(quizCtrl.quiz.questions[quizCtrl.currentIndex])){
+      $log.debug("decide");
+      if(!quizCtrl.isCorrectAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex])){
+        $log.debug("!quizCtrl.isCorrectAttempted");
         quizCtrl.submitAttempt(
-          quizCtrl.quiz.questions[quizCtrl.currentIndex].info.id,
-          quizCtrl.quiz.questions[quizCtrl.currentIndex].attempted
+          quizCtrl.quiz.objects[quizCtrl.currentIndex].node.id,
+          quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted
         );
         quizCtrl.feedback(
-          quizCtrl.quiz.questions[quizCtrl.currentIndex],
-          quizCtrl.quiz.questions[quizCtrl.currentIndex].attempted
+          quizCtrl.quiz.objects[quizCtrl.currentIndex],
+          quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted
         );
+        $log.debug("decided");
       }
-      else if(quizCtrl.currentIndex < quizCtrl.quiz.questions.length - 1){
+      else if(quizCtrl.currentIndex < quizCtrl.quiz.objects.length - 1){
         quizCtrl.nextQuestion();
       }
       else {
@@ -2115,24 +2137,26 @@ window.createGame = function(scope, lessons, injector, log) {
     }
 
     function canSubmit(){
+
       // SCQ | DR
-      if((quizCtrl.quiz.questions[quizCtrl.currentIndex].info.content_type == "choice question" && !quizCtrl.quiz.questions[quizCtrl.currentIndex].info.question_type.is_multiple) || quizCtrl.quiz.questions[quizCtrl.currentIndex].info.content_type == "dr question"){
-        return quizCtrl.quiz.questions[quizCtrl.currentIndex].attempted;
+      if((quizCtrl.quiz.objects[quizCtrl.currentIndex].node.type.type == "choicequestion" && !quizCtrl.quiz.objects[quizCtrl.currentIndex].node.type.is_multiple) || quizCtrl.quiz.objects[quizCtrl.currentIndex].node.type.type == "dr question"){
+        return quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted;
       }
       // MCQ
-      if(quizCtrl.quiz.questions[quizCtrl.currentIndex].info.content_type == "choice question" && quizCtrl.quiz.questions[quizCtrl.currentIndex].info.question_type.is_multiple){
+      if(quizCtrl.quiz.objects[quizCtrl.currentIndex].node.type.type == "choicequestion" && quizCtrl.quiz.objects[quizCtrl.currentIndex].node.type.is_multiple){
         //removes false keys
-        quizCtrl.quiz.questions[quizCtrl.currentIndex].attempted = _.pick(quizCtrl.quiz.questions[quizCtrl.currentIndex].attempted, _.identity);
+        quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted = _.pick(quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted, _.identity);
         // true if attempted and key count is more than one
-        return quizCtrl.quiz.questions[quizCtrl.currentIndex].attempted && _.size(quizCtrl.quiz.questions[quizCtrl.currentIndex].attempted)>1;
+        return quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted && _.size(quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted)>1;
       }
-      if(quizCtrl.quiz.questions[quizCtrl.currentIndex].info.content_type == "sentence ordering" || quizCtrl.quiz.questions[quizCtrl.currentIndex].info.content_type == "sentence structuring"){
-        return quizCtrl.quiz.questions[quizCtrl.currentIndex].attempted.length ? true : false;
+      if(quizCtrl.quiz.objects[quizCtrl.currentIndex].node.type.type == "sentence ordering" || quizCtrl.quiz.objects[quizCtrl.currentIndex].node.type.type == "sentence structuring"){
+        return quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted.length ? true : false;
       }
     }
 
     function feedback (question,attempt){
-      return quizCtrl.isCorrect(question,attempt) ? quizCtrl.audio.play('correct') : quizCtrl.audio.play('wrong') ;
+
+      return quizCtrl.isCorrect(question,attempt) ?   $scope.openModal('correct') : $scope.openModal('wrong') ;
     }
 
     function submitAttempt (question_id,attempt) {
@@ -2144,62 +2168,98 @@ window.createGame = function(scope, lessons, injector, log) {
     }
 
     function isCorrect(question,attempt){
+
       // multiple choice
-      if(question.info.content_type=='choice question' && question.info.question_type.is_multiple){
-        return _.chain(attempt).map(function(num,key){return parseInt(key);}).isEqual(question.info.answer).value();
+      if(question.node.type.type=='choicequestion' && question.node.type.is_multiple){
+        return _.chain(attempt).map(function(num,key){return parseInt(key);}).isEqual(question.node.type.answer).value();
       }
       // single choice
-      if(question.info.content_type=='choice question' && !question.info.question_type.is_multiple){
-        return attempt == question.info.answer[0];
+      if(question.node.type.type=='choicequestion' && !question.node.type.is_multiple){
+        return attempt == question.node.type.answer[0];
       }
       // dr
-      if(question.info.content_type=='dr question'){
-        return attempt == question.info.answer[0];
+      if(question.node.type.type=='dr question'){
+        return attempt == question.node.type.answer[0];
       }
       // sor | sst
-      if(question.info.content_type=='sentence ordering' || question.info.content_type=='sentence structuring'){
-        return angular.equals(question.info.answer,attempt);
+      if(question.node.type.type=='sentence ordering' || question.node.type.type=='sentence structuring'){
+        return angular.equals(question.node.type.answer,attempt);
       }
     }
 
     function isCorrectAttempted (question){
       // multiple choice
-      if(question.info.content_type=='choice question' && question.info.question_type.is_multiple){
-        for (var i = 0; i < quizCtrl.report.attempts[question.info.id].length; i++) {
-          if(_.chain(quizCtrl.report.attempts[question.info.id][i]).map(function(num,key){return parseInt(key);}).isEqual(question.info.answer).value())
+
+      if(question.node.type.type=='choicequestion' && question.node.type.content.is_multiple){
+        for (var i = 0; i < quizCtrl.report.attempts[question.node.id].length; i++) {
+            if(_.chain(quizCtrl.report.attempts[question.node.id][i]).map(function(num,key){return num?parseInt(key):false;}).reject(function(num){ return !num; }).isEqual(question.node.type.answer).value())
             return true;
         }
         return false;
       }
       // single choice
-      if(question.info.content_type=='choice question' && !question.info.question_type.is_multiple){
-        return quizCtrl.report.attempts[question.info.id].indexOf(question.info.answer[0])!=-1 ? true : false;
+      if(question.node.type.type=='choicequestion' && !question.node.type.content.is_multiple){
+        return quizCtrl.report.attempts[question.node.id].indexOf(question.node.type.answer[0])!=-1 ?(true) : false;
       }
+      // to be tested for new api
       // dr
-      if(question.info.content_type=='dr question'){
-        return quizCtrl.report.attempts[question.info.id].indexOf(question.info.answer[0].toLowerCase())!=-1 ? true : false;
-      }
-      if(question.info.content_type=='sentence ordering' || question.info.content_type=='sentence structuring'){
-        for (var i = 0; i < quizCtrl.report.attempts[question.info.id].length; i++) {
-          if(angular.equals(quizCtrl.report.attempts[question.info.id][i],question.info.answer))
-            return true;
-        }
-        return false;
-      }
+      //if(question.node.type.type=='dr question'){
+      //  return quizCtrl.report.attempts[question.node.id].indexOf(question.node.type.answer[0].toLowerCase())!=-1 ? true : false;
+      //}
+      //if(question.node.type.type=='sentence ordering' || question.node.type.type=='sentence structuring'){
+      //  for (var i = 0; i < quizCtrl.report.attempts[question.node.id].length; i++) {
+      //    if(angular.equals(quizCtrl.report.attempts[question.node.id][i],question.node.type.answer))
+      //      return true;
+      //  }
+      //  return false;
+      //}
     }
 
     function isKeyCorrect (question,key){
-        return question.info.answer.indexOf(key)!=-1 ? true : false;
+
+      return question.node.type.answer.indexOf(key)!=-1 ? true : false;
     }
 
     function isKeyAttempted (question,key){
-      if(question.info.question_type.is_multiple){
-        return _.chain(quizCtrl.report.attempts[question.info.id]).last().has(key).value();
+
+      if(question.node.type.is_multiple){
+        return _.chain(quizCtrl.report.attempts[question.node.id]).last().has(key).value();
       }
       else{
-        return quizCtrl.report.attempts[question.info.id].indexOf(key)!=-1 ? true : false;
+        return quizCtrl.report.attempts[question.node.id].indexOf(key)!=-1 ? true : false;
       }
     }
+
+    function playAudio(key){
+      angular.element("#audioplayer")[0].pause();
+      if(key)
+      {
+      angular.element("#audioSource")[0].src = 'sound/hello.mp3';
+      }
+      else{
+        angular.element("#audioSource")[0].src = 'sound/water-drop.mp3';
+      }
+      angular.element("#audioplayer")[0].load();
+      angular.element("#audioplayer")[0].play();
+    }
+
+
+    $ionicModal.fromTemplateUrl(CONSTANT.PATH.QUIZ + '/quiz.feedback' + CONSTANT.VIEW, {
+      scope: $scope,
+      animation: 'slide-in-up'
+    }).then(function(modal) {
+      $scope.modal = modal;
+    });
+    $scope.openModal = function()
+    {
+      $scope.modal.show();
+      return true;
+    };
+     $scope.closeModal = function()
+    {
+      $scope.modal.hide();
+    }
+
   }
 })();
 
@@ -2221,9 +2281,9 @@ window.createGame = function(scope, lessons, injector, log) {
         template : '<ion-nav-view name="state-quiz"></ion-nav-view>',
         resolve: {
             quiz: ['$stateParams', 'Rest', function($stateParams, Rest) {
-                return Rest.one('assessments', $stateParams.id).get().then(function(quiz) {
-                    return quiz.plain();
-                })
+                return Rest.one('accounts',CONSTANT.CLIENTID.ELL).one('assessments',$stateParams.id).get().then(function(quiz){
+                  return quiz.plain();
+                });
             }]
         }
       })
