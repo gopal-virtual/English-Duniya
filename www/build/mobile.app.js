@@ -113,12 +113,12 @@
 })();
 
 (function(){
-    AppConfig.$inject = ["$httpProvider", "$ionicConfigProvider", "$ionicNativeTransitionsProvider", "$logProvider"];
+    AppConfig.$inject = ["$httpProvider", "$ionicConfigProvider", "$ionicNativeTransitionsProvider", "$logProvider", "$windowProvider"];
   angular
     .module('zaya')
     .config(AppConfig)
 
-    function AppConfig($httpProvider, $ionicConfigProvider, $ionicNativeTransitionsProvider, $logProvider){
+    function AppConfig($httpProvider, $ionicConfigProvider, $ionicNativeTransitionsProvider, $logProvider, $windowProvider){
       // global debug log
       $logProvider.debugEnabled(true);
 
@@ -1045,7 +1045,7 @@
     .module('common')
     .constant('CONSTANT',{
       'BACKEND_SERVICE_DOMAIN' : 'http://cc-test.zaya.in/',
-      //'BACKEND_SERVICE_DOMAIN' : 'http://192.168.10.159:8000/',
+      // 'BACKEND_SERVICE_DOMAIN' : 'http://192.168.1.6:9000/',
       'PATH' : {
         'INTRO' : ROOT+'/intro',
         'AUTH' : ROOT+'/auth',
@@ -1069,7 +1069,7 @@
       },
       'ASSETS' : {
         'IMG' : {
-          'ICON' : '/img/icons'
+          'ICON' : 'img/icons'
         }
       }
     })
@@ -1200,6 +1200,68 @@
     }
 })();
 
+(function() {
+  'use strict';
+
+  trackVideo.$inject = ["$window", "$log", "orientation"];
+  angular
+    .module('common')
+    .directive('trackVideo', trackVideo);
+
+  /* @ngInject */
+  function trackVideo($window, $log, orientation) {
+    var video = {
+      restrict: 'A',
+      link: linkFunc,
+    };
+
+    return video;
+
+    // full screen not working ; instead used css to immitate full screen effect ; check below
+    function toggleFullScreen() {
+      if (!document.fullscreenElement && // alternative standard method
+        !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) { // current working methods
+        if (document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen();
+        } else if (document.documentElement.msRequestFullscreen) {
+          document.documentElement.msRequestFullscreen();
+        } else if (document.documentElement.mozRequestFullScreen) {
+          document.documentElement.mozRequestFullScreen();
+        } else if (document.documentElement.webkitRequestFullscreen) {
+          document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        }
+      }
+    }
+
+    function linkFunc(scope, el, attr, ctrl) {
+      el.bind('playing', function() {
+        // toggleFullScreen();
+        el.addClass('fullscreen');
+        orientation.setLandscape();
+      });
+      el.bind('pause', function() {
+        // toggleFullScreen();
+        el.removeClass('fullscreen');
+        orientation.setPortrait();
+      });
+      el.bind('click',function (event) {
+        event.stopPropagation();
+      })
+    }
+  }
+
+})();
+
 (function () {
   'use strict';
 
@@ -1220,6 +1282,44 @@
           }
         }
       };
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('common')
+        .factory('orientation', orientation);
+
+    orientation.$inject = ['$window','$log'];
+
+    /* @ngInject */
+    function orientation($window, $log) {
+        var orientation = {
+            setLandscape : setLandscape,
+            setPortrait : setPortrait
+        };
+
+        return orientation;
+
+        function setPortrait() {
+          try{
+            $window.screen.lockOrientation('portrait');
+          }
+          catch(e){
+            $log.debug(e);
+          }
+        }
+
+        function setLandscape() {
+          try{
+            $window.screen.lockOrientation('landscape');
+          }
+          catch(e){
+            $log.debug(e);
+          }
+        }
     }
 })();
 
@@ -1418,9 +1518,9 @@
     .module('zaya-map')
     .controller('mapController', mapController);
 
-  mapController.$inject = ['$scope', '$log', '$ionicModal', '$state', 'lessons', 'Rest', 'CONSTANT', '$sce'];
+  mapController.$inject = ['$scope','$rootScope', '$log', '$ionicModal', '$state', 'lessons', 'Rest', 'CONSTANT', '$sce', 'orientation'];
 
-  function mapController($scope, $log, $ionicModal, $state, lessons, Rest, CONSTANT, $sce) {
+  function mapController($scope, $rootScope, $log, $ionicModal, $state, lessons, Rest, CONSTANT, $sce, orientation) {
     var mapCtrl = this;
     mapCtrl.lessons = lessons;
     mapCtrl.getLesson = getLesson;
@@ -1432,9 +1532,16 @@
     // mapCtrl.openModal = openModal;
     // mapCtrl.closeModal = closeModal;
 
-    function playResource (resource) {
-      $log.debug('quiz resource', resource);
-      $state.go('quiz.questions',{id : resource.node.id});
+    orientation.setPortrait();
+    function playResource (resource, event) {
+      if(mapCtrl.resourceType(resource) != 'video'){
+        $scope.closeModal();
+        $state.go('quiz.questions',{id : resource.node.id});
+      }
+      else{
+        event.stopPropagation();
+      }
+
     }
     function resourceType (resource){
       if(resource.node.content_type_name == 'assessment'){
@@ -1463,6 +1570,7 @@
 
       }
     }
+
     $scope.$on('openNode', function(event, node) {
       $scope.openModal();
       $log.debug('lesson id : ',node.id);
@@ -1480,7 +1588,8 @@
 
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal' + CONSTANT.VIEW, {
       scope: $scope,
-      animation: 'slide-in-up'
+      animation: 'slide-in-up',
+      hardwareBackButtonClose : false
     }).then(function(modal) {
       $scope.modal = modal;
     });
@@ -1643,7 +1752,7 @@ window.createGame = function(scope, lessons, injector, log) {
 
   // phaser destroy doesn't remove canvas element --> removed manually in app run
   scope.$on('$destroy', function() {
-    this.game.destroy(); // Clean up the game when we leave this scope
+    game.destroy(); // Clean up the game when we leave this scope
   });
 };
 
@@ -1971,15 +2080,15 @@ window.createGame = function(scope, lessons, injector, log) {
         // init attempted
 
         for (var i = 0; i < quizCtrl.quiz.objects.length; i++) {
-          if((quizCtrl.quiz.objects[i].content_type=='choicequestion' && !quizCtrl.quiz.objects[i].node.type.is_multiple) || quizCtrl.quiz.objects[i].node.content_type=='dr question'){
+          if((quizCtrl.quiz.objects[i].node.type.type=='choicequestion' && !quizCtrl.quiz.objects[i].node.type.content.is_multiple) /*|| quizCtrl.quiz.objects[i].node.content_type=='dr question'*/){
             quizCtrl.quiz.objects[i].attempted = "";
           }
-          else if(quizCtrl.quiz.objects[i].node.content_type=='choicequestion' && quizCtrl.quiz.objects[i].node.type.is_multiple){
+          else if(quizCtrl.quiz.objects[i].node.type.type=='choicequestion' && quizCtrl.quiz.objects[i].node.type.content.is_multiple){
             quizCtrl.quiz.objects[i].attempted = {};
           }
-          else if(quizCtrl.quiz.objects[i].node.content_type=='sentence ordering' || quizCtrl.quiz.objects[i].node.content_type=='sentence structuring'){
-            quizCtrl.quiz.objects[i].attempted = [];
-          }
+          //else if(quizCtrl.quiz.objects[i].node.content_type=='sentence ordering' || quizCtrl.quiz.objects[i].node.content_type=='sentence structuring'){
+          //  quizCtrl.quiz.objects[i].attempted = [];
+          //}
           else{}
         }
       }
@@ -2013,7 +2122,9 @@ window.createGame = function(scope, lessons, injector, log) {
     }
 
     function decide() {
+      $log.debug("decide");
       if(!quizCtrl.isCorrectAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex])){
+        $log.debug("!quizCtrl.isCorrectAttempted");
         quizCtrl.submitAttempt(
           quizCtrl.quiz.objects[quizCtrl.currentIndex].node.id,
           quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted
@@ -2022,6 +2133,7 @@ window.createGame = function(scope, lessons, injector, log) {
           quizCtrl.quiz.objects[quizCtrl.currentIndex],
           quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted
         );
+        $log.debug("decided");
       }
       else if(quizCtrl.currentIndex < quizCtrl.quiz.objects.length - 1){
         quizCtrl.nextQuestion();
@@ -2060,7 +2172,6 @@ window.createGame = function(scope, lessons, injector, log) {
     }
 
     function isAttempted (question_id) {
-
       return quizCtrl.report.attempts[question_id].length ? true : false;
     }
 
@@ -2086,28 +2197,30 @@ window.createGame = function(scope, lessons, injector, log) {
 
     function isCorrectAttempted (question){
       // multiple choice
-      if(question.node.type.type=='choicequestion' && question.node.type.is_multiple){
+
+      if(question.node.type.type=='choicequestion' && question.node.type.content.is_multiple){
         for (var i = 0; i < quizCtrl.report.attempts[question.node.id].length; i++) {
-          if(_.chain(quizCtrl.report.attempts[question.node.id][i]).map(function(num,key){return parseInt(key);}).isEqual(question.node.type.answer).value())
+            if(_.chain(quizCtrl.report.attempts[question.node.id][i]).map(function(num,key){return num?parseInt(key):false;}).reject(function(num){ return !num; }).isEqual(question.node.type.answer).value())
             return true;
         }
         return false;
       }
       // single choice
-      if(question.node.type.type=='choicequestion' && !question.node.type.is_multiple){
+      if(question.node.type.type=='choicequestion' && !question.node.type.content.is_multiple){
         return quizCtrl.report.attempts[question.node.id].indexOf(question.node.type.answer[0])!=-1 ?(true) : false;
       }
+      // to be tested for new api
       // dr
-      if(question.node.type.type=='dr question'){
-        return quizCtrl.report.attempts[question.node.id].indexOf(question.node.type.answer[0].toLowerCase())!=-1 ? true : false;
-      }
-      if(question.node.type.type=='sentence ordering' || question.node.type.type=='sentence structuring'){
-        for (var i = 0; i < quizCtrl.report.attempts[question.node.id].length; i++) {
-          if(angular.equals(quizCtrl.report.attempts[question.node.id][i],question.node.type.answer))
-            return true;
-        }
-        return false;
-      }
+      //if(question.node.type.type=='dr question'){
+      //  return quizCtrl.report.attempts[question.node.id].indexOf(question.node.type.answer[0].toLowerCase())!=-1 ? true : false;
+      //}
+      //if(question.node.type.type=='sentence ordering' || question.node.type.type=='sentence structuring'){
+      //  for (var i = 0; i < quizCtrl.report.attempts[question.node.id].length; i++) {
+      //    if(angular.equals(quizCtrl.report.attempts[question.node.id][i],question.node.type.answer))
+      //      return true;
+      //  }
+      //  return false;
+      //}
     }
 
     function isKeyCorrect (question,key){
