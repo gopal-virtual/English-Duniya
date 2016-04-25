@@ -114,6 +114,6 @@ window.createGame = function(scope, lessons, injector, log) {
 
   // phaser destroy doesn't remove canvas element --> removed manually in app run
   scope.$on('$destroy', function() {
-    this.game.destroy(); // Clean up the game when we leave this scope
+    game.destroy(); // Clean up the game when we leave this scope
   });
 };

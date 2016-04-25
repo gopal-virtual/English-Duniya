@@ -5,9 +5,9 @@
     .module('zaya-map')
     .controller('mapController', mapController);
 
-  mapController.$inject = ['$scope', '$log', '$ionicModal', '$state', 'lessons', 'Rest', 'CONSTANT', '$sce'];
+  mapController.$inject = ['$scope','$rootScope', '$log', '$ionicModal', '$state', 'lessons', 'Rest', 'CONSTANT', '$sce'];
 
-  function mapController($scope, $log, $ionicModal, $state, lessons, Rest, CONSTANT, $sce) {
+  function mapController($scope, $rootScope, $log, $ionicModal, $state, lessons, Rest, CONSTANT, $sce) {
     var mapCtrl = this;
     mapCtrl.lessons = lessons;
     mapCtrl.getLesson = getLesson;
@@ -17,7 +17,7 @@
     mapCtrl.resourceType = resourceType;
     // mapCtrl.openModal = openModal;
     // mapCtrl.closeModal = closeModal;
-
+    
     function resourceType (resource){
       if(resource.node.content_type_name == 'assessment'){
         return 'assessment';
@@ -45,6 +45,7 @@
 
       }
     }
+
     $scope.$on('openNode', function(event, node) {
       $scope.openModal();
       $log.debug('lesson id : ',node.id);
