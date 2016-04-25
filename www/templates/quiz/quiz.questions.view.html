@@ -1,62 +1,61 @@
-<ion-pane class="bg-brand">
-  <div class="bar bar-header bar-transparent">
-    <a ui-sref="user.main.home" class="button button-clear button-icon icon ion-ios-close-empty"></a>
-    <div class="h1 title color-stable">Q {{quizCtrl.getCurrentIndex()+1}} / {{quizCtrl.quiz.questions.length}}</div>
-    <button class="button button-clear">HINT</button>
+<ion-pane class="bg-green">
+  <div class="bar bar-header bg-pale">
+    <a ui-sref="user.main.home" class="button button-clear button-icon icon ion-close-round"></a>
+    <!--<div class="h1 title color-stable">Q {{quizCtrl.getCurrentIndex()+1}} / {{quizCtrl.quiz.objects.length}}</div>-->
+    <a class="button button-clear button-icon icon ion-help"></a>
   </div>
-  <ion-content class="has-header has-footer padding-x-20">
-    <div ng-repeat="question in quizCtrl.quiz.questions" ng-if="quizCtrl.isCurrentIndex($index)" ng-class="{'animation-question-slide':quizCtrl.isCurrentIndex($index)}">
-      <div class="card card-transparent">
-        <p>
-          <strong class="text-white">{{question.info.title}}</strong>
+    <div ng-repeat="question in quizCtrl.quiz.objects" ng-if="quizCtrl.isCurrentIndex($index)" ng-class="{'animation-question-slide':quizCtrl.isCurrentIndex($index)}">
+      <div class="bar bar-subheader question-subheader bg-pale">
+
+      <div class="card card-transparent center" ng-click="quizCtrl.playAudio(question.info.audio.key)">
+        <p >
+        <strong class="text-white" ng-if="question.info.title">{{question.info.title}}</strong>
         </p>
-        <p class="text-white">
-          {{question.info.description}}
-        </p>
-        <div ng-if="question.info.content_type=='sentence ordering' || question.info.content_type=='sentence structuring'">
-          <div class="text-center color-light">drop here</div>
-          <div class="list card block padding card-brand-light dropzone" ui-sortable="{cancel : '.correct-attempt', containment: 'parent'}" ng-model="question.attempted">
-            <div class="list card padding text-dark" ng-class="{'float-left':question.info.content_type=='sentence structuring','wrong-attempt':quizCtrl.isAttempted(question.info.id) && !quizCtrl.isCorrectAttempted(question),'correct-attempt': quizCtrl.isAttempted(question.info.id) && quizCtrl.isCorrectAttempted(question)}" ng-repeat="option in question.attempted">
-              {{option}}
-            </div>
-          </div>
-        </div>
+        <div ng-if="question.info.image.key"><img ng-src="{{'img/quiz/1.jpg'}}"></div>
+        <div ng-if="!question.info.title && !question.info.image.key"><img height="100" width="100" ng-src="img/speaker.png"> </div>
       </div>
+      </div>
+      <ion-content class="has-header has-question-subheader has-footer padding-x-20 center">
       <!-- SCQ -->
-      <label ng-if="question.info.content_type=='choice question' && !question.info.question_type.is_multiple" ng-repeat="option in question.info.question_type.choices" class="list card padding block" ng-class="{'wrong-attempt':quizCtrl.isAttempted(question.info.id) && quizCtrl.isKeyAttempted(question,option.key) && !quizCtrl.isKeyCorrect(question,option.key),'correct-attempt': quizCtrl.isAttempted(question.info.id) && quizCtrl.isKeyAttempted(question,option.key) && quizCtrl.isKeyCorrect(question,option.key),'selected':option.key==question.attempted}">
-        <input class="hide" type="radio" ng-model="question.attempted" ng-value="option.key" ng-disabled="quizCtrl.isCorrectAttempted(question)">
-          {{option.option}}
-      </label>
+      <div ng-if="question.node.type.type=='choicequestion' && !question.node.type.content.is_multiple" ng-class="{'wrong-attempt':quizCtrl.isAttempted(question.node.id) && quizCtrl.isKeyAttempted(question,option.key) && !quizCtrl.isKeyCorrect(question,option.key),'correct-attempt': quizCtrl.isAttempted(question.node.id) && quizCtrl.isKeyAttempted(question,option.key) && quizCtrl.isKeyCorrect(question,option.key),'selected':option.key==question.attempted}" class="card padding center card-list card-pale card-radius" ng-repeat="option in question.node.type.content.choices">
+        <label    ng-click="quizCtrl.playAudio(option.audio.key)" >
+          <input class="hide" type="radio" ng-model="question.attempted" ng-value="option.key" ng-disabled="quizCtrl.isCorrectAttempted(question)">
+          <div ng-if="option.option">{{option.option}}</div>
+          <div ng-if="option.image.key"><img ng-src="{{'img/quiz/1.jpg'}}"></div>
+          <div ng-if="!option.option && !option.image.key"><img height="100" width="100" ng-src="img/speaker.png"> </div>
+        </label>
+      </div>
        <!-- MCQ options -->
-      <label ng-if="question.info.content_type=='choice question' && question.info.question_type.is_multiple" ng-repeat="option in question.info.question_type.choices" class="list card padding block" ng-class="{'wrong-attempt':quizCtrl.isAttempted(question.info.id) && quizCtrl.isKeyAttempted(question,option.key) && !quizCtrl.isKeyCorrect(question,option.key),'correct-attempt': quizCtrl.isAttempted(question.info.id) && quizCtrl.isKeyAttempted(question,option.key) && quizCtrl.isKeyCorrect(question,option.key),'selected':question.attempted[option.key]}">
-        <input class="hide" type="checkbox" ng-model="question.attempted[$index+1]" ng-value="option.key" ng-disabled="quizCtrl.isCorrectAttempted(question)">
-          {{option.option}}
-      </label>
-      <!-- DR options-->
-      <div ng-if="question.info.content_type=='dr question'" class="row">
-        <div class="col">
-          <input type="text" class="input-control input-block" placeholder="type your answer" ng-model="question.attempted" ng-class="{'wrong-attempt':quizCtrl.isAttempted(question.info.id) && !quizCtrl.isCorrectAttempted(question),'correct-attempt': quizCtrl.isAttempted(question.info.id)  && quizCtrl.isCorrectAttempted(question)}">
+        <div ng-if="question.node.type.type=='choicequestion' && question.node.type.content.is_multiple" ng-class="{'wrong-attempt':quizCtrl.isAttempted(question.node.id) && quizCtrl.isKeyAttempted(question,option.key) && !quizCtrl.isKeyCorrect(question,option.key),'correct-attempt': quizCtrl.isAttempted(question.node.id) && quizCtrl.isKeyAttempted(question,option.key) && quizCtrl.isKeyCorrect(question,option.key),'selected':question.attempted[option.key]}" class="card padding center card-list card-pale card-radius" ng-repeat="option in question.node.type.content.choices">
+          <label ng-click="quizCtrl.playAudio(option.audio.key)" >
+            <input class="hide" type="checkbox" ng-model="question.attempted[$index+1]" ng-value="option.key" ng-disabled="quizCtrl.isCorrectAttempted(question)">
+            <div ng-if="option.option">{{option.option}}</div>
+            <div ng-if="option.image.key"><img ng-src="{{'img/quiz/1.jpg'}}"></div>
+            <div ng-if="!option.option && !option.image.key"><img height="100" width="100" ng-src="img/speaker.png"> </div>
+          </label>
         </div>
-      </div>
-      <!-- SOR | SST opitons-->
-      <div ng-if="question.info.content_type=='sentence ordering' || question.info.content_type=='sentence structuring'" ui-sortable="{connectWith : '.dropzone',containment: 'ion-content'}" ng-model="question.info.question_type.shuffle">
-        <div class="list card card-light padding color-dark" ng-class="{'float-left' : question.info.content_type=='sentence structuring'}" ng-repeat="option in question.info.question_type.shuffle">
-          {{option}}
-        </div>
+      <!--<label ng-if="question.node.type.type=='choicequestion' && question.node.type.content.is_multiple" ng-repeat="option in question.info.question_type.choices" class="list card padding block" >-->
+        <!--<input class="hide" type="checkbox" ng-model="question.attempted[$index+1]" ng-value="option.key" ng-disabled="quizCtrl.isCorrectAttempted(question)">-->
+        <!--<div ng-if="option.option">{{option.option}}</div>-->
+        <!--<div ng-if="option.image.key"><img ng-src="{{'img/quiz/1.jpg'}}"></div>-->
+        <!--<div ng-if="!option.option && !option.image.key"><img height="100" width="100" ng-src="img/speaker.png"> </div>-->
+      <!--</label>-->
+      </ion-content>
+
+    </div>
+    <audio id="audioplayer">
+      <source id="audioSource" type="audio/mpeg">
+    </audio>
+  <div class="bar bar-footer bar-footer-large bg-green">
+    <div class="row">
+      <div class="col">
+        <button class="button button-block bg-brand-yellow" ng-click="quizCtrl.decide()" ng-disabled="!quizCtrl.canSubmit()">
+          {{quizCtrl.isCorrectAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex]) ? quizCtrl.currentIndex < quizCtrl.quiz.objects.length - 1 ? 'CONTINUE' : 'DONE' : 'SUBMIT'}}
+        </button>
       </div>
     </div>
-  </ion-content>
-  <div class="bar bar-footer bar-transparent">
-    <div class="button-bar">
-      <a class="button button-clear" ng-click="quizCtrl.prevQuestion()">
-        <i class="icon ion-ios-arrow-back"></i>
-      </a>
-      <button class="button button-calm" ng-click="quizCtrl.decide()" ng-disabled="!quizCtrl.canSubmit()">
-        {{quizCtrl.isCorrectAttempted(quizCtrl.quiz.questions[quizCtrl.currentIndex]) ? quizCtrl.currentIndex < quizCtrl.quiz.questions.length - 1 ? 'CONTINUE' : 'DONE' : 'SUBMIT'}}
-      </button>
-      <a class="button button-clear" ng-click="quizCtrl.nextQuestion()">
-        <i class="icon ion-ios-arrow-forward"></i>
-      </a>
-    </div>
+
   </div>
+
+
 </ion-pane>

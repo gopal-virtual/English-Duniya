@@ -32,3 +32,16 @@
     background-color: darken($color,10%);
   }
 }
+.card-radius{
+  border-radius: $border-radius;
+}
+.card-list{
+  display: inline-block;
+  width: 100%;
+  margin: 0px;
+}
+.card-grid{
+  display: inline-block;
+  width: 40%;
+}
+
