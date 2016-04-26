@@ -38,6 +38,11 @@
     //audio
     quizCtrl.playAudio = playAudio;
 
+
+    //question layouts
+    quizCtrl.GRID_TYPE = ['audio_to_text','text_to_pic','pic_to_text','audio_to_pic'];
+    quizCtrl.LIST_TYPE = ['audio_to_text_longer','text_to_pic_longer','pic_to_text_longer','audio_to_pic_longer'];
+
     $scope.modal = {};
 
     function init (quiz) {
@@ -218,7 +223,7 @@
       angular.element("#audioplayer")[0].pause();
       if(key)
       {
-      angular.element("#audioSource")[0].src = 'sound/hello.mp3';
+      angular.element("#audioSource")[0].src = key;
       }
       else{
         angular.element("#audioSource")[0].src = 'sound/water-drop.mp3';
