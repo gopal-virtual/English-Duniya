@@ -1,4 +1,4 @@
-<ion-modal-view style="background:url('img/interlink.png') rgba(0,0,0,0.7) repeat-y center center;" ng-click="closeModal();mapCtrl.resetNode()">
+<ion-modal-view class="modal-dark" style="background-image:url('img/interlink.png'); background-repeat : repeat-y; background-position : center center" ng-click="closeModal();mapCtrl.resetNode()">
   <ion-content ng-init="mapCtrl.selected=false">
     <div class="row" ng-repeat="resource in mapCtrl.selectedNode.objects">
       <div class="col" ng-init="selected=false">

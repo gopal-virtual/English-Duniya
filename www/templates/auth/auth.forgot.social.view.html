@@ -1,20 +1,17 @@
-<ion-view>
+<ion-modal-view class="modal-light">
   <ion-content>
     <div class="row">
-      <form novalidate name="forgotPasswordForm" class="col padding-30"
-            ng-submit="authCtrl.closeKeyboard() && authCtrl.validateForgotPasswordForm(forgotPasswordForm) && authCtrl.passwordResetRequest({'useridentity':authCtrl.password_reset_credentials.useridentity})">
-        <div class="col padding-30">
-          <div class="list">
-            <label for="" class="item item-input item-floating-label">
-              <span class="input-label">EMAIL OR PHONE NO.</span>
-              <input name="useridentity" type="text" ng-model="authCtrl.password_reset_credentials.useridentity" placeholder="EMAIL OR PHONE NO.">
-            </label>
+      <form novalidate name="forgotPasswordForm" class="col padding-30" ng-submit="authCtrl.closeKeyboard() && authCtrl.validateForgotPasswordForm(forgotPasswordForm) && authCtrl.passwordResetRequest({'useridentity':authCtrl.password_reset_credentials.useridentity})">
+        <div class="card card-pink padding-20">
+          <h2 class="text-center color-dark-light">Forgot password</h2>
+          <h4 class="text-center color-dark-light" ng-if="authCtrl.resetPasswordLinkSent == false">We will send a reset password link to your email or phone no.</h4>
+          <h4 class="text-center color-dark-light" ng-if="authCtrl.resetPasswordLinkSent == true">We have sent a reset password link to your email or phone no.</h4>
+          <div class="input-group">
+            <input class="input-control input-default input-block" name="useridentity" type="text" ng-model="authCtrl.password_reset_credentials.useridentity" placeholder="Phone / Email">
           </div>
-          <button type="submit" class="button button-positive button-block">SEND</button>
-          <h4 ng-if="authCtrl.resetPasswordLinkSent == false">We will send a reset password link to your email or phone no.</h4>
-          <h4 ng-if="authCtrl.resetPasswordLinkSent == true">We have sent a reset password link to your email or phone no.</h4>
+          <button type="submit" class="button button-green button-block">SEND</button>
         </div>
       </form>
     </div>
   </ion-content>
-</ion-view>
+</ion-modal-view>

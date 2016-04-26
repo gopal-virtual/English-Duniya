@@ -21,6 +21,7 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 @import
   "www/lib/ionic/scss/ionic",
   "variables",
+  "font",
   "tabs",
   "function",
   "form",
@@ -33,4 +34,5 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
   "common",
   "animation",
   "cover",
-  "alert";
+  "alert",
+  "modal";

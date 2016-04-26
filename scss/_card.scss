@@ -1,3 +1,6 @@
+.card{
+  border-radius: $border-radius;
+}
 .list.card
 {
   border-radius: $border-radius !important;
@@ -32,9 +35,6 @@
     background-color: darken($color,10%);
   }
 }
-.card-radius{
-  border-radius: $border-radius;
-}
 .card-list{
   display: inline-block;
   width: 100%;
@@ -44,4 +44,3 @@
   display: inline-block;
   width: 40%;
 }
-

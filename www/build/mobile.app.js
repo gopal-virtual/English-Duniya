@@ -265,8 +265,8 @@
   angular
     .module('zaya-auth')
     .controller('authController', authController)
-  authController.$inject = ['$state', 'Auth', 'audio', '$rootScope', '$ionicPopup', '$log', '$cordovaOauth', 'CONSTANT', '$interval', '$scope', '$ionicLoading'];
-  function authController($state, Auth, audio, $rootScope, $ionicPopup, $log, $cordovaOauth, CONSTANT, $interval, $scope, $ionicLoading) {
+  authController.$inject = ['$q','$ionicModal', '$state', 'Auth', 'audio', '$rootScope', '$ionicPopup', '$log', '$cordovaOauth', 'CONSTANT', '$interval', '$scope', '$ionicLoading'];
+  function authController($q,$ionicModal, $state, Auth, audio, $rootScope, $ionicPopup, $log, $cordovaOauth, CONSTANT, $interval, $scope, $ionicLoading) {
     var authCtrl = this;
     var email_regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     var indian_phone_regex = /^[7-9][0-9]{9}$/;
@@ -302,6 +302,52 @@
     authCtrl.validCredentialChangePassword = validCredentialChangePassword;
     authCtrl.changePassword = changePassword;
     authCtrl.cancelOTP = cancelOTP;
+    authCtrl.recoverAccount = recoverAccount;
+    authCtrl.error = { "title" : "", "desc" : ""};
+
+
+    function recoverAccount() {
+        $scope.openModal('recover');
+    }
+    $scope.openModal = function(modal) {
+      if(modal == 'error'){
+        $scope.errorModal.show();
+      }
+      else if(modal == 'recover'){
+        $scope.recoveryModal.show();
+      }
+      else {
+        return false;
+      }
+
+    }
+    $scope.closeModal = function(modal) {
+      if(modal == 'error'){
+        $scope.errorModal.hide();
+      }
+      else if(modal == 'recover'){
+        $scope.recoveryModal.hide();
+      }
+      else{
+        return false;
+      }
+    }
+    $ionicModal.fromTemplateUrl(CONSTANT.PATH.AUTH + '/auth.forgot.social' + CONSTANT.VIEW, {
+      scope: $scope,
+      animation: 'slide-in-up',
+      // hardwareBackButtonClose : false
+    }).then(function(recoveryModal) {
+      $scope.recoveryModal = recoveryModal;
+    });
+    $ionicModal.fromTemplateUrl(CONSTANT.PATH.AUTH + '/auth.error.modal' + CONSTANT.VIEW, {
+      scope: $scope,
+      animation: 'slide-in-up',
+      // hardwareBackButtonClose : false
+    }).then(function(errorModal) {
+      $scope.errorModal = errorModal;
+    });
+
+
     function validEmail(email) {
       return email_regex.test(email);
     }
@@ -438,22 +484,28 @@
 
     function showError(title, msg) {
       $log.debug(title, msg);
-      $ionicPopup.alert({
-        title: title,
-        template: msg
-      });
+      authCtrl.error.title = title;
+      authCtrl.error.desc = msg;
+      $scope.openModal('error');
+      // $ionicPopup.alert({
+      //   title: title,
+      //   template: msg
+      // });
     }
 
     function showAlert(title, msg, success) {
       $log.debug(title, msg);
-      $ionicPopup.alert({
-        title: title,
-        template: msg
-      }).then(function (response) {
-        if (success) {
-          success()
-        }
-      });
+      authCtrl.error.title = title;
+      authCtrl.error.desc = msg;
+      $scope.openModal('error', success);
+      // $ionicPopup.alert({
+      //   title: title,
+      //   template: msg
+      // }).then(function (response) {
+      //   if (success) {
+      //     success()
+      //   }
+      // });
     }
 
     function verifyOtpValidations(formData) {
@@ -485,8 +537,7 @@
       Auth.resetPassword(user_credentials, function (success) {
         if (user_credentials.hasOwnProperty('phone_number')) {
           localStorage.setItem('Authorization', success.token);
-          authCtrl.showAlert("Reset Password", "We have send you an otp please verify it to reset password", function () {
-          });
+          $scope.closeModal('recover');
           $state.go('auth.forgot_verify_otp');
         }
         else {
@@ -625,29 +676,34 @@
       $ionicLoading.show({
         template: 'Logging in...'
       });
-      window.plugins.googleplus.login(
-        {
-          'scopes': 'email profile',
-          'webApiKey': '306430510808-i5onn06gvm82lhuiopm6l6188133j5r4.apps.googleusercontent.com',
-          'offline': true
-        },
-        function (user_data) {
-          authCtrl.login('google', {"access_token": user_data.oauthToken});
-          // For the purpose of this example I will store user data on local storage
-          //UserService.setUser({
-          //  userID: user_data.userId,
-          //  name: user_data.displayName,
-          //  email: user_data.email,
-          //  picture: user_data.imageUrl,
-          //  accessToken: user_data.accessToken,
-          //  idToken: user_data.idToken
-          //});
-        },
-        function (msg) {
-          $log.debug(JSON.stringify(msg));
-          $ionicLoading.hide();
-        }
-      );
+      try{
+        window.plugins.googleplus.login(
+          {
+            'scopes': 'email profile',
+            'webApiKey': '306430510808-i5onn06gvm82lhuiopm6l6188133j5r4.apps.googleusercontent.com',
+            'offline': true
+          },
+          function (user_data) {
+            authCtrl.login('google', {"access_token": user_data.oauthToken});
+            // For the purpose of this example I will store user data on local storage
+            //UserService.setUser({
+            //  userID: user_data.userId,
+            //  name: user_data.displayName,
+            //  email: user_data.email,
+            //  picture: user_data.imageUrl,
+            //  accessToken: user_data.accessToken,
+            //  idToken: user_data.idToken
+            //});
+          },
+          function (msg) {
+            authCtrl.showError("Error",msg);
+            $ionicLoading.hide();
+          }
+        );
+      }
+      catch(e){
+        $log.debug(e);
+      }
     };
     authCtrl.googleSignOut = function () {
       window.plugins.googleplus.logout(
@@ -674,11 +730,10 @@
     function verifyOtpResetPassword(otp){
         Auth.verifyOtpResetPassword(otp,function(success){
           $log.debug(success);
-          authCtrl.showAlert("Correct!", "OTP verified!");
           $state.go('auth.change_password', {});
         },function(error){
-          authCtrl.showAlert("InCorrect!", "You entered wrong OTP!");
           $log.debug(error);
+          authCtrl.showAlert("InCorrect!", "You entered wrong OTP!");
         })
     }
     function validCredentialChangePassword(formData) {
@@ -699,10 +754,10 @@
     function changePassword(credentials){
       credentials.secret_key = '@#2i0-jn9($un1w8utqc2dms!$#5+5';
       Auth.changePassword(credentials,function(success){
-        authCtrl.showAlert('Success','You have reset your password',function(success){
+        authCtrl.showAlert('Success','You have reset your password').then(function(success){
           $log.debug(success);
           $state.go('auth.signin', {});
-        })
+        });
       },function(error){
         $log.debug(error);
       })
@@ -1744,6 +1799,11 @@ window.createGame = function(scope, lessons, injector, log) {
     //audio
     quizCtrl.playAudio = playAudio;
 
+
+    //question layouts
+    quizCtrl.GRID_TYPE = ['audio_to_text','text_to_pic','pic_to_text','audio_to_pic'];
+    quizCtrl.LIST_TYPE = ['audio_to_text_longer','text_to_pic_longer','pic_to_text_longer','audio_to_pic_longer'];
+
     $scope.modal = {};
 
     function init (quiz) {
@@ -1924,7 +1984,7 @@ window.createGame = function(scope, lessons, injector, log) {
       angular.element("#audioplayer")[0].pause();
       if(key)
       {
-      angular.element("#audioSource")[0].src = 'sound/hello.mp3';
+      angular.element("#audioSource")[0].src = key;
       }
       else{
         angular.element("#audioSource")[0].src = 'sound/water-drop.mp3';

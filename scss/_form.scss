@@ -4,7 +4,7 @@ input[type=email].input-control,
 input[type=number].input-control{
   border: thin solid lighten($dark, 50%);
   padding : $padding-x * 3 $padding-x * 1.5;
-  margin : $margin-x 0;
+  margin : 0;
 }
 input[type=text].input-control:not(.input-group-item),
 input[type=password].input-control:not(.input-group-item),
@@ -43,6 +43,7 @@ input[type=radio].hide{
 }
 .input-group{
   @include display-flex();
+  margin : $margin-y / 2 0;
 }
 .input-group > .input-group-item.input-control,
 .input-group > .input-group-item
