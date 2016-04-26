@@ -12,13 +12,6 @@
     'use strict';
 
     angular
-        .module('zaya-content', []);
-})();
-
-(function() {
-    'use strict';
-
-    angular
         .module('zaya-map', []);
 })();
 
@@ -27,13 +20,6 @@
 
     angular
         .module('zaya-intro', []);
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('zaya-search', []);
 })();
 
 (function() {
@@ -57,13 +43,6 @@
     'use strict';
 
     angular
-        .module('zaya-playlist', []);
-})();
-
-(function() {
-    'use strict';
-
-    angular
         .module('zaya-profile', []);
 })();
 
@@ -74,13 +53,6 @@
         .module('zaya-quiz', [
           'ui.sortable'
         ]);
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('zaya-group', []);
 })();
 
 (function () {
@@ -98,27 +70,23 @@
 
       // core
       'common',
-      'zaya-content',
       'zaya-map',
       'zaya-user',
-      'zaya-playlist',
       'zaya-profile',
       'zaya-intro',
       'zaya-auth',
       'zaya-quiz',
-      'zaya-search',
-      'zaya-group'
     ]);
 
 })();
 
 (function(){
-    AppConfig.$inject = ["$httpProvider", "$ionicConfigProvider", "$ionicNativeTransitionsProvider", "$logProvider"];
+    AppConfig.$inject = ["$httpProvider", "$ionicConfigProvider", "$ionicNativeTransitionsProvider", "$logProvider", "$windowProvider"];
   angular
     .module('zaya')
     .config(AppConfig)
 
-    function AppConfig($httpProvider, $ionicConfigProvider, $ionicNativeTransitionsProvider, $logProvider){
+    function AppConfig($httpProvider, $ionicConfigProvider, $ionicNativeTransitionsProvider, $logProvider, $windowProvider){
       // global debug log
       $logProvider.debugEnabled(true);
 
@@ -1045,7 +1013,7 @@
     .module('common')
     .constant('CONSTANT',{
       'BACKEND_SERVICE_DOMAIN' : 'http://cc-test.zaya.in/',
-      //'BACKEND_SERVICE_DOMAIN' : 'http://192.168.10.159:8000/',
+      // 'BACKEND_SERVICE_DOMAIN' : 'http://192.168.1.6:9000/',
       'PATH' : {
         'INTRO' : ROOT+'/intro',
         'AUTH' : ROOT+'/auth',
@@ -1069,7 +1037,7 @@
       },
       'ASSETS' : {
         'IMG' : {
-          'ICON' : '/img/icons'
+          'ICON' : 'img/icons'
         }
       }
     })
@@ -1200,6 +1168,68 @@
     }
 })();
 
+(function() {
+  'use strict';
+
+  trackVideo.$inject = ["$window", "$log", "orientation"];
+  angular
+    .module('common')
+    .directive('trackVideo', trackVideo);
+
+  /* @ngInject */
+  function trackVideo($window, $log, orientation) {
+    var video = {
+      restrict: 'A',
+      link: linkFunc,
+    };
+
+    return video;
+
+    // full screen not working ; instead used css to immitate full screen effect ; check below
+    function toggleFullScreen() {
+      if (!document.fullscreenElement && // alternative standard method
+        !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) { // current working methods
+        if (document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen();
+        } else if (document.documentElement.msRequestFullscreen) {
+          document.documentElement.msRequestFullscreen();
+        } else if (document.documentElement.mozRequestFullScreen) {
+          document.documentElement.mozRequestFullScreen();
+        } else if (document.documentElement.webkitRequestFullscreen) {
+          document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        }
+      }
+    }
+
+    function linkFunc(scope, el, attr, ctrl) {
+      el.bind('playing', function() {
+        // toggleFullScreen();
+        el.addClass('fullscreen');
+        orientation.setLandscape();
+      });
+      el.bind('pause', function() {
+        // toggleFullScreen();
+        el.removeClass('fullscreen');
+        orientation.setPortrait();
+      });
+      el.bind('click',function (event) {
+        event.stopPropagation();
+      })
+    }
+  }
+
+})();
+
 (function () {
   'use strict';
 
@@ -1220,6 +1250,44 @@
           }
         }
       };
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('common')
+        .factory('orientation', orientation);
+
+    orientation.$inject = ['$window','$log'];
+
+    /* @ngInject */
+    function orientation($window, $log) {
+        var orientation = {
+            setLandscape : setLandscape,
+            setPortrait : setPortrait
+        };
+
+        return orientation;
+
+        function setPortrait() {
+          try{
+            $window.screen.lockOrientation('portrait');
+          }
+          catch(e){
+            $log.debug(e);
+          }
+        }
+
+        function setLandscape() {
+          try{
+            $window.screen.lockOrientation('landscape');
+          }
+          catch(e){
+            $log.debug(e);
+          }
+        }
     }
 })();
 
@@ -1244,114 +1312,6 @@
     });
   }
 
-})();
-
-(function() {
-  'use strict';
-
-  mainRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
-  angular
-    .module('zaya-content')
-    .config(mainRoute);
-
-  function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
-
-    $stateProvider
-      .state('content',{
-        url : '/content',
-        abstract : true,
-        template : '<ion-nav-view name="state-content"></ion-nav-view>'
-      })
-      .state('content.video',{
-        url : '/video',
-        views : {
-          'state-content' : {
-            templateUrl : CONSTANT.PATH.CONTENT + '/content.video' + CONSTANT.VIEW,
-            // controller : 'contentController as contentCtrl'
-          }
-        }
-      })
-  }
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('zaya-group')
-        .controller('Controller', Controller);
-
-    Controller.$inject = [];
-
-    /* @ngInject */
-    function Controller() {
-        var groupCtrl = this;
-
-        groupCtrl.activate();
-
-        function activate() {
-
-        }
-    }
-})();
-
-(function() {
-  'use strict';
-
-  authRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
-  angular
-    .module('zaya-auth')
-    .config(authRoute);
-
-  function authRoute($stateProvider, $urlRouterProvider, CONSTANT) {
-    $stateProvider
-      .state('group',{
-        url : '/group',
-        abstract : true,
-        template : '<ion-nav-view name="state-group-admin"></ion-nav-view><ion-nav-view name="state-group-student"></ion-nav-view>'
-      })
-      .state('group.admin',{
-        url : '/admin',
-        views : {
-          'state-group-admin' : {
-            templateUrl : CONSTANT.PATH.GROUP + '/group.admin' + CONSTANT.VIEW,
-            controller : 'groupController as groupCtrl'
-          }
-        }
-      })
-      .state('group.student',{
-        url : '/student',
-        views : {
-          'state-group-student' : {
-            templateUrl : CONSTANT.PATH.GROUP + '/group.student' + CONSTANT.VIEW,
-            controller : 'groupController as groupCtrl'
-          }
-        }
-      })
-  }
-})();
-
-(function(){
-  'use strict';
-
-  angular
-    .module('zaya')
-    .controller('homeController',homeController)
-
-  homeController.$inject = ['$scope'];
-
-  function homeController($scope) {
-    var homeCtrl = this;
-    homeCtrl.carouselOptions = {
-        "loop": false,
-        "margin": 0,
-        "items": 1,
-        "stagePadding": 20,
-        "nav": false,
-        "autoplay": false,
-        "center" : true
-    };
-  }
 })();
 
 (function() {
@@ -1418,9 +1378,9 @@
     .module('zaya-map')
     .controller('mapController', mapController);
 
-  mapController.$inject = ['$scope', '$log', '$ionicModal', '$state', 'lessons', 'Rest', 'CONSTANT', '$sce'];
+  mapController.$inject = ['$scope','$rootScope', '$log', '$ionicModal', '$state', 'lessons', 'Rest', 'CONSTANT', '$sce', 'orientation'];
 
-  function mapController($scope, $log, $ionicModal, $state, lessons, Rest, CONSTANT, $sce) {
+  function mapController($scope, $rootScope, $log, $ionicModal, $state, lessons, Rest, CONSTANT, $sce, orientation) {
     var mapCtrl = this;
     mapCtrl.lessons = lessons;
     mapCtrl.getLesson = getLesson;
@@ -1432,9 +1392,16 @@
     // mapCtrl.openModal = openModal;
     // mapCtrl.closeModal = closeModal;
 
-    function playResource (resource) {
-      $log.debug('quiz resource', resource);
-      $state.go('quiz.questions',{id : resource.node.id});
+    orientation.setPortrait();
+    function playResource (resource, event) {
+      if(mapCtrl.resourceType(resource) != 'video'){
+        $scope.closeModal();
+        $state.go('quiz.questions',{id : resource.node.id});
+      }
+      else{
+        event.stopPropagation();
+      }
+
     }
     function resourceType (resource){
       if(resource.node.content_type_name == 'assessment'){
@@ -1463,6 +1430,7 @@
 
       }
     }
+
     $scope.$on('openNode', function(event, node) {
       $scope.openModal();
       $log.debug('lesson id : ',node.id);
@@ -1480,7 +1448,8 @@
 
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal' + CONSTANT.VIEW, {
       scope: $scope,
-      animation: 'slide-in-up'
+      animation: 'slide-in-up',
+      hardwareBackButtonClose : false
     }).then(function(modal) {
       $scope.modal = modal;
     });
@@ -1613,26 +1582,6 @@ window.createGame = function(scope, lessons, injector, log) {
       // this.dragMap();
     },
 
-    dragMap : function() {
-      if (this.game.input.activePointer.isDown) {
-        if (this.game.origDragPoint) {
-          // move the camera by the amount the mouse has moved since last update
-          this.game.camera.x += this.game.origDragPoint.x - this.game.input.activePointer.position.x;
-          this.game.camera.y += this.game.origDragPoint.y - this.game.input.activePointer.position.y;
-          // tween
-          // var cx = (this.game.origDragPoint.x - this.game.input.activePointer.position.x);
-          // var cy = (this.game.origDragPoint.y - this.game.input.activePointer.position.y)
-          // this.game.add.tween(this.game.camera).to({
-          //   x : +cx,
-          //   y : +cy
-          // },300, Phaser.Easing.Linear.None, true)
-        }
-        // set new drag origin to current position
-        this.game.origDragPoint = this.game.input.activePointer.position.clone();
-      } else {
-        this.game.origDragPoint = null;
-      }
-    },
     render : function(){
       this.game.debug.text("fps : "+game.time.fps || '--', 2, 14, "#00ff00");
     }
@@ -1643,7 +1592,7 @@ window.createGame = function(scope, lessons, injector, log) {
 
   // phaser destroy doesn't remove canvas element --> removed manually in app run
   scope.$on('$destroy', function() {
-    this.game.destroy(); // Clean up the game when we leave this scope
+    game.destroy(); // Clean up the game when we leave this scope
   });
 };
 
@@ -1680,175 +1629,6 @@ window.createGame = function(scope, lessons, injector, log) {
           }
         }
       })
-  }
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('zaya-playlist')
-        .controller('playlistController', playlistController);
-
-    playlistController.$inject = ['$ionicScrollDelegate','$timeout','$stateParams','playlistData'];
-
-    function playlistController($ionicScrollDelegate,$timeout,$stateParams,playlistData) {
-        var playlistCtrl = this;
-        playlistCtrl.playlist = playlistData.playlist;
-        playlistCtrl.playlistId = $stateParams.playlistId;
-
-        $timeout(function() {
-            $ionicScrollDelegate.$getByHandle('playlistScrollBottom').scrollBottom();
-        });
-
-
-    }
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('zaya-playlist')
-        .factory('playlistData', playlistData);
-
-    playlistData.$inject = [];
-
-    function playlistData() {
-        var playlist = {
-          playlist : {
-              id : 100,
-              title : "Root",
-              description : "Root",
-              root : true,
-              children : [
-                {
-                  id : 1,
-                  title : "English",
-                  description : "lorem some desction for the subjjectt lorem some desction for the subjjecttlorem some desction for the subjjecttlorem some desction for the subjjecttlorem some desction for the subjjecttlorem some desction for the subjjecttlorem some desction for the subjjecttlorem some desction for the subjjectt",
-                  image : "path",
-                  children : [
-                    {
-                      id : 10,
-                      title : "Lorem ipsum dolor sit amet",
-                      description : "Lorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit amet",
-                      children : [
-                        {
-                          id : 2,
-                          title : "dolor sit amet",
-                          description : "ipsum dolor sit ametLorem ipsum dolor sit amet",
-                        },
-                      ]
-                    },
-                    {
-                      id : 11,
-                      title : "Lorem hello are you",
-                      description : "dolor sit ametLorem ipsum olor sit ametLorem ipsum dolor sit amet",
-                      children : [
-                        {
-                          id : 111,
-                          title : "Lorsdlfkj sdlfkj",
-                          description : "dolor sdlfkjsdf sdflskdjfsd s",
-                          children : []
-                        },
-                        {
-                          id : 111,
-                          title : "sdflksf sdlfsdk",
-                          description : "dolor sdlscfsdf dffkjsdf sdflskdjfsd s",
-                          children : []
-                        },
-                        {
-                          id : 111,
-                          title : "sdfsdf fsdf dsfj",
-                          description : "dolor sdlsdffsfsd sdflskdjfsd s",
-                          children : []
-                        },
-                        {
-                          id : 111,
-                          title : "dfd dfdf",
-                          description : "ddsfsf sdflskdjfsd",
-                          children : []
-                        },
-                      ]
-                    },
-                    {
-                      id : 12,
-                      title : "Lorem ipsum dolor sit amet",
-                      description : "Lorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit amet",
-                      children : []
-                    }
-                  ]
-                },
-                {
-                  id : 2,
-                  title : "Math",
-                  description : "lorem some desction for the subjjectt",
-                  image : "path",
-                  children : []
-                },
-                {
-                  id : 2,
-                  title : "Geography",
-                  description : "lorem some desction for the subjjectt",
-                  image : "path",
-                  children : []
-                },
-                {
-                  id : 4,
-                  title : "Science",
-                  description : "lorem some desction for the subjjectt",
-                  image : "path",
-                  children : []
-                },
-                {
-                  id : 4,
-                  title : "Biology",
-                  description : "lorem some desction for the subjjectt",
-                  image : "path",
-                  children : []
-                },
-                {
-                  id : 4,
-                  title : "Bio technology",
-                  description : "lorem some desction for the subjjectt",
-                  image : "path",
-                  children : []
-                },
-                {
-                  id : 4,
-                  title : "Linkin Park",
-                  description : "lorem some desction for the subjjectt",
-                  image : "path",
-                  children : []
-                }
-              ]
-          }
-        };
-
-        return playlist;
-
-    }
-})();
-
-(function() {
-  'use strict';
-
-  mainRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
-  angular
-    .module('zaya-playlist')
-    .config(mainRoute);
-
-  function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
-    // $stateProvider
-    //   .state('playlist',{
-    //     url : '/playlist',
-    //     views : {
-    //       'playlist-tab':{
-    //         templateUrl : CONSTANT.PATH.PLAYLIST+'/playlist'+CONSTANT.VIEW,
-    //         controller : 'playlistController as playlistCtrl'
-    //       }
-    //     }
-    //   })
   }
 })();
 
@@ -1971,15 +1751,15 @@ window.createGame = function(scope, lessons, injector, log) {
         // init attempted
 
         for (var i = 0; i < quizCtrl.quiz.objects.length; i++) {
-          if((quizCtrl.quiz.objects[i].content_type=='choicequestion' && !quizCtrl.quiz.objects[i].node.type.is_multiple) || quizCtrl.quiz.objects[i].node.content_type=='dr question'){
+          if((quizCtrl.quiz.objects[i].node.type.type=='choicequestion' && !quizCtrl.quiz.objects[i].node.type.content.is_multiple) /*|| quizCtrl.quiz.objects[i].node.content_type=='dr question'*/){
             quizCtrl.quiz.objects[i].attempted = "";
           }
-          else if(quizCtrl.quiz.objects[i].node.content_type=='choicequestion' && quizCtrl.quiz.objects[i].node.type.is_multiple){
+          else if(quizCtrl.quiz.objects[i].node.type.type=='choicequestion' && quizCtrl.quiz.objects[i].node.type.content.is_multiple){
             quizCtrl.quiz.objects[i].attempted = {};
           }
-          else if(quizCtrl.quiz.objects[i].node.content_type=='sentence ordering' || quizCtrl.quiz.objects[i].node.content_type=='sentence structuring'){
-            quizCtrl.quiz.objects[i].attempted = [];
-          }
+          //else if(quizCtrl.quiz.objects[i].node.content_type=='sentence ordering' || quizCtrl.quiz.objects[i].node.content_type=='sentence structuring'){
+          //  quizCtrl.quiz.objects[i].attempted = [];
+          //}
           else{}
         }
       }
@@ -2013,7 +1793,9 @@ window.createGame = function(scope, lessons, injector, log) {
     }
 
     function decide() {
+      $log.debug("decide");
       if(!quizCtrl.isCorrectAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex])){
+        $log.debug("!quizCtrl.isCorrectAttempted");
         quizCtrl.submitAttempt(
           quizCtrl.quiz.objects[quizCtrl.currentIndex].node.id,
           quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted
@@ -2022,6 +1804,7 @@ window.createGame = function(scope, lessons, injector, log) {
           quizCtrl.quiz.objects[quizCtrl.currentIndex],
           quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted
         );
+        $log.debug("decided");
       }
       else if(quizCtrl.currentIndex < quizCtrl.quiz.objects.length - 1){
         quizCtrl.nextQuestion();
@@ -2060,7 +1843,6 @@ window.createGame = function(scope, lessons, injector, log) {
     }
 
     function isAttempted (question_id) {
-
       return quizCtrl.report.attempts[question_id].length ? true : false;
     }
 
@@ -2086,28 +1868,30 @@ window.createGame = function(scope, lessons, injector, log) {
 
     function isCorrectAttempted (question){
       // multiple choice
-      if(question.node.type.type=='choicequestion' && question.node.type.is_multiple){
+
+      if(question.node.type.type=='choicequestion' && question.node.type.content.is_multiple){
         for (var i = 0; i < quizCtrl.report.attempts[question.node.id].length; i++) {
-          if(_.chain(quizCtrl.report.attempts[question.node.id][i]).map(function(num,key){return parseInt(key);}).isEqual(question.node.type.answer).value())
+            if(_.chain(quizCtrl.report.attempts[question.node.id][i]).map(function(num,key){return num?parseInt(key):false;}).reject(function(num){ return !num; }).isEqual(question.node.type.answer).value())
             return true;
         }
         return false;
       }
       // single choice
-      if(question.node.type.type=='choicequestion' && !question.node.type.is_multiple){
+      if(question.node.type.type=='choicequestion' && !question.node.type.content.is_multiple){
         return quizCtrl.report.attempts[question.node.id].indexOf(question.node.type.answer[0])!=-1 ?(true) : false;
       }
+      // to be tested for new api
       // dr
-      if(question.node.type.type=='dr question'){
-        return quizCtrl.report.attempts[question.node.id].indexOf(question.node.type.answer[0].toLowerCase())!=-1 ? true : false;
-      }
-      if(question.node.type.type=='sentence ordering' || question.node.type.type=='sentence structuring'){
-        for (var i = 0; i < quizCtrl.report.attempts[question.node.id].length; i++) {
-          if(angular.equals(quizCtrl.report.attempts[question.node.id][i],question.node.type.answer))
-            return true;
-        }
-        return false;
-      }
+      //if(question.node.type.type=='dr question'){
+      //  return quizCtrl.report.attempts[question.node.id].indexOf(question.node.type.answer[0].toLowerCase())!=-1 ? true : false;
+      //}
+      //if(question.node.type.type=='sentence ordering' || question.node.type.type=='sentence structuring'){
+      //  for (var i = 0; i < quizCtrl.report.attempts[question.node.id].length; i++) {
+      //    if(angular.equals(quizCtrl.report.attempts[question.node.id][i],question.node.type.answer))
+      //      return true;
+      //  }
+      //  return false;
+      //}
     }
 
     function isKeyCorrect (question,key){
@@ -2216,71 +2000,6 @@ window.createGame = function(scope, lessons, injector, log) {
 })();
 
 (function() {
-    'use strict';
-
-    angular
-        .module('zaya-search')
-        .controller('searchController', searchController);
-
-    searchController.$inject = ['CONSTANT'];
-
-    function searchController(CONSTANT) {
-        var searchCtrl = this;
-
-        searchCtrl.tabIndex = 0;
-        searchCtrl.tab = [
-          {
-            type : 'node',
-            path : CONSTANT.PATH.SEARCH + '/search.nodes' + CONSTANT.VIEW,
-            icon : 'ion-ios-book'
-          },
-          {
-            type : 'group',
-            path : CONSTANT.PATH.SEARCH + '/search.groups' + CONSTANT.VIEW,
-            icon : 'ion-person-stalker'
-          },
-          {
-            type : 'user',
-            path : CONSTANT.PATH.SEARCH + '/search.users' + CONSTANT.VIEW,
-            icon : 'ion-person-add'
-          }
-        ]
-    }
-})();
-
-(function() {
-  'use strict';
-
-  mainRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
-  angular
-    .module('zaya-quiz')
-    .config(mainRoute);
-
-  function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
-
-    $stateProvider
-      .state('search',{
-        url : '/search',
-        abstract : true,
-        template : '<ion-nav-view name="state-search"></ion-nav-view>'
-      })
-      .state('search.main',{
-        url : '/main',
-        nativeTransitions : {
-          "type" : 'slide',
-          "direction" : 'up',
-        },
-        views : {
-          'state-search' : {
-            templateUrl : CONSTANT.PATH.SEARCH + '/search' + CONSTANT.VIEW,
-            controller : "searchController as searchCtrl"
-          }
-        }
-      })
-  }
-})();
-
-(function() {
   'use strict';
 
   mainRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
@@ -2297,15 +2016,6 @@ window.createGame = function(scope, lessons, injector, log) {
         abstract : true,
         template: '<ion-nav-view name="state-user"></ion-nav-view>',
       })
-      // content - Video, Image, Game, Pdf etc
-      // .state('user.content',{
-      //   url : '/content/:content_type/:content_id',
-      //   views : {
-      //     'state-user' : {
-      //       templateUrl : CONSTANT.PATH.CONTENT+'/content'+CONSTANT.VIEW,
-      //     }
-      //   }
-      // })
       // personalisation for all
       .state('user.personalise',{
         url : '/personalise',
@@ -2322,22 +2032,6 @@ window.createGame = function(scope, lessons, injector, log) {
           'state-personalise':{
             templateUrl : CONSTANT.PATH.PROFILE+'/personalise.social'+CONSTANT.VIEW,
             controller : 'profileController as profileCtrl'
-          }
-        }
-      })
-      .state('user.personalise.usertype',{
-        url : '/usertype',
-        views : {
-          'state-personalise':{
-            templateUrl : CONSTANT.PATH.PROFILE+'/personalise.usertype'+CONSTANT.VIEW
-          }
-        }
-      })
-      .state('user.personalise.usersubject',{
-        url : '/usersubject',
-        views : {
-          'state-personalise':{
-            templateUrl : CONSTANT.PATH.PROFILE+'/personalise.usersubject'+CONSTANT.VIEW
           }
         }
       })
@@ -2370,26 +2064,6 @@ window.createGame = function(scope, lessons, injector, log) {
           'profile-tab' : {
             templateUrl : CONSTANT.PATH.PROFILE+'/profile.settings'+CONSTANT.VIEW,
             controller : 'profileController as profileCtrl'
-          }
-        }
-      })
-      .state('user.main.playlist',{
-        url : '/playlist/:playlistId',
-        nativeTransitions : null,
-        views : {
-          'playlist-tab':{
-            templateUrl : CONSTANT.PATH.PLAYLIST+'/playlist'+CONSTANT.VIEW,
-            controller : 'playlistController as playlistCtrl'
-          }
-        }
-      })
-      .state('user.main.home',{
-        url : '/home',
-        nativeTransitions : null,
-        views : {
-          'home-tab':{
-            templateUrl : CONSTANT.PATH.HOME+'/home'+CONSTANT.VIEW,
-            controller : 'homeController as homeCtrl'
           }
         }
       })

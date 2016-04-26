@@ -14,15 +14,6 @@
         abstract : true,
         template: '<ion-nav-view name="state-user"></ion-nav-view>',
       })
-      // content - Video, Image, Game, Pdf etc
-      // .state('user.content',{
-      //   url : '/content/:content_type/:content_id',
-      //   views : {
-      //     'state-user' : {
-      //       templateUrl : CONSTANT.PATH.CONTENT+'/content'+CONSTANT.VIEW,
-      //     }
-      //   }
-      // })
       // personalisation for all
       .state('user.personalise',{
         url : '/personalise',
@@ -39,22 +30,6 @@
           'state-personalise':{
             templateUrl : CONSTANT.PATH.PROFILE+'/personalise.social'+CONSTANT.VIEW,
             controller : 'profileController as profileCtrl'
-          }
-        }
-      })
-      .state('user.personalise.usertype',{
-        url : '/usertype',
-        views : {
-          'state-personalise':{
-            templateUrl : CONSTANT.PATH.PROFILE+'/personalise.usertype'+CONSTANT.VIEW
-          }
-        }
-      })
-      .state('user.personalise.usersubject',{
-        url : '/usersubject',
-        views : {
-          'state-personalise':{
-            templateUrl : CONSTANT.PATH.PROFILE+'/personalise.usersubject'+CONSTANT.VIEW
           }
         }
       })
@@ -87,26 +62,6 @@
           'profile-tab' : {
             templateUrl : CONSTANT.PATH.PROFILE+'/profile.settings'+CONSTANT.VIEW,
             controller : 'profileController as profileCtrl'
-          }
-        }
-      })
-      .state('user.main.playlist',{
-        url : '/playlist/:playlistId',
-        nativeTransitions : null,
-        views : {
-          'playlist-tab':{
-            templateUrl : CONSTANT.PATH.PLAYLIST+'/playlist'+CONSTANT.VIEW,
-            controller : 'playlistController as playlistCtrl'
-          }
-        }
-      })
-      .state('user.main.home',{
-        url : '/home',
-        nativeTransitions : null,
-        views : {
-          'home-tab':{
-            templateUrl : CONSTANT.PATH.HOME+'/home'+CONSTANT.VIEW,
-            controller : 'homeController as homeCtrl'
           }
         }
       })

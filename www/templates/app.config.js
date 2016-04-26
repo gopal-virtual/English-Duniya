@@ -3,7 +3,7 @@
     .module('zaya')
     .config(AppConfig)
 
-    function AppConfig($httpProvider, $ionicConfigProvider, $ionicNativeTransitionsProvider, $logProvider){
+    function AppConfig($httpProvider, $ionicConfigProvider, $ionicNativeTransitionsProvider, $logProvider, $windowProvider){
       // global debug log
       $logProvider.debugEnabled(true);
 

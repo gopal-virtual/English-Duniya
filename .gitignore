@@ -7,3 +7,5 @@ plugins/
 /www/modules
 /www/_js/
 .idea/
+angryape.apk
+/www/build/
