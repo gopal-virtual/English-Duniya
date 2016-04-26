@@ -1431,6 +1431,9 @@
       }
     }
 
+    $scope.$on('logout', function() {
+      $state.go('user.main.settings',{});
+    })
     $scope.$on('openNode', function(event, node) {
       $scope.openModal();
       $log.debug('lesson id : ',node.id);
@@ -1506,6 +1509,7 @@ window.createGame = function(scope, lessons, injector, log) {
       this.load.image('desert', 'img/assets_v0.0.3/desert_bg.png');
       this.load.image('cactus', 'img/assets_v0.0.3/cactus.png');
       this.load.image('tent', 'img/assets_v0.0.3/tent_fire.png');
+      this.load.image('practice', 'img/icons/practice_active.png');
       // this.load.spritesheet('cactus_animation', 'img/assets_v0.0.2/cactus_sprite.png', 15, 17, 8);
       this.load.image('node', 'img/assets_v0.0.3/node.png');
       // debug value
@@ -1560,6 +1564,13 @@ window.createGame = function(scope, lessons, injector, log) {
         node.anchor.setTo(0.5, 0.5);
         node.id = lessons[i].id;
       }
+
+      var logout = this.game.add.button(this.game.width - 100, 0, 'practice',function () {
+        scope.$emit('logout');
+      },this, 2 , 1 , 0);
+      logout.scale.setTo(0.3,0.3);
+      logout.fixedToCamera = true;
+      logout.cameraOffset.setTo(this.game.width - 70, 20);
 
       this.init();
       this.game.kineticScrolling.start();

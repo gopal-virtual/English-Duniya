@@ -1,32 +1,45 @@
-<ion-view>
+<ion-view class="bg-pink">
   <ion-content>
+    <div class="row padding-20">
+      <div class="col text-center"><img src="img/icons/practice_active.png" alt="" height="100px" width="auto"></div>
+    </div>
     <div class="row">
-      <form autocomplete="on" novalidate name="authForm" class="col padding-30" ng-submit="authCtrl.closeKeyboard() && authCtrl.validCredential(authForm) && authCtrl.signup({'useridentity':authCtrl.user.useridentity,'password1':authCtrl.user.password,'password2':authCtrl.user.password,'email':authCtrl.user.email})">
-        <h4 class="text-right"><a ui-sref="auth.signin">ALREADY EXIST</a></h4>
-        <div class="list" ng-init="show_password = false">
-          <label for="" class="item item-input item-floating-label"><span class="input-label">PHONE NUMBER</span>
-            <input tabindex="1" name="useridentity" type="number" placeholder="PHONE NUMBER" ng-model="authCtrl.user.useridentity" autocomplete="on">
-          </label>
-          <label for="" class="item item-input item-floating-label"><span class="input-label">EMAIL</span>
-            <input tabindex="2" ng-trim="false" valid-input name="email" type="text" placeholder="EMAIL" ng-model="authCtrl.user.email" autocomplete="on">
-          </label>
-          <label for="" class="item item-input item-floating-label"><span class="input-label">PASSWORD</span>
-            <input tabindex="3" onPaste="return false" autocomplete="off" name="password"  type="{{show_password==false?'password':'text'}}" placeholder="PASSWORD" ng-model="authCtrl.user.password">
-          </label>
+      <div class="col text-center">
+        <h3>Register</h3>
+      </div>
+    </div>
+    <div class="row padding-x-20">
+      <div class="col">
+        <button tabindex="5" ng-click="authCtrl.googleSignIn()" class="button button-block button-assertive icon-left ion-social-googleplus">Google+</button>
+      </div>
+      <div class="col">
+        <button tabindex="6" ng-click="authCtrl.facebookSignIn()" class="button button-block bg-brand text-white icon-left ion-social-facebook">facebook</button>
+      </div>
+    </div>
+    <div class="row">
+      <form autocomplete="on" novalidate name="authForm" class="col padding-x-20" ng-submit="authCtrl.closeKeyboard() && authCtrl.validCredential(authForm) && authCtrl.signup({'useridentity':authCtrl.user.useridentity,'password1':authCtrl.user.password,'password2':authCtrl.user.password,'email':authCtrl.user.email})" ng-init="show_password = false">
+        <div class="form-group">
+          <input class="input-control input-default input-block" tabindex="1" name="useridentity" type="text" placeholder="Phone" ng-model="authCtrl.user.useridentity">
+        </div>
+        <div class="form-group">
+          <input class="input-control input-default input-block" tabindex="2" ng-trim="false" valid-input name="email" type="text" placeholder="Email" ng-model="authCtrl.user.email" autocomplete="on">
+        </div>
+        <div class="form-group">
+          <input class="input-control input-default input-block" tabindex="3" onPaste="return false" autocomplete="off" name="password"  type="{{show_password==false?'password':'text'}}" placeholder="Password" ng-model="authCtrl.user.password">
+        </div>
+        <!-- <div class="list" >
           <ion-list>
             <ion-checkbox ng-model="show_password">Show Password</ion-checkbox>
           </ion-list>
-        </div>
-        <button ng-disabled="authCtrl.signUpDisabled" tabindex="4" class="button button-block button-positive">SIGN UP</button>
-        <br><hr><br>
+        </div> -->
+        <button ng-disabled="authCtrl.signUpDisabled" tabindex="4" class="button button-block button-green">SIGN UP</button>
         </form>
     </div>
-    <div class="row padding-30">
-      <div class="col">
-        <button tabindex="5" ng-click="authCtrl.googleSignIn()" class="button button-block button-assertive icon-left ion-social-google">SIGNUP WITH GOOGLE</button>
-        <button tabindex="6" ng-click="authCtrl.facebookSignIn()" class="button button-block bg-brand text-white icon-left ion-social-facebook">SIGNUP WITH FACEBOOK</button>
-
+    <hr>
+    <div class="row">
+      <div class="col text-center">
+        <h4>Already a member? <a ui-sref="auth.signin">Sign In</a></h4>
       </div>
-      </div>
+    </div>
   </ion-content>
 </ion-view>

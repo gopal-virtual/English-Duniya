@@ -1,11 +1,16 @@
 input[type=text].input-control,
 input[type=password].input-control,
-input[type=email].input-control{
-  border: 0;
-  padding : $padding-x * 2;
+input[type=email].input-control,
+input[type=number].input-control{
+  border: thin solid lighten($dark, 50%);
+  padding : $padding-x * 3 $padding-x * 1.5;
   margin : $margin-x 0;
-  border-radius : $border-radius;
-  box-shadow : inset 1px 1px 5px rgba(0,0,0,0.3);
+}
+input[type=text].input-control:not(.input-group-item),
+input[type=password].input-control:not(.input-group-item),
+input[type=email].input-control:not(.input-group-item),
+input[type=number].input-control:not(.input-group-item){
+  border-radius: $border-radius;
 }
 .input-block{
   width: 100%;
@@ -38,7 +43,6 @@ input[type=radio].hide{
 }
 .input-group{
   @include display-flex();
-  margin : $margin-y 0;
 }
 .input-group > .input-group-item.input-control,
 .input-group > .input-group-item
@@ -65,10 +69,15 @@ input[type=radio].hide{
 }
 .input-group > .input-group-item:first-child{
   border-radius: $border-radius 0 0 $border-radius !important;
+  border-right : 0;
 }
 .input-group > .input-group-item:not(:first-child):not(:last-child){
   border-radius : 0 !important;
 }
 .input-group > .input-group-item:last-child{
   border-radius: 0 $border-radius $border-radius 0 !important;
+  border-top : thin solid lighten($dark, 50%) ;
+  border-right : thin solid lighten($dark, 50%) ;
+  border-bottom : thin solid lighten($dark, 50%) ;
+  border-left : 0 ;
 }

@@ -2,15 +2,17 @@ $padding-x : 10px;
 $padding-y : 10px;
 $margin-x : 10px;
 $margin-y : 10px;
-$border-radius : 5px;
+$border-radius : 10px;
+$border-radius-round : 50px;
 // color
 $brand : #0D618A;
 $brand-white : rgb(255,255,255);
 $brand-green : #39B89A;
+$brand-pink : #FCF3D8;
 $pale : #FCF3D8;
 $neutral : #e4eff2;
 $brand-yellow : #FFBC1D;
-$color-list : ("light" : $light, "stable" : $stable, "positive" : $positive, "calm" : $calm, "balanced" : $balanced, "energised" : $energized, "assertive" :$assertive, "royal" : $royal, "dark" :$dark, "brand" : $brand, "neutral" : $neutral, "green" : $brand-green, "pale" : $pale, "brand-yellow": $brand-yellow);
+$color-list : ("light" : $light, "stable" : $stable, "positive" : $positive, "calm" : $calm, "balanced" : $balanced, "energised" : $energized, "assertive" :$assertive, "royal" : $royal, "dark" :$dark, "brand" : $brand, "neutral" : $neutral, "green" : $brand-green, "pale" : $pale, "brand-yellow": $brand-yellow, "pink" : $brand-pink);
 // $brand-color :
 
 // size

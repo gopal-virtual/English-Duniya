@@ -2,4 +2,17 @@
   box-shadow: 0 2px 2px rgba(0,0,0,0.5);
   vertical-align: center;
   padding: 10px;
+  border-radius: $border-radius;
+}
+.button-green{
+  background-color: $brand-green;
+  color : $brand-white;
+}
+.button-green.active,
+.button-green.activated {
+  background-color: darken($brand-green,10%);
+  color : $brand-white;
+}
+.button-round{
+  border-radius: $border-radius-round;
 }
