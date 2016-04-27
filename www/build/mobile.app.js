@@ -1560,7 +1560,7 @@ window.createGame = function(scope, lessons, injector, log) {
   'use strict';
 
   var lessons = lessons;
-  var game = new Phaser.Game("100", "100" , Phaser.AUTO, 'map_canvas');
+  var game = new Phaser.Game("100", "100" , Phaser.CANVAS, 'map_canvas');
   var playState = {
     preload : function () {
       this.load.image('desert', 'img/assets_v0.0.3/desert_bg.png');
