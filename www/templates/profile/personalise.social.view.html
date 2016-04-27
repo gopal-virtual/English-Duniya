@@ -3,9 +3,9 @@
   <ion-content>
     <div class="row">
       <div class="col padding-30">
-        <form name="personaliseForm" class="list" novalidate ng-submit="personaliseForm.$valid && profileCtrl.createProfile({name : profileCtrl.user.name, age : profileCtrl.calcAge(profileCtrl.user.dob), grade : profileCtrl.user.grade, language : profileCtrl.user.language})">
+        <form name="personaliseForm" class="list" novalidate ng-submit="profileCtrl.closeKeyboard() && profileCtrl.validatePersonaliseForm(personaliseForm) && profileCtrl.createProfile({ age : profileCtrl.calcAge(profileCtrl.user.dob), grade : profileCtrl.user.grade, gender : profileCtrl.user.gender, dob : profileCtrl.convertDate(profileCtrl.user.dob), user : profileCtrl.user.username, first_name : profileCtrl.user.first_name})">
           <label for="" class="item item-input item-floating-label"><span class="input-label">Child's name</span>
-            <input name="username" type="text" placeholder="Child's name" ng-model="profileCtrl.user.name" required>
+            <input name="first_name" type="text" placeholder="Child's name" ng-model="profileCtrl.user.first_name" required>
           </label>
           <label for="" class="item item-input"><span class="input-label">Date of Birth</span>
             <input name="dob" type="date" placeholder="Date of birth" ng-model="profileCtrl.user.dob" required>
@@ -18,16 +18,21 @@
               <option value="3">Grade 3</option>
             </select>
           </label>
-          <label for="" class="item item-input item-select">
-            <span class="input-label">Language</span>
-            <select name="language" ng-model="profileCtrl.user.language" required>
-              <option value="en">English</option>
-              <option value="ben">Bengali</option>
-              <option value="mar">Marathi</option>
-            </select>
-          </label>
+          <div class="list">
+
+        <div class="item item-divider">
+            Gender
+        </div>
+
+        <ion-radio name="gender" value="M" ng-model="profileCtrl.user.gender">
+        Male
+        </ion-radio>
+        <ion-radio name="gender" value="F" ng-model="profileCtrl.user.gender">
+        Female
+        </ion-radio>
+
           <div class="item">
-            <button type="submit" ng-disabled="personaliseForm.$invalid" class="button button-positive button-block">CONTINUE</button>
+            <button type="submit"  class="button button-positive button-block">CONTINUE</button>
             <button type="button" class="button button-positive button-block" ui-sref="map.navigate">go to map</button>
           </div>
         </form>

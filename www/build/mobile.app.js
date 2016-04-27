@@ -198,26 +198,32 @@
         event.preventDefault();
         $state.go('auth.signin');
       }
-       //if authenticated but not verified redirect to OTP page
-      //if (Auth.isAuthorised() && !Auth.isVerified() && (toState.name == 'auth.forgot.verify_otp' || toState.name == 'auth.verify.phone') ) {
-      //  $log.debug("User account not verified");
-      //  return true;
-      //}
-      // if authenticated but not verified redirect to OTP page
+
+      // if authenticated but not verified clear localstorage and redirect to login
       if (Auth.isAuthorised() && !Auth.isVerified() && toState.name != 'auth.verify.phone' && toState.name != 'auth.forgot_verify_otp' && toState.name != 'auth.change_password' ) {
         $log.debug("User account not verified");
         event.preventDefault();
         localStorage.clear();
         $state.go('auth.signin');
       }
-      //if authenticated and verified, redirect to userpage
-      if (Auth.isAuthorised() && Auth.isVerified() && (toState.name == 'auth.signin' || toState.name == 'auth.signup' || toState.name == 'intro' || toState.name == 'auth.verify.phone' || toState.name == 'auth.forgot' || toState.name == 'auth.change_password' || toState.name == 'auth.forgot_verify_otp')) {
-        $log.debug("You are authorized and verified");
+
+
+
+      //if authenticated and verified but has no profile, redirect to user.personalise.social
+      if (Auth.isAuthorised() && Auth.isVerified() && !Auth.hasProfile() && (toState.name != 'user.personalise.social')) {
+        $log.debug("Account authorised and verfified , profile not complete");
+        event.preventDefault();
+        $state.go('user.personalise.social');
+      }
+      //if authenticated, verified and has profile, redirect to userpage
+
+      if (Auth.isAuthorised() && Auth.isVerified() && Auth.hasProfile() && (toState.name == 'auth.signin' || toState.name == 'auth.signup' || toState.name == 'intro' || toState.name == 'auth.verify.phone' || toState.name == 'auth.forgot' || toState.name == 'auth.change_password' || toState.name == 'auth.forgot_verify_otp' || toState.name == 'user.personalise.social')) {
+        $log.debug("Account authorised , verififed and profile completed");
         event.preventDefault();
         $state.go('user.main.home');
       }
       // block access to quiz summary page if there is no quiz data
-      if (toState.name == 'quiz.summary' && !toParams.quizSummary) {
+      if (toState.name == 'quiz.summary' && !toParams.report) {
         $log.debug("Quiz summary page cannot be accessed : No quiz data present");
         event.preventDefault();
       }
@@ -258,6 +264,314 @@
       }
     });
   }
+})();
+
+(function(){
+  var ROOT = 'templates';
+
+  angular
+    .module('common')
+    .constant('CONSTANT',{
+      'BACKEND_SERVICE_DOMAIN' : 'http://cc-test.zaya.in/',
+      // 'BACKEND_SERVICE_DOMAIN' : 'http://192.168.1.6:9000/',
+      'PATH' : {
+        'INTRO' : ROOT+'/intro',
+        'AUTH' : ROOT+'/auth',
+        'QUIZ' : ROOT+'/quiz',
+        'PROFILE' : ROOT+'/profile',
+        'USER' : ROOT+'/user',
+        'PLAYLIST' : ROOT+'/playlist',
+        'HOME' : ROOT+'/home',
+        'RESULT' : ROOT+'/result',
+        'SEARCH' : ROOT+'/search',
+        'GROUP' : ROOT+'/group',
+        'COMMON' : ROOT + '/common',
+        'MAP' : ROOT + '/map',
+        'CONTENT' : ROOT + '/content'
+      },
+      'VIEW' : '.view.html',
+      'CLIENTID' : {
+        'FACEBOOK' : '1159750564044149',
+        'GOOGLE' : '1011514043276-7q3kvn29jkegl2d1v7dtlbtipqqgo1rr.apps.googleusercontent.com',
+        'ELL' : '1e7aa89f-3f50-433a-90ca-e485a92bbda6'
+      },
+      'ASSETS' : {
+        'IMG' : {
+          'ICON' : 'img/icons'
+        }
+      }
+    })
+})();
+
+(function() {
+  angular
+    .module('zaya')
+    .directive('widgetCarousel', widgetCarousel)
+    .directive('carouselItem', carouselItem);
+
+  function widgetCarousel() {
+    var carousel = {}
+    carousel.restrict = 'A';
+    carousel.link = function(scope) {
+      scope.initCarousel = function(element) {
+        // provide any default options you want
+        var defaultOptions = {};
+        var customOptions = scope.$eval($(element).attr('carousel-options'));
+        // combine the two options objects
+        for (var key in customOptions) {
+          if (customOptions.hasOwnProperty(key)) {
+            defaultOptions[key] = customOptions[key];
+          }
+        }
+        // init carousel
+        $(element).owlCarousel(defaultOptions);
+      };
+    }
+    return carousel;
+  }
+
+  function carouselItem() {
+    var carouselItem = {};
+    carouselItem.restrict = 'A';
+    carouselItem.transclude = false;
+    carouselItem.link = function(scope, element) {
+      // wait for the last item in the ng-repeat then call init
+      if (scope.$last) {
+        scope.initCarousel(element.parent());
+      }
+    }
+    return carouselItem;
+  }
+})();
+
+(function(){
+	widgetError.$inject = ["CONSTANT"];
+	angular
+		.module('common')
+		.directive('widgetError',widgetError)
+
+	function widgetError(CONSTANT){
+		var error = {};
+		error.restrict = 'E';
+		error.templateUrl = CONSTANT.PATH.COMMON + '/common.error' + CONSTANT.VIEW;
+		error.controller = ['$rootScope','$scope',function ($rootScope,$scope) {
+			$scope.error = function(){
+				return $rootScope.error;
+			}
+		}]
+		return error;
+	}
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('common')
+        .directive('validInput', validInput);
+
+    function validInput() {
+        var validInput = {
+            require: '?ngModel',
+            link: linkFunc
+        };
+
+        return validInput;
+
+        function linkFunc(scope, element, attrs, ngModelCtrl) {
+          if(!ngModelCtrl) {
+            return;
+          }
+          ngModelCtrl.$parsers.push(function(val) {
+            var clean = val.replace( /[^a-zA-Z0-9@.!#$%&'*+-/=?^_`{|}~]+/g, '');
+            clean = clean.toLowerCase();
+            if (val !== clean) {
+              ngModelCtrl.$setViewValue(clean);
+              ngModelCtrl.$render();
+            }
+            return clean;
+          });
+        }
+    }
+})();
+
+(function() {
+    'use strict';
+
+    validOtp.$inject = ["$log"];
+    angular
+        .module('common')
+        .directive('validOtp', validOtp);
+
+    function validOtp($log) {
+        var validOtp = {
+            require: '?ngModel',
+            link: linkFunc
+        };
+
+        return validOtp;
+
+        function linkFunc(scope, element, attrs, ngModelCtrl) {
+          if(!ngModelCtrl) {
+            return;
+          }
+
+          ngModelCtrl.$parsers.push(function(val) {
+            var clean = (val > 999999)?(val.toString()).substring(0,6):val;
+            if (val !== clean) {
+              ngModelCtrl.$setViewValue(clean);
+              ngModelCtrl.$render();
+            }
+            return clean;
+          });
+        }
+    }
+})();
+
+(function() {
+  'use strict';
+
+  trackVideo.$inject = ["$window", "$log", "orientation"];
+  angular
+    .module('common')
+    .directive('trackVideo', trackVideo);
+
+  /* @ngInject */
+  function trackVideo($window, $log, orientation) {
+    var video = {
+      restrict: 'A',
+      link: linkFunc,
+    };
+
+    return video;
+
+    // full screen not working ; instead used css to immitate full screen effect ; check below
+    function toggleFullScreen() {
+      if (!document.fullscreenElement && // alternative standard method
+        !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) { // current working methods
+        if (document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen();
+        } else if (document.documentElement.msRequestFullscreen) {
+          document.documentElement.msRequestFullscreen();
+        } else if (document.documentElement.mozRequestFullScreen) {
+          document.documentElement.mozRequestFullScreen();
+        } else if (document.documentElement.webkitRequestFullscreen) {
+          document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        }
+      }
+    }
+
+    function linkFunc(scope, el, attr, ctrl) {
+      el.bind('playing', function() {
+        // toggleFullScreen();
+        el.addClass('fullscreen');
+        orientation.setLandscape();
+      });
+      el.bind('pause', function() {
+        // toggleFullScreen();
+        el.removeClass('fullscreen');
+        orientation.setPortrait();
+      });
+      el.bind('click',function (event) {
+        event.stopPropagation();
+      })
+    }
+  }
+
+})();
+
+(function () {
+  'use strict';
+
+    audio.$inject = ["$cordovaNativeAudio"];
+  angular
+    .module('common')
+    .factory('audio',audio)
+
+    function audio($cordovaNativeAudio) {
+      return {
+        play : function (sound) {
+          try{
+            $cordovaNativeAudio.play(sound);
+            void 0;
+          }
+          catch(error){
+            void 0;
+          }
+        }
+      };
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('common')
+        .factory('orientation', orientation);
+
+    orientation.$inject = ['$window','$log'];
+
+    /* @ngInject */
+    function orientation($window, $log) {
+        var orientation = {
+            setLandscape : setLandscape,
+            setPortrait : setPortrait
+        };
+
+        return orientation;
+
+        function setPortrait() {
+          try{
+            $window.screen.lockOrientation('portrait');
+          }
+          catch(e){
+            $log.debug(e);
+          }
+        }
+
+        function setLandscape() {
+          try{
+            $window.screen.lockOrientation('landscape');
+          }
+          catch(e){
+            $log.debug(e);
+          }
+        }
+    }
+})();
+
+(function(){
+  'use strict';
+
+  runConfig.$inject = ["$ionicPlatform", "$cordovaNativeAudio"];
+  angular
+    .module('common')
+    .run(runConfig);
+
+  function runConfig($ionicPlatform,$cordovaNativeAudio) {
+    $ionicPlatform.ready(function() {
+      try{
+        $cordovaNativeAudio.preloadSimple('water-drop', 'sound/water-drop.mp3');
+        $cordovaNativeAudio.preloadSimple('correct', 'sound/correct.mp3');
+        $cordovaNativeAudio.preloadSimple('wrong', 'sound/wrong.mp3');
+      }
+      catch(error){
+        void 0;
+      }
+    });
+  }
+
 })();
 
 (function () {
@@ -771,6 +1085,9 @@
       isAuthorised: function () {
         return localStorage.Authorization;
       },
+      hasProfile: function () {
+        return JSON.parse(localStorage.getItem('user_details')).profile;
+      },
       canSendOtp: function (max_otp_send_count) {
         var last_otp_date = localStorage.getItem('last_otp_date');
         var otp_sent_count = localStorage.getItem('otp_sent_count');
@@ -876,6 +1193,9 @@
         }, function (response) {
           failure(response);
         })
+      },
+      hasProfile: function(){
+        return JSON.parse(localStorage.getItem('user_details')).profile == null ? false : JSON.parse(localStorage.getItem('user_details')).profile;
       }
     }
   }
@@ -1004,314 +1324,6 @@
         }
       })
   }
-})();
-
-(function(){
-  var ROOT = 'templates';
-
-  angular
-    .module('common')
-    .constant('CONSTANT',{
-      'BACKEND_SERVICE_DOMAIN' : 'http://cc-test.zaya.in/',
-      // 'BACKEND_SERVICE_DOMAIN' : 'http://192.168.1.6:9000/',
-      'PATH' : {
-        'INTRO' : ROOT+'/intro',
-        'AUTH' : ROOT+'/auth',
-        'QUIZ' : ROOT+'/quiz',
-        'PROFILE' : ROOT+'/profile',
-        'USER' : ROOT+'/user',
-        'PLAYLIST' : ROOT+'/playlist',
-        'HOME' : ROOT+'/home',
-        'RESULT' : ROOT+'/result',
-        'SEARCH' : ROOT+'/search',
-        'GROUP' : ROOT+'/group',
-        'COMMON' : ROOT + '/common',
-        'MAP' : ROOT + '/map',
-        'CONTENT' : ROOT + '/content'
-      },
-      'VIEW' : '.view.html',
-      'CLIENTID' : {
-        'FACEBOOK' : '1159750564044149',
-        'GOOGLE' : '1011514043276-7q3kvn29jkegl2d1v7dtlbtipqqgo1rr.apps.googleusercontent.com',
-        'ELL' : '1e7aa89f-3f50-433a-90ca-e485a92bbda6'
-      },
-      'ASSETS' : {
-        'IMG' : {
-          'ICON' : 'img/icons'
-        }
-      }
-    })
-})();
-
-(function() {
-  angular
-    .module('zaya')
-    .directive('widgetCarousel', widgetCarousel)
-    .directive('carouselItem', carouselItem);
-
-  function widgetCarousel() {
-    var carousel = {}
-    carousel.restrict = 'A';
-    carousel.link = function(scope) {
-      scope.initCarousel = function(element) {
-        // provide any default options you want
-        var defaultOptions = {};
-        var customOptions = scope.$eval($(element).attr('carousel-options'));
-        // combine the two options objects
-        for (var key in customOptions) {
-          if (customOptions.hasOwnProperty(key)) {
-            defaultOptions[key] = customOptions[key];
-          }
-        }
-        // init carousel
-        $(element).owlCarousel(defaultOptions);
-      };
-    }
-    return carousel;
-  }
-
-  function carouselItem() {
-    var carouselItem = {};
-    carouselItem.restrict = 'A';
-    carouselItem.transclude = false;
-    carouselItem.link = function(scope, element) {
-      // wait for the last item in the ng-repeat then call init
-      if (scope.$last) {
-        scope.initCarousel(element.parent());
-      }
-    }
-    return carouselItem;
-  }
-})();
-
-(function(){
-	widgetError.$inject = ["CONSTANT"];
-	angular
-		.module('common')
-		.directive('widgetError',widgetError)
-
-	function widgetError(CONSTANT){
-		var error = {};
-		error.restrict = 'E';
-		error.templateUrl = CONSTANT.PATH.COMMON + '/common.error' + CONSTANT.VIEW;
-		error.controller = ['$rootScope','$scope',function ($rootScope,$scope) {
-			$scope.error = function(){
-				return $rootScope.error;
-			}
-		}]
-		return error;
-	}
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('common')
-        .directive('validInput', validInput);
-
-    function validInput() {
-        var validInput = {
-            require: '?ngModel',
-            link: linkFunc
-        };
-
-        return validInput;
-
-        function linkFunc(scope, element, attrs, ngModelCtrl) {
-          if(!ngModelCtrl) {
-            return;
-          }
-          ngModelCtrl.$parsers.push(function(val) {
-            var clean = val.replace( /[^a-zA-Z0-9@.!#$%&'*+-/=?^_`{|}~]+/g, '');
-            clean = clean.toLowerCase();
-            if (val !== clean) {
-              ngModelCtrl.$setViewValue(clean);
-              ngModelCtrl.$render();
-            }
-            return clean;
-          });
-        }
-    }
-})();
-
-(function() {
-    'use strict';
-
-    validOtp.$inject = ["$log"];
-    angular
-        .module('common')
-        .directive('validOtp', validOtp);
-
-    function validOtp($log) {
-        var validOtp = {
-            require: '?ngModel',
-            link: linkFunc
-        };
-
-        return validOtp;
-
-        function linkFunc(scope, element, attrs, ngModelCtrl) {
-          if(!ngModelCtrl) {
-            return;
-          }
-
-          ngModelCtrl.$parsers.push(function(val) {
-            var clean = (val > 999999)?(val.toString()).substring(0,6):val;
-            if (val !== clean) {
-              ngModelCtrl.$setViewValue(clean);
-              ngModelCtrl.$render();
-            }
-            return clean;
-          });
-        }
-    }
-})();
-
-(function() {
-  'use strict';
-
-  trackVideo.$inject = ["$window", "$log", "orientation"];
-  angular
-    .module('common')
-    .directive('trackVideo', trackVideo);
-
-  /* @ngInject */
-  function trackVideo($window, $log, orientation) {
-    var video = {
-      restrict: 'A',
-      link: linkFunc,
-    };
-
-    return video;
-
-    // full screen not working ; instead used css to immitate full screen effect ; check below
-    function toggleFullScreen() {
-      if (!document.fullscreenElement && // alternative standard method
-        !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) { // current working methods
-        if (document.documentElement.requestFullscreen) {
-          document.documentElement.requestFullscreen();
-        } else if (document.documentElement.msRequestFullscreen) {
-          document.documentElement.msRequestFullscreen();
-        } else if (document.documentElement.mozRequestFullScreen) {
-          document.documentElement.mozRequestFullScreen();
-        } else if (document.documentElement.webkitRequestFullscreen) {
-          document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-        }
-      } else {
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        } else if (document.msExitFullscreen) {
-          document.msExitFullscreen();
-        } else if (document.mozCancelFullScreen) {
-          document.mozCancelFullScreen();
-        } else if (document.webkitExitFullscreen) {
-          document.webkitExitFullscreen();
-        }
-      }
-    }
-
-    function linkFunc(scope, el, attr, ctrl) {
-      el.bind('playing', function() {
-        // toggleFullScreen();
-        el.addClass('fullscreen');
-        orientation.setLandscape();
-      });
-      el.bind('pause', function() {
-        // toggleFullScreen();
-        el.removeClass('fullscreen');
-        orientation.setPortrait();
-      });
-      el.bind('click',function (event) {
-        event.stopPropagation();
-      })
-    }
-  }
-
-})();
-
-(function () {
-  'use strict';
-
-    audio.$inject = ["$cordovaNativeAudio"];
-  angular
-    .module('common')
-    .factory('audio',audio)
-
-    function audio($cordovaNativeAudio) {
-      return {
-        play : function (sound) {
-          try{
-            $cordovaNativeAudio.play(sound);
-            void 0;
-          }
-          catch(error){
-            void 0;
-          }
-        }
-      };
-    }
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('common')
-        .factory('orientation', orientation);
-
-    orientation.$inject = ['$window','$log'];
-
-    /* @ngInject */
-    function orientation($window, $log) {
-        var orientation = {
-            setLandscape : setLandscape,
-            setPortrait : setPortrait
-        };
-
-        return orientation;
-
-        function setPortrait() {
-          try{
-            $window.screen.lockOrientation('portrait');
-          }
-          catch(e){
-            $log.debug(e);
-          }
-        }
-
-        function setLandscape() {
-          try{
-            $window.screen.lockOrientation('landscape');
-          }
-          catch(e){
-            $log.debug(e);
-          }
-        }
-    }
-})();
-
-(function(){
-  'use strict';
-
-  runConfig.$inject = ["$ionicPlatform", "$cordovaNativeAudio"];
-  angular
-    .module('common')
-    .run(runConfig);
-
-  function runConfig($ionicPlatform,$cordovaNativeAudio) {
-    $ionicPlatform.ready(function() {
-      try{
-        $cordovaNativeAudio.preloadSimple('water-drop', 'sound/water-drop.mp3');
-        $cordovaNativeAudio.preloadSimple('correct', 'sound/correct.mp3');
-        $cordovaNativeAudio.preloadSimple('wrong', 'sound/wrong.mp3');
-      }
-      catch(error){
-        void 0;
-      }
-    });
-  }
-
 })();
 
 (function() {
@@ -1647,7 +1659,10 @@ window.createGame = function(scope, lessons, injector, log) {
         profileCtrl.updateProfile = updateProfile;
         profileCtrl.logout = logout;
         profileCtrl.calcAge = calcAge;
-
+        profileCtrl.closeKeyboard = closeKeyboard;
+        profileCtrl.validatePersonaliseForm = validatePersonaliseForm;
+        profileCtrl.showError = showError;
+        profileCtrl.convertDate = convertDate;
         profileCtrl.tabIndex = 0;
         profileCtrl.tab = [
           {
@@ -1666,10 +1681,20 @@ window.createGame = function(scope, lessons, injector, log) {
           var birthday = +new Date(dateString);
           return ~~((Date.now() - birthday) / (31557600000));
         }
+        function convertDate(date) {
+          function pad(s) { return (s < 10) ? '0' + s : s; }
+          var d = new Date(date);
+          $log.debug([d.getFullYear(),pad(d.getMonth()+1),pad(d.getDate())  ].join('-'))
+          return [d.getFullYear(),pad(d.getMonth()+1),pad(d.getDate())  ].join('-');
+        }
 
         function createProfile (userdata) {
           Rest.all('profiles').post(userdata).then(function(response){
-            $state.go('map.navigate',{});
+              Auth.getUser(function(){
+                $state.go('map.navigate',{});
+              },function(){
+                profileCtrl.showError('Error', 'Error making profile');
+              })
           },function(error){
             $ionicPopup.alert({
               title : _.chain(error.data).keys().first(),
@@ -1688,6 +1713,43 @@ window.createGame = function(scope, lessons, injector, log) {
           },function () {
             // body...
           })
+        }
+        function showError(title, msg) {
+          $log.debug(title, msg);
+          $ionicPopup.alert({
+            title: title,
+            template: msg
+          });
+        }
+
+        function validatePersonaliseForm(formData) {
+          $log.debug(formData);
+          if (!formData.first_name.$viewValue) {
+            profileCtrl.showError("Child's name", "Please enter child's name");
+            return false;
+          }
+          if (!formData.dob.$viewValue) {
+            profileCtrl.showError("DOB", "Please select a DOB");
+            return false;
+          }
+          if (!formData.gender.$viewValue) {
+            profileCtrl.showError("Gender", "Please select a gender");
+            return false;
+          }
+          if (!formData.gender.$viewValue) {
+            profileCtrl.showError("Grade", "Please select a grade");
+            return false;
+          }
+          return true;
+        }
+        function closeKeyboard() {
+          try{
+            cordova.plugins.Keyboard.close();
+          }
+          catch(e){
+            $log.debug(e);
+          }
+          return true;
         }
 
     }
@@ -1732,6 +1794,11 @@ window.createGame = function(scope, lessons, injector, log) {
 
     //audio
     quizCtrl.playAudio = playAudio;
+
+
+    //question layouts
+    quizCtrl.GRID_TYPE = ['audio_to_text','text_to_pic','pic_to_text','audio_to_pic'];
+    quizCtrl.LIST_TYPE = ['audio_to_text_longer','text_to_pic_longer','pic_to_text_longer','audio_to_pic_longer'];
 
     $scope.modal = {};
 
@@ -1913,7 +1980,7 @@ window.createGame = function(scope, lessons, injector, log) {
       angular.element("#audioplayer")[0].pause();
       if(key)
       {
-      angular.element("#audioSource")[0].src = 'sound/hello.mp3';
+      angular.element("#audioSource")[0].src = key;
       }
       else{
         angular.element("#audioSource")[0].src = 'sound/water-drop.mp3';
@@ -1939,6 +2006,172 @@ window.createGame = function(scope, lessons, injector, log) {
       $scope.modal.hide();
     }
 
+  }
+})();
+
+(function () {
+  'use strict';
+  angular
+    .module('zaya-auth')
+    .factory('Auth', Auth)
+  Auth.$inject = ['Restangular', 'CONSTANT', '$cookies', '$log', '$window'];
+  function Auth(Restangular, CONSTANT, $cookies, $log, $window) {
+    var rest_auth = Restangular.withConfig(function (RestangularConfigurer) {
+      RestangularConfigurer.setBaseUrl(CONSTANT.BACKEND_SERVICE_DOMAIN + '/rest-auth');
+      RestangularConfigurer.setRequestSuffix('/');
+      RestangularConfigurer.setDefaultHeaders({
+        'Content-Type': 'application/x-www-form-urlencoded',
+      });
+    });
+    return {
+      login: function (url, user_credentials, success, failure) {
+        rest_auth.all(url).post($.param(user_credentials)).then(function (response) {
+          localStorage.setItem('Authorization', response.key || response.token);
+          success(response);
+        }, function (response) {
+          failure(response);
+        })
+      },
+      logout: function (success, failure) {
+        rest_auth.all('logout').post().then(function (response) {
+          if(localStorage.getItem('authProvider') == 'google')
+          {
+            window.plugins.googleplus.logout();
+          }
+          if(localStorage.getItem('authProvider') == 'facebook')
+          {
+            facebookConnectPlugin.logout();
+          }
+          localStorage.removeItem('Authorization');
+          localStorage.removeItem('user_details');
+          localStorage.removeItem('authProvider');
+          success();
+        }, function (error) {
+          failure();
+        })
+      },
+      signup: function (user_credentials, success, failure) {
+        rest_auth.all('registration').post($.param(user_credentials), success, failure).then(function (response) {
+          localStorage.setItem('Authorization', response.key);
+          success(response);
+        }, function (response) {
+          failure(response);
+        })
+      },
+      reset: function (email, atype, success, failure) {
+        type == 'password' && rest_auth.all('password').all('reset').post(email);
+        type == 'username' && rest_auth.all('username').all('reset').post(email);
+      },
+      isAuthorised: function () {
+        return localStorage.Authorization;
+      },
+      canSendOtp: function (max_otp_send_count) {
+        var last_otp_date = localStorage.getItem('last_otp_date');
+        var otp_sent_count = localStorage.getItem('otp_sent_count');
+        if (last_otp_date && otp_sent_count) {
+          if (this.dateCompare(new Date(), new Date((last_otp_date)))) {
+            localStorage.setItem('last_otp_date', new Date());
+            localStorage.setItem('otp_sent_count', 1);
+            return true;
+          } else {
+            if (otp_sent_count < max_otp_send_count) {
+              localStorage.setItem('last_otp_date', new Date());
+              localStorage.setItem('otp_sent_count', ++otp_sent_count);
+              return true;
+            } else {
+              return false;
+            }
+          }
+        }
+        else {
+          localStorage.setItem('last_otp_date', new Date());
+          localStorage.setItem('otp_sent_count', 1);
+          return true;
+        }
+      },
+      dateCompare: function (date_1, date_2) { // Checks if date_1 > date_2
+        var month_1 = date_1.getMonth();
+        var month_2 = date_2.getMonth();
+        var day_1 = date_1.getDate();
+        var day_2 = date_2.getDate();
+        if (month_1 > month_2) {
+          return true;
+        } else if (month_1 == month_2) {
+          return day_1 > day_2;
+        } else return false;
+      },
+      verifyOtp: function (verification_credentials, success, failure) {
+        $log.debug(JSON.stringify(verification_credentials));
+        rest_auth.all('sms-verification').post($.param(verification_credentials), success, failure).then(function (response) {
+          success(response);
+        }, function (response) {
+          failure(response);
+        })
+      },
+      resetPassword: function (reset_password_credentials, success, failure) {
+        rest_auth.all('password/reset').post($.param(reset_password_credentials), success, failure).then(function (response) {
+          success(response);
+        }, function (response) {
+          failure(response);
+        })
+      },
+      resendOTP: function (success, failure) {
+        rest_auth.all('resend-sms-verification').post('', success, failure).then(function (response) {
+          success(response);
+        }, function (response) {
+          failure(response);
+        })
+      },
+      getUser: function (success, failure) {
+        Restangular.oneUrl('user_details', CONSTANT.BACKEND_SERVICE_DOMAIN + 'rest-auth/user/').get().then(function (response) {
+          localStorage.setItem('user_details', JSON.stringify(response));
+          success(response);
+        }, function (response) {
+          failure(response);
+        });
+      },
+      isVerified: function () {
+        var user_details = JSON.parse(localStorage.getItem('user_details'));
+        if (user_details) {
+          return user_details.is_verified;
+        }
+        else {
+          return false;
+        }
+      },
+      getOTPFromSMS: function (message,success,failure) {
+        var string = message.data.body;
+        if(message.data.address == '+12023353814')
+        {
+          var e_position = string.indexOf("Enter");
+          var o_position = string.indexOf("on");
+          success(string.substring(e_position + 6, o_position - 1));
+        }
+        else{
+          failure();
+        }
+
+      },
+      setAuthProvider: function (authProvider){
+        localStorage.setItem('authProvider',authProvider);
+        return authProvider;
+      },
+      verifyOtpResetPassword: function(otp,success,failure){
+        rest_auth.all('password/reset/sms-verification').post($.param(otp), success, failure).then(function (response) {
+          success(response);
+        }, function (response) {
+          failure(response);
+        })
+      },
+      changePassword: function (credentials, success, failure) {
+        rest_auth.all('password/change').post($.param(credentials), success, failure).then(function (response) {
+          localStorage.removeItem('Authorization');
+          success(response);
+        }, function (response) {
+          failure(response);
+        })
+      }
+    }
   }
 })();
 

@@ -162,6 +162,9 @@
         }, function (response) {
           failure(response);
         })
+      },
+      hasProfile: function(){
+        return JSON.parse(localStorage.getItem('user_details')).profile == null ? false : JSON.parse(localStorage.getItem('user_details')).profile;
       }
     }
   }
