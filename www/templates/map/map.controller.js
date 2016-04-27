@@ -58,6 +58,9 @@
       }
     }
 
+    $scope.$on('logout', function() {
+      $state.go('user.main.settings',{});
+    })
     $scope.$on('openNode', function(event, node) {
       $scope.openModal();
       $log.debug('lesson id : ',node.id);

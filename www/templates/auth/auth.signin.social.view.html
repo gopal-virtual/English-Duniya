@@ -1,25 +1,40 @@
-<ion-view>
+<ion-view class="bg-pink">
   <ion-content>
+    <div class="row padding-20">
+      <div class="col text-center"><img src="img/icons/practice_active.png" alt="" height="100px" width="auto"></div>
+    </div>
     <div class="row">
-      <form name="authForm" class="col padding-30" ng-submit="authCtrl.closeKeyboard() && authCtrl.validCredential(authForm) && authCtrl.login('login',{'useridentity':authCtrl.user.useridentity, 'password':authCtrl.user.password})">
-        <h4 class="text-right"><a ui-sref="auth.signup">NEW USER</a></h4>
-        <h4 class="text-right"><a ui-sref="auth.forgot">FORGOT PASSWORD?</a></h4>
-        <div class="list" ng-init="show_password = false">
-          <label for="" class="item item-input item-floating-label"><span class="input-label">PHONE NO. / EMAIL</span>
-            <input valid-input ng-trim="false" tabindex="1" name="useridentity" type="text" placeholder="PHONE NO. / EMAIL" ng-model="authCtrl.user.useridentity">
-          </label>
-          <label for="" class="item item-input item-floating-label"><span class="input-Nlabel">PASSWORD</span>
-            <input tabindex="2" onPaste="return false" autocomplete="off" name="password" type="{{show_password==false?'password':'text'}}" placeholder="PASSWORD" ng-model="authCtrl.user.password">
-          </label>
-          <ion-list>
-            <ion-checkbox ng-model="show_password">Show Password</ion-checkbox>
-          </ion-list>
+      <div class="col text-center">
+        <h3>Sign In</h3>
+      </div>
+    </div>
+    <div class="row padding-x-20">
+      <div class="col">
+        <button tabindex="4" type="button" ng-click="authCtrl.googleSignIn()" class="button button-block button-assertive icon-left ion-social-googleplus">Google+</button>
+      </div>
+      <div class="col">
+        <button tabindex="5" type="button" ng-click="authCtrl.facebookSignIn()" class="button button-block button-positive icon-left ion-social-facebook">Facebook</button>
+      </div>
+    </div>
+    <div class="row padding-x-20">
+      <form name="authForm" class="col" ng-submit="authCtrl.closeKeyboard() && authCtrl.validCredential(authForm) && authCtrl.login('login',{'useridentity':authCtrl.user.useridentity, 'password':authCtrl.user.password})">
+        <div class="input-group">
+          <input class="input-control input-default input-medium " valid-input ng-trim="false" tabindex="1" name="useridentity" type="text" placeholder="Phone / Email" ng-model="authCtrl.user.useridentity">
         </div>
-        <button tabindex="3" type="submit" class="button button-positive button-block">SIGN IN</button>
-        <br><hr><br>
-        <button tabindex="4" type="button" ng-click="authCtrl.googleSignIn()" class="button button-assertive button-block icon-left ion-social-google">SIGNIN WITH GMAIL</button>
-        <button tabindex="5" type="button" ng-click="authCtrl.facebookSignIn()" class="button button-positive button-block icon-left ion-social-facebook">SIGNIN WITH FACEBOOK</button>
+        <div class="input-group">
+          <input class="input-control input-default input-medium input-group-item" tabindex="2" onPaste="return false" autocomplete="off" name="password" type="{{show_password==false?'password':'text'}}" placeholder="Password" ng-model="authCtrl.user.password">
+          <button type="button" class="input-group-item input-group-addon input-group-addon-light" ng-click="show_password=!show_password">
+            <i class="icon" ng-class="{'ion-ios-glasses-outline' : !show_password, 'ion-ios-glasses' : show_password}"></i>
+          </button>
+        </div>
+        <button tabindex="3" type="submit" class="button button-green button-block">LOG IN</button>
       </form>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col text-center">
+        <h4>No account yet? <a ui-sref="auth.signup">Sign up</a></h4>
+      </div>
     </div>
   </ion-content>
 </ion-view>
