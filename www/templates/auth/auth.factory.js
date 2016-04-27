@@ -78,6 +78,7 @@
           return true;
         }
       },
+      // remove util funstion from auth factory
       dateCompare: function (date_1, date_2) { // Checks if date_1 > date_2
         var month_1 = date_1.getMonth();
         var month_2 = date_2.getMonth();

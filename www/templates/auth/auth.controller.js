@@ -16,13 +16,15 @@
     authCtrl.login = login;
     authCtrl.logout = logout;
     authCtrl.signup = signup;
+    authCtrl.openModal = openModal;
+    authCtrl.closeModal = closeModal;
     authCtrl.rootScope = $rootScope;
     authCtrl.validCredential = validCredential;
     authCtrl.showError = showError;
     authCtrl.showAlert = showAlert;
     authCtrl.verifyOtpValidations = verifyOtpValidations;
     authCtrl.verifyOtp = verifyOtp;
-    authCtrl.getToken = getToken;
+    // authCtrl.getToken = getToken;
     authCtrl.passwordResetRequest = passwordResetRequest;
     authCtrl.validateForgotPasswordForm = validateForgotPasswordForm;
     authCtrl.resendOTP = resendOTP;
@@ -45,44 +47,46 @@
 
 
     function recoverAccount() {
-        $scope.openModal('recover');
+        authCtrl.openModal('recover');
     }
-    $scope.openModal = function(modal) {
+    function openModal (modal) {
       if(modal == 'error'){
-        $scope.errorModal.show();
+        authCtrl.errorModal.show();
       }
       else if(modal == 'recover'){
-        $scope.recoveryModal.show();
+        authCtrl.recoveryModal.show();
       }
       else {
         return false;
       }
 
     }
-    $scope.closeModal = function(modal) {
+    function closeModal (modal) {
+      var q = $q.defer();
+
       if(modal == 'error'){
-        $scope.errorModal.hide();
+        q.resolve(authCtrl.errorModal.hide());
       }
       else if(modal == 'recover'){
-        $scope.recoveryModal.hide();
+        q.resolve(authCtrl.recoveryModal.hide());
       }
       else{
-        return false;
+        q.reject(false);
       }
+
+      return q.promise;
     }
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.AUTH + '/auth.forgot.social' + CONSTANT.VIEW, {
       scope: $scope,
       animation: 'slide-in-up',
-      // hardwareBackButtonClose : false
     }).then(function(recoveryModal) {
-      $scope.recoveryModal = recoveryModal;
+      authCtrl.recoveryModal = recoveryModal;
     });
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.AUTH + '/auth.error.modal' + CONSTANT.VIEW, {
       scope: $scope,
       animation: 'slide-in-up',
-      // hardwareBackButtonClose : false
     }).then(function(errorModal) {
-      $scope.errorModal = errorModal;
+      authCtrl.errorModal = errorModal;
     });
 
 
@@ -106,17 +110,14 @@
         Auth.getUser(function (success) {
           Auth.setAuthProvider(url);
           $ionicLoading.hide();
-          $state.go('user.personalise.social', {});
+          $state.go('map.navigate', {});
         }, function () {
           $ionicLoading.hide();
           authCtrl.showError("Error Login", "Please enter a valid mobile no./Email ID and password");
         });
       }, function (response) {
         $ionicLoading.hide();
-
-        //authCtrl.showError(_.chain(response.data).keys().first(), response.data[_.chain(response.data).keys().first()].toString());
-        if(response.data.details)
-        {
+        if(response.data.details){
           authCtrl.showError("Error Login", response.data.details);
         }
         else{
@@ -124,31 +125,6 @@
         }
         authCtrl.audio.play('wrong');
       })
-    }
-
-    function logout(path) {
-      Auth.logout(function () {
-        $state.go(path, {})
-      }, function () {
-        // body...
-      })
-    }
-
-    function getToken(webservice) {
-      if (webservice == 'facebook') {
-        $cordovaOauth.facebook(CONSTANT.CLIENTID.FACEBOOK, ["email"]).then(function (result) {
-          authCtrl.login('facebook', {"access_token": result.access_token});
-        }, function (error) {
-          authCtrl.showError("Error", error);
-        });
-      }
-      if (webservice == 'google') {
-        $cordovaOauth.google(CONSTANT.CLIENTID.GOOGLE, ["email"]).then(function (result) {
-          authCtrl.login('google', {"access_token": result.access_token});
-        }, function (error) {
-          authCtrl.showError("Error", error);
-        });
-      }
     }
 
     function signup(user_credentials) {
@@ -176,6 +152,32 @@
         authCtrl.signUpDisabled = false;
       })
     }
+
+    function logout(path) {
+      Auth.logout(function () {
+        $state.go(path, {})
+      }, function () {
+        // body...
+      })
+    }
+
+    // web social login / will be used in web apps
+    // function getToken(webservice) {
+    //   if (webservice == 'facebook') {
+    //     $cordovaOauth.facebook(CONSTANT.CLIENTID.FACEBOOK, ["email"]).then(function (result) {
+    //       authCtrl.login('facebook', {"access_token": result.access_token});
+    //     }, function (error) {
+    //       authCtrl.showError("Error", error);
+    //     });
+    //   }
+    //   if (webservice == 'google') {
+    //     $cordovaOauth.google(CONSTANT.CLIENTID.GOOGLE, ["email"]).then(function (result) {
+    //       authCtrl.login('google', {"access_token": result.access_token});
+    //     }, function (error) {
+    //       authCtrl.showError("Error", error);
+    //     });
+    //   }
+    // }
 
     function cleanCredentials(user_credentials) {
       if (validEmail(user_credentials.useridentity)) {
@@ -224,18 +226,18 @@
       $log.debug(title, msg);
       authCtrl.error.title = title;
       authCtrl.error.desc = msg;
-      $scope.openModal('error');
+      authCtrl.openModal('error');
       // $ionicPopup.alert({
       //   title: title,
       //   template: msg
       // });
     }
 
-    function showAlert(title, msg, success) {
+    function showAlert(title, msg) {
       $log.debug(title, msg);
       authCtrl.error.title = title;
       authCtrl.error.desc = msg;
-      $scope.openModal('error', success);
+      authCtrl.openModal('error');
       // $ionicPopup.alert({
       //   title: title,
       //   template: msg
@@ -275,7 +277,7 @@
       Auth.resetPassword(user_credentials, function (success) {
         if (user_credentials.hasOwnProperty('phone_number')) {
           localStorage.setItem('Authorization', success.token);
-          $scope.closeModal('recover');
+          authCtrl.closeModal('recover');
           $state.go('auth.forgot_verify_otp');
         }
         else {
@@ -492,10 +494,9 @@
     function changePassword(credentials){
       credentials.secret_key = '@#2i0-jn9($un1w8utqc2dms!$#5+5';
       Auth.changePassword(credentials,function(success){
-        authCtrl.showAlert('Success','You have reset your password').then(function(success){
-          $log.debug(success);
-          $state.go('auth.signin', {});
-        });
+        authCtrl.showAlert('Success','You have reset your password');
+        $log.debug(success);
+        $state.go('auth.signin', {});
       },function(error){
         $log.debug(error);
       })
