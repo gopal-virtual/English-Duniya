@@ -3,6 +3,18 @@
     <!--<div class="row">-->
       <!--<div class="col col-33 col-offset-33"><img src="img/avatar.png" alt="" class="full-image"></div>-->
     <!--</div>-->
+    <div class="row center">
+      <div style="font:20px;color:white" class="col">
+        Your Score : {{quizCtrl.quizResult.marks}}
+      </div>
+    </div>
+    <div class="row center">
+      <div class="col" ng-repeat="i in quizCtrl.range(quizCtrl.quizResult.stars)">
+        <div>
+          <img height="100px" width="100px" src='img/icons/star.png'>
+        </div>
+      </div>
+    </div>
     <div class="row">
       <div class="col">
         <!--<div class="list card card-dark-dark text-white padding">-->
@@ -16,13 +28,12 @@
           <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatem, debitis.</p>
         </div> -->
         <div class="list card">
-          <div ng-repeat="(key,value) in quizCtrl.report.attempts">
+          <div ng-repeat="(key,value) in quizCtrl.quizResult.analysis">
             <div class="item item-divider">
-              <strong>Question #{{key}}</strong>
+              <strong>Question #{{$index + 1}}</strong>
             </div>
             <div class="item item-text-wrap">
-              attempts
-              <span class="badge badge-assertive">{{value.length}}</span>
+              {{value}}
             </div>
           </div>
         </div>

@@ -16,7 +16,7 @@
         <div ng-if="!question.node.title && !question.node.type.content.image"><img height="100" width="100" ng-src="img/icons/sound.png"> </div>
       </div>
       </div>
-      <ion-content class="has-header has-question-subheader has-footer padding-x-20 center">
+      <ion-content class="has-header has-question-subheader has-quiz-subfooter has-footer padding-x-20 center">
       <!-- SCQ -->
       <div ng-if="question.node.type.type=='choicequestion' && !question.node.type.content.is_multiple" ng-class="{'selected':option.key==question.attempted,'card-list':quizCtrl.LIST_TYPE.indexOf(question.node.type.content.layout_type) > 0,'card-grid':quizCtrl.GRID_TYPE.indexOf(question.node.type.content.layout_type) > 0}" class="card center card-pale card-radius" ng-repeat="option in question.node.type.content.choices">
         <label    ng-click="quizCtrl.playAudio(option.audio)" >
@@ -50,7 +50,7 @@
     <audio id="audioplayer">
       <source id="audioSource" type="audio/mpeg">
     </audio>
-  <div class="bar bar-subfooter auto-height bg-green" style="height:72px;">
+  <div class="bar bar-subfooter quiz-subfooter auto-height bg-green">
     <div class="row">
       <div class="col">
         <button class="button button-full bg-brand-yellow" ng-click="quizCtrl.attemptAndNext()" ng-disabled="!quizCtrl.canSubmit()">
@@ -60,7 +60,7 @@
     </div>
   </div>
 
-  <div class="bar bar-footer bg-neutral-dark">
+  <div class="bar bar-footer progress-bar-footer bg-neutral-dark">
     <div class="row progress-bar">
       <div ng-click="quizCtrl.slideTo($index)" style="height: 10px" class="col" ng-repeat="question in quizCtrl.quiz.objects" ng-class="{'attempted': quizCtrl.isAttempted(question.node.id),'skipped' : question.isVisited == true && !quizCtrl.isAttempted(question.node.id) && quizCtrl.getCurrentIndex() != $index,'current' :  quizCtrl.getCurrentIndex() == $index, 'unattempted' : question.isVisited == false}">
       </div>

@@ -15,7 +15,9 @@
         template : '<ion-nav-view name="state-quiz"></ion-nav-view>',
         resolve: {
             quiz: ['$stateParams', 'Rest', function($stateParams, Rest) {
+
                 return Rest.one('accounts',CONSTANT.CLIENTID.ELL).one('assessments',$stateParams.id).get().then(function(quiz){
+
                   return quiz.plain();
                 });
             }]
@@ -42,7 +44,8 @@
       .state('quiz.summary',{
         url : '/summary',
         params: {
-          report: null
+          report: null,
+          quiz : null
         },
         views : {
           'state-quiz' : {

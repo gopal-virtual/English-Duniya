@@ -1,0 +1,19 @@
+.quiz-subfooter{
+height: 72px !important;
+}
+.progress-bar > div{
+  margin: 1px;
+  box-sizing: border-box;
+}
+.progress-bar > .current{
+ border: 1px solid green;
+}
+.progress-bar > .attempted{
+ background-color: $brand-green;
+}
+.progress-bar > .unattempted{
+ background-color: $brand-yellow;
+}
+.progress-bar > .skipped{
+ background-color: $assertive;
+}
