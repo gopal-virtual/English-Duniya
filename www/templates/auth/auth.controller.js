@@ -60,7 +60,7 @@
         Auth.getUser(function (success) {
           Auth.setAuthProvider(url);
           $ionicLoading.hide();
-          $state.go('user.personalise.social', {});
+          $state.go('map.navigate', {});
         }, function () {
           $ionicLoading.hide();
           authCtrl.showError("Error Login", "Please enter a valid mobile no./Email ID and password");

@@ -54,9 +54,6 @@
       isAuthorised: function () {
         return localStorage.Authorization;
       },
-      hasProfile: function () {
-        return JSON.parse(localStorage.getItem('user_details')).profile;
-      },
       canSendOtp: function (max_otp_send_count) {
         var last_otp_date = localStorage.getItem('last_otp_date');
         var otp_sent_count = localStorage.getItem('otp_sent_count');
@@ -164,7 +161,11 @@
         })
       },
       hasProfile: function(){
-        return JSON.parse(localStorage.getItem('user_details')).profile == null ? false : JSON.parse(localStorage.getItem('user_details')).profile;
+        return JSON.parse(localStorage.getItem('user_details')).profile == null ? false : true;
+      }
+      ,
+      getProfileId: function(){
+        return JSON.parse(localStorage.getItem('user_details')).profile;
       }
     }
   }

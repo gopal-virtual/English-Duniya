@@ -45,3 +45,26 @@
   width: 40%;
 }
 
+.card-grid > .option-image{
+  width:100px;
+  height:100px;
+}
+ .question-image{
+  height: 100px;
+}
+
+ .progress-bar > div{
+   margin: 1px;
+ }
+.progress-bar > .current{
+  border: 1px solid green;
+}
+.progress-bar > .attempted{
+  background-color: $brand-green;
+}
+.progress-bar > .unattempted{
+  background-color: $brand-yellow;
+}
+.progress-bar > .skipped{
+  background-color: $assertive;
+}
