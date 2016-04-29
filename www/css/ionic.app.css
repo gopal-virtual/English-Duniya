@@ -10318,6 +10318,9 @@ p * {
   position: absolute;
   bottom: 44px !important; }
 
+.has-quiz-subfooter {
+  bottom: 118px !important; }
+
 .icon-large {
   font-size: 15em; }
 
@@ -10492,21 +10495,6 @@ p * {
 
 .question-image {
   height: 100px; }
-
-.progress-bar > div {
-  margin: 1px; }
-
-.progress-bar > .current {
-  border: 1px solid green; }
-
-.progress-bar > .attempted {
-  background-color: #39B89A; }
-
-.progress-bar > .unattempted {
-  background-color: #FFBC1D; }
-
-.progress-bar > .skipped {
-  background-color: #ef473a; }
 
 .bar-transparent {
   background-color: transparent;
@@ -10743,3 +10731,22 @@ p * {
 
 .modal-dark {
   background-color: rgba(0, 0, 0, 0.7); }
+
+.quiz-subfooter {
+  height: 72px !important; }
+
+.progress-bar > div {
+  margin: 1px;
+  box-sizing: border-box; }
+
+.progress-bar > .current {
+  border: 1px solid green; }
+
+.progress-bar > .attempted {
+  background-color: #39B89A; }
+
+.progress-bar > .unattempted {
+  background-color: #FFBC1D; }
+
+.progress-bar > .skipped {
+  background-color: #ef473a; }

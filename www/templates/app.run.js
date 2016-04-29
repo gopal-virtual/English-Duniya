@@ -51,7 +51,7 @@
       // block access to quiz summary page if there is no quiz data
       if (toState.name == 'quiz.summary' && !toParams.report) {
         $log.debug("Quiz summary page cannot be accessed : No quiz data present");
-        event.preventDefault();
+        // event.preventDefault();
       }
 
       if(toState.name == 'auth.verify.phone'){
