@@ -1,0 +1,13 @@
+<ion-modal-view class="modal-light">
+  <ion-content>
+    <div class="row">
+      <div class="col padding-20">
+        <div class="card card-pink padding-20">
+          <h2 >{{authCtrl.error.title}}</h2>
+          <p class="font-md">{{authCtrl.error.desc}}</p>
+          <button type="submit" class="button button-green button-block" ng-click="authCtrl.closeModal('error')">Ok</button>
+        </div>
+      </div>
+    </div>
+  </ion-content>
+</ion-modal-view>

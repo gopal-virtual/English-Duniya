@@ -1,11 +1,11 @@
 <ion-view class="bg-pink">
   <ion-content>
-    <div class="row padding-20">
-      <div class="col text-center"><img src="img/icons/practice_active.png" alt="" height="100px" width="auto"></div>
+    <div class="row padding-10">
+      <div class="col text-center"><img src="img/icons/practice_active.png" alt="" height="60px" width="auto"></div>
     </div>
     <div class="row">
       <div class="col text-center">
-        <h3>Register</h3>
+        <h3 class="color-dark-light">Register</h3>
       </div>
     </div>
     <div class="row padding-x-20">
@@ -18,27 +18,25 @@
     </div>
     <div class="row">
       <form autocomplete="on" novalidate name="authForm" class="col padding-x-20" ng-submit="authCtrl.closeKeyboard() && authCtrl.validCredential(authForm) && authCtrl.signup({'useridentity':authCtrl.user.useridentity,'password1':authCtrl.user.password,'password2':authCtrl.user.password,'email':authCtrl.user.email})" ng-init="show_password = false">
-        <div class="form-group">
-          <input class="input-control input-default input-block" tabindex="1" name="useridentity" type="text" placeholder="Phone" ng-model="authCtrl.user.useridentity">
+        <div class="input-group">
+          <input class="input-control input-default input-block font-md" tabindex="1" name="useridentity" type="text" placeholder="Phone" ng-model="authCtrl.user.useridentity">
         </div>
-        <div class="form-group">
-          <input class="input-control input-default input-block" tabindex="2" ng-trim="false" valid-input name="email" type="text" placeholder="Email" ng-model="authCtrl.user.email" autocomplete="on">
+        <div class="input-group">
+          <input class="input-control input-default input-block font-md" tabindex="2" ng-trim="false" valid-input name="email" type="text" placeholder="Email" ng-model="authCtrl.user.email" autocomplete="on">
         </div>
-        <div class="form-group">
-          <input class="input-control input-default input-block" tabindex="3" onPaste="return false" autocomplete="off" name="password"  type="{{show_password==false?'password':'text'}}" placeholder="Password" ng-model="authCtrl.user.password">
+        <div class="input-group">
+          <input class="input-control input-group-item input-default input-block font-md" tabindex="3" onPaste="return false" autocomplete="off" name="password"  type="{{show_password==false?'password':'text'}}" placeholder="Password" ng-model="authCtrl.user.password">
+          <button type="button" class="input-group-item input-group-addon input-group-addon-light font-md" ng-click="show_password=!show_password">
+            <i class="icon" ng-class="{'ion-ios-glasses-outline' : !show_password, 'ion-ios-glasses' : show_password}"></i>
+          </button>
         </div>
-        <!-- <div class="list" >
-          <ion-list>
-            <ion-checkbox ng-model="show_password">Show Password</ion-checkbox>
-          </ion-list>
-        </div> -->
         <button ng-disabled="authCtrl.signUpDisabled" tabindex="4" class="button button-block button-green">SIGN UP</button>
         </form>
     </div>
     <hr>
     <div class="row">
       <div class="col text-center">
-        <h4>Already a member? <a ui-sref="auth.signin">Sign In</a></h4>
+        <h4><span class="color-dark-light">Already a member? </span><a ui-sref="auth.signin">Sign In</a></h4>
       </div>
     </div>
   </ion-content>
