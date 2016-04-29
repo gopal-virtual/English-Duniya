@@ -1,19 +1,24 @@
 .quiz-subfooter{
-height: 72px !important;
+  height: $quiz-subfooter-height !important;
+  bottom : $bar-footer-height;
 }
 .progress-bar > div{
   margin: 1px;
   box-sizing: border-box;
 }
-.progress-bar > .current{
- border: 1px solid green;
+.progress-bar > .current,
+.progress-bar > .attempted.current,
+.progress-bar > .unattempted.current,
+.progress-bar > .skipped.current
+{
+ background-color: $calm;
 }
 .progress-bar > .attempted{
- background-color: $brand-green;
+ background-color: darken($brand-yellow,20%);
 }
 .progress-bar > .unattempted{
- background-color: $brand-yellow;
+ background-color: darken($neutral,20%);
 }
 .progress-bar > .skipped{
- background-color: $assertive;
+ background-color: $brand-yellow;
 }

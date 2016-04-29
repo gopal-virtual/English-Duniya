@@ -9774,6 +9774,10 @@ input[type=radio].hide {
   background-color: #FCF3D8;
   color: #c6980f; }
 
+.input-group > .input-group-addon-transparent {
+  background-color: transparent;
+  color: rgba(128, 128, 128, 0); }
+
 .input-group > .input-group-item:first-child {
   border-radius: 10px 0 0 10px !important;
   border-right: 0; }
@@ -9851,6 +9855,9 @@ input[type=radio].hide {
 .bg-pink {
   background-color: #FCF3D8; }
 
+.bg-transparent {
+  background-color: transparent; }
+
 .bg-light-light {
   background-color: white; }
 
@@ -9895,6 +9902,9 @@ input[type=radio].hide {
 
 .bg-pink-light {
   background-color: white; }
+
+.bg-transparent-light {
+  background-color: rgba(26, 26, 26, 0); }
 
 .bg-light-dark {
   background-color: #e6e6e6; }
@@ -9941,6 +9951,9 @@ input[type=radio].hide {
 .bg-pink-dark {
   background-color: #f8e4a9; }
 
+.bg-transparent-dark {
+  background-color: transparent; }
+
 .color-light {
   color: #fff; }
 
@@ -9985,6 +9998,9 @@ input[type=radio].hide {
 
 .color-pink {
   color: #FCF3D8; }
+
+.color-transparent {
+  color: transparent; }
 
 .color-light-light {
   color: white; }
@@ -10031,6 +10047,9 @@ input[type=radio].hide {
 .color-pink-light {
   color: white; }
 
+.color-transparent-light {
+  color: rgba(26, 26, 26, 0); }
+
 .color-light-dark {
   color: #e6e6e6; }
 
@@ -10076,80 +10095,83 @@ input[type=radio].hide {
 .color-pink-dark {
   color: #f8e4a9; }
 
+.color-transparent-dark {
+  color: transparent; }
+
 .list-inset {
   background-color: transparent; }
 
 .padding-10 {
-  padding: 10px; }
+  padding: 10px !important; }
 
 .padding-y-10 {
-  padding: 10px 0; }
+  padding: 10px 0 !important; }
 
 .padding-x-10 {
-  padding: 0 10px; }
+  padding: 0 10px !important; }
 
 .padding-20 {
-  padding: 20px; }
+  padding: 20px !important; }
 
 .padding-y-20 {
-  padding: 20px 0; }
+  padding: 20px 0 !important; }
 
 .padding-x-20 {
-  padding: 0 20px; }
+  padding: 0 20px !important; }
 
 .padding-30 {
-  padding: 30px; }
+  padding: 30px !important; }
 
 .padding-y-30 {
-  padding: 30px 0; }
+  padding: 30px 0 !important; }
 
 .padding-x-30 {
-  padding: 0 30px; }
+  padding: 0 30px !important; }
 
 .padding-40 {
-  padding: 40px; }
+  padding: 40px !important; }
 
 .padding-y-40 {
-  padding: 40px 0; }
+  padding: 40px 0 !important; }
 
 .padding-x-40 {
-  padding: 0 40px; }
+  padding: 0 40px !important; }
 
 .margin-10 {
-  margin: 10px; }
+  margin: 10px !important; }
 
 .margin-y-10 {
-  margin: 10px 0; }
+  margin: 10px 0 !important; }
 
 .margin-x-10 {
-  margin: 0 10px; }
+  margin: 0 10px !important; }
 
 .margin-20 {
-  margin: 20px; }
+  margin: 20px !important; }
 
 .margin-y-20 {
-  margin: 20px 0; }
+  margin: 20px 0 !important; }
 
 .margin-x-20 {
-  margin: 0 20px; }
+  margin: 0 20px !important; }
 
 .margin-30 {
-  margin: 30px; }
+  margin: 30px !important; }
 
 .margin-y-30 {
-  margin: 30px 0; }
+  margin: 30px 0 !important; }
 
 .margin-x-30 {
-  margin: 0 30px; }
+  margin: 0 30px !important; }
 
 .margin-40 {
-  margin: 40px; }
+  margin: 40px !important; }
 
 .margin-y-40 {
-  margin: 40px 0; }
+  margin: 40px 0 !important; }
 
 .margin-x-40 {
-  margin: 0 40px; }
+  margin: 0 40px !important; }
 
 .selected.wrong-attempt,
 .card-brand.wrong-attempt,
@@ -10208,10 +10230,10 @@ video::-webkit-media-controls-mute-button {
 
 .question-subheader {
   height: 190px !important;
-  top: 43px !important; }
+  top: 44px !important; }
 
 .has-question-subheader {
-  top: 260px !important; }
+  top: 234px !important; }
 
 .bar-footer-large {
   height: 60px; }
@@ -10319,7 +10341,7 @@ p * {
   bottom: 44px !important; }
 
 .has-quiz-subfooter {
-  bottom: 118px !important; }
+  bottom: 44px !important; }
 
 .icon-large {
   font-size: 15em; }
@@ -10390,6 +10412,9 @@ p * {
 .card-pink {
   background-color: #FCF3D8; }
 
+.card-transparent {
+  background-color: transparent; }
+
 .card-light-light {
   background-color: white; }
 
@@ -10434,6 +10459,9 @@ p * {
 
 .card-pink-light {
   background-color: white; }
+
+.card-transparent-light {
+  background-color: rgba(26, 26, 26, 0); }
 
 .card-light-dark {
   background-color: #e6e6e6; }
@@ -10480,6 +10508,9 @@ p * {
 .card-pink-dark {
   background-color: #f8e4a9; }
 
+.card-transparent-dark {
+  background-color: transparent; }
+
 .card-list {
   display: inline-block;
   width: 100%;
@@ -10515,6 +10546,9 @@ p * {
 
 .no-border {
   border: 0px !important; }
+
+ion-content.overflow-visible {
+  overflow: visible; }
 
 .animation-delay {
   -webkit-animation-delay: 1s; }
@@ -10637,6 +10671,9 @@ p * {
 .cover-pink {
   background-color: #FCF3D8; }
 
+.cover-transparent {
+  background-color: transparent; }
+
 .cover > .toolbox {
   text-align: right;
   font-size: 1.5em;
@@ -10726,6 +10763,10 @@ p * {
   background-color: #FCF3D8;
   color: #c6980f; }
 
+.alert-transparent {
+  background-color: transparent;
+  color: rgba(128, 128, 128, 0); }
+
 .modal-light {
   background-color: rgba(255, 255, 255, 0.9); }
 
@@ -10733,20 +10774,24 @@ p * {
   background-color: rgba(0, 0, 0, 0.7); }
 
 .quiz-subfooter {
-  height: 72px !important; }
+  height: 85px !important;
+  bottom: 44px; }
 
 .progress-bar > div {
   margin: 1px;
   box-sizing: border-box; }
 
-.progress-bar > .current {
-  border: 1px solid green; }
+.progress-bar > .current,
+.progress-bar > .attempted.current,
+.progress-bar > .unattempted.current,
+.progress-bar > .skipped.current {
+  background-color: #11c1f3; }
 
 .progress-bar > .attempted {
-  background-color: #39B89A; }
+  background-color: #b68000; }
 
 .progress-bar > .unattempted {
-  background-color: #FFBC1D; }
+  background-color: #9fc6d1; }
 
 .progress-bar > .skipped {
-  background-color: #ef473a; }
+  background-color: #FFBC1D; }
