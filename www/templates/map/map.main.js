@@ -17,7 +17,8 @@ window.createGame = function(scope, lessons, injector, log) {
       this.load.image('particle2', 'img/assets/particle2.png');
       this.load.image('particle3', 'img/assets/particle3.png');
 
-      // this.load.spritesheet('cactus_animation', 'img/assets_v0.0.2/cactus_sprite.png', 15, 17, 8);
+      this.load.spritesheet('fire_animation', 'img/assets/fire_animation.png', 322,452, 20);
+      this.load.spritesheet('cactus_animation', 'img/assets/cactus_animation.png', 30,52, 5);
       this.load.image('node', 'img/icons/node.png');
       // debug value
       this.game.time.advancedTiming = true;
@@ -95,8 +96,6 @@ window.createGame = function(scope, lessons, injector, log) {
         // cactus_animation.animations.play('walk', 10, true);
       }
 
-
-
       // placing lesson node
       // 1. lesson node count
       // 2. Node should follow a particular path
@@ -145,6 +144,16 @@ window.createGame = function(scope, lessons, injector, log) {
       logout.scale.setTo(0.3,0.3);
       logout.fixedToCamera = true;
       logout.cameraOffset.setTo(this.game.width - 70, 20);
+
+
+      var fire_animation = this.game.add.sprite(20,20, 'fire_animation');
+      fire_animation.scale.setTo(0.5,0.5);
+      var light = fire_animation.animations.add('light');
+      fire_animation.animations.play('light', 20, true);
+      // cactus
+      var cactus_animation = this.game.add.sprite(20,20, 'cactus_animation');
+      var wind = cactus_animation.animations.add('wind');
+      cactus_animation.animations.play('wind', 5, true);
 
       this.init();
       this.game.kineticScrolling.start();
