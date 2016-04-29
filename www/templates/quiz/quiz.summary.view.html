@@ -9,9 +9,15 @@
       </div>
     </div>
     <div class="row center">
-      <div class="col" ng-repeat="i in quizCtrl.range(quizCtrl.quizResult.stars)">
+      {{quizCtrl.quizResult.stars}}
+      <div class="col" ng-repeat="i in quizCtrl.utilities.range(quizCtrl.quizResult.stars) track by $index">
         <div>
           <img height="100px" width="100px" src='img/icons/star.png'>
+        </div>
+      </div>
+      <div class="col" ng-if="quizCtrl.quizResult.stars == 0">
+        <div>
+          <h1>Try again</h1>
         </div>
       </div>
     </div>

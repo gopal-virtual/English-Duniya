@@ -1362,6 +1362,22 @@
     }
 })();
 
+(function () {
+  'use strict';
+
+  angular
+    .module('common')
+    .factory('Utilities',utilities)
+
+    function utilities() {
+      return {
+        range : function (num) {
+          return new Array(num);
+        }
+      };
+    }
+})();
+
 (function(){
   'use strict';
 
@@ -1909,9 +1925,9 @@ window.createGame = function(scope, lessons, injector, log) {
     .module('zaya-quiz')
     .controller('QuizController', QuizController)
 
-  QuizController.$inject = ['quiz','$stateParams', '$state', '$scope', 'audio','$log','$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate'] ;
+  QuizController.$inject = ['quiz','$stateParams', '$state', '$scope', 'audio','$log','$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities'] ;
 
-  function QuizController(quiz, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate) {
+  function QuizController(quiz, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities) {
     var quizCtrl = this;
 
     quizCtrl.quiz = quiz;
@@ -1939,7 +1955,7 @@ window.createGame = function(scope, lessons, injector, log) {
     quizCtrl.calculateResult = calculateResult;
     quizCtrl.MARKS_MULTIPIER = 10;
     quizCtrl.quizResult = {};
-    quizCtrl.range = range;
+    quizCtrl.utilities = Utilities;
     //audio
     quizCtrl.playAudio = playAudio;
 
@@ -1957,6 +1973,8 @@ window.createGame = function(scope, lessons, injector, log) {
 
     $scope.modal = {};
 
+
+
     function init (quiz) {
 
       // init report object
@@ -1969,9 +1987,6 @@ window.createGame = function(scope, lessons, injector, log) {
         quizCtrl.quizResult = quizCtrl.calculateResult(quizCtrl.report,quizCtrl.quiz);
       }
       else if($state.current.name=="quiz.questions"){
-        $log.debug(quizCtrl.quiz);
-        $log.debug(JSON.stringify(quizCtrl.quiz));
-
         quizCtrl.report = {};
         quizCtrl.report.quiz_id =  quiz.node.id;
         quizCtrl.report.attempts = {};
@@ -2227,9 +2242,13 @@ window.createGame = function(scope, lessons, injector, log) {
             if(percent_correct >= 95){
               result.stars = 3;
             }
-            result.stars = 2;
+            else{
+              result.stars = 2;
+            }
           }
-          result.stars = 1;
+          else{
+            result.stars = 1;
+          }
         }
       return result;
     }
