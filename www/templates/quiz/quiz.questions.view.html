@@ -55,7 +55,7 @@
   <div class="bar bar-subfooter quiz-subfooter bg-transparent">
     <div class="row">
       <div class="col padding-x-20">
-        <button class="button button-block bg-brand-yellow padding-10" ng-click="quizCtrl.canSubmit() && quizCtrl.attemptAndNext()">
+        <button class="button button-block bg-brand-yellow padding-10" ng-click="quizCtrl.canSubmit()?quizCtrl.attemptAndNext():quizCtrl.audio.play('wrong')">
         {{ quizCtrl.currentIndex < quizCtrl.quiz.objects.length - 1 ?  'NEXT' : 'SUBMIT'}}
         </button>
       </div>

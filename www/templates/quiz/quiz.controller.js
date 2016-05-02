@@ -296,7 +296,7 @@
         quizCtrl.quiz.objects[quizCtrl.currentIndex].node.id,
         quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted
       );
-
+      quizCtrl.audio.play('water-drop');
       if (quizCtrl.currentIndex < quizCtrl.quiz.objects.length - 1) {
         $ionicSlideBoxDelegate.next();
       } else {
