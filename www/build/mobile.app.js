@@ -181,16 +181,6 @@
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
     //$http.defaults.headers.common['Access-Control-Request-Headers'] = 'accept, auth-token, content-type, xsrfcookiename';
     $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
-      // alternative to phaser destroy() ; phaser destroy doesn't remove canvas element
-      if (toState.name != 'user.main.playlist') {
-        try {
-          var canvas = document.querySelector('#map_canvas');
-          canvas.parentNode.removeChild(canvas);
-          $log.debug("Canvas Removed");
-        }
-        catch (e) {
-        }
-      }
 
       //if not authenticated, redirect to login page
       if (!Auth.isAuthorised() && toState.name != 'auth.signin' && toState.name != 'auth.signup' && toState.name != 'auth.forgot') {
@@ -1482,9 +1472,9 @@
     .module('zaya-map')
     .controller('mapController', mapController);
 
-  mapController.$inject = ['$scope','$rootScope', '$log', '$ionicModal', '$state', 'lessons', 'Rest', 'CONSTANT', '$sce', 'orientation'];
+  mapController.$inject = ['$scope','$rootScope', '$log', '$ionicModal', '$state', 'lessons', 'Rest', 'CONSTANT', '$sce', 'orientation','$ionicLoading','$timeout'];
 
-  function mapController($scope, $rootScope, $log, $ionicModal, $state, lessons, Rest, CONSTANT, $sce, orientation) {
+  function mapController($scope, $rootScope, $log, $ionicModal, $state, lessons, Rest, CONSTANT, $sce, orientation, $ionicLoading, $timeout) {
     var mapCtrl = this;
     mapCtrl.lessons = lessons;
     mapCtrl.getLesson = getLesson;
@@ -1496,16 +1486,17 @@
     // mapCtrl.openModal = openModal;
     // mapCtrl.closeModal = closeModal;
 
-    orientation.setPortrait();
-    function playResource (resource, event) {
+    function playResource (resource) {
       if(mapCtrl.resourceType(resource) != 'video'){
         $scope.closeModal();
+        $ionicLoading.show({noBackdrop: false, hideOnStateChange: true});
         $state.go('quiz.questions',{id : resource.node.id});
+        // $timeout(function(){
+        //   $scope.closeModal();
+        // })
+        // .then(function(){
+        // })
       }
-      else{
-        event.stopPropagation();
-      }
-
     }
     function resourceType (resource){
       if(resource.node.content_type_name == 'assessment'){
@@ -1539,18 +1530,18 @@
       $state.go('user.main.settings',{});
     })
     $scope.$on('openNode', function(event, node) {
-      $scope.openModal();
-      $log.debug('lesson id : ',node.id);
-      $log.debug(mapCtrl.getLesson(node.id));
+      mapCtrl.getLesson(node.id);
     })
     $scope.$on('$destroy', function() {
       $scope.modal.remove();
     });
     $scope.openModal = function() {
       $scope.modal.show();
+      return true;
     }
     $scope.closeModal = function() {
       $scope.modal.hide();
+      return true;
     }
 
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal' + CONSTANT.VIEW, {
@@ -1566,12 +1557,21 @@
     }
 
     function getLesson(id) {
+      $ionicLoading.show({noBackdrop: false, hideOnStateChange: true});
       Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('lessons', id).get().then(function(response) {
-        $log.debug('lesson details : ',response.plain());
+        $ionicLoading.hide();
+        $scope.openModal();
         mapCtrl.selectedNode = response.plain();
-        $log.debug('selected node : ', mapCtrl.selectedNode);
+        localStorage.setItem('lesson', JSON.stringify(mapCtrl.selectedNode));
       })
     }
+
+    if(localStorage.lesson){
+      // mapCtrl.selectedNode = JSON.parse(localStorage.lesson);
+      // $scope.openModal();
+      mapCtrl.getLesson(JSON.parse(localStorage.lesson).node.id);
+    }
+
   }
 })();
 
@@ -1802,6 +1802,9 @@ window.createGame = function(scope, lessons, injector, log) {
   // phaser destroy doesn't remove canvas element --> removed manually in app run
   scope.$on('$destroy', function() {
     game.destroy(); // Clean up the game when we leave this scope
+    var canvas = document.querySelector('#map_canvas');
+    canvas.parentNode.removeChild(canvas);
+    log.debug('game destoryed');
   });
 };
 
@@ -2329,6 +2332,7 @@ window.createGame = function(scope, lessons, injector, log) {
       })
       .state('quiz.questions',{
         url : '/questions',
+        nativeTransitions: null,
         views : {
           'state-quiz' : {
             templateUrl : CONSTANT.PATH.QUIZ+'/quiz.questions'+CONSTANT.VIEW,

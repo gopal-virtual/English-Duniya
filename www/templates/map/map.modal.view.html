@@ -7,7 +7,7 @@
           ng-src="{{mapCtrl.getIcon(resource)}}"
           width="40%" height="auto" alt="resource icon"
           ng-hide="mapCtrl.resourceType(resource) == 'video' && selected"
-          ng-click="selected=true;mapCtrl.playResource(resource,$event);"/>
+          ng-click="selected=true;$event.stopPropagation();mapCtrl.playResource(resource);"/>
           <video track-video
           ng-if="mapCtrl.resourceType(resource) == 'video' && selected"
           ng-src="{{mapCtrl.getSrc(resource.node.type.path)}}" width="100%" height="auto" controls="false"></video>
