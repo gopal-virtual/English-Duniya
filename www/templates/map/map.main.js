@@ -187,7 +187,7 @@ window.createGame = function(scope, lessons, injector, log) {
     },
 
     render : function(){
-      this.game.debug.text("fps : "+game.time.fps || '--', 2, 14, "#00ff00");
+      // this.game.debug.text("fps : "+game.time.fps || '--', 2, 14, "#00ff00");
     }
   }
 
