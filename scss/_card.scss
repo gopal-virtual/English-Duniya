@@ -1,5 +1,6 @@
 .card{
   border-radius: $border-radius;
+  box-sizing: content-box;
 }
 .list.card
 {
@@ -45,7 +46,7 @@
   width: 40%;
 }
 
-.card-grid > .option-image{
+ .option-image{
   width:100px;
   height:100px;
 }

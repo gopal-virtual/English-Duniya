@@ -94,4 +94,11 @@
       }
     });
   }
-})();
+}
+function handleOpenURL(url) {
+    setTimeout( function() {
+        var event = new CustomEvent('LaunchUrl', {detail: {'url': url}});
+        window.dispatchEvent(event);
+    }, 0);
+}
+)();

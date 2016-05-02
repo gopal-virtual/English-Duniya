@@ -25,7 +25,7 @@
           <div class="padding-10 font-md" ng-if="option.option">{{option.option}}</div>
           <div class="padding-10" ng-if="option.image"><img ng-src="{{option.image}}" class="option-image"></div>
           <div class="padding-10" ng-if="!option.option && !option.image">
-            <img  height="100" width="100" ng-src="img/icons/sound.png" >
+            <img  height="100" width="100" src="img/icons/sound.png" >
           </div>
         </label>
       </div>
@@ -45,7 +45,7 @@
         <!--<div ng-if="!option.option && !option.image.key"><img height="100" width="100" ng-src="img/speaker.png"> </div>-->
       <!--</label>-->
       <div class="card card-transparent padding-y-30"></div>
-      </ion-content>
+    </ion-content>
 
     </ion-slide>
     </ion-slide-box>
@@ -55,7 +55,7 @@
   <div class="bar bar-subfooter quiz-subfooter bg-transparent">
     <div class="row">
       <div class="col padding-x-20">
-        <button class="button button-block bg-brand-yellow padding-10" ng-click="quizCtrl.canSubmit() && quizCtrl.attemptAndNext()">
+        <button class="button button-block bg-brand-yellow padding-10" ng-click="quizCtrl.canSubmit()?quizCtrl.attemptAndNext():quizCtrl.audio.play('wrong')">
         {{ quizCtrl.currentIndex < quizCtrl.quiz.objects.length - 1 ?  'NEXT' : 'SUBMIT'}}
         </button>
       </div>
