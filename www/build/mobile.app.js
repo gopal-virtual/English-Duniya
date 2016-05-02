@@ -173,102 +173,6 @@
 
 (function () {
   'use strict';
-  runConfig.$inject = ["$ionicPlatform", "$rootScope", "$timeout", "$log", "$state", "$http", "$cookies", "Auth", "$window"];
-  angular
-    .module('zaya')
-    .run(runConfig);
-  function runConfig($ionicPlatform, $rootScope, $timeout, $log, $state, $http, $cookies, Auth, $window) {
-    $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
-    //$http.defaults.headers.common['Access-Control-Request-Headers'] = 'accept, auth-token, content-type, xsrfcookiename';
-    $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
-      // alternative to phaser destroy() ; phaser destroy doesn't remove canvas element
-      if (toState.name != 'user.main.playlist') {
-        try {
-          var canvas = document.querySelector('#map_canvas');
-          canvas.parentNode.removeChild(canvas);
-          $log.debug("Canvas Removed");
-        }
-        catch (e) {
-        }
-      }
-
-      //if not authenticated, redirect to login page
-      if (!Auth.isAuthorised() && toState.name != 'auth.signin' && toState.name != 'auth.signup' && toState.name != 'auth.forgot') {
-        $log.debug("You are not authorized");
-        event.preventDefault();
-        $state.go('auth.signin');
-      }
-
-      // if authenticated but not verified clear localstorage and redirect to login
-      if (Auth.isAuthorised() && !Auth.isVerified() && toState.name != 'auth.verify.phone' && toState.name != 'auth.forgot_verify_otp' && toState.name != 'auth.change_password' ) {
-        $log.debug("User account not verified");
-        event.preventDefault();
-        localStorage.clear();
-        $state.go('auth.signin');
-      }
-
-
-
-      //if authenticated and verified but has no profile, redirect to user.personalise.social
-      if (Auth.isAuthorised() && Auth.isVerified() && !Auth.hasProfile() && (toState.name != 'user.personalise.social')) {
-        $log.debug("Account authorised and verfified , profile not complete");
-        event.preventDefault();
-        $state.go('user.personalise.social');
-      }
-      //if authenticated, verified and has profile, redirect to userpage
-
-      if (Auth.isAuthorised() && Auth.isVerified() && Auth.hasProfile() && (toState.name == 'auth.signin' || toState.name == 'auth.signup' || toState.name == 'intro' || toState.name == 'auth.verify.phone' || toState.name == 'auth.forgot' || toState.name == 'auth.change_password' || toState.name == 'auth.forgot_verify_otp' || toState.name == 'user.personalise.social')) {
-        $log.debug("Account authorised , verififed and profile completed");
-        event.preventDefault();
-        $state.go('map.navigate');
-      }
-      // block access to quiz summary page if there is no quiz data
-      if (toState.name == 'quiz.summary' && !toParams.report) {
-        $log.debug("Quiz summary page cannot be accessed : No quiz data present");
-        event.preventDefault();
-        $state.go('map.navigate');
-      }
-
-      if(toState.name == 'auth.verify.phone'){
-        $log.debug("verify");
-        document.addEventListener('onSMSArrive',function(e){
-          $rootScope.$broadcast('smsArrived',{'message':e})
-        });
-
-      }
-
-    });
-    $ionicPlatform.ready(function () {
-
-      try{
-        SMS && SMS.startWatch(function () {
-          $log.debug('start watching sms');
-        }, function () {
-          $log.debug('Failed to start sms watching');
-        });
-      }
-      catch(error){
-        $log.debug(error);
-      }
-
-      if (window.cordova && window.cordova.plugins.Keyboard) {
-        // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-        // for form inputs)
-        cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-        // Don't remove this line unless you know what you are doing. It stops the viewport
-        // from snapping when text inputs are focused. Ionic handles this internally for
-        // a much nicer keyboard experience.
-        cordova.plugins.Keyboard.disableScroll(true);
-      }
-      if (window.StatusBar) {
-        StatusBar.styleDefault();
-      }
-    });
-  }
-})();
-
-(function () {
-  'use strict';
   angular
     .module('zaya-auth')
     .controller('authController', authController)
@@ -1459,117 +1363,6 @@
 })();
 
 (function() {
-    'use strict';
-
-    angular
-        .module('zaya-profile')
-        .controller('profileController', profileController);
-
-    profileController.$inject = ['CONSTANT','$state','Auth','Rest','$log','$ionicPopup'];
-
-    function profileController(CONSTANT, $state, Auth, Rest, $log, $ionicPopup) {
-        var profileCtrl = this;
-        profileCtrl.createProfile = createProfile;
-        profileCtrl.updateProfile = updateProfile;
-        profileCtrl.logout = logout;
-        profileCtrl.calcAge = calcAge;
-        profileCtrl.closeKeyboard = closeKeyboard;
-        profileCtrl.validatePersonaliseForm = validatePersonaliseForm;
-        profileCtrl.showError = showError;
-        profileCtrl.convertDate = convertDate;
-        profileCtrl.tabIndex = 0;
-        profileCtrl.tab = [
-          {
-            type : 'group',
-            path : CONSTANT.PATH.PROFILE + '/profile.groups' + CONSTANT.VIEW,
-            icon : 'ion-person-stalker'
-          },
-          {
-            type : 'badge',
-            path : CONSTANT.PATH.PROFILE + '/profile.badges' + CONSTANT.VIEW,
-            icon : 'ion-trophy'
-          }
-        ]
-
-        function calcAge(dateString) {
-          var birthday = +new Date(dateString);
-          return ~~((Date.now() - birthday) / (31557600000));
-        }
-        function convertDate(date) {
-          function pad(s) { return (s < 10) ? '0' + s : s; }
-          var d = new Date(date);
-          $log.debug([d.getFullYear(),pad(d.getMonth()+1),pad(d.getDate())  ].join('-'))
-          return [d.getFullYear(),pad(d.getMonth()+1),pad(d.getDate())  ].join('-');
-        }
-
-        function createProfile (userdata) {
-          Rest.all('profiles').post(userdata).then(function(response){
-              Auth.getUser(function(){
-                $state.go('map.navigate',{});
-              },function(){
-                profileCtrl.showError('Error', 'Error making profile');
-              })
-          },function(error){
-            $ionicPopup.alert({
-              title : _.chain(error.data).keys().first(),
-              template : error.data[_.chain(error.data).keys().first()].toString(),
-            });
-          })
-        }
-
-        function updateProfile(userdata) {
-          // body...
-        }
-
-        function logout() {
-          Auth.logout(function () {
-            $state.go('auth.signin',{})
-          },function () {
-            // body...
-          })
-        }
-        function showError(title, msg) {
-          $log.debug(title, msg);
-          $ionicPopup.alert({
-            title: title,
-            template: msg
-          });
-        }
-
-        function validatePersonaliseForm(formData) {
-          $log.debug(formData);
-          if (!formData.first_name.$viewValue) {
-            profileCtrl.showError("Child's name", "Please enter child's name");
-            return false;
-          }
-          if (!formData.dob.$viewValue) {
-            profileCtrl.showError("DOB", "Please select a DOB");
-            return false;
-          }
-          if (!formData.gender.$viewValue) {
-            profileCtrl.showError("Gender", "Please select a gender");
-            return false;
-          }
-          if (!formData.gender.$viewValue) {
-            profileCtrl.showError("Grade", "Please select a grade");
-            return false;
-          }
-          return true;
-        }
-        function closeKeyboard() {
-          try{
-            cordova.plugins.Keyboard.close();
-          }
-          catch(e){
-            $log.debug(e);
-          }
-          return true;
-        }
-
-    }
-})();
-
-(function() {
   'use strict';
 
   angular
@@ -1921,6 +1714,117 @@ window.createGame = function(scope, lessons, injector, log) {
 })();
 
 (function() {
+    'use strict';
+
+    angular
+        .module('zaya-profile')
+        .controller('profileController', profileController);
+
+    profileController.$inject = ['CONSTANT','$state','Auth','Rest','$log','$ionicPopup'];
+
+    function profileController(CONSTANT, $state, Auth, Rest, $log, $ionicPopup) {
+        var profileCtrl = this;
+        profileCtrl.createProfile = createProfile;
+        profileCtrl.updateProfile = updateProfile;
+        profileCtrl.logout = logout;
+        profileCtrl.calcAge = calcAge;
+        profileCtrl.closeKeyboard = closeKeyboard;
+        profileCtrl.validatePersonaliseForm = validatePersonaliseForm;
+        profileCtrl.showError = showError;
+        profileCtrl.convertDate = convertDate;
+        profileCtrl.tabIndex = 0;
+        profileCtrl.tab = [
+          {
+            type : 'group',
+            path : CONSTANT.PATH.PROFILE + '/profile.groups' + CONSTANT.VIEW,
+            icon : 'ion-person-stalker'
+          },
+          {
+            type : 'badge',
+            path : CONSTANT.PATH.PROFILE + '/profile.badges' + CONSTANT.VIEW,
+            icon : 'ion-trophy'
+          }
+        ]
+
+        function calcAge(dateString) {
+          var birthday = +new Date(dateString);
+          return ~~((Date.now() - birthday) / (31557600000));
+        }
+        function convertDate(date) {
+          function pad(s) { return (s < 10) ? '0' + s : s; }
+          var d = new Date(date);
+          $log.debug([d.getFullYear(),pad(d.getMonth()+1),pad(d.getDate())  ].join('-'))
+          return [d.getFullYear(),pad(d.getMonth()+1),pad(d.getDate())  ].join('-');
+        }
+
+        function createProfile (userdata) {
+          Rest.all('profiles').post(userdata).then(function(response){
+              Auth.getUser(function(){
+                $state.go('map.navigate',{});
+              },function(){
+                profileCtrl.showError('Error', 'Error making profile');
+              })
+          },function(error){
+            $ionicPopup.alert({
+              title : _.chain(error.data).keys().first(),
+              template : error.data[_.chain(error.data).keys().first()].toString(),
+            });
+          })
+        }
+
+        function updateProfile(userdata) {
+          // body...
+        }
+
+        function logout() {
+          Auth.logout(function () {
+            $state.go('auth.signin',{})
+          },function () {
+            // body...
+          })
+        }
+        function showError(title, msg) {
+          $log.debug(title, msg);
+          $ionicPopup.alert({
+            title: title,
+            template: msg
+          });
+        }
+
+        function validatePersonaliseForm(formData) {
+          $log.debug(formData);
+          if (!formData.first_name.$viewValue) {
+            profileCtrl.showError("Child's name", "Please enter child's name");
+            return false;
+          }
+          if (!formData.dob.$viewValue) {
+            profileCtrl.showError("DOB", "Please select a DOB");
+            return false;
+          }
+          if (!formData.gender.$viewValue) {
+            profileCtrl.showError("Gender", "Please select a gender");
+            return false;
+          }
+          if (!formData.gender.$viewValue) {
+            profileCtrl.showError("Grade", "Please select a grade");
+            return false;
+          }
+          return true;
+        }
+        function closeKeyboard() {
+          try{
+            cordova.plugins.Keyboard.close();
+          }
+          catch(e){
+            $log.debug(e);
+          }
+          return true;
+        }
+
+    }
+})();
+
+(function() {
   angular
     .module('zaya-quiz')
     .controller('QuizController', QuizController)
@@ -2218,7 +2122,7 @@ window.createGame = function(scope, lessons, injector, log) {
         quizCtrl.quiz.objects[quizCtrl.currentIndex].node.id,
         quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted
       );
-
+      quizCtrl.audio.play('water-drop');
       if (quizCtrl.currentIndex < quizCtrl.quiz.objects.length - 1) {
         $ionicSlideBoxDelegate.next();
       } else {

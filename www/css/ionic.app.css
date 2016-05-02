@@ -9736,7 +9736,7 @@ input[type=radio].hide {
 
 .input-group > .input-group-addon-energised {
   background-color: #ffc900;
-  color: black; }
+  color: white; }
 
 .input-group > .input-group-addon-assertive {
   background-color: #ef473a;
@@ -10520,7 +10520,7 @@ p * {
   display: inline-block;
   width: 40%; }
 
-.card-grid > .option-image {
+.option-image {
   width: 100px;
   height: 100px; }
 
@@ -10725,7 +10725,7 @@ ion-content.overflow-visible {
 
 .alert-energised {
   background-color: #ffc900;
-  color: black; }
+  color: white; }
 
 .alert-assertive {
   background-color: #ef473a;
