@@ -30,10 +30,10 @@
         </label>
       </div>
        <!-- MCQ options -->
-        <div ng-if="question.node.type.type=='choicequestion' && question.node.type.content.is_multiple" ng-class="{'selected':question.attempted[option.key],'card-list':quizCtrl.LIST_TYPE.indexOf(question.node.type.content.layout_type) > = 0,'card-grid':quizCtrl.GRID_TYPE.indexOf(question.node.type.content.layout_type) > = 0}" class="card center card-pale card-radius" ng-repeat="option in question.node.type.content.choices">
+        <div ng-if="question.node.type.type=='choicequestion' && question.node.type.content.is_multiple" ng-class="{'selected':question.attempted[option.key],'card-list':quizCtrl.LIST_TYPE.indexOf(question.node.type.content.layout_type) >= 0,'card-grid':quizCtrl.GRID_TYPE.indexOf(question.node.type.content.layout_type) >= 0}" class="card center card-pale card-radius" ng-repeat="option in question.node.type.content.choices">
           <label ng-click="quizCtrl.playAudio(option.audio)" >
             <input class="hide" type="checkbox" ng-model="question.attempted[$index+1]" ng-value="option.key" >
-            <div class="padding-10" ng-if="option.option">{{option.option}}</div>
+            <div class="padding-10 font-md" ng-if="option.option">{{option.option}}</div>
             <div class="padding-10" ng-if="option.image"><img ng-src="{{option.image}}" class="option-image"></div>
             <div class="padding-10" ng-if="!option.option && !option.image"><img height="100" width="100" ng-src="img/icons/sound.png"> </div>
           </label>
