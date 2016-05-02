@@ -239,7 +239,20 @@
 
     });
     $ionicPlatform.ready(function () {
-
+      // detect app activity
+      document.addEventListener("pause", function(){
+        $log.debug("paused");
+        try{
+          var video = document.querySelector('video');
+          if(!video.paused){
+            video.pause();
+          }
+        }
+        catch(e){
+          $log.debug(e);
+        }
+      }, false);
+      // sms watch
       try{
         SMS && SMS.startWatch(function () {
           $log.debug('start watching sms');
