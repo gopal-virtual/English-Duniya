@@ -1,5 +1,6 @@
 .card{
   border-radius: $border-radius;
+  box-sizing: content-box;
 }
 .list.card
 {
