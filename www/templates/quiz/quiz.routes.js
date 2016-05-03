@@ -34,6 +34,7 @@
       })
       .state('quiz.questions',{
         url : '/questions',
+        nativeTransitions: null,
         views : {
           'state-quiz' : {
             templateUrl : CONSTANT.PATH.QUIZ+'/quiz.questions'+CONSTANT.VIEW,

@@ -43,11 +43,15 @@
     function linkFunc(scope, el, attr, ctrl) {
       el.bind('playing', function() {
         // toggleFullScreen();
+        document.querySelector("ion-modal-view").classList.remove('modal-dark');
+        document.querySelector("ion-modal-view").classList.add('modal-black');
         el.addClass('fullscreen');
         orientation.setLandscape();
       });
       el.bind('pause', function() {
         // toggleFullScreen();
+        document.querySelector("ion-modal-view").classList.remove('modal-black');
+        document.querySelector("ion-modal-view").classList.add('modal-dark');
         el.removeClass('fullscreen');
         orientation.setPortrait();
       });

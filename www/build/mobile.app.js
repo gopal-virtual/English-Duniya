@@ -173,6 +173,108 @@
 
 (function () {
   'use strict';
+<<<<<<< HEAD
+  runConfig.$inject = ["$ionicPlatform", "$rootScope", "$timeout", "$log", "$state", "$http", "$cookies", "Auth", "$window"];
+  angular
+    .module('zaya')
+    .run(runConfig);
+  function runConfig($ionicPlatform, $rootScope, $timeout, $log, $state, $http, $cookies, Auth, $window) {
+    $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
+    //$http.defaults.headers.common['Access-Control-Request-Headers'] = 'accept, auth-token, content-type, xsrfcookiename';
+    $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
+
+      //if not authenticated, redirect to login page
+      if (!Auth.isAuthorised() && toState.name != 'auth.signin' && toState.name != 'auth.signup' && toState.name != 'auth.forgot') {
+        $log.debug("You are not authorized");
+        event.preventDefault();
+        $state.go('auth.signin');
+      }
+
+      // if authenticated but not verified clear localstorage and redirect to login
+      if (Auth.isAuthorised() && !Auth.isVerified() && toState.name != 'auth.verify.phone' && toState.name != 'auth.forgot_verify_otp' && toState.name != 'auth.change_password' ) {
+        $log.debug("User account not verified");
+        event.preventDefault();
+        localStorage.clear();
+        $state.go('auth.signin');
+      }
+
+
+
+      //if authenticated and verified but has no profile, redirect to user.personalise.social
+      if (Auth.isAuthorised() && Auth.isVerified() && !Auth.hasProfile() && (toState.name != 'user.personalise.social')) {
+        $log.debug("Account authorised and verfified , profile not complete");
+        event.preventDefault();
+        $state.go('user.personalise.social');
+      }
+      //if authenticated, verified and has profile, redirect to userpage
+
+      if (Auth.isAuthorised() && Auth.isVerified() && Auth.hasProfile() && (toState.name == 'auth.signin' || toState.name == 'auth.signup' || toState.name == 'intro' || toState.name == 'auth.verify.phone' || toState.name == 'auth.forgot' || toState.name == 'auth.change_password' || toState.name == 'auth.forgot_verify_otp' || toState.name == 'user.personalise.social')) {
+        $log.debug("Account authorised , verififed and profile completed");
+        event.preventDefault();
+        $state.go('map.navigate');
+      }
+      // block access to quiz summary page if there is no quiz data
+      if (toState.name == 'quiz.summary' && !toParams.report) {
+        $log.debug("Quiz summary page cannot be accessed : No quiz data present");
+        event.preventDefault();
+        $state.go('map.navigate');
+      }
+
+      if(toState.name == 'auth.verify.phone'){
+        $log.debug("verify");
+        document.addEventListener('onSMSArrive',function(e){
+          $rootScope.$broadcast('smsArrived',{'message':e})
+        });
+
+      }
+
+    });
+    $ionicPlatform.ready(function () {
+      // detect app activity
+      document.addEventListener("pause", function(){
+        $log.debug("paused");
+        try{
+          var video = document.querySelector('video');
+          if(!video.paused){
+            video.pause();
+          }
+        }
+        catch(e){
+          $log.debug(e);
+        }
+      }, false);
+      // sms watch
+      try{
+        SMS && SMS.startWatch(function () {
+          $log.debug('start watching sms');
+        }, function () {
+          $log.debug('Failed to start sms watching');
+        });
+      }
+      catch(error){
+        $log.debug(error);
+      }
+
+      if (window.cordova && window.cordova.plugins.Keyboard) {
+        // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
+        // for form inputs)
+        cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+        // Don't remove this line unless you know what you are doing. It stops the viewport
+        // from snapping when text inputs are focused. Ionic handles this internally for
+        // a much nicer keyboard experience.
+        cordova.plugins.Keyboard.disableScroll(true);
+      }
+      if (window.StatusBar) {
+        StatusBar.styleDefault();
+      }
+    });
+  }
+})();
+
+(function () {
+  'use strict';
+=======
+>>>>>>> 0b30997c79984b19bba660de654331c4c0d34280
   angular
     .module('zaya-auth')
     .controller('authController', authController)
@@ -1189,11 +1291,15 @@
     function linkFunc(scope, el, attr, ctrl) {
       el.bind('playing', function() {
         // toggleFullScreen();
+        document.querySelector("ion-modal-view").classList.remove('modal-dark');
+        document.querySelector("ion-modal-view").classList.add('modal-black');
         el.addClass('fullscreen');
         orientation.setLandscape();
       });
       el.bind('pause', function() {
         // toggleFullScreen();
+        document.querySelector("ion-modal-view").classList.remove('modal-black');
+        document.querySelector("ion-modal-view").classList.add('modal-dark');
         el.removeClass('fullscreen');
         orientation.setPortrait();
       });
@@ -1369,9 +1475,9 @@
     .module('zaya-map')
     .controller('mapController', mapController);
 
-  mapController.$inject = ['$scope','$rootScope', '$log', '$ionicModal', '$state', 'lessons', 'Rest', 'CONSTANT', '$sce', 'orientation'];
+  mapController.$inject = ['$scope','$rootScope', '$log', '$ionicModal', '$state', 'lessons', 'Rest', 'CONSTANT', '$sce', 'orientation','$ionicLoading','$timeout'];
 
-  function mapController($scope, $rootScope, $log, $ionicModal, $state, lessons, Rest, CONSTANT, $sce, orientation) {
+  function mapController($scope, $rootScope, $log, $ionicModal, $state, lessons, Rest, CONSTANT, $sce, orientation, $ionicLoading, $timeout) {
     var mapCtrl = this;
     mapCtrl.lessons = lessons;
     mapCtrl.getLesson = getLesson;
@@ -1383,16 +1489,17 @@
     // mapCtrl.openModal = openModal;
     // mapCtrl.closeModal = closeModal;
 
-    orientation.setPortrait();
-    function playResource (resource, event) {
+    function playResource (resource) {
       if(mapCtrl.resourceType(resource) != 'video'){
         $scope.closeModal();
+        $ionicLoading.show({noBackdrop: false, hideOnStateChange: true});
         $state.go('quiz.questions',{id : resource.node.id});
+        // $timeout(function(){
+        //   $scope.closeModal();
+        // })
+        // .then(function(){
+        // })
       }
-      else{
-        event.stopPropagation();
-      }
-
     }
     function resourceType (resource){
       if(resource.node.content_type_name == 'assessment'){
@@ -1426,18 +1533,18 @@
       $state.go('user.main.settings',{});
     })
     $scope.$on('openNode', function(event, node) {
-      $scope.openModal();
-      $log.debug('lesson id : ',node.id);
-      $log.debug(mapCtrl.getLesson(node.id));
+      mapCtrl.getLesson(node.id);
     })
     $scope.$on('$destroy', function() {
       $scope.modal.remove();
     });
     $scope.openModal = function() {
       $scope.modal.show();
+      return true;
     }
     $scope.closeModal = function() {
       $scope.modal.hide();
+      return true;
     }
 
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal' + CONSTANT.VIEW, {
@@ -1453,12 +1560,21 @@
     }
 
     function getLesson(id) {
+      $ionicLoading.show({noBackdrop: false, hideOnStateChange: true});
       Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('lessons', id).get().then(function(response) {
-        $log.debug('lesson details : ',response.plain());
+        $ionicLoading.hide();
+        $scope.openModal();
         mapCtrl.selectedNode = response.plain();
-        $log.debug('selected node : ', mapCtrl.selectedNode);
+        localStorage.setItem('lesson', JSON.stringify(mapCtrl.selectedNode));
       })
     }
+
+    if(localStorage.lesson){
+      // mapCtrl.selectedNode = JSON.parse(localStorage.lesson);
+      // $scope.openModal();
+      mapCtrl.getLesson(JSON.parse(localStorage.lesson).node.id);
+    }
+
   }
 })();
 
@@ -1509,7 +1625,8 @@ window.createGame = function(scope, lessons, injector, log) {
       this.load.image('particle2', 'img/assets/particle2.png');
       this.load.image('particle3', 'img/assets/particle3.png');
 
-      // this.load.spritesheet('cactus_animation', 'img/assets_v0.0.2/cactus_sprite.png', 15, 17, 8);
+      this.load.spritesheet('fire_animation', 'img/assets/fire_animation.png', 322,452, 20);
+      this.load.spritesheet('cactus_animation', 'img/assets/cactus_animation.png', 30,52, 5);
       this.load.image('node', 'img/icons/node.png');
       // debug value
       this.game.time.advancedTiming = true;
@@ -1521,33 +1638,33 @@ window.createGame = function(scope, lessons, injector, log) {
       this.game.world.setBounds(0, 0, this.game.width, desert.height);
       log.debug(this.world.height - 30);
       var cactus_points = [
-        {x : 42 , y : 2050 , scale : 1},
-        {x : 328 , y : 1998, scale : 1},
-        {x : 128, y : 1904, scale : 1},
-        {x : 304, y : 1798, scale : 1},
-        {x : 26, y : 1772, scale : 1},
-        {x : 348, y : 1675, scale : 1},
-        {x : 38, y : 1591, scale : 1},
-        {x : 124, y : 1446, scale : 1},
-        {x : 292, y : 1280, scale : 1},
-        {x : 40, y : 1096, scale : 1},
-        {x : 76, y : 913, scale : 1},
-        {x : 306, y : 768, scale : 1},
-        {x : 40, y : 475, scale : 1},
-        {x : 42, y : 254, scale : 1},
-        {x : 310, y : 184, scale : 1},
+        {x : 42 * game_scale , y : 2050 , scale : 1},
+        {x : 328 * game_scale , y : 1998, scale : 1},
+        {x : 128 * game_scale, y : 1904, scale : 1},
+        {x : 304 * game_scale, y : 1798, scale : 1},
+        {x : 26 * game_scale, y : 1772, scale : 1},
+        {x : 348 * game_scale, y : 1675, scale : 1},
+        {x : 38 * game_scale, y : 1591, scale : 1},
+        {x : 124 * game_scale, y : 1446, scale : 1},
+        {x : 292 * game_scale, y : 1280, scale : 1},
+        {x : 40 * game_scale, y : 1096, scale : 1},
+        {x : 76 * game_scale, y : 913, scale : 1},
+        {x : 306 * game_scale, y : 768, scale : 1},
+        {x : 40 * game_scale, y : 475, scale : 1},
+        {x : 42 * game_scale, y : 254, scale : 1},
+        {x : 310 * game_scale, y : 184, scale : 1},
       ];
       var tent_points = [
-        {x : 258, y : 950, scale : 1 }
+        {x : 258 * game_scale, y : 950, scale : 1 }
       ];
       var tent_green_points = [
-        {x : 26, y : 1403, scale : 1}
+        {x : 26 * game_scale, y : 1403, scale : 1}
       ]
       var one_stone_points = [
-        {x : 42, y : 1873 , scale : 1},
-        {x : 214, y : 1797, scale : 1},
-        {x : 45, y : 1235, scale : 1},
-        {x : 345, y : 1202, scale : 1}
+        {x : 42 * game_scale, y : 1873 , scale : 1},
+        {x : 214 * game_scale, y : 1797, scale : 1},
+        {x : 45 * game_scale, y : 1235, scale : 1},
+        {x : 345 * game_scale, y : 1202, scale : 1}
       ];
       var two_stone_points = [
         {x : 293, y : 2139, scale : 1},
@@ -1587,16 +1704,20 @@ window.createGame = function(scope, lessons, injector, log) {
         // cactus_animation.animations.play('walk', 10, true);
       }
 
-
-
       // placing lesson node
       // 1. lesson node count
       // 2. Node should follow a particular path
       // path
+      log.debug('desert', desert.width);
       this.points = {
-        'x': [101,113,170,202,216,201,180,172,172,179,195,211,207,160,138,144,167,197,204,197,165,126,101,161,256,223,134,102,138,200,235,200,164,164,164,164,164,164,164,164,164],
+        'x': [101,113,170,202,216,201,180,172,172,179,195,211,207,160,138,144,167,197,204,197,165,126,101,161,256,223,134,102,138,200,235,200,180,180,180,180,180,180,180,180,180],
         'y': [50,64,109,148,189,235,287,346,404,456,495,529,574,644,693,748,803,854,877,941,980,1022,1091,1116,1116,1171,1209,1266,1318,1342,1371,1433,1494,1577,1659,1742,1824,1907,1989,2072,2155]
       };
+
+      for (var i = 0, points_count = this.points.x.length; i < points_count; i++) {
+        this.points.x[i] *= game_scale;
+      }
+
       this.increment = 1 / game.world.height;
 
       // Somewhere to draw to
@@ -1638,6 +1759,16 @@ window.createGame = function(scope, lessons, injector, log) {
       logout.fixedToCamera = true;
       logout.cameraOffset.setTo(this.game.width - 70, 20);
 
+
+      var fire_animation = this.game.add.sprite(20,20, 'fire_animation');
+      fire_animation.scale.setTo(0.5,0.5);
+      var light = fire_animation.animations.add('light');
+      fire_animation.animations.play('light', 20, true);
+      // cactus
+      var cactus_animation = this.game.add.sprite(20,20, 'cactus_animation');
+      var wind = cactus_animation.animations.add('wind');
+      cactus_animation.animations.play('wind', 5, true);
+
       this.init();
       this.game.kineticScrolling.start();
     },
@@ -1664,7 +1795,7 @@ window.createGame = function(scope, lessons, injector, log) {
     },
 
     render : function(){
-      this.game.debug.text("fps : "+game.time.fps || '--', 2, 14, "#00ff00");
+      // this.game.debug.text("fps : "+game.time.fps || '--', 2, 14, "#00ff00");
     }
   }
 
@@ -1674,6 +1805,9 @@ window.createGame = function(scope, lessons, injector, log) {
   // phaser destroy doesn't remove canvas element --> removed manually in app run
   scope.$on('$destroy', function() {
     game.destroy(); // Clean up the game when we leave this scope
+    var canvas = document.querySelector('#map_canvas');
+    canvas.parentNode.removeChild(canvas);
+    log.debug('game destoryed');
   });
 };
 
@@ -2258,6 +2392,7 @@ window.createGame = function(scope, lessons, injector, log) {
       })
       .state('quiz.questions',{
         url : '/questions',
+        nativeTransitions: null,
         views : {
           'state-quiz' : {
             templateUrl : CONSTANT.PATH.QUIZ+'/quiz.questions'+CONSTANT.VIEW,

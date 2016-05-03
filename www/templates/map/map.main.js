@@ -17,7 +17,8 @@ window.createGame = function(scope, lessons, injector, log) {
       this.load.image('particle2', 'img/assets/particle2.png');
       this.load.image('particle3', 'img/assets/particle3.png');
 
-      // this.load.spritesheet('cactus_animation', 'img/assets_v0.0.2/cactus_sprite.png', 15, 17, 8);
+      this.load.spritesheet('fire_animation', 'img/assets/fire_animation.png', 322,452, 20);
+      this.load.spritesheet('cactus_animation', 'img/assets/cactus_animation.png', 30,52, 5);
       this.load.image('node', 'img/icons/node.png');
       // debug value
       this.game.time.advancedTiming = true;
@@ -29,33 +30,33 @@ window.createGame = function(scope, lessons, injector, log) {
       this.game.world.setBounds(0, 0, this.game.width, desert.height);
       log.debug(this.world.height - 30);
       var cactus_points = [
-        {x : 42 , y : 2050 , scale : 1},
-        {x : 328 , y : 1998, scale : 1},
-        {x : 128, y : 1904, scale : 1},
-        {x : 304, y : 1798, scale : 1},
-        {x : 26, y : 1772, scale : 1},
-        {x : 348, y : 1675, scale : 1},
-        {x : 38, y : 1591, scale : 1},
-        {x : 124, y : 1446, scale : 1},
-        {x : 292, y : 1280, scale : 1},
-        {x : 40, y : 1096, scale : 1},
-        {x : 76, y : 913, scale : 1},
-        {x : 306, y : 768, scale : 1},
-        {x : 40, y : 475, scale : 1},
-        {x : 42, y : 254, scale : 1},
-        {x : 310, y : 184, scale : 1},
+        {x : 42 * game_scale , y : 2050 , scale : 1},
+        {x : 328 * game_scale , y : 1998, scale : 1},
+        {x : 128 * game_scale, y : 1904, scale : 1},
+        {x : 304 * game_scale, y : 1798, scale : 1},
+        {x : 26 * game_scale, y : 1772, scale : 1},
+        {x : 348 * game_scale, y : 1675, scale : 1},
+        {x : 38 * game_scale, y : 1591, scale : 1},
+        {x : 124 * game_scale, y : 1446, scale : 1},
+        {x : 292 * game_scale, y : 1280, scale : 1},
+        {x : 40 * game_scale, y : 1096, scale : 1},
+        {x : 76 * game_scale, y : 913, scale : 1},
+        {x : 306 * game_scale, y : 768, scale : 1},
+        {x : 40 * game_scale, y : 475, scale : 1},
+        {x : 42 * game_scale, y : 254, scale : 1},
+        {x : 310 * game_scale, y : 184, scale : 1},
       ];
       var tent_points = [
-        {x : 258, y : 950, scale : 1 }
+        {x : 258 * game_scale, y : 950, scale : 1 }
       ];
       var tent_green_points = [
-        {x : 26, y : 1403, scale : 1}
+        {x : 26 * game_scale, y : 1403, scale : 1}
       ]
       var one_stone_points = [
-        {x : 42, y : 1873 , scale : 1},
-        {x : 214, y : 1797, scale : 1},
-        {x : 45, y : 1235, scale : 1},
-        {x : 345, y : 1202, scale : 1}
+        {x : 42 * game_scale, y : 1873 , scale : 1},
+        {x : 214 * game_scale, y : 1797, scale : 1},
+        {x : 45 * game_scale, y : 1235, scale : 1},
+        {x : 345 * game_scale, y : 1202, scale : 1}
       ];
       var two_stone_points = [
         {x : 293, y : 2139, scale : 1},
@@ -95,16 +96,20 @@ window.createGame = function(scope, lessons, injector, log) {
         // cactus_animation.animations.play('walk', 10, true);
       }
 
-
-
       // placing lesson node
       // 1. lesson node count
       // 2. Node should follow a particular path
       // path
+      log.debug('desert', desert.width);
       this.points = {
-        'x': [101,113,170,202,216,201,180,172,172,179,195,211,207,160,138,144,167,197,204,197,165,126,101,161,256,223,134,102,138,200,235,200,164,164,164,164,164,164,164,164,164],
+        'x': [101,113,170,202,216,201,180,172,172,179,195,211,207,160,138,144,167,197,204,197,165,126,101,161,256,223,134,102,138,200,235,200,180,180,180,180,180,180,180,180,180],
         'y': [50,64,109,148,189,235,287,346,404,456,495,529,574,644,693,748,803,854,877,941,980,1022,1091,1116,1116,1171,1209,1266,1318,1342,1371,1433,1494,1577,1659,1742,1824,1907,1989,2072,2155]
       };
+
+      for (var i = 0, points_count = this.points.x.length; i < points_count; i++) {
+        this.points.x[i] *= game_scale;
+      }
+
       this.increment = 1 / game.world.height;
 
       // Somewhere to draw to
@@ -146,6 +151,16 @@ window.createGame = function(scope, lessons, injector, log) {
       logout.fixedToCamera = true;
       logout.cameraOffset.setTo(this.game.width - 70, 20);
 
+
+      var fire_animation = this.game.add.sprite(20,20, 'fire_animation');
+      fire_animation.scale.setTo(0.5,0.5);
+      var light = fire_animation.animations.add('light');
+      fire_animation.animations.play('light', 20, true);
+      // cactus
+      var cactus_animation = this.game.add.sprite(20,20, 'cactus_animation');
+      var wind = cactus_animation.animations.add('wind');
+      cactus_animation.animations.play('wind', 5, true);
+
       this.init();
       this.game.kineticScrolling.start();
     },
@@ -172,7 +187,7 @@ window.createGame = function(scope, lessons, injector, log) {
     },
 
     render : function(){
-      this.game.debug.text("fps : "+game.time.fps || '--', 2, 14, "#00ff00");
+      // this.game.debug.text("fps : "+game.time.fps || '--', 2, 14, "#00ff00");
     }
   }
 
@@ -182,5 +197,8 @@ window.createGame = function(scope, lessons, injector, log) {
   // phaser destroy doesn't remove canvas element --> removed manually in app run
   scope.$on('$destroy', function() {
     game.destroy(); // Clean up the game when we leave this scope
+    var canvas = document.querySelector('#map_canvas');
+    canvas.parentNode.removeChild(canvas);
+    log.debug('game destoryed');
   });
 };

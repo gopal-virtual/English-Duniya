@@ -7,16 +7,6 @@
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
     //$http.defaults.headers.common['Access-Control-Request-Headers'] = 'accept, auth-token, content-type, xsrfcookiename';
     $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
-      // alternative to phaser destroy() ; phaser destroy doesn't remove canvas element
-      if (toState.name != 'user.main.playlist') {
-        try {
-          var canvas = document.querySelector('#map_canvas');
-          canvas.parentNode.removeChild(canvas);
-          $log.debug("Canvas Removed");
-        }
-        catch (e) {
-        }
-      }
 
       //if not authenticated, redirect to login page
       if (!Auth.isAuthorised() && toState.name != 'auth.signin' && toState.name != 'auth.signup' && toState.name != 'auth.forgot') {
@@ -65,7 +55,20 @@
 
     });
     $ionicPlatform.ready(function () {
-
+      // detect app activity
+      document.addEventListener("pause", function(){
+        $log.debug("paused");
+        try{
+          var video = document.querySelector('video');
+          if(!video.paused){
+            video.pause();
+          }
+        }
+        catch(e){
+          $log.debug(e);
+        }
+      }, false);
+      // sms watch
       try{
         SMS && SMS.startWatch(function () {
           $log.debug('start watching sms');

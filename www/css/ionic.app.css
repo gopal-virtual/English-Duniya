@@ -10773,6 +10773,9 @@ ion-content.overflow-visible {
 .modal-dark {
   background-color: rgba(0, 0, 0, 0.7); }
 
+.modal-black {
+  background-color: black; }
+
 .quiz-subfooter {
   height: 85px !important;
   bottom: 44px; }
