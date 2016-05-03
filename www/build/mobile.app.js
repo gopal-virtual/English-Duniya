@@ -173,7 +173,6 @@
 
 (function () {
   'use strict';
-<<<<<<< HEAD
   runConfig.$inject = ["$ionicPlatform", "$rootScope", "$timeout", "$log", "$state", "$http", "$cookies", "Auth", "$window"];
   angular
     .module('zaya')
@@ -269,12 +268,11 @@
       }
     });
   }
-})();
+}
+)();
 
 (function () {
   'use strict';
-=======
->>>>>>> 0b30997c79984b19bba660de654331c4c0d34280
   angular
     .module('zaya-auth')
     .controller('authController', authController)
