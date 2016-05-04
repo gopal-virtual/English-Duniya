@@ -19,9 +19,9 @@
       </div>
       <ion-content class="has-header has-question-subheader has-quiz-subfooter padding-20 center">
       <!-- SCQ -->
-      <div ng-if="question.node.type.type=='choicequestion' && !question.node.type.content.is_multiple" ng-class="{'selected':option.key==question.attempted,'card-list':quizCtrl.LIST_TYPE.indexOf(question.node.type.content.layout_type) >= 0,'card-grid':quizCtrl.GRID_TYPE.indexOf(question.node.type.content.layout_type) >= 0}" class="card center card-pale card-radius" ng-repeat="option in question.node.type.content.choices">
+      <div ng-click="question.attempted=(question.attempted==option.key?'':option.key)" ng-if="question.node.type.type=='choicequestion' && !question.node.type.content.is_multiple" ng-class="{'selected':option.key==question.attempted,'card-list':quizCtrl.LIST_TYPE.indexOf(question.node.type.content.layout_type) >= 0,'card-grid':quizCtrl.GRID_TYPE.indexOf(question.node.type.content.layout_type) >= 0}" class="card center card-pale card-radius" ng-repeat="option in question.node.type.content.choices">
         <label    ng-click="quizCtrl.playAudio(option.audio)" >
-          <input class="hide" type="radio" ng-model="question.attempted" ng-value="option.key" >
+          <input class="hide" >
           <div class="padding-10 font-md" ng-if="option.option">{{option.option}}</div>
           <div class="padding-10" ng-if="option.image"><img ng-src="{{option.image}}" class="option-image"></div>
           <div class="padding-10" ng-if="!option.option && !option.image">
