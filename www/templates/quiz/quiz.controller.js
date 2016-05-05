@@ -35,6 +35,7 @@
       quizCtrl.quizResult = {};
       quizCtrl.utilities = Utilities;
       quizCtrl.submitQuiz = submitQuiz;
+      quizCtrl.endQuiz = endQuiz;
       //audio
       quizCtrl.playAudio = playAudio;
 
@@ -404,6 +405,10 @@
            template: 'Are you sure you want to end quiz?'
          }).then(function(res) {
            if(res) {
+             $ionicLoading.show({
+               noBackdrop: false,
+               hideOnStateChange: true
+             });
              $state.go('map.navigate',{});
            } else {
              console.log('You are not sure');
