@@ -1993,6 +1993,7 @@ window.createGame = function(scope, lessons, injector, log) {
       quizCtrl.quizResult = {};
       quizCtrl.utilities = Utilities;
       quizCtrl.submitQuiz = submitQuiz;
+      quizCtrl.endQuiz = endQuiz;
       //audio
       quizCtrl.playAudio = playAudio;
 
@@ -2362,6 +2363,10 @@ window.createGame = function(scope, lessons, injector, log) {
            template: 'Are you sure you want to end quiz?'
          }).then(function(res) {
            if(res) {
+             $ionicLoading.show({
+               noBackdrop: false,
+               hideOnStateChange: true
+             });
              $state.go('map.navigate',{});
            } else {
              void 0;
