@@ -2,6 +2,9 @@
   height: $quiz-subfooter-height !important;
   bottom : $bar-footer-height;
 }
+.bar-footer-large{
+  height:60px;
+}
 .progress-bar > div{
   margin: 1px;
   box-sizing: border-box;
