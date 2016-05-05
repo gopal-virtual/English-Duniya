@@ -10,7 +10,11 @@
   box-shadow: 0px 5px 5px transparentize($dark, 0.5);
   z-index: 9;
   border-radius: 0 0 $border-radius $border-radius;
+  border-bottom: $border-thin solid $brand-green;
   @include display-flex();
+}
+.result-hack{
+  border-radius: 0 !important;
 }
 .result-backdrop{
   position: fixed;
@@ -29,14 +33,22 @@
   box-sizing: border-box;
   background-color: $pale;
   border-radius : 0 0 $border-radius $border-radius;
-  top : $result-height - $border-radius;
-  padding : $border-radius;
-  width : 20%;
+  top : $result-height - $border-thin;
+  margin-left : -5%;
+  padding : $padding-x 0;
+  width : 30%;
   z-index: 8;
 }
 .result > .result-item:first-child {
   border-radius: 0 0 0 $border-radius;
 }
+.result > .result-item:first-child > .result-item-dropdown {
+  margin-left: 0 !important;
+  width : 30% !important;
+}
 .result > .result-item:last-child {
   border-radius: 0 0 $border-radius 0;
+}
+.result > .result-item:nth-child(4) > .result-item-dropdown {
+  margin-left: -10% !important;
 }

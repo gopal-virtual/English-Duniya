@@ -1484,18 +1484,18 @@
     mapCtrl.getIcon = getIcon;
     mapCtrl.resourceType = resourceType;
     mapCtrl.playResource = playResource;
-    mapCtrl.showScore = showScore;
     mapCtrl.backdrop = false;
+    mapCtrl.showScore = -1;
+
     // mapCtrl.openModal = openModal;
     // mapCtrl.closeModal = closeModal;
 
-    function showScore(skill) {
-      mapCtrl.backdrop = true;
-        // $ionicBackdrop.retain();
-        // $timeout(function() {
-        //   $ionicBackdrop.release();
-        // }, 1000);
-    }
+    mapCtrl.skillSet = [
+      {name : 'reading', score : 300},
+      {name : 'listening', score : 200},
+      {name : 'vocabulary', score : 250},
+      {name : 'grammar', score : 3000}
+    ];
 
     function playResource (resource) {
       if(mapCtrl.resourceType(resource) != 'video'){
