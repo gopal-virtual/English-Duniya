@@ -53,10 +53,10 @@
     <audio id="audioplayer">
       <source id="audioSource" type="audio/mpeg">
     </audio>
-  <div class="bar bar-subfooter quiz-subfooter bg-transparent">
+  <div ng-if="quizCtrl.currentIndex == quizCtrl.quiz.objects.length - 1" class="bar bar-subfooter quiz-subfooter bg-transparent">
     <div class="row">
       <div class="col padding-x-20">
-        <button ng-if="quizCtrl.currentIndex == quizCtrl.quiz.objects.length - 1" class="button button-block bg-brand-yellow padding-10" ng-click="quizCtrl.submitQuiz()">
+        <button  class="button button-block bg-brand-yellow padding-10" ng-click="quizCtrl.submitQuiz()">
         SUBMIT
         </button>
       </div>
