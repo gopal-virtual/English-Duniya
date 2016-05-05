@@ -9,7 +9,6 @@
       </div>
     </div>
     <div class="row center">
-      {{quizCtrl.quizResult.stars}}
       <div class="col" ng-repeat="i in quizCtrl.utilities.range(quizCtrl.quizResult.stars) track by $index">
         <div>
           <img height="100px" width="100px" src='img/icons/star.png'>
@@ -36,6 +35,7 @@
         <div class="list card">
           <div ng-repeat="(key,value) in quizCtrl.quizResult.analysis">
             <div class="item item-divider">
+              {{key}}
               <strong>Question #{{$index + 1}}</strong>
             </div>
             <div class="item item-text-wrap">
