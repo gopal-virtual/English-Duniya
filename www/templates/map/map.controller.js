@@ -5,9 +5,9 @@
     .module('zaya-map')
     .controller('mapController', mapController);
 
-  mapController.$inject = ['$scope','$rootScope', '$log', '$ionicModal', '$state', 'lessons', 'Rest', 'CONSTANT', '$sce', 'orientation','$ionicLoading','$timeout'];
+  mapController.$inject = ['$scope','$rootScope', '$log', '$ionicModal', '$state', 'lessons', 'Rest', 'CONSTANT', '$sce', 'orientation','$ionicLoading','$timeout','$ionicBackdrop'];
 
-  function mapController($scope, $rootScope, $log, $ionicModal, $state, lessons, Rest, CONSTANT, $sce, orientation, $ionicLoading, $timeout) {
+  function mapController($scope, $rootScope, $log, $ionicModal, $state, lessons, Rest, CONSTANT, $sce, orientation, $ionicLoading, $timeout, $ionicBackdrop) {
     var mapCtrl = this;
     mapCtrl.lessons = lessons;
     mapCtrl.getLesson = getLesson;
@@ -16,8 +16,18 @@
     mapCtrl.getIcon = getIcon;
     mapCtrl.resourceType = resourceType;
     mapCtrl.playResource = playResource;
+    mapCtrl.showScore = showScore;
+    mapCtrl.backdrop = false;
     // mapCtrl.openModal = openModal;
     // mapCtrl.closeModal = closeModal;
+
+    function showScore(skill) {
+      mapCtrl.backdrop = true;
+        // $ionicBackdrop.retain();
+        // $timeout(function() {
+        //   $ionicBackdrop.release();
+        // }, 1000);
+    }
 
     function playResource (resource) {
       if(mapCtrl.resourceType(resource) != 'video'){

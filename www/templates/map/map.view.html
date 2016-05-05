@@ -1,3 +1,31 @@
+<div class="result" ng-init="showScore1=false;showScore2=false;showScore3=false;showScore4=false;">
+  <div ng-click="mapCtrl.showScore('read');showScore1=true" class="result-item icon-read">
+    <div class="result-item-dropdown text-center" ng-show="showScore1">
+      <p>Reading</p>
+      <p>200</p>
+    </div>
+  </div>
+  <div ng-click="mapCtrl.showScore('listen');showScore2=true" class="result-item icon-listen">
+    <div class="result-item-dropdown text-center" ng-show="showScore2">
+      <p>Reading</p>
+      <p>200</p>
+    </div>
+  </div>
+  <div ng-click="mapCtrl.showScore('vocab');showScore3=true" class="result-item icon-vocab">
+    <div class="result-item-dropdown text-center" ng-show="showScore3">
+      <p>Reading</p>
+      <p>200</p>
+    </div>
+  </div>
+  <div ng-click="mapCtrl.showScore('grammar');showScore4=true" class="result-item icon-grammar">
+    <div class="result-item-dropdown text-center" ng-show="showScore4">
+      <p>Reading</p>
+      <p>200</p>
+    </div>
+  </div>
+  <div class="result-item bg-grey-light icon-settings"></div>
+</div>
+<div class="result-backdrop modal-dark" ng-show="mapCtrl.backdrop" ng-click="mapCtrl.backdrop=false;showScore1=false;showScore2=false;showScore3=false;showScore4=false;"></div>
 <ion-view>
   <ion-content>
     <div map-canvas lessons="mapCtrl.lessons"></div>
