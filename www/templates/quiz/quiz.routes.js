@@ -17,7 +17,7 @@
             quiz: ['$stateParams', 'Rest', function($stateParams, Rest) {
 
                 return Rest.one('accounts',CONSTANT.CLIENTID.ELL).one('assessments',$stateParams.id).get().then(function(quiz){
-                  
+
                   return quiz.plain();
                 });
             }]
