@@ -10658,8 +10658,7 @@ ion-content.overflow-visible {
 .animation-fade-in-from-top,
 .animation-stack-in {
   -webkit-animation-fill-mode: backwards;
-  -webkit-animation-duration: 300ms;
-  -webkit-animation-delay: 400ms; }
+  -webkit-animation-duration: 300ms; }
 
 .animation-fade-in-from-bottom {
   -webkit-animation-name: fade-in-from-bottom; }
@@ -10911,11 +10910,29 @@ ion-content.overflow-visible {
   top: 44px !important; }
 
 .has-question-subheader {
-  top: 234px !important;
-  box-shadow: inset 0px 5px 8px -2px #1d5e4e; }
+  top: 234px !important; }
+
+.fading-scroll-top::before {
+  content: '';
+  top: -20px;
+  left: 0;
+  height: 20px;
+  right: 0;
+  background: linear-gradient(to top, #54B7A0 0, transparent 100%);
+  position: absolute;
+  z-index: 1; }
+
+.fading-scroll-bottom::after {
+  content: '';
+  bottom: -20px;
+  left: 0;
+  height: 20px;
+  right: 0;
+  background: linear-gradient(to bottom, #54B7A0 0, transparent 100%);
+  position: absolute; }
 
 .quiz-header {
-  border: 0px !important; }
+  border: 0 !important; }
 
 .result {
   position: fixed;

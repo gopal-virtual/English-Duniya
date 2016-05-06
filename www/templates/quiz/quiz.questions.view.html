@@ -9,7 +9,7 @@
   </div>
   <ion-slide-box on-slide-changed="quizCtrl.slideHasChanged($index)">
     <ion-slide ng-repeat="question in quizCtrl.quiz.objects" ng-class="{'animation-question-slide':quizCtrl.isCurrentIndex($index)}">
-      <div class="bar bar-subheader question-subheader bg-pale">
+      <div class="bar bar-subheader question-subheader bg-pale fading-scroll-bottom">
 
       <div class="card card-transparent center" ng-click="quizCtrl.playAudio(question.node.type.content.audio)">
         <p>
@@ -20,8 +20,10 @@
         <div ng-if="!question.node.title && !question.node.type.content.image"><img height="100" width="100" src="img/icons/sound.png"> </div>
       </div>
       </div>
-      <ion-content  overflow-scroll="false" has-bouncing="true" class="has-header has-footer has-question-subheader center padding-y-10 bg-green" ng-class="{'has-quiz-subfooter':quizCtrl.currentIndex == quizCtrl.quiz.objects.length - 1}">
+      <ion-content  overflow-scroll="false" has-bouncing="true" class="has-header has-footer has-question-subheader center padding-y-20 bg-green " ng-class="{'has-quiz-subfooter':quizCtrl.currentIndex == quizCtrl.quiz.objects.length - 1}">
       <!-- SCQ -->
+      <div>
+
       <div ng-click="question.attempted=question.attempted==option.key?'':option.key" ng-if="question.node.type.type=='choicequestion' && !question.node.type.content.is_multiple" ng-class="{'selected':option.key==question.attempted,'card-list':quizCtrl.LIST_TYPE.indexOf(question.node.type.content.layout_type) >= 0,'card-grid':quizCtrl.GRID_TYPE.indexOf(question.node.type.content.layout_type) >= 0}" class="card center card-pale card-radius" ng-repeat="option in question.node.type.content.choices">
         <label ng-click="quizCtrl.playAudio(option.audio)" >
           <input class="hide" >
@@ -41,6 +43,13 @@
             <div class="padding-10" ng-if="!option.option && !option.image"><img height="100" width="100" src="img/icons/sound.png"> </div>
           </label>
         </div>
+        <br>
+        <br>
+        <br>
+        <br>
+
+    </div>
+
       <!--<label ng-if="question.node.type.type=='choicequestion' && question.node.type.content.is_multiple" ng-repeat="option in question.info.question_type.choices" class="list card padding block" >-->
         <!--<input class="hide" type="checkbox" ng-model="question.attempted[$index+1]" ng-value="option.key" ng-disabled="quizCtrl.isCorrectAttempted(question)">-->
         <!--<div ng-if="option.option">{{option.option}}</div>-->
@@ -54,17 +63,17 @@
     <audio id="audioplayer">
       <source id="audioSource" type="audio/mpeg">
     </audio>
-  <div ng-if="quizCtrl.currentIndex == quizCtrl.quiz.objects.length - 1" class="bar bar-subfooter quiz-subfooter bg-transparent">
-    <div class="row">
+  <div ng-if="quizCtrl.currentIndex == quizCtrl.quiz.objects.length - 1" class="bar bar-subfooter quiz-subfooter bg-green fading-scroll-top">
+    <div class="row ">
       <div class="col padding-x-20">
-        <button  class="button button-block bg-brand-yellow padding-10 button-round" ng-click="quizCtrl.submitQuiz()">
+        <button  class="animation-fade-in-from-bottom button button-block bg-brand-yellow padding-10 button-round" ng-click="quizCtrl.submitQuiz()">
         SUBMIT
         </button>
       </div>
     </div>
   </div>
 
-  <div class="bar bar-footer progress-bar-footer bg-neutral-dark">
+  <div class="bar bar-footer progress-bar-footer bg-neutral-dark" ng-class="{'fading-scroll-top':quizCtrl.currentIndex != quizCtrl.quiz.objects.length - 1}">
     <div class="row progress-bar">
       <div ng-click="quizCtrl.slideTo($index)" class="col" ng-repeat="question in quizCtrl.quiz.objects" ng-class="{'attempted': quizCtrl.isAttempted(question.node.id),'skipped' : question.isVisited == true && !quizCtrl.isAttempted(question.node.id) && quizCtrl.getCurrentIndex() != $index,'current' :  quizCtrl.getCurrentIndex() == $index, 'unattempted' : question.isVisited == false}">
       </div>

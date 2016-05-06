@@ -1410,6 +1410,63 @@
 })();
 
 (function() {
+    'use strict';
+
+    angular
+        .module('zaya-intro')
+        .controller('introController', introController);
+
+    introController.$inject = [];
+
+    /* @ngInject */
+    function introController() {
+        var introCtrl = this;
+
+        introCtrl.tabIndex = 0;
+        introCtrl.slides = [
+          {
+            title : "Hello this Title",
+            description : "some description is theresome description is theresome description is there",
+            img : "img/01.png",
+            color : "bg-brand-light"
+          },
+          {
+            title : "Hello this Title",
+            description : "some description is theresome description is theresome description is there",
+            img : "img/02.png",
+            // color : "bg-brand-light"
+            color : "bg-assertive-light"
+          },
+          {
+            title : "Hello this Title",
+            description : "some description is theresome description is theresome description is there",
+            img : "img/03.png",
+            // color : "bg-brand-light"
+            color : "bg-royal-light"
+          }
+        ];
+    }
+})();
+
+(function() {
+  'use strict';
+
+  mainRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
+  angular
+    .module('zaya-intro')
+    .config(mainRoute);
+
+  function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
+    $stateProvider
+      .state('intro',{
+        url : '/intro',
+        templateUrl : CONSTANT.PATH.INTRO+'/intro'+CONSTANT.VIEW,
+        controller : "introController as introCtrl"
+      })
+  }
+})();
+
+(function() {
   'use strict';
 
   angular
@@ -1785,63 +1842,6 @@ window.createGame = function(scope, lessons, injector, log) {
             controller : 'mapController as mapCtrl'
           }
         }
-      })
-  }
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('zaya-intro')
-        .controller('introController', introController);
-
-    introController.$inject = [];
-
-    /* @ngInject */
-    function introController() {
-        var introCtrl = this;
-
-        introCtrl.tabIndex = 0;
-        introCtrl.slides = [
-          {
-            title : "Hello this Title",
-            description : "some description is theresome description is theresome description is there",
-            img : "img/01.png",
-            color : "bg-brand-light"
-          },
-          {
-            title : "Hello this Title",
-            description : "some description is theresome description is theresome description is there",
-            img : "img/02.png",
-            // color : "bg-brand-light"
-            color : "bg-assertive-light"
-          },
-          {
-            title : "Hello this Title",
-            description : "some description is theresome description is theresome description is there",
-            img : "img/03.png",
-            // color : "bg-brand-light"
-            color : "bg-royal-light"
-          }
-        ];
-    }
-})();
-
-(function() {
-  'use strict';
-
-  mainRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
-  angular
-    .module('zaya-intro')
-    .config(mainRoute);
-
-  function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
-    $stateProvider
-      .state('intro',{
-        url : '/intro',
-        templateUrl : CONSTANT.PATH.INTRO+'/intro'+CONSTANT.VIEW,
-        controller : "introController as introCtrl"
       })
   }
 })();
@@ -2472,7 +2472,7 @@ window.createGame = function(scope, lessons, injector, log) {
         nativeTransitions: null,
         views : {
           'state-quiz' : {
-            templateUrl : CONSTANT.PATH.QUIZ+'/practice.questions'+CONSTANT.VIEW,
+            templateUrl : CONSTANT.PATH.QUIZ+'/quiz.questions'+CONSTANT.VIEW,
             controller : 'QuizController as quizCtrl'
           }
         }
