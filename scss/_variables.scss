@@ -7,19 +7,34 @@ $border-radius-round : 50px;
 // color
 $brand : #0D618A;
 $brand-white : rgb(255,255,255);
+$brand-grey : rgb(170, 170, 170);
 $brand-green : #39B89A;
 $brand-pink : #FCF3D8;
 $pale : #FCF3D8;
 $neutral : #e4eff2;
 $brand-yellow : #FFBC1D;
-$color-list : ("light" : $light, "stable" : $stable, "positive" : $positive, "calm" : $calm, "balanced" : $balanced, "energised" : $energized, "assertive" :$assertive, "royal" : $royal, "dark" :$dark, "brand" : $brand, "neutral" : $neutral, "green" : $brand-green, "pale" : $pale, "brand-yellow": $brand-yellow, "pink" : $brand-pink, "transparent" : transparent);
+$color-list : ("light" : $light, "stable" : $stable, "positive" : $positive, "calm" : $calm, "balanced" : $balanced, "energised" : $energized, "assertive" :$assertive, "royal" : $royal, "dark" :$dark, "brand" : $brand, "neutral" : $neutral, "green" : $brand-green, "pale" : $pale, "brand-yellow": $brand-yellow, "pink" : $brand-pink, "transparent" : transparent, "grey" : $brand-grey);
 $font-size : ("xl" : 2em,"lg" : 1.75em, "md" : 1.5em, "sm" : 1.25em, "xs" : 1em);
-// $brand-color :
+
+$icon-path : '../img/icons';
+$icon-list : (
+'vocab' : 'icon-vocab.png',
+'vocab-active' : 'icon-vocab-active.png',
+'read' : 'icon-read.png',
+'read-active' : 'icon-read-active.png',
+'grammar' : 'icon-grammar.png',
+'grammar-active' : 'icon-grammar-active.png',
+'listen' : 'icon-listen.png',
+'listen-active' : 'icon-listen-active.png',
+'settings' : 'icon-settings.png',
+'pause' : 'icon-pause.png',
+'question-mark' : 'icon-question-mark.png'
+);
 
 // size
 $cover-height : 250px;
-$bar-height-large : 60px;
-
+$bar-height-large : 65px;
+$result-height : 45px;
 //question
 $question-subheader-height : 190px;
 $quiz-subfooter-height : 85px;

@@ -72,11 +72,14 @@
 .card.selected{
   background-color: $brand-yellow;
 }
-.correct{
-  background: url('../img/correct.png') no-repeat center center;
+.card.practice-feedback{
+box-shadow: none;
+}
+.practice-feedback.correct{
+  background: url('../img/icons/icon-correct.png') no-repeat center center;
   background-size: auto 70%;
 }
-.wrong{
-  background: url('../img/wrong.png') no-repeat center center;
+.practice-feedback.wrong{
+  background: url('../img/icons/icon-incorrect.png') no-repeat center center;
   background-size: auto 70%;
 }

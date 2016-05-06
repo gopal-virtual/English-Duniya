@@ -1,16 +1,16 @@
 @each $name, $color in $color-list{
   .bg-#{$name}{
-    background-color : $color;
+    background : $color;
   }
 }
 @each $name, $color in $color-list{
   .bg-#{$name}-light{
-    background-color : lighten($color, 10%);
+    background : lighten($color, 10%);
   }
 }
 @each $name, $color in $color-list{
   .bg-#{$name}-dark{
-    background-color : darken($color, 10%);
+    background : darken($color, 10%);
   }
 }
 @each $name, $color in $color-list{

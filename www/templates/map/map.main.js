@@ -10,7 +10,6 @@ window.createGame = function(scope, lessons, injector, log) {
       this.load.image('cactus', 'img/assets/cactus.png');
       this.load.image('tent', 'img/assets/tent_fire.png');
       this.load.image('tent_green', 'img/assets/tent_green.png');
-      this.load.image('practice', 'img/icons/practice_active.png');
       this.load.image('two_stone', 'img/assets/two_stone.png');
       this.load.image('one_stone', 'img/assets/one_stone.png');
       this.load.image('particle1', 'img/assets/particle1.png');
@@ -143,14 +142,6 @@ window.createGame = function(scope, lessons, injector, log) {
           s.checkWorldBounds = true;
           s.events.onOutOfBounds.add(this.resetSprite, this);
       }
-
-      var logout = this.game.add.button(this.game.width - 100, 0, 'practice',function () {
-        scope.$emit('logout');
-      },this, 2 , 1 , 0);
-      logout.scale.setTo(0.3,0.3);
-      logout.fixedToCamera = true;
-      logout.cameraOffset.setTo(this.game.width - 70, 20);
-
 
       var fire_animation = this.game.add.sprite(20,20, 'fire_animation');
       fire_animation.scale.setTo(0.5,0.5);

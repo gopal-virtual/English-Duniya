@@ -37,7 +37,7 @@
         nativeTransitions: null,
         views : {
           'state-quiz' : {
-            templateUrl : CONSTANT.PATH.QUIZ+'/quiz.questions'+CONSTANT.VIEW,
+            templateUrl : CONSTANT.PATH.QUIZ+'/practice.questions'+CONSTANT.VIEW,
             controller : 'QuizController as quizCtrl'
           }
         }

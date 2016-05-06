@@ -1,8 +1,11 @@
-<ion-pane class="bg-green">
+<ion-pane class="bg-pale">
   <div class="bar bar-header bg-pale quiz-header">
-    <a ng-click="quizCtrl.endQuiz()" class="button button-clear button-icon icon ion-android-close"></a>
-    <!--<div class="h1 title color-stable">Q {{quizCtrl.getCurrentIndex()+1}} / {{quizCtrl.quiz.objects.length}}</div>-->
-    <a class="button button-clear button-icon icon ion-android-hand"></a>
+    <div class="col">
+      <a ng-click="quizCtrl.pauseQuiz()" style="width:28px;display: inline-block;height: 26px;" class="icon-pause"></a>
+    </div>
+    <div class="col" align="right">
+      <a ui-sref="map.navigate" style="width:28px;display: inline-block;height: 26px;" class="icon-question-mark"></a>
+    </div>
   </div>
   <ion-slide-box on-slide-changed="quizCtrl.slideHasChanged($index)">
     <ion-slide ng-repeat="question in quizCtrl.quiz.objects" ng-class="{'animation-question-slide':quizCtrl.isCurrentIndex($index)}">
@@ -17,7 +20,7 @@
         <div ng-if="!question.node.title && !question.node.type.content.image"><img height="100" width="100" src="img/icons/sound.png"> </div>
       </div>
       </div>
-      <ion-content class="has-header has-footer has-question-subheader center margin-y-10" ng-class="{'has-quiz-subfooter':quizCtrl.currentIndex == quizCtrl.quiz.objects.length - 1}">
+      <ion-content  overflow-scroll="false" has-bouncing="true" class="has-header has-footer has-question-subheader center padding-y-10 bg-green" ng-class="{'has-quiz-subfooter':quizCtrl.currentIndex == quizCtrl.quiz.objects.length - 1}">
       <!-- SCQ -->
       <div ng-click="question.attempted=question.attempted==option.key?'':option.key" ng-if="question.node.type.type=='choicequestion' && !question.node.type.content.is_multiple" ng-class="{'selected':option.key==question.attempted,'card-list':quizCtrl.LIST_TYPE.indexOf(question.node.type.content.layout_type) >= 0,'card-grid':quizCtrl.GRID_TYPE.indexOf(question.node.type.content.layout_type) >= 0}" class="card center card-pale card-radius" ng-repeat="option in question.node.type.content.choices">
         <label ng-click="quizCtrl.playAudio(option.audio)" >
