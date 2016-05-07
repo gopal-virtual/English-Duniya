@@ -1,4 +1,11 @@
 {
   "name": "zaya-mobile",
-  "app_id": "cfa57de1"
+  "app_id": "cfa57de1",
+  "browsers": [
+    {
+      "platform": "android",
+      "browser": "crosswalk-lite",
+      "version": "10.39.236.1"
+    }
+  ]
 }

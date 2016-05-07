@@ -11,7 +11,7 @@
     function orientation($window, $log) {
         var orientation = {
             setLandscape : setLandscape,
-            setPortrait : setPortrait
+            setPortrait : setPortrait,
         };
 
         return orientation;
@@ -33,5 +33,6 @@
             $log.debug(e);
           }
         }
+
     }
 })();

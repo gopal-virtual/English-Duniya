@@ -5,9 +5,9 @@
     .module('zaya-map')
     .controller('mapController', mapController);
 
-  mapController.$inject = ['$scope','$rootScope', '$log', '$ionicModal', '$state', 'lessons', 'Rest', 'CONSTANT', '$sce', 'orientation','$ionicLoading','$timeout'];
+  mapController.$inject = ['$scope','$rootScope', '$log', '$ionicModal', '$state', 'lessons', 'Rest', 'CONSTANT', '$sce', 'orientation','$ionicLoading','$timeout','$ionicBackdrop'];
 
-  function mapController($scope, $rootScope, $log, $ionicModal, $state, lessons, Rest, CONSTANT, $sce, orientation, $ionicLoading, $timeout) {
+  function mapController($scope, $rootScope, $log, $ionicModal, $state, lessons, Rest, CONSTANT, $sce, orientation, $ionicLoading, $timeout, $ionicBackdrop) {
     var mapCtrl = this;
     mapCtrl.lessons = lessons;
     mapCtrl.getLesson = getLesson;
@@ -16,19 +16,50 @@
     mapCtrl.getIcon = getIcon;
     mapCtrl.resourceType = resourceType;
     mapCtrl.playResource = playResource;
+    mapCtrl.backdrop = false;
+    mapCtrl.showScore = -1;
+
     // mapCtrl.openModal = openModal;
     // mapCtrl.closeModal = closeModal;
+    mapCtrl.onPlayerReady = function(API){
+        mapCtrl.API = API;
+    }
+
+	mapCtrl.updateOrientation = function(state) {
+        if(state=='play'){
+            orientation.setLandscape();
+            mapCtrl.API.toggleFullScreen();
+        }
+        if(state=='pause' || state=='stop'){
+            orientation.setPortrait();
+            mapCtrl.API.toggleFullScreen();
+        }
+	};
+    mapCtrl.config = {
+        sources : [
+            {
+                src : '',
+                type : 'video/mp4'
+            }
+        ],
+        theme: "lib/videogular-themes-default/videogular.css"
+    }
+
+    mapCtrl.skillSet = [
+      {name : 'reading', score : 300},
+      {name : 'listening', score : 200},
+      {name : 'vocabulary', score : 250},
+      {name : 'grammar', score : 3000}
+    ];
 
     function playResource (resource) {
       if(mapCtrl.resourceType(resource) != 'video'){
         $scope.closeModal();
         $ionicLoading.show({noBackdrop: false, hideOnStateChange: true});
         $state.go('quiz.questions',{id : resource.node.id});
-        // $timeout(function(){
-        //   $scope.closeModal();
-        // })
-        // .then(function(){
-        // })
+      }
+      else{
+          mapCtrl.config.sources[0].src = mapCtrl.getSrc(resource.node.type.path);
       }
     }
     function resourceType (resource){
