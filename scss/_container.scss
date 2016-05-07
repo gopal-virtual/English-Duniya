@@ -18,5 +18,8 @@
   bottom : $bar-height !important;
 }
 .has-quiz-subfooter{
-  bottom: $bar-footer-height !important;
+  bottom: $bar-footer-height + $quiz-subfooter-height !important;
+}
+.has-footer-large{
+  bottom: $bar-height-large !important;
 }
