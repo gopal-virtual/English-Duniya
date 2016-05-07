@@ -55,9 +55,9 @@
 
     });
     $ionicPlatform.ready(function () {
-      if (window.StatusBar) {
-        StatusBar.hide();
-      }
+    //   if (window.StatusBar) {
+    //     StatusBar.hide();
+    //   }
       // detect app activity
       document.addEventListener("pause", function(){
         $log.debug("paused");
