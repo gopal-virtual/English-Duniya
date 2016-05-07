@@ -10223,10 +10223,6 @@ input[type=radio].hide {
   padding: 0;
   overflow: hidden; }
 
-video::-webkit-media-controls-fullscreen-button,
-video::-webkit-media-controls-mute-button {
-  display: none; }
-
 .feedback-modal {
   background: transparent; }
 
@@ -10397,6 +10393,30 @@ p * {
 
 .icon-settings.active {
   background-image: url("../img/icons/icon-settings-active.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 60%; }
+
+.icon-pause {
+  background-image: url("../img/icons/icon-pause.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 60%; }
+
+.icon-pause.active {
+  background-image: url("../img/icons/icon-pause-active.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 60%; }
+
+.icon-question-mark {
+  background-image: url("../img/icons/icon-question-mark.png.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 60%; }
+
+.icon-question-mark.active {
+  background-image: url("../img/icons/icon-question-mark.png-active.png");
   background-repeat: no-repeat;
   background-position: center center;
   background-size: auto 60%; }
