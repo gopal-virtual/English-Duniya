@@ -18,7 +18,10 @@ window.createGame = function(scope, lessons, injector, log) {
 
       this.load.spritesheet('fire_animation', 'img/assets/fire_animation.png', 322,452, 20);
       this.load.spritesheet('cactus_animation', 'img/assets/cactus_animation.png', 30,52, 5);
+
       this.load.image('node', 'img/icons/node.png');
+      this.load.image('read', 'img/icons/icon-read.png');
+      this.load.image('read_deactive', 'img/icons/icon-read-deactive.png');
       // debug value
       this.game.time.advancedTiming = true;
     },
@@ -101,8 +104,8 @@ window.createGame = function(scope, lessons, injector, log) {
       // path
       log.debug('desert', desert.width);
       this.points = {
-        'x': [101,113,170,202,216,201,180,172,172,179,195,211,207,160,138,144,167,197,204,197,165,126,101,161,256,223,134,102,138,200,235,200,180,180,180,180,180,180,180,180,180],
-        'y': [50,64,109,148,189,235,287,346,404,456,495,529,574,644,693,748,803,854,877,941,980,1022,1091,1116,1116,1171,1209,1266,1318,1342,1371,1433,1494,1577,1659,1742,1824,1907,1989,2072,2155]
+        'x': [101,113,170,202,216,201,180,172,172,179,195,211,207,160,138,144,167,197,204,197,165,126,101,161,256,223,134,102,138,200,235,200,180,180,180,180,180,180,180,180],
+        'y': [50,64,109,148,189,235,287,346,404,456,495,529,574,644,693,748,803,854,877,941,980,1022,1091,1116,1116,1171,1209,1266,1318,1342,1371,1433,1494,1577,1659,1742,1824,1907,1950,2050]
       };
 
       for (var i = 0, points_count = this.points.x.length; i < points_count; i++) {
@@ -121,14 +124,24 @@ window.createGame = function(scope, lessons, injector, log) {
         this.bmd.rect(posx, posy, 4, 4, '#219C7F');
       }
       // Place nodes
-      for (var j = 0, i = lessons.length-1, nodeCount = 1/lessons.length; j < 1; j += nodeCount, i--) {
+      for (var j = 0, i = lessons.length-1, nodeCount = 1/(lessons.length-1); j <= 1; j += nodeCount, i--) {
+        var currentLesson = lessons[i];
+        var locked = currentLesson.locked ? '_deactive' : '';
         var posx = this.math.catmullRomInterpolation(this.points.x, j);
         var posy = this.math.catmullRomInterpolation(this.points.y, j);
-        var node = this.game.add.button(posx, posy, 'node', function (node) {
-          scope.$emit('openNode',node);
-        }, this, 2, 1, 0);
+        var node = this.game.add.button(posx, posy, 'node');
+        node.inputEnabled = true;
+        node.events.onInputDown.add(function(currentLesson){
+            return function(){
+                if(!currentLesson.locked)
+                    scope.$emit('openNode',currentLesson);
+            }
+        }(currentLesson))
+        var icon = this.game.add.sprite(posx, posy, 'read'+locked);
+        icon.anchor.setTo(0.5,0.5);
+        icon.scale.setTo(0.3,0.3);
         node.anchor.setTo(0.5, 0.5);
-        node.id = lessons[i].id;
+        node.scale.setTo(1.2, 1.2);
       }
       for (var i = 0; i < 100; i++)
       {

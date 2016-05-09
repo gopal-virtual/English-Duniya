@@ -12,10 +12,11 @@
         url : '/map',
         abstract : true,
           resolve : {
-            lessons : ['Rest','$log',function(Rest, $log){
+            lessons : ['Rest','$log','extendLesson',function(Rest, $log, extendLesson){
               return Rest.one('accounts', CONSTANT.CLIENTID.ELL).getList('lessons').then(function(lessons) {
-                $log.debug(lessons.plain());
-                return lessons.plain();
+                $log.debug(extendLesson);
+                $log.debug(extendLesson.getLesson(lessons.plain()));
+                return extendLesson.getLesson(lessons.plain());
               })
             }]
           },

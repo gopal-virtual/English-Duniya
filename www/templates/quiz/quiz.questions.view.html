@@ -1,4 +1,4 @@
-<ion-pane class="bg-pale">
+<ion-pane class="bg-pale" ng-if="quizCtrl.quiz.objects.length">
   <div class="bar bar-header bg-pale quiz-header">
     <div class="col">
       <a ng-click="quizCtrl.pauseQuiz()" style="width:28px;display: inline-block;height: 26px;" class="icon-pause"></a>
@@ -95,3 +95,15 @@
 
 
 </ion-pane>
+<ion-view ng-if="!quizCtrl.quiz.objects.length" class="bg-pale">
+    <ion-content>
+        <div class="row">
+            <div class="col">
+                <div class="card text-center font-lg padding-20">
+                    No questions
+                    <button class="button button-block bg-brand-yellow padding-10 button-round" ui-sref="map.navigate">Go back to map</button>
+                </div>
+            </div>
+        </div>
+    </ion-content>
+</ion-view>

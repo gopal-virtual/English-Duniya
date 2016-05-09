@@ -276,6 +276,965 @@
 }
 )();
 
+(function(){
+  var ROOT = 'templates';
+
+  angular
+    .module('common')
+    .constant('CONSTANT',{
+      'BACKEND_SERVICE_DOMAIN' : 'http://cc-test.zaya.in/',
+      // 'BACKEND_SERVICE_DOMAIN' : 'http://192.168.1.6:9000/',
+      'PATH' : {
+        'INTRO' : ROOT+'/intro',
+        'AUTH' : ROOT+'/auth',
+        'QUIZ' : ROOT+'/quiz',
+        'PROFILE' : ROOT+'/profile',
+        'USER' : ROOT+'/user',
+        'PLAYLIST' : ROOT+'/playlist',
+        'HOME' : ROOT+'/home',
+        'RESULT' : ROOT+'/result',
+        'SEARCH' : ROOT+'/search',
+        'GROUP' : ROOT+'/group',
+        'COMMON' : ROOT + '/common',
+        'MAP' : ROOT + '/map',
+        'CONTENT' : ROOT + '/content'
+      },
+      'VIEW' : '.view.html',
+      'CLIENTID' : {
+        'FACEBOOK' : '1159750564044149',
+        'GOOGLE' : '1011514043276-7q3kvn29jkegl2d1v7dtlbtipqqgo1rr.apps.googleusercontent.com',
+        'ELL' : '1e7aa89f-3f50-433a-90ca-e485a92bbda6'
+      },
+      'ASSETS' : {
+        'IMG' : {
+          'ICON' : 'img/icons'
+        }
+      }
+    })
+})();
+
+(function() {
+  angular
+    .module('zaya')
+    .directive('widgetCarousel', widgetCarousel)
+    .directive('carouselItem', carouselItem);
+
+  function widgetCarousel() {
+    var carousel = {}
+    carousel.restrict = 'A';
+    carousel.link = function(scope) {
+      scope.initCarousel = function(element) {
+        // provide any default options you want
+        var defaultOptions = {};
+        var customOptions = scope.$eval($(element).attr('carousel-options'));
+        // combine the two options objects
+        for (var key in customOptions) {
+          if (customOptions.hasOwnProperty(key)) {
+            defaultOptions[key] = customOptions[key];
+          }
+        }
+        // init carousel
+        $(element).owlCarousel(defaultOptions);
+      };
+    }
+    return carousel;
+  }
+
+  function carouselItem() {
+    var carouselItem = {};
+    carouselItem.restrict = 'A';
+    carouselItem.transclude = false;
+    carouselItem.link = function(scope, element) {
+      // wait for the last item in the ng-repeat then call init
+      if (scope.$last) {
+        scope.initCarousel(element.parent());
+      }
+    }
+    return carouselItem;
+  }
+})();
+
+(function(){
+	widgetError.$inject = ["CONSTANT"];
+	angular
+		.module('common')
+		.directive('widgetError',widgetError)
+
+	function widgetError(CONSTANT){
+		var error = {};
+		error.restrict = 'E';
+		error.templateUrl = CONSTANT.PATH.COMMON + '/common.error' + CONSTANT.VIEW;
+		error.controller = ['$rootScope','$scope',function ($rootScope,$scope) {
+			$scope.error = function(){
+				return $rootScope.error;
+			}
+		}]
+		return error;
+	}
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('common')
+        .directive('validInput', validInput);
+
+    function validInput() {
+        var validInput = {
+            require: '?ngModel',
+            link: linkFunc
+        };
+
+        return validInput;
+
+        function linkFunc(scope, element, attrs, ngModelCtrl) {
+          if(!ngModelCtrl) {
+            return;
+          }
+          ngModelCtrl.$parsers.push(function(val) {
+            var clean = val.replace( /[^a-zA-Z0-9@.!#$%&'*+-/=?^_`{|}~]+/g, '');
+            clean = clean.toLowerCase();
+            if (val !== clean) {
+              ngModelCtrl.$setViewValue(clean);
+              ngModelCtrl.$render();
+            }
+            return clean;
+          });
+        }
+    }
+})();
+
+(function() {
+    'use strict';
+
+    validOtp.$inject = ["$log"];
+    angular
+        .module('common')
+        .directive('validOtp', validOtp);
+
+    function validOtp($log) {
+        var validOtp = {
+            require: '?ngModel',
+            link: linkFunc
+        };
+
+        return validOtp;
+
+        function linkFunc(scope, element, attrs, ngModelCtrl) {
+          if(!ngModelCtrl) {
+            return;
+          }
+
+          ngModelCtrl.$parsers.push(function(val) {
+            var clean = (val > 999999)?(val.toString()).substring(0,6):val;
+            if (val !== clean) {
+              ngModelCtrl.$setViewValue(clean);
+              ngModelCtrl.$render();
+            }
+            return clean;
+          });
+        }
+    }
+})();
+
+(function() {
+  'use strict';
+
+  trackVideo.$inject = ["$window", "$log", "orientation"];
+  angular
+    .module('common')
+    .directive('trackVideo', trackVideo);
+
+  /* @ngInject */
+  function trackVideo($window, $log, orientation) {
+    var video = {
+      restrict: 'A',
+      link: linkFunc,
+    };
+
+    return video;
+
+    // full screen not working ; instead used css to immitate full screen effect ; check below
+    function toggleFullScreen() {
+      if (!document.fullscreenElement && // alternative standard method
+        !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) { // current working methods
+        if (document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen();
+        } else if (document.documentElement.msRequestFullscreen) {
+          document.documentElement.msRequestFullscreen();
+        } else if (document.documentElement.mozRequestFullScreen) {
+          document.documentElement.mozRequestFullScreen();
+        } else if (document.documentElement.webkitRequestFullscreen) {
+          document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        }
+      }
+    }
+
+    function linkFunc(scope, el, attr, ctrl) {
+      el.bind('playing', function() {
+        // toggleFullScreen();
+        document.querySelector("ion-modal-view").classList.remove('modal-dark');
+        document.querySelector("ion-modal-view").classList.add('modal-black');
+        el.addClass('fullscreen');
+        orientation.setLandscape();
+      });
+      el.bind('pause', function() {
+        // toggleFullScreen();
+        document.querySelector("ion-modal-view").classList.remove('modal-black');
+        document.querySelector("ion-modal-view").classList.add('modal-dark');
+        el.removeClass('fullscreen');
+        orientation.setPortrait();
+      });
+      el.bind('click',function (event) {
+        event.stopPropagation();
+      })
+    }
+  }
+
+})();
+
+(function () {
+  'use strict';
+
+    audio.$inject = ["$cordovaNativeAudio"];
+  angular
+    .module('common')
+    .factory('audio',audio)
+
+    function audio($cordovaNativeAudio) {
+      return {
+        play : function (sound) {
+          try{
+            $cordovaNativeAudio.play(sound);
+            void 0;
+          }
+          catch(error){
+            void 0;
+          }
+        }
+      };
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('common')
+        .factory('orientation', orientation);
+
+    orientation.$inject = ['$window','$log'];
+
+    /* @ngInject */
+    function orientation($window, $log) {
+        var orientation = {
+            setLandscape : setLandscape,
+            setPortrait : setPortrait,
+        };
+
+        return orientation;
+
+        function setPortrait() {
+          try{
+            $window.screen.lockOrientation('portrait');
+          }
+          catch(e){
+            $log.debug(e);
+          }
+        }
+
+        function setLandscape() {
+          try{
+            $window.screen.lockOrientation('landscape');
+          }
+          catch(e){
+            $log.debug(e);
+          }
+        }
+
+    }
+})();
+
+(function () {
+  'use strict';
+
+  angular
+    .module('common')
+    .factory('Utilities',utilities)
+
+    function utilities() {
+      return {
+        range : function (num) {
+          return new Array(num);
+        }
+      };
+    }
+})();
+
+(function(){
+  'use strict';
+
+  runConfig.$inject = ["$ionicPlatform", "$cordovaNativeAudio"];
+  angular
+    .module('common')
+    .run(runConfig);
+
+  function runConfig($ionicPlatform,$cordovaNativeAudio) {
+    $ionicPlatform.ready(function() {
+      try{
+        $cordovaNativeAudio.preloadSimple('water-drop', 'sound/water-drop.mp3');
+        $cordovaNativeAudio.preloadSimple('correct', 'sound/correct.mp3');
+        $cordovaNativeAudio.preloadSimple('wrong', 'sound/wrong.mp3');
+      }
+      catch(error){
+        void 0;
+      }
+    });
+  }
+
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('zaya-intro')
+        .controller('introController', introController);
+
+    introController.$inject = [];
+
+    /* @ngInject */
+    function introController() {
+        var introCtrl = this;
+
+        introCtrl.tabIndex = 0;
+        introCtrl.slides = [
+          {
+            title : "Hello this Title",
+            description : "some description is theresome description is theresome description is there",
+            img : "img/01.png",
+            color : "bg-brand-light"
+          },
+          {
+            title : "Hello this Title",
+            description : "some description is theresome description is theresome description is there",
+            img : "img/02.png",
+            // color : "bg-brand-light"
+            color : "bg-assertive-light"
+          },
+          {
+            title : "Hello this Title",
+            description : "some description is theresome description is theresome description is there",
+            img : "img/03.png",
+            // color : "bg-brand-light"
+            color : "bg-royal-light"
+          }
+        ];
+    }
+})();
+
+(function() {
+  'use strict';
+
+  mainRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
+  angular
+    .module('zaya-intro')
+    .config(mainRoute);
+
+  function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
+    $stateProvider
+      .state('intro',{
+        url : '/intro',
+        templateUrl : CONSTANT.PATH.INTRO+'/intro'+CONSTANT.VIEW,
+        controller : "introController as introCtrl"
+      })
+  }
+})();
+
+(function() {
+  'use strict';
+
+  angular
+    .module('zaya-map')
+    .controller('mapController', mapController);
+
+  mapController.$inject = ['$scope','$rootScope', '$log', '$ionicModal', '$state', 'lessons', 'Rest', 'CONSTANT', '$sce', 'orientation','$ionicLoading','$timeout','$ionicBackdrop'];
+
+  function mapController($scope, $rootScope, $log, $ionicModal, $state, lessons, Rest, CONSTANT, $sce, orientation, $ionicLoading, $timeout, $ionicBackdrop) {
+    var mapCtrl = this;
+    mapCtrl.lessons = lessons;
+    mapCtrl.getLesson = getLesson;
+    mapCtrl.getSrc = getSrc;
+    mapCtrl.resetNode = resetNode;
+    mapCtrl.getIcon = getIcon;
+    mapCtrl.resourceType = resourceType;
+    mapCtrl.playResource = playResource;
+    mapCtrl.backdrop = false;
+    mapCtrl.showScore = -1;
+
+    // mapCtrl.openModal = openModal;
+    // mapCtrl.closeModal = closeModal;
+    mapCtrl.onPlayerReady = function(API){
+        mapCtrl.API = API;
+    }
+
+	mapCtrl.updateOrientation = function(state) {
+        if(state=='play'){
+            orientation.setLandscape();
+            mapCtrl.API.toggleFullScreen();
+        }
+        if(state=='pause' || state=='stop'){
+            orientation.setPortrait();
+            mapCtrl.API.toggleFullScreen();
+        }
+	};
+    mapCtrl.config = {
+        sources : [
+            {
+                src : '',
+                type : 'video/mp4'
+            }
+        ],
+        theme: "lib/videogular-themes-default/videogular.css"
+    }
+
+    mapCtrl.skillSet = [
+      {name : 'reading', score : 300},
+      {name : 'listening', score : 200},
+      {name : 'vocabulary', score : 250},
+      {name : 'grammar', score : 3000}
+    ];
+
+    function playResource (resource) {
+      if(mapCtrl.resourceType(resource) != 'video'){
+        $scope.closeModal();
+        $ionicLoading.show({noBackdrop: false, hideOnStateChange: true});
+        $state.go('quiz.questions',{id : resource.node.id});
+      }
+      else{
+          mapCtrl.config.sources[0].src = mapCtrl.getSrc(resource.node.type.path);
+      }
+    }
+    function resourceType (resource){
+      if(resource.node.content_type_name == 'assessment'){
+        return 'assessment';
+      }
+      else if(resource.node.content_type_name == 'resource'){
+        if(resource.node.type.file_type.substring(0,resource.node.type.file_type.indexOf('/')) == 'video'){
+          return 'video';
+        }
+      }
+      else {}
+    }
+    function getSrc(src){
+      return $sce.trustAsResourceUrl(CONSTANT.BACKEND_SERVICE_DOMAIN + src);
+    }
+    function getIcon(resource){
+      if(resource.node.content_type_name == 'assessment'){
+        return CONSTANT.ASSETS.IMG.ICON + '/quiz.png';
+      }
+      else if(resource.node.content_type_name == 'resource'){
+        if(resource.node.type.file_type.substring(0,resource.node.type.file_type.indexOf('/')) == 'video'){
+          return CONSTANT.ASSETS.IMG.ICON + '/video.png';
+        }
+      }
+      else {
+
+      }
+    }
+
+    $scope.$on('logout', function() {
+      $state.go('user.main.settings',{});
+    })
+    $scope.$on('openNode', function(event, node) {
+      mapCtrl.getLesson(node.id);
+    })
+    $scope.$on('$destroy', function() {
+      $scope.modal.remove();
+    });
+    $scope.openModal = function() {
+      $scope.modal.show();
+      return true;
+    }
+    $scope.closeModal = function() {
+      $scope.modal.hide();
+      return true;
+    }
+
+    $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal' + CONSTANT.VIEW, {
+      scope: $scope,
+      animation: 'slide-in-up',
+      hardwareBackButtonClose : false
+    }).then(function(modal) {
+      $scope.modal = modal;
+    });
+
+    function resetNode(){
+        mapCtrl.selectedNode = {};
+    }
+
+    function getLesson(id) {
+      $ionicLoading.show({noBackdrop: false, hideOnStateChange: true});
+      Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('lessons', id).get().then(function(response) {
+        $ionicLoading.hide();
+        $scope.openModal();
+        mapCtrl.selectedNode = response.plain();
+        $log.debug('get lesson',response.plain());
+        localStorage.setItem('lesson', JSON.stringify(mapCtrl.selectedNode));
+      })
+    }
+
+    $timeout(function functionName() {
+        if(localStorage.lesson){
+            $scope.openModal();
+            mapCtrl.selectedNode = JSON.parse(localStorage.lesson);
+        }
+    });
+
+  }
+})();
+
+(function() {
+    'use strict';
+
+    mapCanvas.$inject = ["$injector", "$timeout", "$log"];
+    angular
+        .module('zaya-map')
+        .directive('mapCanvas', mapCanvas)
+
+    /* @ngInject */
+    function mapCanvas($injector, $timeout, $log) {
+        var mapCanvas = {
+            restrict: 'A',
+            template: '<div id="map_canvas"></div>',
+            scope: {
+              lessons : '='
+            },
+            link: linkFunc,
+        };
+
+        return mapCanvas;
+
+        function linkFunc(scope, el, attr, ctrl) {
+          $timeout(createGame(scope, scope.lessons, $injector, $log));
+        }
+    }
+
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('zaya-map')
+        .factory('extendLesson', extendLesson);
+
+    extendLesson.$inject = ['$log'];
+
+    /* @ngInject */
+    function extendLesson($log) {
+        var extendLesson = {
+            getLesson: getLesson
+        };
+
+        return extendLesson;
+
+        function setLock(lesson, bool){
+            lesson.locked = bool;
+        }
+
+        function getLesson(lesson) {
+
+            angular.forEach(lesson, function(value, key){
+                setLock(value,true);
+
+                // unlock first lessons
+                if(key == 0){
+                    setLock(value, false);
+                }
+
+                // if score is > 80%, unlock the next lesson
+                if(value.type.total_score > 0){
+                    if(((value.type.obtained_score / value.type.total_score) * 100) > 80){
+                        lesson[key + 1] && setLock(lesson[key + 1], false) ;
+                    }
+                }
+            })
+
+            return lesson;
+        }
+
+    }
+})();
+
+window.createGame = function(scope, lessons, injector, log) {
+  'use strict';
+
+  var lessons = lessons;
+  var game = new Phaser.Game("100", "100" , Phaser.CANVAS, 'map_canvas');
+
+  var playState = {
+    preload : function () {
+      this.load.image('desert', 'img/assets/desert.png');
+      this.load.image('cactus', 'img/assets/cactus.png');
+      this.load.image('tent', 'img/assets/tent_fire.png');
+      this.load.image('tent_green', 'img/assets/tent_green.png');
+      this.load.image('two_stone', 'img/assets/two_stone.png');
+      this.load.image('one_stone', 'img/assets/one_stone.png');
+      this.load.image('particle1', 'img/assets/particle1.png');
+      this.load.image('particle2', 'img/assets/particle2.png');
+      this.load.image('particle3', 'img/assets/particle3.png');
+
+      this.load.spritesheet('fire_animation', 'img/assets/fire_animation.png', 322,452, 20);
+      this.load.spritesheet('cactus_animation', 'img/assets/cactus_animation.png', 30,52, 5);
+
+      this.load.image('node', 'img/icons/node.png');
+      this.load.image('read', 'img/icons/icon-read.png');
+      this.load.image('read_deactive', 'img/icons/icon-read-deactive.png');
+      // debug value
+      this.game.time.advancedTiming = true;
+    },
+    create : function() {
+      var desert = this.game.add.sprite(0,0,'desert');
+      var game_scale = game.world.width/desert.width;
+      desert.scale.setTo(game_scale, 1);
+      this.game.world.setBounds(0, 0, this.game.width, desert.height);
+      log.debug(this.world.height - 30);
+      var cactus_points = [
+        {x : 42 * game_scale , y : 2050 , scale : 1},
+        {x : 328 * game_scale , y : 1998, scale : 1},
+        {x : 128 * game_scale, y : 1904, scale : 1},
+        {x : 304 * game_scale, y : 1798, scale : 1},
+        {x : 26 * game_scale, y : 1772, scale : 1},
+        {x : 348 * game_scale, y : 1675, scale : 1},
+        {x : 38 * game_scale, y : 1591, scale : 1},
+        {x : 124 * game_scale, y : 1446, scale : 1},
+        {x : 292 * game_scale, y : 1280, scale : 1},
+        {x : 40 * game_scale, y : 1096, scale : 1},
+        {x : 76 * game_scale, y : 913, scale : 1},
+        {x : 306 * game_scale, y : 768, scale : 1},
+        {x : 40 * game_scale, y : 475, scale : 1},
+        {x : 42 * game_scale, y : 254, scale : 1},
+        {x : 310 * game_scale, y : 184, scale : 1},
+      ];
+      var tent_points = [
+        {x : 258 * game_scale, y : 950, scale : 1 }
+      ];
+      var tent_green_points = [
+        {x : 26 * game_scale, y : 1403, scale : 1}
+      ]
+      var one_stone_points = [
+        {x : 42 * game_scale, y : 1873 , scale : 1},
+        {x : 214 * game_scale, y : 1797, scale : 1},
+        {x : 45 * game_scale, y : 1235, scale : 1},
+        {x : 345 * game_scale, y : 1202, scale : 1}
+      ];
+      var two_stone_points = [
+        {x : 293, y : 2139, scale : 1},
+      ]
+
+      // place tent
+      for (var i = 0, tent_count = tent_points.length ; i < tent_count; i++) {
+        var tent = this.game.add.sprite(tent_points[i].x, tent_points[i].y,'tent');
+        tent.anchor.setTo(0.5,0.5);
+        tent.scale.setTo(tent_points[i].scale);
+      }
+      for (var i = 0, tent_count = tent_green_points.length ; i < tent_count; i++) {
+        var tent = this.game.add.sprite(tent_green_points[i].x, tent_green_points[i].y,'tent_green');
+        tent.anchor.setTo(0.5,0.5);
+        tent.scale.setTo(tent_green_points[i].scale);
+      }
+      // place stone
+      for (var i = 0, one_stone_count = one_stone_points.length ; i < one_stone_count; i++) {
+        var tent = this.game.add.sprite(one_stone_points[i].x, one_stone_points[i].y,'one_stone');
+        tent.anchor.setTo(0.5,0.5);
+        tent.scale.setTo(one_stone_points[i].scale);
+      }
+      for (var i = 0, two_stone_count = two_stone_points.length ; i < two_stone_count; i++) {
+        var tent = this.game.add.sprite(two_stone_points[i].x, two_stone_points[i].y,'two_stone');
+        tent.anchor.setTo(0.5,0.5);
+        tent.scale.setTo(two_stone_points[i].scale);
+      }
+      // place cactus
+      for (var i = 0, cactus_count = cactus_points.length; i < cactus_count; i++) {
+        var cactus = this.game.add.sprite(cactus_points[i].x, cactus_points[i].y,'cactus');
+        cactus.anchor.setTo(0.5,0.5);
+        cactus.scale.setTo(cactus_points[i].scale);
+        // catcus animation
+        // var cactus_animation = this.game.add.sprite(this.game.rnd.between(10,this.game.world.width-10), this.game.rnd.between(0,this.game.world.height), 'cactus_animation');
+        // cactus_animation.scale.setTo(3,3);
+        // var walk = cactus_animation.animations.add('walk');
+        // cactus_animation.animations.play('walk', 10, true);
+      }
+
+      // placing lesson node
+      // 1. lesson node count
+      // 2. Node should follow a particular path
+      // path
+      log.debug('desert', desert.width);
+      this.points = {
+        'x': [101,113,170,202,216,201,180,172,172,179,195,211,207,160,138,144,167,197,204,197,165,126,101,161,256,223,134,102,138,200,235,200,180,180,180,180,180,180,180,180],
+        'y': [50,64,109,148,189,235,287,346,404,456,495,529,574,644,693,748,803,854,877,941,980,1022,1091,1116,1116,1171,1209,1266,1318,1342,1371,1433,1494,1577,1659,1742,1824,1907,1950,2050]
+      };
+
+      for (var i = 0, points_count = this.points.x.length; i < points_count; i++) {
+        this.points.x[i] *= game_scale;
+      }
+
+      this.increment = 1 / game.world.height;
+
+      // Somewhere to draw to
+      this.bmd = this.add.bitmapData(this.game.width, this.game.world.height);
+      this.bmd.addToWorld();
+      // Draw the path
+      for (var j = 0; j < 1; j += this.increment) {
+        var posx = this.math.catmullRomInterpolation(this.points.x, j);
+        var posy = this.math.catmullRomInterpolation(this.points.y, j);
+        this.bmd.rect(posx, posy, 4, 4, '#219C7F');
+      }
+      // Place nodes
+      for (var j = 0, i = lessons.length-1, nodeCount = 1/(lessons.length-1); j <= 1; j += nodeCount, i--) {
+        var currentLesson = lessons[i];
+        var locked = currentLesson.locked ? '_deactive' : '';
+        var posx = this.math.catmullRomInterpolation(this.points.x, j);
+        var posy = this.math.catmullRomInterpolation(this.points.y, j);
+        var node = this.game.add.button(posx, posy, 'node');
+        node.inputEnabled = true;
+        node.events.onInputDown.add(function(currentLesson){
+            return function(){
+                if(!currentLesson.locked)
+                    scope.$emit('openNode',currentLesson);
+            }
+        }(currentLesson))
+        var icon = this.game.add.sprite(posx, posy, 'read'+locked);
+        icon.anchor.setTo(0.5,0.5);
+        icon.scale.setTo(0.3,0.3);
+        node.anchor.setTo(0.5, 0.5);
+        node.scale.setTo(1.2, 1.2);
+      }
+      for (var i = 0; i < 100; i++)
+      {
+          var s = this.game.add.sprite(this.world.randomX, this.game.world.randomY, 'particle' + this.game.rnd.between(1, 3));
+
+          s.scale.setTo(this.game.rnd.between(1, 2)/20);
+          this.game.physics.arcade.enable(s);
+          s.body.velocity.x = this.game.rnd.between(-55, -70);
+          s.body.velocity.y = this.game.rnd.between(10, 20);
+          s.autoCull = true;
+          s.checkWorldBounds = true;
+          s.events.onOutOfBounds.add(this.resetSprite, this);
+      }
+
+      var fire_animation = this.game.add.sprite(20,20, 'fire_animation');
+      fire_animation.scale.setTo(0.5,0.5);
+      var light = fire_animation.animations.add('light');
+      fire_animation.animations.play('light', 20, true);
+      // cactus
+      var cactus_animation = this.game.add.sprite(20,20, 'cactus_animation');
+      var wind = cactus_animation.animations.add('wind');
+      cactus_animation.animations.play('wind', 5, true);
+
+      this.init();
+      this.game.kineticScrolling.start();
+    },
+    init : function() {
+      this.game.kineticScrolling = this.game.plugins.add(Phaser.Plugin.KineticScrolling);
+      this.game.kineticScrolling.configure({
+        kineticMovement: true,
+        timeConstantScroll: 325, //really mimic iOS
+        horizontalScroll: false,
+        verticalScroll: true,
+        horizontalWheel: false,
+        verticalWheel: true,
+        deltaWheel: 40
+    });
+      this.game.camera.y = ((~~this.world.height/this.game.height)-1) * this.game.height;
+    },
+    resetSprite : function (sprite) {
+        sprite.x = this.game.world.bounds.right;
+        if(sprite.y > this.world.height)
+          sprite.y = this.game.world.bounds.top;
+    },
+    update : function() {
+      // this.dragMap();
+    },
+
+    render : function(){
+      // this.game.debug.text("fps : "+game.time.fps || '--', 2, 14, "#00ff00");
+    }
+  }
+
+  game.state.add('play',playState);
+  game.state.start('play');
+
+  // phaser destroy doesn't remove canvas element --> removed manually in app run
+  scope.$on('$destroy', function() {
+    game.destroy(); // Clean up the game when we leave this scope
+    var canvas = document.querySelector('#map_canvas');
+    canvas.parentNode.removeChild(canvas);
+    log.debug('game destoryed');
+  });
+};
+
+(function() {
+  'use strict';
+
+  mainRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
+  angular
+    .module('zaya-map')
+    .config(mainRoute);
+
+  function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
+
+    $stateProvider
+      .state('map',{
+        url : '/map',
+        abstract : true,
+          resolve : {
+            lessons : ['Rest','$log','extendLesson',function(Rest, $log, extendLesson){
+              return Rest.one('accounts', CONSTANT.CLIENTID.ELL).getList('lessons').then(function(lessons) {
+                $log.debug(extendLesson);
+                $log.debug(extendLesson.getLesson(lessons.plain()));
+                return extendLesson.getLesson(lessons.plain());
+              })
+            }]
+          },
+        template : '<ion-nav-view name="state-map"></ion-nav-view>'
+      })
+      .state('map.navigate',{
+        url : '/navigate',
+        views : {
+          'state-map' : {
+            templateUrl : CONSTANT.PATH.MAP + '/map' + CONSTANT.VIEW,
+            controller : 'mapController as mapCtrl'
+          }
+        }
+      })
+  }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('zaya-profile')
+        .controller('profileController', profileController);
+
+    profileController.$inject = ['CONSTANT','$state','Auth','Rest','$log','$ionicPopup'];
+
+    function profileController(CONSTANT, $state, Auth, Rest, $log, $ionicPopup) {
+        var profileCtrl = this;
+        profileCtrl.createProfile = createProfile;
+        profileCtrl.updateProfile = updateProfile;
+        profileCtrl.logout = logout;
+        profileCtrl.calcAge = calcAge;
+        profileCtrl.closeKeyboard = closeKeyboard;
+        profileCtrl.validatePersonaliseForm = validatePersonaliseForm;
+        profileCtrl.showError = showError;
+        profileCtrl.convertDate = convertDate;
+        profileCtrl.tabIndex = 0;
+        profileCtrl.tab = [
+          {
+            type : 'group',
+            path : CONSTANT.PATH.PROFILE + '/profile.groups' + CONSTANT.VIEW,
+            icon : 'ion-person-stalker'
+          },
+          {
+            type : 'badge',
+            path : CONSTANT.PATH.PROFILE + '/profile.badges' + CONSTANT.VIEW,
+            icon : 'ion-trophy'
+          }
+        ]
+
+        function calcAge(dateString) {
+          var birthday = +new Date(dateString);
+          return ~~((Date.now() - birthday) / (31557600000));
+        }
+        function convertDate(date) {
+          function pad(s) { return (s < 10) ? '0' + s : s; }
+          var d = new Date(date);
+          $log.debug([d.getFullYear(),pad(d.getMonth()+1),pad(d.getDate())  ].join('-'))
+          return [d.getFullYear(),pad(d.getMonth()+1),pad(d.getDate())  ].join('-');
+        }
+
+        function createProfile (userdata) {
+          Rest.all('profiles').post(userdata).then(function(response){
+              Auth.getUser(function(){
+                $state.go('map.navigate',{});
+              },function(){
+                profileCtrl.showError('Error', 'Error making profile');
+              })
+          },function(error){
+            $ionicPopup.alert({
+              title : _.chain(error.data).keys().first(),
+              template : error.data[_.chain(error.data).keys().first()].toString(),
+            });
+          })
+        }
+
+        function updateProfile(userdata) {
+          // body...
+        }
+
+        function logout() {
+          Auth.logout(function () {
+            $state.go('auth.signin',{})
+          },function () {
+            // body...
+          })
+        }
+        function showError(title, msg) {
+          $log.debug(title, msg);
+          $ionicPopup.alert({
+            title: title,
+            template: msg
+          });
+        }
+
+        function validatePersonaliseForm(formData) {
+          $log.debug(formData);
+          if (!formData.first_name.$viewValue) {
+            profileCtrl.showError("Child's name", "Please enter child's name");
+            return false;
+          }
+          if (!formData.dob.$viewValue) {
+            profileCtrl.showError("DOB", "Please select a DOB");
+            return false;
+          }
+          if (!formData.gender.$viewValue) {
+            profileCtrl.showError("Gender", "Please select a gender");
+            return false;
+          }
+          if (!formData.gender.$viewValue) {
+            profileCtrl.showError("Grade", "Please select a grade");
+            return false;
+          }
+          return true;
+        }
+        function closeKeyboard() {
+          try{
+            cordova.plugins.Keyboard.close();
+          }
+          catch(e){
+            $log.debug(e);
+          }
+          return true;
+        }
+
+    }
+})();
+
 (function () {
   'use strict';
   angular
@@ -1087,575 +2046,6 @@
 })();
 
 (function() {
-    'use strict';
-
-    angular
-        .module('zaya-intro')
-        .controller('introController', introController);
-
-    introController.$inject = [];
-
-    /* @ngInject */
-    function introController() {
-        var introCtrl = this;
-
-        introCtrl.tabIndex = 0;
-        introCtrl.slides = [
-          {
-            title : "Hello this Title",
-            description : "some description is theresome description is theresome description is there",
-            img : "img/01.png",
-            color : "bg-brand-light"
-          },
-          {
-            title : "Hello this Title",
-            description : "some description is theresome description is theresome description is there",
-            img : "img/02.png",
-            // color : "bg-brand-light"
-            color : "bg-assertive-light"
-          },
-          {
-            title : "Hello this Title",
-            description : "some description is theresome description is theresome description is there",
-            img : "img/03.png",
-            // color : "bg-brand-light"
-            color : "bg-royal-light"
-          }
-        ];
-    }
-})();
-
-(function() {
-  'use strict';
-
-  mainRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
-  angular
-    .module('zaya-intro')
-    .config(mainRoute);
-
-  function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
-    $stateProvider
-      .state('intro',{
-        url : '/intro',
-        templateUrl : CONSTANT.PATH.INTRO+'/intro'+CONSTANT.VIEW,
-        controller : "introController as introCtrl"
-      })
-  }
-})();
-
-(function() {
-  'use strict';
-
-  angular
-    .module('zaya-map')
-    .controller('mapController', mapController);
-
-  mapController.$inject = ['$scope','$rootScope', '$log', '$ionicModal', '$state', 'lessons', 'Rest', 'CONSTANT', '$sce', 'orientation','$ionicLoading','$timeout','$ionicBackdrop'];
-
-  function mapController($scope, $rootScope, $log, $ionicModal, $state, lessons, Rest, CONSTANT, $sce, orientation, $ionicLoading, $timeout, $ionicBackdrop) {
-    var mapCtrl = this;
-    mapCtrl.lessons = lessons;
-    mapCtrl.getLesson = getLesson;
-    mapCtrl.getSrc = getSrc;
-    mapCtrl.resetNode = resetNode;
-    mapCtrl.getIcon = getIcon;
-    mapCtrl.resourceType = resourceType;
-    mapCtrl.playResource = playResource;
-    mapCtrl.backdrop = false;
-    mapCtrl.showScore = -1;
-
-    // mapCtrl.openModal = openModal;
-    // mapCtrl.closeModal = closeModal;
-    mapCtrl.onPlayerReady = function(API){
-        mapCtrl.API = API;
-    }
-
-	mapCtrl.updateOrientation = function(state) {
-        if(state=='play'){
-            orientation.setLandscape();
-            mapCtrl.API.toggleFullScreen();
-        }
-        if(state=='pause' || state=='stop'){
-            orientation.setPortrait();
-            mapCtrl.API.toggleFullScreen();
-        }
-	};
-    mapCtrl.config = {
-        sources : [
-            {
-                src : '',
-                type : 'video/mp4'
-            }
-        ],
-        theme: "lib/videogular-themes-default/videogular.css"
-    }
-
-    mapCtrl.skillSet = [
-      {name : 'reading', score : 300},
-      {name : 'listening', score : 200},
-      {name : 'vocabulary', score : 250},
-      {name : 'grammar', score : 3000}
-    ];
-
-    function playResource (resource) {
-      if(mapCtrl.resourceType(resource) != 'video'){
-        $scope.closeModal();
-        $ionicLoading.show({noBackdrop: false, hideOnStateChange: true});
-        $state.go('quiz.questions',{id : resource.node.id});
-      }
-      else{
-          mapCtrl.config.sources[0].src = mapCtrl.getSrc(resource.node.type.path);
-      }
-    }
-    function resourceType (resource){
-      if(resource.node.content_type_name == 'assessment'){
-        return 'assessment';
-      }
-      else if(resource.node.content_type_name == 'resource'){
-        if(resource.node.type.file_type.substring(0,resource.node.type.file_type.indexOf('/')) == 'video'){
-          return 'video';
-        }
-      }
-      else {}
-    }
-    function getSrc(src){
-      return $sce.trustAsResourceUrl(CONSTANT.BACKEND_SERVICE_DOMAIN + src);
-    }
-    function getIcon(resource){
-      if(resource.node.content_type_name == 'assessment'){
-        return CONSTANT.ASSETS.IMG.ICON + '/quiz.png';
-      }
-      else if(resource.node.content_type_name == 'resource'){
-        if(resource.node.type.file_type.substring(0,resource.node.type.file_type.indexOf('/')) == 'video'){
-          return CONSTANT.ASSETS.IMG.ICON + '/video.png';
-        }
-      }
-      else {
-
-      }
-    }
-
-    $scope.$on('logout', function() {
-      $state.go('user.main.settings',{});
-    })
-    $scope.$on('openNode', function(event, node) {
-      mapCtrl.getLesson(node.id);
-    })
-    $scope.$on('$destroy', function() {
-      $scope.modal.remove();
-    });
-    $scope.openModal = function() {
-      $scope.modal.show();
-      return true;
-    }
-    $scope.closeModal = function() {
-      $scope.modal.hide();
-      return true;
-    }
-
-    $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal' + CONSTANT.VIEW, {
-      scope: $scope,
-      animation: 'slide-in-up',
-      hardwareBackButtonClose : false
-    }).then(function(modal) {
-      $scope.modal = modal;
-    });
-
-    function resetNode(){
-        mapCtrl.selectedNode = {};
-    }
-
-    function getLesson(id) {
-      $ionicLoading.show({noBackdrop: false, hideOnStateChange: true});
-      Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('lessons', id).get().then(function(response) {
-        $ionicLoading.hide();
-        $scope.openModal();
-        mapCtrl.selectedNode = response.plain();
-        localStorage.setItem('lesson', JSON.stringify(mapCtrl.selectedNode));
-      })
-    }
-
-    if(localStorage.lesson){
-      // mapCtrl.selectedNode = JSON.parse(localStorage.lesson);
-      // $scope.openModal();
-      mapCtrl.getLesson(JSON.parse(localStorage.lesson).node.id);
-    }
-
-  }
-})();
-
-(function() {
-    'use strict';
-
-    mapCanvas.$inject = ["$injector", "$timeout", "$log"];
-    angular
-        .module('zaya-map')
-        .directive('mapCanvas', mapCanvas)
-
-    /* @ngInject */
-    function mapCanvas($injector, $timeout, $log) {
-        var mapCanvas = {
-            restrict: 'A',
-            template: '<div id="map_canvas"></div>',
-            scope: {
-              lessons : '='
-            },
-            link: linkFunc,
-        };
-
-        return mapCanvas;
-
-        function linkFunc(scope, el, attr, ctrl) {
-          $timeout(createGame(scope, scope.lessons, $injector, $log));
-        }
-    }
-
-})();
-
-window.createGame = function(scope, lessons, injector, log) {
-  'use strict';
-
-  var lessons = lessons;
-  var game = new Phaser.Game("100", "100" , Phaser.CANVAS, 'map_canvas');
-
-  var playState = {
-    preload : function () {
-      this.load.image('desert', 'img/assets/desert.png');
-      this.load.image('cactus', 'img/assets/cactus.png');
-      this.load.image('tent', 'img/assets/tent_fire.png');
-      this.load.image('tent_green', 'img/assets/tent_green.png');
-      this.load.image('two_stone', 'img/assets/two_stone.png');
-      this.load.image('one_stone', 'img/assets/one_stone.png');
-      this.load.image('particle1', 'img/assets/particle1.png');
-      this.load.image('particle2', 'img/assets/particle2.png');
-      this.load.image('particle3', 'img/assets/particle3.png');
-
-      this.load.spritesheet('fire_animation', 'img/assets/fire_animation.png', 322,452, 20);
-      this.load.spritesheet('cactus_animation', 'img/assets/cactus_animation.png', 30,52, 5);
-      this.load.image('node', 'img/icons/node.png');
-      // debug value
-      this.game.time.advancedTiming = true;
-    },
-    create : function() {
-      var desert = this.game.add.sprite(0,0,'desert');
-      var game_scale = game.world.width/desert.width;
-      desert.scale.setTo(game_scale, 1);
-      this.game.world.setBounds(0, 0, this.game.width, desert.height);
-      log.debug(this.world.height - 30);
-      var cactus_points = [
-        {x : 42 * game_scale , y : 2050 , scale : 1},
-        {x : 328 * game_scale , y : 1998, scale : 1},
-        {x : 128 * game_scale, y : 1904, scale : 1},
-        {x : 304 * game_scale, y : 1798, scale : 1},
-        {x : 26 * game_scale, y : 1772, scale : 1},
-        {x : 348 * game_scale, y : 1675, scale : 1},
-        {x : 38 * game_scale, y : 1591, scale : 1},
-        {x : 124 * game_scale, y : 1446, scale : 1},
-        {x : 292 * game_scale, y : 1280, scale : 1},
-        {x : 40 * game_scale, y : 1096, scale : 1},
-        {x : 76 * game_scale, y : 913, scale : 1},
-        {x : 306 * game_scale, y : 768, scale : 1},
-        {x : 40 * game_scale, y : 475, scale : 1},
-        {x : 42 * game_scale, y : 254, scale : 1},
-        {x : 310 * game_scale, y : 184, scale : 1},
-      ];
-      var tent_points = [
-        {x : 258 * game_scale, y : 950, scale : 1 }
-      ];
-      var tent_green_points = [
-        {x : 26 * game_scale, y : 1403, scale : 1}
-      ]
-      var one_stone_points = [
-        {x : 42 * game_scale, y : 1873 , scale : 1},
-        {x : 214 * game_scale, y : 1797, scale : 1},
-        {x : 45 * game_scale, y : 1235, scale : 1},
-        {x : 345 * game_scale, y : 1202, scale : 1}
-      ];
-      var two_stone_points = [
-        {x : 293, y : 2139, scale : 1},
-      ]
-
-      // place tent
-      for (var i = 0, tent_count = tent_points.length ; i < tent_count; i++) {
-        var tent = this.game.add.sprite(tent_points[i].x, tent_points[i].y,'tent');
-        tent.anchor.setTo(0.5,0.5);
-        tent.scale.setTo(tent_points[i].scale);
-      }
-      for (var i = 0, tent_count = tent_green_points.length ; i < tent_count; i++) {
-        var tent = this.game.add.sprite(tent_green_points[i].x, tent_green_points[i].y,'tent_green');
-        tent.anchor.setTo(0.5,0.5);
-        tent.scale.setTo(tent_green_points[i].scale);
-      }
-      // place stone
-      for (var i = 0, one_stone_count = one_stone_points.length ; i < one_stone_count; i++) {
-        var tent = this.game.add.sprite(one_stone_points[i].x, one_stone_points[i].y,'one_stone');
-        tent.anchor.setTo(0.5,0.5);
-        tent.scale.setTo(one_stone_points[i].scale);
-      }
-      for (var i = 0, two_stone_count = two_stone_points.length ; i < two_stone_count; i++) {
-        var tent = this.game.add.sprite(two_stone_points[i].x, two_stone_points[i].y,'two_stone');
-        tent.anchor.setTo(0.5,0.5);
-        tent.scale.setTo(two_stone_points[i].scale);
-      }
-      // place cactus
-      for (var i = 0, cactus_count = cactus_points.length; i < cactus_count; i++) {
-        var cactus = this.game.add.sprite(cactus_points[i].x, cactus_points[i].y,'cactus');
-        cactus.anchor.setTo(0.5,0.5);
-        cactus.scale.setTo(cactus_points[i].scale);
-        // catcus animation
-        // var cactus_animation = this.game.add.sprite(this.game.rnd.between(10,this.game.world.width-10), this.game.rnd.between(0,this.game.world.height), 'cactus_animation');
-        // cactus_animation.scale.setTo(3,3);
-        // var walk = cactus_animation.animations.add('walk');
-        // cactus_animation.animations.play('walk', 10, true);
-      }
-
-      // placing lesson node
-      // 1. lesson node count
-      // 2. Node should follow a particular path
-      // path
-      log.debug('desert', desert.width);
-      this.points = {
-        'x': [101,113,170,202,216,201,180,172,172,179,195,211,207,160,138,144,167,197,204,197,165,126,101,161,256,223,134,102,138,200,235,200,180,180,180,180,180,180,180,180,180],
-        'y': [50,64,109,148,189,235,287,346,404,456,495,529,574,644,693,748,803,854,877,941,980,1022,1091,1116,1116,1171,1209,1266,1318,1342,1371,1433,1494,1577,1659,1742,1824,1907,1989,2072,2155]
-      };
-
-      for (var i = 0, points_count = this.points.x.length; i < points_count; i++) {
-        this.points.x[i] *= game_scale;
-      }
-
-      this.increment = 1 / game.world.height;
-
-      // Somewhere to draw to
-      this.bmd = this.add.bitmapData(this.game.width, this.game.world.height);
-      this.bmd.addToWorld();
-      // Draw the path
-      for (var j = 0; j < 1; j += this.increment) {
-        var posx = this.math.catmullRomInterpolation(this.points.x, j);
-        var posy = this.math.catmullRomInterpolation(this.points.y, j);
-        this.bmd.rect(posx, posy, 4, 4, '#219C7F');
-      }
-      // Place nodes
-      for (var j = 0, i = lessons.length-1, nodeCount = 1/lessons.length; j < 1; j += nodeCount, i--) {
-        var posx = this.math.catmullRomInterpolation(this.points.x, j);
-        var posy = this.math.catmullRomInterpolation(this.points.y, j);
-        var node = this.game.add.button(posx, posy, 'node', function (node) {
-          scope.$emit('openNode',node);
-        }, this, 2, 1, 0);
-        node.anchor.setTo(0.5, 0.5);
-        node.id = lessons[i].id;
-      }
-      for (var i = 0; i < 100; i++)
-      {
-          var s = this.game.add.sprite(this.world.randomX, this.game.world.randomY, 'particle' + this.game.rnd.between(1, 3));
-
-          s.scale.setTo(this.game.rnd.between(1, 2)/20);
-          this.game.physics.arcade.enable(s);
-          s.body.velocity.x = this.game.rnd.between(-55, -70);
-          s.body.velocity.y = this.game.rnd.between(10, 20);
-          s.autoCull = true;
-          s.checkWorldBounds = true;
-          s.events.onOutOfBounds.add(this.resetSprite, this);
-      }
-
-      var fire_animation = this.game.add.sprite(20,20, 'fire_animation');
-      fire_animation.scale.setTo(0.5,0.5);
-      var light = fire_animation.animations.add('light');
-      fire_animation.animations.play('light', 20, true);
-      // cactus
-      var cactus_animation = this.game.add.sprite(20,20, 'cactus_animation');
-      var wind = cactus_animation.animations.add('wind');
-      cactus_animation.animations.play('wind', 5, true);
-
-      this.init();
-      this.game.kineticScrolling.start();
-    },
-    init : function() {
-      this.game.kineticScrolling = this.game.plugins.add(Phaser.Plugin.KineticScrolling);
-      this.game.kineticScrolling.configure({
-        kineticMovement: true,
-        timeConstantScroll: 325, //really mimic iOS
-        horizontalScroll: false,
-        verticalScroll: true,
-        horizontalWheel: false,
-        verticalWheel: true,
-        deltaWheel: 40
-    });
-      this.game.camera.y = ((~~this.world.height/this.game.height)-1) * this.game.height;
-    },
-    resetSprite : function (sprite) {
-        sprite.x = this.game.world.bounds.right;
-        if(sprite.y > this.world.height)
-          sprite.y = this.game.world.bounds.top;
-    },
-    update : function() {
-      // this.dragMap();
-    },
-
-    render : function(){
-      // this.game.debug.text("fps : "+game.time.fps || '--', 2, 14, "#00ff00");
-    }
-  }
-
-  game.state.add('play',playState);
-  game.state.start('play');
-
-  // phaser destroy doesn't remove canvas element --> removed manually in app run
-  scope.$on('$destroy', function() {
-    game.destroy(); // Clean up the game when we leave this scope
-    var canvas = document.querySelector('#map_canvas');
-    canvas.parentNode.removeChild(canvas);
-    log.debug('game destoryed');
-  });
-};
-
-(function() {
-  'use strict';
-
-  mainRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
-  angular
-    .module('zaya-map')
-    .config(mainRoute);
-
-  function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
-
-    $stateProvider
-      .state('map',{
-        url : '/map',
-        abstract : true,
-          resolve : {
-            lessons : ['Rest','$log',function(Rest, $log){
-              return Rest.one('accounts', CONSTANT.CLIENTID.ELL).getList('lessons').then(function(lessons) {
-                $log.debug(lessons.plain());
-                return lessons.plain();
-              })
-            }]
-          },
-        template : '<ion-nav-view name="state-map"></ion-nav-view>'
-      })
-      .state('map.navigate',{
-        url : '/navigate',
-        views : {
-          'state-map' : {
-            templateUrl : CONSTANT.PATH.MAP + '/map' + CONSTANT.VIEW,
-            controller : 'mapController as mapCtrl'
-          }
-        }
-      })
-  }
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('zaya-profile')
-        .controller('profileController', profileController);
-
-    profileController.$inject = ['CONSTANT','$state','Auth','Rest','$log','$ionicPopup'];
-
-    function profileController(CONSTANT, $state, Auth, Rest, $log, $ionicPopup) {
-        var profileCtrl = this;
-        profileCtrl.createProfile = createProfile;
-        profileCtrl.updateProfile = updateProfile;
-        profileCtrl.logout = logout;
-        profileCtrl.calcAge = calcAge;
-        profileCtrl.closeKeyboard = closeKeyboard;
-        profileCtrl.validatePersonaliseForm = validatePersonaliseForm;
-        profileCtrl.showError = showError;
-        profileCtrl.convertDate = convertDate;
-        profileCtrl.tabIndex = 0;
-        profileCtrl.tab = [
-          {
-            type : 'group',
-            path : CONSTANT.PATH.PROFILE + '/profile.groups' + CONSTANT.VIEW,
-            icon : 'ion-person-stalker'
-          },
-          {
-            type : 'badge',
-            path : CONSTANT.PATH.PROFILE + '/profile.badges' + CONSTANT.VIEW,
-            icon : 'ion-trophy'
-          }
-        ]
-
-        function calcAge(dateString) {
-          var birthday = +new Date(dateString);
-          return ~~((Date.now() - birthday) / (31557600000));
-        }
-        function convertDate(date) {
-          function pad(s) { return (s < 10) ? '0' + s : s; }
-          var d = new Date(date);
-          $log.debug([d.getFullYear(),pad(d.getMonth()+1),pad(d.getDate())  ].join('-'))
-          return [d.getFullYear(),pad(d.getMonth()+1),pad(d.getDate())  ].join('-');
-        }
-
-        function createProfile (userdata) {
-          Rest.all('profiles').post(userdata).then(function(response){
-              Auth.getUser(function(){
-                $state.go('map.navigate',{});
-              },function(){
-                profileCtrl.showError('Error', 'Error making profile');
-              })
-          },function(error){
-            $ionicPopup.alert({
-              title : _.chain(error.data).keys().first(),
-              template : error.data[_.chain(error.data).keys().first()].toString(),
-            });
-          })
-        }
-
-        function updateProfile(userdata) {
-          // body...
-        }
-
-        function logout() {
-          Auth.logout(function () {
-            $state.go('auth.signin',{})
-          },function () {
-            // body...
-          })
-        }
-        function showError(title, msg) {
-          $log.debug(title, msg);
-          $ionicPopup.alert({
-            title: title,
-            template: msg
-          });
-        }
-
-        function validatePersonaliseForm(formData) {
-          $log.debug(formData);
-          if (!formData.first_name.$viewValue) {
-            profileCtrl.showError("Child's name", "Please enter child's name");
-            return false;
-          }
-          if (!formData.dob.$viewValue) {
-            profileCtrl.showError("DOB", "Please select a DOB");
-            return false;
-          }
-          if (!formData.gender.$viewValue) {
-            profileCtrl.showError("Gender", "Please select a gender");
-            return false;
-          }
-          if (!formData.gender.$viewValue) {
-            profileCtrl.showError("Grade", "Please select a grade");
-            return false;
-          }
-          return true;
-        }
-        function closeKeyboard() {
-          try{
-            cordova.plugins.Keyboard.close();
-          }
-          catch(e){
-            $log.debug(e);
-          }
-          return true;
-        }
-
-    }
-})();
-
-(function() {
   angular
     .module('zaya-quiz')
     .controller('QuizController', QuizController)
@@ -2269,333 +2659,4 @@ window.createGame = function(scope, lessons, injector, log) {
         }
       })
   }
-})();
-
-(function(){
-  var ROOT = 'templates';
-
-  angular
-    .module('common')
-    .constant('CONSTANT',{
-      'BACKEND_SERVICE_DOMAIN' : 'http://cc-test.zaya.in/',
-      // 'BACKEND_SERVICE_DOMAIN' : 'http://192.168.1.6:9000/',
-      'PATH' : {
-        'INTRO' : ROOT+'/intro',
-        'AUTH' : ROOT+'/auth',
-        'QUIZ' : ROOT+'/quiz',
-        'PROFILE' : ROOT+'/profile',
-        'USER' : ROOT+'/user',
-        'PLAYLIST' : ROOT+'/playlist',
-        'HOME' : ROOT+'/home',
-        'RESULT' : ROOT+'/result',
-        'SEARCH' : ROOT+'/search',
-        'GROUP' : ROOT+'/group',
-        'COMMON' : ROOT + '/common',
-        'MAP' : ROOT + '/map',
-        'CONTENT' : ROOT + '/content'
-      },
-      'VIEW' : '.view.html',
-      'CLIENTID' : {
-        'FACEBOOK' : '1159750564044149',
-        'GOOGLE' : '1011514043276-7q3kvn29jkegl2d1v7dtlbtipqqgo1rr.apps.googleusercontent.com',
-        'ELL' : '1e7aa89f-3f50-433a-90ca-e485a92bbda6'
-      },
-      'ASSETS' : {
-        'IMG' : {
-          'ICON' : 'img/icons'
-        }
-      }
-    })
-})();
-
-(function() {
-  angular
-    .module('zaya')
-    .directive('widgetCarousel', widgetCarousel)
-    .directive('carouselItem', carouselItem);
-
-  function widgetCarousel() {
-    var carousel = {}
-    carousel.restrict = 'A';
-    carousel.link = function(scope) {
-      scope.initCarousel = function(element) {
-        // provide any default options you want
-        var defaultOptions = {};
-        var customOptions = scope.$eval($(element).attr('carousel-options'));
-        // combine the two options objects
-        for (var key in customOptions) {
-          if (customOptions.hasOwnProperty(key)) {
-            defaultOptions[key] = customOptions[key];
-          }
-        }
-        // init carousel
-        $(element).owlCarousel(defaultOptions);
-      };
-    }
-    return carousel;
-  }
-
-  function carouselItem() {
-    var carouselItem = {};
-    carouselItem.restrict = 'A';
-    carouselItem.transclude = false;
-    carouselItem.link = function(scope, element) {
-      // wait for the last item in the ng-repeat then call init
-      if (scope.$last) {
-        scope.initCarousel(element.parent());
-      }
-    }
-    return carouselItem;
-  }
-})();
-
-(function(){
-	widgetError.$inject = ["CONSTANT"];
-	angular
-		.module('common')
-		.directive('widgetError',widgetError)
-
-	function widgetError(CONSTANT){
-		var error = {};
-		error.restrict = 'E';
-		error.templateUrl = CONSTANT.PATH.COMMON + '/common.error' + CONSTANT.VIEW;
-		error.controller = ['$rootScope','$scope',function ($rootScope,$scope) {
-			$scope.error = function(){
-				return $rootScope.error;
-			}
-		}]
-		return error;
-	}
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('common')
-        .directive('validInput', validInput);
-
-    function validInput() {
-        var validInput = {
-            require: '?ngModel',
-            link: linkFunc
-        };
-
-        return validInput;
-
-        function linkFunc(scope, element, attrs, ngModelCtrl) {
-          if(!ngModelCtrl) {
-            return;
-          }
-          ngModelCtrl.$parsers.push(function(val) {
-            var clean = val.replace( /[^a-zA-Z0-9@.!#$%&'*+-/=?^_`{|}~]+/g, '');
-            clean = clean.toLowerCase();
-            if (val !== clean) {
-              ngModelCtrl.$setViewValue(clean);
-              ngModelCtrl.$render();
-            }
-            return clean;
-          });
-        }
-    }
-})();
-
-(function() {
-    'use strict';
-
-    validOtp.$inject = ["$log"];
-    angular
-        .module('common')
-        .directive('validOtp', validOtp);
-
-    function validOtp($log) {
-        var validOtp = {
-            require: '?ngModel',
-            link: linkFunc
-        };
-
-        return validOtp;
-
-        function linkFunc(scope, element, attrs, ngModelCtrl) {
-          if(!ngModelCtrl) {
-            return;
-          }
-
-          ngModelCtrl.$parsers.push(function(val) {
-            var clean = (val > 999999)?(val.toString()).substring(0,6):val;
-            if (val !== clean) {
-              ngModelCtrl.$setViewValue(clean);
-              ngModelCtrl.$render();
-            }
-            return clean;
-          });
-        }
-    }
-})();
-
-(function() {
-  'use strict';
-
-  trackVideo.$inject = ["$window", "$log", "orientation"];
-  angular
-    .module('common')
-    .directive('trackVideo', trackVideo);
-
-  /* @ngInject */
-  function trackVideo($window, $log, orientation) {
-    var video = {
-      restrict: 'A',
-      link: linkFunc,
-    };
-
-    return video;
-
-    // full screen not working ; instead used css to immitate full screen effect ; check below
-    function toggleFullScreen() {
-      if (!document.fullscreenElement && // alternative standard method
-        !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) { // current working methods
-        if (document.documentElement.requestFullscreen) {
-          document.documentElement.requestFullscreen();
-        } else if (document.documentElement.msRequestFullscreen) {
-          document.documentElement.msRequestFullscreen();
-        } else if (document.documentElement.mozRequestFullScreen) {
-          document.documentElement.mozRequestFullScreen();
-        } else if (document.documentElement.webkitRequestFullscreen) {
-          document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-        }
-      } else {
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        } else if (document.msExitFullscreen) {
-          document.msExitFullscreen();
-        } else if (document.mozCancelFullScreen) {
-          document.mozCancelFullScreen();
-        } else if (document.webkitExitFullscreen) {
-          document.webkitExitFullscreen();
-        }
-      }
-    }
-
-    function linkFunc(scope, el, attr, ctrl) {
-      el.bind('playing', function() {
-        // toggleFullScreen();
-        document.querySelector("ion-modal-view").classList.remove('modal-dark');
-        document.querySelector("ion-modal-view").classList.add('modal-black');
-        el.addClass('fullscreen');
-        orientation.setLandscape();
-      });
-      el.bind('pause', function() {
-        // toggleFullScreen();
-        document.querySelector("ion-modal-view").classList.remove('modal-black');
-        document.querySelector("ion-modal-view").classList.add('modal-dark');
-        el.removeClass('fullscreen');
-        orientation.setPortrait();
-      });
-      el.bind('click',function (event) {
-        event.stopPropagation();
-      })
-    }
-  }
-
-})();
-
-(function () {
-  'use strict';
-
-    audio.$inject = ["$cordovaNativeAudio"];
-  angular
-    .module('common')
-    .factory('audio',audio)
-
-    function audio($cordovaNativeAudio) {
-      return {
-        play : function (sound) {
-          try{
-            $cordovaNativeAudio.play(sound);
-            void 0;
-          }
-          catch(error){
-            void 0;
-          }
-        }
-      };
-    }
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('common')
-        .factory('orientation', orientation);
-
-    orientation.$inject = ['$window','$log'];
-
-    /* @ngInject */
-    function orientation($window, $log) {
-        var orientation = {
-            setLandscape : setLandscape,
-            setPortrait : setPortrait,
-        };
-
-        return orientation;
-
-        function setPortrait() {
-          try{
-            $window.screen.lockOrientation('portrait');
-          }
-          catch(e){
-            $log.debug(e);
-          }
-        }
-
-        function setLandscape() {
-          try{
-            $window.screen.lockOrientation('landscape');
-          }
-          catch(e){
-            $log.debug(e);
-          }
-        }
-
-    }
-})();
-
-(function () {
-  'use strict';
-
-  angular
-    .module('common')
-    .factory('Utilities',utilities)
-
-    function utilities() {
-      return {
-        range : function (num) {
-          return new Array(num);
-        }
-      };
-    }
-})();
-
-(function(){
-  'use strict';
-
-  runConfig.$inject = ["$ionicPlatform", "$cordovaNativeAudio"];
-  angular
-    .module('common')
-    .run(runConfig);
-
-  function runConfig($ionicPlatform,$cordovaNativeAudio) {
-    $ionicPlatform.ready(function() {
-      try{
-        $cordovaNativeAudio.preloadSimple('water-drop', 'sound/water-drop.mp3');
-        $cordovaNativeAudio.preloadSimple('correct', 'sound/correct.mp3');
-        $cordovaNativeAudio.preloadSimple('wrong', 'sound/wrong.mp3');
-      }
-      catch(error){
-        void 0;
-      }
-    });
-  }
-
 })();

@@ -126,15 +126,17 @@
         $ionicLoading.hide();
         $scope.openModal();
         mapCtrl.selectedNode = response.plain();
+        $log.debug('get lesson',response.plain());
         localStorage.setItem('lesson', JSON.stringify(mapCtrl.selectedNode));
       })
     }
 
-    if(localStorage.lesson){
-      // mapCtrl.selectedNode = JSON.parse(localStorage.lesson);
-      // $scope.openModal();
-      mapCtrl.getLesson(JSON.parse(localStorage.lesson).node.id);
-    }
+    $timeout(function functionName() {
+        if(localStorage.lesson){
+            $scope.openModal();
+            mapCtrl.selectedNode = JSON.parse(localStorage.lesson);
+        }
+    });
 
   }
 })();
