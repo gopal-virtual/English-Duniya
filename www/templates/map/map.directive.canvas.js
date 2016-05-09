@@ -11,7 +11,7 @@
             restrict: 'A',
             template: '<div id="map_canvas"></div>',
             scope: {
-              lessons : '='
+              lessons : '=',
             },
             link: linkFunc,
         };

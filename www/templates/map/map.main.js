@@ -22,6 +22,8 @@ window.createGame = function(scope, lessons, injector, log) {
       this.load.image('node', 'img/icons/node.png');
       this.load.image('read', 'img/icons/icon-read.png');
       this.load.image('read_deactive', 'img/icons/icon-read-deactive.png');
+      this.load.image('star', 'img/icons/icon-star.png');
+      this.load.image('nostar', 'img/icons/icon-nostar.png');
       // debug value
       this.game.time.advancedTiming = true;
     },
@@ -126,6 +128,7 @@ window.createGame = function(scope, lessons, injector, log) {
       // Place nodes
       for (var j = 0, i = lessons.length-1, nodeCount = 1/(lessons.length-1); j <= 1; j += nodeCount, i--) {
         var currentLesson = lessons[i];
+        log.debug('lesson status', currentLesson);
         var locked = currentLesson.locked ? '_deactive' : '';
         var posx = this.math.catmullRomInterpolation(this.points.x, j);
         var posy = this.math.catmullRomInterpolation(this.points.y, j);
@@ -141,7 +144,34 @@ window.createGame = function(scope, lessons, injector, log) {
         icon.anchor.setTo(0.5,0.5);
         icon.scale.setTo(0.3,0.3);
         node.anchor.setTo(0.5, 0.5);
-        node.scale.setTo(1.2, 1.2);
+        node.scale.setTo(1.8, 1.8);
+
+        // add stars
+        if(currentLesson.stars >= 0){
+            var stars = this.game.add.group();
+            if(currentLesson.stars == 0){
+                stars.create(posx - 150, posy, 'nostar');
+                stars.create(posx, posy, 'nostar');
+                stars.create(posx + 150, posy, 'nostar');
+            }
+            else if(currentLesson.stars == 1){
+                stars.create(posx - 150, posy, 'star');
+                stars.create(posx, posy, 'nostar');
+                stars.create(posx + 150, posy, 'nostar');
+            }
+            else if(currentLesson.stars == 2){
+                stars.create(posx - 150, posy, 'star');
+                stars.create(posx, posy, 'star');
+                stars.create(posx + 150, posy, 'nostar');
+            }
+            else if(currentLesson.stars == 3){
+                stars.create(posx - 150, posy, 'star');
+                stars.create(posx, posy, 'star');
+                stars.create(posx + 150, posy, 'star');
+            }
+            else{}
+        }
+        // stars.scale.setTo(0.2,0.2);
       }
       for (var i = 0; i < 100; i++)
       {
