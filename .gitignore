@@ -9,4 +9,6 @@ plugins/
 .idea/
 *.apk
 /www/build/
+mobile.app.js
+mobile.app.min.js
 .DS_Store

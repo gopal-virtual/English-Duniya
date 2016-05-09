@@ -75,7 +75,7 @@
 
   <div class="bar bar-footer progress-bar-footer bg-neutral-dark" ng-class="{'fading-scroll-top':quizCtrl.currentIndex != quizCtrl.quiz.objects.length - 1}">
     <div class="row progress-bar">
-      <div ng-click="quizCtrl.slideTo($index)" class="col" ng-repeat="question in quizCtrl.quiz.objects" ng-class="{'attempted': quizCtrl.isAttempted(question.node.id),'skipped' : question.isVisited == true && !quizCtrl.isAttempted(question.node.id) && quizCtrl.getCurrentIndex() != $index,'current' :  quizCtrl.getCurrentIndex() == $index, 'unattempted' : question.isVisited == false}">
+      <div ng-click="quizCtrl.slideTo($index)" class="col" ng-repeat="question in quizCtrl.quiz.objects" ng-class="{'attempted': quizCtrl.isAttempted(question),'skipped' : question.isVisited == true && !quizCtrl.isAttempted(question) && quizCtrl.getCurrentIndex() != $index,'current' :  quizCtrl.getCurrentIndex() == $index, 'unattempted' : question.isVisited == false}">
       </div>
     </div>
   </div>

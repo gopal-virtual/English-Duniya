@@ -92,9 +92,7 @@
                 node: key
               }
               Quiz.saveAttempt(attempt, function(response) {
-                $log.debug(response);
               }, function(error) {
-                $log.debug(error);
               })
             });
           }, function(error) {
@@ -121,7 +119,7 @@
           if ((quizCtrl.quiz.objects[i].node.type.type == 'choicequestion' && !quizCtrl.quiz.objects[i].node.type.content.is_multiple) /*|| quizCtrl.quiz.objects[i].node.content_type=='dr question'*/ ) {
             quizCtrl.quiz.objects[i].attempted = "";
           } else if (quizCtrl.quiz.objects[i].node.type.type == 'choicequestion' && quizCtrl.quiz.objects[i].node.type.content.is_multiple) {
-            quizCtrl.quiz.objects[i].attempted = {};
+            quizCtrl.quiz.objects[i].attempted = [];
           }
           //else if(quizCtrl.quiz.objects[i].node.content_type=='sentence ordering' || quizCtrl.quiz.objects[i].node.content_type=='sentence structuring'){
           //  quizCtrl.quiz.objects[i].attempted = [];
@@ -159,7 +157,6 @@
 
     function decide() {
       if (!quizCtrl.isCorrectAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex])) {
-        $log.debug("!quizCtrl.isCorrectAttempted");
         quizCtrl.submitAttempt(
           quizCtrl.quiz.objects[quizCtrl.currentIndex].node.id,
           quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted
@@ -212,8 +209,23 @@
     }
 
 
-    function isAttempted(question_id) {
-      return quizCtrl.report.attempts[question_id].length ? true : false;
+    function isAttempted(question) {
+      // multiple choice
+      if (question.node.type.type == 'choicequestion' && question.node.type.content.is_multiple) {
+        for (var i = 0; i < quizCtrl.report.attempts[question.node.id].length; i++) {
+          if (_.chain(quizCtrl.report.attempts[question.node.id][i]).map(function(num, key) {
+              return num ? parseInt(key) : false;
+            }).reject(function(num) {
+              return !num;
+            }).value().length > 0)
+            return true;
+        }
+        return false;
+      }
+      // single choice
+      if (question.node.type.type == 'choicequestion' && !question.node.type.content.is_multiple) {
+        return quizCtrl.report.attempts[question.node.id].length > 0;
+      }
     }
 
     function isCorrect(question, attempt) {
@@ -343,9 +355,8 @@
         correct_questions: 0,
         stars: 0
       };
-      $log.debug(quizCtrl.report);
       angular.forEach(quiz.objects, function(value) {
-        if (isAttempted(value.node.id)) {
+        if (isAttempted(value)) {
           if (quizCtrl.isCorrectAttempted(value)) {
             result.analysis[value.node.id] = "Correct";
             result.marks += parseInt(value.node.level) * quizCtrl.MARKS_MULTIPIER;
@@ -359,7 +370,6 @@
 
       })
       var percent_correct = parseInt((result.correct_questions / quiz.objects.length) * 100);
-      $log.debug(percent_correct);
       if (percent_correct >= 80) {
         if (percent_correct >= 90) {
           if (percent_correct >= 95) {
@@ -386,8 +396,6 @@
       }).then(function(res) {
         if (res) {
           angular.forEach(quiz.objects, function(value, key) {
-            $log.debug(value);
-
             quizCtrl.submitAttempt(value.node.id,
               value.attempted)
           })
@@ -425,9 +433,7 @@
       quizCtrl.pauseModal = modal;
     });
     function pauseQuiz() {
-
         quizCtrl.pauseModal.show();
-
     }
     function restartQuiz() {
       $ionicLoading.show({
@@ -435,7 +441,6 @@
         hideOnStateChange: true
       });
         $state.go($state.current, {}, {reload: true});
-
     }
   }
 })();
