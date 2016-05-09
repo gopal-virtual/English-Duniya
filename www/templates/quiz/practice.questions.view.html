@@ -25,7 +25,7 @@
       <!-- SCQ -->
       <div
         ng-if="question.node.type.type=='choicequestion' && !question.node.type.content.is_multiple"
-        ng-class="{'wrong-attempt':quizCtrl.isAttempted(question.node.id) && quizCtrl.isKeyAttempted(question,option.key) && !quizCtrl.isKeyCorrect(question,option.key),'correct-attempt': quizCtrl.isAttempted(question.node.id) && quizCtrl.isKeyAttempted(question,option.key) && quizCtrl.isKeyCorrect(question,option.key),'selected':option.key==question.attempted,'card-list':quizCtrl.LIST_TYPE.indexOf(question.node.type.content.layout_type) > 0,'card-grid':quizCtrl.GRID_TYPE.indexOf(question.node.type.content.layout_type) > 0}"
+        ng-class="{'wrong-attempt':quizCtrl.isAttempted(question) && quizCtrl.isKeyAttempted(question,option.key) && !quizCtrl.isKeyCorrect(question,option.key),'correct-attempt': quizCtrl.isAttempted(question) && quizCtrl.isKeyAttempted(question,option.key) && quizCtrl.isKeyCorrect(question,option.key),'selected':option.key==question.attempted,'card-list':quizCtrl.LIST_TYPE.indexOf(question.node.type.content.layout_type) > 0,'card-grid':quizCtrl.GRID_TYPE.indexOf(question.node.type.content.layout_type) > 0}"
         class="card center card-pale card-radius"
         ng-repeat="option in question.node.type.content.choices">
         <label ng-click="quizCtrl.playAudio(option.audio)">
@@ -36,10 +36,11 @@
           </div>
         </label>
       </div>
+
       <!-- MCQ options -->
       <div
         ng-if="question.node.type.type=='choicequestion' && question.node.type.content.is_multiple"
-        ng-class="{'wrong-attempt':quizCtrl.isAttempted(question.node.id) && quizCtrl.isKeyAttempted(question,option.key) && !quizCtrl.isKeyCorrect(question,option.key),'correct-attempt': quizCtrl.isAttempted(question.node.id) && quizCtrl.isKeyAttempted(question,option.key) && quizCtrl.isKeyCorrect(question,option.key),'selected':question.attempted[option.key],'card-list':quizCtrl.LIST_TYPE.indexOf(question.node.type.content.layout_type) > 0,'card-grid':quizCtrl.GRID_TYPE.indexOf(question.node.type.content.layout_type) > 0}"
+        ng-class="{'wrong-attempt':quizCtrl.isAttempted(question) && quizCtrl.isKeyAttempted(question,option.key) && !quizCtrl.isKeyCorrect(question,option.key),'correct-attempt': quizCtrl.isAttempted(question) && quizCtrl.isKeyAttempted(question,option.key) && quizCtrl.isKeyCorrect(question,option.key),'selected':question.attempted[option.key],'card-list':quizCtrl.LIST_TYPE.indexOf(question.node.type.content.layout_type) > 0,'card-grid':quizCtrl.GRID_TYPE.indexOf(question.node.type.content.layout_type) > 0}"
         class="card center card-pale card-radius"
         ng-repeat="option in question.node.type.content.choices">
         <label ng-click="quizCtrl.playAudio(option.audio)">
@@ -57,6 +58,7 @@
       <!--<div ng-if="!option.option && !option.image.key"><img height="100" width="100" ng-src="img/speaker.png"> </div>-->
       <!--</label>-->
     </ion-content>
+    
 
   </div>
   <audio id="audioplayer">
