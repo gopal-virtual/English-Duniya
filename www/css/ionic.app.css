@@ -9736,7 +9736,7 @@ input[type=radio].hide {
 
 .input-group > .input-group-addon-energised {
   background-color: #ffc900;
-  color: white; }
+  color: black; }
 
 .input-group > .input-group-addon-assertive {
   background-color: #ef473a;
@@ -10206,7 +10206,7 @@ input[type=radio].hide {
   height: 100%; }
 
 .box.has-footer {
-  height: calc(100% - 65px); }
+  height: calc(100% - 60px); }
 
 .scroll-bar-indicator {
   display: none; }
@@ -10222,10 +10222,6 @@ input[type=radio].hide {
   margin: 0;
   padding: 0;
   overflow: hidden; }
-
-video::-webkit-media-controls-fullscreen-button,
-video::-webkit-media-controls-mute-button {
-  display: none; }
 
 .feedback-modal {
   background: transparent; }
@@ -10295,6 +10291,9 @@ p * {
   font-weight: bold;
   text-transform: uppercase; }
 
+.capitalize {
+  text-transform: capitalize; }
+
 .font-xl {
   font-size: 2em !important; }
 
@@ -10333,76 +10332,94 @@ p * {
   bottom: 129px !important; }
 
 .has-footer-large {
-  bottom: 65px !important; }
+  bottom: 60px !important; }
 
 .icon-large {
   font-size: 15em; }
 
-.icon-vocab {
+.icon-vocabulary {
   background-image: url("../img/icons/icon-vocab.png");
   background-repeat: no-repeat;
   background-position: center center;
-  background-size: auto 70%; }
+  background-size: auto 60%; }
 
-.icon-vocab-active {
+.icon-vocabulary.active {
   background-image: url("../img/icons/icon-vocab-active.png");
   background-repeat: no-repeat;
   background-position: center center;
-  background-size: auto 70%; }
+  background-size: auto 60%; }
 
-.icon-read {
+.icon-reading {
   background-image: url("../img/icons/icon-read.png");
   background-repeat: no-repeat;
   background-position: center center;
-  background-size: auto 70%; }
+  background-size: auto 60%; }
 
-.icon-read-active {
+.icon-reading.active {
   background-image: url("../img/icons/icon-read-active.png");
   background-repeat: no-repeat;
   background-position: center center;
-  background-size: auto 70%; }
+  background-size: auto 60%; }
 
 .icon-grammar {
   background-image: url("../img/icons/icon-grammar.png");
   background-repeat: no-repeat;
   background-position: center center;
-  background-size: auto 70%; }
+  background-size: auto 60%; }
 
-.icon-grammar-active {
+.icon-grammar.active {
   background-image: url("../img/icons/icon-grammar-active.png");
   background-repeat: no-repeat;
   background-position: center center;
-  background-size: auto 70%; }
+  background-size: auto 60%; }
 
-.icon-listen {
+.icon-listening {
   background-image: url("../img/icons/icon-listen.png");
   background-repeat: no-repeat;
   background-position: center center;
-  background-size: auto 70%; }
+  background-size: auto 60%; }
 
-.icon-listen-active {
+.icon-listening.active {
   background-image: url("../img/icons/icon-listen-active.png");
   background-repeat: no-repeat;
   background-position: center center;
-  background-size: auto 70%; }
+  background-size: auto 60%; }
 
 .icon-settings {
   background-image: url("../img/icons/icon-settings.png");
   background-repeat: no-repeat;
   background-position: center center;
-  background-size: auto 70%; }
+  background-size: auto 60%; }
+
+.icon-settings.active {
+  background-image: url("../img/icons/icon-settings-active.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 60%; }
 
 .icon-pause {
   background-image: url("../img/icons/icon-pause.png");
   background-repeat: no-repeat;
   background-position: center center;
-  background-size: auto 70%; }
+  background-size: auto 60%; }
 
-.icon-question-mark {
-  background-image: url("../img/icons/icon-question-mark.png");
+.icon-pause.active {
+  background-image: url("../img/icons/icon-pause-active.png");
   background-repeat: no-repeat;
   background-position: center center;
-  background-size: auto 70%; }
+  background-size: auto 60%; }
+
+.icon-question-mark {
+  background-image: url("../img/icons/icon-question-mark.png.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 60%; }
+
+.icon-question-mark.active {
+  background-image: url("../img/icons/icon-question-mark.png-active.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 60%; }
 
 .card {
   border-radius: 10px;
@@ -10692,6 +10709,19 @@ ion-content.overflow-visible {
     -webkit-transform: translate3d(0, 0px, 0);
     opacity: 1; } }
 
+.animation-bounce-in-from-top {
+  -webkit-animation-fill-mode: backwards;
+  -webkit-animation-duration: 300ms;
+  -webkit-animation-name: bounce-in-from-top; }
+
+@keyframes bounce-in-from-top {
+  0% {
+    -webkit-transform: translate3d(0, -20px, 0);
+    opacity: 0; }
+  100% {
+    -webkit-transform: translate3d(0, 0px, 0);
+    opacity: 1; } }
+
 .animation-stack-in {
   -webkit-animation-name: stack-in; }
 
@@ -10824,7 +10854,7 @@ ion-content.overflow-visible {
 
 .alert-energised {
   background-color: #ffc900;
-  color: white; }
+  color: black; }
 
 .alert-assertive {
   background-color: #ef473a;
@@ -10884,7 +10914,7 @@ ion-content.overflow-visible {
   bottom: 44px; }
 
 .bar-footer-large {
-  height: 65px; }
+  height: 60px; }
 
 .progress-bar > div {
   margin: 1px;
@@ -10941,17 +10971,21 @@ ion-content.overflow-visible {
   left: 0;
   right: 0;
   width: 100%;
-  height: 45px;
+  height: 53px;
   background-color: #FCF3D8;
   box-shadow: 0px 5px 5px rgba(68, 68, 68, 0.5);
   z-index: 9;
   border-radius: 0 0 10px 10px;
+  border-bottom: 2px solid #39B89A;
   display: -webkit-box;
   display: -webkit-flex;
   display: -moz-box;
   display: -moz-flex;
   display: -ms-flexbox;
   display: flex; }
+
+.result-hack {
+  border-radius: 0 !important; }
 
 .result-backdrop {
   position: fixed;
@@ -10970,13 +11004,21 @@ ion-content.overflow-visible {
   box-sizing: border-box;
   background-color: #FCF3D8;
   border-radius: 0 0 10px 10px;
-  top: 35px;
-  padding: 10px;
-  width: 20%;
+  top: 51px;
+  margin-left: -5%;
+  padding: 10px 0;
+  width: 30%;
   z-index: 8; }
 
 .result > .result-item:first-child {
   border-radius: 0 0 0 10px; }
 
+.result > .result-item:first-child > .result-item-dropdown {
+  margin-left: 0 !important;
+  width: 30% !important; }
+
 .result > .result-item:last-child {
   border-radius: 0 0 10px 0; }
+
+.result > .result-item:nth-child(4) > .result-item-dropdown {
+  margin-left: -10% !important; }

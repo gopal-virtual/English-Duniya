@@ -10,6 +10,8 @@
       'ngMessages',
       'ngCookies',
       'ngCordovaOauth',
+      'com.2fdevs.videogular',
+      'com.2fdevs.videogular.plugins.controls',
 
       // core
       'common',

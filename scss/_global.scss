@@ -78,11 +78,6 @@
   padding: 0;
   overflow: hidden;
 }
-video::-webkit-media-controls-fullscreen-button,
-video::-webkit-media-controls-mute-button {
-    display: none;
-}
-
 
 .feedback-modal{
   background: transparent;

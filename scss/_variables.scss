@@ -2,6 +2,7 @@ $padding-x : 10px;
 $padding-y : 10px;
 $margin-x : 10px;
 $margin-y : 10px;
+$border-thin : 2px;
 $border-radius : 10px;
 $border-radius-round : 50px;
 // color
@@ -17,24 +18,21 @@ $color-list : ("light" : $light, "stable" : $stable, "positive" : $positive, "ca
 $font-size : ("xl" : 2em,"lg" : 1.75em, "md" : 1.5em, "sm" : 1.25em, "xs" : 1em);
 
 $icon-path : '../img/icons';
+$icon-type : '.png';
 $icon-list : (
-'vocab' : 'icon-vocab.png',
-'vocab-active' : 'icon-vocab-active.png',
-'read' : 'icon-read.png',
-'read-active' : 'icon-read-active.png',
-'grammar' : 'icon-grammar.png',
-'grammar-active' : 'icon-grammar-active.png',
-'listen' : 'icon-listen.png',
-'listen-active' : 'icon-listen-active.png',
-'settings' : 'icon-settings.png',
-'pause' : 'icon-pause.png',
+'vocabulary' : 'icon-vocab',
+'reading' : 'icon-read',
+'grammar' : 'icon-grammar',
+'listening' : 'icon-listen',
+'settings' : 'icon-settings',
+'pause' : 'icon-pause',
 'question-mark' : 'icon-question-mark.png'
 );
 
 // size
 $cover-height : 250px;
-$bar-height-large : 65px;
-$result-height : 45px;
+$bar-height-large : 60px;
+$result-height : 53px;
 //question
 $question-subheader-height : 190px;
 $quiz-subfooter-height : 85px;
