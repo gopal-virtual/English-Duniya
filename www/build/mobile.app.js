@@ -276,6 +276,335 @@
 }
 )();
 
+(function(){
+  var ROOT = 'templates';
+
+  angular
+    .module('common')
+    .constant('CONSTANT',{
+      'BACKEND_SERVICE_DOMAIN' : 'http://cc-test.zaya.in/',
+      // 'BACKEND_SERVICE_DOMAIN' : 'http://192.168.1.6:9000/',
+      'PATH' : {
+        'INTRO' : ROOT+'/intro',
+        'AUTH' : ROOT+'/auth',
+        'QUIZ' : ROOT+'/quiz',
+        'PROFILE' : ROOT+'/profile',
+        'USER' : ROOT+'/user',
+        'PLAYLIST' : ROOT+'/playlist',
+        'HOME' : ROOT+'/home',
+        'RESULT' : ROOT+'/result',
+        'SEARCH' : ROOT+'/search',
+        'GROUP' : ROOT+'/group',
+        'COMMON' : ROOT + '/common',
+        'MAP' : ROOT + '/map',
+        'CONTENT' : ROOT + '/content'
+      },
+      'VIEW' : '.view.html',
+      'CLIENTID' : {
+        'FACEBOOK' : '1159750564044149',
+        'GOOGLE' : '1011514043276-7q3kvn29jkegl2d1v7dtlbtipqqgo1rr.apps.googleusercontent.com',
+        'ELL' : '1e7aa89f-3f50-433a-90ca-e485a92bbda6'
+      },
+      'ASSETS' : {
+        'IMG' : {
+          'ICON' : 'img/icons'
+        }
+      }
+    })
+})();
+
+(function() {
+  angular
+    .module('zaya')
+    .directive('widgetCarousel', widgetCarousel)
+    .directive('carouselItem', carouselItem);
+
+  function widgetCarousel() {
+    var carousel = {}
+    carousel.restrict = 'A';
+    carousel.link = function(scope) {
+      scope.initCarousel = function(element) {
+        // provide any default options you want
+        var defaultOptions = {};
+        var customOptions = scope.$eval($(element).attr('carousel-options'));
+        // combine the two options objects
+        for (var key in customOptions) {
+          if (customOptions.hasOwnProperty(key)) {
+            defaultOptions[key] = customOptions[key];
+          }
+        }
+        // init carousel
+        $(element).owlCarousel(defaultOptions);
+      };
+    }
+    return carousel;
+  }
+
+  function carouselItem() {
+    var carouselItem = {};
+    carouselItem.restrict = 'A';
+    carouselItem.transclude = false;
+    carouselItem.link = function(scope, element) {
+      // wait for the last item in the ng-repeat then call init
+      if (scope.$last) {
+        scope.initCarousel(element.parent());
+      }
+    }
+    return carouselItem;
+  }
+})();
+
+(function(){
+	widgetError.$inject = ["CONSTANT"];
+	angular
+		.module('common')
+		.directive('widgetError',widgetError)
+
+	function widgetError(CONSTANT){
+		var error = {};
+		error.restrict = 'E';
+		error.templateUrl = CONSTANT.PATH.COMMON + '/common.error' + CONSTANT.VIEW;
+		error.controller = ['$rootScope','$scope',function ($rootScope,$scope) {
+			$scope.error = function(){
+				return $rootScope.error;
+			}
+		}]
+		return error;
+	}
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('common')
+        .directive('validInput', validInput);
+
+    function validInput() {
+        var validInput = {
+            require: '?ngModel',
+            link: linkFunc
+        };
+
+        return validInput;
+
+        function linkFunc(scope, element, attrs, ngModelCtrl) {
+          if(!ngModelCtrl) {
+            return;
+          }
+          ngModelCtrl.$parsers.push(function(val) {
+            var clean = val.replace( /[^a-zA-Z0-9@.!#$%&'*+-/=?^_`{|}~]+/g, '');
+            clean = clean.toLowerCase();
+            if (val !== clean) {
+              ngModelCtrl.$setViewValue(clean);
+              ngModelCtrl.$render();
+            }
+            return clean;
+          });
+        }
+    }
+})();
+
+(function() {
+    'use strict';
+
+    validOtp.$inject = ["$log"];
+    angular
+        .module('common')
+        .directive('validOtp', validOtp);
+
+    function validOtp($log) {
+        var validOtp = {
+            require: '?ngModel',
+            link: linkFunc
+        };
+
+        return validOtp;
+
+        function linkFunc(scope, element, attrs, ngModelCtrl) {
+          if(!ngModelCtrl) {
+            return;
+          }
+
+          ngModelCtrl.$parsers.push(function(val) {
+            var clean = (val > 999999)?(val.toString()).substring(0,6):val;
+            if (val !== clean) {
+              ngModelCtrl.$setViewValue(clean);
+              ngModelCtrl.$render();
+            }
+            return clean;
+          });
+        }
+    }
+})();
+
+(function() {
+  'use strict';
+
+  trackVideo.$inject = ["$window", "$log", "orientation"];
+  angular
+    .module('common')
+    .directive('trackVideo', trackVideo);
+
+  /* @ngInject */
+  function trackVideo($window, $log, orientation) {
+    var video = {
+      restrict: 'A',
+      link: linkFunc,
+    };
+
+    return video;
+
+    // full screen not working ; instead used css to immitate full screen effect ; check below
+    function toggleFullScreen() {
+      if (!document.fullscreenElement && // alternative standard method
+        !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) { // current working methods
+        if (document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen();
+        } else if (document.documentElement.msRequestFullscreen) {
+          document.documentElement.msRequestFullscreen();
+        } else if (document.documentElement.mozRequestFullScreen) {
+          document.documentElement.mozRequestFullScreen();
+        } else if (document.documentElement.webkitRequestFullscreen) {
+          document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        }
+      }
+    }
+
+    function linkFunc(scope, el, attr, ctrl) {
+      el.bind('playing', function() {
+        // toggleFullScreen();
+        document.querySelector("ion-modal-view").classList.remove('modal-dark');
+        document.querySelector("ion-modal-view").classList.add('modal-black');
+        el.addClass('fullscreen');
+        orientation.setLandscape();
+      });
+      el.bind('pause', function() {
+        // toggleFullScreen();
+        document.querySelector("ion-modal-view").classList.remove('modal-black');
+        document.querySelector("ion-modal-view").classList.add('modal-dark');
+        el.removeClass('fullscreen');
+        orientation.setPortrait();
+      });
+      el.bind('click',function (event) {
+        event.stopPropagation();
+      })
+    }
+  }
+
+})();
+
+(function () {
+  'use strict';
+
+    audio.$inject = ["$cordovaNativeAudio"];
+  angular
+    .module('common')
+    .factory('audio',audio)
+
+    function audio($cordovaNativeAudio) {
+      return {
+        play : function (sound) {
+          try{
+            $cordovaNativeAudio.play(sound);
+            void 0;
+          }
+          catch(error){
+            void 0;
+          }
+        }
+      };
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('common')
+        .factory('orientation', orientation);
+
+    orientation.$inject = ['$window','$log'];
+
+    /* @ngInject */
+    function orientation($window, $log) {
+        var orientation = {
+            setLandscape : setLandscape,
+            setPortrait : setPortrait,
+        };
+
+        return orientation;
+
+        function setPortrait() {
+          try{
+            $window.screen.lockOrientation('portrait');
+          }
+          catch(e){
+            $log.debug(e);
+          }
+        }
+
+        function setLandscape() {
+          try{
+            $window.screen.lockOrientation('landscape');
+          }
+          catch(e){
+            $log.debug(e);
+          }
+        }
+
+    }
+})();
+
+(function () {
+  'use strict';
+
+  angular
+    .module('common')
+    .factory('Utilities',utilities)
+
+    function utilities() {
+      return {
+        range : function (num) {
+          return new Array(num);
+        }
+      };
+    }
+})();
+
+(function(){
+  'use strict';
+
+  runConfig.$inject = ["$ionicPlatform", "$cordovaNativeAudio"];
+  angular
+    .module('common')
+    .run(runConfig);
+
+  function runConfig($ionicPlatform,$cordovaNativeAudio) {
+    $ionicPlatform.ready(function() {
+      try{
+        $cordovaNativeAudio.preloadSimple('water-drop', 'sound/water-drop.mp3');
+        $cordovaNativeAudio.preloadSimple('correct', 'sound/correct.mp3');
+        $cordovaNativeAudio.preloadSimple('wrong', 'sound/wrong.mp3');
+      }
+      catch(error){
+        void 0;
+      }
+    });
+  }
+
+})();
+
 (function () {
   'use strict';
   angular
@@ -1084,335 +1413,6 @@
         }
       })
   }
-})();
-
-(function(){
-  var ROOT = 'templates';
-
-  angular
-    .module('common')
-    .constant('CONSTANT',{
-      'BACKEND_SERVICE_DOMAIN' : 'http://cc-test.zaya.in/',
-      // 'BACKEND_SERVICE_DOMAIN' : 'http://192.168.1.6:9000/',
-      'PATH' : {
-        'INTRO' : ROOT+'/intro',
-        'AUTH' : ROOT+'/auth',
-        'QUIZ' : ROOT+'/quiz',
-        'PROFILE' : ROOT+'/profile',
-        'USER' : ROOT+'/user',
-        'PLAYLIST' : ROOT+'/playlist',
-        'HOME' : ROOT+'/home',
-        'RESULT' : ROOT+'/result',
-        'SEARCH' : ROOT+'/search',
-        'GROUP' : ROOT+'/group',
-        'COMMON' : ROOT + '/common',
-        'MAP' : ROOT + '/map',
-        'CONTENT' : ROOT + '/content'
-      },
-      'VIEW' : '.view.html',
-      'CLIENTID' : {
-        'FACEBOOK' : '1159750564044149',
-        'GOOGLE' : '1011514043276-7q3kvn29jkegl2d1v7dtlbtipqqgo1rr.apps.googleusercontent.com',
-        'ELL' : '1e7aa89f-3f50-433a-90ca-e485a92bbda6'
-      },
-      'ASSETS' : {
-        'IMG' : {
-          'ICON' : 'img/icons'
-        }
-      }
-    })
-})();
-
-(function() {
-  angular
-    .module('zaya')
-    .directive('widgetCarousel', widgetCarousel)
-    .directive('carouselItem', carouselItem);
-
-  function widgetCarousel() {
-    var carousel = {}
-    carousel.restrict = 'A';
-    carousel.link = function(scope) {
-      scope.initCarousel = function(element) {
-        // provide any default options you want
-        var defaultOptions = {};
-        var customOptions = scope.$eval($(element).attr('carousel-options'));
-        // combine the two options objects
-        for (var key in customOptions) {
-          if (customOptions.hasOwnProperty(key)) {
-            defaultOptions[key] = customOptions[key];
-          }
-        }
-        // init carousel
-        $(element).owlCarousel(defaultOptions);
-      };
-    }
-    return carousel;
-  }
-
-  function carouselItem() {
-    var carouselItem = {};
-    carouselItem.restrict = 'A';
-    carouselItem.transclude = false;
-    carouselItem.link = function(scope, element) {
-      // wait for the last item in the ng-repeat then call init
-      if (scope.$last) {
-        scope.initCarousel(element.parent());
-      }
-    }
-    return carouselItem;
-  }
-})();
-
-(function(){
-	widgetError.$inject = ["CONSTANT"];
-	angular
-		.module('common')
-		.directive('widgetError',widgetError)
-
-	function widgetError(CONSTANT){
-		var error = {};
-		error.restrict = 'E';
-		error.templateUrl = CONSTANT.PATH.COMMON + '/common.error' + CONSTANT.VIEW;
-		error.controller = ['$rootScope','$scope',function ($rootScope,$scope) {
-			$scope.error = function(){
-				return $rootScope.error;
-			}
-		}]
-		return error;
-	}
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('common')
-        .directive('validInput', validInput);
-
-    function validInput() {
-        var validInput = {
-            require: '?ngModel',
-            link: linkFunc
-        };
-
-        return validInput;
-
-        function linkFunc(scope, element, attrs, ngModelCtrl) {
-          if(!ngModelCtrl) {
-            return;
-          }
-          ngModelCtrl.$parsers.push(function(val) {
-            var clean = val.replace( /[^a-zA-Z0-9@.!#$%&'*+-/=?^_`{|}~]+/g, '');
-            clean = clean.toLowerCase();
-            if (val !== clean) {
-              ngModelCtrl.$setViewValue(clean);
-              ngModelCtrl.$render();
-            }
-            return clean;
-          });
-        }
-    }
-})();
-
-(function() {
-    'use strict';
-
-    validOtp.$inject = ["$log"];
-    angular
-        .module('common')
-        .directive('validOtp', validOtp);
-
-    function validOtp($log) {
-        var validOtp = {
-            require: '?ngModel',
-            link: linkFunc
-        };
-
-        return validOtp;
-
-        function linkFunc(scope, element, attrs, ngModelCtrl) {
-          if(!ngModelCtrl) {
-            return;
-          }
-
-          ngModelCtrl.$parsers.push(function(val) {
-            var clean = (val > 999999)?(val.toString()).substring(0,6):val;
-            if (val !== clean) {
-              ngModelCtrl.$setViewValue(clean);
-              ngModelCtrl.$render();
-            }
-            return clean;
-          });
-        }
-    }
-})();
-
-(function() {
-  'use strict';
-
-  trackVideo.$inject = ["$window", "$log", "orientation"];
-  angular
-    .module('common')
-    .directive('trackVideo', trackVideo);
-
-  /* @ngInject */
-  function trackVideo($window, $log, orientation) {
-    var video = {
-      restrict: 'A',
-      link: linkFunc,
-    };
-
-    return video;
-
-    // full screen not working ; instead used css to immitate full screen effect ; check below
-    function toggleFullScreen() {
-      if (!document.fullscreenElement && // alternative standard method
-        !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) { // current working methods
-        if (document.documentElement.requestFullscreen) {
-          document.documentElement.requestFullscreen();
-        } else if (document.documentElement.msRequestFullscreen) {
-          document.documentElement.msRequestFullscreen();
-        } else if (document.documentElement.mozRequestFullScreen) {
-          document.documentElement.mozRequestFullScreen();
-        } else if (document.documentElement.webkitRequestFullscreen) {
-          document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-        }
-      } else {
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        } else if (document.msExitFullscreen) {
-          document.msExitFullscreen();
-        } else if (document.mozCancelFullScreen) {
-          document.mozCancelFullScreen();
-        } else if (document.webkitExitFullscreen) {
-          document.webkitExitFullscreen();
-        }
-      }
-    }
-
-    function linkFunc(scope, el, attr, ctrl) {
-      el.bind('playing', function() {
-        // toggleFullScreen();
-        document.querySelector("ion-modal-view").classList.remove('modal-dark');
-        document.querySelector("ion-modal-view").classList.add('modal-black');
-        el.addClass('fullscreen');
-        orientation.setLandscape();
-      });
-      el.bind('pause', function() {
-        // toggleFullScreen();
-        document.querySelector("ion-modal-view").classList.remove('modal-black');
-        document.querySelector("ion-modal-view").classList.add('modal-dark');
-        el.removeClass('fullscreen');
-        orientation.setPortrait();
-      });
-      el.bind('click',function (event) {
-        event.stopPropagation();
-      })
-    }
-  }
-
-})();
-
-(function () {
-  'use strict';
-
-    audio.$inject = ["$cordovaNativeAudio"];
-  angular
-    .module('common')
-    .factory('audio',audio)
-
-    function audio($cordovaNativeAudio) {
-      return {
-        play : function (sound) {
-          try{
-            $cordovaNativeAudio.play(sound);
-            void 0;
-          }
-          catch(error){
-            void 0;
-          }
-        }
-      };
-    }
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('common')
-        .factory('orientation', orientation);
-
-    orientation.$inject = ['$window','$log'];
-
-    /* @ngInject */
-    function orientation($window, $log) {
-        var orientation = {
-            setLandscape : setLandscape,
-            setPortrait : setPortrait,
-        };
-
-        return orientation;
-
-        function setPortrait() {
-          try{
-            $window.screen.lockOrientation('portrait');
-          }
-          catch(e){
-            $log.debug(e);
-          }
-        }
-
-        function setLandscape() {
-          try{
-            $window.screen.lockOrientation('landscape');
-          }
-          catch(e){
-            $log.debug(e);
-          }
-        }
-
-    }
-})();
-
-(function () {
-  'use strict';
-
-  angular
-    .module('common')
-    .factory('Utilities',utilities)
-
-    function utilities() {
-      return {
-        range : function (num) {
-          return new Array(num);
-        }
-      };
-    }
-})();
-
-(function(){
-  'use strict';
-
-  runConfig.$inject = ["$ionicPlatform", "$cordovaNativeAudio"];
-  angular
-    .module('common')
-    .run(runConfig);
-
-  function runConfig($ionicPlatform,$cordovaNativeAudio) {
-    $ionicPlatform.ready(function() {
-      try{
-        $cordovaNativeAudio.preloadSimple('water-drop', 'sound/water-drop.mp3');
-        $cordovaNativeAudio.preloadSimple('correct', 'sound/correct.mp3');
-        $cordovaNativeAudio.preloadSimple('wrong', 'sound/wrong.mp3');
-      }
-      catch(error){
-        void 0;
-      }
-    });
-  }
-
 })();
 
 (function() {
@@ -2457,15 +2457,12 @@ window.createGame = function(scope, lessons, injector, log) {
     }
     function parseToDisplay(string) {
       var text = quizCtrl.replaceImageTag(quizCtrl.removeSoundTag(string));
-      return text.trim() || '<img src="img/icons/sound.png"></img>';
+      return text.trim() || '<img height="100" width="100" src="img/icons/sound.png"></img>';
 
     }
-
     function removeSoundTag(string) {
       return string.replace(quizCtrl.soundIdRegex, "");
     }
-
-
     function replaceImageTag(string) {
       return string.replace(quizCtrl.imageTagRegex, "<img src='"+quizCtrl.getImageSrc(quizCtrl.getImageId(string))+"'></img>");
     }

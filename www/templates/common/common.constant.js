@@ -29,8 +29,10 @@
       },
       'ASSETS' : {
         'IMG' : {
-          'ICON' : 'img/icons'
+          'ICON' : 'img/icons',
+          'SOUND_PLACEHOLDER' : 'img/icons/sound.png'
         }
       }
+
     })
 })();

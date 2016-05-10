@@ -306,6 +306,7 @@
     }
 
     function playAudio(key) {
+      return;
       angular.element("#audioplayer")[0].pause();
       if (key) {
         angular.element("#audioSource")[0].src = key;
@@ -407,8 +408,9 @@
         if (res) {
           angular.forEach(quiz.objects, function(value, key) {
             quizCtrl.submitAttempt(value.node.id,
-              value.attempted)
-          })
+              value.attempted);
+          });
+            
           $state.go('quiz.summary', {
             report: angular.copy(quizCtrl.report),
             quiz: angular.copy(quizCtrl.quiz)
@@ -416,7 +418,7 @@
         } else {
           console.log('You are not sure');
         }
-      });;
+      });
     }
 
     function endQuiz() {
@@ -471,15 +473,12 @@
     }
     function parseToDisplay(string) {
       var text = quizCtrl.replaceImageTag(quizCtrl.removeSoundTag(string));
-      return text.trim() || '<img src="img/icons/sound.png"></img>';
+      return text.trim() || '<img height="100" width="100" src="'+CONSTANT.ASSETS.IMG.SOUND_PLACEHOLDER+'"></img>';
 
     }
-
     function removeSoundTag(string) {
       return string.replace(quizCtrl.soundIdRegex, "");
     }
-
-
     function replaceImageTag(string) {
       return string.replace(quizCtrl.imageTagRegex, "<img src='"+quizCtrl.getImageSrc(quizCtrl.getImageId(string))+"'></img>");
     }
