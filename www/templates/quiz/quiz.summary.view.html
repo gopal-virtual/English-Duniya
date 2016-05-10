@@ -10,7 +10,7 @@
     </div>
     <div class="row center">
       <div class="col stars">
-          <img ng-repeat="star in [1,2,3]" src="img/icons/{{ quizCtrl.starCount($index) ? 'icon-star' : 'icon-nostar'}}.png">
+          <img ng-repeat="star in [1,2,3]" ng-src="{{ quizCtrl.starCount($index) ? 'img/icons/icon-star.png' : 'img/icons/icon-nostar.png'}}">
       </div>
     </div>
     <div class="row padding-30">
