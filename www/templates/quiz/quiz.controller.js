@@ -40,6 +40,7 @@
     quizCtrl.restartQuiz = restartQuiz;
     //audio
     quizCtrl.playAudio = playAudio;
+    quizCtrl.starCount = starCount;
 
     //question layouts
     quizCtrl.GRID_TYPE = ['audio_to_text', 'text_to_pic', 'pic_to_text', 'audio_to_pic'];
@@ -55,7 +56,10 @@
 
     $scope.modal = {};
 
-
+    function starCount (index){
+        var count = quizCtrl.quizResult.stars - index ;
+        return count > 0 ? count : 0;
+    }
 
     function init(quiz) {
 
@@ -358,29 +362,28 @@
       angular.forEach(quiz.objects, function(value) {
         if (isAttempted(value)) {
           if (quizCtrl.isCorrectAttempted(value)) {
-            result.analysis[value.node.id] = "Correct";
+            result.analysis[value.node.id] = {title : value.node.title, status : 1};
             result.marks += parseInt(value.node.level) * quizCtrl.MARKS_MULTIPIER;
             result.correct_questions++;
           } else {
-            result.analysis[value.node.id] = "Wrong";
+            result.analysis[value.node.id] = {title : value.node.title, status : 0};
           }
         } else {
-          result.analysis[value.node.id] = "Unattemted"
+          result.analysis[value.node.id] = {title : value.node.title, status : -1}
         }
 
       })
       var percent_correct = parseInt((result.correct_questions / quiz.objects.length) * 100);
-      if (percent_correct >= 80) {
-        if (percent_correct >= 90) {
-          if (percent_correct >= 95) {
-            result.stars = 3;
-          } else {
-            result.stars = 2;
-          }
-        } else {
+      if(percent_correct >= CONSTANT.STAR.ONE && percent_correct < CONSTANT.STAR.TWO){
           result.stars = 1;
-        }
       }
+      else if(percent_correct >= CONSTANT.STAR.TWO && percent_correct < CONSTANT.STAR.THREE){
+          result.stars = 1;
+      }
+      else if(percent_correct >= CONSTANT.STAR.THREE){
+          result.stars = 1;
+      }
+      else{}
       return result;
     }
 
