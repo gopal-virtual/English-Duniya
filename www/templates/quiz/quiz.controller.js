@@ -90,14 +90,13 @@
               // 3 - NotAttempted
               var attempt = {
                 answer: value.length > 0 ? value : null,
+                score: quizCtrl.quizResult.score[key],
                 status: value.length > 0 ? 1 : 2,
                 person: Auth.getProfileId(),
                 report: report_id,
                 node: key
               }
-              Quiz.saveAttempt(attempt, function(response) {
-              }, function(error) {
-              })
+              Quiz.saveAttempt(attempt, function(response) {}, function(error) {})
             });
           }, function(error) {
 
@@ -114,8 +113,8 @@
         }
         // init attempted
 
-        for (var i = 0; i < quizCtrl.quiz.objects.length; i++) {
-          if (i != 0)
+        for (i = 0; i < quizCtrl.quiz.objects.length; i++) {
+          if (i !== 0)
             quizCtrl.quiz.objects[i].isVisited = false;
           else
             quizCtrl.quiz.objects[i].isVisited = true;
@@ -203,13 +202,7 @@
     }
 
     function submitAttempt(question_id, attempt) {
-      if (quizCtrl.quiz.objects[quizCtrl.currentIndex].node.type.type == "choicequestion" && !quizCtrl.quiz.objects[quizCtrl.currentIndex].node.type.content.is_multiple && attempt != '') {
-        quizCtrl.report.attempts[question_id].push(angular.copy(attempt));
-      } else if (quizCtrl.quiz.objects[quizCtrl.currentIndex].node.type.type == "choicequestion" && quizCtrl.quiz.objects[quizCtrl.currentIndex].node.type.content.is_multiple && attempt.length > 0) {
-        quizCtrl.report.attempts[question_id].push(angular.copy(attempt));
-
-      }
-
+      quizCtrl.report.attempts[question_id].push(angular.copy(attempt));
     }
 
 
@@ -323,7 +316,7 @@
     };
     $scope.closeModal = function() {
       $scope.modal.hide();
-    }
+    };
 
     function attemptAndNext() {
       quizCtrl.submitAttempt(
@@ -357,22 +350,26 @@
         analysis: {},
         marks: 0,
         correct_questions: 0,
-        stars: 0
+        stars: 0,
+        score: {}
       };
       angular.forEach(quiz.objects, function(value) {
         if (isAttempted(value)) {
           if (quizCtrl.isCorrectAttempted(value)) {
             result.analysis[value.node.id] = {title : value.node.title, status : 1};
+            result.score[value.node.id] = parseInt(value.node.level) * quizCtrl.MARKS_MULTIPIER;
             result.marks += parseInt(value.node.level) * quizCtrl.MARKS_MULTIPIER;
             result.correct_questions++;
           } else {
             result.analysis[value.node.id] = {title : value.node.title, status : 0};
+            result.score[value.node.id] = 0;
           }
         } else {
           result.analysis[value.node.id] = {title : value.node.title, status : -1}
+          result.score[value.node.id] = 0;
         }
 
-      })
+      });
       var percent_correct = parseInt((result.correct_questions / quiz.objects.length) * 100);
       if(percent_correct >= CONSTANT.STAR.ONE && percent_correct < CONSTANT.STAR.TWO){
           result.stars = 1;
@@ -399,9 +396,15 @@
       }).then(function(res) {
         if (res) {
           angular.forEach(quiz.objects, function(value, key) {
-            quizCtrl.submitAttempt(value.node.id,
-              value.attempted)
-          })
+            if (value.node.type.type == 'choicequestion' && !value.node.type.content.is_multiple && value.attempted !== '') {
+              quizCtrl.submitAttempt(value.node.id,
+                value.attempted);
+            } else if (value.node.type.type == 'choicequestion' && value.node.type.content.is_multiple && value.attempted.length > 0) {
+              quizCtrl.submitAttempt(value.node.id,
+                value.attempted);
+            }
+
+          });
           $state.go('quiz.summary', {
             report: angular.copy(quizCtrl.report),
             quiz: angular.copy(quizCtrl.quiz)
@@ -409,7 +412,7 @@
         } else {
           console.log('You are not sure');
         }
-      });;
+      });
     }
 
     function endQuiz() {
@@ -427,7 +430,7 @@
         } else {
           console.log('You are not sure');
         }
-      });;
+      });
     }
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.QUIZ + '/quiz.pause.modal' + CONSTANT.VIEW, {
       scope: $scope,
@@ -435,15 +438,19 @@
     }).then(function(modal) {
       quizCtrl.pauseModal = modal;
     });
+
     function pauseQuiz() {
-        quizCtrl.pauseModal.show();
+      quizCtrl.pauseModal.show();
     }
+
     function restartQuiz() {
       $ionicLoading.show({
         noBackdrop: false,
         hideOnStateChange: true
       });
-        $state.go($state.current, {}, {reload: true});
+      $state.go($state.current, {}, {
+        reload: true
+      });
     }
   }
 })();
