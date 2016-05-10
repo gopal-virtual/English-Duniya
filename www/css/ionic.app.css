@@ -10410,13 +10410,13 @@ p * {
   background-size: auto 60%; }
 
 .icon-question-mark {
-  background-image: url("../img/icons/icon-question-mark.png.png");
+  background-image: url("../img/icons/icon-question-mark.png");
   background-repeat: no-repeat;
   background-position: center center;
   background-size: auto 60%; }
 
 .icon-question-mark.active {
-  background-image: url("../img/icons/icon-question-mark.png-active.png");
+  background-image: url("../img/icons/icon-question-mark-active.png");
   background-repeat: no-repeat;
   background-position: center center;
   background-size: auto 60%; }

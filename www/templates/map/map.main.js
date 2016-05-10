@@ -125,6 +125,19 @@ window.createGame = function(scope, lessons, injector, log) {
         var posy = this.math.catmullRomInterpolation(this.points.y, j);
         this.bmd.rect(posx, posy, 4, 4, '#219C7F');
       }
+    //   var stars = this.game.add.group();
+      function createStars(count, x, y){
+          for (var i = 0; i < 3; i++) {
+              var startype = count ? 'star' : 'nostar';
+              log.debug(startype);
+              var star = stars.create(x[0] + x[i+1], y[0] + y[i+1], startype);
+              star.anchor.setTo(0.5,0.5);
+              star.scale.setTo(0.2,0.2);
+              count -= count > 0 ? 1 : 0;
+          }
+      }
+      var star_x = [-30,0,30];
+      var star_y = [-20,-30,-20];
       // Place nodes
       for (var j = 0, i = lessons.length-1, nodeCount = 1/(lessons.length-1); j <= 1; j += nodeCount, i--) {
         var currentLesson = lessons[i];
@@ -149,29 +162,21 @@ window.createGame = function(scope, lessons, injector, log) {
         // add stars
         if(currentLesson.stars >= 0){
             var stars = this.game.add.group();
+            log.debug('stars in lesson',currentLesson.stars);
             if(currentLesson.stars == 0){
-                stars.create(posx - 150, posy, 'nostar');
-                stars.create(posx, posy, 'nostar');
-                stars.create(posx + 150, posy, 'nostar');
+                createStars(0,$.merge([posx],star_x),$.merge([posy],star_y));
             }
             else if(currentLesson.stars == 1){
-                stars.create(posx - 150, posy, 'star');
-                stars.create(posx, posy, 'nostar');
-                stars.create(posx + 150, posy, 'nostar');
+                createStars(1,$.merge([posx],star_x),$.merge([posy],star_y));
             }
             else if(currentLesson.stars == 2){
-                stars.create(posx - 150, posy, 'star');
-                stars.create(posx, posy, 'star');
-                stars.create(posx + 150, posy, 'nostar');
+                createStars(2,$.merge([posx],star_x),$.merge([posy],star_y));
             }
             else if(currentLesson.stars == 3){
-                stars.create(posx - 150, posy, 'star');
-                stars.create(posx, posy, 'star');
-                stars.create(posx + 150, posy, 'star');
+                createStars(3,$.merge([posx],star_x),$.merge([posy],star_y));
             }
             else{}
         }
-        // stars.scale.setTo(0.2,0.2);
       }
       for (var i = 0; i < 100; i++)
       {
@@ -186,14 +191,16 @@ window.createGame = function(scope, lessons, injector, log) {
           s.events.onOutOfBounds.add(this.resetSprite, this);
       }
 
-      var fire_animation = this.game.add.sprite(20,20, 'fire_animation');
-      fire_animation.scale.setTo(0.5,0.5);
-      var light = fire_animation.animations.add('light');
-      fire_animation.animations.play('light', 20, true);
+      // fire animation
+    //   var fire_animation = this.game.add.sprite(20,20, 'fire_animation');
+    //   fire_animation.scale.setTo(0.5,0.5);
+    //   var light = fire_animation.animations.add('light');
+    //   fire_animation.animations.play('light', 20, true);
+    
       // cactus
-      var cactus_animation = this.game.add.sprite(20,20, 'cactus_animation');
-      var wind = cactus_animation.animations.add('wind');
-      cactus_animation.animations.play('wind', 5, true);
+    //   var cactus_animation = this.game.add.sprite(20,20, 'cactus_animation');
+    //   var wind = cactus_animation.animations.add('wind');
+    //   cactus_animation.animations.play('wind', 5, true);
 
       this.init();
       this.game.kineticScrolling.start();
