@@ -10231,6 +10231,21 @@ hr {
   height: 1px;
   background-image: linear-gradient(to right, transparent, rgba(180, 180, 180, 0.75), transparent); }
 
+.stars > img {
+  width: 100px;
+  height: 100px; }
+
+.stars > img:first-child,
+.stars > img:last-child {
+  width: 70px;
+  height: 70px; }
+
+.stars > img:first-child {
+  -webkit-transform: rotateZ(-15deg) translateY(10px); }
+
+.stars > img:last-child {
+  -webkit-transform: rotateZ(15deg) translateY(10px); }
+
 html * {
   font-family: "kg_primary_penmanship_2Rg"; }
 
@@ -10293,6 +10308,9 @@ p * {
 
 .capitalize {
   text-transform: capitalize; }
+
+.font-sl {
+  font-size: 3em !important; }
 
 .font-xl {
   font-size: 2em !important; }
@@ -10963,6 +10981,11 @@ ion-content.overflow-visible {
 
 .quiz-header {
   border: 0 !important; }
+
+.header-icon {
+  width: 28px;
+  display: inline-block;
+  height: 26px; }
 
 .result {
   position: fixed;
