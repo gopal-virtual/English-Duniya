@@ -43,7 +43,7 @@
             }
         ],
         theme: "lib/videogular-themes-default/videogular.css"
-    }
+    };
 
     mapCtrl.skillSet = [
       {name : 'reading', score : 300},
