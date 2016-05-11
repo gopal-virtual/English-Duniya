@@ -1,0 +1,22 @@
+<ion-view>
+    <ion-content scroll="false">
+        <videogular vg-theme="contentCtrl.config.theme" vg-player-ready="contentCtrl.onPlayerReady($API)" vg-auto-play="contentCtrl.config.autoplay">
+            <vg-media vg-src="contentCtrl.config.sources">
+            </vg-media>
+            <vg-buffering></vg-buffering>
+            <vg-controls>
+                <vg-play-pause-button></vg-play-pause-button>
+                <vg-time-display>{{ currentTime | date:'mm:ss' }}</vg-time-display>
+                <vg-scrub-bar>
+                    <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+                </vg-scrub-bar>
+                <vg-time-display>{{ timeLeft | date:'mm:ss' }}</vg-time-display>
+                <vg-volume>
+                    <vg-mute-button></vg-mute-button>
+                    <vg-volume-bar></vg-volume-bar>
+                </vg-volume>
+                <vg-fullscreen-button></vg-fullscreen-button>
+            </vg-controls>
+        </videogular>
+    </ion-content>
+</ion-view>

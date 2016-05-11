@@ -196,7 +196,7 @@ window.createGame = function(scope, lessons, injector, log) {
     //   fire_animation.scale.setTo(0.5,0.5);
     //   var light = fire_animation.animations.add('light');
     //   fire_animation.animations.play('light', 20, true);
-    
+
       // cactus
     //   var cactus_animation = this.game.add.sprite(20,20, 'cactus_animation');
     //   var wind = cactus_animation.animations.add('wind');
