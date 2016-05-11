@@ -20,9 +20,10 @@ window.createGame = function(scope, lessons, injector, log) {
       this.load.spritesheet('cactus_animation', 'img/assets/cactus_animation.png', 30,52, 5);
 
       this.load.image('node', 'img/icons/node.png');
+      this.load.image('node-locked', 'img/icons/icon-node-locked.png');
       this.load.image('read', 'img/icons/icon-read.png');
       this.load.image('read_deactive', 'img/icons/icon-read-deactive.png');
-      this.load.image('star', 'img/icons/icon-star.png');
+      this.load.image('star', 'img/icons/icon-star-small.png');
       this.load.image('nostar', 'img/icons/icon-nostar.png');
       // debug value
       this.game.time.advancedTiming = true;
@@ -127,37 +128,38 @@ window.createGame = function(scope, lessons, injector, log) {
       }
     //   var stars = this.game.add.group();
       function createStars(count, x, y){
-          for (var i = 0; i < 3; i++) {
-              var startype = count ? 'star' : 'nostar';
-              log.debug(startype);
-              var star = stars.create(x[0] + x[i+1], y[0] + y[i+1], startype);
+          for (var i = 0; i < count; i++) {
+            //   var startype = count ? 'star' : 'nostar';
+            //   log.debug(startype);
+              var star = stars.create(x[0] + x[i+1], y[0] + y[i+1], 'star');
               star.anchor.setTo(0.5,0.5);
-              star.scale.setTo(0.2,0.2);
-              count -= count > 0 ? 1 : 0;
+            //   star.scale.setTo(0.2,0.2);
+            //   count -= count > 0 ? 1 : 0;
           }
       }
-      var star_x = [-30,0,30];
-      var star_y = [-20,-30,-20];
+      var star_x = [-12,0,12];
+      var star_y = [-10,-15,-10];
+
       // Place nodes
       for (var j = 0, i = lessons.length-1, nodeCount = 1/(lessons.length-1); j <= 1; j += nodeCount, i--) {
         var currentLesson = lessons[i];
         log.debug('lesson status', currentLesson);
-        var locked = currentLesson.locked ? '_deactive' : '';
+        var locked = currentLesson.locked ? '-locked' : '';
         var posx = this.math.catmullRomInterpolation(this.points.x, j);
         var posy = this.math.catmullRomInterpolation(this.points.y, j);
-        var node = this.game.add.button(posx, posy, 'node');
+        var node = this.game.add.button(posx, posy, 'node'+locked);
         node.inputEnabled = true;
         node.events.onInputDown.add(function(currentLesson){
             return function(){
                 if(!currentLesson.locked)
                     scope.$emit('openNode',currentLesson);
             }
-        }(currentLesson))
-        var icon = this.game.add.sprite(posx, posy, 'read'+locked);
-        icon.anchor.setTo(0.5,0.5);
-        icon.scale.setTo(0.3,0.3);
+        }(currentLesson));
+        // var icon = this.game.add.sprite(posx, posy, 'read'+locked);
+        // icon.anchor.setTo(0.5,0.5);
+        // icon.scale.setTo(0.3,0.3);
         node.anchor.setTo(0.5, 0.5);
-        node.scale.setTo(1.8, 1.8);
+        // node.scale.setTo(1.8, 1.8);
 
         // add stars
         if(currentLesson.stars >= 0){
