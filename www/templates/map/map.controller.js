@@ -5,11 +5,11 @@
     .module('zaya-map')
     .controller('mapController', mapController);
 
-  mapController.$inject = ['$scope','$rootScope', '$log', '$ionicModal', '$state', 'lessons', 'Rest', 'CONSTANT', '$sce', 'orientation','$ionicLoading','$timeout','$ionicBackdrop'];
+  mapController.$inject = ['$scope','$rootScope', '$log', '$ionicModal', '$state', 'lessons', 'scores', 'extendLesson', 'Rest', 'CONSTANT', '$sce', 'orientation','$ionicLoading','$timeout','$ionicBackdrop'];
 
-  function mapController($scope, $rootScope, $log, $ionicModal, $state, lessons, Rest, CONSTANT, $sce, orientation, $ionicLoading, $timeout, $ionicBackdrop) {
+  function mapController($scope, $rootScope, $log, $ionicModal, $state, lessons, scores, extendLesson, Rest, CONSTANT, $sce, orientation, $ionicLoading, $timeout, $ionicBackdrop) {
     var mapCtrl = this;
-    mapCtrl.lessons = lessons;
+    mapCtrl.lessons = extendLesson.getLesson(lessons, scores);
     mapCtrl.getLesson = getLesson;
     mapCtrl.getSrc = getSrc;
     mapCtrl.resetNode = resetNode;
@@ -126,15 +126,17 @@
         $ionicLoading.hide();
         $scope.openModal();
         mapCtrl.selectedNode = response.plain();
+        $log.debug('get lesson',response.plain());
         localStorage.setItem('lesson', JSON.stringify(mapCtrl.selectedNode));
       })
     }
 
-    if(localStorage.lesson){
-      // mapCtrl.selectedNode = JSON.parse(localStorage.lesson);
-      // $scope.openModal();
-      mapCtrl.getLesson(JSON.parse(localStorage.lesson).node.id);
-    }
+    $timeout(function functionName() {
+        if(localStorage.lesson){
+            $scope.openModal();
+            mapCtrl.selectedNode = JSON.parse(localStorage.lesson);
+        }
+    });
 
   }
 })();

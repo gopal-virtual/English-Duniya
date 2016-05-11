@@ -88,3 +88,18 @@ hr{
     height: 1px;
     background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(180, 180, 180, 0.75), rgba(0, 0, 0, 0));
 }
+.stars > img{
+    width: 100px;
+    height : 100px;
+}
+.stars > img:first-child,
+.stars > img:last-child{
+    width: 70px;
+    height : 70px;
+}
+.stars > img:first-child {
+    -webkit-transform: rotateZ(-15deg) translateY(10px);
+}
+.stars> img:last-child {
+    -webkit-transform: rotateZ(15deg) translateY(10px);
+}

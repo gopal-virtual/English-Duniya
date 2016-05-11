@@ -1,10 +1,10 @@
-<ion-pane class="bg-pale">
+<ion-pane class="bg-pale" ng-if="quizCtrl.quiz.objects.length">
   <div class="bar bar-header bg-pale quiz-header">
     <div class="col">
-      <a ng-click="quizCtrl.pauseQuiz()" style="width:28px;display: inline-block;height: 26px;" class="icon-pause"></a>
+      <a ng-click="quizCtrl.pauseQuiz()"  class="header-icon icon-pause"></a>
     </div>
     <div class="col" align="right">
-      <a ui-sref="map.navigate" style="width:28px;display: inline-block;height: 26px;" class="icon-question-mark"></a>
+      <a ui-sref="map.navigate" class="header-icon icon-question-mark"></a>
     </div>
   </div>
   <ion-slide-box on-slide-changed="quizCtrl.slideHasChanged($index)">
@@ -13,6 +13,7 @@
 
       <div class="card card-transparent center" ng-click="quizCtrl.playAudio(quizCtrl.getSoundId(question.node.title))">
         <p>
+          <strong ng-if="question.node.title">{{question.node.title}}</strong>
           <strong ng-if="question.node.title" ng-bind-html="quizCtrl.parseToDisplay(question.node.title)"></strong>
         </p>
         <!-- <div ng-if="question.node.type.content.image"><img class="question-image" ng-src="{{question.node.type.content.image}}"></div> -->
@@ -94,3 +95,15 @@
 
 
 </ion-pane>
+<ion-view ng-if="!quizCtrl.quiz.objects.length" class="bg-pale">
+    <ion-content>
+        <div class="row">
+            <div class="col">
+                <div class="card text-center font-lg padding-20">
+                    No questions
+                    <button class="button button-block bg-brand-yellow padding-10 button-round" ui-sref="map.navigate">Go back to map</button>
+                </div>
+            </div>
+        </div>
+    </ion-content>
+</ion-view>
