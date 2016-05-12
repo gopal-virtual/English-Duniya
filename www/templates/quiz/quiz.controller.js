@@ -370,7 +370,8 @@
         }
 
       });
-      var percent_correct = parseInt((result.correct_questions / quiz.objects.length) * 100);
+      var percent_correct = parseInt((result.marks / quiz.node.type.score) * 100);
+      $log.debug('see the score',result.marks , quiz.node.type.score, percent_correct);
       if(percent_correct >= CONSTANT.STAR.ONE && percent_correct < CONSTANT.STAR.TWO){
           result.stars = 1;
       }
