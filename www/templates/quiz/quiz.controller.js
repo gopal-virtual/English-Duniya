@@ -56,9 +56,9 @@
 
     $scope.modal = {};
 
-    function starCount (index){
-        var count = quizCtrl.quizResult.stars - index ;
-        return count > 0 ? count : 0;
+    function starCount(index) {
+      var count = quizCtrl.quizResult.stars - index;
+      return count > 0 ? count : 0;
     }
 
     function init(quiz) {
@@ -84,20 +84,21 @@
             score: quizCtrl.quizResult.marks
           }, function(success) {
             var report_id = success.id;
+            var attempts = [];
             angular.forEach(quizCtrl.report.attempts, function(value, key) {
               // 1 - Attempted
               // 2 - Skipped
               // 3 - NotAttempted
-              var attempt = {
+              attempts.push({
                 answer: value.length > 0 ? value : null,
                 score: quizCtrl.quizResult.score[key],
                 status: value.length > 0 ? 1 : 2,
                 person: Auth.getProfileId(),
                 report: report_id,
                 node: key
-              }
-              Quiz.saveAttempt(attempt, function(response) {}, function(error) {})
+              });
             });
+            Quiz.saveAttempt(attempts, function(response) {}, function(error) {})
           }, function(error) {
 
           })
@@ -356,32 +357,38 @@
       angular.forEach(quiz.objects, function(value) {
         if (isAttempted(value)) {
           if (quizCtrl.isCorrectAttempted(value)) {
-            result.analysis[value.node.id] = {title : value.node.title, status : 1};
+            result.analysis[value.node.id] = {
+              title: value.node.title,
+              status: 1
+            };
             result.score[value.node.id] = parseInt(value.node.level) * quizCtrl.MARKS_MULTIPIER;
             result.marks += parseInt(value.node.level) * quizCtrl.MARKS_MULTIPIER;
             result.correct_questions++;
           } else {
-            result.analysis[value.node.id] = {title : value.node.title, status : 0};
+            result.analysis[value.node.id] = {
+              title: value.node.title,
+              status: 0
+            };
             result.score[value.node.id] = 0;
           }
         } else {
-          result.analysis[value.node.id] = {title : value.node.title, status : -1}
+          result.analysis[value.node.id] = {
+            title: value.node.title,
+            status: -1
+          }
           result.score[value.node.id] = 0;
         }
 
       });
       var percent_correct = parseInt((result.marks / quiz.node.type.score) * 100);
-      $log.debug('see the score',result.marks , quiz.node.type.score, percent_correct);
-      if(percent_correct >= CONSTANT.STAR.ONE && percent_correct < CONSTANT.STAR.TWO){
-          result.stars = 1;
-      }
-      else if(percent_correct >= CONSTANT.STAR.TWO && percent_correct < CONSTANT.STAR.THREE){
-          result.stars = 1;
-      }
-      else if(percent_correct >= CONSTANT.STAR.THREE){
-          result.stars = 1;
-      }
-      else{}
+      $log.debug('see the score', result.marks, quiz.node.type.score, percent_correct);
+      if (percent_correct >= CONSTANT.STAR.ONE && percent_correct < CONSTANT.STAR.TWO) {
+        result.stars = 1;
+      } else if (percent_correct >= CONSTANT.STAR.TWO && percent_correct < CONSTANT.STAR.THREE) {
+        result.stars = 1;
+      } else if (percent_correct >= CONSTANT.STAR.THREE) {
+        result.stars = 1;
+      } else {}
       return result;
     }
 
