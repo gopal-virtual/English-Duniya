@@ -50,7 +50,7 @@
           $state.go('quiz.questions', {
             id: resource.node.id
           });
-        }, 500);
+        });
       } else {
         $timeout(function() {
           $state.go('content.video', {
@@ -59,7 +59,7 @@
               type: 'video/mp4'
             }
           });
-        }, 500);
+        });
         //   mapCtrl.config.sources[0].src = mapCtrl.getSrc(resource.node.type.path);
       }
     }
