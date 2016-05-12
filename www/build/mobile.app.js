@@ -276,335 +276,6 @@
 }
 )();
 
-(function(){
-  var ROOT = 'templates';
-
-  angular
-    .module('common')
-    .constant('CONSTANT',{
-      'BACKEND_SERVICE_DOMAIN' : 'http://cc-test.zaya.in/',
-      // 'BACKEND_SERVICE_DOMAIN' : 'http://192.168.1.6:9000/',
-      'PATH' : {
-        'INTRO' : ROOT+'/intro',
-        'AUTH' : ROOT+'/auth',
-        'QUIZ' : ROOT+'/quiz',
-        'PROFILE' : ROOT+'/profile',
-        'USER' : ROOT+'/user',
-        'PLAYLIST' : ROOT+'/playlist',
-        'HOME' : ROOT+'/home',
-        'RESULT' : ROOT+'/result',
-        'SEARCH' : ROOT+'/search',
-        'GROUP' : ROOT+'/group',
-        'COMMON' : ROOT + '/common',
-        'MAP' : ROOT + '/map',
-        'CONTENT' : ROOT + '/content'
-      },
-      'VIEW' : '.view.html',
-      'CLIENTID' : {
-        'FACEBOOK' : '1159750564044149',
-        'GOOGLE' : '1011514043276-7q3kvn29jkegl2d1v7dtlbtipqqgo1rr.apps.googleusercontent.com',
-        'ELL' : '1e7aa89f-3f50-433a-90ca-e485a92bbda6'
-      },
-      'ASSETS' : {
-        'IMG' : {
-          'ICON' : 'img/icons'
-        }
-      }
-    })
-})();
-
-(function() {
-  angular
-    .module('zaya')
-    .directive('widgetCarousel', widgetCarousel)
-    .directive('carouselItem', carouselItem);
-
-  function widgetCarousel() {
-    var carousel = {}
-    carousel.restrict = 'A';
-    carousel.link = function(scope) {
-      scope.initCarousel = function(element) {
-        // provide any default options you want
-        var defaultOptions = {};
-        var customOptions = scope.$eval($(element).attr('carousel-options'));
-        // combine the two options objects
-        for (var key in customOptions) {
-          if (customOptions.hasOwnProperty(key)) {
-            defaultOptions[key] = customOptions[key];
-          }
-        }
-        // init carousel
-        $(element).owlCarousel(defaultOptions);
-      };
-    }
-    return carousel;
-  }
-
-  function carouselItem() {
-    var carouselItem = {};
-    carouselItem.restrict = 'A';
-    carouselItem.transclude = false;
-    carouselItem.link = function(scope, element) {
-      // wait for the last item in the ng-repeat then call init
-      if (scope.$last) {
-        scope.initCarousel(element.parent());
-      }
-    }
-    return carouselItem;
-  }
-})();
-
-(function(){
-	widgetError.$inject = ["CONSTANT"];
-	angular
-		.module('common')
-		.directive('widgetError',widgetError)
-
-	function widgetError(CONSTANT){
-		var error = {};
-		error.restrict = 'E';
-		error.templateUrl = CONSTANT.PATH.COMMON + '/common.error' + CONSTANT.VIEW;
-		error.controller = ['$rootScope','$scope',function ($rootScope,$scope) {
-			$scope.error = function(){
-				return $rootScope.error;
-			}
-		}]
-		return error;
-	}
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('common')
-        .directive('validInput', validInput);
-
-    function validInput() {
-        var validInput = {
-            require: '?ngModel',
-            link: linkFunc
-        };
-
-        return validInput;
-
-        function linkFunc(scope, element, attrs, ngModelCtrl) {
-          if(!ngModelCtrl) {
-            return;
-          }
-          ngModelCtrl.$parsers.push(function(val) {
-            var clean = val.replace( /[^a-zA-Z0-9@.!#$%&'*+-/=?^_`{|}~]+/g, '');
-            clean = clean.toLowerCase();
-            if (val !== clean) {
-              ngModelCtrl.$setViewValue(clean);
-              ngModelCtrl.$render();
-            }
-            return clean;
-          });
-        }
-    }
-})();
-
-(function() {
-    'use strict';
-
-    validOtp.$inject = ["$log"];
-    angular
-        .module('common')
-        .directive('validOtp', validOtp);
-
-    function validOtp($log) {
-        var validOtp = {
-            require: '?ngModel',
-            link: linkFunc
-        };
-
-        return validOtp;
-
-        function linkFunc(scope, element, attrs, ngModelCtrl) {
-          if(!ngModelCtrl) {
-            return;
-          }
-
-          ngModelCtrl.$parsers.push(function(val) {
-            var clean = (val > 999999)?(val.toString()).substring(0,6):val;
-            if (val !== clean) {
-              ngModelCtrl.$setViewValue(clean);
-              ngModelCtrl.$render();
-            }
-            return clean;
-          });
-        }
-    }
-})();
-
-(function() {
-  'use strict';
-
-  trackVideo.$inject = ["$window", "$log", "orientation"];
-  angular
-    .module('common')
-    .directive('trackVideo', trackVideo);
-
-  /* @ngInject */
-  function trackVideo($window, $log, orientation) {
-    var video = {
-      restrict: 'A',
-      link: linkFunc,
-    };
-
-    return video;
-
-    // full screen not working ; instead used css to immitate full screen effect ; check below
-    function toggleFullScreen() {
-      if (!document.fullscreenElement && // alternative standard method
-        !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) { // current working methods
-        if (document.documentElement.requestFullscreen) {
-          document.documentElement.requestFullscreen();
-        } else if (document.documentElement.msRequestFullscreen) {
-          document.documentElement.msRequestFullscreen();
-        } else if (document.documentElement.mozRequestFullScreen) {
-          document.documentElement.mozRequestFullScreen();
-        } else if (document.documentElement.webkitRequestFullscreen) {
-          document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-        }
-      } else {
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        } else if (document.msExitFullscreen) {
-          document.msExitFullscreen();
-        } else if (document.mozCancelFullScreen) {
-          document.mozCancelFullScreen();
-        } else if (document.webkitExitFullscreen) {
-          document.webkitExitFullscreen();
-        }
-      }
-    }
-
-    function linkFunc(scope, el, attr, ctrl) {
-      el.bind('playing', function() {
-        // toggleFullScreen();
-        document.querySelector("ion-modal-view").classList.remove('modal-dark');
-        document.querySelector("ion-modal-view").classList.add('modal-black');
-        el.addClass('fullscreen');
-        orientation.setLandscape();
-      });
-      el.bind('pause', function() {
-        // toggleFullScreen();
-        document.querySelector("ion-modal-view").classList.remove('modal-black');
-        document.querySelector("ion-modal-view").classList.add('modal-dark');
-        el.removeClass('fullscreen');
-        orientation.setPortrait();
-      });
-      el.bind('click',function (event) {
-        event.stopPropagation();
-      })
-    }
-  }
-
-})();
-
-(function () {
-  'use strict';
-
-    audio.$inject = ["$cordovaNativeAudio"];
-  angular
-    .module('common')
-    .factory('audio',audio)
-
-    function audio($cordovaNativeAudio) {
-      return {
-        play : function (sound) {
-          try{
-            $cordovaNativeAudio.play(sound);
-            void 0;
-          }
-          catch(error){
-            void 0;
-          }
-        }
-      };
-    }
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('common')
-        .factory('orientation', orientation);
-
-    orientation.$inject = ['$window','$log'];
-
-    /* @ngInject */
-    function orientation($window, $log) {
-        var orientation = {
-            setLandscape : setLandscape,
-            setPortrait : setPortrait,
-        };
-
-        return orientation;
-
-        function setPortrait() {
-          try{
-            $window.screen.lockOrientation('portrait');
-          }
-          catch(e){
-            $log.debug(e);
-          }
-        }
-
-        function setLandscape() {
-          try{
-            $window.screen.lockOrientation('landscape');
-          }
-          catch(e){
-            $log.debug(e);
-          }
-        }
-
-    }
-})();
-
-(function () {
-  'use strict';
-
-  angular
-    .module('common')
-    .factory('Utilities',utilities)
-
-    function utilities() {
-      return {
-        range : function (num) {
-          return new Array(num);
-        }
-      };
-    }
-})();
-
-(function(){
-  'use strict';
-
-  runConfig.$inject = ["$ionicPlatform", "$cordovaNativeAudio"];
-  angular
-    .module('common')
-    .run(runConfig);
-
-  function runConfig($ionicPlatform,$cordovaNativeAudio) {
-    $ionicPlatform.ready(function() {
-      try{
-        $cordovaNativeAudio.preloadSimple('water-drop', 'sound/water-drop.mp3');
-        $cordovaNativeAudio.preloadSimple('correct', 'sound/correct.mp3');
-        $cordovaNativeAudio.preloadSimple('wrong', 'sound/wrong.mp3');
-      }
-      catch(error){
-        void 0;
-      }
-    });
-  }
-
-})();
-
 (function () {
   'use strict';
   angular
@@ -1416,6 +1087,341 @@
 })();
 
 (function() {
+  var ROOT = 'templates';
+
+  angular
+    .module('common')
+    .constant('CONSTANT', {
+      'BACKEND_SERVICE_DOMAIN': 'http://cc-test.zaya.in/',
+      // 'BACKEND_SERVICE_DOMAIN' : 'http://192.168.1.6:9000/',
+      'PATH': {
+        'INTRO': ROOT + '/intro',
+        'AUTH': ROOT + '/auth',
+        'QUIZ': ROOT + '/quiz',
+        'PROFILE': ROOT + '/profile',
+        'USER': ROOT + '/user',
+        'PLAYLIST': ROOT + '/playlist',
+        'HOME': ROOT + '/home',
+        'RESULT': ROOT + '/result',
+        'SEARCH': ROOT + '/search',
+        'GROUP': ROOT + '/group',
+        'COMMON': ROOT + '/common',
+        'MAP': ROOT + '/map',
+        'CONTENT': ROOT + '/content'
+      },
+      'VIEW': '.view.html',
+      'CLIENTID': {
+        'FACEBOOK': '1159750564044149',
+        'GOOGLE': '1011514043276-7q3kvn29jkegl2d1v7dtlbtipqqgo1rr.apps.googleusercontent.com',
+        'ELL': '1e7aa89f-3f50-433a-90ca-e485a92bbda6'
+      },
+      'ASSETS' : {
+        'IMG' : {
+          'ICON' : 'img/icons',
+          'SOUND_PLACEHOLDER' : 'img/icons/sound.png'
+        }
+      },
+      'STAR': {
+        'ONE': 80,
+        'TWO': 90,
+        'THREE': 95
+      }
+    })
+})();
+
+(function() {
+  angular
+    .module('zaya')
+    .directive('widgetCarousel', widgetCarousel)
+    .directive('carouselItem', carouselItem);
+
+  function widgetCarousel() {
+    var carousel = {}
+    carousel.restrict = 'A';
+    carousel.link = function(scope) {
+      scope.initCarousel = function(element) {
+        // provide any default options you want
+        var defaultOptions = {};
+        var customOptions = scope.$eval($(element).attr('carousel-options'));
+        // combine the two options objects
+        for (var key in customOptions) {
+          if (customOptions.hasOwnProperty(key)) {
+            defaultOptions[key] = customOptions[key];
+          }
+        }
+        // init carousel
+        $(element).owlCarousel(defaultOptions);
+      };
+    }
+    return carousel;
+  }
+
+  function carouselItem() {
+    var carouselItem = {};
+    carouselItem.restrict = 'A';
+    carouselItem.transclude = false;
+    carouselItem.link = function(scope, element) {
+      // wait for the last item in the ng-repeat then call init
+      if (scope.$last) {
+        scope.initCarousel(element.parent());
+      }
+    }
+    return carouselItem;
+  }
+})();
+
+(function(){
+	widgetError.$inject = ["CONSTANT"];
+	angular
+		.module('common')
+		.directive('widgetError',widgetError)
+
+	function widgetError(CONSTANT){
+		var error = {};
+		error.restrict = 'E';
+		error.templateUrl = CONSTANT.PATH.COMMON + '/common.error' + CONSTANT.VIEW;
+		error.controller = ['$rootScope','$scope',function ($rootScope,$scope) {
+			$scope.error = function(){
+				return $rootScope.error;
+			}
+		}]
+		return error;
+	}
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('common')
+        .directive('validInput', validInput);
+
+    function validInput() {
+        var validInput = {
+            require: '?ngModel',
+            link: linkFunc
+        };
+
+        return validInput;
+
+        function linkFunc(scope, element, attrs, ngModelCtrl) {
+          if(!ngModelCtrl) {
+            return;
+          }
+          ngModelCtrl.$parsers.push(function(val) {
+            var clean = val.replace( /[^a-zA-Z0-9@.!#$%&'*+-/=?^_`{|}~]+/g, '');
+            clean = clean.toLowerCase();
+            if (val !== clean) {
+              ngModelCtrl.$setViewValue(clean);
+              ngModelCtrl.$render();
+            }
+            return clean;
+          });
+        }
+    }
+})();
+
+(function() {
+    'use strict';
+
+    validOtp.$inject = ["$log"];
+    angular
+        .module('common')
+        .directive('validOtp', validOtp);
+
+    function validOtp($log) {
+        var validOtp = {
+            require: '?ngModel',
+            link: linkFunc
+        };
+
+        return validOtp;
+
+        function linkFunc(scope, element, attrs, ngModelCtrl) {
+          if(!ngModelCtrl) {
+            return;
+          }
+
+          ngModelCtrl.$parsers.push(function(val) {
+            var clean = (val > 999999)?(val.toString()).substring(0,6):val;
+            if (val !== clean) {
+              ngModelCtrl.$setViewValue(clean);
+              ngModelCtrl.$render();
+            }
+            return clean;
+          });
+        }
+    }
+})();
+
+(function() {
+  'use strict';
+
+  trackVideo.$inject = ["$window", "$log", "orientation"];
+  angular
+    .module('common')
+    .directive('trackVideo', trackVideo);
+
+  /* @ngInject */
+  function trackVideo($window, $log, orientation) {
+    var video = {
+      restrict: 'A',
+      link: linkFunc,
+    };
+
+    return video;
+
+    // full screen not working ; instead used css to immitate full screen effect ; check below
+    function toggleFullScreen() {
+      if (!document.fullscreenElement && // alternative standard method
+        !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) { // current working methods
+        if (document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen();
+        } else if (document.documentElement.msRequestFullscreen) {
+          document.documentElement.msRequestFullscreen();
+        } else if (document.documentElement.mozRequestFullScreen) {
+          document.documentElement.mozRequestFullScreen();
+        } else if (document.documentElement.webkitRequestFullscreen) {
+          document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        }
+      }
+    }
+
+    function linkFunc(scope, el, attr, ctrl) {
+      el.bind('playing', function() {
+        // toggleFullScreen();
+        document.querySelector("ion-modal-view").classList.remove('modal-dark');
+        document.querySelector("ion-modal-view").classList.add('modal-black');
+        el.addClass('fullscreen');
+        orientation.setLandscape();
+      });
+      el.bind('pause', function() {
+        // toggleFullScreen();
+        document.querySelector("ion-modal-view").classList.remove('modal-black');
+        document.querySelector("ion-modal-view").classList.add('modal-dark');
+        el.removeClass('fullscreen');
+        orientation.setPortrait();
+      });
+      el.bind('click',function (event) {
+        event.stopPropagation();
+      })
+    }
+  }
+
+})();
+
+(function () {
+  'use strict';
+
+    audio.$inject = ["$cordovaNativeAudio"];
+  angular
+    .module('common')
+    .factory('audio',audio)
+
+    function audio($cordovaNativeAudio) {
+      return {
+        play : function (sound) {
+          try{
+            $cordovaNativeAudio.play(sound);
+            void 0;
+          }
+          catch(error){
+            void 0;
+          }
+        }
+      };
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('common')
+        .factory('orientation', orientation);
+
+    orientation.$inject = ['$window','$log'];
+
+    /* @ngInject */
+    function orientation($window, $log) {
+        var orientation = {
+            setLandscape : setLandscape,
+            setPortrait : setPortrait,
+        };
+
+        return orientation;
+
+        function setPortrait() {
+          try{
+            $window.screen.lockOrientation('portrait');
+          }
+          catch(e){
+            $log.debug(e);
+          }
+        }
+
+        function setLandscape() {
+          try{
+            $window.screen.lockOrientation('landscape');
+          }
+          catch(e){
+            $log.debug(e);
+          }
+        }
+
+    }
+})();
+
+(function () {
+  'use strict';
+
+  angular
+    .module('common')
+    .factory('Utilities',utilities)
+
+    function utilities() {
+      return {
+        range : function (num) {
+          return new Array(num);
+        }
+      };
+    }
+})();
+
+(function(){
+  'use strict';
+
+  runConfig.$inject = ["$ionicPlatform", "$cordovaNativeAudio"];
+  angular
+    .module('common')
+    .run(runConfig);
+
+  function runConfig($ionicPlatform,$cordovaNativeAudio) {
+    $ionicPlatform.ready(function() {
+      try{
+        $cordovaNativeAudio.preloadSimple('water-drop', 'sound/water-drop.mp3');
+        $cordovaNativeAudio.preloadSimple('correct', 'sound/correct.mp3');
+        $cordovaNativeAudio.preloadSimple('wrong', 'sound/wrong.mp3');
+      }
+      catch(error){
+        void 0;
+      }
+    });
+  }
+
+})();
+
+(function() {
     'use strict';
 
     angular
@@ -1479,11 +1485,11 @@
     .module('zaya-map')
     .controller('mapController', mapController);
 
-  mapController.$inject = ['$scope','$rootScope', '$log', '$ionicModal', '$state', 'lessons', 'Rest', 'CONSTANT', '$sce', 'orientation','$ionicLoading','$timeout','$ionicBackdrop'];
+  mapController.$inject = ['$scope','$rootScope', '$log', '$ionicModal', '$state', 'lessons', 'scores', 'extendLesson', 'Rest', 'CONSTANT', '$sce', 'orientation','$ionicLoading','$timeout','$ionicBackdrop'];
 
-  function mapController($scope, $rootScope, $log, $ionicModal, $state, lessons, Rest, CONSTANT, $sce, orientation, $ionicLoading, $timeout, $ionicBackdrop) {
+  function mapController($scope, $rootScope, $log, $ionicModal, $state, lessons, scores, extendLesson, Rest, CONSTANT, $sce, orientation, $ionicLoading, $timeout, $ionicBackdrop) {
     var mapCtrl = this;
-    mapCtrl.lessons = lessons;
+    mapCtrl.lessons = extendLesson.getLesson(lessons, scores);
     mapCtrl.getLesson = getLesson;
     mapCtrl.getSrc = getSrc;
     mapCtrl.resetNode = resetNode;
@@ -1600,15 +1606,17 @@
         $ionicLoading.hide();
         $scope.openModal();
         mapCtrl.selectedNode = response.plain();
+        $log.debug('get lesson',response.plain());
         localStorage.setItem('lesson', JSON.stringify(mapCtrl.selectedNode));
       })
     }
 
-    if(localStorage.lesson){
-      // mapCtrl.selectedNode = JSON.parse(localStorage.lesson);
-      // $scope.openModal();
-      mapCtrl.getLesson(JSON.parse(localStorage.lesson).node.id);
-    }
+    $timeout(function functionName() {
+        if(localStorage.lesson){
+            $scope.openModal();
+            mapCtrl.selectedNode = JSON.parse(localStorage.lesson);
+        }
+    });
 
   }
 })();
@@ -1627,7 +1635,7 @@
             restrict: 'A',
             template: '<div id="map_canvas"></div>',
             scope: {
-              lessons : '='
+              lessons : '=',
             },
             link: linkFunc,
         };
@@ -1639,6 +1647,72 @@
         }
     }
 
+})();
+
+(function() {
+  'use strict';
+
+  angular
+    .module('zaya-map')
+    .factory('extendLesson', extendLesson);
+
+  extendLesson.$inject = ['$log', 'CONSTANT'];
+
+  /* @ngInject */
+  function extendLesson($log, CONSTANT) {
+    var extendLesson = {
+      getLesson: getLesson
+    };
+
+    return extendLesson;
+
+    function setLock(key, lesson, bool) {
+      lesson.locked = bool;
+    }
+
+    function setStar(key, lesson, count) {
+      lesson.stars = count;
+    }
+
+    function getLesson(lessons, scores) {
+
+      angular.forEach(lessons, function(value, key) {
+        setLock(key, value, true);
+      })
+      angular.forEach(lessons, function(value, key) {
+        if (scores[key].total_score > 0) {
+          var score = (scores[key].obtained_score / scores[key].total_score) * 100;
+
+          // if score is > 80%, unlock the next lessons
+          if (score >= CONSTANT.STAR.ONE) {
+            if (lessons[key + 1])
+              setLock(key, lessons[key + 1], false);
+          }
+
+          // give stars
+          if (scores[key].obtained_score == 0) {
+            setStar(key, lessons[key], -1);
+          } else if (score > 0 && score < CONSTANT.STAR.ONE) {
+            setStar(key, lessons[key], 0);
+          } else if (score >= CONSTANT.STAR.ONE && score < CONSTANT.STAR.TWO) {
+            setStar(key, lessons[key], 1);
+          } else if (score >= CONSTANT.STAR.TWO && score < CONSTANT.STAR.THREE) {
+            setStar(key, lessons[key], 2);
+          } else if (score >= CONSTANT.STAR.THREE) {
+            setStar(key, lessons[key], 3);
+          } else {}
+
+          // unlock first lessons
+          if (key == 0) {
+            setLock(key, value, false);
+          }
+        }
+      })
+
+      return lessons;
+    }
+
+  }
 })();
 
 window.createGame = function(scope, lessons, injector, log) {
@@ -1661,7 +1735,12 @@ window.createGame = function(scope, lessons, injector, log) {
 
       this.load.spritesheet('fire_animation', 'img/assets/fire_animation.png', 322,452, 20);
       this.load.spritesheet('cactus_animation', 'img/assets/cactus_animation.png', 30,52, 5);
+
       this.load.image('node', 'img/icons/node.png');
+      this.load.image('read', 'img/icons/icon-read.png');
+      this.load.image('read_deactive', 'img/icons/icon-read-deactive.png');
+      this.load.image('star', 'img/icons/icon-star.png');
+      this.load.image('nostar', 'img/icons/icon-nostar.png');
       // debug value
       this.game.time.advancedTiming = true;
     },
@@ -1744,8 +1823,8 @@ window.createGame = function(scope, lessons, injector, log) {
       // path
       log.debug('desert', desert.width);
       this.points = {
-        'x': [101,113,170,202,216,201,180,172,172,179,195,211,207,160,138,144,167,197,204,197,165,126,101,161,256,223,134,102,138,200,235,200,180,180,180,180,180,180,180,180,180],
-        'y': [50,64,109,148,189,235,287,346,404,456,495,529,574,644,693,748,803,854,877,941,980,1022,1091,1116,1116,1171,1209,1266,1318,1342,1371,1433,1494,1577,1659,1742,1824,1907,1989,2072,2155]
+        'x': [101,113,170,202,216,201,180,172,172,179,195,211,207,160,138,144,167,197,204,197,165,126,101,161,256,223,134,102,138,200,235,200,180,180,180,180,180,180,180,180],
+        'y': [50,64,109,148,189,235,287,346,404,456,495,529,574,644,693,748,803,854,877,941,980,1022,1091,1116,1116,1171,1209,1266,1318,1342,1371,1433,1494,1577,1659,1742,1824,1907,1950,2050]
       };
 
       for (var i = 0, points_count = this.points.x.length; i < points_count; i++) {
@@ -1763,15 +1842,58 @@ window.createGame = function(scope, lessons, injector, log) {
         var posy = this.math.catmullRomInterpolation(this.points.y, j);
         this.bmd.rect(posx, posy, 4, 4, '#219C7F');
       }
+    //   var stars = this.game.add.group();
+      function createStars(count, x, y){
+          for (var i = 0; i < 3; i++) {
+              var startype = count ? 'star' : 'nostar';
+              log.debug(startype);
+              var star = stars.create(x[0] + x[i+1], y[0] + y[i+1], startype);
+              star.anchor.setTo(0.5,0.5);
+              star.scale.setTo(0.2,0.2);
+              count -= count > 0 ? 1 : 0;
+          }
+      }
+      var star_x = [-30,0,30];
+      var star_y = [-20,-30,-20];
       // Place nodes
-      for (var j = 0, i = lessons.length-1, nodeCount = 1/lessons.length; j < 1; j += nodeCount, i--) {
+      for (var j = 0, i = lessons.length-1, nodeCount = 1/(lessons.length-1); j <= 1; j += nodeCount, i--) {
+        var currentLesson = lessons[i];
+        log.debug('lesson status', currentLesson);
+        var locked = currentLesson.locked ? '_deactive' : '';
         var posx = this.math.catmullRomInterpolation(this.points.x, j);
         var posy = this.math.catmullRomInterpolation(this.points.y, j);
-        var node = this.game.add.button(posx, posy, 'node', function (node) {
-          scope.$emit('openNode',node);
-        }, this, 2, 1, 0);
+        var node = this.game.add.button(posx, posy, 'node');
+        node.inputEnabled = true;
+        node.events.onInputDown.add(function(currentLesson){
+            return function(){
+                if(!currentLesson.locked)
+                    scope.$emit('openNode',currentLesson);
+            }
+        }(currentLesson))
+        var icon = this.game.add.sprite(posx, posy, 'read'+locked);
+        icon.anchor.setTo(0.5,0.5);
+        icon.scale.setTo(0.3,0.3);
         node.anchor.setTo(0.5, 0.5);
-        node.id = lessons[i].id;
+        node.scale.setTo(1.8, 1.8);
+
+        // add stars
+        if(currentLesson.stars >= 0){
+            var stars = this.game.add.group();
+            log.debug('stars in lesson',currentLesson.stars);
+            if(currentLesson.stars == 0){
+                createStars(0,$.merge([posx],star_x),$.merge([posy],star_y));
+            }
+            else if(currentLesson.stars == 1){
+                createStars(1,$.merge([posx],star_x),$.merge([posy],star_y));
+            }
+            else if(currentLesson.stars == 2){
+                createStars(2,$.merge([posx],star_x),$.merge([posy],star_y));
+            }
+            else if(currentLesson.stars == 3){
+                createStars(3,$.merge([posx],star_x),$.merge([posy],star_y));
+            }
+            else{}
+        }
       }
       for (var i = 0; i < 100; i++)
       {
@@ -1786,14 +1908,16 @@ window.createGame = function(scope, lessons, injector, log) {
           s.events.onOutOfBounds.add(this.resetSprite, this);
       }
 
-      var fire_animation = this.game.add.sprite(20,20, 'fire_animation');
-      fire_animation.scale.setTo(0.5,0.5);
-      var light = fire_animation.animations.add('light');
-      fire_animation.animations.play('light', 20, true);
+      // fire animation
+    //   var fire_animation = this.game.add.sprite(20,20, 'fire_animation');
+    //   fire_animation.scale.setTo(0.5,0.5);
+    //   var light = fire_animation.animations.add('light');
+    //   fire_animation.animations.play('light', 20, true);
+    
       // cactus
-      var cactus_animation = this.game.add.sprite(20,20, 'cactus_animation');
-      var wind = cactus_animation.animations.add('wind');
-      cactus_animation.animations.play('wind', 5, true);
+    //   var cactus_animation = this.game.add.sprite(20,20, 'cactus_animation');
+    //   var wind = cactus_animation.animations.add('wind');
+    //   cactus_animation.animations.play('wind', 5, true);
 
       this.init();
       this.game.kineticScrolling.start();
@@ -1848,25 +1972,32 @@ window.createGame = function(scope, lessons, injector, log) {
   function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
 
     $stateProvider
-      .state('map',{
-        url : '/map',
-        abstract : true,
-          resolve : {
-            lessons : ['Rest','$log',function(Rest, $log){
-              return Rest.one('accounts', CONSTANT.CLIENTID.ELL).getList('lessons').then(function(lessons) {
-                $log.debug(lessons.plain());
-                return lessons.plain();
-              })
-            }]
-          },
-        template : '<ion-nav-view name="state-map"></ion-nav-view>'
+      .state('map', {
+        url: '/map',
+        abstract: true,
+        resolve: {
+          lessons: ['Rest', '$log', function(Rest, $log) {
+            return Rest.one('accounts', CONSTANT.CLIENTID.ELL).getList('lessons').then(function(lessons) {
+              return lessons.plain();
+            })
+
+          }],
+          scores: ['Rest', '$log', function(Rest, $log) {
+            return Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('profiles', JSON.parse(localStorage.user_details).profile).getList('lessons-score').then(function(score) {
+                $log.debug('scores rest' , score.plain());
+              return score.plain();
+            })
+          }]
+
+        },
+        template: '<ion-nav-view name="state-map"></ion-nav-view>'
       })
-      .state('map.navigate',{
-        url : '/navigate',
-        views : {
-          'state-map' : {
-            templateUrl : CONSTANT.PATH.MAP + '/map' + CONSTANT.VIEW,
-            controller : 'mapController as mapCtrl'
+      .state('map.navigate', {
+        url: '/navigate',
+        views: {
+          'state-map': {
+            templateUrl: CONSTANT.PATH.MAP + '/map' + CONSTANT.VIEW,
+            controller: 'mapController as mapCtrl'
           }
         }
       })
@@ -2024,8 +2155,10 @@ window.createGame = function(scope, lessons, injector, log) {
     quizCtrl.endQuiz = endQuiz;
     quizCtrl.pauseQuiz = pauseQuiz;
     quizCtrl.restartQuiz = restartQuiz;
+
     //audio
     quizCtrl.playAudio = playAudio;
+    quizCtrl.starCount = starCount;
 
     //question layouts
     quizCtrl.GRID_TYPE = ['audio_to_text', 'text_to_pic', 'pic_to_text', 'audio_to_pic'];
@@ -2047,13 +2180,23 @@ window.createGame = function(scope, lessons, injector, log) {
     quizCtrl.removeSoundTag = removeSoundTag;
 
 
+    quizCtrl.myStyle = {
+      height: '10px',
+      width: '0%',
+      'background-color': 'yellow'
+    }
+    quizCtrl.practiceResult = {};
+
     // initialisation call
     quizCtrl.setCurrentIndex(0);
     quizCtrl.init(quizCtrl.quiz);
 
     $scope.modal = {};
 
-
+    function starCount(index) {
+      var count = quizCtrl.quizResult.stars - index;
+      return count > 0 ? count : 0;
+    }
 
     function init(quiz) {
 
@@ -2073,32 +2216,35 @@ window.createGame = function(scope, lessons, injector, log) {
         quizCtrl.quiz = $stateParams.quiz;
         quizCtrl.quizResult = quizCtrl.calculateResult(quizCtrl.report, quizCtrl.quiz);
         Quiz.saveReport({
-          node: quizCtrl.quiz.node.id,
-          person: Auth.getProfileId(),
-          score: quizCtrl.quizResult.marks
-        }, function(success) {
-          var report_id = success.id;
-          angular.forEach(quizCtrl.report.attempts, function(value, key) {
-            // 1 - Attempted
-            // 2 - Skipped
-            // 3 - NotAttempted
-            var attempt = {
-              answer: value.length > 0 ? value : null,
-              status: value.length > 0 ? 1 : 2,
-              person: Auth.getProfileId(),
-              report: report_id,
-              node: key
-            };
-            Quiz.saveAttempt(attempt, function(response) {}, function(error) {});
-          });
-        }, function(error) {
+            node: quizCtrl.quiz.node.id,
+            person: Auth.getProfileId(),
+            score: quizCtrl.quizResult.marks
+          }, function(success) {
+            var report_id = success.id;
+            angular.forEach(quizCtrl.report.attempts, function(value, key) {
+              // 1 - Attempted
+              // 2 - Skipped
+              // 3 - NotAttempted
+              var attempt = {
+                answer: value.length > 0 ? value : null,
+                score: quizCtrl.quizResult.score[key],
+                status: value.length > 0 ? 1 : 2,
+                person: Auth.getProfileId(),
+                report: report_id,
+                node: key
+              }
+              Quiz.saveAttempt(attempt, function(response) {}, function(error) {})
+            });
+          }, function(error) {
 
-        });
-        // quizCtrl.report = {"quiz_id":"10014638-8567-4a33-814a-1b7bfedf0664","attempts":{"cbe39272-ccbd-4e05-9532-d53699ec59cd":[3],"61524a03-4acd-4b1d-ae96-96702387e7e3":[3],"5b66574b-621b-435e-a812-db7be6a94dfd":[3],"cda26918-b9d4-4120-afe4-1e627691454f":[3],"1eac2901-3f1a-4e48-b2cb-706964aece32":[2]}};
-        // quizCtrl.quiz = {"node":{"id":"10014638-8567-4a33-814a-1b7bfedf0664","content_type_name":"assessment","type":{"id":"7053747a-2967-431a-bc68-2aa23b8bd1c4","score":100},"created":"2016-04-25T11:36:53.969858Z","updated":"2016-04-25T11:36:53.969884Z","title":"Assessment test","description":"Assessment description","object_id":"7053747a-2967-431a-bc68-2aa23b8bd1c4","stauts":"PUBLISHED","lft":10,"rght":21,"tree_id":1,"level":1,"parent":"5cb5adc2-84f8-41d2-9272-81790cb314c2","content_type":26,"account":"1e7aa89f-3f50-433a-90ca-e485a92bbda6"},"objects":[{"node":{"id":"cbe39272-ccbd-4e05-9532-d53699ec59cd","content_type_name":"json question","type":{"id":"249fdc1f-b466-4993-be6e-555fb6052a55","created":"2016-04-25T11:49:39.453229Z","updated":"2016-04-25T11:49:39.453251Z","microstandard":"a48b89d6-cfdf-4119-b335-863e57606c31","is_critical_thinking":false,"level":1,"answer":[3],"score":20,"content":{"image":null,"choices":[{"image":"http://lorempixel.com/100/100/","key":1,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":2,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":3,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":4,"audio":null,"option":null}],"layout_type":"audio_to_pic","audio":"http://soundbible.com/grab.php?id=769&type=mp3","is_multiple":false},"type":"choicequestion"},"created":"2016-04-25T11:49:39.486776Z","updated":"2016-04-25T11:49:39.486799Z","title":"Audio to text","description":"","object_id":"249fdc1f-b466-4993-be6e-555fb6052a55","stauts":"PUBLISHED","lft":13,"rght":14,"tree_id":1,"level":2,"parent":"10014638-8567-4a33-814a-1b7bfedf0664","content_type":22,"account":"1e7aa89f-3f50-433a-90ca-e485a92bbda6"},"objects":[]},{"node":{"id":"61524a03-4acd-4b1d-ae96-96702387e7e3","content_type_name":"json question","type":{"id":"e7962a73-0199-477d-9838-8f8e419907b8","created":"2016-04-25T11:50:41.767437Z","updated":"2016-04-25T11:50:41.767456Z","microstandard":"a48b89d6-cfdf-4119-b335-863e57606c31","is_critical_thinking":false,"level":1,"answer":[3],"score":20,"content":{"image":null,"choices":[{"image":"http://lorempixel.com/100/100/","key":1,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":2,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":3,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":4,"audio":null,"option":null}],"layout_type":"audio_to_pic","audio":"http://soundbible.com/grab.php?id=769&type=mp3","is_multiple":false},"type":"choicequestion"},"created":"2016-04-25T11:50:41.799933Z","updated":"2016-04-25T11:50:41.799953Z","title":"Audio to text","description":"","object_id":"e7962a73-0199-477d-9838-8f8e419907b8","stauts":"PUBLISHED","lft":17,"rght":18,"tree_id":1,"level":2,"parent":"10014638-8567-4a33-814a-1b7bfedf0664","content_type":22,"account":"1e7aa89f-3f50-433a-90ca-e485a92bbda6"},"objects":[]},{"node":{"id":"5b66574b-621b-435e-a812-db7be6a94dfd","content_type_name":"json question","type":{"id":"d72b724c-f8af-4221-815d-08abba56bda2","created":"2016-04-25T11:43:38.461255Z","updated":"2016-04-25T11:43:38.461273Z","microstandard":"a48b89d6-cfdf-4119-b335-863e57606c31","is_critical_thinking":false,"level":1,"answer":[3],"score":20,"content":{"image":null,"choices":[{"image":"http://lorempixel.com/100/100/","key":1,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":2,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":3,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":4,"audio":null,"option":null}],"layout_type":"audio_to_pic","audio":"http://soundbible.com/grab.php?id=769&type=mp3","is_multiple":false},"type":"choicequestion"},"created":"2016-04-25T11:43:38.493848Z","updated":"2016-04-25T11:43:38.493870Z","title":"Audio to text","description":"","object_id":"d72b724c-f8af-4221-815d-08abba56bda2","stauts":"PUBLISHED","lft":11,"rght":12,"tree_id":1,"level":2,"parent":"10014638-8567-4a33-814a-1b7bfedf0664","content_type":22,"account":"1e7aa89f-3f50-433a-90ca-e485a92bbda6"},"objects":[]},{"node":{"id":"cda26918-b9d4-4120-afe4-1e627691454f","content_type_name":"json question","type":{"id":"8f9e4441-2e51-4834-860b-9324a6468889","created":"2016-04-25T11:50:17.262086Z","updated":"2016-04-25T11:50:17.262103Z","microstandard":"a48b89d6-cfdf-4119-b335-863e57606c31","is_critical_thinking":false,"level":1,"answer":[3],"score":20,"content":{"image":null,"choices":[{"image":"http://lorempixel.com/100/100/","key":1,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":2,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":3,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":4,"audio":null,"option":null}],"layout_type":"audio_to_pic","audio":"http://soundbible.com/grab.php?id=769&type=mp3","is_multiple":false},"type":"choicequestion"},"created":"2016-04-25T11:50:17.295078Z","updated":"2016-04-25T11:50:17.295097Z","title":"Audio to text","description":"","object_id":"8f9e4441-2e51-4834-860b-9324a6468889","stauts":"PUBLISHED","lft":15,"rght":16,"tree_id":1,"level":2,"parent":"10014638-8567-4a33-814a-1b7bfedf0664","content_type":22,"account":"1e7aa89f-3f50-433a-90ca-e485a92bbda6"},"objects":[]},{"node":{"id":"1eac2901-3f1a-4e48-b2cb-706964aece32","content_type_name":"json question","type":{"id":"1678c124-710c-4b52-98a8-a873624d2dd0","created":"2016-04-25T11:50:45.706748Z","updated":"2016-04-25T11:50:45.706765Z","microstandard":"a48b89d6-cfdf-4119-b335-863e57606c31","is_critical_thinking":false,"level":1,"answer":[3],"score":20,"content":{"image":null,"choices":[{"image":"http://lorempixel.com/100/100/","key":1,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":2,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":3,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":4,"audio":null,"option":null}],"layout_type":"audio_to_pic","audio":"http://soundbible.com/grab.php?id=769&type=mp3","is_multiple":false},"type":"choicequestion"},"created":"2016-04-25T11:50:45.739207Z","updated":"2016-04-25T11:50:45.739227Z","title":"Audio to text","description":"","object_id":"1678c124-710c-4b52-98a8-a873624d2dd0","stauts":"PUBLISHED","lft":19,"rght":20,"tree_id":1,"level":2,"parent":"10014638-8567-4a33-814a-1b7bfedf0664","content_type":22,"account":"1e7aa89f-3f50-433a-90ca-e485a92bbda6"},"objects":[]}]}
+          })
+          // quizCtrl.report = {"quiz_id":"10014638-8567-4a33-814a-1b7bfedf0664","attempts":{"cbe39272-ccbd-4e05-9532-d53699ec59cd":[3],"61524a03-4acd-4b1d-ae96-96702387e7e3":[3],"5b66574b-621b-435e-a812-db7be6a94dfd":[3],"cda26918-b9d4-4120-afe4-1e627691454f":[3],"1eac2901-3f1a-4e48-b2cb-706964aece32":[2]}};
+          // quizCtrl.quiz = {"node":{"id":"10014638-8567-4a33-814a-1b7bfedf0664","content_type_name":"assessment","type":{"id":"7053747a-2967-431a-bc68-2aa23b8bd1c4","score":100},"created":"2016-04-25T11:36:53.969858Z","updated":"2016-04-25T11:36:53.969884Z","title":"Assessment test","description":"Assessment description","object_id":"7053747a-2967-431a-bc68-2aa23b8bd1c4","stauts":"PUBLISHED","lft":10,"rght":21,"tree_id":1,"level":1,"parent":"5cb5adc2-84f8-41d2-9272-81790cb314c2","content_type":26,"account":"1e7aa89f-3f50-433a-90ca-e485a92bbda6"},"objects":[{"node":{"id":"cbe39272-ccbd-4e05-9532-d53699ec59cd","content_type_name":"json question","type":{"id":"249fdc1f-b466-4993-be6e-555fb6052a55","created":"2016-04-25T11:49:39.453229Z","updated":"2016-04-25T11:49:39.453251Z","microstandard":"a48b89d6-cfdf-4119-b335-863e57606c31","is_critical_thinking":false,"level":1,"answer":[3],"score":20,"content":{"image":null,"choices":[{"image":"http://lorempixel.com/100/100/","key":1,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":2,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":3,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":4,"audio":null,"option":null}],"layout_type":"audio_to_pic","audio":"http://soundbible.com/grab.php?id=769&type=mp3","is_multiple":false},"type":"choicequestion"},"created":"2016-04-25T11:49:39.486776Z","updated":"2016-04-25T11:49:39.486799Z","title":"Audio to text","description":"","object_id":"249fdc1f-b466-4993-be6e-555fb6052a55","stauts":"PUBLISHED","lft":13,"rght":14,"tree_id":1,"level":2,"parent":"10014638-8567-4a33-814a-1b7bfedf0664","content_type":22,"account":"1e7aa89f-3f50-433a-90ca-e485a92bbda6"},"objects":[]},{"node":{"id":"61524a03-4acd-4b1d-ae96-96702387e7e3","content_type_name":"json question","type":{"id":"e7962a73-0199-477d-9838-8f8e419907b8","created":"2016-04-25T11:50:41.767437Z","updated":"2016-04-25T11:50:41.767456Z","microstandard":"a48b89d6-cfdf-4119-b335-863e57606c31","is_critical_thinking":false,"level":1,"answer":[3],"score":20,"content":{"image":null,"choices":[{"image":"http://lorempixel.com/100/100/","key":1,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":2,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":3,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":4,"audio":null,"option":null}],"layout_type":"audio_to_pic","audio":"http://soundbible.com/grab.php?id=769&type=mp3","is_multiple":false},"type":"choicequestion"},"created":"2016-04-25T11:50:41.799933Z","updated":"2016-04-25T11:50:41.799953Z","title":"Audio to text","description":"","object_id":"e7962a73-0199-477d-9838-8f8e419907b8","stauts":"PUBLISHED","lft":17,"rght":18,"tree_id":1,"level":2,"parent":"10014638-8567-4a33-814a-1b7bfedf0664","content_type":22,"account":"1e7aa89f-3f50-433a-90ca-e485a92bbda6"},"objects":[]},{"node":{"id":"5b66574b-621b-435e-a812-db7be6a94dfd","content_type_name":"json question","type":{"id":"d72b724c-f8af-4221-815d-08abba56bda2","created":"2016-04-25T11:43:38.461255Z","updated":"2016-04-25T11:43:38.461273Z","microstandard":"a48b89d6-cfdf-4119-b335-863e57606c31","is_critical_thinking":false,"level":1,"answer":[3],"score":20,"content":{"image":null,"choices":[{"image":"http://lorempixel.com/100/100/","key":1,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":2,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":3,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":4,"audio":null,"option":null}],"layout_type":"audio_to_pic","audio":"http://soundbible.com/grab.php?id=769&type=mp3","is_multiple":false},"type":"choicequestion"},"created":"2016-04-25T11:43:38.493848Z","updated":"2016-04-25T11:43:38.493870Z","title":"Audio to text","description":"","object_id":"d72b724c-f8af-4221-815d-08abba56bda2","stauts":"PUBLISHED","lft":11,"rght":12,"tree_id":1,"level":2,"parent":"10014638-8567-4a33-814a-1b7bfedf0664","content_type":22,"account":"1e7aa89f-3f50-433a-90ca-e485a92bbda6"},"objects":[]},{"node":{"id":"cda26918-b9d4-4120-afe4-1e627691454f","content_type_name":"json question","type":{"id":"8f9e4441-2e51-4834-860b-9324a6468889","created":"2016-04-25T11:50:17.262086Z","updated":"2016-04-25T11:50:17.262103Z","microstandard":"a48b89d6-cfdf-4119-b335-863e57606c31","is_critical_thinking":false,"level":1,"answer":[3],"score":20,"content":{"image":null,"choices":[{"image":"http://lorempixel.com/100/100/","key":1,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":2,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":3,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":4,"audio":null,"option":null}],"layout_type":"audio_to_pic","audio":"http://soundbible.com/grab.php?id=769&type=mp3","is_multiple":false},"type":"choicequestion"},"created":"2016-04-25T11:50:17.295078Z","updated":"2016-04-25T11:50:17.295097Z","title":"Audio to text","description":"","object_id":"8f9e4441-2e51-4834-860b-9324a6468889","stauts":"PUBLISHED","lft":15,"rght":16,"tree_id":1,"level":2,"parent":"10014638-8567-4a33-814a-1b7bfedf0664","content_type":22,"account":"1e7aa89f-3f50-433a-90ca-e485a92bbda6"},"objects":[]},{"node":{"id":"1eac2901-3f1a-4e48-b2cb-706964aece32","content_type_name":"json question","type":{"id":"1678c124-710c-4b52-98a8-a873624d2dd0","created":"2016-04-25T11:50:45.706748Z","updated":"2016-04-25T11:50:45.706765Z","microstandard":"a48b89d6-cfdf-4119-b335-863e57606c31","is_critical_thinking":false,"level":1,"answer":[3],"score":20,"content":{"image":null,"choices":[{"image":"http://lorempixel.com/100/100/","key":1,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":2,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":3,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":4,"audio":null,"option":null}],"layout_type":"audio_to_pic","audio":"http://soundbible.com/grab.php?id=769&type=mp3","is_multiple":false},"type":"choicequestion"},"created":"2016-04-25T11:50:45.739207Z","updated":"2016-04-25T11:50:45.739227Z","title":"Audio to text","description":"","object_id":"1678c124-710c-4b52-98a8-a873624d2dd0","stauts":"PUBLISHED","lft":19,"rght":20,"tree_id":1,"level":2,"parent":"10014638-8567-4a33-814a-1b7bfedf0664","content_type":22,"account":"1e7aa89f-3f50-433a-90ca-e485a92bbda6"},"objects":[]}]}
 
-      } else if ($state.current.name == "quiz.questions") {
+      } else if ($state.current.name == "quiz.questions" || $state.current.name == "quiz.practice.questions") {
         quizCtrl.report = {};
+        quizCtrl.practiceResult.totalMarks= quizCtrl.quiz.node.type.score;
+        quizCtrl.practiceResult.scoredMarks = 0;
         quizCtrl.report.quiz_id = quiz.node.id;
         quizCtrl.report.attempts = {};
         for (var i = 0; i < quiz.objects.length; i++) {
@@ -2106,8 +2252,8 @@ window.createGame = function(scope, lessons, injector, log) {
         }
         // init attempted
 
-        for (var i = 0; i < quizCtrl.quiz.objects.length; i++) {
-          if (i != 0)
+        for (i = 0; i < quizCtrl.quiz.objects.length; i++) {
+          if (i !== 0)
             quizCtrl.quiz.objects[i].isVisited = false;
           else
             quizCtrl.quiz.objects[i].isVisited = true;
@@ -2122,7 +2268,40 @@ window.createGame = function(scope, lessons, injector, log) {
           //}
           else {}
         }
-      } else {}
+      } else if($state.current.name = 'quiz.practice.summary'){
+        $log.debug("shere");
+          $log.debug($stateParams);
+        quizCtrl.report = $stateParams.report;
+        quizCtrl.quiz = $stateParams.quiz;
+        quizCtrl.practiceResult = $stateParams.practiceResult;
+        $log.debug(quizCtrl.report);
+        Quiz.saveReport({
+            node: quizCtrl.quiz.node.id,
+            person: Auth.getProfileId(),
+            score: quizCtrl.practiceResult.totalMarks
+          }, function(success) {
+            var report_id = success.id;
+            angular.forEach(quizCtrl.report.attempts, function(value, key) {
+              // 1 - Attempted
+              // 2 - Skipped
+              // 3 - NotAttempted
+
+              angular.forEach(value,function(attempt){
+                var attempt = {
+                  answer: value.length > 0 ? value : null,
+                  score: quizCtrl.quizResult.score[key],
+                  status: value.length > 0 ? 1 : 2,
+                  person: Auth.getProfileId(),
+                  report: report_id,
+                  node: key
+                }
+                Quiz.saveAttempt(attempt, function(response) {}, function(error) {})
+              })
+            });
+          }, function(error) {
+
+          })
+      }
 
     }
 
@@ -2152,23 +2331,30 @@ window.createGame = function(scope, lessons, injector, log) {
     }
 
     function decide() {
-      if (!quizCtrl.isCorrectAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex])) {
-        quizCtrl.submitAttempt(
-          quizCtrl.quiz.objects[quizCtrl.currentIndex].node.id,
-          quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted
-        );
-        quizCtrl.feedback(
-          quizCtrl.quiz.objects[quizCtrl.currentIndex],
-          quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted
-        );
-      } else if (quizCtrl.currentIndex < quizCtrl.quiz.objects.length - 1) {
-        quizCtrl.nextQuestion();
+      quizCtrl.submitAttempt(
+        quizCtrl.quiz.objects[quizCtrl.currentIndex].node.id,
+        quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted
+      );
+
+
+        $log.debug("a")
+      if (quizCtrl.isCorrectAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex])) {
+        $log.debug("Correct attempt");
+        quizCtrl.practiceResult.scoredMarks +=  quizCtrl.quiz.objects[quizCtrl.currentIndex].node.type.score * quizCtrl.MARKS_MULTIPIER;
+        $log.debug(quizCtrl.practiceResult);
+        quizCtrl.practiceResult.percentCorrect = parseInt((quizCtrl.practiceResult.scoredMarks / quizCtrl.practiceResult.totalMarks) * 100);
+        $log.debug("Percent Correct"+quizCtrl.practiceResult.percentCorrect);
+        quizCtrl.myStyle.width = quizCtrl.practiceResult.percentCorrect;
       } else {
-        // final question -> go to summary
-        $state.go('quiz.summary', {
-          report: angular.copy(quizCtrl.report)
-        });
+        if (quizCtrl.report.attempts[quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.id].length == 2) {
+          quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].attempted = {};
+          quizCtrl.quiz.objects.push(angular.copy(quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()]))
+        }
+
       }
+      $scope.openModal();
+
+
     }
 
     function canSubmit() {
@@ -2190,18 +2376,33 @@ window.createGame = function(scope, lessons, injector, log) {
     }
 
     function feedback(question, attempt) {
+      return;
 
-      return quizCtrl.isCorrect(question, attempt) ? $scope.openModal('correct') : $scope.openModal('wrong');
+      // if (quizCtrl.currentIndex < quizCtrl.quiz.objects.length - 1) {
+      //   quizCtrl.nextQuestion();
+      // } else {
+      //   $log.debug("Final")
+      //     // final question -> go to summary
+      //   $state.go('quiz.practice.summary', {
+      //     report: angular.copy(quizCtrl.report)
+      //   });
+      // }
+      $log.debug("b")
+
+      if (isCorrectAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex])) {
+
+      } else {
+        if (quizCtrl.report.attempts[quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.id].length == 2) {
+          quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].attempted = {};
+          quizCtrl.quiz.objects.push(angular.copy(quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()]))
+        }
+
+      }
+      $scope.openModal();
     }
 
     function submitAttempt(question_id, attempt) {
-      if (quizCtrl.quiz.objects[quizCtrl.currentIndex].node.type.type == "choicequestion" && !quizCtrl.quiz.objects[quizCtrl.currentIndex].node.type.content.is_multiple && attempt != '') {
-        quizCtrl.report.attempts[question_id].push(angular.copy(attempt));
-      } else if (quizCtrl.quiz.objects[quizCtrl.currentIndex].node.type.type == "choicequestion" && quizCtrl.quiz.objects[quizCtrl.currentIndex].node.type.content.is_multiple && attempt.length > 0) {
-        quizCtrl.report.attempts[question_id].push(angular.copy(attempt));
-
-      }
-
+      quizCtrl.report.attempts[question_id].push(angular.copy(attempt));
     }
 
 
@@ -2303,7 +2504,7 @@ window.createGame = function(scope, lessons, injector, log) {
     }
 
 
-    $ionicModal.fromTemplateUrl(CONSTANT.PATH.QUIZ + '/quiz.feedback' + CONSTANT.VIEW, {
+    $ionicModal.fromTemplateUrl(CONSTANT.PATH.QUIZ + '/practice.feedback' + CONSTANT.VIEW, {
       scope: $scope,
       animation: 'slide-in-up'
     }).then(function(modal) {
@@ -2315,7 +2516,26 @@ window.createGame = function(scope, lessons, injector, log) {
     };
     $scope.closeModal = function() {
       $scope.modal.hide();
-    }
+
+      if (quizCtrl.currentIndex >= quizCtrl.quiz.objects.length - 1) {
+        $log.debug("Last question exiting now");
+        $state.go('quiz.practice.summary', {
+          quiz : angular.copy(quizCtrl.quiz),
+          practiceResult : angular.copy(quizCtrl.practiceResult),
+          report: angular.copy(quizCtrl.report)
+        });
+      } else {
+        $log.debug("Not last question");
+        // $scope.modal.hide();
+        $log.debug("c")
+
+        if (isCorrectAttempted(quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()]) || quizCtrl.report.attempts[quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.id].length >= 2) {
+          $log.debug("Correct or last attempt");
+          quizCtrl.nextQuestion();
+        }
+      }
+
+    };
 
     function attemptAndNext() {
       quizCtrl.submitAttempt(
@@ -2349,34 +2569,45 @@ window.createGame = function(scope, lessons, injector, log) {
         analysis: {},
         marks: 0,
         correct_questions: 0,
-        stars: 0
+        stars: 0,
+        score: {}
       };
       angular.forEach(quiz.objects, function(value) {
         if (isAttempted(value)) {
+          $log.debug("d")
+
           if (quizCtrl.isCorrectAttempted(value)) {
-            result.analysis[value.node.id] = "Correct";
+            result.analysis[value.node.id] = {
+              title: value.node.title,
+              status: 1
+            };
+            result.score[value.node.id] = parseInt(value.node.level) * quizCtrl.MARKS_MULTIPIER;
             result.marks += parseInt(value.node.level) * quizCtrl.MARKS_MULTIPIER;
             result.correct_questions++;
           } else {
-            result.analysis[value.node.id] = "Wrong";
+            result.analysis[value.node.id] = {
+              title: value.node.title,
+              status: 0
+            };
+            result.score[value.node.id] = 0;
           }
         } else {
-          result.analysis[value.node.id] = "Unattemted"
+          result.analysis[value.node.id] = {
+            title: value.node.title,
+            status: -1
+          }
+          result.score[value.node.id] = 0;
         }
 
-      })
+      });
       var percent_correct = parseInt((result.correct_questions / quiz.objects.length) * 100);
-      if (percent_correct >= 80) {
-        if (percent_correct >= 90) {
-          if (percent_correct >= 95) {
-            result.stars = 3;
-          } else {
-            result.stars = 2;
-          }
-        } else {
-          result.stars = 1;
-        }
-      }
+      if (percent_correct >= CONSTANT.STAR.ONE && percent_correct < CONSTANT.STAR.TWO) {
+        result.stars = 1;
+      } else if (percent_correct >= CONSTANT.STAR.TWO && percent_correct < CONSTANT.STAR.THREE) {
+        result.stars = 1;
+      } else if (percent_correct >= CONSTANT.STAR.THREE) {
+        result.stars = 1;
+      } else {}
       return result;
     }
 
@@ -2392,9 +2623,15 @@ window.createGame = function(scope, lessons, injector, log) {
       }).then(function(res) {
         if (res) {
           angular.forEach(quiz.objects, function(value, key) {
-            quizCtrl.submitAttempt(value.node.id,
-              value.attempted)
-          })
+            if (value.node.type.type == 'choicequestion' && !value.node.type.content.is_multiple && value.attempted !== '') {
+              quizCtrl.submitAttempt(value.node.id,
+                value.attempted);
+            } else if (value.node.type.type == 'choicequestion' && value.node.type.content.is_multiple && value.attempted.length > 0) {
+              quizCtrl.submitAttempt(value.node.id,
+                value.attempted);
+            }
+
+          });
           $state.go('quiz.summary', {
             report: angular.copy(quizCtrl.report),
             quiz: angular.copy(quizCtrl.quiz)
@@ -2402,7 +2639,7 @@ window.createGame = function(scope, lessons, injector, log) {
         } else {
           void 0;
         }
-      });;
+      });
     }
 
     function endQuiz() {
@@ -2420,7 +2657,7 @@ window.createGame = function(scope, lessons, injector, log) {
         } else {
           void 0;
         }
-      });;
+      });
     }
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.QUIZ + '/quiz.pause.modal' + CONSTANT.VIEW, {
       scope: $scope,
@@ -2445,26 +2682,31 @@ window.createGame = function(scope, lessons, injector, log) {
 
 
     function getSoundId(string) {
-      if(quizCtrl.soundIdRegex.exec(string))
-      return quizCtrl.soundIdRegex.exec(string)[1];
+      if (quizCtrl.soundIdRegex.exec(string))
+        return quizCtrl.soundIdRegex.exec(string)[1];
     }
+
     function getImageId(string) {
-      if(quizCtrl.imageTagRegex.exec(string))
+      if (quizCtrl.imageTagRegex.exec(string))
         return quizCtrl.imageTagRegex.exec(string)[1];
     }
+
     function getImageSrc(id) {
       return quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.type.content.widgets.images[id];
     }
+
     function parseToDisplay(string) {
       var text = quizCtrl.replaceImageTag(quizCtrl.removeSoundTag(string));
-      return text.trim() || '<img height="100" width="100" src="img/icons/sound.png"></img>';
+      return text.trim() || '<img height="100" width="100" src="' + CONSTANT.ASSETS.IMG.SOUND_PLACEHOLDER + '"></img>';
 
     }
+
     function removeSoundTag(string) {
       return string.replace(quizCtrl.soundIdRegex, "");
     }
+
     function replaceImageTag(string) {
-      return string.replace(quizCtrl.imageTagRegex, "<img src='"+quizCtrl.getImageSrc(quizCtrl.getImageId(string))+"'></img>");
+      return string.replace(quizCtrl.imageTagRegex, "<img src='" + quizCtrl.getImageSrc(quizCtrl.getImageId(string)) + "'></img>");
     }
   }
 })();
@@ -2520,7 +2762,7 @@ window.createGame = function(scope, lessons, injector, log) {
         template : '<ion-nav-view name="state-quiz"></ion-nav-view>',
         resolve: {
             quiz: ['$stateParams', 'Rest', function($stateParams, Rest) {
-                return {"node":{"id":"5d8b3d13-f4fb-40ce-a83f-51b1dd28d65a","content_type_name":"assessment","type":{"id":"60818cc0-80ef-4bb9-9f1a-3809cb17480c","score":260},"created":"2016-05-07T12:42:59.955741Z","updated":"2016-05-07T12:42:59.955798Z","title":"letter sounds vs names","description":"","object_id":"60818cc0-80ef-4bb9-9f1a-3809cb17480c","stauts":"PUBLISHED","lft":4,"rght":57,"tree_id":3,"level":1,"parent":"55a5321c-af6b-484f-a083-110c63a934f8","content_type":26,"account":"ccbb119e-3831-43d5-8c1d-2832dfd7a31c","tag":null},"objects":[{"node":{"id":"9aad1431-4292-4983-a4dc-76c49c8e57fc","content_type_name":"json question","type":{"id":"5e36a8da-8ac2-4b48-9fe6-8b37e5f5e8e5","created":"2016-05-07T12:42:59.971242Z","updated":"2016-05-07T12:42:59.971277Z","microstandard":"ELL.1.RE.PA.30","is_critical_thinking":false,"level":1,"answer":{"answer":"b"},"score":10,"content":{"content":{"a":" [[sound id=2]] ","b":" [[sound id=1]] "},"widgets":{"sounds":{"1":"/media/contents/zaya/soundclips/2015/08/13/a-sound_EK07B8.mp3","2":"/media/contents/zaya/soundclips/2015/08/13/name-of-a_LH0LUQ.mp3"},"videos":{},"images":{"1":"http://lorempixel.com/100/100"}}},"type":"choicequestion"},"created":"2016-05-07T12:42:59.983129Z","updated":"2016-05-07T12:42:59.983183Z","title":"Select the letter sound ofa [[image id=1]]","description":"","object_id":"5e36a8da-8ac2-4b48-9fe6-8b37e5f5e8e5","stauts":"PUBLISHED","lft":5,"rght":6,"tree_id":3,"level":2,"parent":"5d8b3d13-f4fb-40ce-a83f-51b1dd28d65a","content_type":22,"account":"ccbb119e-3831-43d5-8c1d-2832dfd7a31c","tag":null},"objects":[]},{"node":{"id":"e81b7854-bf07-452d-8ab1-33f32b8db525","content_type_name":"json question","type":{"id":"f1c36527-ed0d-42d1-900a-1989b6bcfd59","created":"2016-05-07T12:42:59.998169Z","updated":"2016-05-07T12:42:59.998244Z","microstandard":"ELL.1.RE.PA.30","is_critical_thinking":false,"level":1,"answer":{"answer":"a"},"score":10,"content":{"content":{"a":" [[sound id=2]] ","b":" [[sound id=1]] "},"widgets":{"sounds":{"1":"/media/contents/zaya/soundclips/2016/01/14/name-of-b-final_L52FU2.mp3","2":"/media/contents/zaya/soundclips/2015/08/13/b-sound_FXZA6D.mp3"},"videos":{},"images":{}}},"type":"choicequestion"},"created":"2016-05-07T12:43:00.040174Z","updated":"2016-05-07T12:43:00.040207Z","title":"Select the letter sound ofb","description":"","object_id":"f1c36527-ed0d-42d1-900a-1989b6bcfd59","stauts":"PUBLISHED","lft":7,"rght":8,"tree_id":3,"level":2,"parent":"5d8b3d13-f4fb-40ce-a83f-51b1dd28d65a","content_type":22,"account":"ccbb119e-3831-43d5-8c1d-2832dfd7a31c","tag":null},"objects":[]},{"node":{"id":"c3cecf94-9249-4098-87fa-a3883719edbc","content_type_name":"json question","type":{"id":"12eec6d3-d883-49c1-b331-1a229a6ff28e","created":"2016-05-07T12:43:00.089871Z","updated":"2016-05-07T12:43:00.089896Z","microstandard":"ELL.1.RE.PA.30","is_critical_thinking":false,"level":1,"answer":{"answer":"b"},"score":10,"content":{"content":{"a":" [[sound id=3]] ","b":" [[sound id=2]] "},"widgets":{"sounds":{"1":"/media/contents/zaya/soundclips/2016/01/14/select-the-sound-of-this-letter_N11G4D.mp3","2":"/media/contents/zaya/soundclips/2015/08/13/c-sound_FA77P6.mp3","3":"/media/contents/zaya/soundclips/2015/08/13/name-of-c_16TAZ5.mp3"},"videos":{},"images":{}}},"type":"choicequestion"},"created":"2016-05-07T12:43:00.134026Z","updated":"2016-05-07T12:43:00.134059Z","title":"Select the letter sound ofc [[sound id=1]]","description":"","object_id":"12eec6d3-d883-49c1-b331-1a229a6ff28e","stauts":"PUBLISHED","lft":9,"rght":10,"tree_id":3,"level":2,"parent":"5d8b3d13-f4fb-40ce-a83f-51b1dd28d65a","content_type":22,"account":"ccbb119e-3831-43d5-8c1d-2832dfd7a31c","tag":null},"objects":[]},{"node":{"id":"005dcafe-9bd7-4256-b390-aa77100e9f21","content_type_name":"json question","type":{"id":"ff0e5e34-bfee-4c99-9862-f3107d6597f0","created":"2016-05-07T12:43:00.181620Z","updated":"2016-05-07T12:43:00.181643Z","microstandard":"ELL.1.RE.PA.30","is_critical_thinking":false,"level":1,"answer":{"answer":"b"},"score":10,"content":{"content":{"a":" [[sound id=3]] ","b":" [[sound id=2]] "},"widgets":{"sounds":{"1":"/media/contents/zaya/soundclips/2016/01/14/select-the-sound-of-this-letter_KPDOH6.mp3","2":"/media/contents/zaya/soundclips/2015/08/13/d-sound_SVZ1XG.mp3","3":"/media/contents/zaya/soundclips/2016/01/14/name-of-d-final_1ZDX81.mp3"},"videos":{},"images":{}}},"type":"choicequestion"},"created":"2016-05-07T12:43:00.208881Z","updated":"2016-05-07T12:43:00.208915Z","title":"Select the letter sound ofd [[sound id=1]]","description":"","object_id":"ff0e5e34-bfee-4c99-9862-f3107d6597f0","stauts":"PUBLISHED","lft":11,"rght":12,"tree_id":3,"level":2,"parent":"5d8b3d13-f4fb-40ce-a83f-51b1dd28d65a","content_type":22,"account":"ccbb119e-3831-43d5-8c1d-2832dfd7a31c","tag":null},"objects":[]},{"node":{"id":"04989d1b-9011-43a9-bb0c-b0d7b47706a4","content_type_name":"json question","type":{"id":"0b494bdd-25c1-44a4-91c0-ad6ef663d5d2","created":"2016-05-07T12:43:00.420781Z","updated":"2016-05-07T12:43:00.420813Z","microstandard":"ELL.1.RE.PA.30","is_critical_thinking":false,"level":1,"answer":{"answer":"b"},"score":10,"content":{"content":{"a":" [[sound id=3]] ","b":" [[sound id=2]] "},"widgets":{"sounds":{"1":"/media/contents/zaya/soundclips/2016/01/14/select-the-sound-of-this-letter_QDVRQU.mp3","2":"/media/contents/zaya/soundclips/2015/08/13/e-sound_WMBJBW.mp3","3":"/media/contents/zaya/soundclips/2015/08/13/name-of-e_A24A36.mp3"},"videos":{},"images":{}}},"type":"choicequestion"},"created":"2016-05-07T12:43:00.516490Z","updated":"2016-05-07T12:43:00.516524Z","title":"Select the letter sound ofe [[sound id=1]]","description":"","object_id":"0b494bdd-25c1-44a4-91c0-ad6ef663d5d2","stauts":"PUBLISHED","lft":13,"rght":14,"tree_id":3,"level":2,"parent":"5d8b3d13-f4fb-40ce-a83f-51b1dd28d65a","content_type":22,"account":"ccbb119e-3831-43d5-8c1d-2832dfd7a31c","tag":null},"objects":[]},{"node":{"id":"fdb873b8-5025-429d-bb95-0bf995f2c635","content_type_name":"json question","type":{"id":"a7cf59e0-23c8-4692-bfb4-dda22e2ea757","created":"2016-05-07T12:43:00.534082Z","updated":"2016-05-07T12:43:00.534116Z","microstandard":"ELL.1.RE.PA.30","is_critical_thinking":false,"level":1,"answer":{"answer":"b"},"score":10,"content":{"content":{"a":" [[sound id=3]] ","b":" [[sound id=2]] "},"widgets":{"sounds":{"1":"/media/contents/zaya/soundclips/2016/01/14/select-the-sound-of-this-letter_ESKWXL.mp3","2":"/media/contents/zaya/soundclips/2015/08/13/f-sound_3VA79D.mp3","3":"/media/contents/zaya/soundclips/2015/08/13/name-of-f_ONHQOK.mp3"},"videos":{},"images":{}}},"type":"choicequestion"},"created":"2016-05-07T12:43:00.554741Z","updated":"2016-05-07T12:43:00.554775Z","title":"Select the letter sound off [[sound id=1]]","description":"","object_id":"a7cf59e0-23c8-4692-bfb4-dda22e2ea757","stauts":"PUBLISHED","lft":15,"rght":16,"tree_id":3,"level":2,"parent":"5d8b3d13-f4fb-40ce-a83f-51b1dd28d65a","content_type":22,"account":"ccbb119e-3831-43d5-8c1d-2832dfd7a31c","tag":null},"objects":[]},{"node":{"id":"ddb33d30-b657-4d9c-9a47-b3720e9a3b1d","content_type_name":"json question","type":{"id":"c43d4456-7edd-4e97-983f-105a543672e4","created":"2016-05-07T12:43:00.575383Z","updated":"2016-05-07T12:43:00.575417Z","microstandard":"ELL.1.RE.PA.30","is_critical_thinking":false,"level":1,"answer":{"answer":"a"},"score":10,"content":{"content":{"a":" [[sound id=3]] ","b":" [[sound id=2]] "},"widgets":{"sounds":{"1":"/media/contents/zaya/soundclips/2016/01/14/select-the-sound-of-this-letter_TLJUNV.mp3","2":"/media/contents/zaya/soundclips/2015/08/13/name-of-g_T4XZDP.mp3","3":"/media/contents/zaya/soundclips/2015/08/13/g-sound_JFY2UW.mp3"},"videos":{},"images":{}}},"type":"choicequestion"},"created":"2016-05-07T12:43:00.594042Z","updated":"2016-05-07T12:43:00.594094Z","title":"Select the letter sound ofg [[sound id=1]]","description":"","object_id":"c43d4456-7edd-4e97-983f-105a543672e4","stauts":"PUBLISHED","lft":17,"rght":18,"tree_id":3,"level":2,"parent":"5d8b3d13-f4fb-40ce-a83f-51b1dd28d65a","content_type":22,"account":"ccbb119e-3831-43d5-8c1d-2832dfd7a31c","tag":null},"objects":[]},{"node":{"id":"8a6fd341-eaa4-4855-8de8-9c1580ad01db","content_type_name":"json question","type":{"id":"819005bf-870d-411e-adad-f26f3694fcbb","created":"2016-05-07T12:43:00.613544Z","updated":"2016-05-07T12:43:00.613605Z","microstandard":"ELL.1.RE.PA.30","is_critical_thinking":false,"level":1,"answer":{"answer":"b"},"score":10,"content":{"content":{"a":" [[sound id=3]] ","b":" [[sound id=2]] "},"widgets":{"sounds":{"1":"/media/contents/zaya/soundclips/2016/01/14/select-the-sound-of-this-letter_TAHDRJ.mp3","2":"/media/contents/zaya/soundclips/2015/08/13/h-sound_WXBB1F.mp3","3":"/media/contents/zaya/soundclips/2015/08/13/name-of-h_QJU6Q1.mp3"},"videos":{},"images":{}}},"type":"choicequestion"},"created":"2016-05-07T12:43:00.630097Z","updated":"2016-05-07T12:43:00.630152Z","title":"Select the letter sound ofh [[sound id=1]]","description":"","object_id":"819005bf-870d-411e-adad-f26f3694fcbb","stauts":"PUBLISHED","lft":19,"rght":20,"tree_id":3,"level":2,"parent":"5d8b3d13-f4fb-40ce-a83f-51b1dd28d65a","content_type":22,"account":"ccbb119e-3831-43d5-8c1d-2832dfd7a31c","tag":null},"objects":[]},{"node":{"id":"77bf770f-3be8-43a6-8a02-9bbec06c2ff0","content_type_name":"json question","type":{"id":"607645df-c73a-4e0b-b35f-3d2ef535ab76","created":"2016-05-07T12:43:00.643234Z","updated":"2016-05-07T12:43:00.643263Z","microstandard":"ELL.1.RE.PA.30","is_critical_thinking":false,"level":1,"answer":{"answer":"a"},"score":10,"content":{"content":{"a":" [[sound id=3]] ","b":" [[sound id=2]] "},"widgets":{"sounds":{"1":"/media/contents/zaya/soundclips/2016/01/14/select-the-sound-of-this-letter_J2KGKA.mp3","2":"/media/contents/zaya/soundclips/2015/08/13/name-of-i_EYHITR.mp3","3":"/media/contents/zaya/soundclips/2015/08/13/i-sound_TYRUMS.mp3"},"videos":{},"images":{}}},"type":"choicequestion"},"created":"2016-05-07T12:43:00.653527Z","updated":"2016-05-07T12:43:00.653559Z","title":"Select the letter sound ofi [[sound id=1]]","description":"","object_id":"607645df-c73a-4e0b-b35f-3d2ef535ab76","stauts":"PUBLISHED","lft":21,"rght":22,"tree_id":3,"level":2,"parent":"5d8b3d13-f4fb-40ce-a83f-51b1dd28d65a","content_type":22,"account":"ccbb119e-3831-43d5-8c1d-2832dfd7a31c","tag":null},"objects":[]},{"node":{"id":"c4d03d78-8a86-4d10-b5e4-3cc40b933365","content_type_name":"json question","type":{"id":"6bda1b35-94ac-4a50-9817-0907071e9ee9","created":"2016-05-07T12:43:00.663542Z","updated":"2016-05-07T12:43:00.663579Z","microstandard":"ELL.1.RE.PA.30","is_critical_thinking":false,"level":1,"answer":{"answer":"a"},"score":10,"content":{"content":{"a":" [[sound id=3]] ","b":" [[sound id=2]] "},"widgets":{"sounds":{"1":"/media/contents/zaya/soundclips/2016/01/14/select-the-sound-of-this-letter_S0NUDE.mp3","2":"/media/contents/zaya/soundclips/2015/08/13/name-of-j_URT0KE.mp3","3":"/media/contents/zaya/soundclips/2015/08/13/j-sound_NPDORY.mp3"},"videos":{},"images":{}}},"type":"choicequestion"},"created":"2016-05-07T12:43:00.673356Z","updated":"2016-05-07T12:43:00.673389Z","title":"Select the letter sound ofj [[sound id=1]]","description":"","object_id":"6bda1b35-94ac-4a50-9817-0907071e9ee9","stauts":"PUBLISHED","lft":23,"rght":24,"tree_id":3,"level":2,"parent":"5d8b3d13-f4fb-40ce-a83f-51b1dd28d65a","content_type":22,"account":"ccbb119e-3831-43d5-8c1d-2832dfd7a31c","tag":null},"objects":[]},{"node":{"id":"7939d2c5-9dae-43b6-aaa4-cf50e3f74cda","content_type_name":"json question","type":{"id":"04d8acb8-d47d-40a4-b251-03aa0945668b","created":"2016-05-07T12:43:00.683753Z","updated":"2016-05-07T12:43:00.683857Z","microstandard":"ELL.1.RE.PA.30","is_critical_thinking":false,"level":1,"answer":{"answer":"a"},"score":10,"content":{"content":{"a":" [[sound id=3]] ","b":" [[sound id=2]] "},"widgets":{"sounds":{"1":"/media/contents/zaya/soundclips/2016/01/14/select-the-sound-of-this-letter_8A8SFG.mp3","2":"/media/contents/zaya/soundclips/2015/08/13/name-of-k_6WCU8Y.mp3","3":"/media/contents/zaya/soundclips/2015/08/13/k-sound_OC06P7.mp3"},"videos":{},"images":{}}},"type":"choicequestion"},"created":"2016-05-07T12:43:00.693348Z","updated":"2016-05-07T12:43:00.693380Z","title":"Select the letter sound ofk [[sound id=1]]","description":"","object_id":"04d8acb8-d47d-40a4-b251-03aa0945668b","stauts":"PUBLISHED","lft":25,"rght":26,"tree_id":3,"level":2,"parent":"5d8b3d13-f4fb-40ce-a83f-51b1dd28d65a","content_type":22,"account":"ccbb119e-3831-43d5-8c1d-2832dfd7a31c","tag":null},"objects":[]},{"node":{"id":"64776c19-f4b0-46e9-b9e7-ecfe48df5646","content_type_name":"json question","type":{"id":"ab7a8ee7-963a-451d-8cba-7916c32aa81b","created":"2016-05-07T12:43:00.703602Z","updated":"2016-05-07T12:43:00.703631Z","microstandard":"ELL.1.RE.PA.30","is_critical_thinking":false,"level":1,"answer":{"answer":"a"},"score":10,"content":{"content":{"a":" [[sound id=3]] ","b":" [[sound id=2]] "},"widgets":{"sounds":{"1":"/media/contents/zaya/soundclips/2016/01/14/select-the-sound-of-this-letter_FF2LTN.mp3","2":"/media/contents/zaya/soundclips/2015/08/13/name-of-l_XEPINW.mp3","3":"/media/contents/zaya/soundclips/2015/08/13/l-sound_1MVEZJ.mp3"},"videos":{},"images":{}}},"type":"choicequestion"},"created":"2016-05-07T12:43:00.712146Z","updated":"2016-05-07T12:43:00.712178Z","title":"Select the letter sound ofl [[sound id=1]]","description":"","object_id":"ab7a8ee7-963a-451d-8cba-7916c32aa81b","stauts":"PUBLISHED","lft":27,"rght":28,"tree_id":3,"level":2,"parent":"5d8b3d13-f4fb-40ce-a83f-51b1dd28d65a","content_type":22,"account":"ccbb119e-3831-43d5-8c1d-2832dfd7a31c","tag":null},"objects":[]},{"node":{"id":"cac43387-19a4-4049-bc7f-992fbddd8da1","content_type_name":"json question","type":{"id":"f5164332-d301-4aa1-bffa-a7c3c8e54f6a","created":"2016-05-07T12:43:00.722791Z","updated":"2016-05-07T12:43:00.722823Z","microstandard":"ELL.1.RE.PA.30","is_critical_thinking":false,"level":1,"answer":{"answer":"a"},"score":10,"content":{"content":{"a":" [[sound id=3]] ","b":" [[sound id=2]] "},"widgets":{"sounds":{"1":"/media/contents/zaya/soundclips/2016/01/14/select-the-sound-of-this-letter_WIAJS6.mp3","2":"/media/contents/zaya/soundclips/2015/08/13/name-of-m_QQP82Y.mp3","3":"/media/contents/zaya/soundclips/2015/08/13/m-sound_JG3N3X.mp3"},"videos":{},"images":{}}},"type":"choicequestion"},"created":"2016-05-07T12:43:00.731205Z","updated":"2016-05-07T12:43:00.731237Z","title":"Select the letter sound ofm [[sound id=1]]","description":"","object_id":"f5164332-d301-4aa1-bffa-a7c3c8e54f6a","stauts":"PUBLISHED","lft":29,"rght":30,"tree_id":3,"level":2,"parent":"5d8b3d13-f4fb-40ce-a83f-51b1dd28d65a","content_type":22,"account":"ccbb119e-3831-43d5-8c1d-2832dfd7a31c","tag":null},"objects":[]},{"node":{"id":"f3c918eb-e4d2-4c54-bb79-292f35db3fdc","content_type_name":"json question","type":{"id":"2c3005fe-d36c-4973-9c9d-973fa9e1ec42","created":"2016-05-07T12:43:00.744379Z","updated":"2016-05-07T12:43:00.744427Z","microstandard":"ELL.1.RE.PA.30","is_critical_thinking":false,"level":1,"answer":{"answer":"b"},"score":10,"content":{"content":{"a":" [[sound id=3]] ","b":" [[sound id=2]] "},"widgets":{"sounds":{"1":"/media/contents/zaya/soundclips/2016/01/14/select-the-sound-of-this-letter_1JUCB0.mp3","2":"/media/contents/zaya/soundclips/2015/08/13/n-sound_D836YX.mp3","3":"/media/contents/zaya/soundclips/2015/08/13/name-of-n_X100GE.mp3"},"videos":{},"images":{}}},"type":"choicequestion"},"created":"2016-05-07T12:43:00.754515Z","updated":"2016-05-07T12:43:00.754549Z","title":"Select the letter sound ofn [[sound id=1]]","description":"","object_id":"2c3005fe-d36c-4973-9c9d-973fa9e1ec42","stauts":"PUBLISHED","lft":31,"rght":32,"tree_id":3,"level":2,"parent":"5d8b3d13-f4fb-40ce-a83f-51b1dd28d65a","content_type":22,"account":"ccbb119e-3831-43d5-8c1d-2832dfd7a31c","tag":null},"objects":[]},{"node":{"id":"b54c6652-8673-4b4d-b2b1-deea8cc04c72","content_type_name":"json question","type":{"id":"14ff5dfa-f055-4d33-934a-573a2b6a6fbb","created":"2016-05-07T12:43:00.764602Z","updated":"2016-05-07T12:43:00.764636Z","microstandard":"ELL.1.RE.PA.30","is_critical_thinking":false,"level":1,"answer":{"answer":"a"},"score":10,"content":{"content":{"a":" [[sound id=3]] ","b":" [[sound id=2]] "},"widgets":{"sounds":{"1":"/media/contents/zaya/soundclips/2016/01/14/select-the-sound-of-this-letter_OEDE11.mp3","2":"/media/contents/zaya/soundclips/2015/08/13/name-of-o_QTA8NH.mp3","3":"/media/contents/zaya/soundclips/2015/08/13/o-sound_EL24HU.mp3"},"videos":{},"images":{}}},"type":"choicequestion"},"created":"2016-05-07T12:43:00.773890Z","updated":"2016-05-07T12:43:00.773924Z","title":"Select the letter sound ofo [[sound id=1]]","description":"","object_id":"14ff5dfa-f055-4d33-934a-573a2b6a6fbb","stauts":"PUBLISHED","lft":33,"rght":34,"tree_id":3,"level":2,"parent":"5d8b3d13-f4fb-40ce-a83f-51b1dd28d65a","content_type":22,"account":"ccbb119e-3831-43d5-8c1d-2832dfd7a31c","tag":null},"objects":[]},{"node":{"id":"5a8e681c-ce1e-47ad-a148-551e63fb6f69","content_type_name":"json question","type":{"id":"e37609c0-e529-48c7-bb5c-60e78aa98dde","created":"2016-05-07T12:43:00.783530Z","updated":"2016-05-07T12:43:00.783557Z","microstandard":"ELL.1.RE.PA.30","is_critical_thinking":false,"level":1,"answer":{"answer":"b"},"score":10,"content":{"content":{"a":" [[sound id=3]] ","b":" [[sound id=2]] "},"widgets":{"sounds":{"1":"/media/contents/zaya/soundclips/2016/01/14/select-the-sound-of-this-letter_0YWL9T.mp3","2":"/media/contents/zaya/soundclips/2015/08/13/p-sound_7KNXSW.mp3","3":"/media/contents/zaya/soundclips/2016/01/14/name-of-p-final_2Y8BDJ.mp3"},"videos":{},"images":{}}},"type":"choicequestion"},"created":"2016-05-07T12:43:00.793536Z","updated":"2016-05-07T12:43:00.793569Z","title":"Select the letter sound ofp [[sound id=1]]","description":"","object_id":"e37609c0-e529-48c7-bb5c-60e78aa98dde","stauts":"PUBLISHED","lft":35,"rght":36,"tree_id":3,"level":2,"parent":"5d8b3d13-f4fb-40ce-a83f-51b1dd28d65a","content_type":22,"account":"ccbb119e-3831-43d5-8c1d-2832dfd7a31c","tag":null},"objects":[]},{"node":{"id":"8b5f28cf-ce5f-494c-8459-d80021a10021","content_type_name":"json question","type":{"id":"5f8ed370-6de2-4c9b-9ffa-d3625279839b","created":"2016-05-07T12:43:00.803574Z","updated":"2016-05-07T12:43:00.803735Z","microstandard":"ELL.1.RE.PA.30","is_critical_thinking":false,"level":1,"answer":{"answer":"a"},"score":10,"content":{"content":{"a":" [[sound id=3]] ","b":" [[sound id=2]] "},"widgets":{"sounds":{"1":"/media/contents/zaya/soundclips/2016/01/14/select-the-sound-of-this-letter_6OWBCL.mp3","2":"/media/contents/zaya/soundclips/2015/08/13/name-of-q_HQ5TLA.mp3","3":"/media/contents/zaya/soundclips/2015/08/13/q-sound_7TWKXE.mp3"},"videos":{},"images":{}}},"type":"choicequestion"},"created":"2016-05-07T12:43:00.812341Z","updated":"2016-05-07T12:43:00.812375Z","title":"Select the letter sound ofq [[sound id=1]]","description":"","object_id":"5f8ed370-6de2-4c9b-9ffa-d3625279839b","stauts":"PUBLISHED","lft":37,"rght":38,"tree_id":3,"level":2,"parent":"5d8b3d13-f4fb-40ce-a83f-51b1dd28d65a","content_type":22,"account":"ccbb119e-3831-43d5-8c1d-2832dfd7a31c","tag":null},"objects":[]},{"node":{"id":"0b18e5a6-54ae-4c70-9e73-443df17d038f","content_type_name":"json question","type":{"id":"5559bedc-91f9-48e8-8b94-ee12fdba59b6","created":"2016-05-07T12:43:00.822599Z","updated":"2016-05-07T12:43:00.822632Z","microstandard":"ELL.1.RE.PA.30","is_critical_thinking":false,"level":1,"answer":{"answer":"b"},"score":10,"content":{"content":{"a":" [[sound id=3]] ","b":" [[sound id=2]] "},"widgets":{"sounds":{"1":"/media/contents/zaya/soundclips/2016/01/14/select-the-sound-of-this-letter_OBDNXQ.mp3","2":"/media/contents/zaya/soundclips/2015/08/13/r-sound_NY21PE.mp3","3":"/media/contents/zaya/soundclips/2015/08/13/name-of-r_5MGFFL.mp3"},"videos":{},"images":{}}},"type":"choicequestion"},"created":"2016-05-07T12:43:00.831620Z","updated":"2016-05-07T12:43:00.831655Z","title":"Select the letter sound ofr [[sound id=1]]","description":"","object_id":"5559bedc-91f9-48e8-8b94-ee12fdba59b6","stauts":"PUBLISHED","lft":39,"rght":40,"tree_id":3,"level":2,"parent":"5d8b3d13-f4fb-40ce-a83f-51b1dd28d65a","content_type":22,"account":"ccbb119e-3831-43d5-8c1d-2832dfd7a31c","tag":null},"objects":[]},{"node":{"id":"966675bf-ce92-4344-9e16-fc11bec51e4d","content_type_name":"json question","type":{"id":"7a92ac67-9efd-41a4-90f0-53a39d81b6fb","created":"2016-05-07T12:43:00.842570Z","updated":"2016-05-07T12:43:00.842598Z","microstandard":"ELL.1.RE.PA.30","is_critical_thinking":false,"level":1,"answer":{"answer":"a"},"score":10,"content":{"content":{"a":" [[sound id=3]] ","b":" [[sound id=2]] "},"widgets":{"sounds":{"1":"/media/contents/zaya/soundclips/2016/01/14/select-the-sound-of-this-letter_DV7Q8H.mp3","2":"/media/contents/zaya/soundclips/2015/08/13/name-of-s_0NO2X6.mp3","3":"/media/contents/zaya/soundclips/2015/08/13/s-sound_UVMTAR.mp3"},"videos":{},"images":{}}},"type":"choicequestion"},"created":"2016-05-07T12:43:00.851492Z","updated":"2016-05-07T12:43:00.851525Z","title":"Select the letter sound ofs [[sound id=1]]","description":"","object_id":"7a92ac67-9efd-41a4-90f0-53a39d81b6fb","stauts":"PUBLISHED","lft":41,"rght":42,"tree_id":3,"level":2,"parent":"5d8b3d13-f4fb-40ce-a83f-51b1dd28d65a","content_type":22,"account":"ccbb119e-3831-43d5-8c1d-2832dfd7a31c","tag":null},"objects":[]},{"node":{"id":"5697ac67-bb0d-4071-becf-fc3463142f52","content_type_name":"json question","type":{"id":"d028714d-756f-4288-a61e-cd65b0c22a86","created":"2016-05-07T12:43:00.862635Z","updated":"2016-05-07T12:43:00.862664Z","microstandard":"ELL.1.RE.PA.30","is_critical_thinking":false,"level":1,"answer":{"answer":"a"},"score":10,"content":{"content":{"a":" [[sound id=3]] ","b":" [[sound id=2]] "},"widgets":{"sounds":{"1":"/media/contents/zaya/soundclips/2016/01/14/select-the-sound-of-this-letter_2L1Y42.mp3","2":"/media/contents/zaya/soundclips/2016/01/14/name-of-t-final_9OV3K0.mp3","3":"/media/contents/zaya/soundclips/2015/08/13/t-sound_O7CNHH.mp3"},"videos":{},"images":{}}},"type":"choicequestion"},"created":"2016-05-07T12:43:00.871891Z","updated":"2016-05-07T12:43:00.871924Z","title":"Select the letter sound oft [[sound id=1]]","description":"","object_id":"d028714d-756f-4288-a61e-cd65b0c22a86","stauts":"PUBLISHED","lft":43,"rght":44,"tree_id":3,"level":2,"parent":"5d8b3d13-f4fb-40ce-a83f-51b1dd28d65a","content_type":22,"account":"ccbb119e-3831-43d5-8c1d-2832dfd7a31c","tag":null},"objects":[]},{"node":{"id":"09220ece-51eb-4ba4-b888-e9bc92214f0d","content_type_name":"json question","type":{"id":"2ef1b4c2-20a6-4767-b57b-b2e87c8cc9c9","created":"2016-05-07T12:43:00.882377Z","updated":"2016-05-07T12:43:00.882403Z","microstandard":"ELL.1.RE.PA.30","is_critical_thinking":false,"level":1,"answer":{"answer":"a"},"score":10,"content":{"content":{"a":" [[sound id=2]] ","b":" [[sound id=1]] "},"widgets":{"sounds":{"1":"/media/contents/zaya/soundclips/2015/08/13/name-of-u_9D1WUZ.mp3","2":"/media/contents/zaya/soundclips/2016/01/14/sound-of-u-final_I74OH3.mp3"},"videos":{},"images":{}}},"type":"choicequestion"},"created":"2016-05-07T12:43:00.891274Z","updated":"2016-05-07T12:43:00.891306Z","title":"Select the letter sound ofu","description":"","object_id":"2ef1b4c2-20a6-4767-b57b-b2e87c8cc9c9","stauts":"PUBLISHED","lft":45,"rght":46,"tree_id":3,"level":2,"parent":"5d8b3d13-f4fb-40ce-a83f-51b1dd28d65a","content_type":22,"account":"ccbb119e-3831-43d5-8c1d-2832dfd7a31c","tag":null},"objects":[]},{"node":{"id":"d74d1351-32d9-492d-b5d4-236cafe4572f","content_type_name":"json question","type":{"id":"420458a1-9684-4dba-9b3d-aeac2569323f","created":"2016-05-07T12:43:00.901634Z","updated":"2016-05-07T12:43:00.901714Z","microstandard":"ELL.1.RE.PA.30","is_critical_thinking":false,"level":1,"answer":{"answer":"b"},"score":10,"content":{"content":{"a":" [[sound id=3]] ","b":" [[sound id=2]] "},"widgets":{"sounds":{"1":"/media/contents/zaya/soundclips/2016/01/14/select-the-sound-of-this-letter_XJXXK3.mp3","2":"/media/contents/zaya/soundclips/2015/08/13/v-sound_OT3MR8.mp3","3":"/media/contents/zaya/soundclips/2015/08/13/name-of-v_G85DDP.mp3"},"videos":{},"images":{}}},"type":"choicequestion"},"created":"2016-05-07T12:43:00.911263Z","updated":"2016-05-07T12:43:00.911294Z","title":"Select the letter sound ofv [[sound id=1]]","description":"","object_id":"420458a1-9684-4dba-9b3d-aeac2569323f","stauts":"PUBLISHED","lft":47,"rght":48,"tree_id":3,"level":2,"parent":"5d8b3d13-f4fb-40ce-a83f-51b1dd28d65a","content_type":22,"account":"ccbb119e-3831-43d5-8c1d-2832dfd7a31c","tag":null},"objects":[]},{"node":{"id":"4a2e89d0-5787-4ce0-a294-d3bf2d735188","content_type_name":"json question","type":{"id":"e4f14aef-8e7a-4f22-8700-a4d757d93b6d","created":"2016-05-07T12:43:00.921027Z","updated":"2016-05-07T12:43:00.921054Z","microstandard":"ELL.1.RE.PA.30","is_critical_thinking":false,"level":1,"answer":{"answer":"a"},"score":10,"content":{"content":{"a":" [[sound id=3]] ","b":" [[sound id=2]] "},"widgets":{"sounds":{"1":"/media/contents/zaya/soundclips/2016/01/14/select-the-sound-of-this-letter_MU5O0A.mp3","2":"/media/contents/zaya/soundclips/2015/08/13/name-of-w_8ABOB1.mp3","3":"/media/contents/zaya/soundclips/2015/08/13/w-sound_U3RVRC.mp3"},"videos":{},"images":{}}},"type":"choicequestion"},"created":"2016-05-07T12:43:00.931420Z","updated":"2016-05-07T12:43:00.931455Z","title":"Select the letter sound ofw [[sound id=1]]","description":"","object_id":"e4f14aef-8e7a-4f22-8700-a4d757d93b6d","stauts":"PUBLISHED","lft":49,"rght":50,"tree_id":3,"level":2,"parent":"5d8b3d13-f4fb-40ce-a83f-51b1dd28d65a","content_type":22,"account":"ccbb119e-3831-43d5-8c1d-2832dfd7a31c","tag":null},"objects":[]},{"node":{"id":"616ba51c-be19-4224-9366-6312a275ade7","content_type_name":"json question","type":{"id":"8022d1dd-57f6-4959-90c5-68f2bd8193b0","created":"2016-05-07T12:43:00.945078Z","updated":"2016-05-07T12:43:00.945110Z","microstandard":"ELL.1.RE.PA.30","is_critical_thinking":false,"level":1,"answer":{"answer":"a"},"score":10,"content":{"content":{"a":" [[sound id=3]] ","b":" [[sound id=2]] "},"widgets":{"sounds":{"1":"/media/contents/zaya/soundclips/2016/01/14/select-the-sound-of-this-letter_ZBJ2DX.mp3","2":"/media/contents/zaya/soundclips/2015/08/13/name-of-x_6VEVUK.mp3","3":"/media/contents/zaya/soundclips/2015/08/13/x-sound_RHFV6J.mp3"},"videos":{},"images":{}}},"type":"choicequestion"},"created":"2016-05-07T12:43:00.957755Z","updated":"2016-05-07T12:43:00.957875Z","title":"Select the letter sound ofx [[sound id=1]]","description":"","object_id":"8022d1dd-57f6-4959-90c5-68f2bd8193b0","stauts":"PUBLISHED","lft":51,"rght":52,"tree_id":3,"level":2,"parent":"5d8b3d13-f4fb-40ce-a83f-51b1dd28d65a","content_type":22,"account":"ccbb119e-3831-43d5-8c1d-2832dfd7a31c","tag":null},"objects":[]},{"node":{"id":"6ca3e874-ab33-40dc-a94d-96741589cdbf","content_type_name":"json question","type":{"id":"cceec617-6f18-46b6-963d-b27c394042ce","created":"2016-05-07T12:43:00.975044Z","updated":"2016-05-07T12:43:00.975097Z","microstandard":"ELL.1.RE.PA.30","is_critical_thinking":false,"level":1,"answer":{"answer":"b"},"score":10,"content":{"content":{"a":" [[sound id=3]] ","b":" [[sound id=2]] "},"widgets":{"sounds":{"1":"/media/contents/zaya/soundclips/2016/01/14/select-the-sound-of-this-letter_6L23Z4.mp3","2":"/media/contents/zaya/soundclips/2015/08/13/y-sound_0DXBCU.mp3","3":"/media/contents/zaya/soundclips/2015/08/13/name-of-y_09PTMD.mp3"},"videos":{},"images":{}}},"type":"choicequestion"},"created":"2016-05-07T12:43:00.987179Z","updated":"2016-05-07T12:43:00.987228Z","title":"Select the letter sound ofy [[sound id=1]]","description":"","object_id":"cceec617-6f18-46b6-963d-b27c394042ce","stauts":"PUBLISHED","lft":53,"rght":54,"tree_id":3,"level":2,"parent":"5d8b3d13-f4fb-40ce-a83f-51b1dd28d65a","content_type":22,"account":"ccbb119e-3831-43d5-8c1d-2832dfd7a31c","tag":null},"objects":[]},{"node":{"id":"d7c8a56c-6638-48ce-b6a3-afeef9d96a95","content_type_name":"json question","type":{"id":"74abcc74-bcc3-4d5d-840d-73ff416aa732","created":"2016-05-07T12:43:01.004524Z","updated":"2016-05-07T12:43:01.004567Z","microstandard":"ELL.1.RE.PA.30","is_critical_thinking":false,"level":1,"answer":{"answer":"b"},"score":10,"content":{"content":{"a":" [[sound id=2]] ","b":"[[sound id=1]]"},"widgets":{"sounds":{"1":"/media/contents/zaya/soundclips/2015/08/13/z-sound_N78YQZ.mp3","2":"/media/contents/zaya/soundclips/2015/08/13/name-of-z_ZXVXPO.mp3"},"videos":{},"images":{}}},"type":"choicequestion"},"created":"2016-05-07T12:43:01.017595Z","updated":"2016-05-07T12:43:01.017630Z","title":"Select the letter sound ofz","description":"","object_id":"74abcc74-bcc3-4d5d-840d-73ff416aa732","stauts":"PUBLISHED","lft":55,"rght":56,"tree_id":3,"level":2,"parent":"5d8b3d13-f4fb-40ce-a83f-51b1dd28d65a","content_type":22,"account":"ccbb119e-3831-43d5-8c1d-2832dfd7a31c","tag":null},"objects":[]}]};
+                return {"node":{"id":"c1693b27-cad4-415d-b6bc-97026c5adecb","content_type_name":"assessment","type":{"id":"076a8ab4-26e2-458f-afb3-7a390a301fa3","type":"assessment","score":340},"created":"2016-05-11T05:10:02.312761Z","updated":"2016-05-11T05:10:02.312803Z","title":"ELL.BA.K.2","description":"","object_id":"076a8ab4-26e2-458f-afb3-7a390a301fa3","stauts":"PUBLISHED","lft":2,"rght":9,"tree_id":3,"level":1,"parent":"c247fe3d-94f0-4ed8-9a48-21537186ed96","content_type":26,"account":"d881a735-2028-4271-b1bc-cfb9f04e0a90","tag":null},"objects":[{"node":{"id":"680d0966-2cb0-4de9-91e1-ee2e52374baa","content_type_name":"json question","type":{"id":"aa0105ef-d555-4af4-8543-1db6cdd9d4b5","created":"2016-05-11T05:10:03.558652Z","updated":"2016-05-11T05:10:03.558681Z","microstandard":"ELL.BA.K.2","is_critical_thinking":false,"level":1,"answer":[1,2],"score":10,"content":{"is_multiple":true,"widgets":{"videos":{},"sounds":{"1":"/media/ell/sounds/select-all-vowels-sab-vowels-chuno_JW2HIH.mp3"},"images":{}},"options":[{"option":"Option 1","key":1},{"option":"Option 2","key":2},{"option":"Option 3","key":3},{"option":"Option 4","key":4}],"hints":"[]"},"type":"choicequestion"},"created":"2016-05-11T05:10:03.573401Z","updated":"2016-05-11T05:10:03.573444Z","title":"Select all vowels.Select all vowels. [[sound id=1]]","description":"","object_id":"aa0105ef-d555-4af4-8543-1db6cdd9d4b5","stauts":"PUBLISHED","lft":3,"rght":4,"tree_id":3,"level":2,"parent":"c1693b27-cad4-415d-b6bc-97026c5adecb","content_type":22,"account":"d881a735-2028-4271-b1bc-cfb9f04e0a90","tag":null},"objects":[]},{"node":{"id":"1bbf8be4-6f8c-408a-be6e-2a9f2efb4051","content_type_name":"json question","type":{"id":"f4e2f823-a017-48b3-b56c-d9efa198feed","created":"2016-05-11T05:10:04.983862Z","updated":"2016-05-11T05:10:04.983893Z","microstandard":"ELL.BA.K.2","is_critical_thinking":false,"level":1,"answer":[1,2],"score":10,"content":{"is_multiple":true,"widgets":{"videos":{},"sounds":{"1":"/media/ell/sounds/select-all-vowels-sab-vowels-chuno_JA7FOB.mp3"},"images":{}},"options":[{"key":1,"option":"Option 1"},{"key":2,"option":"Option 2"},{"key":3,"option":"Option 3"},{"key":4,"option":"Option 4"}],"hints":"[]"},"type":"choicequestion"},"created":"2016-05-11T05:10:05.205000Z","updated":"2016-05-11T05:10:05.205064Z","title":"Select all vowels.Select all vowels. [[sound id=1]]","description":"","object_id":"f4e2f823-a017-48b3-b56c-d9efa198feed","stauts":"PUBLISHED","lft":5,"rght":6,"tree_id":3,"level":2,"parent":"c1693b27-cad4-415d-b6bc-97026c5adecb","content_type":22,"account":"d881a735-2028-4271-b1bc-cfb9f04e0a90","tag":null},"objects":[]}]};
                 return Rest.one('accounts',CONSTANT.CLIENTID.ELL).one('assessments',$stateParams.id).get().then(function(quiz){
 
                   return quiz.plain();
@@ -2547,6 +2789,7 @@ window.createGame = function(scope, lessons, injector, log) {
           }
         }
       })
+
       .state('quiz.summary',{
         url : '/summary',
         params: {
@@ -2556,6 +2799,38 @@ window.createGame = function(scope, lessons, injector, log) {
         views : {
           'state-quiz' : {
             templateUrl : CONSTANT.PATH.QUIZ+'/quiz.summary'+CONSTANT.VIEW,
+            controller : 'QuizController as quizCtrl'
+          }
+        }
+      })
+      .state('quiz.practice',{
+        url : '/practice',
+        views: {
+          'state-quiz': {
+            template : '<ion-nav-view name="state-quiz-practice"></ion-nav-view>'
+          }
+        }
+      })
+      .state('quiz.practice.questions',{
+        url : '/questions',
+        nativeTransitions: null,
+        views : {
+          'state-quiz-practice' : {
+            templateUrl : CONSTANT.PATH.QUIZ+'/practice.questions'+CONSTANT.VIEW,
+            controller : 'QuizController as quizCtrl'
+          }
+        }
+      })
+      .state('quiz.practice.summary',{
+        url : '/summary',
+        params: {
+          report: null,
+          quiz : null,
+          practiceResult: null
+        },
+        views : {
+          'state-quiz-practice' : {
+            templateUrl : CONSTANT.PATH.QUIZ+'/practice.summary'+CONSTANT.VIEW,
             controller : 'QuizController as quizCtrl'
           }
         }

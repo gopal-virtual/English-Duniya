@@ -6,7 +6,7 @@
       </div>
     </div>
     <div class="row">
-      <div class="col text-center font-sl text-white"><strong>{{quizCtrl.quizResult.marks}} / {{quizCtrl.quiz.node.type.score}}</strong></div>
+      <div class="col text-center font-sl text-white"><strong>{{quizCtrl.practiceResult.scoredMarks}} / {{quizCtrl.practiceResult.totalMarks}}</strong></div>
     </div>
     <div class="row center">
       <div class="col stars">
@@ -15,7 +15,7 @@
     </div>
     <div class="row padding-30">
       <div class="col">
-        <button class="button bg-pale button-round button-block" ui-sref="quiz.practice.questions({id : quizCtrl.quiz.node.id})">REDO</button>
+        <button class="button bg-pale button-round button-block" ui-sref="quiz.questions({id : quizCtrl.quiz.node.id})">REDO</button>
       </div>
       <div class="col">
         <button class="button bg-brand-yellow button-round button-block" ui-sref="map.navigate">NEXT</button>
@@ -28,7 +28,7 @@
     </div>
     <div class="row bg-pale padding-x-30">
       <div class="col">
-        <div class="list card" ng-repeat="item in quizCtrl.report">
+        <div class="list card" ng-repeat="item in quizCtrl.quizResult.analysis">
           <div>
             <div class="item item-divider padding-20 font-md" ng-class="{'bg-assertive-light':item.status==0,'bg-green' : item.status==1, 'bg-grey-light' : item.status==-1}">
               Question {{$index + 1}}

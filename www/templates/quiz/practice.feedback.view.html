@@ -1,0 +1,10 @@
+<ion-modal-view ng-click="closeModal()" class="modal-dark feedback-modal">
+  <ion-content>
+    <div class="row box">
+      <div class="col col-center"  style="height: 40%" ng-init="">
+        <div ng-if="quizCtrl.currentIndex" class="card card-pale text-center padding-30 practice-feedback" ng-class="{'correct':quizCtrl.isCorrectAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex]),'wrong':!quizCtrl.isCorrectAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex])}">
+        </div>
+      </div>
+    </div>
+  </ion-content>
+</ion-modal-view>
