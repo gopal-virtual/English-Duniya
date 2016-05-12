@@ -29,8 +29,17 @@
         setLock(key, value, true);
       })
       angular.forEach(lessons, function(value, key) {
-        if (scores[key].total_score > 0) {
-          var score = (scores[key].obtained_score / scores[key].total_score) * 100;
+
+        var total_score = 0;
+        var obtained_score = 0;
+
+        angular.forEach(scores[key].contents.assessment, function(value, key) {
+          total_score += value.total_score;
+          obtained_score += value.obtained_score;
+        })
+
+        if (total_score > 0) {
+          var score = (obtained_score / total_score) * 100;
 
           // if score is > 80%, unlock the next lessons
           if (score >= CONSTANT.STAR.ONE) {
@@ -39,7 +48,7 @@
           }
 
           // give stars
-          if (scores[key].obtained_score == 0) {
+          if (obtained_score == 0) {
             setStar(key, lessons[key], -1);
           } else if (score > 0 && score < CONSTANT.STAR.ONE) {
             setStar(key, lessons[key], 0);

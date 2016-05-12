@@ -6,12 +6,14 @@
           <img
           ng-src="{{mapCtrl.getIcon(resource)}}"
           width="40%" height="auto" alt="resource icon"
-          ng-hide="mapCtrl.resourceType(resource) == 'video' && selected"
           ng-click="selected=true;$event.stopPropagation();mapCtrl.playResource(resource);"/>
           <!-- <video track-video
+          ng-hide="mapCtrl.resourceType(resource) == 'video' && selected"
+
+          
           ng-if="mapCtrl.resourceType(resource) == 'video' && selected"
           ng-src="{{mapCtrl.getSrc(resource.node.type.path)}}" width="100%" height="auto" controls="false"></video> -->
-          <videogular ng-if="mapCtrl.resourceType(resource) == 'video' && selected" vg-theme="mapCtrl.config.theme" ng-click="$event.stopPropagation()" vg-player-ready="mapCtrl.onPlayerReady($API)" vg-update-state="mapCtrl.updateOrientation($state)">
+          <!-- <videogular ng-if="mapCtrl.resourceType(resource) == 'video' && selected" vg-theme="mapCtrl.config.theme" ng-click="$event.stopPropagation()" vg-player-ready="mapCtrl.onPlayerReady($API)" vg-update-state="mapCtrl.updateOrientation($state)">
               <vg-media vg-src="mapCtrl.config.sources">
               </vg-media>
               <vg-controls>
@@ -27,7 +29,7 @@
                   </vg-volume>
                   <vg-fullscreen-button></vg-fullscreen-button>
               </vg-controls>
-          </videogular>
+          </videogular> -->
 
         </div>
       </div>

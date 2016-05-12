@@ -19,7 +19,11 @@
         return mapCanvas;
 
         function linkFunc(scope, el, attr, ctrl) {
-          $timeout(createGame(scope, scope.lessons, $injector, $log));
+          $timeout(
+              function(){
+                  createGame(scope, scope.lessons, $injector, $log)
+              }
+          );
         }
     }
 

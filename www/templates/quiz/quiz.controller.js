@@ -104,20 +104,21 @@
             score: quizCtrl.quizResult.marks
           }, function(success) {
             var report_id = success.id;
+            var attempts = [];
             angular.forEach(quizCtrl.report.attempts, function(value, key) {
               // 1 - Attempted
               // 2 - Skipped
               // 3 - NotAttempted
-              var attempt = {
+              attempts.push({
                 answer: value.length > 0 ? value : null,
                 score: quizCtrl.quizResult.score[key],
                 status: value.length > 0 ? 1 : 2,
                 person: Auth.getProfileId(),
                 report: report_id,
                 node: key
-              }
-              Quiz.saveAttempt(attempt, function(response) {}, function(error) {})
+              });
             });
+            Quiz.saveAttempt(attempts, function(response) {}, function(error) {})
           }, function(error) {
 
           })
@@ -483,7 +484,8 @@
         }
 
       });
-      var percent_correct = parseInt((result.correct_questions / quiz.objects.length) * 100);
+      var percent_correct = parseInt((result.marks / quiz.node.type.score) * 100);
+      $log.debug('see the score', result.marks, quiz.node.type.score, percent_correct);
       if (percent_correct >= CONSTANT.STAR.ONE && percent_correct < CONSTANT.STAR.TWO) {
         result.stars = 1;
       } else if (percent_correct >= CONSTANT.STAR.TWO && percent_correct < CONSTANT.STAR.THREE) {

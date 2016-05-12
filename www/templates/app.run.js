@@ -49,6 +49,13 @@
         event.preventDefault();
         $state.go('map.navigate');
       }
+      // block content state
+      if (toState.name == 'content.video' && !toParams.video) {
+        $log.debug("Video value is not present");
+        event.preventDefault();
+        $state.go('map.navigate');
+      }
+
       if(toState.name == 'auth.verify.phone'){
         $log.debug("verify");
         document.addEventListener('onSMSArrive',function(e){

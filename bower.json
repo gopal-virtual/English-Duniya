@@ -9,7 +9,8 @@
     "phaser-kinetic-scrolling-plugin": "~1.0.3",
     "videogular": "~1.4.3",
     "videogular-themes-default": "~1.4.3",
-    "videogular-controls": "~1.4.3"
+    "videogular-controls": "~1.4.3",
+    "videogular-buffering": "~1.4.3"
   },
   "dependencies": {
     "ngCordova": "~0.1.24-alpha",
