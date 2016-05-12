@@ -26,13 +26,15 @@ $icon-list : (
 'listening' : 'icon-listen',
 'settings' : 'icon-settings',
 'pause' : 'icon-pause',
-'question-mark' : 'icon-question-mark'
+'question-mark' : 'icon-question-mark',
+'next' : 'icon-next'
 );
 
 // size
 $cover-height : 250px;
-$bar-height-large : 60px;
+$bar-height-large : 90px;
 $result-height : 53px;
+$quiz-header-height : 55px;
 //question
 $question-subheader-height : 190px;
 $quiz-subfooter-height : 85px;

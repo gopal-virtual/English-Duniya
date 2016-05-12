@@ -44,7 +44,11 @@
         event.preventDefault();
         $state.go('map.navigate');
       }
-
+      if (toState.name == 'quiz.practice.summary' && !toParams.report) {
+        $log.debug("Practice summary page cannot be accessed : No quiz data present");
+        event.preventDefault();
+        $state.go('map.navigate');
+      }
       if(toState.name == 'auth.verify.phone'){
         $log.debug("verify");
         document.addEventListener('onSMSArrive',function(e){

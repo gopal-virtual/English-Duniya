@@ -1,13 +1,23 @@
 <ion-pane class="bg-pale" ng-if="quizCtrl.quiz.objects.length">
   <div class="bar bar-header bg-pale quiz-header">
-    <div class="col">
-      <a ng-click="quizCtrl.pauseQuiz()"  class="header-icon icon-pause"></a>
+    <div class="row padding-0">
+      <div class="col">
+        <a ng-click="quizCtrl.pauseQuiz()"  class="header-icon icon-pause"></a>
+      </div>
+      <div class="padding-10 row">
+
+      <div ng-click="quizCtrl.slideTo($index)" class="col progress-bar" ng-repeat="question in quizCtrl.quiz.objects" ng-class="{'attempted': quizCtrl.isAttempted(question),'skipped' : question.isVisited == true && !quizCtrl.isAttempted(question) && quizCtrl.getCurrentIndex() != $index,'current' :  quizCtrl.getCurrentIndex() == $index, 'unattempted' : question.isVisited == false}">
+
+      </div>
     </div>
-    <div class="col" align="right">
-      <a ui-sref="map.navigate" class="header-icon icon-question-mark"></a>
+      <div class="col" align="right">
+        <a ui-sref="map.navigate" class="header-icon icon-question-mark"></a>
+      </div>
     </div>
+
+
   </div>
-  <ion-slide-box on-slide-changed="quizCtrl.slideHasChanged($index)">
+  <ion-slide-box on-slide-changed="quizCtrl.slideHasChanged($index)" show-pager="false">
     <ion-slide ng-repeat="question in quizCtrl.quiz.objects" ng-class="{'animation-question-slide':quizCtrl.isCurrentIndex($index)}">
       <div class="bar bar-subheader question-subheader bg-pale fading-scroll-bottom">
 
@@ -19,7 +29,7 @@
         <!-- <div ng-if="!question.node.title && !question.node.type.content.image"><img height="100" width="100" src="img/icons/sound.png"> </div> -->
       </div>
       </div>
-      <ion-content  overflow-scroll="false" has-bouncing="true" class="has-header has-footer has-question-subheader center padding-y-20 bg-green " ng-class="{'has-quiz-subfooter':quizCtrl.currentIndex == quizCtrl.quiz.objects.length - 1}">
+      <ion-content  overflow-scroll="false" has-bouncing="true" class="has-header has-question-subheader center padding-y-20 bg-green " ng-class="{'has-footer-large':quizCtrl.currentIndex == quizCtrl.quiz.objects.length - 1}">
       <!-- SCQ -->
       <div>
         <div ng-click="question.attempted=(question.attempted==option.key)?'':option.key" ng-if="question.node.type.type=='choicequestion' && !question.node.type.content.is_multiple" ng-class="{'selected':option.key==question.attempted,'card-list':quizCtrl.LIST_TYPE.indexOf(question.node.type.content.layout_type) >= 0,'card-grid':quizCtrl.GRID_TYPE.indexOf(question.node.type.content.layout_type) >= 0}" class="card center card-pale card-radius" ng-repeat="option in question.node.type.content.options">
@@ -61,19 +71,13 @@
     <audio id="audioplayer">
       <source id="audioSource" type="audio/mpeg">
     </audio>
-  <div ng-if="quizCtrl.currentIndex == quizCtrl.quiz.objects.length - 1" class="bar bar-subfooter quiz-subfooter bg-green fading-scroll-top">
-    <div class="row ">
-      <div class="col padding-x-20">
-        <button  class="animation-fade-in-from-bottom button button-block bg-brand-yellow padding-10 button-round" ng-click="quizCtrl.submitQuiz()">
-        SUBMIT
-        </button>
-      </div>
-    </div>
-  </div>
 
-  <div class="bar bar-footer progress-bar-footer bg-neutral-dark" ng-class="{'fading-scroll-top':quizCtrl.currentIndex != quizCtrl.quiz.objects.length - 1}">
-    <div class="row progress-bar">
-      <div ng-click="quizCtrl.slideTo($index)" class="col" ng-repeat="question in quizCtrl.quiz.objects" ng-class="{'attempted': quizCtrl.isAttempted(question),'skipped' : question.isVisited == true && !quizCtrl.isAttempted(question) && quizCtrl.getCurrentIndex() != $index,'current' :  quizCtrl.getCurrentIndex() == $index, 'unattempted' : question.isVisited == false}">
+
+  <div ng-if="quizCtrl.currentIndex == quizCtrl.quiz.objects.length - 1" class="bar bar-footer bar-footer-large bg-green fading-scroll-top" >
+    <div class="row ">
+      <div class="col">
+        <button  class="icon-next animation-fade-in-from-bottom button button-block bg-brand-yellow padding-20 button-round" ng-click="quizCtrl.submitQuiz()">
+        </button>
       </div>
     </div>
   </div>
