@@ -9736,7 +9736,7 @@ input[type=radio].hide {
 
 .input-group > .input-group-addon-energised {
   background-color: #ffc900;
-  color: black; }
+  color: white; }
 
 .input-group > .input-group-addon-assertive {
   background-color: #ef473a;
@@ -10123,6 +10123,15 @@ input[type=radio].hide {
 .list-inset {
   background-color: transparent; }
 
+.padding-0 {
+  padding: 0px !important; }
+
+.padding-y-0 {
+  padding: 0px 0 !important; }
+
+.padding-x-0 {
+  padding: 0 0px !important; }
+
 .padding-10 {
   padding: 10px !important; }
 
@@ -10206,7 +10215,7 @@ input[type=radio].hide {
   height: 100%; }
 
 .box.has-footer {
-  height: calc(100% - 60px); }
+  height: calc(100% - 90px); }
 
 .scroll-bar-indicator {
   display: none; }
@@ -10350,7 +10359,7 @@ p * {
   bottom: 129px !important; }
 
 .has-footer-large {
-  bottom: 60px !important; }
+  bottom: 90px !important; }
 
 .icon-large {
   font-size: 15em; }
@@ -10438,6 +10447,93 @@ p * {
   background-repeat: no-repeat;
   background-position: center center;
   background-size: auto 60%; }
+
+.icon-next {
+  background-image: url("../img/icons/icon-next.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 60%; }
+
+.icon-next.active {
+  background-image: url("../img/icons/icon-next-active.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 60%; }
+
+.icon-back {
+  background-image: url("../img/icons/icon-back.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 60%; }
+
+.icon-back.active {
+  background-image: url("../img/icons/icon-back-active.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 60%; }
+
+.icon-redo {
+  background-image: url("../img/icons/icon-redo.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 60%; }
+
+.icon-redo.active {
+  background-image: url("../img/icons/icon-redo-active.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 60%; }
+
+.icon-map {
+  background-image: url("../img/icons/icon-map.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 60%; }
+
+.icon-map.active {
+  background-image: url("../img/icons/icon-map-active.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 60%; }
+
+.icon-star {
+  background-image: url("../img/icons/icon-star.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 60%; }
+
+.icon-star.active {
+  background-image: url("../img/icons/icon-star-active.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 60%; }
+
+.icon-nostar {
+  background-image: url("../img/icons/icon-nostar.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 60%; }
+
+.icon-nostar.active {
+  background-image: url("../img/icons/icon-nostar-active.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 60%; }
+
+.icon-greenstar {
+  background-image: url("../img/icons/icon-greenstar.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 60%; }
+
+.icon-greenstar.active {
+  background-image: url("../img/icons/icon-greenstar-active.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 60%; }
+
+.icon-left-align {
+  background-position: 5% center !important; }
 
 .card {
   border-radius: 10px;
@@ -10652,12 +10748,16 @@ p * {
   box-shadow: none; }
 
 .practice-feedback.correct {
-  background: url("../img/icons/icon-correct.png") no-repeat center center;
+  background: url("../img/correct.png") no-repeat center center;
   background-size: auto 70%; }
 
 .practice-feedback.wrong {
-  background: url("../img/icons/icon-incorrect.png") no-repeat center center;
+  background: url("../img/incorrect.png") no-repeat center center;
   background-size: auto 70%; }
+
+.card-image {
+  height: 100px;
+  width: 100px; }
 
 .bar-transparent {
   background-color: transparent;
@@ -10677,10 +10777,73 @@ p * {
   text-align: center; }
 
 .no-border {
-  border: 0px !important; }
+  border: 0 !important; }
 
 ion-content.overflow-visible {
   overflow: visible; }
+
+progress[value] {
+  /* Reset the default appearance */
+  -webkit-appearance: none;
+  appearance: none;
+  align-self: center;
+  margin: 0px; }
+
+progress[value]::-webkit-progress-bar {
+  background-color: #727271;
+  border-radius: 2px;
+  height: 5px; }
+
+progress[value]::-webkit-progress-value {
+  background-color: #FFBC1D;
+  border-radius: 2px;
+  background-size: 35px 20px, 100% 100%, 100% 100%;
+  transition: width 300ms ease-in; }
+
+.practice-progress, progress[value]::-webkit-progress-value {
+  background-color: #39B89A;
+  height: 5px;
+  z-index: 1; }
+
+.progress-bar-container {
+  position: relative; }
+
+.progress-bar-container > .mark-0 {
+  border-radius: 100%;
+  height: 20px;
+  width: 20px;
+  background-color: #727271;
+  z-index: 2;
+  position: absolute;
+  margin-top: 2px;
+  left: calc(0% - 10px); }
+
+.mark-filled {
+  background-color: #39B89A !important; }
+
+.progress-bar-container > .mark-60 {
+  z-index: 2;
+  position: absolute;
+  width: 25px;
+  left: calc(60% - 12px);
+  height: 30px;
+  margin-top: -3px; }
+
+.progress-bar-container > .mark-80 {
+  z-index: 2;
+  position: absolute;
+  width: 25px;
+  left: calc(80% - 12px);
+  height: 30px;
+  margin-top: -3px; }
+
+.progress-bar-container > .mark-100 {
+  z-index: 2;
+  position: absolute;
+  width: 25px;
+  left: calc(100% - 12px);
+  height: 30px;
+  margin-top: -3px; }
 
 .animation-delay {
   -webkit-animation-delay: 1s; }
@@ -10872,7 +11035,7 @@ ion-content.overflow-visible {
 
 .alert-energised {
   background-color: #ffc900;
-  color: black; }
+  color: white; }
 
 .alert-assertive {
   background-color: #ef473a;
@@ -10932,33 +11095,14 @@ ion-content.overflow-visible {
   bottom: 44px; }
 
 .bar-footer-large {
-  height: 60px; }
-
-.progress-bar > div {
-  margin: 1px;
-  box-sizing: border-box; }
-
-.progress-bar > .current,
-.progress-bar > .attempted.current,
-.progress-bar > .unattempted.current,
-.progress-bar > .skipped.current {
-  background-color: #11c1f3; }
-
-.progress-bar > .attempted {
-  background-color: #b68000; }
-
-.progress-bar > .unattempted {
-  background-color: #9fc6d1; }
-
-.progress-bar > .skipped {
-  background-color: #FFBC1D; }
+  height: 90px; }
 
 .question-subheader {
   height: 190px !important;
-  top: 44px !important; }
+  top: 55px !important; }
 
 .has-question-subheader {
-  top: 234px !important; }
+  top: 245px !important; }
 
 .fading-scroll-top::before {
   content: '';
@@ -10980,12 +11124,35 @@ ion-content.overflow-visible {
   position: absolute; }
 
 .quiz-header {
-  border: 0 !important; }
+  border: 0 !important;
+  height: 55px; }
 
 .header-icon {
-  width: 28px;
+  width: 35px;
   display: inline-block;
-  height: 26px; }
+  height: 35px; }
+
+.progress-bar {
+  margin: 2px;
+  border-radius: 50px;
+  box-sizing: border-box;
+  height: 15px;
+  align-self: center; }
+
+.progress-bar.current,
+.progress-bar.attempted.current,
+.progress-bar.unattempted.current,
+.progress-bar.skipped.current {
+  background-color: #11c1f3; }
+
+.progress-bar.attempted {
+  background-color: #b68000; }
+
+.progress-bar.unattempted {
+  background-color: #9fc6d1; }
+
+.progress-bar.skipped {
+  background-color: #FFBC1D; }
 
 .result {
   position: fixed;

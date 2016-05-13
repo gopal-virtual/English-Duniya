@@ -10,6 +10,7 @@ $brand : #0D618A;
 $brand-white : rgb(255,255,255);
 $brand-grey : rgb(170, 170, 170);
 $brand-green : #39B89A;
+
 $brand-pink : #FCF3D8;
 $pale : #FCF3D8;
 $neutral : #e4eff2;
@@ -26,13 +27,24 @@ $icon-list : (
 'listening' : 'icon-listen',
 'settings' : 'icon-settings',
 'pause' : 'icon-pause',
-'question-mark' : 'icon-question-mark'
+'question-mark' : 'icon-question-mark',
+'next' : 'icon-next',
+'back' : 'icon-back',
+'redo' : 'icon-redo',
+'map' : 'icon-map',
+'star' : 'icon-star',
+'nostar' : 'icon-nostar',
+'greenstar' : 'icon-greenstar'
 );
 
 // size
 $cover-height : 250px;
-$bar-height-large : 60px;
+$bar-height-large : 90px;
 $result-height : 53px;
+$quiz-header-height : 55px;
 //question
 $question-subheader-height : 190px;
 $quiz-subfooter-height : 85px;
+
+$feedback-image-incorrect : '../img/incorrect.png';
+$feedback-image-correct : '../img/correct.png';

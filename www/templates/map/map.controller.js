@@ -12,7 +12,9 @@
       orientation.setPortrait();
     });
     var mapCtrl = this;
-    mapCtrl.lessons = extendLesson.getLesson(lessons, scores);
+    mapCtrl.lessons = lessons;
+    // mapCtrl.lessons = extendLesson.getLesson(lessons, scores);
+
     mapCtrl.getLesson = getLesson;
     mapCtrl.getSrc = getSrc;
     mapCtrl.resetNode = resetNode;

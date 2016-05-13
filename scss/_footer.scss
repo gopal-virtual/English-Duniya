@@ -5,23 +5,3 @@
 .bar-footer-large{
   height: $bar-height-large;
 }
-.progress-bar > div{
-  margin: 1px;
-  box-sizing: border-box;
-}
-.progress-bar > .current,
-.progress-bar > .attempted.current,
-.progress-bar > .unattempted.current,
-.progress-bar > .skipped.current
-{
- background-color: $calm;
-}
-.progress-bar > .attempted{
- background-color: darken($brand-yellow,20%);
-}
-.progress-bar > .unattempted{
- background-color: darken($neutral,20%);
-}
-.progress-bar > .skipped{
- background-color: $brand-yellow;
-}
