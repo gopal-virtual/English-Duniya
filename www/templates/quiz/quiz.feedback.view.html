@@ -2,11 +2,9 @@
   <ion-content>
     <div class="row box">
       <div class="col col-center"  style="height: 40%">
-        <div class="card card-pale text-center padding-30" ng-class="{'correct':quizCtrl.isCorrectAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex]),'wrong':!quizCtrl.isCorrectAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex])}">
+        <div class="card card-pale text-center padding-30 practice-feedback" ng-class="{'correct':quizCtrl.isCorrectAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex]),'wrong':!quizCtrl.isCorrectAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex])}">
         </div>
-
       </div>
     </div>
-
   </ion-content>
 </ion-modal-view>

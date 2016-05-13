@@ -11,7 +11,7 @@
             restrict: 'A',
             template: '<div id="map_canvas"></div>',
             scope: {
-              lessons : '='
+              lessons : '=',
             },
             link: linkFunc,
         };
@@ -19,7 +19,11 @@
         return mapCanvas;
 
         function linkFunc(scope, el, attr, ctrl) {
-          $timeout(createGame(scope, scope.lessons, $injector, $log));
+          $timeout(
+              function(){
+                  createGame(scope, scope.lessons, $injector, $log)
+              }
+          );
         }
     }
 

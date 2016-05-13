@@ -1,16 +1,16 @@
 @each $name, $color in $color-list{
   .bg-#{$name}{
-    background-color : $color;
+    background : $color;
   }
 }
 @each $name, $color in $color-list{
   .bg-#{$name}-light{
-    background-color : lighten($color, 10%);
+    background : lighten($color, 10%);
   }
 }
 @each $name, $color in $color-list{
   .bg-#{$name}-dark{
-    background-color : darken($color, 10%);
+    background : darken($color, 10%);
   }
 }
 @each $name, $color in $color-list{
@@ -53,31 +53,6 @@
     margin : 0 $value !important;
   }
 }
-.selected.wrong-attempt,
-.card-brand.wrong-attempt,
-.wrong-attempt
-{
-  background-color: lighten($assertive, 20%);
-}
-.selected.correct-attempt,
-.card-brand.correct-attempt,
-.correct-attempt
-{
-  background-color: lighten($balanced, 20%);
-}
-.selected{
-  box-shadow: 0 0 10px $calm;
-  background-color: lighten($dark, 60%);
-  border: 2px solid #06e9ff;
-}
-.correct{
-  background: url('../img/correct.png') no-repeat center center;
-  background-size: auto 70%;
-}
-.wrong{
-  background: url('../img/wrong.png') no-repeat center center;
-  background-size: auto 70%;
-}
 .slider { height: 100%; }
 .scroll { height: 100%; }
 .box{
@@ -103,21 +78,6 @@
   padding: 0;
   overflow: hidden;
 }
-video::-webkit-media-controls-fullscreen-button,
-video::-webkit-media-controls-mute-button {
-    display: none;
-}
-.question-subheader{
-  height: $question-subheader-height !important;
-  top : $bar-height !important;
-}
-.has-question-subheader{
-  top: $question-subheader-height+$bar-height !important;
-}
-
-.bar-footer-large{
-  height:60px;
-}
 
 .feedback-modal{
   background: transparent;
@@ -127,4 +87,19 @@ hr{
     border: 0;
     height: 1px;
     background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(180, 180, 180, 0.75), rgba(0, 0, 0, 0));
+}
+.stars > img{
+    width: 100px;
+    height : 100px;
+}
+.stars > img:first-child,
+.stars > img:last-child{
+    width: 70px;
+    height : 70px;
+}
+.stars > img:first-child {
+    -webkit-transform: rotateZ(-15deg) translateY(10px);
+}
+.stars> img:last-child {
+    -webkit-transform: rotateZ(15deg) translateY(10px);
 }

@@ -1,3 +1,18 @@
 .icon-large{
   font-size: 15em;
 }
+
+@each $icon, $icon-name in $icon-list{
+  .icon-#{$icon}{
+    background-image: url("#{$icon-path}/#{$icon-name}#{$icon-type}");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: auto 60%;
+  }
+  .icon-#{$icon}.active{
+    background-image: url("#{$icon-path}/#{$icon-name}-active#{$icon-type}");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: auto 60%;
+  }
+}

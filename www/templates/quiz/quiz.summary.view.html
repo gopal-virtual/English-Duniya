@@ -1,50 +1,45 @@
-<ion-view class="bg-dark">
-  <ion-content>
-    <!--<div class="row">-->
-      <!--<div class="col col-33 col-offset-33"><img src="img/avatar.png" alt="" class="full-image"></div>-->
-    <!--</div>-->
-    <div class="row center">
-      <div style="font:20px;color:white" class="col">
-        Your Score : {{quizCtrl.quizResult.marks}}
-      </div>
-    </div>
-    <div class="row center">
-      <div class="col" ng-repeat="i in quizCtrl.utilities.range(quizCtrl.quizResult.stars) track by $index">
-        <div>
-          <img height="100px" width="100px" src='img/icons/star.png'>
-        </div>
-      </div>
-      <div class="col" ng-if="quizCtrl.quizResult.stars == 0">
-        <div>
-          <h1>Try again</h1>
-        </div>
+<ion-view class="bg-green">
+  <ion-content overflow-scroll="true">
+    <div class="row padding-y-40">
+      <div class="col font-lg text-white text-center">
+        LESSON COMPLETE!
       </div>
     </div>
     <div class="row">
+      <div class="col text-center font-sl text-white"><strong>{{quizCtrl.quizResult.marks}} / {{quizCtrl.quiz.node.type.score}}</strong></div>
+    </div>
+    <div class="row center">
+      <div class="col stars">
+          <img ng-repeat="star in [1,2,3]" ng-src="{{ quizCtrl.starCount($index) ? 'img/icons/icon-star.png' : 'img/icons/icon-nostar.png'}}">
+      </div>
+    </div>
+    <div class="row padding-30">
       <div class="col">
-        <!--<div class="list card card-dark-dark text-white padding">-->
-          <!--<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatem, debitis.</p>-->
-        <!--</div>-->
-        <!--<p class="text-white text-center">Up next</p>-->
-        <!--<div class="list card card-brand text-white padding">-->
-          <!--Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consectetur, hic?-->
-        <!--</div>-->
-        <!-- <div class="card card-dark text-white padding">
-          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatem, debitis.</p>
-        </div> -->
-        <div class="list card">
-          <div ng-repeat="(key,value) in quizCtrl.quizResult.analysis">
-            <div class="item item-divider">
-              {{key}}
-              <strong>Question #{{$index + 1}}</strong>
+        <button class="button bg-pale button-round button-block" ui-sref="quiz.questions({id : quizCtrl.quiz.node.id})">REDO</button>
+      </div>
+      <div class="col">
+        <button class="button bg-brand-yellow button-round button-block" ui-sref="map.navigate">NEXT</button>
+      </div>
+    </div>
+    <div class="row bg-pale padding-y-20">
+        <div class="col text-center">
+            <u class="font-lg">QUESTIONS</u>
+        </div>
+    </div>
+    <div class="row bg-pale padding-x-30">
+      <div class="col">
+        <div class="list card" ng-repeat="item in quizCtrl.quizResult.analysis">
+          <div>
+            <div class="item item-divider padding-20 font-md" ng-class="{'bg-assertive-light':item.status==0,'bg-green' : item.status==1, 'bg-grey-light' : item.status==-1}">
+              Question {{$index + 1}}
             </div>
             <div class="item item-text-wrap">
-              {{value}}
+                <p class="font-md">{{item.title}}</p>
+              <span ng-class="{'color-assertive-light':item.status==0,'color-green' : item.status==1, 'color-grey' : item.status==-1}">
+                  {{item.status == 1 ? 'CORRECT' : item.status == 0 ? 'WRONG' : 'SKIPPED'}}
+              </span>
             </div>
           </div>
-        </div>
-        <div class="list card card-transparent">
-          <button class="button button-calm button-block" ui-sref="map.navigate">CONTINUE</button>
         </div>
       </div>
     </div>

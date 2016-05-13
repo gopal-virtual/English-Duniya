@@ -5,62 +5,93 @@
     .module('zaya-map')
     .controller('mapController', mapController);
 
-  mapController.$inject = ['$scope','$rootScope', '$log', '$ionicModal', '$state', 'lessons', 'Rest', 'CONSTANT', '$sce', 'orientation','$ionicLoading','$timeout'];
+  mapController.$inject = ['$scope', '$rootScope', '$log', '$ionicModal', '$state', 'lessons', 'scores', 'extendLesson', 'Rest', 'CONSTANT', '$sce', '$ionicLoading', '$timeout', '$ionicBackdrop', 'orientation'];
 
-  function mapController($scope, $rootScope, $log, $ionicModal, $state, lessons, Rest, CONSTANT, $sce, orientation, $ionicLoading, $timeout) {
+  function mapController($scope, $rootScope, $log, $ionicModal, $state, lessons, scores, extendLesson, Rest, CONSTANT, $sce, $ionicLoading, $timeout, $ionicBackdrop, orientation) {
+    $scope.$on("$ionicView.beforeEnter", function(event, data) {
+      orientation.setPortrait();
+    });
     var mapCtrl = this;
-    mapCtrl.lessons = lessons;
+    mapCtrl.lessons = extendLesson.getLesson(lessons, scores);
     mapCtrl.getLesson = getLesson;
     mapCtrl.getSrc = getSrc;
     mapCtrl.resetNode = resetNode;
     mapCtrl.getIcon = getIcon;
     mapCtrl.resourceType = resourceType;
     mapCtrl.playResource = playResource;
+    mapCtrl.backdrop = false;
+    mapCtrl.showScore = -1;
+
     // mapCtrl.openModal = openModal;
     // mapCtrl.closeModal = closeModal;
 
-    function playResource (resource) {
-      if(mapCtrl.resourceType(resource) != 'video'){
-        $scope.closeModal();
-        $ionicLoading.show({noBackdrop: false, hideOnStateChange: true});
-        $state.go('quiz.questions',{id : resource.node.id});
-        // $timeout(function(){
-        //   $scope.closeModal();
-        // })
-        // .then(function(){
-        // })
+    mapCtrl.skillSet = [{
+      name: 'reading',
+      score: 300
+    }, {
+      name: 'listening',
+      score: 200
+    }, {
+      name: 'vocabulary',
+      score: 250
+    }, {
+      name: 'grammar',
+      score: 3000
+    }];
+
+    function playResource(resource) {
+      $scope.closeModal();
+      $ionicLoading.show({
+        noBackdrop: false,
+        hideOnStateChange: true
+      });
+      if (mapCtrl.resourceType(resource) != 'video') {
+        $timeout(function() {
+          $state.go('quiz.questions', {
+            id: resource.node.id
+          });
+        });
+      } else {
+        $timeout(function() {
+          $state.go('content.video', {
+            video: {
+              src: mapCtrl.getSrc(resource.node.type.path),
+              type: 'video/mp4'
+            }
+          });
+        });
+        //   mapCtrl.config.sources[0].src = mapCtrl.getSrc(resource.node.type.path);
       }
     }
-    function resourceType (resource){
-      if(resource.node.content_type_name == 'assessment'){
+
+    function resourceType(resource) {
+      if (resource.node.content_type_name == 'assessment') {
         return 'assessment';
-      }
-      else if(resource.node.content_type_name == 'resource'){
-        if(resource.node.type.file_type.substring(0,resource.node.type.file_type.indexOf('/')) == 'video'){
+      } else if (resource.node.content_type_name == 'resource') {
+        if (resource.node.type.file_type.substring(0, resource.node.type.file_type.indexOf('/')) == 'video') {
           return 'video';
         }
-      }
-      else {}
+      } else {}
     }
-    function getSrc(src){
+
+    function getSrc(src) {
       return $sce.trustAsResourceUrl(CONSTANT.BACKEND_SERVICE_DOMAIN + src);
     }
-    function getIcon(resource){
-      if(resource.node.content_type_name == 'assessment'){
+
+    function getIcon(resource) {
+      if (resource.node.content_type_name == 'assessment') {
         return CONSTANT.ASSETS.IMG.ICON + '/quiz.png';
-      }
-      else if(resource.node.content_type_name == 'resource'){
-        if(resource.node.type.file_type.substring(0,resource.node.type.file_type.indexOf('/')) == 'video'){
+      } else if (resource.node.content_type_name == 'resource') {
+        if (resource.node.type.file_type.substring(0, resource.node.type.file_type.indexOf('/')) == 'video') {
           return CONSTANT.ASSETS.IMG.ICON + '/video.png';
         }
-      }
-      else {
+      } else {
 
       }
     }
 
     $scope.$on('logout', function() {
-      $state.go('user.main.settings',{});
+      $state.go('user.main.settings', {});
     })
     $scope.$on('openNode', function(event, node) {
       mapCtrl.getLesson(node.id);
@@ -80,30 +111,35 @@
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal' + CONSTANT.VIEW, {
       scope: $scope,
       animation: 'slide-in-up',
-      hardwareBackButtonClose : false
+      hardwareBackButtonClose: false
     }).then(function(modal) {
       $scope.modal = modal;
     });
 
-    function resetNode(){
-        mapCtrl.selectedNode = {};
+    function resetNode() {
+      mapCtrl.selectedNode = {};
     }
 
     function getLesson(id) {
-      $ionicLoading.show({noBackdrop: false, hideOnStateChange: true});
+      $ionicLoading.show({
+        noBackdrop: false,
+        hideOnStateChange: true
+      });
       Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('lessons', id).get().then(function(response) {
         $ionicLoading.hide();
         $scope.openModal();
         mapCtrl.selectedNode = response.plain();
+        $log.debug('get lesson', response.plain());
         localStorage.setItem('lesson', JSON.stringify(mapCtrl.selectedNode));
       })
     }
 
-    if(localStorage.lesson){
-      // mapCtrl.selectedNode = JSON.parse(localStorage.lesson);
-      // $scope.openModal();
-      mapCtrl.getLesson(JSON.parse(localStorage.lesson).node.id);
-    }
+    $timeout(function functionName() {
+      if (localStorage.lesson) {
+        $scope.openModal();
+        mapCtrl.selectedNode = JSON.parse(localStorage.lesson);
+      }
+    });
 
   }
 })();

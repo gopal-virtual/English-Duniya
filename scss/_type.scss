@@ -31,6 +31,9 @@ p *{
   font-weight: bold;
   text-transform: uppercase;
 }
+.capitalize{
+  text-transform: capitalize;
+}
 
 @each $name, $size in $font-size{
   .font-#{$name}{

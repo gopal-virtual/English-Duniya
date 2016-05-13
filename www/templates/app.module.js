@@ -10,6 +10,9 @@
       'ngMessages',
       'ngCookies',
       'ngCordovaOauth',
+      'com.2fdevs.videogular',
+      'com.2fdevs.videogular.plugins.controls',
+      'com.2fdevs.videogular.plugins.buffering',
 
       // core
       'common',
@@ -19,6 +22,7 @@
       'zaya-intro',
       'zaya-auth',
       'zaya-quiz',
+      'zaya-content'
     ]);
 
 })();

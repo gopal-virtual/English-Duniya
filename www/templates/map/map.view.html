@@ -1,5 +1,16 @@
+<div class="result">
+  <div ng-click="mapCtrl.backdrop=true;mapCtrl.showScore=$index" class="result-item bg-pale icon-{{skill.name}}" ng-class="{'result-hack active' : mapCtrl.showScore==$index}" ng-class="{'result-hack':mapCtrl.showScore==0}" ng-repeat="skill in mapCtrl.skillSet">
+    <div class="result-item-dropdown text-center" ng-class="{'animation-bounce-in-from-top':mapCtrl.showScore==$index}" ng-show="mapCtrl.showScore==$index">
+      <span class="color-green font-lg capitalize">{{skill.name}}</span>
+      <br>
+      <span class="font-md">{{skill.score}}</span>
+    </div>
+  </div>
+  <div class="result-item bg-grey-light icon-settings"></div>
+</div>
+<div class="result-backdrop modal-dark" ng-show="mapCtrl.backdrop" ng-click="mapCtrl.backdrop=false;mapCtrl.showScore=-1"></div>
 <ion-view>
-  <ion-content>
-    <div map-canvas lessons="mapCtrl.lessons"></div>
+  <ion-content class="has-header">
+    <div map-canvas lessons="mapCtrl.lessons" width="mapCtrl.width" height="mapCtrl.height"></div>
   </ion-content>
 </ion-view>

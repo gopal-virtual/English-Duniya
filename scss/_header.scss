@@ -1,0 +1,39 @@
+.question-subheader {
+  height: $question-subheader-height !important;
+  top: $bar-height !important;
+  // box-shadow: 0px 4px 4px 0px rgba(29,94,78,1)
+  //   -webkit-box-shadow: 5px 2px 3px 2px rgba(23, 103, 86, 2.6);
+  // -moz-box-shadow: 5px 2px 3px 2px rgba(23, 103, 86, 2.6);
+  // box-shadow: 5px 2px 3px 2px rgba(23, 103, 86, 2.6);
+}
+.has-question-subheader {
+  top: $question-subheader-height+$bar-height !important;
+  // box-shadow:inset 0px 5px 8px -2px rgba(29,94,78,1);
+}
+.fading-scroll-top::before {
+  content: '';
+  top: -20px;
+  left: 0;
+  height: 20px;
+  right: 0;
+  background: linear-gradient(to top,#54B7A0 0,transparent 100%);
+  position: absolute;
+  z-index: 1;
+}
+.fading-scroll-bottom::after {
+  content: '';
+  bottom: -20px;
+  left: 0;
+  height: 20px;
+  right: 0;
+  background: linear-gradient(to bottom,#54B7A0 0,rgba(0, 0, 0, 0) 100%);
+  position: absolute;
+}
+.quiz-header {
+  border: 0 !important;
+}
+.header-icon{
+  width:28px;
+  display: inline-block;
+  height: 26px;
+}
