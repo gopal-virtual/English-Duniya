@@ -24,6 +24,8 @@
 
     // mapCtrl.openModal = openModal;
     // mapCtrl.closeModal = closeModal;
+    mapCtrl.openSettings = openSettings;
+    mapCtrl.closeSettings = closeSettings;
 
     mapCtrl.skillSet = [{
       name: 'reading',
@@ -38,6 +40,13 @@
       name: 'grammar',
       score: 3000
     }];
+
+    function openSettings(){
+        $scope.settings.show();
+    }
+    function closeSettings(){
+        $scope.settings.hide();
+    }
 
     function playResource(resource) {
       $scope.closeModal();
@@ -108,12 +117,20 @@
       return true;
     }
 
+
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal' + CONSTANT.VIEW, {
       scope: $scope,
       animation: 'slide-in-up',
-      hardwareBackButtonClose: false
+      //   hardwareBackButtonClose: false
     }).then(function(modal) {
       $scope.modal = modal;
+    });
+    $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.settings' + CONSTANT.VIEW, {
+      scope: $scope,
+      animation: 'slide-in-up',
+      //   hardwareBackButtonClose: false
+    }).then(function(settings) {
+      $scope.settings = settings;
     });
 
     function resetNode() {

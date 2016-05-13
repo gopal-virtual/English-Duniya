@@ -52,11 +52,11 @@ input[type=radio].hide{
 }
 .input-group > .input-group-item
 {
-  @include flex(1);
+  @include flex(2);
 }
 .input-group > .input-control,
 {
-  @include flex(5);
+  @include flex(4);
 }
 .input-group > .input-group-addon{
   border : 0;

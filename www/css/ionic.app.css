@@ -9695,20 +9695,20 @@ input[type=radio].hide {
   margin: 0 !important; }
 
 .input-group > .input-group-item {
-  -webkit-box-flex: 1;
-  -webkit-flex: 1;
-  -moz-box-flex: 1;
-  -moz-flex: 1;
-  -ms-flex: 1;
-  flex: 1; }
+  -webkit-box-flex: 2;
+  -webkit-flex: 2;
+  -moz-box-flex: 2;
+  -moz-flex: 2;
+  -ms-flex: 2;
+  flex: 2; }
 
 .input-group > .input-control {
-  -webkit-box-flex: 5;
-  -webkit-flex: 5;
-  -moz-box-flex: 5;
-  -moz-flex: 5;
-  -ms-flex: 5;
-  flex: 5; }
+  -webkit-box-flex: 4;
+  -webkit-flex: 4;
+  -moz-box-flex: 4;
+  -moz-flex: 4;
+  -ms-flex: 4;
+  flex: 4; }
 
 .input-group > .input-group-addon {
   border: 0;
@@ -10359,92 +10359,161 @@ p * {
   background-image: url("../img/icons/icon-vocab.png");
   background-repeat: no-repeat;
   background-position: center center;
-  background-size: auto 60%; }
+  background-size: auto 50%; }
 
 .icon-vocabulary.active {
   background-image: url("../img/icons/icon-vocab-active.png");
   background-repeat: no-repeat;
   background-position: center center;
-  background-size: auto 60%; }
+  background-size: auto 50%; }
 
 .icon-reading {
   background-image: url("../img/icons/icon-read.png");
   background-repeat: no-repeat;
   background-position: center center;
-  background-size: auto 60%; }
+  background-size: auto 50%; }
 
 .icon-reading.active {
   background-image: url("../img/icons/icon-read-active.png");
   background-repeat: no-repeat;
   background-position: center center;
-  background-size: auto 60%; }
+  background-size: auto 50%; }
 
 .icon-grammar {
   background-image: url("../img/icons/icon-grammar.png");
   background-repeat: no-repeat;
   background-position: center center;
-  background-size: auto 60%; }
+  background-size: auto 50%; }
 
 .icon-grammar.active {
   background-image: url("../img/icons/icon-grammar-active.png");
   background-repeat: no-repeat;
   background-position: center center;
-  background-size: auto 60%; }
+  background-size: auto 50%; }
 
 .icon-listening {
   background-image: url("../img/icons/icon-listen.png");
   background-repeat: no-repeat;
   background-position: center center;
-  background-size: auto 60%; }
+  background-size: auto 50%; }
 
 .icon-listening.active {
   background-image: url("../img/icons/icon-listen-active.png");
   background-repeat: no-repeat;
   background-position: center center;
-  background-size: auto 60%; }
+  background-size: auto 50%; }
 
 .icon-settings {
   background-image: url("../img/icons/icon-settings.png");
   background-repeat: no-repeat;
   background-position: center center;
-  background-size: auto 60%; }
+  background-size: auto 50%; }
 
 .icon-settings.active {
   background-image: url("../img/icons/icon-settings-active.png");
   background-repeat: no-repeat;
   background-position: center center;
-  background-size: auto 60%; }
+  background-size: auto 50%; }
 
 .icon-pause {
   background-image: url("../img/icons/icon-pause.png");
   background-repeat: no-repeat;
   background-position: center center;
-  background-size: auto 60%; }
+  background-size: auto 50%; }
 
 .icon-pause.active {
   background-image: url("../img/icons/icon-pause-active.png");
   background-repeat: no-repeat;
   background-position: center center;
-  background-size: auto 60%; }
+  background-size: auto 50%; }
 
 .icon-question-mark {
   background-image: url("../img/icons/icon-question-mark.png");
   background-repeat: no-repeat;
   background-position: center center;
-  background-size: auto 60%; }
+  background-size: auto 50%; }
 
 .icon-question-mark.active {
   background-image: url("../img/icons/icon-question-mark-active.png");
   background-repeat: no-repeat;
   background-position: center center;
-  background-size: auto 60%; }
+  background-size: auto 50%; }
+
+.icon-email {
+  background-image: url("../img/icons/icon-mail.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 50%; }
+
+.icon-email.active {
+  background-image: url("../img/icons/icon-mail-active.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 50%; }
+
+.icon-profile {
+  background-image: url("../img/icons/icon-profile.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 50%; }
+
+.icon-profile.active {
+  background-image: url("../img/icons/icon-profile-active.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 50%; }
+
+.icon-show-password {
+  background-image: url("../img/icons/icon-show-password.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 50%; }
+
+.icon-show-password.active {
+  background-image: url("../img/icons/icon-show-password-active.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 50%; }
+
+.icon-hide-password {
+  background-image: url("../img/icons/icon-hide-password.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 50%; }
+
+.icon-hide-password.active {
+  background-image: url("../img/icons/icon-hide-password-active.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 50%; }
+
+.icon-phone {
+  background-image: url("../img/icons/icon-phone.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 50%; }
+
+.icon-phone.active {
+  background-image: url("../img/icons/icon-phone-active.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 50%; }
+
+.icon-logout {
+  background-image: url("../img/icons/icon-logout.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 50%; }
+
+.icon-logout.active {
+  background-image: url("../img/icons/icon-logout-active.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 50%; }
 
 .card {
   border-radius: 10px;
-  box-sizing: content-box;
-  -webkit-box-shadow: 2px 3px 4px 0 rgba(0, 68, 54, 0.69);
-  -moz-box-shadow: 2px 3px 4px 0 rgba(0, 68, 54, 0.69);
-  box-shadow: 2px 3px 4px 0 rgba(0, 68, 54, 0.69); }
+  box-sizing: content-box; }
 
 .list.card {
   border-radius: 10px !important;
@@ -10465,157 +10534,310 @@ p * {
   padding: 10px 0; }
 
 .card-light {
-  background-color: #fff; }
+  background-color: #fff;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(204, 204, 204, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(204, 204, 204, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(204, 204, 204, 0.5); }
 
 .card-stable {
-  background-color: #f8f8f8; }
+  background-color: #f8f8f8;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(197, 197, 197, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(197, 197, 197, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(197, 197, 197, 0.5); }
 
 .card-positive {
-  background-color: #387ef5; }
+  background-color: #387ef5;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(10, 76, 189, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(10, 76, 189, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(10, 76, 189, 0.5); }
 
 .card-calm {
-  background-color: #11c1f3; }
+  background-color: #11c1f3;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(8, 119, 150, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(8, 119, 150, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(8, 119, 150, 0.5); }
 
 .card-balanced {
-  background-color: #33cd5f; }
+  background-color: #33cd5f;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(30, 124, 57, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(30, 124, 57, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(30, 124, 57, 0.5); }
 
 .card-energised {
-  background-color: #ffc900; }
+  background-color: #ffc900;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(153, 121, 0, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(153, 121, 0, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(153, 121, 0, 0.5); }
 
 .card-assertive {
-  background-color: #ef473a; }
+  background-color: #ef473a;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(180, 27, 15, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(180, 27, 15, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(180, 27, 15, 0.5); }
 
 .card-royal {
-  background-color: #886aea; }
+  background-color: #886aea;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(71, 29, 209, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(71, 29, 209, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(71, 29, 209, 0.5); }
 
 .card-dark {
-  background-color: #444; }
+  background-color: #444;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(17, 17, 17, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(17, 17, 17, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(17, 17, 17, 0.5); }
 
 .card-brand {
-  background-color: #0D618A; }
+  background-color: #0D618A;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(4, 31, 45, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(4, 31, 45, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(4, 31, 45, 0.5); }
 
 .card-neutral {
-  background-color: #e4eff2; }
+  background-color: #e4eff2;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(159, 198, 209, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(159, 198, 209, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(159, 198, 209, 0.5); }
 
 .card-green {
-  background-color: #39B89A; }
+  background-color: #39B89A;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(33, 106, 89, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(33, 106, 89, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(33, 106, 89, 0.5); }
 
 .card-pale {
-  background-color: #FCF3D8; }
+  background-color: #FCF3D8;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(245, 214, 121, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(245, 214, 121, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(245, 214, 121, 0.5); }
 
 .card-brand-yellow {
-  background-color: #FFBC1D; }
+  background-color: #FFBC1D;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(182, 128, 0, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(182, 128, 0, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(182, 128, 0, 0.5); }
 
 .card-pink {
-  background-color: #FCF3D8; }
+  background-color: #FCF3D8;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(245, 214, 121, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(245, 214, 121, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(245, 214, 121, 0.5); }
 
 .card-transparent {
-  background-color: transparent; }
+  background-color: transparent;
+  -webkit-box-shadow: 2px 3px 4px 0 transparent;
+  -moz-box-shadow: 2px 3px 4px 0 transparent;
+  box-shadow: 2px 3px 4px 0 transparent; }
 
 .card-grey {
-  background-color: #aaaaaa; }
+  background-color: #aaaaaa;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(119, 119, 119, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(119, 119, 119, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(119, 119, 119, 0.5); }
 
 .card-light-light {
-  background-color: white; }
+  background-color: white;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(204, 204, 204, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(204, 204, 204, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(204, 204, 204, 0.5); }
 
 .card-stable-light {
-  background-color: white; }
+  background-color: white;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(197, 197, 197, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(197, 197, 197, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(197, 197, 197, 0.5); }
 
 .card-positive-light {
-  background-color: #699df7; }
+  background-color: #699df7;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(10, 76, 189, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(10, 76, 189, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(10, 76, 189, 0.5); }
 
 .card-calm-light {
-  background-color: #42cef5; }
+  background-color: #42cef5;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(8, 119, 150, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(8, 119, 150, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(8, 119, 150, 0.5); }
 
 .card-balanced-light {
-  background-color: #5cd77f; }
+  background-color: #5cd77f;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(30, 124, 57, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(30, 124, 57, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(30, 124, 57, 0.5); }
 
 .card-energised-light {
-  background-color: #ffd433; }
+  background-color: #ffd433;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(153, 121, 0, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(153, 121, 0, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(153, 121, 0, 0.5); }
 
 .card-assertive-light {
-  background-color: #f37369; }
+  background-color: #f37369;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(180, 27, 15, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(180, 27, 15, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(180, 27, 15, 0.5); }
 
 .card-royal-light {
-  background-color: #ac97f0; }
+  background-color: #ac97f0;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(71, 29, 209, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(71, 29, 209, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(71, 29, 209, 0.5); }
 
 .card-dark-light {
-  background-color: #5e5e5e; }
+  background-color: #5e5e5e;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(17, 17, 17, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(17, 17, 17, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(17, 17, 17, 0.5); }
 
 .card-brand-light {
-  background-color: #1182b9; }
+  background-color: #1182b9;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(4, 31, 45, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(4, 31, 45, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(4, 31, 45, 0.5); }
 
 .card-neutral-light {
-  background-color: white; }
+  background-color: white;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(159, 198, 209, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(159, 198, 209, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(159, 198, 209, 0.5); }
 
 .card-green-light {
-  background-color: #59cbb0; }
+  background-color: #59cbb0;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(33, 106, 89, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(33, 106, 89, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(33, 106, 89, 0.5); }
 
 .card-pale-light {
-  background-color: white; }
+  background-color: white;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(245, 214, 121, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(245, 214, 121, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(245, 214, 121, 0.5); }
 
 .card-brand-yellow-light {
-  background-color: #ffcb50; }
+  background-color: #ffcb50;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(182, 128, 0, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(182, 128, 0, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(182, 128, 0, 0.5); }
 
 .card-pink-light {
-  background-color: white; }
+  background-color: white;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(245, 214, 121, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(245, 214, 121, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(245, 214, 121, 0.5); }
 
 .card-transparent-light {
-  background-color: rgba(26, 26, 26, 0); }
+  background-color: rgba(26, 26, 26, 0);
+  -webkit-box-shadow: 2px 3px 4px 0 transparent;
+  -moz-box-shadow: 2px 3px 4px 0 transparent;
+  box-shadow: 2px 3px 4px 0 transparent; }
 
 .card-grey-light {
-  background-color: #c4c4c4; }
+  background-color: #c4c4c4;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(119, 119, 119, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(119, 119, 119, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(119, 119, 119, 0.5); }
 
 .card-light-dark {
-  background-color: #e6e6e6; }
+  background-color: #e6e6e6;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(204, 204, 204, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(204, 204, 204, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(204, 204, 204, 0.5); }
 
 .card-stable-dark {
-  background-color: #dfdfdf; }
+  background-color: #dfdfdf;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(197, 197, 197, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(197, 197, 197, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(197, 197, 197, 0.5); }
 
 .card-positive-dark {
-  background-color: #0c60ee; }
+  background-color: #0c60ee;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(10, 76, 189, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(10, 76, 189, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(10, 76, 189, 0.5); }
 
 .card-calm-dark {
-  background-color: #0a9dc7; }
+  background-color: #0a9dc7;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(8, 119, 150, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(8, 119, 150, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(8, 119, 150, 0.5); }
 
 .card-balanced-dark {
-  background-color: #28a54c; }
+  background-color: #28a54c;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(30, 124, 57, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(30, 124, 57, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(30, 124, 57, 0.5); }
 
 .card-energised-dark {
-  background-color: #cca100; }
+  background-color: #cca100;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(153, 121, 0, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(153, 121, 0, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(153, 121, 0, 0.5); }
 
 .card-assertive-dark {
-  background-color: #e42112; }
+  background-color: #e42112;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(180, 27, 15, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(180, 27, 15, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(180, 27, 15, 0.5); }
 
 .card-royal-dark {
-  background-color: #643de4; }
+  background-color: #643de4;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(71, 29, 209, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(71, 29, 209, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(71, 29, 209, 0.5); }
 
 .card-dark-dark {
-  background-color: #2b2b2b; }
+  background-color: #2b2b2b;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(17, 17, 17, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(17, 17, 17, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(17, 17, 17, 0.5); }
 
 .card-brand-dark {
-  background-color: #09405b; }
+  background-color: #09405b;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(4, 31, 45, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(4, 31, 45, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(4, 31, 45, 0.5); }
 
 .card-neutral-dark {
-  background-color: #c2dbe1; }
+  background-color: #c2dbe1;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(159, 198, 209, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(159, 198, 209, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(159, 198, 209, 0.5); }
 
 .card-green-dark {
-  background-color: #2d9179; }
+  background-color: #2d9179;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(33, 106, 89, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(33, 106, 89, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(33, 106, 89, 0.5); }
 
 .card-pale-dark {
-  background-color: #f8e4a9; }
+  background-color: #f8e4a9;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(245, 214, 121, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(245, 214, 121, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(245, 214, 121, 0.5); }
 
 .card-brand-yellow-dark {
-  background-color: #e9a400; }
+  background-color: #e9a400;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(182, 128, 0, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(182, 128, 0, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(182, 128, 0, 0.5); }
 
 .card-pink-dark {
-  background-color: #f8e4a9; }
+  background-color: #f8e4a9;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(245, 214, 121, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(245, 214, 121, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(245, 214, 121, 0.5); }
 
 .card-transparent-dark {
-  background-color: transparent; }
+  background-color: transparent;
+  -webkit-box-shadow: 2px 3px 4px 0 transparent;
+  -moz-box-shadow: 2px 3px 4px 0 transparent;
+  box-shadow: 2px 3px 4px 0 transparent; }
 
 .card-grey-dark {
-  background-color: #919191; }
+  background-color: #919191;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(119, 119, 119, 0.5);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(119, 119, 119, 0.5);
+  box-shadow: 2px 3px 4px 0 rgba(119, 119, 119, 0.5); }
 
 .card-list {
   display: inline-block;
@@ -10926,6 +11148,9 @@ ion-content.overflow-visible {
 
 .modal-black {
   background-color: black; }
+
+.modal-transparent {
+  background-color: transparent; }
 
 .quiz-subfooter {
   height: 85px !important;
