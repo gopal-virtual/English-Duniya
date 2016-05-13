@@ -76,10 +76,14 @@
 box-shadow: none;
 }
 .practice-feedback.correct{
-  background: url('../img/icons/icon-correct.png') no-repeat center center;
+  background: url($feedback-image-correct) no-repeat center center;
   background-size: auto 70%;
 }
 .practice-feedback.wrong{
-  background: url('../img/icons/icon-incorrect.png') no-repeat center center;
+  background: url($feedback-image-incorrect) no-repeat center center;
   background-size: auto 70%;
+}
+.card-image{
+  height: 100px;
+  width: 100px;
 }

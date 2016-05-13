@@ -1,13 +1,19 @@
 <ion-modal-view class="modal-dark" ng-click="quizCtrl.pauseModal.hide()">
-  <ion-content class="padding-20">
-    <div class="row">
-          <button ng-click="quizCtrl.pauseModal.hide()" class="button button-green button-block">Resume</button>
+  <ion-content class="padding-40">
+    <div class="row margin-y-30">
+          <button ng-click="quizCtrl.pauseModal.hide()" class="icon-back icon-left-align animation-fade-in-from-bottom button button-block bg-green padding-20 button-round font-xl">
+          RETURN
+          </button>
     </div>
-    <div class="row">
-          <button ng-click="quizCtrl.pauseModal.hide() && quizCtrl.restartQuiz()" class="button button-green button-block">Restart</button>
+    <div class="row margin-y-30">
+          <button ng-click="quizCtrl.pauseModal.hide() && quizCtrl.restartQuiz()" class="icon-redo icon-left-align animation-fade-in-from-bottom button button-block bg-calm padding-20 button-round font-xl">
+            RESTART
+          </button>
     </div>
-    <div class="row">
-          <button ng-click="quizCtrl.pauseModal.hide() && quizCtrl.endQuiz()" class="button button-green button-block">End</button>
+    <div class="row margin-y-30">
+          <button ng-click="quizCtrl.pauseModal.hide() && quizCtrl.endQuiz()" class="icon-map icon-left-align animation-fade-in-from-bottom button button-block bg-brand-yellow padding-20 button-round font-xl">
+            EXIT TO MAP
+          </button>
     </div>
   </ion-content>
 </ion-modal-view>

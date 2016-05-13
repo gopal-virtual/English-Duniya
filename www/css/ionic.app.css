@@ -10460,6 +10460,81 @@ p * {
   background-position: center center;
   background-size: auto 60%; }
 
+.icon-back {
+  background-image: url("../img/icons/icon-back.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 60%; }
+
+.icon-back.active {
+  background-image: url("../img/icons/icon-back-active.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 60%; }
+
+.icon-redo {
+  background-image: url("../img/icons/icon-redo.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 60%; }
+
+.icon-redo.active {
+  background-image: url("../img/icons/icon-redo-active.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 60%; }
+
+.icon-map {
+  background-image: url("../img/icons/icon-map.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 60%; }
+
+.icon-map.active {
+  background-image: url("../img/icons/icon-map-active.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 60%; }
+
+.icon-star {
+  background-image: url("../img/icons/icon-star.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 60%; }
+
+.icon-star.active {
+  background-image: url("../img/icons/icon-star-active.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 60%; }
+
+.icon-nostar {
+  background-image: url("../img/icons/icon-nostar.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 60%; }
+
+.icon-nostar.active {
+  background-image: url("../img/icons/icon-nostar-active.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 60%; }
+
+.icon-greenstar {
+  background-image: url("../img/icons/icon-greenstar.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 60%; }
+
+.icon-greenstar.active {
+  background-image: url("../img/icons/icon-greenstar-active.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto 60%; }
+
+.icon-left-align {
+  background-position: 5% center !important; }
+
 .card {
   border-radius: 10px;
   box-sizing: content-box;
@@ -10673,12 +10748,16 @@ p * {
   box-shadow: none; }
 
 .practice-feedback.correct {
-  background: url("../img/icons/icon-correct.png") no-repeat center center;
+  background: url("../img/correct.png") no-repeat center center;
   background-size: auto 70%; }
 
 .practice-feedback.wrong {
-  background: url("../img/icons/icon-incorrect.png") no-repeat center center;
+  background: url("../img/incorrect.png") no-repeat center center;
   background-size: auto 70%; }
+
+.card-image {
+  height: 100px;
+  width: 100px; }
 
 .bar-transparent {
   background-color: transparent;
@@ -10698,10 +10777,73 @@ p * {
   text-align: center; }
 
 .no-border {
-  border: 0px !important; }
+  border: 0 !important; }
 
 ion-content.overflow-visible {
   overflow: visible; }
+
+progress[value] {
+  /* Reset the default appearance */
+  -webkit-appearance: none;
+  appearance: none;
+  align-self: center;
+  margin: 0px; }
+
+progress[value]::-webkit-progress-bar {
+  background-color: #727271;
+  border-radius: 2px;
+  height: 5px; }
+
+progress[value]::-webkit-progress-value {
+  background-color: #FFBC1D;
+  border-radius: 2px;
+  background-size: 35px 20px, 100% 100%, 100% 100%;
+  transition: width 300ms ease-in; }
+
+.practice-progress, progress[value]::-webkit-progress-value {
+  background-color: #39B89A;
+  height: 5px;
+  z-index: 1; }
+
+.progress-bar-container {
+  position: relative; }
+
+.progress-bar-container > .mark-0 {
+  border-radius: 100%;
+  height: 20px;
+  width: 20px;
+  background-color: #727271;
+  z-index: 2;
+  position: absolute;
+  margin-top: 2px;
+  left: calc(0% - 10px); }
+
+.mark-filled {
+  background-color: #39B89A !important; }
+
+.progress-bar-container > .mark-60 {
+  z-index: 2;
+  position: absolute;
+  width: 25px;
+  left: calc(60% - 12px);
+  height: 30px;
+  margin-top: -3px; }
+
+.progress-bar-container > .mark-80 {
+  z-index: 2;
+  position: absolute;
+  width: 25px;
+  left: calc(80% - 12px);
+  height: 30px;
+  margin-top: -3px; }
+
+.progress-bar-container > .mark-100 {
+  z-index: 2;
+  position: absolute;
+  width: 25px;
+  left: calc(100% - 12px);
+  height: 30px;
+  margin-top: -3px; }
 
 .animation-delay {
   -webkit-animation-delay: 1s; }

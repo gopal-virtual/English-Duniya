@@ -38,7 +38,7 @@
     quizCtrl.endQuiz = endQuiz;
     quizCtrl.pauseQuiz = pauseQuiz;
     quizCtrl.restartQuiz = restartQuiz;
-
+    quizCtrl.CONSTANT = CONSTANT;
     //audio
     quizCtrl.playAudio = playAudio;
     quizCtrl.starCount = starCount;
@@ -53,7 +53,7 @@
 
     //Regex operations
     quizCtrl.soundIdRegex = /(?:\[\[)(?:sound)(?:\s)(?:id=)([0-9]+)(?:\]\])/;
-    quizCtrl.imageTagRegex = /(?:\[\[)(?:image)(?:\s)(?:id=)([0-9]+)(?:\]\])/;
+    quizCtrl.imageTagRegex = /(?:\[\[)(?:img)(?:\s)(?:id=)([0-9]+)(?:\]\])/;
 
     quizCtrl.getSoundId = getSoundId;
     quizCtrl.getImageId = getImageId;
@@ -95,9 +95,13 @@
           });
           $state.go('map.navigate');
         }
+
         quizCtrl.report = $stateParams.report;
+        $log.debug("Summary")
+        $log.debug(quizCtrl.report);
         quizCtrl.quiz = $stateParams.quiz;
         quizCtrl.quizResult = quizCtrl.calculateResult(quizCtrl.report, quizCtrl.quiz);
+        $log.debug(quizCtrl.quizResult);
         Quiz.saveReport({
             node: quizCtrl.quiz.node.id,
             person: Auth.getProfileId(),
@@ -127,7 +131,8 @@
 
       } else if ($state.current.name == "quiz.questions" || $state.current.name == "quiz.practice.questions") {
         quizCtrl.report = {};
-        quizCtrl.practiceResult.totalMarks= quizCtrl.quiz.node.type.score;
+        quizCtrl.practiceResult.totalMarks = quizCtrl.quiz.node.type.score;
+        quizCtrl.practiceResult.percentCorrect = 0;
         quizCtrl.practiceResult.scoredMarks = 0;
         quizCtrl.report.quiz_id = quiz.node.id;
         quizCtrl.report.attempts = {};
@@ -152,39 +157,72 @@
           //}
           else {}
         }
-      } else if($state.current.name = 'quiz.practice.summary'){
+      } else if ($state.current.name = 'quiz.practice.summary') {
         $log.debug("shere");
-          $log.debug($stateParams);
+        $log.debug($stateParams);
         quizCtrl.report = $stateParams.report;
         quizCtrl.quiz = $stateParams.quiz;
         quizCtrl.practiceResult = $stateParams.practiceResult;
         $log.debug(quizCtrl.report);
         Quiz.saveReport({
-            node: quizCtrl.quiz.node.id,
+            node: '10014638-8567-4a33-814a-1b7bfedf0664',
             person: Auth.getProfileId(),
             score: quizCtrl.practiceResult.totalMarks
           }, function(success) {
             var report_id = success.id;
-            angular.forEach(quizCtrl.report.attempts, function(value, key) {
-              // 1 - Attempted
-              // 2 - Skipped
-              // 3 - NotAttempted
+            var attempts = [];
 
-              angular.forEach(value,function(attempt){
-                var attempt = {
-                  answer: value.length > 0 ? value : null,
-                  score: quizCtrl.quizResult.score[key],
-                  status: value.length > 0 ? 1 : 2,
+            angular.forEach(quizCtrl.quiz.objects, function(question) {
+              var attempts_array = quizCtrl.report.attempts[question.node.id];
+              quizCtrl.report.attempts[question.node.id].is_correct = false;
+              angular.forEach(attempts_array, function(attempt) {
+                $log.debug("attempt");
+                $log.debug(attempt);
+                attempts.push({
+                  answer: attempt.length > 0 ? attempt : null,
+                  score: quizCtrl.isCorrect(question, attempt) ? question.node.type.score : 0,
+                  status: 1, //Skipping is not allowed in practice so status is set to 1
                   person: Auth.getProfileId(),
                   report: report_id,
-                  node: key
+                  node: question.node.id
+                });
+                if (quizCtrl.isCorrect(question, attempt)) {
+                  quizCtrl.report.attempts[question.node.id].is_correct = true;
                 }
-                Quiz.saveAttempt(attempt, function(response) {}, function(error) {})
               })
-            });
+            })
+            quizCtrl.practiceResult.analysis = attempts;
+            Quiz.saveAttempt(attempts, function(response) {}, function(error) {})
           }, function(error) {
 
           })
+          // Quiz.saveReport({
+          //     node: quizCtrl.quiz.node.id,
+          //     person: Auth.getProfileId(),
+          //     score:
+          //   }, function(success) {
+          //     var report_id = success.id;
+          //
+          //     angular.forEach(quizCtrl.report.attempts, function(value, key) {
+          //       // 1 - Attempted
+          //       // 2 - Skipped
+          //       // 3 - NotAttempted
+          //
+          //       angular.forEach(value,function(attempt){
+          //         var attempt = {
+          //           answer: value.length > 0 ? value : null,
+          //           score: quizCtrl.quizResult.score[key],
+          //           status: value.length > 0 ? 1 : 2,
+          //           person: Auth.getProfileId(),
+          //           report: report_id,
+          //           node: key
+          //         }
+          //         Quiz.saveAttempt(attempt, function(response) {}, function(error) {})
+          //       })
+          //     });
+          //   }, function(error) {
+          //
+          //   })
       }
 
     }
@@ -221,14 +259,12 @@
       );
 
 
-        $log.debug("a")
       if (quizCtrl.isCorrectAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex])) {
-        $log.debug("Correct attempt");
-        quizCtrl.practiceResult.scoredMarks +=  quizCtrl.quiz.objects[quizCtrl.currentIndex].node.type.score * quizCtrl.MARKS_MULTIPIER;
-        $log.debug(quizCtrl.practiceResult);
+        quizCtrl.practiceResult.scoredMarks += quizCtrl.quiz.objects[quizCtrl.currentIndex].node.type.score;
+        $log.debug("scored marks", quizCtrl.practiceResult.scoredMarks)
         quizCtrl.practiceResult.percentCorrect = parseInt((quizCtrl.practiceResult.scoredMarks / quizCtrl.practiceResult.totalMarks) * 100);
-        $log.debug("Percent Correct"+quizCtrl.practiceResult.percentCorrect);
-        quizCtrl.myStyle.width = quizCtrl.practiceResult.percentCorrect;
+        $log.debug("percent", quizCtrl.practiceResult.percentCorrect)
+        quizCtrl.myStyle.width = quizCtrl.practiceResult.percentCorrect + "%";
       } else {
         if (quizCtrl.report.attempts[quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.id].length == 2) {
           quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].attempted = {};
@@ -252,7 +288,7 @@
         //removes false keys
         quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted = _.pick(quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted, _.identity);
         // true if attempted and key count is more than one
-        return quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted && _.size(quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted) > 1;
+        return quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted && _.size(quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted) >= 1;
       }
       if (quizCtrl.quiz.objects[quizCtrl.currentIndex].node.type.type == "sentence ordering" || quizCtrl.quiz.objects[quizCtrl.currentIndex].node.type.type == "sentence structuring") {
         return quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted.length ? true : false;
@@ -315,7 +351,7 @@
       if (question.node.type.type == 'choicequestion' && question.node.type.content.is_multiple) {
         return _.chain(attempt).map(function(num, key) {
           return parseInt(key);
-        }).isEqual(question.node.type.answer).value();
+        }).sort().isEqual(question.node.type.answer.sort()).value();
       }
       // single choice
       if (question.node.type.type == 'choicequestion' && !question.node.type.content.is_multiple) {
@@ -339,7 +375,7 @@
               return num ? parseInt(key) : false;
             }).reject(function(num) {
               return !num;
-            }).isEqual(question.node.type.answer).value())
+            }).sort().isEqual(question.node.type.answer.sort()).value())
             return true;
         }
         return false;
@@ -379,7 +415,9 @@
     function playAudio(key) {
       angular.element("#audioplayer")[0].pause();
       if (key) {
-        angular.element("#audioSource")[0].src = key;
+
+        $log.debug(quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.type.content.widgets.sounds[key])
+        angular.element("#audioSource")[0].src = quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.type.content.widgets.sounds[key];
       } else {
         angular.element("#audioSource")[0].src = 'sound/water-drop.mp3';
       }
@@ -399,25 +437,26 @@
       return true;
     };
     $scope.closeModal = function() {
-      $scope.modal.hide();
-
-      if (quizCtrl.currentIndex >= quizCtrl.quiz.objects.length - 1) {
-        $log.debug("Last question exiting now");
-        $state.go('quiz.practice.summary', {
-          quiz : angular.copy(quizCtrl.quiz),
-          practiceResult : angular.copy(quizCtrl.practiceResult),
-          report: angular.copy(quizCtrl.report)
-        });
-      } else {
-        $log.debug("Not last question");
-        // $scope.modal.hide();
-        $log.debug("c")
-
-        if (isCorrectAttempted(quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()]) || quizCtrl.report.attempts[quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.id].length >= 2) {
-          $log.debug("Correct or last attempt");
-          quizCtrl.nextQuestion();
+      if (isCorrectAttempted(quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()]) || quizCtrl.report.attempts[quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.id].length >= 2) {
+        $log.debug("Correct or last attempt");
+        if (quizCtrl.currentIndex >= quizCtrl.quiz.objects.length - 1) {
+          $log.debug("Last question exiting now");
+          $scope.modal.hide().then(function() {
+            $state.go('quiz.practice.summary', {
+              quiz: angular.copy(quizCtrl.quiz),
+              practiceResult: angular.copy(quizCtrl.practiceResult),
+              report: angular.copy(quizCtrl.report)
+            });
+          });
+        } else {
+          $scope.modal.hide().then(function() {
+            quizCtrl.nextQuestion();
+          });
         }
+      } else {
+        $scope.modal.hide()
       }
+
 
     };
 
@@ -459,16 +498,20 @@
       angular.forEach(quiz.objects, function(value) {
         if (isAttempted(value)) {
           $log.debug("d")
+          $log.debug(value);
 
           if (quizCtrl.isCorrectAttempted(value)) {
+            $log.debug("coorect attempted");
             result.analysis[value.node.id] = {
               title: value.node.title,
               status: 1
             };
-            result.score[value.node.id] = parseInt(value.node.level) * quizCtrl.MARKS_MULTIPIER;
-            result.marks += parseInt(value.node.level) * quizCtrl.MARKS_MULTIPIER;
+            result.score[value.node.id] = value.node.type.score;
+            result.marks += value.node.type.score;
             result.correct_questions++;
           } else {
+            $log.debug("in coorect attempted");
+
             result.analysis[value.node.id] = {
               title: value.node.title,
               status: 0
@@ -484,14 +527,15 @@
         }
 
       });
+      // $log.debug(result)
       var percent_correct = parseInt((result.marks / quiz.node.type.score) * 100);
       $log.debug('see the score', result.marks, quiz.node.type.score, percent_correct);
       if (percent_correct >= CONSTANT.STAR.ONE && percent_correct < CONSTANT.STAR.TWO) {
         result.stars = 1;
       } else if (percent_correct >= CONSTANT.STAR.TWO && percent_correct < CONSTANT.STAR.THREE) {
-        result.stars = 1;
+        result.stars = 2;
       } else if (percent_correct >= CONSTANT.STAR.THREE) {
-        result.stars = 1;
+        result.stars = 3;
       } else {}
       return result;
     }
@@ -508,15 +552,21 @@
       }).then(function(res) {
         if (res) {
           angular.forEach(quiz.objects, function(value, key) {
+            $log.debug("here");
             if (value.node.type.type == 'choicequestion' && !value.node.type.content.is_multiple && value.attempted !== '') {
               quizCtrl.submitAttempt(value.node.id,
                 value.attempted);
             } else if (value.node.type.type == 'choicequestion' && value.node.type.content.is_multiple && value.attempted.length > 0) {
+              $log.debug("Multiple found");
+
               quizCtrl.submitAttempt(value.node.id,
                 value.attempted);
             }
 
           });
+          $log.debug("Report");
+          $log.debug(quizCtrl.report);
+
           $state.go('quiz.summary', {
             report: angular.copy(quizCtrl.report),
             quiz: angular.copy(quizCtrl.quiz)
@@ -582,7 +632,7 @@
 
     function parseToDisplay(string) {
       var text = quizCtrl.replaceImageTag(quizCtrl.removeSoundTag(string));
-      return text.trim() || '<img height="100" width="100" src="' + CONSTANT.ASSETS.IMG.SOUND_PLACEHOLDER + '"></img>';
+      return text.trim() || '<img class="card-image" src="' + CONSTANT.ASSETS.IMG.SOUND_PLACEHOLDER + '"></img>';
 
     }
 
@@ -591,7 +641,7 @@
     }
 
     function replaceImageTag(string) {
-      return string.replace(quizCtrl.imageTagRegex, "<img src='" + quizCtrl.getImageSrc(quizCtrl.getImageId(string)) + "'></img>");
+      return string.replace(quizCtrl.imageTagRegex, "<img class='card-image' src='" + quizCtrl.getImageSrc(quizCtrl.getImageId(string)) + "'></img>");
     }
   }
 })();
