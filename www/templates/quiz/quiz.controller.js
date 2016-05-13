@@ -417,7 +417,7 @@
       if (key) {
 
         $log.debug(quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.type.content.widgets.sounds[key])
-        angular.element("#audioSource")[0].src = quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.type.content.widgets.sounds[key];
+        angular.element("#audioSource")[0].src = 'http://cc-test.zaya.in/' + quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.type.content.widgets.sounds[key];
       } else {
         angular.element("#audioSource")[0].src = 'sound/water-drop.mp3';
       }
@@ -641,7 +641,7 @@
     }
 
     function replaceImageTag(string) {
-      return string.replace(quizCtrl.imageTagRegex, "<img class='card-image' src='" + quizCtrl.getImageSrc(quizCtrl.getImageId(string)) + "'></img>");
+      return string.replace(quizCtrl.imageTagRegex, "<img class='card-image' src='http://cc-test.zaya.in/" + quizCtrl.getImageSrc(quizCtrl.getImageId(string)) + "'></img>");
     }
   }
 })();
