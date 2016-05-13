@@ -60,10 +60,10 @@
             setStar(key, lessons[key], 3);
           } else {}
 
-          // unlock first lessons
-          if (key == 0) {
+        }
+        // unlock first lessons
+        if (key == 0) {
             setLock(key, value, false);
-          }
         }
       })
 
