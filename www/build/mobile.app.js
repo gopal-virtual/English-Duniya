@@ -1442,6 +1442,63 @@
 })();
 
 (function() {
+    'use strict';
+
+    angular
+        .module('zaya-intro')
+        .controller('introController', introController);
+
+    introController.$inject = [];
+
+    /* @ngInject */
+    function introController() {
+        var introCtrl = this;
+
+        introCtrl.tabIndex = 0;
+        introCtrl.slides = [
+          {
+            title : "Hello this Title",
+            description : "some description is theresome description is theresome description is there",
+            img : "img/01.png",
+            color : "bg-brand-light"
+          },
+          {
+            title : "Hello this Title",
+            description : "some description is theresome description is theresome description is there",
+            img : "img/02.png",
+            // color : "bg-brand-light"
+            color : "bg-assertive-light"
+          },
+          {
+            title : "Hello this Title",
+            description : "some description is theresome description is theresome description is there",
+            img : "img/03.png",
+            // color : "bg-brand-light"
+            color : "bg-royal-light"
+          }
+        ];
+    }
+})();
+
+(function() {
+  'use strict';
+
+  mainRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
+  angular
+    .module('zaya-intro')
+    .config(mainRoute);
+
+  function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
+    $stateProvider
+      .state('intro',{
+        url : '/intro',
+        templateUrl : CONSTANT.PATH.INTRO+'/intro'+CONSTANT.VIEW,
+        controller : "introController as introCtrl"
+      })
+  }
+})();
+
+(function() {
   'use strict';
 
   angular
@@ -1499,63 +1556,6 @@
                   controller : 'contentController as contentCtrl'
               }
           }
-      })
-  }
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('zaya-intro')
-        .controller('introController', introController);
-
-    introController.$inject = [];
-
-    /* @ngInject */
-    function introController() {
-        var introCtrl = this;
-
-        introCtrl.tabIndex = 0;
-        introCtrl.slides = [
-          {
-            title : "Hello this Title",
-            description : "some description is theresome description is theresome description is there",
-            img : "img/01.png",
-            color : "bg-brand-light"
-          },
-          {
-            title : "Hello this Title",
-            description : "some description is theresome description is theresome description is there",
-            img : "img/02.png",
-            // color : "bg-brand-light"
-            color : "bg-assertive-light"
-          },
-          {
-            title : "Hello this Title",
-            description : "some description is theresome description is theresome description is there",
-            img : "img/03.png",
-            // color : "bg-brand-light"
-            color : "bg-royal-light"
-          }
-        ];
-    }
-})();
-
-(function() {
-  'use strict';
-
-  mainRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
-  angular
-    .module('zaya-intro')
-    .config(mainRoute);
-
-  function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
-    $stateProvider
-      .state('intro',{
-        url : '/intro',
-        templateUrl : CONSTANT.PATH.INTRO+'/intro'+CONSTANT.VIEW,
-        controller : "introController as introCtrl"
       })
   }
 })();
@@ -2637,11 +2637,10 @@ window.createGame = function(scope, lessons, injector, log) {
 
         $log.debug(quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.type.content.widgets.sounds[key])
         angular.element("#audioSource")[0].src = 'http://cc-test.zaya.in' + quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.type.content.widgets.sounds[key];
-      } else {
-        angular.element("#audioSource")[0].src = 'sound/water-drop.mp3';
+        angular.element("#audioplayer")[0].load();
+        angular.element("#audioplayer")[0].play();
       }
-      angular.element("#audioplayer")[0].load();
-      angular.element("#audioplayer")[0].play();
+
     }
 
 
@@ -2851,7 +2850,7 @@ window.createGame = function(scope, lessons, injector, log) {
 
     function parseToDisplay(string) {
       var text = quizCtrl.replaceImageTag(quizCtrl.removeSoundTag(string));
-      return text.trim() || '<img class="content-image" src="' + CONSTANT.ASSETS.IMG.SOUND_PLACEHOLDER + '"></img>';
+      return text.trim() || '<img class="content-image sound-image" src="' + CONSTANT.ASSETS.IMG.SOUND_PLACEHOLDER + '"></img>';
 
     }
 

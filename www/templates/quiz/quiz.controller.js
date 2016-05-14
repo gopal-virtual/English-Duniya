@@ -631,7 +631,7 @@
 
     function parseToDisplay(string) {
       var text = quizCtrl.replaceImageTag(quizCtrl.removeSoundTag(string));
-      return text.trim() || '<img class="content-image" src="' + CONSTANT.ASSETS.IMG.SOUND_PLACEHOLDER + '"></img>';
+      return text.trim() || '<img class="content-image sound-image" src="' + CONSTANT.ASSETS.IMG.SOUND_PLACEHOLDER + '"></img>';
 
     }
 

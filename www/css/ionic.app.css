@@ -10750,6 +10750,10 @@ p * {
   max-height: 95%;
   max-width: 95%; }
 
+.option > .content-image.sound-image {
+  max-height: 85%;
+  max-width: 85%; }
+
 .selected.wrong-attempt,
 .card-brand.wrong-attempt,
 .wrong-attempt {
@@ -10809,7 +10813,8 @@ progress[value] {
   -webkit-appearance: none;
   appearance: none;
   align-self: center;
-  margin: 0px; }
+  margin: 0px;
+  margin-top: 4%; }
 
 progress[value]::-webkit-progress-bar {
   background-color: #727271;
@@ -11121,7 +11126,8 @@ progress[value]::-webkit-progress-value {
 
 .question-subheader {
   height: 25% !important;
-  top: 8% !important; }
+  top: 8% !important;
+  box-shadow: 1px 1px 1px gray; }
 
 .has-question-subheader {
   top: 33% !important; }

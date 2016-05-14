@@ -65,7 +65,11 @@
 .option>.content-image {
   max-height: 95%;
   max-width: 95%;
+}
 
+.option>.content-image.sound-image {
+  max-height: 85%;
+  max-width: 85%;
 }
 .selected.wrong-attempt,
 .card-brand.wrong-attempt,

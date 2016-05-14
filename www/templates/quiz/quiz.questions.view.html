@@ -8,14 +8,14 @@
       <progress max="1" value="{{(quizCtrl.currentIndex+1)/quizCtrl.quiz.objects.length}}"></progress>
         </div>
       <div class="col" align="right">
-        <a ui-sref="map.navigate" class="header-icon icon-question-mark"></a>
+        <!-- <a ui-sref="map.navigate" class="header-icon icon-question-mark"></a> -->
       </div>
     </div>
 
   </div>
   <ion-slide-box on-slide-changed="quizCtrl.slideHasChanged($index)" show-pager="false">
     <ion-slide ng-repeat="question in quizCtrl.quiz.objects" ng-class="{'animation-question-slide':quizCtrl.isCurrentIndex($index)}">
-      <div class="bar bar-subheader question-subheader bg-pale fading-scroll-bottom ">
+      <div class="bar bar-subheader question-subheader bg-pale ">
 
         <div ng-if="question.node.title" ng-bind-html="quizCtrl.parseToDisplay(question.node.title)" class="question card card-transparent center margin-x-0 margin-y-0" ng-click="quizCtrl.playAudio(quizCtrl.getSoundId(question.node.title))">
 
@@ -32,12 +32,12 @@
             class="card center card-pale card-radius"
             ng-repeat="option in question.node.type.content.options">
             <label ng-click="quizCtrl.playAudio(quizCtrl.getSoundId(option.option))">
-              <input class="hide">
+              <input class="hide" >
               <div class="padding-10 font-md option" ng-if="option" ng-bind-html="quizCtrl.parseToDisplay(option.option)"></div>
               <!-- <div class="padding-10" ng-if="option.image"><img ng-src="{{option.image}}" class="option-image"></div>
-          <div class="padding-10" ng-if="!option.option && !option.image">
-            <img  height="100" width="100" src="img/icons/sound.png" >
-          </div> -->
+              <div class="padding-10" ng-if="!option.option && !option.image">
+              <img  height="100" width="100" src="img/icons/sound.png" >
+            </div> -->
             </label>
           </div>
           <!-- MCQ options -->
@@ -47,7 +47,7 @@
             class="card center card-pale card-radius"
             ng-repeat="option in question.node.type.content.options">
             <label ng-click="quizCtrl.playAudio(quizCtrl.getSoundId(option.option))">
-              <input class="hide" type="checkbox" ng-model="question.attempted[option.key]" ng-value="option.key">
+              <input class="hide" type="checkbox" ng-model="question.attempted[option.key]" ng-value="option.key" >
               <div class="padding-10 font-md option" ng-if="option" ng-bind-html="quizCtrl.parseToDisplay(option.option)"></div>
               <!-- <div class="padding-10" ng-if="option.image"><img ng-src="{{option.image}}" class="option-image"></div> -->
               <!-- <div class="padding-10" ng-if="!option.option && !option.image"><img height="100" width="100" src="img/icons/sound.png"> </div> -->
@@ -68,7 +68,7 @@
         <source id="audioSource" type="audio/mpeg">
       </audio>
 
-      <div class="bar bar-footer bar-footer-large bg-green fading-scroll-top padding-x-20">
+      <div class="bar bar-footer bar-footer-large bg-green padding-x-20">
         <div class="row ">
           <div class="col">
             <button ng-if="quizCtrl.currentIndex != quizCtrl.quiz.objects.length - 1" class="icon-next animation-fade-in-from-bottom button button-block bg-brand-yellow padding-20 button-round" ng-click="quizCtrl.slideTo($index+1)">
