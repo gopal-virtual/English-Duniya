@@ -71,7 +71,11 @@
       <div class="bar bar-footer bar-footer-large bg-green fading-scroll-top padding-x-20">
         <div class="row ">
           <div class="col">
-            <button class="icon-next animation-fade-in-from-bottom button button-block bg-brand-yellow padding-20 button-round" ng-click="quizCtrl.currentIndex == quizCtrl.quiz.objects.length - 1 ? quizCtrl.submitQuiz() : quizCtrl.slideTo($index+1)"></button>
+            <button ng-if="quizCtrl.currentIndex != quizCtrl.quiz.objects.length - 1" class="icon-next animation-fade-in-from-bottom button button-block bg-brand-yellow padding-20 button-round" ng-click="quizCtrl.slideTo($index+1)">
+            </button>
+            <button  ng-if="quizCtrl.currentIndex == quizCtrl.quiz.objects.length - 1" class=" animation-fade-in-from-bottom button button-block bg-brand-yellow padding-x-20 padding-y-10 button-round" ng-click="quizCtrl.submitQuiz()">
+              SUBMIT
+            </button>
           </div>
         </div>
       </div>
