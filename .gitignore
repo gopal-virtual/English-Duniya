@@ -9,4 +9,5 @@ plugins/
 .idea/
 *.apk
 /www/build/
+/www/css/
 .DS_Store
