@@ -10609,6 +10609,9 @@ p * {
 .icon-fit-height {
   background-size: auto 50%; }
 
+.icon-left-align {
+  background-position: 5% center; }
+
 .card {
   border-radius: 10px;
   box-sizing: content-box; }
@@ -11068,24 +11071,24 @@ progress[value]::-webkit-progress-value {
   position: absolute;
   width: 25px;
   left: calc(60% - 12px);
-  height: 30px;
-  margin-top: -3px; }
+  height: 40px;
+  margin-top: -2%; }
 
 .progress-bar-container > .mark-80 {
   z-index: 2;
   position: absolute;
   width: 25px;
   left: calc(80% - 12px);
-  height: 30px;
-  margin-top: -3px; }
+  height: 40px;
+  margin-top: -2%; }
 
 .progress-bar-container > .mark-100 {
   z-index: 2;
   position: absolute;
   width: 25px;
   left: calc(100% - 12px);
-  height: 30px;
-  margin-top: -3px; }
+  height: 40px;
+  margin-top: -2%; }
 
 .animation-delay {
   -webkit-animation-delay: 1s; }

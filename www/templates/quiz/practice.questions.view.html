@@ -2,13 +2,13 @@
   <div class="bar bar-header bg-pale quiz-header">
 
     <div class="col">
-      <a ng-click="quizCtrl.pauseQuiz()" class="header-icon icon-pause"></a>
+      <a ng-click="quizCtrl.pauseQuiz()" class="header-icon icon-pause icon-fit-width"></a>
     </div>
       <div class="padding-y-10 margin-x-10 row progress-bar-container" >
-      <div class="col-5 mark-0 " ng-class="{'mark-filled':quizCtrl.practiceResult.percentCorrect > 0}"></div>
-      <div class="col-5 mark-60" ng-class="{'icon-greenstar':quizCtrl.practiceResult.percentCorrect >= 60,'icon-nostar':quizCtrl.practiceResult.percentCorrect < 60}"></div>
-      <div class="col-5 mark-80" ng-class="{'icon-greenstar':quizCtrl.practiceResult.percentCorrect >= 80,'icon-nostar':quizCtrl.practiceResult.percentCorrect < 80}"></div>
-      <div class="col-5 mark-100" ng-class="{'icon-greenstar':quizCtrl.practiceResult.percentCorrect >= 100,'icon-nostar':quizCtrl.practiceResult.percentCorrect < 100}"></div>
+      <div class="col-5 mark-0" ng-class="{'mark-filled':quizCtrl.practiceResult.percentCorrect > 0}"  ></div>
+      <div class="col-5 mark-60 icon-fit-height" ng-class="{'icon-greenstar':quizCtrl.practiceResult.percentCorrect >= 60,'icon-nostar':quizCtrl.practiceResult.percentCorrect < 60}" ></div>
+      <div class="col-5 mark-80 icon-fit-height" ng-class="{'icon-greenstar':quizCtrl.practiceResult.percentCorrect >= 80,'icon-nostar':quizCtrl.practiceResult.percentCorrect < 80}" ></div>
+      <div class="col-5 mark-100 icon-fit-height" ng-class="{'icon-greenstar':quizCtrl.practiceResult.percentCorrect >= 100,'icon-nostar':quizCtrl.practiceResult.percentCorrect < 100}" ></div>
 
       <!-- <div class="col" style="z-index:1"> -->
         <progress max="100" class="practice-progress" value="{{quizCtrl.practiceResult.percentCorrect}}"></progress>
@@ -69,7 +69,7 @@
   <div class="bar bar-footer bar-footer-large bg-green">
     <div class="row">
       <div class="col">
-        <button class="icon-next animation-fade-in-from-bottom button button-block bg-brand-yellow padding-20 button-round" ng-click="quizCtrl.decide()" ng-disabled="!quizCtrl.canSubmit()">
+        <button class="icon-next animation-fade-in-from-bottom button button-block bg-brand-yellow padding-20 button-round icon-fit-height" ng-click="quizCtrl.decide()" ng-disabled="!quizCtrl.canSubmit()">
           <!-- {{quizCtrl.isCorrectAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex]) ? quizCtrl.currentIndex < quizCtrl.quiz.objects.length - 1 ? 'CONTINUE' : 'DONE' : 'SUBMIT'}} -->
         </button>
 

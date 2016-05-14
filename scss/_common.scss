@@ -58,11 +58,11 @@ z-index: 1;
   background-color:$brand-green !important;
 }
 .progress-bar-container > .mark-60{
-  z-index:2;position:absolute;width: 25px;left: calc(60% - 12px);height: 30px;margin-top: -3px;
+  z-index:2;position:absolute;width: 25px;left: calc(60% - 12px);height: 40px;margin-top: -2%;
 }
 .progress-bar-container > .mark-80{
-  z-index:2;position:absolute;width: 25px;left: calc(80% - 12px);height: 30px;margin-top: -3px;
+  z-index:2;position:absolute;width: 25px;left: calc(80% - 12px);height: 40px;margin-top: -2%;
 }
 .progress-bar-container > .mark-100{
-  z-index:2;position:absolute;width: 25px;left: calc(100% - 12px);height: 30px;margin-top: -3px;
+  z-index:2;position:absolute;width: 25px;left: calc(100% - 12px);height: 40px;margin-top: -2%;
 }

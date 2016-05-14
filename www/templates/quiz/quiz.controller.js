@@ -165,7 +165,7 @@
         quizCtrl.practiceResult = $stateParams.practiceResult;
         $log.debug(quizCtrl.report);
         Quiz.saveReport({
-            node: '10014638-8567-4a33-814a-1b7bfedf0664',
+            node: quizCtrl.quiz.node.id,
             person: Auth.getProfileId(),
             score: quizCtrl.practiceResult.totalMarks
           }, function(success) {
@@ -187,12 +187,13 @@
                   node: question.node.id
                 });
                 if (quizCtrl.isCorrect(question, attempt)) {
+                  $log.debug(quizCtrl.isCorrect(question, attempt),'is correct');
                   quizCtrl.report.attempts[question.node.id].is_correct = true;
                 }
               })
             })
             quizCtrl.practiceResult.analysis = attempts;
-            Quiz.saveAttempt(attempts, function(response) {}, function(error) {})
+            // Quiz.saveAttempt(attempts, function(response) {}, function(error) {})
           }, function(error) {
 
           })
@@ -577,21 +578,21 @@
     }
 
     function endQuiz() {
-
-      $ionicPopup.confirm({
-        title: 'End Quiz?',
-        template: 'Are you sure you want to end quiz?'
-      }).then(function(res) {
-        if (res) {
-          $ionicLoading.show({
-            noBackdrop: false,
-            hideOnStateChange: true
-          });
-          $state.go('map.navigate', {});
-        } else {
-          console.log('You are not sure');
-        }
+      $ionicLoading.show({
+        noBackdrop: false,
+        hideOnStateChange: true
       });
+      $state.go('map.navigate', {});
+      // $ionicPopup.confirm({
+      //   title: 'End Quiz?',
+      //   template: 'Are you sure you want to end quiz?'
+      // }).then(function(res) {
+      //   if (res) {
+      //
+      //   } else {
+      //     console.log('You are not sure');
+      //   }
+      // });
     }
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.QUIZ + '/quiz.pause.modal' + CONSTANT.VIEW, {
       scope: $scope,
@@ -605,13 +606,14 @@
     }
 
     function restartQuiz() {
-      $ionicLoading.show({
-        noBackdrop: false,
-        hideOnStateChange: true
-      });
       $state.go($state.current, {}, {
         reload: true
       });
+      // $ionicLoading.show({
+      //   noBackdrop: false,
+      //   hideOnStateChange: true
+      // });
+
     }
 
 
