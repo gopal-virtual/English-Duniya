@@ -9742,7 +9742,7 @@ input[type=radio].hide {
 
 .input-group > .input-group-addon-energised {
   background-color: #ffc900;
-  color: white; }
+  color: black; }
 
 .input-group > .input-group-addon-assertive {
   background-color: #ef473a;
@@ -11277,7 +11277,7 @@ progress[value]::-webkit-progress-value {
 
 .alert-energised {
   background-color: #ffc900;
-  color: white; }
+  color: black; }
 
 .alert-assertive {
   background-color: #ef473a;

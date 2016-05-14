@@ -73,13 +73,21 @@
         noBackdrop: false,
         hideOnStateChange: true
       });
-      if (mapCtrl.resourceType(resource) != 'video') {
+      if (mapCtrl.resourceType(resource) == 'assessment') {
         $timeout(function() {
           $state.go('quiz.questions', {
             id: resource.node.id
           });
         });
-      } else {
+      }
+      else if(mapCtrl.resourceType(resource) == 'practice'){
+          $timeout(function() {
+            $state.go('quiz.practice.questions', {
+              id: resource.node.id
+            });
+          });
+      }
+      else if(mapCtrl.resourceType(resource) == 'video') {
         $timeout(function() {
           $state.go('content.video', {
             video: {
@@ -90,15 +98,18 @@
         });
         //   mapCtrl.config.sources[0].src = mapCtrl.getSrc(resource.node.type.path);
       }
+      else{}
     }
 
     function resourceType(resource) {
-      if (resource.node.content_type_name == 'assessment') {
+      if (resource.node.content_type_name == 'assessment' && resource.node.type.type == 'assessment') {
         return 'assessment';
-      } else if (resource.node.content_type_name == 'resource') {
-        if (resource.node.type.file_type.substring(0, resource.node.type.file_type.indexOf('/')) == 'video') {
-          return 'video';
-        }
+      }
+      else if(resource.node.content_type_name == 'assessment' && resource.node.type.type == 'practice'){
+          return 'practice';
+      }
+      else if (resource.node.content_type_name == 'resource' && resource.node.type.file_type == 'mp4') {
+        return 'video';
       } else {}
     }
 
@@ -107,12 +118,12 @@
     }
 
     function getIcon(resource) {
-      if (resource.node.content_type_name == 'assessment') {
+      if (resource.node.content_type_name == 'assessment' && resource.node.type.type == 'assessment') {
         return CONSTANT.ASSETS.IMG.ICON + '/quiz.png';
-      } else if (resource.node.content_type_name == 'resource') {
-        if (resource.node.type.file_type.substring(0, resource.node.type.file_type.indexOf('/')) == 'video') {
-          return CONSTANT.ASSETS.IMG.ICON + '/video.png';
-        }
+      } else if (resource.node.content_type_name == 'assessment' && resource.node.type.type == 'practice') {
+        return CONSTANT.ASSETS.IMG.ICON + '/practice.png';
+      } else if (resource.node.content_type_name == 'resource' && resource.node.type.file_type == 'mp4') {
+        return CONSTANT.ASSETS.IMG.ICON + '/video.png';
       } else {
 
       }

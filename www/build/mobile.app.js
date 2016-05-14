@@ -296,6 +296,816 @@
 }
 )();
 
+(function () {
+  'use strict';
+  angular
+    .module('zaya-auth')
+    .controller('authController', authController)
+  authController.$inject = ['$q','$ionicModal', '$state', 'Auth', 'audio', '$rootScope', '$ionicPopup', '$log', '$cordovaOauth', 'CONSTANT', '$interval', '$scope', '$ionicLoading'];
+  function authController($q,$ionicModal, $state, Auth, audio, $rootScope, $ionicPopup, $log, $cordovaOauth, CONSTANT, $interval, $scope, $ionicLoading) {
+    var authCtrl = this;
+    var email_regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    var indian_phone_regex = /^[7-9][0-9]{9}$/;
+    //var username_regex = /^[a-z0-9]*$/;
+    var min = 6;
+    var max = 15;
+    var country_code = '+91';
+    authCtrl.audio = audio;
+    authCtrl.login = login;
+    authCtrl.logout = logout;
+    authCtrl.signup = signup;
+    authCtrl.openModal = openModal;
+    authCtrl.closeModal = closeModal;
+    authCtrl.rootScope = $rootScope;
+    authCtrl.validCredential = validCredential;
+    authCtrl.showError = showError;
+    authCtrl.showAlert = showAlert;
+    authCtrl.verifyOtpValidations = verifyOtpValidations;
+    authCtrl.verifyOtp = verifyOtp;
+    // authCtrl.getToken = getToken;
+    authCtrl.passwordResetRequest = passwordResetRequest;
+    authCtrl.validateForgotPasswordForm = validateForgotPasswordForm;
+    authCtrl.resendOTP = resendOTP;
+    authCtrl.max_counter = 60;
+    authCtrl.startCounter = startCounter;
+    authCtrl.stopCounter = stopCounter;
+    authCtrl.signUpDisabled = false;
+    authCtrl.resendOTPCount = 0;
+    authCtrl.resendOTPDate = null;
+    authCtrl.maxOTPsendCountperDay = 50;
+    authCtrl.autoVerifyPhoneStatus = false;
+    authCtrl.resetPasswordLinkSent = false;
+    authCtrl.closeKeyboard = closeKeyboard;
+    authCtrl.verifyOtpResetPassword = verifyOtpResetPassword;
+    authCtrl.validCredentialChangePassword = validCredentialChangePassword;
+    authCtrl.changePassword = changePassword;
+    authCtrl.cancelOTP = cancelOTP;
+    authCtrl.recoverAccount = recoverAccount;
+    authCtrl.error = { "title" : "", "desc" : ""};
+
+
+    function recoverAccount() {
+        authCtrl.openModal('recover');
+    }
+    function openModal (modal) {
+      if(modal == 'error'){
+        authCtrl.errorModal.show();
+      }
+      else if(modal == 'recover'){
+        authCtrl.recoveryModal.show();
+      }
+      else {
+        return false;
+      }
+
+    }
+    function closeModal (modal) {
+      var q = $q.defer();
+
+      if(modal == 'error'){
+        q.resolve(authCtrl.errorModal.hide());
+      }
+      else if(modal == 'recover'){
+        q.resolve(authCtrl.recoveryModal.hide());
+      }
+      else{
+        q.reject(false);
+      }
+
+      return q.promise;
+    }
+    $ionicModal.fromTemplateUrl(CONSTANT.PATH.AUTH + '/auth.forgot.social' + CONSTANT.VIEW, {
+      scope: $scope,
+      animation: 'slide-in-up',
+    }).then(function(recoveryModal) {
+      authCtrl.recoveryModal = recoveryModal;
+    });
+    $ionicModal.fromTemplateUrl(CONSTANT.PATH.AUTH + '/auth.error.modal' + CONSTANT.VIEW, {
+      scope: $scope,
+      animation: 'slide-in-up',
+    }).then(function(errorModal) {
+      authCtrl.errorModal = errorModal;
+    });
+
+
+    function validEmail(email) {
+      return email_regex.test(email);
+    }
+
+    function validPhoneNumber(number) {
+      return indian_phone_regex.test(number);
+    }
+
+    //function validUsername(username) {
+    //  return username_regex.test(username);
+    //}
+    function login(url, user_credentials) {
+      $ionicLoading.show({
+        template: 'Logging in...'
+      });
+      user_credentials = ( url == 'login' ) ? cleanCredentials(user_credentials) : user_credentials;
+      Auth.login(url, user_credentials, function (response) {
+        Auth.getUser(function (success) {
+          Auth.setAuthProvider(url);
+          $ionicLoading.hide();
+          $state.go('map.navigate', {});
+        }, function () {
+          $ionicLoading.hide();
+          authCtrl.showError("Error Login", "Please enter a valid mobile no./Email ID and password");
+        });
+      }, function (response) {
+        $ionicLoading.hide();
+        if(response.data.details){
+          authCtrl.showError("Error Login", response.data.details);
+        }
+        else{
+          authCtrl.showError("Error Login", "Please enter a valid mobile no./Email ID and password");
+        }
+        authCtrl.audio.play('wrong');
+      })
+    }
+
+    function signup(user_credentials) {
+      $ionicLoading.show({
+        template: 'Signing up...'
+      });
+      user_credentials = cleanCredentials(user_credentials);
+      authCtrl.signUpDisabled = true;
+      Auth.signup(user_credentials, function (response) {
+        $state.go('auth.verify.phone', {});
+        $ionicLoading.hide();
+        authCtrl.signUpDisabled = false;
+      }, function (response) {
+        $ionicLoading.hide();
+        //  authCtrl.showError(_.chain(response.data).keys().first(), response.data[_.chain(response.data).keys().first()].toString());
+        if(response.data)
+        {
+          authCtrl.showError("Could not register", response.data.details);
+        }
+        else
+        {
+          authCtrl.showError("Could not register", "Please enter a valid mobile no. and password");
+        }
+        authCtrl.audio.play('wrong');
+        authCtrl.signUpDisabled = false;
+      })
+    }
+
+    function logout(path) {
+      Auth.logout(function () {
+        $state.go(path, {})
+      }, function () {
+        // body...
+      })
+    }
+
+    // web social login / will be used in web apps
+    // function getToken(webservice) {
+    //   if (webservice == 'facebook') {
+    //     $cordovaOauth.facebook(CONSTANT.CLIENTID.FACEBOOK, ["email"]).then(function (result) {
+    //       authCtrl.login('facebook', {"access_token": result.access_token});
+    //     }, function (error) {
+    //       authCtrl.showError("Error", error);
+    //     });
+    //   }
+    //   if (webservice == 'google') {
+    //     $cordovaOauth.google(CONSTANT.CLIENTID.GOOGLE, ["email"]).then(function (result) {
+    //       authCtrl.login('google', {"access_token": result.access_token});
+    //     }, function (error) {
+    //       authCtrl.showError("Error", error);
+    //     });
+    //   }
+    // }
+
+    function cleanCredentials(user_credentials) {
+      if (validEmail(user_credentials.useridentity)) {
+        user_credentials['email'] = user_credentials.useridentity;
+      }
+      else if (!isNaN(parseInt(user_credentials.useridentity, 10)) && validPhoneNumber(parseInt(user_credentials.useridentity, 10))) {
+        user_credentials['phone_number'] = country_code + user_credentials.useridentity;
+      }
+      delete user_credentials['useridentity'];
+      return user_credentials;
+    }
+
+    function validCredential(formData) {
+      if (!formData.useridentity.$viewValue) {
+        authCtrl.showError("Empty", "Its empty! Enter a valid phone number or email");
+        return false;
+      }
+      else if (formData.useridentity.$viewValue && formData.useridentity.$viewValue.indexOf('@') != -1 && !validEmail(formData.useridentity.$viewValue)) {
+        authCtrl.showError("Email", "Oops! Please enter a valid email");
+        return false;
+      }
+      else if (formData.useridentity.$viewValue && !isNaN(parseInt(formData.useridentity.$viewValue, 10)) && !validPhoneNumber(formData.useridentity.$viewValue) && !validEmail(formData.useridentity.$viewValue)) {
+        authCtrl.showError("Phone", "Oops! Please enter a valid mobile no.");
+        return false;
+      }
+      else if (!formData.password.$viewValue) {
+        authCtrl.showError("Password", "Its empty! Enter a valid password");
+        return false;
+      }
+      else if (formData.password.$viewValue.length < min) {
+        authCtrl.showError("Password", "Minimum " + min + " characters required");
+        return false;
+      }
+      else if (formData.password.$viewValue.length > max) {
+        authCtrl.showError("Password", "Maximum " + max + " can be used");
+        return false;
+      }
+      else if (formData.email && formData.email.$viewValue && !validEmail(formData.email.$viewValue)) {
+        authCtrl.showError("Email", "Oops! Please enter a valid email");
+        return false;
+      }
+      return true;
+    }
+
+    function showError(title, msg) {
+      $log.debug(title, msg);
+      authCtrl.error.title = title;
+      authCtrl.error.desc = msg;
+      authCtrl.openModal('error');
+      // $ionicPopup.alert({
+      //   title: title,
+      //   template: msg
+      // });
+    }
+
+    function showAlert(title, msg) {
+      $log.debug(title, msg);
+      authCtrl.error.title = title;
+      authCtrl.error.desc = msg;
+      authCtrl.openModal('error');
+      // $ionicPopup.alert({
+      //   title: title,
+      //   template: msg
+      // }).then(function (response) {
+      //   if (success) {
+      //     success()
+      //   }
+      // });
+    }
+
+    function verifyOtpValidations(formData) {
+      if (!formData.otp.$viewValue) {
+        authCtrl.showError("OTP", "Its empty! Enter the one time password");
+        return false;
+      }
+      $log.debug("OTP validations passed");
+      return true;
+    }
+
+    function verifyOtp(otp_credentials) {
+      $ionicLoading.show({
+        template: 'Verifying...'
+      });
+      Auth.verifyOtp(otp_credentials, otpVerifiedSuccessHandler, function (error) {
+        $ionicLoading.hide();
+        authCtrl.showError("Incorrect OTP!", "The one time password you entered is incorrect!");
+      })
+    }
+
+    function passwordResetRequest(user_credentials) {
+      $ionicLoading.show({
+        template: 'Requesting...'
+      });
+      $log.debug(user_credentials);
+      user_credentials = cleanCredentials(user_credentials);
+      $log.debug(user_credentials);
+      Auth.resetPassword(user_credentials, function (success) {
+        if (user_credentials.hasOwnProperty('phone_number')) {
+          localStorage.setItem('Authorization', success.token);
+          authCtrl.closeModal('recover');
+          $state.go('auth.forgot_verify_otp');
+        }
+        else {
+          authCtrl.showAlert("Reset Password", "We have send a link to your email");
+        }
+        authCtrl.resetPasswordLinkSent = true;
+        $ionicLoading.hide();
+      }, function (error) {
+        authCtrl.showAlert("Not Registered", "Mobile no. /Email ID is not registered.");
+        $ionicLoading.hide();
+      })
+    }
+
+    function validateForgotPasswordForm(formData) {
+      $log.debug(formData);
+      if (!formData.useridentity.$viewValue) {
+        authCtrl.showError("Empty", "Its empty! Enter a valid phone number or email");
+        return false;
+      }
+      else if (formData.useridentity.$viewValue && formData.useridentity.$viewValue.indexOf('@') != -1 && !validEmail(formData.useridentity.$viewValue)) {
+        authCtrl.showError("Email", "Oops! Please enter a valid email");
+        return false;
+      }
+      else if (formData.useridentity.$viewValue && !isNaN(parseInt(formData.useridentity.$viewValue, 10)) && !validPhoneNumber(formData.useridentity.$viewValue)) {
+        authCtrl.showError("Phone", "Oops! Please enter a valid mobile no.");
+        return false;
+      }
+      return true;
+    }
+
+    function resendOTP() {
+      if (Auth.canSendOtp(authCtrl.maxOTPsendCountperDay)) {
+        Auth.resendOTP(function (success) {
+          authCtrl.showAlert("OTP Sent", "We have sent you otp again");
+          authCtrl.startCounter();
+          authCtrl.autoVerifyPhoneStatus = 'Waiting For SMS';
+        }, function (error) {
+          authCtrl.showError(error);
+        })
+      }
+      else {
+        authCtrl.showAlert("OTP Resend count exceed", "Sorry you cant send more otps try again tomorrow");
+      }
+    }
+
+    function startCounter() {
+      authCtrl.counter = authCtrl.max_counter;
+      authCtrl.start = $interval(function () {
+        if (authCtrl.counter > 0) {
+          authCtrl.counter--;
+        } else {
+          authCtrl.stopCounter();
+        }
+      }, 1000);
+      return true;
+    }
+
+    function stopCounter() {
+      if (angular.isDefined(authCtrl.start)) {
+        $interval.cancel(authCtrl.start);
+      }
+    }
+
+    $scope.$on('smsArrived', function (event, data) {
+      $ionicLoading.show({
+        template: 'Getting OTP From SMS'
+      });
+      authCtrl.autoVerifyPhoneStatus = 'Getting OTP From SMS';
+      Auth.getOTPFromSMS(data.message, function (otp) {
+        $ionicLoading.show({
+          template: 'OTP received. Verifying..'
+        });
+        authCtrl.autoVerifyPhoneStatus = 'OTP received. Verifying..';
+        Auth.verifyOtp({'code': otp}, function (success) {
+          authCtrl.autoVerifyPhoneStatus = 'Verified';
+          otpVerifiedSuccessHandler(success);
+        }, function () {
+          $ionicLoading.hide();
+          authCtrl.autoVerifyPhoneStatus = 'Error Verifying OTP. Try Again';
+        });
+      }, function () {
+        $ionicLoading.hide();
+        authCtrl.autoVerifyPhoneStatus = 'Error Getting OTP From SMS';
+        //authCtrl.showError("Could not get OTP","Error fetching OTP");
+      });
+      if (SMS) {
+        SMS.stopWatch(function () {
+          $log.debug('watching', 'watching stopped');
+        }, function () {
+          updateStatus('failed to stop watching');
+        });
+        SMS.startWatch(function () {
+          $log.debug('watching', 'watching started');
+        }, function () {
+          updateStatus('failed to start watching');
+        });
+      }
+    });
+    function otpVerifiedSuccessHandler(success) {
+      Auth.getUser(function (success) {
+        $ionicLoading.hide();
+        authCtrl.showAlert("Correct!", "Phone Number verified!");
+        $state.go('user.personalise.social', {});
+      }, function (error) {
+        $ionicLoading.hide();
+        authCtrl.showError("Error", "Could not verify OTP. Try again");
+      });
+    }
+
+    authCtrl.numberOfWatches = function () {
+      var root = angular.element(document.getElementsByTagName('body'));
+      var watchers = [];
+      var f = function (element) {
+        angular.forEach(['$scope', '$isolateScope'], function (scopeProperty) {
+          if (element.data() && element.data().hasOwnProperty(scopeProperty)) {
+            angular.forEach(element.data()[scopeProperty].$$watchers, function (watcher) {
+              watchers.push(watcher);
+            });
+          }
+        });
+        angular.forEach(element.children(), function (childElement) {
+          f(angular.element(childElement));
+        });
+      };
+      f(root);
+      // Remove duplicate watchers
+      var watchersWithoutDuplicates = [];
+      angular.forEach(watchers, function (item) {
+        if (watchersWithoutDuplicates.indexOf(item) < 0) {
+          watchersWithoutDuplicates.push(item);
+        }
+      });
+      $log.debug(watchersWithoutDuplicates);
+    };
+    authCtrl.googleSignIn = function () {
+      $ionicLoading.show({
+        template: 'Logging in...'
+      });
+      try{
+        window.plugins.googleplus.login(
+          {
+            'scopes': 'email profile',
+            'webApiKey': '306430510808-i5onn06gvm82lhuiopm6l6188133j5r4.apps.googleusercontent.com',
+            'offline': true
+          },
+          function (user_data) {
+            authCtrl.login('google', {"access_token": user_data.oauthToken});
+            // For the purpose of this example I will store user data on local storage
+            //UserService.setUser({
+            //  userID: user_data.userId,
+            //  name: user_data.displayName,
+            //  email: user_data.email,
+            //  picture: user_data.imageUrl,
+            //  accessToken: user_data.accessToken,
+            //  idToken: user_data.idToken
+            //});
+          },
+          function (msg) {
+            authCtrl.showError("Error",msg);
+            $ionicLoading.hide();
+          }
+        );
+      }
+      catch(e){
+        $log.debug(e);
+      }
+    };
+    authCtrl.googleSignOut = function () {
+      window.plugins.googleplus.logout(
+        function (msg) {
+          void 0;
+        }
+      );
+    };
+    authCtrl.facebookSignIn = function () {
+      facebookConnectPlugin.login(['email', 'public_profile'], function (success) {
+        authCtrl.login('facebook', {"access_token": success.authResponse.accessToken});
+      }, function () {
+      })
+    };
+    function closeKeyboard() {
+      try{
+        cordova.plugins.Keyboard.close();
+      }
+      catch(e){
+        $log.debug(e);
+      }
+      return true;
+    }
+    function verifyOtpResetPassword(otp){
+        Auth.verifyOtpResetPassword(otp,function(success){
+          $log.debug(success);
+          $state.go('auth.change_password', {});
+        },function(error){
+          $log.debug(error);
+          authCtrl.showAlert("InCorrect!", "You entered wrong OTP!");
+        })
+    }
+    function validCredentialChangePassword(formData) {
+      if (!formData.password1.$viewValue) {
+        authCtrl.showError("Enter Password", "Its empty! Enter a password");
+        return false;
+      }
+      else if(formData.password1.$viewValue.length < 6){
+        authCtrl.showError("Password too small", "Password must be 6 characters long");
+        return false;
+      }
+      else if(typeof(formData.password2.$viewValue) == 'undefined' || !angular.equals(formData.password2.$viewValue,formData.password1.$viewValue)){
+        authCtrl.showError("Confirm Password", "Please confirm your password");
+        return false;
+      }
+      return true;
+    }
+    function changePassword(credentials){
+      credentials.secret_key = '@#2i0-jn9($un1w8utqc2dms!$#5+5';
+      Auth.changePassword(credentials,function(success){
+        authCtrl.showAlert('Success','You have reset your password');
+        $log.debug(success);
+        $state.go('auth.signin', {});
+      },function(error){
+        $log.debug(error);
+      })
+    }
+    function cancelOTP(){
+     localStorage.clear();
+      $state.go('auth.signin',{});
+    }
+
+  }
+})();
+
+(function () {
+  'use strict';
+  angular
+    .module('zaya-auth')
+    .factory('Auth', Auth)
+  Auth.$inject = ['Restangular', 'CONSTANT', '$cookies', '$log', '$window'];
+  function Auth(Restangular, CONSTANT, $cookies, $log, $window) {
+    var rest_auth = Restangular.withConfig(function (RestangularConfigurer) {
+      RestangularConfigurer.setBaseUrl(CONSTANT.BACKEND_SERVICE_DOMAIN + '/rest-auth');
+      RestangularConfigurer.setRequestSuffix('/');
+      RestangularConfigurer.setDefaultHeaders({
+        'Content-Type': 'application/x-www-form-urlencoded',
+      });
+    });
+    return {
+      login: function (url, user_credentials, success, failure) {
+        rest_auth.all(url).post($.param(user_credentials)).then(function (response) {
+          localStorage.setItem('Authorization', response.key || response.token);
+          success(response);
+        }, function (response) {
+          failure(response);
+        })
+      },
+      logout: function (success, failure) {
+        rest_auth.all('logout').post().then(function (response) {
+          if(localStorage.getItem('authProvider') == 'google')
+          {
+            window.plugins.googleplus.logout();
+          }
+          if(localStorage.getItem('authProvider') == 'facebook')
+          {
+            facebookConnectPlugin.logout();
+          }
+          localStorage.removeItem('Authorization');
+          localStorage.removeItem('user_details');
+          localStorage.removeItem('authProvider');
+          success();
+        }, function (error) {
+          failure();
+        })
+      },
+      signup: function (user_credentials, success, failure) {
+        rest_auth.all('registration').post($.param(user_credentials), success, failure).then(function (response) {
+          localStorage.setItem('Authorization', response.key);
+          success(response);
+        }, function (response) {
+          failure(response);
+        })
+      },
+      reset: function (email, atype, success, failure) {
+        type == 'password' && rest_auth.all('password').all('reset').post(email);
+        type == 'username' && rest_auth.all('username').all('reset').post(email);
+      },
+      isAuthorised: function () {
+        return localStorage.Authorization;
+      },
+      canSendOtp: function (max_otp_send_count) {
+        var last_otp_date = localStorage.getItem('last_otp_date');
+        var otp_sent_count = localStorage.getItem('otp_sent_count');
+        if (last_otp_date && otp_sent_count) {
+          if (this.dateCompare(new Date(), new Date((last_otp_date)))) {
+            localStorage.setItem('last_otp_date', new Date());
+            localStorage.setItem('otp_sent_count', 1);
+            return true;
+          } else {
+            if (otp_sent_count < max_otp_send_count) {
+              localStorage.setItem('last_otp_date', new Date());
+              localStorage.setItem('otp_sent_count', ++otp_sent_count);
+              return true;
+            } else {
+              return false;
+            }
+          }
+        }
+        else {
+          localStorage.setItem('last_otp_date', new Date());
+          localStorage.setItem('otp_sent_count', 1);
+          return true;
+        }
+      },
+      // remove util funstion from auth factory
+      dateCompare: function (date_1, date_2) { // Checks if date_1 > date_2
+        var month_1 = date_1.getMonth();
+        var month_2 = date_2.getMonth();
+        var day_1 = date_1.getDate();
+        var day_2 = date_2.getDate();
+        if (month_1 > month_2) {
+          return true;
+        } else if (month_1 == month_2) {
+          return day_1 > day_2;
+        } else return false;
+      },
+      verifyOtp: function (verification_credentials, success, failure) {
+        $log.debug(JSON.stringify(verification_credentials));
+        rest_auth.all('sms-verification').post($.param(verification_credentials), success, failure).then(function (response) {
+          success(response);
+        }, function (response) {
+          failure(response);
+        })
+      },
+      resetPassword: function (reset_password_credentials, success, failure) {
+        rest_auth.all('password/reset').post($.param(reset_password_credentials), success, failure).then(function (response) {
+          success(response);
+        }, function (response) {
+          failure(response);
+        })
+      },
+      resendOTP: function (success, failure) {
+        rest_auth.all('resend-sms-verification').post('', success, failure).then(function (response) {
+          success(response);
+        }, function (response) {
+          failure(response);
+        })
+      },
+      getUser: function (success, failure) {
+        Restangular.oneUrl('user_details', CONSTANT.BACKEND_SERVICE_DOMAIN + 'rest-auth/user/').get().then(function (response) {
+          localStorage.setItem('user_details', JSON.stringify(response));
+          success(response);
+        }, function (response) {
+          failure(response);
+        });
+      },
+      isVerified: function () {
+        var user_details = JSON.parse(localStorage.getItem('user_details'));
+        if (user_details) {
+          return user_details.is_verified;
+        }
+        else {
+          return false;
+        }
+      },
+      getOTPFromSMS: function (message,success,failure) {
+        var string = message.data.body;
+        if(message.data.address == '+12023353814')
+        {
+          var e_position = string.indexOf("Enter");
+          var o_position = string.indexOf("on");
+          success(string.substring(e_position + 6, o_position - 1));
+        }
+        else{
+          failure();
+        }
+
+      },
+      setAuthProvider: function (authProvider){
+        localStorage.setItem('authProvider',authProvider);
+        return authProvider;
+      },
+      verifyOtpResetPassword: function(otp,success,failure){
+        rest_auth.all('password/reset/sms-verification').post($.param(otp), success, failure).then(function (response) {
+          success(response);
+        }, function (response) {
+          failure(response);
+        })
+      },
+      changePassword: function (credentials, success, failure) {
+        rest_auth.all('password/change').post($.param(credentials), success, failure).then(function (response) {
+          localStorage.removeItem('Authorization');
+          success(response);
+        }, function (response) {
+          failure(response);
+        })
+      },
+      hasProfile: function(){
+        return JSON.parse(localStorage.getItem('user_details')).profile == null ? false : true;
+      }
+      ,
+      getProfileId: function(){
+        return JSON.parse(localStorage.getItem('user_details')).profile;
+      }
+    }
+  }
+})();
+
+(function() {
+  'use strict';
+
+  authRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
+  angular
+    .module('zaya-auth')
+    .config(authRoute);
+
+  function authRoute($stateProvider, $urlRouterProvider, CONSTANT) {
+    $stateProvider
+    .state('auth', {
+        url: '/auth',
+        abstract: true,
+        template: "<ion-nav-view name='state-auth'></ion-nav-view>",
+      })
+      // intro is now the main screen
+      // .state('auth.main', {
+      //   url: '/main',
+      //   views: {
+      //     'state-auth': {
+      //       templateUrl: CONSTANT.PATH.AUTH + "/auth.main" + CONSTANT.VIEW
+      //     }
+      //   }
+      // })
+      .state('auth.signin', {
+        url: '/signin',
+        nativeTransitions: {
+          "type": "slide",
+          "direction": "left",
+          "duration" :  400
+        },
+        views: {
+          'state-auth': {
+            // templateUrl: CONSTANT.PATH.AUTH + '/auth.signin' + CONSTANT.VIEW,
+            templateUrl: CONSTANT.PATH.AUTH + '/auth.signin.social' + CONSTANT.VIEW,
+            controller: 'authController as authCtrl'
+          }
+        }
+      })
+      .state('auth.signup', {
+        url: '/signup',
+        nativeTransitions: {
+          "type": "slide",
+          "direction": "left",
+          "duration" :  400
+        },
+        views: {
+          'state-auth': {
+            // templateUrl: CONSTANT.PATH.AUTH + '/auth.signup' + CONSTANT.VIEW,
+            templateUrl: CONSTANT.PATH.AUTH + '/auth.signup.social' + CONSTANT.VIEW,
+            controller: 'authController as authCtrl'
+          }
+        }
+      })
+      .state('auth.forgot', {
+        url: '/forgot',
+        nativeTransitions: {
+          "type": "slide",
+          "direction": "up",
+          "duration" :  400
+        },
+        views: {
+          'state-auth': {
+            // templateUrl: CONSTANT.PATH.AUTH + '/auth.forgot' + CONSTANT.VIEW,
+            templateUrl: CONSTANT.PATH.AUTH + '/auth.forgot.social' + CONSTANT.VIEW,
+            controller: 'authController as authCtrl'
+          }
+        }
+      })
+      .state('auth.forgot_verify_otp', {
+        url: '/verifyotp',
+        nativeTransitions: {
+          "type": "slide",
+          "direction": "up",
+          "duration" :  400
+        },
+        views: {
+          'state-auth': {
+            // templateUrl: CONSTANT.PATH.AUTH + '/auth.forgot' + CONSTANT.VIEW,
+            templateUrl: CONSTANT.PATH.AUTH + '/auth.forgot.verify' + CONSTANT.VIEW,
+            controller: 'authController as authCtrl'
+          }
+        }
+      })
+      .state('auth.change_password', {
+        url: '/changepassword',
+        nativeTransitions: {
+          "type": "slide",
+          "direction": "up",
+          "duration" :  400
+        },
+        views: {
+          'state-auth': {
+            // templateUrl: CONSTANT.PATH.AUTH + '/auth.forgot' + CONSTANT.VIEW,
+            templateUrl: CONSTANT.PATH.AUTH + '/auth.changepassword' + CONSTANT.VIEW,
+            controller: 'authController as authCtrl'
+          }
+        }
+      })
+      .state('auth.verify',{
+        abstract : true,
+        url : '/verify',
+        views : {
+          "state-auth" : {
+            template : "<ion-nav-view name='state-auth-verify'></ion-nav-view>"
+          }
+        }
+      })
+      .state('auth.verify.phone', {
+        url: '/phone',
+        nativeTransitions: {
+          "type": "slide",
+          "direction": "left",
+          "duration" :  400
+        },
+        views: {
+          'state-auth-verify': {
+            templateUrl: CONSTANT.PATH.AUTH + '/auth.verify.phonenumber' + CONSTANT.VIEW,
+            controller: 'authController as authCtrl'
+          }
+        }
+      })
+  }
+})();
+
 (function() {
   var ROOT = 'templates';
 
@@ -694,63 +1504,6 @@
 })();
 
 (function() {
-    'use strict';
-
-    angular
-        .module('zaya-intro')
-        .controller('introController', introController);
-
-    introController.$inject = [];
-
-    /* @ngInject */
-    function introController() {
-        var introCtrl = this;
-
-        introCtrl.tabIndex = 0;
-        introCtrl.slides = [
-          {
-            title : "Hello this Title",
-            description : "some description is theresome description is theresome description is there",
-            img : "img/01.png",
-            color : "bg-brand-light"
-          },
-          {
-            title : "Hello this Title",
-            description : "some description is theresome description is theresome description is there",
-            img : "img/02.png",
-            // color : "bg-brand-light"
-            color : "bg-assertive-light"
-          },
-          {
-            title : "Hello this Title",
-            description : "some description is theresome description is theresome description is there",
-            img : "img/03.png",
-            // color : "bg-brand-light"
-            color : "bg-royal-light"
-          }
-        ];
-    }
-})();
-
-(function() {
-  'use strict';
-
-  mainRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
-  angular
-    .module('zaya-intro')
-    .config(mainRoute);
-
-  function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
-    $stateProvider
-      .state('intro',{
-        url : '/intro',
-        templateUrl : CONSTANT.PATH.INTRO+'/intro'+CONSTANT.VIEW,
-        controller : "introController as introCtrl"
-      })
-  }
-})();
-
-(function() {
   'use strict';
 
   angular
@@ -825,13 +1578,21 @@
         noBackdrop: false,
         hideOnStateChange: true
       });
-      if (mapCtrl.resourceType(resource) != 'video') {
+      if (mapCtrl.resourceType(resource) == 'assessment') {
         $timeout(function() {
           $state.go('quiz.questions', {
             id: resource.node.id
           });
         });
-      } else {
+      }
+      else if(mapCtrl.resourceType(resource) == 'practice'){
+          $timeout(function() {
+            $state.go('quiz.practice.questions', {
+              id: resource.node.id
+            });
+          });
+      }
+      else if(mapCtrl.resourceType(resource) == 'video') {
         $timeout(function() {
           $state.go('content.video', {
             video: {
@@ -842,15 +1603,18 @@
         });
         //   mapCtrl.config.sources[0].src = mapCtrl.getSrc(resource.node.type.path);
       }
+      else{}
     }
 
     function resourceType(resource) {
-      if (resource.node.content_type_name == 'assessment') {
+      if (resource.node.content_type_name == 'assessment' && resource.node.type.type == 'assessment') {
         return 'assessment';
-      } else if (resource.node.content_type_name == 'resource') {
-        if (resource.node.type.file_type.substring(0, resource.node.type.file_type.indexOf('/')) == 'video') {
-          return 'video';
-        }
+      }
+      else if(resource.node.content_type_name == 'assessment' && resource.node.type.type == 'practice'){
+          return 'practice';
+      }
+      else if (resource.node.content_type_name == 'resource' && resource.node.type.file_type == 'mp4') {
+        return 'video';
       } else {}
     }
 
@@ -859,12 +1623,12 @@
     }
 
     function getIcon(resource) {
-      if (resource.node.content_type_name == 'assessment') {
+      if (resource.node.content_type_name == 'assessment' && resource.node.type.type == 'assessment') {
         return CONSTANT.ASSETS.IMG.ICON + '/quiz.png';
-      } else if (resource.node.content_type_name == 'resource') {
-        if (resource.node.type.file_type.substring(0, resource.node.type.file_type.indexOf('/')) == 'video') {
-          return CONSTANT.ASSETS.IMG.ICON + '/video.png';
-        }
+      } else if (resource.node.content_type_name == 'assessment' && resource.node.type.type == 'practice') {
+        return CONSTANT.ASSETS.IMG.ICON + '/practice.png';
+      } else if (resource.node.content_type_name == 'resource' && resource.node.type.file_type == 'mp4') {
+        return CONSTANT.ASSETS.IMG.ICON + '/video.png';
       } else {
 
       }
@@ -1299,15 +2063,14 @@ window.createGame = function(scope, lessons, injector, log) {
         url: '/map',
         abstract: true,
         resolve: {
-          lessons: ['Rest', '$log', function(Rest, $log) {
-            return Rest.one('accounts', CONSTANT.CLIENTID.ELL).getList('lessons').then(function(lessons) {
-              return lessons.plain();
+          lessons: ['Rest', '$log','$http', function(Rest, $log, $http) {
+            return Rest.one('accounts', CONSTANT.CLIENTID.ELL).customGET('lessons', {limit : 25} ).then(function(lessons) {
+              return lessons.plain().results;
             })
-
           }],
           scores: ['Rest', '$log', function(Rest, $log) {
             return Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('profiles', JSON.parse(localStorage.user_details).profile).getList('lessons-score').then(function(score) {
-                $log.debug('scores rest' , score.plain());
+              $log.debug('scores rest', score.plain());
               return score.plain();
             })
           }]
@@ -1323,6 +2086,63 @@ window.createGame = function(scope, lessons, injector, log) {
             controller: 'mapController as mapCtrl'
           }
         }
+      })
+  }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('zaya-intro')
+        .controller('introController', introController);
+
+    introController.$inject = [];
+
+    /* @ngInject */
+    function introController() {
+        var introCtrl = this;
+
+        introCtrl.tabIndex = 0;
+        introCtrl.slides = [
+          {
+            title : "Hello this Title",
+            description : "some description is theresome description is theresome description is there",
+            img : "img/01.png",
+            color : "bg-brand-light"
+          },
+          {
+            title : "Hello this Title",
+            description : "some description is theresome description is theresome description is there",
+            img : "img/02.png",
+            // color : "bg-brand-light"
+            color : "bg-assertive-light"
+          },
+          {
+            title : "Hello this Title",
+            description : "some description is theresome description is theresome description is there",
+            img : "img/03.png",
+            // color : "bg-brand-light"
+            color : "bg-royal-light"
+          }
+        ];
+    }
+})();
+
+(function() {
+  'use strict';
+
+  mainRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
+  angular
+    .module('zaya-intro')
+    .config(mainRoute);
+
+  function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
+    $stateProvider
+      .state('intro',{
+        url : '/intro',
+        templateUrl : CONSTANT.PATH.INTRO+'/intro'+CONSTANT.VIEW,
+        controller : "introController as introCtrl"
       })
   }
 })();
@@ -2152,8 +2972,6 @@ window.createGame = function(scope, lessons, injector, log) {
         template : '<ion-nav-view name="state-quiz"></ion-nav-view>',
         resolve: {
             quiz: ['$stateParams', 'Rest', function($stateParams, Rest) {
-                // return {"node":{"id":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type_name":"assessment","type":{"id":"a74c7b03-f132-4b16-ab7e-9a5ff3744c26","type":"assessment","score":600},"created":"2016-05-12T12:56:59.275501Z","updated":"2016-05-12T12:56:59.275564Z","title":"Beginning Blends (L, R, S)","description":"","object_id":"a74c7b03-f132-4b16-ab7e-9a5ff3744c26","stauts":"PUBLISHED","lft":2,"rght":63,"tree_id":1,"level":1,"parent":"9adb6c64-773a-4217-8627-f0b6f8336382","content_type":26,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[{"node":{"id":"162c100c-a295-4a9e-8fa4-35cc37c62b19","content_type_name":"json question","type":{"id":"1dde30df-0826-4fec-919e-728420c0db73","created":"2016-05-12T12:56:59.351763Z","updated":"2016-05-12T12:56:59.351798Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":1,"answer":[2],"score":10,"content":{"hints":"[]","widgets":{"sounds":{},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":"globe","key":4},{"option":"crop","key":3},{"option":"block","key":1},{"option":"drop","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:56:59.390021Z","updated":"2016-05-12T12:56:59.390059Z","title":"dr","description":"","object_id":"1dde30df-0826-4fec-919e-728420c0db73","stauts":"PUBLISHED","lft":3,"rght":4,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"eabcce21-0be5-4702-a5ef-e6bca75caed1","content_type_name":"json question","type":{"id":"91844612-5ee0-4246-a486-5fa4b4ff4fb6","created":"2016-05-12T12:56:59.413639Z","updated":"2016-05-12T12:56:59.413697Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":1,"answer":[3,2],"score":10,"content":{"hints":"[]","widgets":{"sounds":{},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":"plan","key":4},{"option":"skate","key":3},{"option":"broom","key":1},{"option":"sky","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:56:59.448045Z","updated":"2016-05-12T12:56:59.448100Z","title":"sk","description":"","object_id":"91844612-5ee0-4246-a486-5fa4b4ff4fb6","stauts":"PUBLISHED","lft":5,"rght":6,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"29b256e1-5712-481d-9605-e8549faa27aa","content_type_name":"json question","type":{"id":"11dd51e1-8101-4198-9d53-9149d875ea88","created":"2016-05-12T12:56:59.478796Z","updated":"2016-05-12T12:56:59.478848Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":1,"answer":[1,2],"score":10,"content":{"hints":"[]","widgets":{"sounds":{},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":"sky","key":4},{"option":"sleep","key":3},{"option":"class","key":1},{"option":"clock","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:56:59.503543Z","updated":"2016-05-12T12:56:59.503601Z","title":"cl","description":"","object_id":"11dd51e1-8101-4198-9d53-9149d875ea88","stauts":"PUBLISHED","lft":7,"rght":8,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"cfa822c2-51bd-4788-bc91-d9bc27c7b550","content_type_name":"json question","type":{"id":"cda7393f-3503-46b0-9652-2f903a826d96","created":"2016-05-12T12:56:59.527382Z","updated":"2016-05-12T12:56:59.527445Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":1,"answer":[3,1,2],"score":10,"content":{"hints":"[]","widgets":{"sounds":{},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":"drum","key":4},{"option":"black","key":3},{"option":"blue","key":1},{"option":"bland","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:56:59.569805Z","updated":"2016-05-12T12:56:59.569870Z","title":"bl","description":"","object_id":"cda7393f-3503-46b0-9652-2f903a826d96","stauts":"PUBLISHED","lft":9,"rght":10,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"df28d4b8-0754-455a-a971-04fced5fcd0a","content_type_name":"json question","type":{"id":"36b247a6-7c46-4b6f-b650-cf8b7e1d9e8c","created":"2016-05-12T12:56:59.616159Z","updated":"2016-05-12T12:56:59.616190Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":1,"answer":[3,2],"score":10,"content":{"hints":"[]","widgets":{"sounds":{},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":"drone","key":4},{"option":"prune","key":3},{"option":"stick","key":1},{"option":"probe","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:56:59.648250Z","updated":"2016-05-12T12:56:59.648282Z","title":"pr","description":"","object_id":"36b247a6-7c46-4b6f-b650-cf8b7e1d9e8c","stauts":"PUBLISHED","lft":11,"rght":12,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"22228584-fd44-4e79-9726-9f09e1c83f42","content_type_name":"json question","type":{"id":"160d9f4b-0a5f-4bc7-a9ae-210576df9129","created":"2016-05-12T12:56:59.772696Z","updated":"2016-05-12T12:56:59.772724Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":2,"answer":[4,3],"score":20,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/broom_ZNMYTK.mp3","2":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/brain_OVTQIC.mp3","3":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/crop_6T4O8Y.mp3","4":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/drop_3XQU5G.mp3"},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":" [[sound id=1]] ","key":4},{"option":" [[sound id=2]] ","key":3},{"option":" [[sound id=3]] ","key":1},{"option":" [[sound id=4]] ","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:56:59.784011Z","updated":"2016-05-12T12:56:59.784045Z","title":"br","description":"","object_id":"160d9f4b-0a5f-4bc7-a9ae-210576df9129","stauts":"PUBLISHED","lft":13,"rght":14,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"df95755c-e63b-4c7a-9693-176e7a871fa5","content_type_name":"json question","type":{"id":"3b841ec9-2ddf-41f4-9e42-fd795b2c8d0b","created":"2016-05-12T12:56:59.905118Z","updated":"2016-05-12T12:56:59.905145Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":2,"answer":[3,1],"score":20,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/drone_9DG8IR.mp3","2":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/plum_JHQWVY.mp3","3":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/plane_KZUN6Z.mp3","4":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/block_KUKM0A.mp3"},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":" [[sound id=1]] ","key":4},{"option":" [[sound id=2]] ","key":3},{"option":" [[sound id=3]] ","key":1},{"option":" [[sound id=4]] ","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:56:59.915732Z","updated":"2016-05-12T12:56:59.915768Z","title":"pl","description":"","object_id":"3b841ec9-2ddf-41f4-9e42-fd795b2c8d0b","stauts":"PUBLISHED","lft":15,"rght":16,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"4f0fbd8b-96d8-49b5-8e6a-bd3b54d12953","content_type_name":"json question","type":{"id":"af7acd05-8f6e-4a1e-b729-d24f22be7c49","created":"2016-05-12T12:57:00.037034Z","updated":"2016-05-12T12:57:00.037062Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":2,"answer":[4,2],"score":20,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/prune_3U3CWQ.mp3","2":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/drum_C2VZ4E.mp3","3":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/brick_YCDGJF.mp3","4":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/prize_DTZX5A.mp3"},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":" [[sound id=1]] ","key":4},{"option":" [[sound id=2]] ","key":3},{"option":" [[sound id=3]] ","key":1},{"option":" [[sound id=4]] ","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:00.046799Z","updated":"2016-05-12T12:57:00.046832Z","title":"pr","description":"","object_id":"af7acd05-8f6e-4a1e-b729-d24f22be7c49","stauts":"PUBLISHED","lft":17,"rght":18,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"2edce18a-97c9-4df5-a85c-8e023590435a","content_type_name":"json question","type":{"id":"15bd0dd4-390c-42cd-8e12-64ef6f27fcee","created":"2016-05-12T12:57:00.210211Z","updated":"2016-05-12T12:57:00.210237Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":2,"answer":[3,2],"score":20,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/clock_7WSP6T.mp3","2":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/31/globe_FM9F07.mp3","3":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/class_2L8I2P.mp3","4":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/glass_X3U7RT.mp3"},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":" [[sound id=1]] ","key":4},{"option":" [[sound id=2]] ","key":3},{"option":" [[sound id=3]] ","key":1},{"option":" [[sound id=4]] ","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:00.220483Z","updated":"2016-05-12T12:57:00.220517Z","title":"gl","description":"","object_id":"15bd0dd4-390c-42cd-8e12-64ef6f27fcee","stauts":"PUBLISHED","lft":19,"rght":20,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"64152db3-6eb9-46af-9616-9184eaa7be20","content_type_name":"json question","type":{"id":"34105ac8-ac4b-49eb-852b-7a6f1ecf293a","created":"2016-05-12T12:57:00.336373Z","updated":"2016-05-12T12:57:00.336402Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":2,"answer":[2],"score":20,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/stairs_1RX5DY.mp3","2":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/stop_QBR2CP.mp3","3":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/31/smile_7YJFPP.mp3","4":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/snake_PYHRCY.mp3"},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":" [[sound id=1]] ","key":4},{"option":" [[sound id=2]] ","key":3},{"option":" [[sound id=3]] ","key":1},{"option":" [[sound id=4]] ","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:00.346098Z","updated":"2016-05-12T12:57:00.346130Z","title":"sn","description":"","object_id":"34105ac8-ac4b-49eb-852b-7a6f1ecf293a","stauts":"PUBLISHED","lft":21,"rght":22,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"24b49946-72ea-47fb-aff8-6d72d4ac8d6f","content_type_name":"json question","type":{"id":"81bde716-67df-41c3-97c9-185c2b9b4991","created":"2016-05-12T12:57:00.463194Z","updated":"2016-05-12T12:57:00.463222Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":2,"answer":[1,2],"score":20,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/black_MGSQ93.mp3","2":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/block_346JMX.mp3","3":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/flock_787RJT.mp3","4":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/flag_9EZSHM.mp3"},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":" [[sound id=1]] ","key":4},{"option":" [[sound id=2]] ","key":3},{"option":" [[sound id=3]] ","key":1},{"option":" [[sound id=4]] ","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:00.491059Z","updated":"2016-05-12T12:57:00.491093Z","title":"fl","description":"","object_id":"81bde716-67df-41c3-97c9-185c2b9b4991","stauts":"PUBLISHED","lft":23,"rght":24,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"e0c2fd9f-7eb3-43e9-b9e4-6645c7256360","content_type_name":"json question","type":{"id":"9de167cb-5f2b-448b-8664-3bac685bea4c","created":"2016-05-12T12:57:00.619500Z","updated":"2016-05-12T12:57:00.619528Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":2,"answer":[1],"score":20,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/broom_CGPY6N.mp3","2":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/truck_JBQ5ZB.mp3","3":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/trap_VQ6ND7.mp3","4":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/grab_XF6QA9.mp3"},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":" [[sound id=1]] ","key":4},{"option":" [[sound id=2]] ","key":3},{"option":" [[sound id=3]] ","key":1},{"option":" [[sound id=4]] ","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:00.629023Z","updated":"2016-05-12T12:57:00.629055Z","title":"tr","description":"","object_id":"9de167cb-5f2b-448b-8664-3bac685bea4c","stauts":"PUBLISHED","lft":25,"rght":26,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"d64892d6-0bbd-4c33-b8e0-a4d1c49bbddc","content_type_name":"json question","type":{"id":"7681b51a-97ca-4f17-8e99-267f09829237","created":"2016-05-12T12:57:00.745204Z","updated":"2016-05-12T12:57:00.745232Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":2,"answer":[3,2],"score":20,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/small_DH96E0.mp3","2":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/stairs_H7P48Q.mp3","3":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/clam_5OVPWR.mp3","4":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/stick_46RMWG.mp3"},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":" [[sound id=1]] ","key":4},{"option":" [[sound id=2]] ","key":3},{"option":" [[sound id=3]] ","key":1},{"option":" [[sound id=4]] ","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:00.754843Z","updated":"2016-05-12T12:57:00.754874Z","title":"st","description":"","object_id":"7681b51a-97ca-4f17-8e99-267f09829237","stauts":"PUBLISHED","lft":27,"rght":28,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"64f8d91d-eabb-4845-85f7-c639b309ffa9","content_type_name":"json question","type":{"id":"cb1f21eb-8a75-41f9-87f3-b49632365ff8","created":"2016-05-12T12:57:00.870675Z","updated":"2016-05-12T12:57:00.870702Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":2,"answer":[1,2],"score":20,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/broke_DM7876.mp3","2":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/tap_L7GUWJ.mp3","3":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/drop_N9E3E2.mp3","4":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/drum_CPBOBH.mp3"},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":" [[sound id=1]] ","key":4},{"option":" [[sound id=2]] ","key":3},{"option":" [[sound id=3]] ","key":1},{"option":" [[sound id=4]] ","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:00.880871Z","updated":"2016-05-12T12:57:00.880905Z","title":"dr","description":"","object_id":"cb1f21eb-8a75-41f9-87f3-b49632365ff8","stauts":"PUBLISHED","lft":29,"rght":30,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"82a3af56-481c-4fb4-ba35-e8d9ee0f6630","content_type_name":"json question","type":{"id":"017edec0-ed45-442f-b279-385aa871b395","created":"2016-05-12T12:57:00.950347Z","updated":"2016-05-12T12:57:00.950383Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":3,"answer":[3],"score":30,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/stick_ELFKB2.mp3"},"videos":{},"images":{"1":"http://curate.zaya.in/media/contents/zaya/photos/2015/09/01/stick_1QBKAF.png"}},"is_multiple":false,"options":[{"option":"sp","key":4},{"option":"st","key":3},{"option":"sc","key":1},{"option":"sm","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:00.960589Z","updated":"2016-05-12T12:57:00.960625Z","title":"[[img id=1]] [[sound id=1]]","description":"","object_id":"017edec0-ed45-442f-b279-385aa871b395","stauts":"PUBLISHED","lft":31,"rght":32,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"cccd9128-686b-43e1-81ac-1c8ae8f8a66c","content_type_name":"json question","type":{"id":"adc718ac-d422-4e39-915f-87f1f5340882","created":"2016-05-12T12:57:01.023555Z","updated":"2016-05-12T12:57:01.023584Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":3,"answer":[2],"score":30,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/spoon_J5UK1S.mp3"},"videos":{},"images":{"1":"http://curate.zaya.in/media/contents/zaya/photos/2016/02/25/spoon_FA5AXI.png"}},"is_multiple":false,"options":[{"option":"sn","key":4},{"option":"sm","key":3},{"option":"st","key":1},{"option":"sp","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.033477Z","updated":"2016-05-12T12:57:01.033512Z","title":"[[img id=1]] [[sound id=1]]","description":"","object_id":"adc718ac-d422-4e39-915f-87f1f5340882","stauts":"PUBLISHED","lft":33,"rght":34,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"d71d7e44-fdd9-4b8a-9c61-f1e74e30c825","content_type_name":"json question","type":{"id":"5d640c50-012c-4e4b-bcda-4011bd2ce063","created":"2016-05-12T12:57:01.098546Z","updated":"2016-05-12T12:57:01.098572Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":3,"answer":[3],"score":30,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/truck_SQT9AH.mp3"},"videos":{},"images":{"1":"http://curate.zaya.in/media/contents/zaya/photos/2016/02/25/truck_VNUB0N.png"}},"is_multiple":false,"options":[{"option":"dr","key":4},{"option":"tr","key":3},{"option":"br","key":1},{"option":"bl","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.120818Z","updated":"2016-05-12T12:57:01.120853Z","title":"[[img id=1]] [[sound id=1]]","description":"","object_id":"5d640c50-012c-4e4b-bcda-4011bd2ce063","stauts":"PUBLISHED","lft":35,"rght":36,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"1fe67424-f2a4-440b-99bb-8483c7c63166","content_type_name":"json question","type":{"id":"f95c5838-14e2-4fc5-afce-2ffd98637386","created":"2016-05-12T12:57:01.158963Z","updated":"2016-05-12T12:57:01.159027Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":3,"answer":[4],"score":30,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/31/globe_R5JK2S.mp3"},"videos":{},"images":{}},"is_multiple":false,"options":[{"option":"gl","key":4},{"option":"sl","key":3},{"option":"dr","key":1},{"option":"br","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.171821Z","updated":"2016-05-12T12:57:01.171858Z","title":"[[sound id=1]]","description":"","object_id":"f95c5838-14e2-4fc5-afce-2ffd98637386","stauts":"PUBLISHED","lft":37,"rght":38,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"52875d13-70f8-4703-ac7f-2360b4b9553d","content_type_name":"json question","type":{"id":"c3e26cb2-4c70-4b6d-b3f3-e6be3638b379","created":"2016-05-12T12:57:01.234455Z","updated":"2016-05-12T12:57:01.234486Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":3,"answer":[1],"score":30,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/snail_5CQD1E.mp3"},"videos":{},"images":{"1":"http://curate.zaya.in/media/contents/zaya/photos/2016/02/25/snail_XBPKXF.png"}},"is_multiple":false,"options":[{"option":"gr","key":4},{"option":"tr","key":3},{"option":"sn","key":1},{"option":"sm","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.244582Z","updated":"2016-05-12T12:57:01.244616Z","title":"[[img id=1]] [[sound id=1]]","description":"","object_id":"c3e26cb2-4c70-4b6d-b3f3-e6be3638b379","stauts":"PUBLISHED","lft":39,"rght":40,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"47d34dbf-01ee-4a26-b03d-3c892d1e1fec","content_type_name":"json question","type":{"id":"3a220a4b-cfa3-400e-b27e-e175ce7b1d62","created":"2016-05-12T12:57:01.356434Z","updated":"2016-05-12T12:57:01.356462Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":3,"answer":[3],"score":30,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/plane_CYJYTP.mp3"},"videos":{},"images":{"1":"http://curate.zaya.in/media/contents/zaya/photos/2016/02/25/plane_UTJREM.png"}},"is_multiple":false,"options":[{"option":"pr","key":4},{"option":"pl","key":3},{"option":"cl","key":1},{"option":"cr","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.366632Z","updated":"2016-05-12T12:57:01.366666Z","title":"[[img id=1]] [[sound id=1]]","description":"","object_id":"3a220a4b-cfa3-400e-b27e-e175ce7b1d62","stauts":"PUBLISHED","lft":41,"rght":42,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"f629ada9-2cc8-4753-9344-7f3ceadf5000","content_type_name":"json question","type":{"id":"b9a7f3f2-7fe4-4ed4-83ef-c87313cb77f8","created":"2016-05-12T12:57:01.429291Z","updated":"2016-05-12T12:57:01.429319Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":3,"answer":[3],"score":30,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/clock_H8EFGC.mp3"},"videos":{},"images":{"1":"http://curate.zaya.in/media/contents/zaya/photos/2015/09/01/clock_CPC46R.png"}},"is_multiple":false,"options":[{"option":"pl","key":4},{"option":"cl","key":3},{"option":"bl","key":1},{"option":"dr","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.438882Z","updated":"2016-05-12T12:57:01.438922Z","title":"[[img id=1]] [[sound id=1]]","description":"","object_id":"b9a7f3f2-7fe4-4ed4-83ef-c87313cb77f8","stauts":"PUBLISHED","lft":43,"rght":44,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"18026752-d923-4f00-9677-545eb4a4fc5e","content_type_name":"json question","type":{"id":"143ec4c5-31e4-446f-a234-313427e93f02","created":"2016-05-12T12:57:01.505779Z","updated":"2016-05-12T12:57:01.505808Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":3,"answer":[2],"score":30,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/grass_NX9C3F.mp3"},"videos":{},"images":{"1":"http://curate.zaya.in/media/contents/zaya/photos/2016/02/25/grass_ZDH9LM.png"}},"is_multiple":false,"options":[{"option":"cl","key":4},{"option":"bl","key":3},{"option":"cr","key":1},{"option":"gr","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.516721Z","updated":"2016-05-12T12:57:01.516754Z","title":"[[img id=1]] [[sound id=1]]","description":"","object_id":"143ec4c5-31e4-446f-a234-313427e93f02","stauts":"PUBLISHED","lft":45,"rght":46,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"0e79e883-fa3d-483d-ac37-703967b7afab","content_type_name":"json question","type":{"id":"28266a54-d6c6-4a3f-ab45-eecd295dc390","created":"2016-05-12T12:57:01.586509Z","updated":"2016-05-12T12:57:01.586556Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":3,"answer":[3],"score":30,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/tree_M10F9T.mp3"},"videos":{},"images":{"1":"http://curate.zaya.in/media/contents/zaya/photos/2016/02/25/tree_FOUJ6U.png"}},"is_multiple":false,"options":[{"option":"dr","key":4},{"option":"tr","key":3},{"option":"pr","key":1},{"option":"cr","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.601463Z","updated":"2016-05-12T12:57:01.601524Z","title":"[[img id=1]] [[sound id=1]]","description":"","object_id":"28266a54-d6c6-4a3f-ab45-eecd295dc390","stauts":"PUBLISHED","lft":47,"rght":48,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"50d65cf2-309b-427e-a44f-dccba6de2752","content_type_name":"json question","type":{"id":"cb8a0d73-f9da-4af9-a562-9e10a343f6b6","created":"2016-05-12T12:57:01.726150Z","updated":"2016-05-12T12:57:01.726220Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":3,"answer":[1],"score":30,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/31/crane_Q4CM4X.mp3"},"videos":{},"images":{}},"is_multiple":false,"options":[{"option":"tr","key":4},{"option":"gr","key":3},{"option":"cr","key":1},{"option":"pl","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.762503Z","updated":"2016-05-12T12:57:01.762560Z","title":"[[sound id=1]]","description":"","object_id":"cb8a0d73-f9da-4af9-a562-9e10a343f6b6","stauts":"PUBLISHED","lft":49,"rght":50,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"455ae052-e71c-4152-865f-41c8ae34bf8d","content_type_name":"json question","type":{"id":"0aca89a3-780a-4b12-b9ba-8de2d628eede","created":"2016-05-12T12:57:01.782073Z","updated":"2016-05-12T12:57:01.782104Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":1,"answer":[2],"score":10,"content":{"hints":"[]","widgets":{"sounds":{},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":"stock","key":4},{"option":"crop","key":3},{"option":"snail","key":1},{"option":"small","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.807064Z","updated":"2016-05-12T12:57:01.807126Z","title":"sm","description":"","object_id":"0aca89a3-780a-4b12-b9ba-8de2d628eede","stauts":"PUBLISHED","lft":51,"rght":52,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"e9a5a5c5-636c-45e7-9d5d-4f5f719159a7","content_type_name":"json question","type":{"id":"d372277a-1e43-4736-9e18-782848fa4e97","created":"2016-05-12T12:57:01.818575Z","updated":"2016-05-12T12:57:01.818616Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":1,"answer":[2],"score":10,"content":{"hints":"[]","widgets":{"sounds":{},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":"throw","key":4},{"option":"glow","key":3},{"option":"blow","key":1},{"option":"place","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.839624Z","updated":"2016-05-12T12:57:01.839695Z","title":"pl","description":"","object_id":"d372277a-1e43-4736-9e18-782848fa4e97","stauts":"PUBLISHED","lft":53,"rght":54,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"9beaaaf0-9075-4988-9b51-0550f1f782b6","content_type_name":"json question","type":{"id":"12f80277-19bd-4b66-89bf-ab91954d81a8","created":"2016-05-12T12:57:01.855058Z","updated":"2016-05-12T12:57:01.855131Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":1,"answer":[4,3,2],"score":10,"content":{"hints":"[]","widgets":{"sounds":{},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":"trick","key":4},{"option":"trap","key":3},{"option":"club","key":1},{"option":"truck","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.870469Z","updated":"2016-05-12T12:57:01.870504Z","title":"tr","description":"","object_id":"12f80277-19bd-4b66-89bf-ab91954d81a8","stauts":"PUBLISHED","lft":55,"rght":56,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"27681226-4c60-4719-bb4f-63a7de8b2e6a","content_type_name":"json question","type":{"id":"df1db188-8658-49c6-a7af-4570da5f26fa","created":"2016-05-12T12:57:01.881038Z","updated":"2016-05-12T12:57:01.881070Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":1,"answer":[1],"score":10,"content":{"hints":"[]","widgets":{"sounds":{},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":"blend","key":4},{"option":"prize","key":3},{"option":"glow","key":1},{"option":"clam","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.893994Z","updated":"2016-05-12T12:57:01.894055Z","title":"gl","description":"","object_id":"df1db188-8658-49c6-a7af-4570da5f26fa","stauts":"PUBLISHED","lft":57,"rght":58,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"2616f02f-047d-4700-af74-108e2ed716b3","content_type_name":"json question","type":{"id":"51f50a96-4d2e-4b4d-b079-f059193bf0fa","created":"2016-05-12T12:57:01.909467Z","updated":"2016-05-12T12:57:01.909524Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":1,"answer":[1],"score":10,"content":{"hints":"[]","widgets":{"sounds":{},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":"skate","key":4},{"option":"spot","key":3},{"option":"stairs","key":1},{"option":"black","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.931146Z","updated":"2016-05-12T12:57:01.931209Z","title":"st","description":"","object_id":"51f50a96-4d2e-4b4d-b079-f059193bf0fa","stauts":"PUBLISHED","lft":59,"rght":60,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"41995ffd-2548-4965-857d-9ab76d4adf82","content_type_name":"json question","type":{"id":"0f858462-1490-40ce-8f86-3ce3c850325b","created":"2016-05-12T12:57:02.186295Z","updated":"2016-05-12T12:57:02.186330Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":2,"answer":[3,1],"score":20,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/smile_GXPK1Z.mp3","2":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/skate_QV9MJB.mp3","3":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/sky_JAY7YD.mp3","4":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/dry_9R37SR.mp3"},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":" [[sound id=1]] ","key":4},{"option":" [[sound id=2]] ","key":3},{"option":" [[sound id=3]] ","key":1},{"option":" [[sound id=4]] ","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:02.202258Z","updated":"2016-05-12T12:57:02.202298Z","title":"sk","description":"","object_id":"0f858462-1490-40ce-8f86-3ce3c850325b","stauts":"PUBLISHED","lft":61,"rght":62,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]}]}
-                // eturn {"node":{"id":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type_name":"assessment","type":{"id":"a74c7b03-f132-4b16-ab7e-9a5ff3744c26","type":"assessment","score":600},"created":"2016-05-12T12:56:59.275501Z","updated":"2016-05-12T12:56:59.275564Z","title":"Beginning Blends (L, R, S)","description":"","object_id":"a74c7b03-f132-4b16-ab7e-9a5ff3744c26","stauts":"PUBLISHED","lft":2,"rght":63,"tree_id":1,"level":1,"parent":"9adb6c64-773a-4217-8627-f0b6f8336382","content_type":26,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[{"node":{"id":"162c100c-a295-4a9e-8fa4-35cc37c62b19","content_type_name":"json question","type":{"id":"1dde30df-0826-4fec-919e-728420c0db73","created":"2016-05-12T12:56:59.351763Z","updated":"2016-05-12T12:56:59.351798Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":1,"answer":[2],"score":10,"content":{"hints":"[]","widgets":{"sounds":{},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":"globe","key":4},{"option":"crop","key":3},{"option":"block","key":1},{"option":"drop","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:56:59.390021Z","updated":"2016-05-12T12:56:59.390059Z","title":"dr","description":"","object_id":"1dde30df-0826-4fec-919e-728420c0db73","stauts":"PUBLISHED","lft":3,"rght":4,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"eabcce21-0be5-4702-a5ef-e6bca75caed1","content_type_name":"json question","type":{"id":"91844612-5ee0-4246-a486-5fa4b4ff4fb6","created":"2016-05-12T12:56:59.413639Z","updated":"2016-05-12T12:56:59.413697Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":1,"answer":[3,2],"score":10,"content":{"hints":"[]","widgets":{"sounds":{},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":"plan","key":4},{"option":"skate","key":3},{"option":"broom","key":1},{"option":"sky","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:56:59.448045Z","updated":"2016-05-12T12:56:59.448100Z","title":"sk","description":"","object_id":"91844612-5ee0-4246-a486-5fa4b4ff4fb6","stauts":"PUBLISHED","lft":5,"rght":6,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"29b256e1-5712-481d-9605-e8549faa27aa","content_type_name":"json question","type":{"id":"11dd51e1-8101-4198-9d53-9149d875ea88","created":"2016-05-12T12:56:59.478796Z","updated":"2016-05-12T12:56:59.478848Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":1,"answer":[1,2],"score":10,"content":{"hints":"[]","widgets":{"sounds":{},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":"sky","key":4},{"option":"sleep","key":3},{"option":"class","key":1},{"option":"clock","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:56:59.503543Z","updated":"2016-05-12T12:56:59.503601Z","title":"cl","description":"","object_id":"11dd51e1-8101-4198-9d53-9149d875ea88","stauts":"PUBLISHED","lft":7,"rght":8,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"cfa822c2-51bd-4788-bc91-d9bc27c7b550","content_type_name":"json question","type":{"id":"cda7393f-3503-46b0-9652-2f903a826d96","created":"2016-05-12T12:56:59.527382Z","updated":"2016-05-12T12:56:59.527445Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":1,"answer":[3,1,2],"score":10,"content":{"hints":"[]","widgets":{"sounds":{},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":"drum","key":4},{"option":"black","key":3},{"option":"blue","key":1},{"option":"bland","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:56:59.569805Z","updated":"2016-05-12T12:56:59.569870Z","title":"bl","description":"","object_id":"cda7393f-3503-46b0-9652-2f903a826d96","stauts":"PUBLISHED","lft":9,"rght":10,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"df28d4b8-0754-455a-a971-04fced5fcd0a","content_type_name":"json question","type":{"id":"36b247a6-7c46-4b6f-b650-cf8b7e1d9e8c","created":"2016-05-12T12:56:59.616159Z","updated":"2016-05-12T12:56:59.616190Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":1,"answer":[3,2],"score":10,"content":{"hints":"[]","widgets":{"sounds":{},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":"drone","key":4},{"option":"prune","key":3},{"option":"stick","key":1},{"option":"probe","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:56:59.648250Z","updated":"2016-05-12T12:56:59.648282Z","title":"pr","description":"","object_id":"36b247a6-7c46-4b6f-b650-cf8b7e1d9e8c","stauts":"PUBLISHED","lft":11,"rght":12,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"22228584-fd44-4e79-9726-9f09e1c83f42","content_type_name":"json question","type":{"id":"160d9f4b-0a5f-4bc7-a9ae-210576df9129","created":"2016-05-12T12:56:59.772696Z","updated":"2016-05-12T12:56:59.772724Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":2,"answer":[4,3],"score":20,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/broom_ZNMYTK.mp3","2":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/brain_OVTQIC.mp3","3":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/crop_6T4O8Y.mp3","4":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/drop_3XQU5G.mp3"},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":" [[sound id=1]] ","key":4},{"option":" [[sound id=2]] ","key":3},{"option":" [[sound id=3]] ","key":1},{"option":" [[sound id=4]] ","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:56:59.784011Z","updated":"2016-05-12T12:56:59.784045Z","title":"br","description":"","object_id":"160d9f4b-0a5f-4bc7-a9ae-210576df9129","stauts":"PUBLISHED","lft":13,"rght":14,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"df95755c-e63b-4c7a-9693-176e7a871fa5","content_type_name":"json question","type":{"id":"3b841ec9-2ddf-41f4-9e42-fd795b2c8d0b","created":"2016-05-12T12:56:59.905118Z","updated":"2016-05-12T12:56:59.905145Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":2,"answer":[3,1],"score":20,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/drone_9DG8IR.mp3","2":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/plum_JHQWVY.mp3","3":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/plane_KZUN6Z.mp3","4":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/block_KUKM0A.mp3"},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":" [[sound id=1]] ","key":4},{"option":" [[sound id=2]] ","key":3},{"option":" [[sound id=3]] ","key":1},{"option":" [[sound id=4]] ","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:56:59.915732Z","updated":"2016-05-12T12:56:59.915768Z","title":"pl","description":"","object_id":"3b841ec9-2ddf-41f4-9e42-fd795b2c8d0b","stauts":"PUBLISHED","lft":15,"rght":16,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"4f0fbd8b-96d8-49b5-8e6a-bd3b54d12953","content_type_name":"json question","type":{"id":"af7acd05-8f6e-4a1e-b729-d24f22be7c49","created":"2016-05-12T12:57:00.037034Z","updated":"2016-05-12T12:57:00.037062Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":2,"answer":[4,2],"score":20,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/prune_3U3CWQ.mp3","2":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/drum_C2VZ4E.mp3","3":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/brick_YCDGJF.mp3","4":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/prize_DTZX5A.mp3"},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":" [[sound id=1]] ","key":4},{"option":" [[sound id=2]] ","key":3},{"option":" [[sound id=3]] ","key":1},{"option":" [[sound id=4]] ","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:00.046799Z","updated":"2016-05-12T12:57:00.046832Z","title":"pr","description":"","object_id":"af7acd05-8f6e-4a1e-b729-d24f22be7c49","stauts":"PUBLISHED","lft":17,"rght":18,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"2edce18a-97c9-4df5-a85c-8e023590435a","content_type_name":"json question","type":{"id":"15bd0dd4-390c-42cd-8e12-64ef6f27fcee","created":"2016-05-12T12:57:00.210211Z","updated":"2016-05-12T12:57:00.210237Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":2,"answer":[3,2],"score":20,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/clock_7WSP6T.mp3","2":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/31/globe_FM9F07.mp3","3":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/class_2L8I2P.mp3","4":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/glass_X3U7RT.mp3"},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":" [[sound id=1]] ","key":4},{"option":" [[sound id=2]] ","key":3},{"option":" [[sound id=3]] ","key":1},{"option":" [[sound id=4]] ","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:00.220483Z","updated":"2016-05-12T12:57:00.220517Z","title":"gl","description":"","object_id":"15bd0dd4-390c-42cd-8e12-64ef6f27fcee","stauts":"PUBLISHED","lft":19,"rght":20,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"64152db3-6eb9-46af-9616-9184eaa7be20","content_type_name":"json question","type":{"id":"34105ac8-ac4b-49eb-852b-7a6f1ecf293a","created":"2016-05-12T12:57:00.336373Z","updated":"2016-05-12T12:57:00.336402Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":2,"answer":[2],"score":20,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/stairs_1RX5DY.mp3","2":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/stop_QBR2CP.mp3","3":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/31/smile_7YJFPP.mp3","4":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/snake_PYHRCY.mp3"},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":" [[sound id=1]] ","key":4},{"option":" [[sound id=2]] ","key":3},{"option":" [[sound id=3]] ","key":1},{"option":" [[sound id=4]] ","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:00.346098Z","updated":"2016-05-12T12:57:00.346130Z","title":"sn","description":"","object_id":"34105ac8-ac4b-49eb-852b-7a6f1ecf293a","stauts":"PUBLISHED","lft":21,"rght":22,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"24b49946-72ea-47fb-aff8-6d72d4ac8d6f","content_type_name":"json question","type":{"id":"81bde716-67df-41c3-97c9-185c2b9b4991","created":"2016-05-12T12:57:00.463194Z","updated":"2016-05-12T12:57:00.463222Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":2,"answer":[1,2],"score":20,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/black_MGSQ93.mp3","2":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/block_346JMX.mp3","3":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/flock_787RJT.mp3","4":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/flag_9EZSHM.mp3"},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":" [[sound id=1]] ","key":4},{"option":" [[sound id=2]] ","key":3},{"option":" [[sound id=3]] ","key":1},{"option":" [[sound id=4]] ","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:00.491059Z","updated":"2016-05-12T12:57:00.491093Z","title":"fl","description":"","object_id":"81bde716-67df-41c3-97c9-185c2b9b4991","stauts":"PUBLISHED","lft":23,"rght":24,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"e0c2fd9f-7eb3-43e9-b9e4-6645c7256360","content_type_name":"json question","type":{"id":"9de167cb-5f2b-448b-8664-3bac685bea4c","created":"2016-05-12T12:57:00.619500Z","updated":"2016-05-12T12:57:00.619528Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":2,"answer":[1],"score":20,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/broom_CGPY6N.mp3","2":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/truck_JBQ5ZB.mp3","3":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/trap_VQ6ND7.mp3","4":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/grab_XF6QA9.mp3"},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":" [[sound id=1]] ","key":4},{"option":" [[sound id=2]] ","key":3},{"option":" [[sound id=3]] ","key":1},{"option":" [[sound id=4]] ","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:00.629023Z","updated":"2016-05-12T12:57:00.629055Z","title":"tr","description":"","object_id":"9de167cb-5f2b-448b-8664-3bac685bea4c","stauts":"PUBLISHED","lft":25,"rght":26,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"d64892d6-0bbd-4c33-b8e0-a4d1c49bbddc","content_type_name":"json question","type":{"id":"7681b51a-97ca-4f17-8e99-267f09829237","created":"2016-05-12T12:57:00.745204Z","updated":"2016-05-12T12:57:00.745232Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":2,"answer":[3,2],"score":20,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/small_DH96E0.mp3","2":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/stairs_H7P48Q.mp3","3":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/clam_5OVPWR.mp3","4":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/stick_46RMWG.mp3"},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":" [[sound id=1]] ","key":4},{"option":" [[sound id=2]] ","key":3},{"option":" [[sound id=3]] ","key":1},{"option":" [[sound id=4]] ","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:00.754843Z","updated":"2016-05-12T12:57:00.754874Z","title":"st","description":"","object_id":"7681b51a-97ca-4f17-8e99-267f09829237","stauts":"PUBLISHED","lft":27,"rght":28,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"64f8d91d-eabb-4845-85f7-c639b309ffa9","content_type_name":"json question","type":{"id":"cb1f21eb-8a75-41f9-87f3-b49632365ff8","created":"2016-05-12T12:57:00.870675Z","updated":"2016-05-12T12:57:00.870702Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":2,"answer":[1,2],"score":20,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/broke_DM7876.mp3","2":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/tap_L7GUWJ.mp3","3":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/drop_N9E3E2.mp3","4":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/drum_CPBOBH.mp3"},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":" [[sound id=1]] ","key":4},{"option":" [[sound id=2]] ","key":3},{"option":" [[sound id=3]] ","key":1},{"option":" [[sound id=4]] ","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:00.880871Z","updated":"2016-05-12T12:57:00.880905Z","title":"dr","description":"","object_id":"cb1f21eb-8a75-41f9-87f3-b49632365ff8","stauts":"PUBLISHED","lft":29,"rght":30,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"82a3af56-481c-4fb4-ba35-e8d9ee0f6630","content_type_name":"json question","type":{"id":"017edec0-ed45-442f-b279-385aa871b395","created":"2016-05-12T12:57:00.950347Z","updated":"2016-05-12T12:57:00.950383Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":3,"answer":[3],"score":30,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/stick_ELFKB2.mp3"},"videos":{},"images":{"1":"http://curate.zaya.in/media/contents/zaya/photos/2015/09/01/stick_1QBKAF.png"}},"is_multiple":false,"options":[{"option":"sp","key":4},{"option":"st","key":3},{"option":"sc","key":1},{"option":"sm","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:00.960589Z","updated":"2016-05-12T12:57:00.960625Z","title":"[[img id=1]] [[sound id=1]]","description":"","object_id":"017edec0-ed45-442f-b279-385aa871b395","stauts":"PUBLISHED","lft":31,"rght":32,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"cccd9128-686b-43e1-81ac-1c8ae8f8a66c","content_type_name":"json question","type":{"id":"adc718ac-d422-4e39-915f-87f1f5340882","created":"2016-05-12T12:57:01.023555Z","updated":"2016-05-12T12:57:01.023584Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":3,"answer":[2],"score":30,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/spoon_J5UK1S.mp3"},"videos":{},"images":{"1":"http://curate.zaya.in/media/contents/zaya/photos/2016/02/25/spoon_FA5AXI.png"}},"is_multiple":false,"options":[{"option":"sn","key":4},{"option":"sm","key":3},{"option":"st","key":1},{"option":"sp","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.033477Z","updated":"2016-05-12T12:57:01.033512Z","title":"[[img id=1]] [[sound id=1]]","description":"","object_id":"adc718ac-d422-4e39-915f-87f1f5340882","stauts":"PUBLISHED","lft":33,"rght":34,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"d71d7e44-fdd9-4b8a-9c61-f1e74e30c825","content_type_name":"json question","type":{"id":"5d640c50-012c-4e4b-bcda-4011bd2ce063","created":"2016-05-12T12:57:01.098546Z","updated":"2016-05-12T12:57:01.098572Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":3,"answer":[3],"score":30,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/truck_SQT9AH.mp3"},"videos":{},"images":{"1":"http://curate.zaya.in/media/contents/zaya/photos/2016/02/25/truck_VNUB0N.png"}},"is_multiple":false,"options":[{"option":"dr","key":4},{"option":"tr","key":3},{"option":"br","key":1},{"option":"bl","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.120818Z","updated":"2016-05-12T12:57:01.120853Z","title":"[[img id=1]] [[sound id=1]]","description":"","object_id":"5d640c50-012c-4e4b-bcda-4011bd2ce063","stauts":"PUBLISHED","lft":35,"rght":36,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"1fe67424-f2a4-440b-99bb-8483c7c63166","content_type_name":"json question","type":{"id":"f95c5838-14e2-4fc5-afce-2ffd98637386","created":"2016-05-12T12:57:01.158963Z","updated":"2016-05-12T12:57:01.159027Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":3,"answer":[4],"score":30,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/31/globe_R5JK2S.mp3"},"videos":{},"images":{}},"is_multiple":false,"options":[{"option":"gl","key":4},{"option":"sl","key":3},{"option":"dr","key":1},{"option":"br","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.171821Z","updated":"2016-05-12T12:57:01.171858Z","title":"[[sound id=1]]","description":"","object_id":"f95c5838-14e2-4fc5-afce-2ffd98637386","stauts":"PUBLISHED","lft":37,"rght":38,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"52875d13-70f8-4703-ac7f-2360b4b9553d","content_type_name":"json question","type":{"id":"c3e26cb2-4c70-4b6d-b3f3-e6be3638b379","created":"2016-05-12T12:57:01.234455Z","updated":"2016-05-12T12:57:01.234486Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":3,"answer":[1],"score":30,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/snail_5CQD1E.mp3"},"videos":{},"images":{"1":"http://curate.zaya.in/media/contents/zaya/photos/2016/02/25/snail_XBPKXF.png"}},"is_multiple":false,"options":[{"option":"gr","key":4},{"option":"tr","key":3},{"option":"sn","key":1},{"option":"sm","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.244582Z","updated":"2016-05-12T12:57:01.244616Z","title":"[[img id=1]] [[sound id=1]]","description":"","object_id":"c3e26cb2-4c70-4b6d-b3f3-e6be3638b379","stauts":"PUBLISHED","lft":39,"rght":40,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"47d34dbf-01ee-4a26-b03d-3c892d1e1fec","content_type_name":"json question","type":{"id":"3a220a4b-cfa3-400e-b27e-e175ce7b1d62","created":"2016-05-12T12:57:01.356434Z","updated":"2016-05-12T12:57:01.356462Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":3,"answer":[3],"score":30,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/plane_CYJYTP.mp3"},"videos":{},"images":{"1":"http://curate.zaya.in/media/contents/zaya/photos/2016/02/25/plane_UTJREM.png"}},"is_multiple":false,"options":[{"option":"pr","key":4},{"option":"pl","key":3},{"option":"cl","key":1},{"option":"cr","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.366632Z","updated":"2016-05-12T12:57:01.366666Z","title":"[[img id=1]] [[sound id=1]]","description":"","object_id":"3a220a4b-cfa3-400e-b27e-e175ce7b1d62","stauts":"PUBLISHED","lft":41,"rght":42,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"f629ada9-2cc8-4753-9344-7f3ceadf5000","content_type_name":"json question","type":{"id":"b9a7f3f2-7fe4-4ed4-83ef-c87313cb77f8","created":"2016-05-12T12:57:01.429291Z","updated":"2016-05-12T12:57:01.429319Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":3,"answer":[3],"score":30,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/clock_H8EFGC.mp3"},"videos":{},"images":{"1":"http://curate.zaya.in/media/contents/zaya/photos/2015/09/01/clock_CPC46R.png"}},"is_multiple":false,"options":[{"option":"pl","key":4},{"option":"cl","key":3},{"option":"bl","key":1},{"option":"dr","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.438882Z","updated":"2016-05-12T12:57:01.438922Z","title":"[[img id=1]] [[sound id=1]]","description":"","object_id":"b9a7f3f2-7fe4-4ed4-83ef-c87313cb77f8","stauts":"PUBLISHED","lft":43,"rght":44,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"18026752-d923-4f00-9677-545eb4a4fc5e","content_type_name":"json question","type":{"id":"143ec4c5-31e4-446f-a234-313427e93f02","created":"2016-05-12T12:57:01.505779Z","updated":"2016-05-12T12:57:01.505808Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":3,"answer":[2],"score":30,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/grass_NX9C3F.mp3"},"videos":{},"images":{"1":"http://curate.zaya.in/media/contents/zaya/photos/2016/02/25/grass_ZDH9LM.png"}},"is_multiple":false,"options":[{"option":"cl","key":4},{"option":"bl","key":3},{"option":"cr","key":1},{"option":"gr","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.516721Z","updated":"2016-05-12T12:57:01.516754Z","title":"[[img id=1]] [[sound id=1]]","description":"","object_id":"143ec4c5-31e4-446f-a234-313427e93f02","stauts":"PUBLISHED","lft":45,"rght":46,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"0e79e883-fa3d-483d-ac37-703967b7afab","content_type_name":"json question","type":{"id":"28266a54-d6c6-4a3f-ab45-eecd295dc390","created":"2016-05-12T12:57:01.586509Z","updated":"2016-05-12T12:57:01.586556Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":3,"answer":[3],"score":30,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/tree_M10F9T.mp3"},"videos":{},"images":{"1":"http://curate.zaya.in/media/contents/zaya/photos/2016/02/25/tree_FOUJ6U.png"}},"is_multiple":false,"options":[{"option":"dr","key":4},{"option":"tr","key":3},{"option":"pr","key":1},{"option":"cr","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.601463Z","updated":"2016-05-12T12:57:01.601524Z","title":"[[img id=1]] [[sound id=1]]","description":"","object_id":"28266a54-d6c6-4a3f-ab45-eecd295dc390","stauts":"PUBLISHED","lft":47,"rght":48,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"50d65cf2-309b-427e-a44f-dccba6de2752","content_type_name":"json question","type":{"id":"cb8a0d73-f9da-4af9-a562-9e10a343f6b6","created":"2016-05-12T12:57:01.726150Z","updated":"2016-05-12T12:57:01.726220Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":3,"answer":[1],"score":30,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/31/crane_Q4CM4X.mp3"},"videos":{},"images":{}},"is_multiple":false,"options":[{"option":"tr","key":4},{"option":"gr","key":3},{"option":"cr","key":1},{"option":"pl","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.762503Z","updated":"2016-05-12T12:57:01.762560Z","title":"[[sound id=1]]","description":"","object_id":"cb8a0d73-f9da-4af9-a562-9e10a343f6b6","stauts":"PUBLISHED","lft":49,"rght":50,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"455ae052-e71c-4152-865f-41c8ae34bf8d","content_type_name":"json question","type":{"id":"0aca89a3-780a-4b12-b9ba-8de2d628eede","created":"2016-05-12T12:57:01.782073Z","updated":"2016-05-12T12:57:01.782104Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":1,"answer":[2],"score":10,"content":{"hints":"[]","widgets":{"sounds":{},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":"stock","key":4},{"option":"crop","key":3},{"option":"snail","key":1},{"option":"small","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.807064Z","updated":"2016-05-12T12:57:01.807126Z","title":"sm","description":"","object_id":"0aca89a3-780a-4b12-b9ba-8de2d628eede","stauts":"PUBLISHED","lft":51,"rght":52,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"e9a5a5c5-636c-45e7-9d5d-4f5f719159a7","content_type_name":"json question","type":{"id":"d372277a-1e43-4736-9e18-782848fa4e97","created":"2016-05-12T12:57:01.818575Z","updated":"2016-05-12T12:57:01.818616Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":1,"answer":[2],"score":10,"content":{"hints":"[]","widgets":{"sounds":{},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":"throw","key":4},{"option":"glow","key":3},{"option":"blow","key":1},{"option":"place","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.839624Z","updated":"2016-05-12T12:57:01.839695Z","title":"pl","description":"","object_id":"d372277a-1e43-4736-9e18-782848fa4e97","stauts":"PUBLISHED","lft":53,"rght":54,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"9beaaaf0-9075-4988-9b51-0550f1f782b6","content_type_name":"json question","type":{"id":"12f80277-19bd-4b66-89bf-ab91954d81a8","created":"2016-05-12T12:57:01.855058Z","updated":"2016-05-12T12:57:01.855131Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":1,"answer":[4,3,2],"score":10,"content":{"hints":"[]","widgets":{"sounds":{},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":"trick","key":4},{"option":"trap","key":3},{"option":"club","key":1},{"option":"truck","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.870469Z","updated":"2016-05-12T12:57:01.870504Z","title":"tr","description":"","object_id":"12f80277-19bd-4b66-89bf-ab91954d81a8","stauts":"PUBLISHED","lft":55,"rght":56,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"27681226-4c60-4719-bb4f-63a7de8b2e6a","content_type_name":"json question","type":{"id":"df1db188-8658-49c6-a7af-4570da5f26fa","created":"2016-05-12T12:57:01.881038Z","updated":"2016-05-12T12:57:01.881070Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":1,"answer":[1],"score":10,"content":{"hints":"[]","widgets":{"sounds":{},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":"blend","key":4},{"option":"prize","key":3},{"option":"glow","key":1},{"option":"clam","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.893994Z","updated":"2016-05-12T12:57:01.894055Z","title":"gl","description":"","object_id":"df1db188-8658-49c6-a7af-4570da5f26fa","stauts":"PUBLISHED","lft":57,"rght":58,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"2616f02f-047d-4700-af74-108e2ed716b3","content_type_name":"json question","type":{"id":"51f50a96-4d2e-4b4d-b079-f059193bf0fa","created":"2016-05-12T12:57:01.909467Z","updated":"2016-05-12T12:57:01.909524Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":1,"answer":[1],"score":10,"content":{"hints":"[]","widgets":{"sounds":{},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":"skate","key":4},{"option":"spot","key":3},{"option":"stairs","key":1},{"option":"black","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.931146Z","updated":"2016-05-12T12:57:01.931209Z","title":"st","description":"","object_id":"51f50a96-4d2e-4b4d-b079-f059193bf0fa","stauts":"PUBLISHED","lft":59,"rght":60,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"41995ffd-2548-4965-857d-9ab76d4adf82","content_type_name":"json question","type":{"id":"0f858462-1490-40ce-8f86-3ce3c850325b","created":"2016-05-12T12:57:02.186295Z","updated":"2016-05-12T12:57:02.186330Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":2,"answer":[3,1],"score":20,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/smile_GXPK1Z.mp3","2":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/skate_QV9MJB.mp3","3":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/sky_JAY7YD.mp3","4":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/dry_9R37SR.mp3"},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":" [[sound id=1]] ","key":4},{"option":" [[sound id=2]] ","key":3},{"option":" [[sound id=3]] ","key":1},{"option":" [[sound id=4]] ","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:02.202258Z","updated":"2016-05-12T12:57:02.202298Z","title":"sk","description":"","object_id":"0f858462-1490-40ce-8f86-3ce3c850325b","stauts":"PUBLISHED","lft":61,"rght":62,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]}]}
                 return Rest.one('accounts',CONSTANT.CLIENTID.ELL).one('assessments',$stateParams.id).get().then(function(quiz){
                   return quiz.plain();
                 });
@@ -2302,816 +3120,6 @@ window.createGame = function(scope, lessons, injector, log) {
         views : {
           'result-tab':{
             templateUrl : CONSTANT.PATH.RESULT+'/result'+CONSTANT.VIEW
-          }
-        }
-      })
-  }
-})();
-
-(function () {
-  'use strict';
-  angular
-    .module('zaya-auth')
-    .controller('authController', authController)
-  authController.$inject = ['$q','$ionicModal', '$state', 'Auth', 'audio', '$rootScope', '$ionicPopup', '$log', '$cordovaOauth', 'CONSTANT', '$interval', '$scope', '$ionicLoading'];
-  function authController($q,$ionicModal, $state, Auth, audio, $rootScope, $ionicPopup, $log, $cordovaOauth, CONSTANT, $interval, $scope, $ionicLoading) {
-    var authCtrl = this;
-    var email_regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    var indian_phone_regex = /^[7-9][0-9]{9}$/;
-    //var username_regex = /^[a-z0-9]*$/;
-    var min = 6;
-    var max = 15;
-    var country_code = '+91';
-    authCtrl.audio = audio;
-    authCtrl.login = login;
-    authCtrl.logout = logout;
-    authCtrl.signup = signup;
-    authCtrl.openModal = openModal;
-    authCtrl.closeModal = closeModal;
-    authCtrl.rootScope = $rootScope;
-    authCtrl.validCredential = validCredential;
-    authCtrl.showError = showError;
-    authCtrl.showAlert = showAlert;
-    authCtrl.verifyOtpValidations = verifyOtpValidations;
-    authCtrl.verifyOtp = verifyOtp;
-    // authCtrl.getToken = getToken;
-    authCtrl.passwordResetRequest = passwordResetRequest;
-    authCtrl.validateForgotPasswordForm = validateForgotPasswordForm;
-    authCtrl.resendOTP = resendOTP;
-    authCtrl.max_counter = 60;
-    authCtrl.startCounter = startCounter;
-    authCtrl.stopCounter = stopCounter;
-    authCtrl.signUpDisabled = false;
-    authCtrl.resendOTPCount = 0;
-    authCtrl.resendOTPDate = null;
-    authCtrl.maxOTPsendCountperDay = 50;
-    authCtrl.autoVerifyPhoneStatus = false;
-    authCtrl.resetPasswordLinkSent = false;
-    authCtrl.closeKeyboard = closeKeyboard;
-    authCtrl.verifyOtpResetPassword = verifyOtpResetPassword;
-    authCtrl.validCredentialChangePassword = validCredentialChangePassword;
-    authCtrl.changePassword = changePassword;
-    authCtrl.cancelOTP = cancelOTP;
-    authCtrl.recoverAccount = recoverAccount;
-    authCtrl.error = { "title" : "", "desc" : ""};
-
-
-    function recoverAccount() {
-        authCtrl.openModal('recover');
-    }
-    function openModal (modal) {
-      if(modal == 'error'){
-        authCtrl.errorModal.show();
-      }
-      else if(modal == 'recover'){
-        authCtrl.recoveryModal.show();
-      }
-      else {
-        return false;
-      }
-
-    }
-    function closeModal (modal) {
-      var q = $q.defer();
-
-      if(modal == 'error'){
-        q.resolve(authCtrl.errorModal.hide());
-      }
-      else if(modal == 'recover'){
-        q.resolve(authCtrl.recoveryModal.hide());
-      }
-      else{
-        q.reject(false);
-      }
-
-      return q.promise;
-    }
-    $ionicModal.fromTemplateUrl(CONSTANT.PATH.AUTH + '/auth.forgot.social' + CONSTANT.VIEW, {
-      scope: $scope,
-      animation: 'slide-in-up',
-    }).then(function(recoveryModal) {
-      authCtrl.recoveryModal = recoveryModal;
-    });
-    $ionicModal.fromTemplateUrl(CONSTANT.PATH.AUTH + '/auth.error.modal' + CONSTANT.VIEW, {
-      scope: $scope,
-      animation: 'slide-in-up',
-    }).then(function(errorModal) {
-      authCtrl.errorModal = errorModal;
-    });
-
-
-    function validEmail(email) {
-      return email_regex.test(email);
-    }
-
-    function validPhoneNumber(number) {
-      return indian_phone_regex.test(number);
-    }
-
-    //function validUsername(username) {
-    //  return username_regex.test(username);
-    //}
-    function login(url, user_credentials) {
-      $ionicLoading.show({
-        template: 'Logging in...'
-      });
-      user_credentials = ( url == 'login' ) ? cleanCredentials(user_credentials) : user_credentials;
-      Auth.login(url, user_credentials, function (response) {
-        Auth.getUser(function (success) {
-          Auth.setAuthProvider(url);
-          $ionicLoading.hide();
-          $state.go('map.navigate', {});
-        }, function () {
-          $ionicLoading.hide();
-          authCtrl.showError("Error Login", "Please enter a valid mobile no./Email ID and password");
-        });
-      }, function (response) {
-        $ionicLoading.hide();
-        if(response.data.details){
-          authCtrl.showError("Error Login", response.data.details);
-        }
-        else{
-          authCtrl.showError("Error Login", "Please enter a valid mobile no./Email ID and password");
-        }
-        authCtrl.audio.play('wrong');
-      })
-    }
-
-    function signup(user_credentials) {
-      $ionicLoading.show({
-        template: 'Signing up...'
-      });
-      user_credentials = cleanCredentials(user_credentials);
-      authCtrl.signUpDisabled = true;
-      Auth.signup(user_credentials, function (response) {
-        $state.go('auth.verify.phone', {});
-        $ionicLoading.hide();
-        authCtrl.signUpDisabled = false;
-      }, function (response) {
-        $ionicLoading.hide();
-        //  authCtrl.showError(_.chain(response.data).keys().first(), response.data[_.chain(response.data).keys().first()].toString());
-        if(response.data)
-        {
-          authCtrl.showError("Could not register", response.data.details);
-        }
-        else
-        {
-          authCtrl.showError("Could not register", "Please enter a valid mobile no. and password");
-        }
-        authCtrl.audio.play('wrong');
-        authCtrl.signUpDisabled = false;
-      })
-    }
-
-    function logout(path) {
-      Auth.logout(function () {
-        $state.go(path, {})
-      }, function () {
-        // body...
-      })
-    }
-
-    // web social login / will be used in web apps
-    // function getToken(webservice) {
-    //   if (webservice == 'facebook') {
-    //     $cordovaOauth.facebook(CONSTANT.CLIENTID.FACEBOOK, ["email"]).then(function (result) {
-    //       authCtrl.login('facebook', {"access_token": result.access_token});
-    //     }, function (error) {
-    //       authCtrl.showError("Error", error);
-    //     });
-    //   }
-    //   if (webservice == 'google') {
-    //     $cordovaOauth.google(CONSTANT.CLIENTID.GOOGLE, ["email"]).then(function (result) {
-    //       authCtrl.login('google', {"access_token": result.access_token});
-    //     }, function (error) {
-    //       authCtrl.showError("Error", error);
-    //     });
-    //   }
-    // }
-
-    function cleanCredentials(user_credentials) {
-      if (validEmail(user_credentials.useridentity)) {
-        user_credentials['email'] = user_credentials.useridentity;
-      }
-      else if (!isNaN(parseInt(user_credentials.useridentity, 10)) && validPhoneNumber(parseInt(user_credentials.useridentity, 10))) {
-        user_credentials['phone_number'] = country_code + user_credentials.useridentity;
-      }
-      delete user_credentials['useridentity'];
-      return user_credentials;
-    }
-
-    function validCredential(formData) {
-      if (!formData.useridentity.$viewValue) {
-        authCtrl.showError("Empty", "Its empty! Enter a valid phone number or email");
-        return false;
-      }
-      else if (formData.useridentity.$viewValue && formData.useridentity.$viewValue.indexOf('@') != -1 && !validEmail(formData.useridentity.$viewValue)) {
-        authCtrl.showError("Email", "Oops! Please enter a valid email");
-        return false;
-      }
-      else if (formData.useridentity.$viewValue && !isNaN(parseInt(formData.useridentity.$viewValue, 10)) && !validPhoneNumber(formData.useridentity.$viewValue) && !validEmail(formData.useridentity.$viewValue)) {
-        authCtrl.showError("Phone", "Oops! Please enter a valid mobile no.");
-        return false;
-      }
-      else if (!formData.password.$viewValue) {
-        authCtrl.showError("Password", "Its empty! Enter a valid password");
-        return false;
-      }
-      else if (formData.password.$viewValue.length < min) {
-        authCtrl.showError("Password", "Minimum " + min + " characters required");
-        return false;
-      }
-      else if (formData.password.$viewValue.length > max) {
-        authCtrl.showError("Password", "Maximum " + max + " can be used");
-        return false;
-      }
-      else if (formData.email && formData.email.$viewValue && !validEmail(formData.email.$viewValue)) {
-        authCtrl.showError("Email", "Oops! Please enter a valid email");
-        return false;
-      }
-      return true;
-    }
-
-    function showError(title, msg) {
-      $log.debug(title, msg);
-      authCtrl.error.title = title;
-      authCtrl.error.desc = msg;
-      authCtrl.openModal('error');
-      // $ionicPopup.alert({
-      //   title: title,
-      //   template: msg
-      // });
-    }
-
-    function showAlert(title, msg) {
-      $log.debug(title, msg);
-      authCtrl.error.title = title;
-      authCtrl.error.desc = msg;
-      authCtrl.openModal('error');
-      // $ionicPopup.alert({
-      //   title: title,
-      //   template: msg
-      // }).then(function (response) {
-      //   if (success) {
-      //     success()
-      //   }
-      // });
-    }
-
-    function verifyOtpValidations(formData) {
-      if (!formData.otp.$viewValue) {
-        authCtrl.showError("OTP", "Its empty! Enter the one time password");
-        return false;
-      }
-      $log.debug("OTP validations passed");
-      return true;
-    }
-
-    function verifyOtp(otp_credentials) {
-      $ionicLoading.show({
-        template: 'Verifying...'
-      });
-      Auth.verifyOtp(otp_credentials, otpVerifiedSuccessHandler, function (error) {
-        $ionicLoading.hide();
-        authCtrl.showError("Incorrect OTP!", "The one time password you entered is incorrect!");
-      })
-    }
-
-    function passwordResetRequest(user_credentials) {
-      $ionicLoading.show({
-        template: 'Requesting...'
-      });
-      $log.debug(user_credentials);
-      user_credentials = cleanCredentials(user_credentials);
-      $log.debug(user_credentials);
-      Auth.resetPassword(user_credentials, function (success) {
-        if (user_credentials.hasOwnProperty('phone_number')) {
-          localStorage.setItem('Authorization', success.token);
-          authCtrl.closeModal('recover');
-          $state.go('auth.forgot_verify_otp');
-        }
-        else {
-          authCtrl.showAlert("Reset Password", "We have send a link to your email");
-        }
-        authCtrl.resetPasswordLinkSent = true;
-        $ionicLoading.hide();
-      }, function (error) {
-        authCtrl.showAlert("Not Registered", "Mobile no. /Email ID is not registered.");
-        $ionicLoading.hide();
-      })
-    }
-
-    function validateForgotPasswordForm(formData) {
-      $log.debug(formData);
-      if (!formData.useridentity.$viewValue) {
-        authCtrl.showError("Empty", "Its empty! Enter a valid phone number or email");
-        return false;
-      }
-      else if (formData.useridentity.$viewValue && formData.useridentity.$viewValue.indexOf('@') != -1 && !validEmail(formData.useridentity.$viewValue)) {
-        authCtrl.showError("Email", "Oops! Please enter a valid email");
-        return false;
-      }
-      else if (formData.useridentity.$viewValue && !isNaN(parseInt(formData.useridentity.$viewValue, 10)) && !validPhoneNumber(formData.useridentity.$viewValue)) {
-        authCtrl.showError("Phone", "Oops! Please enter a valid mobile no.");
-        return false;
-      }
-      return true;
-    }
-
-    function resendOTP() {
-      if (Auth.canSendOtp(authCtrl.maxOTPsendCountperDay)) {
-        Auth.resendOTP(function (success) {
-          authCtrl.showAlert("OTP Sent", "We have sent you otp again");
-          authCtrl.startCounter();
-          authCtrl.autoVerifyPhoneStatus = 'Waiting For SMS';
-        }, function (error) {
-          authCtrl.showError(error);
-        })
-      }
-      else {
-        authCtrl.showAlert("OTP Resend count exceed", "Sorry you cant send more otps try again tomorrow");
-      }
-    }
-
-    function startCounter() {
-      authCtrl.counter = authCtrl.max_counter;
-      authCtrl.start = $interval(function () {
-        if (authCtrl.counter > 0) {
-          authCtrl.counter--;
-        } else {
-          authCtrl.stopCounter();
-        }
-      }, 1000);
-      return true;
-    }
-
-    function stopCounter() {
-      if (angular.isDefined(authCtrl.start)) {
-        $interval.cancel(authCtrl.start);
-      }
-    }
-
-    $scope.$on('smsArrived', function (event, data) {
-      $ionicLoading.show({
-        template: 'Getting OTP From SMS'
-      });
-      authCtrl.autoVerifyPhoneStatus = 'Getting OTP From SMS';
-      Auth.getOTPFromSMS(data.message, function (otp) {
-        $ionicLoading.show({
-          template: 'OTP received. Verifying..'
-        });
-        authCtrl.autoVerifyPhoneStatus = 'OTP received. Verifying..';
-        Auth.verifyOtp({'code': otp}, function (success) {
-          authCtrl.autoVerifyPhoneStatus = 'Verified';
-          otpVerifiedSuccessHandler(success);
-        }, function () {
-          $ionicLoading.hide();
-          authCtrl.autoVerifyPhoneStatus = 'Error Verifying OTP. Try Again';
-        });
-      }, function () {
-        $ionicLoading.hide();
-        authCtrl.autoVerifyPhoneStatus = 'Error Getting OTP From SMS';
-        //authCtrl.showError("Could not get OTP","Error fetching OTP");
-      });
-      if (SMS) {
-        SMS.stopWatch(function () {
-          $log.debug('watching', 'watching stopped');
-        }, function () {
-          updateStatus('failed to stop watching');
-        });
-        SMS.startWatch(function () {
-          $log.debug('watching', 'watching started');
-        }, function () {
-          updateStatus('failed to start watching');
-        });
-      }
-    });
-    function otpVerifiedSuccessHandler(success) {
-      Auth.getUser(function (success) {
-        $ionicLoading.hide();
-        authCtrl.showAlert("Correct!", "Phone Number verified!");
-        $state.go('user.personalise.social', {});
-      }, function (error) {
-        $ionicLoading.hide();
-        authCtrl.showError("Error", "Could not verify OTP. Try again");
-      });
-    }
-
-    authCtrl.numberOfWatches = function () {
-      var root = angular.element(document.getElementsByTagName('body'));
-      var watchers = [];
-      var f = function (element) {
-        angular.forEach(['$scope', '$isolateScope'], function (scopeProperty) {
-          if (element.data() && element.data().hasOwnProperty(scopeProperty)) {
-            angular.forEach(element.data()[scopeProperty].$$watchers, function (watcher) {
-              watchers.push(watcher);
-            });
-          }
-        });
-        angular.forEach(element.children(), function (childElement) {
-          f(angular.element(childElement));
-        });
-      };
-      f(root);
-      // Remove duplicate watchers
-      var watchersWithoutDuplicates = [];
-      angular.forEach(watchers, function (item) {
-        if (watchersWithoutDuplicates.indexOf(item) < 0) {
-          watchersWithoutDuplicates.push(item);
-        }
-      });
-      $log.debug(watchersWithoutDuplicates);
-    };
-    authCtrl.googleSignIn = function () {
-      $ionicLoading.show({
-        template: 'Logging in...'
-      });
-      try{
-        window.plugins.googleplus.login(
-          {
-            'scopes': 'email profile',
-            'webApiKey': '306430510808-i5onn06gvm82lhuiopm6l6188133j5r4.apps.googleusercontent.com',
-            'offline': true
-          },
-          function (user_data) {
-            authCtrl.login('google', {"access_token": user_data.oauthToken});
-            // For the purpose of this example I will store user data on local storage
-            //UserService.setUser({
-            //  userID: user_data.userId,
-            //  name: user_data.displayName,
-            //  email: user_data.email,
-            //  picture: user_data.imageUrl,
-            //  accessToken: user_data.accessToken,
-            //  idToken: user_data.idToken
-            //});
-          },
-          function (msg) {
-            authCtrl.showError("Error",msg);
-            $ionicLoading.hide();
-          }
-        );
-      }
-      catch(e){
-        $log.debug(e);
-      }
-    };
-    authCtrl.googleSignOut = function () {
-      window.plugins.googleplus.logout(
-        function (msg) {
-          void 0;
-        }
-      );
-    };
-    authCtrl.facebookSignIn = function () {
-      facebookConnectPlugin.login(['email', 'public_profile'], function (success) {
-        authCtrl.login('facebook', {"access_token": success.authResponse.accessToken});
-      }, function () {
-      })
-    };
-    function closeKeyboard() {
-      try{
-        cordova.plugins.Keyboard.close();
-      }
-      catch(e){
-        $log.debug(e);
-      }
-      return true;
-    }
-    function verifyOtpResetPassword(otp){
-        Auth.verifyOtpResetPassword(otp,function(success){
-          $log.debug(success);
-          $state.go('auth.change_password', {});
-        },function(error){
-          $log.debug(error);
-          authCtrl.showAlert("InCorrect!", "You entered wrong OTP!");
-        })
-    }
-    function validCredentialChangePassword(formData) {
-      if (!formData.password1.$viewValue) {
-        authCtrl.showError("Enter Password", "Its empty! Enter a password");
-        return false;
-      }
-      else if(formData.password1.$viewValue.length < 6){
-        authCtrl.showError("Password too small", "Password must be 6 characters long");
-        return false;
-      }
-      else if(typeof(formData.password2.$viewValue) == 'undefined' || !angular.equals(formData.password2.$viewValue,formData.password1.$viewValue)){
-        authCtrl.showError("Confirm Password", "Please confirm your password");
-        return false;
-      }
-      return true;
-    }
-    function changePassword(credentials){
-      credentials.secret_key = '@#2i0-jn9($un1w8utqc2dms!$#5+5';
-      Auth.changePassword(credentials,function(success){
-        authCtrl.showAlert('Success','You have reset your password');
-        $log.debug(success);
-        $state.go('auth.signin', {});
-      },function(error){
-        $log.debug(error);
-      })
-    }
-    function cancelOTP(){
-     localStorage.clear();
-      $state.go('auth.signin',{});
-    }
-
-  }
-})();
-
-(function () {
-  'use strict';
-  angular
-    .module('zaya-auth')
-    .factory('Auth', Auth)
-  Auth.$inject = ['Restangular', 'CONSTANT', '$cookies', '$log', '$window'];
-  function Auth(Restangular, CONSTANT, $cookies, $log, $window) {
-    var rest_auth = Restangular.withConfig(function (RestangularConfigurer) {
-      RestangularConfigurer.setBaseUrl(CONSTANT.BACKEND_SERVICE_DOMAIN + '/rest-auth');
-      RestangularConfigurer.setRequestSuffix('/');
-      RestangularConfigurer.setDefaultHeaders({
-        'Content-Type': 'application/x-www-form-urlencoded',
-      });
-    });
-    return {
-      login: function (url, user_credentials, success, failure) {
-        rest_auth.all(url).post($.param(user_credentials)).then(function (response) {
-          localStorage.setItem('Authorization', response.key || response.token);
-          success(response);
-        }, function (response) {
-          failure(response);
-        })
-      },
-      logout: function (success, failure) {
-        rest_auth.all('logout').post().then(function (response) {
-          if(localStorage.getItem('authProvider') == 'google')
-          {
-            window.plugins.googleplus.logout();
-          }
-          if(localStorage.getItem('authProvider') == 'facebook')
-          {
-            facebookConnectPlugin.logout();
-          }
-          localStorage.removeItem('Authorization');
-          localStorage.removeItem('user_details');
-          localStorage.removeItem('authProvider');
-          success();
-        }, function (error) {
-          failure();
-        })
-      },
-      signup: function (user_credentials, success, failure) {
-        rest_auth.all('registration').post($.param(user_credentials), success, failure).then(function (response) {
-          localStorage.setItem('Authorization', response.key);
-          success(response);
-        }, function (response) {
-          failure(response);
-        })
-      },
-      reset: function (email, atype, success, failure) {
-        type == 'password' && rest_auth.all('password').all('reset').post(email);
-        type == 'username' && rest_auth.all('username').all('reset').post(email);
-      },
-      isAuthorised: function () {
-        return localStorage.Authorization;
-      },
-      canSendOtp: function (max_otp_send_count) {
-        var last_otp_date = localStorage.getItem('last_otp_date');
-        var otp_sent_count = localStorage.getItem('otp_sent_count');
-        if (last_otp_date && otp_sent_count) {
-          if (this.dateCompare(new Date(), new Date((last_otp_date)))) {
-            localStorage.setItem('last_otp_date', new Date());
-            localStorage.setItem('otp_sent_count', 1);
-            return true;
-          } else {
-            if (otp_sent_count < max_otp_send_count) {
-              localStorage.setItem('last_otp_date', new Date());
-              localStorage.setItem('otp_sent_count', ++otp_sent_count);
-              return true;
-            } else {
-              return false;
-            }
-          }
-        }
-        else {
-          localStorage.setItem('last_otp_date', new Date());
-          localStorage.setItem('otp_sent_count', 1);
-          return true;
-        }
-      },
-      // remove util funstion from auth factory
-      dateCompare: function (date_1, date_2) { // Checks if date_1 > date_2
-        var month_1 = date_1.getMonth();
-        var month_2 = date_2.getMonth();
-        var day_1 = date_1.getDate();
-        var day_2 = date_2.getDate();
-        if (month_1 > month_2) {
-          return true;
-        } else if (month_1 == month_2) {
-          return day_1 > day_2;
-        } else return false;
-      },
-      verifyOtp: function (verification_credentials, success, failure) {
-        $log.debug(JSON.stringify(verification_credentials));
-        rest_auth.all('sms-verification').post($.param(verification_credentials), success, failure).then(function (response) {
-          success(response);
-        }, function (response) {
-          failure(response);
-        })
-      },
-      resetPassword: function (reset_password_credentials, success, failure) {
-        rest_auth.all('password/reset').post($.param(reset_password_credentials), success, failure).then(function (response) {
-          success(response);
-        }, function (response) {
-          failure(response);
-        })
-      },
-      resendOTP: function (success, failure) {
-        rest_auth.all('resend-sms-verification').post('', success, failure).then(function (response) {
-          success(response);
-        }, function (response) {
-          failure(response);
-        })
-      },
-      getUser: function (success, failure) {
-        Restangular.oneUrl('user_details', CONSTANT.BACKEND_SERVICE_DOMAIN + 'rest-auth/user/').get().then(function (response) {
-          localStorage.setItem('user_details', JSON.stringify(response));
-          success(response);
-        }, function (response) {
-          failure(response);
-        });
-      },
-      isVerified: function () {
-        var user_details = JSON.parse(localStorage.getItem('user_details'));
-        if (user_details) {
-          return user_details.is_verified;
-        }
-        else {
-          return false;
-        }
-      },
-      getOTPFromSMS: function (message,success,failure) {
-        var string = message.data.body;
-        if(message.data.address == '+12023353814')
-        {
-          var e_position = string.indexOf("Enter");
-          var o_position = string.indexOf("on");
-          success(string.substring(e_position + 6, o_position - 1));
-        }
-        else{
-          failure();
-        }
-
-      },
-      setAuthProvider: function (authProvider){
-        localStorage.setItem('authProvider',authProvider);
-        return authProvider;
-      },
-      verifyOtpResetPassword: function(otp,success,failure){
-        rest_auth.all('password/reset/sms-verification').post($.param(otp), success, failure).then(function (response) {
-          success(response);
-        }, function (response) {
-          failure(response);
-        })
-      },
-      changePassword: function (credentials, success, failure) {
-        rest_auth.all('password/change').post($.param(credentials), success, failure).then(function (response) {
-          localStorage.removeItem('Authorization');
-          success(response);
-        }, function (response) {
-          failure(response);
-        })
-      },
-      hasProfile: function(){
-        return JSON.parse(localStorage.getItem('user_details')).profile == null ? false : true;
-      }
-      ,
-      getProfileId: function(){
-        return JSON.parse(localStorage.getItem('user_details')).profile;
-      }
-    }
-  }
-})();
-
-(function() {
-  'use strict';
-
-  authRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
-  angular
-    .module('zaya-auth')
-    .config(authRoute);
-
-  function authRoute($stateProvider, $urlRouterProvider, CONSTANT) {
-    $stateProvider
-    .state('auth', {
-        url: '/auth',
-        abstract: true,
-        template: "<ion-nav-view name='state-auth'></ion-nav-view>",
-      })
-      // intro is now the main screen
-      // .state('auth.main', {
-      //   url: '/main',
-      //   views: {
-      //     'state-auth': {
-      //       templateUrl: CONSTANT.PATH.AUTH + "/auth.main" + CONSTANT.VIEW
-      //     }
-      //   }
-      // })
-      .state('auth.signin', {
-        url: '/signin',
-        nativeTransitions: {
-          "type": "slide",
-          "direction": "left",
-          "duration" :  400
-        },
-        views: {
-          'state-auth': {
-            // templateUrl: CONSTANT.PATH.AUTH + '/auth.signin' + CONSTANT.VIEW,
-            templateUrl: CONSTANT.PATH.AUTH + '/auth.signin.social' + CONSTANT.VIEW,
-            controller: 'authController as authCtrl'
-          }
-        }
-      })
-      .state('auth.signup', {
-        url: '/signup',
-        nativeTransitions: {
-          "type": "slide",
-          "direction": "left",
-          "duration" :  400
-        },
-        views: {
-          'state-auth': {
-            // templateUrl: CONSTANT.PATH.AUTH + '/auth.signup' + CONSTANT.VIEW,
-            templateUrl: CONSTANT.PATH.AUTH + '/auth.signup.social' + CONSTANT.VIEW,
-            controller: 'authController as authCtrl'
-          }
-        }
-      })
-      .state('auth.forgot', {
-        url: '/forgot',
-        nativeTransitions: {
-          "type": "slide",
-          "direction": "up",
-          "duration" :  400
-        },
-        views: {
-          'state-auth': {
-            // templateUrl: CONSTANT.PATH.AUTH + '/auth.forgot' + CONSTANT.VIEW,
-            templateUrl: CONSTANT.PATH.AUTH + '/auth.forgot.social' + CONSTANT.VIEW,
-            controller: 'authController as authCtrl'
-          }
-        }
-      })
-      .state('auth.forgot_verify_otp', {
-        url: '/verifyotp',
-        nativeTransitions: {
-          "type": "slide",
-          "direction": "up",
-          "duration" :  400
-        },
-        views: {
-          'state-auth': {
-            // templateUrl: CONSTANT.PATH.AUTH + '/auth.forgot' + CONSTANT.VIEW,
-            templateUrl: CONSTANT.PATH.AUTH + '/auth.forgot.verify' + CONSTANT.VIEW,
-            controller: 'authController as authCtrl'
-          }
-        }
-      })
-      .state('auth.change_password', {
-        url: '/changepassword',
-        nativeTransitions: {
-          "type": "slide",
-          "direction": "up",
-          "duration" :  400
-        },
-        views: {
-          'state-auth': {
-            // templateUrl: CONSTANT.PATH.AUTH + '/auth.forgot' + CONSTANT.VIEW,
-            templateUrl: CONSTANT.PATH.AUTH + '/auth.changepassword' + CONSTANT.VIEW,
-            controller: 'authController as authCtrl'
-          }
-        }
-      })
-      .state('auth.verify',{
-        abstract : true,
-        url : '/verify',
-        views : {
-          "state-auth" : {
-            template : "<ion-nav-view name='state-auth-verify'></ion-nav-view>"
-          }
-        }
-      })
-      .state('auth.verify.phone', {
-        url: '/phone',
-        nativeTransitions: {
-          "type": "slide",
-          "direction": "left",
-          "duration" :  400
-        },
-        views: {
-          'state-auth-verify': {
-            templateUrl: CONSTANT.PATH.AUTH + '/auth.verify.phonenumber' + CONSTANT.VIEW,
-            controller: 'authController as authCtrl'
           }
         }
       })

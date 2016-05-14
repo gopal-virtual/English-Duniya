@@ -12,15 +12,14 @@
         url: '/map',
         abstract: true,
         resolve: {
-          lessons: ['Rest', '$log', function(Rest, $log) {
-            return Rest.one('accounts', CONSTANT.CLIENTID.ELL).getList('lessons').then(function(lessons) {
-              return lessons.plain();
+          lessons: ['Rest', '$log','$http', function(Rest, $log, $http) {
+            return Rest.one('accounts', CONSTANT.CLIENTID.ELL).customGET('lessons', {limit : 25} ).then(function(lessons) {
+              return lessons.plain().results;
             })
-
           }],
           scores: ['Rest', '$log', function(Rest, $log) {
             return Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('profiles', JSON.parse(localStorage.user_details).profile).getList('lessons-score').then(function(score) {
-                $log.debug('scores rest' , score.plain());
+              $log.debug('scores rest', score.plain());
               return score.plain();
             })
           }]
