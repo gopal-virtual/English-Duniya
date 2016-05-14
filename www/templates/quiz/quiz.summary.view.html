@@ -21,7 +21,7 @@
         <button class="button bg-brand-yellow button-round button-block" ui-sref="map.navigate">NEXT</button>
       </div>
     </div>
-    <div class="row bg-pale padding-y-20">
+    <!-- <div class="row bg-pale padding-y-20">
         <div class="col text-center">
             <u class="font-lg">QUESTIONS</u>
         </div>
@@ -35,7 +35,7 @@
               Question {{$index + 1}}
             </div>
             <div class="item item-text-wrap">
-                <!-- <p class="font-md">{{item.title}}</p> -->
+                <p class="font-md">{{item.title}}</p>
               <span ng-class="{'color-assertive-light':item.status==0,'color-green' : item.status==1, 'color-grey' : item.status==-1}">
                 {{item.status == 1 ? 'CORRECT' : item.status == 0 ? 'WRONG' : 'SKIPPED'}}
               </span>
@@ -43,6 +43,6 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
   </ion-content>
 </ion-view>

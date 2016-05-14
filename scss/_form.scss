@@ -114,3 +114,14 @@ input[type=radio].hide{
 .radio-female.checked{
     background: url('#{$icon-path}/icon-girl.png') no-repeat -144px 0 !important;
 }
+
+.input-group-social{
+
+}
+.input-group-social > .input-group-item:first-child{
+  border-radius: $border-radius 0 0 $border-radius !important;
+  border-top : thin solid lighten($dark, 50%) ;
+  border-left : thin solid lighten($dark, 50%) ;
+  border-bottom : thin solid lighten($dark, 50%) ;
+  max-width: 15%;
+}
