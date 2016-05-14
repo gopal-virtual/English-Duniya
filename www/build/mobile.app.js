@@ -19,6 +19,13 @@
     'use strict';
 
     angular
+        .module('zaya-content', []);
+})();
+
+(function() {
+    'use strict';
+
+    angular
         .module('zaya-intro', []);
 })();
 
@@ -67,6 +74,9 @@
       'ngMessages',
       'ngCookies',
       'ngCordovaOauth',
+      'com.2fdevs.videogular',
+      'com.2fdevs.videogular.plugins.controls',
+      'com.2fdevs.videogular.plugins.buffering',
 
       // core
       'common',
@@ -76,6 +86,7 @@
       'zaya-intro',
       'zaya-auth',
       'zaya-quiz',
+      'zaya-content'
     ]);
 
 })();
@@ -218,6 +229,17 @@
         event.preventDefault();
         $state.go('map.navigate');
       }
+      if (toState.name == 'quiz.practice.summary' && !toParams.report) {
+        $log.debug("Practice summary page cannot be accessed : No quiz data present");
+        event.preventDefault();
+        $state.go('map.navigate');
+      }
+      // block content state
+      if (toState.name == 'content.video' && !toParams.video) {
+        $log.debug("Video value is not present");
+        event.preventDefault();
+        $state.go('map.navigate');
+      }
 
       if(toState.name == 'auth.verify.phone'){
         $log.debug("verify");
@@ -229,6 +251,9 @@
 
     });
     $ionicPlatform.ready(function () {
+    //   if (window.StatusBar) {
+    //     StatusBar.hide();
+    //   }
       // detect app activity
       document.addEventListener("pause", function(){
         $log.debug("paused");
@@ -1081,39 +1106,45 @@
   }
 })();
 
-(function(){
+(function() {
   var ROOT = 'templates';
 
   angular
     .module('common')
-    .constant('CONSTANT',{
-      'BACKEND_SERVICE_DOMAIN' : 'http://cc-test.zaya.in/',
+    .constant('CONSTANT', {
+      'BACKEND_SERVICE_DOMAIN': 'http://cc-test.zaya.in/',
       // 'BACKEND_SERVICE_DOMAIN' : 'http://192.168.1.6:9000/',
-      'PATH' : {
-        'INTRO' : ROOT+'/intro',
-        'AUTH' : ROOT+'/auth',
-        'QUIZ' : ROOT+'/quiz',
-        'PROFILE' : ROOT+'/profile',
-        'USER' : ROOT+'/user',
-        'PLAYLIST' : ROOT+'/playlist',
-        'HOME' : ROOT+'/home',
-        'RESULT' : ROOT+'/result',
-        'SEARCH' : ROOT+'/search',
-        'GROUP' : ROOT+'/group',
-        'COMMON' : ROOT + '/common',
-        'MAP' : ROOT + '/map',
-        'CONTENT' : ROOT + '/content'
+      'PATH': {
+        'INTRO': ROOT + '/intro',
+        'AUTH': ROOT + '/auth',
+        'QUIZ': ROOT + '/quiz',
+        'PROFILE': ROOT + '/profile',
+        'USER': ROOT + '/user',
+        'PLAYLIST': ROOT + '/playlist',
+        'HOME': ROOT + '/home',
+        'RESULT': ROOT + '/result',
+        'SEARCH': ROOT + '/search',
+        'GROUP': ROOT + '/group',
+        'COMMON': ROOT + '/common',
+        'MAP': ROOT + '/map',
+        'CONTENT': ROOT + '/content'
       },
-      'VIEW' : '.view.html',
-      'CLIENTID' : {
-        'FACEBOOK' : '1159750564044149',
-        'GOOGLE' : '1011514043276-7q3kvn29jkegl2d1v7dtlbtipqqgo1rr.apps.googleusercontent.com',
-        'ELL' : '1e7aa89f-3f50-433a-90ca-e485a92bbda6'
+      'VIEW': '.view.html',
+      'CLIENTID': {
+        'FACEBOOK': '1159750564044149',
+        'GOOGLE': '1011514043276-7q3kvn29jkegl2d1v7dtlbtipqqgo1rr.apps.googleusercontent.com',
+        'ELL': '1e7aa89f-3f50-433a-90ca-e485a92bbda6'
       },
       'ASSETS' : {
         'IMG' : {
-          'ICON' : 'img/icons'
+          'ICON' : 'img/icons',
+          'SOUND_PLACEHOLDER' : 'img/icons/sound.png'
         }
+      },
+      'STAR': {
+        'ONE': 60,
+        'TWO': 80,
+        'THREE': 95
       }
     })
 })();
@@ -1345,7 +1376,7 @@
     function orientation($window, $log) {
         var orientation = {
             setLandscape : setLandscape,
-            setPortrait : setPortrait
+            setPortrait : setPortrait,
         };
 
         return orientation;
@@ -1367,6 +1398,7 @@
             $log.debug(e);
           }
         }
+
     }
 })();
 
@@ -1407,6 +1439,68 @@
     });
   }
 
+})();
+
+(function() {
+  'use strict';
+
+  angular
+    .module('zaya-content')
+    .controller('contentController', contentController);
+
+  contentController.$inject = ['$stateParams', 'orientation', '$log','$scope'];
+
+  /* @ngInject */
+  function contentController($stateParams, orientation, $log, $scope) {
+    var contentCtrl = this;
+    contentCtrl.onPlayerReady = onPlayerReady;
+    contentCtrl.config = {
+      sources: [$stateParams.video],
+      autoplay : true,
+      theme: "lib/videogular-themes-default/videogular.css"
+    };
+
+    function onPlayerReady(API) {
+      contentCtrl.API = API;
+    }
+
+    $scope.$on("$ionicView.beforeEnter", function(event, data) {
+      orientation.setLandscape();
+    });
+
+  }
+
+})();
+
+(function() {
+  'use strict';
+
+  mainRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
+  angular
+    .module('zaya-content')
+    .config(mainRoute);
+
+  function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
+
+    $stateProvider
+      .state('content', {
+          url : '/content',
+          abstract : true,
+          template : '<ion-nav-view name="state-content"></ion-nav-view>'
+      })
+      .state('content.video', {
+          url : '/video',
+          params: {
+            video: null,
+          },
+          views : {
+              'state-content' : {
+                  templateUrl : CONSTANT.PATH.CONTENT + '/content.video' + CONSTANT.VIEW,
+                  controller : 'contentController as contentCtrl'
+              }
+          }
+      })
+  }
 })();
 
 (function() {
@@ -1473,62 +1567,95 @@
     .module('zaya-map')
     .controller('mapController', mapController);
 
-  mapController.$inject = ['$scope','$rootScope', '$log', '$ionicModal', '$state', 'lessons', 'Rest', 'CONSTANT', '$sce', 'orientation','$ionicLoading','$timeout'];
+  mapController.$inject = ['$scope', '$rootScope', '$log', '$ionicModal', '$state', 'lessons', 'scores', 'extendLesson', 'Rest', 'CONSTANT', '$sce', '$ionicLoading', '$timeout', '$ionicBackdrop', 'orientation'];
 
-  function mapController($scope, $rootScope, $log, $ionicModal, $state, lessons, Rest, CONSTANT, $sce, orientation, $ionicLoading, $timeout) {
+  function mapController($scope, $rootScope, $log, $ionicModal, $state, lessons, scores, extendLesson, Rest, CONSTANT, $sce, $ionicLoading, $timeout, $ionicBackdrop, orientation) {
+    $scope.$on("$ionicView.beforeEnter", function(event, data) {
+      orientation.setPortrait();
+    });
     var mapCtrl = this;
     mapCtrl.lessons = lessons;
+    // mapCtrl.lessons = extendLesson.getLesson(lessons, scores);
+
     mapCtrl.getLesson = getLesson;
     mapCtrl.getSrc = getSrc;
     mapCtrl.resetNode = resetNode;
     mapCtrl.getIcon = getIcon;
     mapCtrl.resourceType = resourceType;
     mapCtrl.playResource = playResource;
+    mapCtrl.backdrop = false;
+    mapCtrl.showScore = -1;
+
     // mapCtrl.openModal = openModal;
     // mapCtrl.closeModal = closeModal;
 
-    function playResource (resource) {
-      if(mapCtrl.resourceType(resource) != 'video'){
-        $scope.closeModal();
-        $ionicLoading.show({noBackdrop: false, hideOnStateChange: true});
-        $state.go('quiz.questions',{id : resource.node.id});
-        // $timeout(function(){
-        //   $scope.closeModal();
-        // })
-        // .then(function(){
-        // })
+    mapCtrl.skillSet = [{
+      name: 'reading',
+      score: 300
+    }, {
+      name: 'listening',
+      score: 200
+    }, {
+      name: 'vocabulary',
+      score: 250
+    }, {
+      name: 'grammar',
+      score: 3000
+    }];
+
+    function playResource(resource) {
+      $scope.closeModal();
+      $ionicLoading.show({
+        noBackdrop: false,
+        hideOnStateChange: true
+      });
+      if (mapCtrl.resourceType(resource) != 'video') {
+        $timeout(function() {
+          $state.go('quiz.questions', {
+            id: resource.node.id
+          });
+        });
+      } else {
+        $timeout(function() {
+          $state.go('content.video', {
+            video: {
+              src: mapCtrl.getSrc(resource.node.type.path),
+              type: 'video/mp4'
+            }
+          });
+        });
+        //   mapCtrl.config.sources[0].src = mapCtrl.getSrc(resource.node.type.path);
       }
     }
-    function resourceType (resource){
-      if(resource.node.content_type_name == 'assessment'){
+
+    function resourceType(resource) {
+      if (resource.node.content_type_name == 'assessment') {
         return 'assessment';
-      }
-      else if(resource.node.content_type_name == 'resource'){
-        if(resource.node.type.file_type.substring(0,resource.node.type.file_type.indexOf('/')) == 'video'){
+      } else if (resource.node.content_type_name == 'resource') {
+        if (resource.node.type.file_type.substring(0, resource.node.type.file_type.indexOf('/')) == 'video') {
           return 'video';
         }
-      }
-      else {}
+      } else {}
     }
-    function getSrc(src){
+
+    function getSrc(src) {
       return $sce.trustAsResourceUrl(CONSTANT.BACKEND_SERVICE_DOMAIN + src);
     }
-    function getIcon(resource){
-      if(resource.node.content_type_name == 'assessment'){
+
+    function getIcon(resource) {
+      if (resource.node.content_type_name == 'assessment') {
         return CONSTANT.ASSETS.IMG.ICON + '/quiz.png';
-      }
-      else if(resource.node.content_type_name == 'resource'){
-        if(resource.node.type.file_type.substring(0,resource.node.type.file_type.indexOf('/')) == 'video'){
+      } else if (resource.node.content_type_name == 'resource') {
+        if (resource.node.type.file_type.substring(0, resource.node.type.file_type.indexOf('/')) == 'video') {
           return CONSTANT.ASSETS.IMG.ICON + '/video.png';
         }
-      }
-      else {
+      } else {
 
       }
     }
 
     $scope.$on('logout', function() {
-      $state.go('user.main.settings',{});
+      $state.go('user.main.settings', {});
     })
     $scope.$on('openNode', function(event, node) {
       mapCtrl.getLesson(node.id);
@@ -1548,30 +1675,35 @@
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal' + CONSTANT.VIEW, {
       scope: $scope,
       animation: 'slide-in-up',
-      hardwareBackButtonClose : false
+      hardwareBackButtonClose: false
     }).then(function(modal) {
       $scope.modal = modal;
     });
 
-    function resetNode(){
-        mapCtrl.selectedNode = {};
+    function resetNode() {
+      mapCtrl.selectedNode = {};
     }
 
     function getLesson(id) {
-      $ionicLoading.show({noBackdrop: false, hideOnStateChange: true});
+      $ionicLoading.show({
+        noBackdrop: false,
+        hideOnStateChange: true
+      });
       Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('lessons', id).get().then(function(response) {
         $ionicLoading.hide();
         $scope.openModal();
         mapCtrl.selectedNode = response.plain();
+        $log.debug('get lesson', response.plain());
         localStorage.setItem('lesson', JSON.stringify(mapCtrl.selectedNode));
       })
     }
 
-    if(localStorage.lesson){
-      // mapCtrl.selectedNode = JSON.parse(localStorage.lesson);
-      // $scope.openModal();
-      mapCtrl.getLesson(JSON.parse(localStorage.lesson).node.id);
-    }
+    $timeout(function functionName() {
+      if (localStorage.lesson) {
+        $scope.openModal();
+        mapCtrl.selectedNode = JSON.parse(localStorage.lesson);
+      }
+    });
 
   }
 })();
@@ -1590,7 +1722,7 @@
             restrict: 'A',
             template: '<div id="map_canvas"></div>',
             scope: {
-              lessons : '='
+              lessons : '=',
             },
             link: linkFunc,
         };
@@ -1598,10 +1730,89 @@
         return mapCanvas;
 
         function linkFunc(scope, el, attr, ctrl) {
-          $timeout(createGame(scope, scope.lessons, $injector, $log));
+          $timeout(
+              function(){
+                  createGame(scope, scope.lessons, $injector, $log)
+              }
+          );
         }
     }
 
+})();
+
+(function() {
+  'use strict';
+
+  angular
+    .module('zaya-map')
+    .factory('extendLesson', extendLesson);
+
+  extendLesson.$inject = ['$log', 'CONSTANT'];
+
+  /* @ngInject */
+  function extendLesson($log, CONSTANT) {
+    var extendLesson = {
+      getLesson: getLesson
+    };
+
+    return extendLesson;
+
+    function setLock(key, lesson, bool) {
+      lesson.locked = bool;
+    }
+
+    function setStar(key, lesson, count) {
+      lesson.stars = count;
+    }
+
+    function getLesson(lessons, scores) {
+
+      angular.forEach(lessons, function(value, key) {
+        setLock(key, value, true);
+      })
+      angular.forEach(lessons, function(value, key) {
+
+        var total_score = 0;
+        var obtained_score = 0;
+
+        angular.forEach(scores[key].contents.assessment, function(value, key) {
+          total_score += value.total_score;
+          obtained_score += value.obtained_score;
+        })
+
+        if (total_score > 0) {
+          var score = (obtained_score / total_score) * 100;
+
+          // if score is > 80%, unlock the next lessons
+          if (score >= CONSTANT.STAR.ONE) {
+            if (lessons[key + 1])
+              setLock(key, lessons[key + 1], false);
+          }
+
+          // give stars
+          if (obtained_score == 0) {
+            setStar(key, lessons[key], -1);
+          } else if (score > 0 && score < CONSTANT.STAR.ONE) {
+            setStar(key, lessons[key], 0);
+          } else if (score >= CONSTANT.STAR.ONE && score < CONSTANT.STAR.TWO) {
+            setStar(key, lessons[key], 1);
+          } else if (score >= CONSTANT.STAR.TWO && score < CONSTANT.STAR.THREE) {
+            setStar(key, lessons[key], 2);
+          } else if (score >= CONSTANT.STAR.THREE) {
+            setStar(key, lessons[key], 3);
+          } else {}
+
+        }
+        // unlock first lessons
+        if (key == 0) {
+            setLock(key, value, false);
+        }
+      })
+
+      return lessons;
+    }
+
+  }
 })();
 
 window.createGame = function(scope, lessons, injector, log) {
@@ -1616,7 +1827,6 @@ window.createGame = function(scope, lessons, injector, log) {
       this.load.image('cactus', 'img/assets/cactus.png');
       this.load.image('tent', 'img/assets/tent_fire.png');
       this.load.image('tent_green', 'img/assets/tent_green.png');
-      this.load.image('practice', 'img/icons/practice_active.png');
       this.load.image('two_stone', 'img/assets/two_stone.png');
       this.load.image('one_stone', 'img/assets/one_stone.png');
       this.load.image('particle1', 'img/assets/particle1.png');
@@ -1625,7 +1835,13 @@ window.createGame = function(scope, lessons, injector, log) {
 
       this.load.spritesheet('fire_animation', 'img/assets/fire_animation.png', 322,452, 20);
       this.load.spritesheet('cactus_animation', 'img/assets/cactus_animation.png', 30,52, 5);
+
       this.load.image('node', 'img/icons/node.png');
+      this.load.image('node-locked', 'img/icons/icon-node-locked.png');
+      this.load.image('read', 'img/icons/icon-read.png');
+      this.load.image('read_deactive', 'img/icons/icon-read-deactive.png');
+      this.load.image('star', 'img/icons/icon-star-small.png');
+      this.load.image('nostar', 'img/icons/icon-nostar.png');
       // debug value
       this.game.time.advancedTiming = true;
     },
@@ -1708,8 +1924,8 @@ window.createGame = function(scope, lessons, injector, log) {
       // path
       log.debug('desert', desert.width);
       this.points = {
-        'x': [101,113,170,202,216,201,180,172,172,179,195,211,207,160,138,144,167,197,204,197,165,126,101,161,256,223,134,102,138,200,235,200,180,180,180,180,180,180,180,180,180],
-        'y': [50,64,109,148,189,235,287,346,404,456,495,529,574,644,693,748,803,854,877,941,980,1022,1091,1116,1116,1171,1209,1266,1318,1342,1371,1433,1494,1577,1659,1742,1824,1907,1989,2072,2155]
+        'x': [101,113,170,202,216,201,180,172,172,179,195,211,207,160,138,144,167,197,204,197,165,126,101,161,256,223,134,102,138,200,235,200,180,180,180,180,180,180,180,180],
+        'y': [50,64,109,148,189,235,287,346,404,456,495,529,574,644,693,748,803,854,877,941,980,1022,1091,1116,1116,1171,1209,1266,1318,1342,1371,1433,1494,1577,1659,1742,1824,1907,1950,2050]
       };
 
       for (var i = 0, points_count = this.points.x.length; i < points_count; i++) {
@@ -1727,15 +1943,59 @@ window.createGame = function(scope, lessons, injector, log) {
         var posy = this.math.catmullRomInterpolation(this.points.y, j);
         this.bmd.rect(posx, posy, 4, 4, '#219C7F');
       }
+    //   var stars = this.game.add.group();
+      function createStars(count, x, y){
+          for (var i = 0; i < count; i++) {
+            //   var startype = count ? 'star' : 'nostar';
+            //   log.debug(startype);
+              var star = stars.create(x[0] + x[i+1], y[0] + y[i+1], 'star');
+              star.anchor.setTo(0.5,0.5);
+            //   star.scale.setTo(0.2,0.2);
+            //   count -= count > 0 ? 1 : 0;
+          }
+      }
+      var star_x = [-12,0,12];
+      var star_y = [-10,-15,-10];
+
       // Place nodes
-      for (var j = 0, i = lessons.length-1, nodeCount = 1/lessons.length; j < 1; j += nodeCount, i--) {
+      for (var j = 0, i = lessons.length-1, nodeCount = 1/(lessons.length-1); j <= 1; j += nodeCount, i--) {
+        var currentLesson = lessons[i];
+        log.debug('lesson status', currentLesson);
+        var locked = currentLesson.locked ? '-locked' : '';
         var posx = this.math.catmullRomInterpolation(this.points.x, j);
         var posy = this.math.catmullRomInterpolation(this.points.y, j);
-        var node = this.game.add.button(posx, posy, 'node', function (node) {
-          scope.$emit('openNode',node);
-        }, this, 2, 1, 0);
+        var node = this.game.add.button(posx, posy, 'node'+locked);
+        node.inputEnabled = true;
+        node.events.onInputDown.add(function(currentLesson){
+            return function(){
+                if(!currentLesson.locked)
+                    scope.$emit('openNode',currentLesson);
+            }
+        }(currentLesson));
+        // var icon = this.game.add.sprite(posx, posy, 'read'+locked);
+        // icon.anchor.setTo(0.5,0.5);
+        // icon.scale.setTo(0.3,0.3);
         node.anchor.setTo(0.5, 0.5);
-        node.id = lessons[i].id;
+        // node.scale.setTo(1.8, 1.8);
+
+        // add stars
+        if(currentLesson.stars >= 0){
+            var stars = this.game.add.group();
+            log.debug('stars in lesson',currentLesson.stars);
+            if(currentLesson.stars == 0){
+                createStars(0,$.merge([posx],star_x),$.merge([posy],star_y));
+            }
+            else if(currentLesson.stars == 1){
+                createStars(1,$.merge([posx],star_x),$.merge([posy],star_y));
+            }
+            else if(currentLesson.stars == 2){
+                createStars(2,$.merge([posx],star_x),$.merge([posy],star_y));
+            }
+            else if(currentLesson.stars == 3){
+                createStars(3,$.merge([posx],star_x),$.merge([posy],star_y));
+            }
+            else{}
+        }
       }
       for (var i = 0; i < 100; i++)
       {
@@ -1750,22 +2010,16 @@ window.createGame = function(scope, lessons, injector, log) {
           s.events.onOutOfBounds.add(this.resetSprite, this);
       }
 
-      var logout = this.game.add.button(this.game.width - 100, 0, 'practice',function () {
-        scope.$emit('logout');
-      },this, 2 , 1 , 0);
-      logout.scale.setTo(0.3,0.3);
-      logout.fixedToCamera = true;
-      logout.cameraOffset.setTo(this.game.width - 70, 20);
+      // fire animation
+    //   var fire_animation = this.game.add.sprite(20,20, 'fire_animation');
+    //   fire_animation.scale.setTo(0.5,0.5);
+    //   var light = fire_animation.animations.add('light');
+    //   fire_animation.animations.play('light', 20, true);
 
-
-      var fire_animation = this.game.add.sprite(20,20, 'fire_animation');
-      fire_animation.scale.setTo(0.5,0.5);
-      var light = fire_animation.animations.add('light');
-      fire_animation.animations.play('light', 20, true);
       // cactus
-      var cactus_animation = this.game.add.sprite(20,20, 'cactus_animation');
-      var wind = cactus_animation.animations.add('wind');
-      cactus_animation.animations.play('wind', 5, true);
+    //   var cactus_animation = this.game.add.sprite(20,20, 'cactus_animation');
+    //   var wind = cactus_animation.animations.add('wind');
+    //   cactus_animation.animations.play('wind', 5, true);
 
       this.init();
       this.game.kineticScrolling.start();
@@ -1820,25 +2074,32 @@ window.createGame = function(scope, lessons, injector, log) {
   function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
 
     $stateProvider
-      .state('map',{
-        url : '/map',
-        abstract : true,
-          resolve : {
-            lessons : ['Rest','$log',function(Rest, $log){
-              return Rest.one('accounts', CONSTANT.CLIENTID.ELL).getList('lessons').then(function(lessons) {
-                $log.debug(lessons.plain());
-                return lessons.plain();
-              })
-            }]
-          },
-        template : '<ion-nav-view name="state-map"></ion-nav-view>'
+      .state('map', {
+        url: '/map',
+        abstract: true,
+        resolve: {
+          lessons: ['Rest', '$log', function(Rest, $log) {
+            return Rest.one('accounts', CONSTANT.CLIENTID.ELL).getList('lessons').then(function(lessons) {
+              return lessons.plain();
+            })
+
+          }],
+          scores: ['Rest', '$log', function(Rest, $log) {
+            return Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('profiles', JSON.parse(localStorage.user_details).profile).getList('lessons-score').then(function(score) {
+                $log.debug('scores rest' , score.plain());
+              return score.plain();
+            })
+          }]
+
+        },
+        template: '<ion-nav-view name="state-map"></ion-nav-view>'
       })
-      .state('map.navigate',{
-        url : '/navigate',
-        views : {
-          'state-map' : {
-            templateUrl : CONSTANT.PATH.MAP + '/map' + CONSTANT.VIEW,
-            controller : 'mapController as mapCtrl'
+      .state('map.navigate', {
+        url: '/navigate',
+        views: {
+          'state-map': {
+            templateUrl: CONSTANT.PATH.MAP + '/map' + CONSTANT.VIEW,
+            controller: 'mapController as mapCtrl'
           }
         }
       })
@@ -1961,9 +2222,9 @@ window.createGame = function(scope, lessons, injector, log) {
     .module('zaya-quiz')
     .controller('QuizController', QuizController)
 
-  QuizController.$inject = ['quiz', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Quiz', 'Auth'];
+  QuizController.$inject = ['quiz', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Quiz', 'Auth', '$ionicLoading', '$ionicPopup'];
 
-  function QuizController(quiz, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Quiz, Auth) {
+  function QuizController(quiz, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Quiz, Auth, $ionicLoading, $ionicPopup) {
     var quizCtrl = this;
 
     quizCtrl.quiz = quiz;
@@ -1992,8 +2253,14 @@ window.createGame = function(scope, lessons, injector, log) {
     quizCtrl.MARKS_MULTIPIER = 10;
     quizCtrl.quizResult = {};
     quizCtrl.utilities = Utilities;
+    quizCtrl.submitQuiz = submitQuiz;
+    quizCtrl.endQuiz = endQuiz;
+    quizCtrl.pauseQuiz = pauseQuiz;
+    quizCtrl.restartQuiz = restartQuiz;
+    quizCtrl.CONSTANT = CONSTANT;
     //audio
     quizCtrl.playAudio = playAudio;
+    quizCtrl.starCount = starCount;
 
     //question layouts
     quizCtrl.GRID_TYPE = ['audio_to_text', 'text_to_pic', 'pic_to_text', 'audio_to_pic'];
@@ -2003,54 +2270,89 @@ window.createGame = function(scope, lessons, injector, log) {
     quizCtrl.slideHasChanged = slideHasChanged;
     quizCtrl.slideTo = slideTo;
 
+    //Regex operations
+    quizCtrl.soundIdRegex = /(?:\[\[)(?:sound)(?:\s)(?:id=)([0-9]+)(?:\]\])/;
+    quizCtrl.imageTagRegex = /(?:\[\[)(?:img)(?:\s)(?:id=)([0-9]+)(?:\]\])/;
+
+    quizCtrl.getSoundId = getSoundId;
+    quizCtrl.getImageId = getImageId;
+    quizCtrl.getImageSrc = getImageSrc;
+    quizCtrl.parseToDisplay = parseToDisplay;
+    quizCtrl.replaceImageTag = replaceImageTag;
+    quizCtrl.removeSoundTag = removeSoundTag;
+
+
+    quizCtrl.myStyle = {
+      height: '10px',
+      width: '0%',
+      'background-color': 'yellow'
+    }
+    quizCtrl.practiceResult = {};
+
     // initialisation call
     quizCtrl.setCurrentIndex(0);
     quizCtrl.init(quizCtrl.quiz);
 
     $scope.modal = {};
 
-
+    function starCount(index) {
+      var count = quizCtrl.quizResult.stars - index;
+      return count > 0 ? count : 0;
+    }
 
     function init(quiz) {
 
       // init report object
       if ($state.current.name == "quiz.summary") {
+        document.addEventListener("backbutton", onBackKeyDown, false);
+
+        function onBackKeyDown(e) {
+          e.preventDefault();
+          $ionicLoading.show({
+            noBackdrop: false,
+            hideOnStateChange: true
+          });
+          $state.go('map.navigate');
+        }
+
         quizCtrl.report = $stateParams.report;
+        $log.debug("Summary")
+        $log.debug(quizCtrl.report);
         quizCtrl.quiz = $stateParams.quiz;
         quizCtrl.quizResult = quizCtrl.calculateResult(quizCtrl.report, quizCtrl.quiz);
+        $log.debug(quizCtrl.quizResult);
         Quiz.saveReport({
             node: quizCtrl.quiz.node.id,
             person: Auth.getProfileId(),
             score: quizCtrl.quizResult.marks
           }, function(success) {
             var report_id = success.id;
-            $log.debug(JSON.stringify(quizCtrl.report));
+            var attempts = [];
             angular.forEach(quizCtrl.report.attempts, function(value, key) {
               // 1 - Attempted
               // 2 - Skipped
               // 3 - NotAttempted
-              var attempt = {
+              attempts.push({
                 answer: value.length > 0 ? value : null,
+                score: quizCtrl.quizResult.score[key],
                 status: value.length > 0 ? 1 : 2,
                 person: Auth.getProfileId(),
                 report: report_id,
                 node: key
-              }
-              Quiz.saveAttempt(attempt, function(response) {
-                $log.debug(response);
-              }, function(error) {
-                $log.debug(error);
-              })
+              });
             });
+            Quiz.saveAttempt(attempts, function(response) {}, function(error) {})
           }, function(error) {
 
           })
           // quizCtrl.report = {"quiz_id":"10014638-8567-4a33-814a-1b7bfedf0664","attempts":{"cbe39272-ccbd-4e05-9532-d53699ec59cd":[3],"61524a03-4acd-4b1d-ae96-96702387e7e3":[3],"5b66574b-621b-435e-a812-db7be6a94dfd":[3],"cda26918-b9d4-4120-afe4-1e627691454f":[3],"1eac2901-3f1a-4e48-b2cb-706964aece32":[2]}};
           // quizCtrl.quiz = {"node":{"id":"10014638-8567-4a33-814a-1b7bfedf0664","content_type_name":"assessment","type":{"id":"7053747a-2967-431a-bc68-2aa23b8bd1c4","score":100},"created":"2016-04-25T11:36:53.969858Z","updated":"2016-04-25T11:36:53.969884Z","title":"Assessment test","description":"Assessment description","object_id":"7053747a-2967-431a-bc68-2aa23b8bd1c4","stauts":"PUBLISHED","lft":10,"rght":21,"tree_id":1,"level":1,"parent":"5cb5adc2-84f8-41d2-9272-81790cb314c2","content_type":26,"account":"1e7aa89f-3f50-433a-90ca-e485a92bbda6"},"objects":[{"node":{"id":"cbe39272-ccbd-4e05-9532-d53699ec59cd","content_type_name":"json question","type":{"id":"249fdc1f-b466-4993-be6e-555fb6052a55","created":"2016-04-25T11:49:39.453229Z","updated":"2016-04-25T11:49:39.453251Z","microstandard":"a48b89d6-cfdf-4119-b335-863e57606c31","is_critical_thinking":false,"level":1,"answer":[3],"score":20,"content":{"image":null,"choices":[{"image":"http://lorempixel.com/100/100/","key":1,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":2,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":3,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":4,"audio":null,"option":null}],"layout_type":"audio_to_pic","audio":"http://soundbible.com/grab.php?id=769&type=mp3","is_multiple":false},"type":"choicequestion"},"created":"2016-04-25T11:49:39.486776Z","updated":"2016-04-25T11:49:39.486799Z","title":"Audio to text","description":"","object_id":"249fdc1f-b466-4993-be6e-555fb6052a55","stauts":"PUBLISHED","lft":13,"rght":14,"tree_id":1,"level":2,"parent":"10014638-8567-4a33-814a-1b7bfedf0664","content_type":22,"account":"1e7aa89f-3f50-433a-90ca-e485a92bbda6"},"objects":[]},{"node":{"id":"61524a03-4acd-4b1d-ae96-96702387e7e3","content_type_name":"json question","type":{"id":"e7962a73-0199-477d-9838-8f8e419907b8","created":"2016-04-25T11:50:41.767437Z","updated":"2016-04-25T11:50:41.767456Z","microstandard":"a48b89d6-cfdf-4119-b335-863e57606c31","is_critical_thinking":false,"level":1,"answer":[3],"score":20,"content":{"image":null,"choices":[{"image":"http://lorempixel.com/100/100/","key":1,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":2,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":3,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":4,"audio":null,"option":null}],"layout_type":"audio_to_pic","audio":"http://soundbible.com/grab.php?id=769&type=mp3","is_multiple":false},"type":"choicequestion"},"created":"2016-04-25T11:50:41.799933Z","updated":"2016-04-25T11:50:41.799953Z","title":"Audio to text","description":"","object_id":"e7962a73-0199-477d-9838-8f8e419907b8","stauts":"PUBLISHED","lft":17,"rght":18,"tree_id":1,"level":2,"parent":"10014638-8567-4a33-814a-1b7bfedf0664","content_type":22,"account":"1e7aa89f-3f50-433a-90ca-e485a92bbda6"},"objects":[]},{"node":{"id":"5b66574b-621b-435e-a812-db7be6a94dfd","content_type_name":"json question","type":{"id":"d72b724c-f8af-4221-815d-08abba56bda2","created":"2016-04-25T11:43:38.461255Z","updated":"2016-04-25T11:43:38.461273Z","microstandard":"a48b89d6-cfdf-4119-b335-863e57606c31","is_critical_thinking":false,"level":1,"answer":[3],"score":20,"content":{"image":null,"choices":[{"image":"http://lorempixel.com/100/100/","key":1,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":2,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":3,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":4,"audio":null,"option":null}],"layout_type":"audio_to_pic","audio":"http://soundbible.com/grab.php?id=769&type=mp3","is_multiple":false},"type":"choicequestion"},"created":"2016-04-25T11:43:38.493848Z","updated":"2016-04-25T11:43:38.493870Z","title":"Audio to text","description":"","object_id":"d72b724c-f8af-4221-815d-08abba56bda2","stauts":"PUBLISHED","lft":11,"rght":12,"tree_id":1,"level":2,"parent":"10014638-8567-4a33-814a-1b7bfedf0664","content_type":22,"account":"1e7aa89f-3f50-433a-90ca-e485a92bbda6"},"objects":[]},{"node":{"id":"cda26918-b9d4-4120-afe4-1e627691454f","content_type_name":"json question","type":{"id":"8f9e4441-2e51-4834-860b-9324a6468889","created":"2016-04-25T11:50:17.262086Z","updated":"2016-04-25T11:50:17.262103Z","microstandard":"a48b89d6-cfdf-4119-b335-863e57606c31","is_critical_thinking":false,"level":1,"answer":[3],"score":20,"content":{"image":null,"choices":[{"image":"http://lorempixel.com/100/100/","key":1,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":2,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":3,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":4,"audio":null,"option":null}],"layout_type":"audio_to_pic","audio":"http://soundbible.com/grab.php?id=769&type=mp3","is_multiple":false},"type":"choicequestion"},"created":"2016-04-25T11:50:17.295078Z","updated":"2016-04-25T11:50:17.295097Z","title":"Audio to text","description":"","object_id":"8f9e4441-2e51-4834-860b-9324a6468889","stauts":"PUBLISHED","lft":15,"rght":16,"tree_id":1,"level":2,"parent":"10014638-8567-4a33-814a-1b7bfedf0664","content_type":22,"account":"1e7aa89f-3f50-433a-90ca-e485a92bbda6"},"objects":[]},{"node":{"id":"1eac2901-3f1a-4e48-b2cb-706964aece32","content_type_name":"json question","type":{"id":"1678c124-710c-4b52-98a8-a873624d2dd0","created":"2016-04-25T11:50:45.706748Z","updated":"2016-04-25T11:50:45.706765Z","microstandard":"a48b89d6-cfdf-4119-b335-863e57606c31","is_critical_thinking":false,"level":1,"answer":[3],"score":20,"content":{"image":null,"choices":[{"image":"http://lorempixel.com/100/100/","key":1,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":2,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":3,"audio":null,"option":null},{"image":"http://lorempixel.com/100/100/","key":4,"audio":null,"option":null}],"layout_type":"audio_to_pic","audio":"http://soundbible.com/grab.php?id=769&type=mp3","is_multiple":false},"type":"choicequestion"},"created":"2016-04-25T11:50:45.739207Z","updated":"2016-04-25T11:50:45.739227Z","title":"Audio to text","description":"","object_id":"1678c124-710c-4b52-98a8-a873624d2dd0","stauts":"PUBLISHED","lft":19,"rght":20,"tree_id":1,"level":2,"parent":"10014638-8567-4a33-814a-1b7bfedf0664","content_type":22,"account":"1e7aa89f-3f50-433a-90ca-e485a92bbda6"},"objects":[]}]}
 
-      } else if ($state.current.name == "quiz.questions") {
-        $log.debug(JSON.stringify(quizCtrl.quiz));
+      } else if ($state.current.name == "quiz.questions" || $state.current.name == "quiz.practice.questions") {
         quizCtrl.report = {};
+        quizCtrl.practiceResult.totalMarks = quizCtrl.quiz.node.type.score;
+        quizCtrl.practiceResult.percentCorrect = 0;
+        quizCtrl.practiceResult.scoredMarks = 0;
         quizCtrl.report.quiz_id = quiz.node.id;
         quizCtrl.report.attempts = {};
         for (var i = 0; i < quiz.objects.length; i++) {
@@ -2058,8 +2360,8 @@ window.createGame = function(scope, lessons, injector, log) {
         }
         // init attempted
 
-        for (var i = 0; i < quizCtrl.quiz.objects.length; i++) {
-          if (i != 0)
+        for (i = 0; i < quizCtrl.quiz.objects.length; i++) {
+          if (i !== 0)
             quizCtrl.quiz.objects[i].isVisited = false;
           else
             quizCtrl.quiz.objects[i].isVisited = true;
@@ -2067,14 +2369,80 @@ window.createGame = function(scope, lessons, injector, log) {
           if ((quizCtrl.quiz.objects[i].node.type.type == 'choicequestion' && !quizCtrl.quiz.objects[i].node.type.content.is_multiple) /*|| quizCtrl.quiz.objects[i].node.content_type=='dr question'*/ ) {
             quizCtrl.quiz.objects[i].attempted = "";
           } else if (quizCtrl.quiz.objects[i].node.type.type == 'choicequestion' && quizCtrl.quiz.objects[i].node.type.content.is_multiple) {
-            quizCtrl.quiz.objects[i].attempted = {};
+            quizCtrl.quiz.objects[i].attempted = [];
           }
           //else if(quizCtrl.quiz.objects[i].node.content_type=='sentence ordering' || quizCtrl.quiz.objects[i].node.content_type=='sentence structuring'){
           //  quizCtrl.quiz.objects[i].attempted = [];
           //}
           else {}
         }
-      } else {}
+      } else if ($state.current.name = 'quiz.practice.summary') {
+        $log.debug("shere");
+        $log.debug($stateParams);
+        quizCtrl.report = $stateParams.report;
+        quizCtrl.quiz = $stateParams.quiz;
+        quizCtrl.practiceResult = $stateParams.practiceResult;
+        $log.debug(quizCtrl.report);
+        Quiz.saveReport({
+            node: '10014638-8567-4a33-814a-1b7bfedf0664',
+            person: Auth.getProfileId(),
+            score: quizCtrl.practiceResult.totalMarks
+          }, function(success) {
+            var report_id = success.id;
+            var attempts = [];
+
+            angular.forEach(quizCtrl.quiz.objects, function(question) {
+              var attempts_array = quizCtrl.report.attempts[question.node.id];
+              quizCtrl.report.attempts[question.node.id].is_correct = false;
+              angular.forEach(attempts_array, function(attempt) {
+                $log.debug("attempt");
+                $log.debug(attempt);
+                attempts.push({
+                  answer: attempt.length > 0 ? attempt : null,
+                  score: quizCtrl.isCorrect(question, attempt) ? question.node.type.score : 0,
+                  status: 1, //Skipping is not allowed in practice so status is set to 1
+                  person: Auth.getProfileId(),
+                  report: report_id,
+                  node: question.node.id
+                });
+                if (quizCtrl.isCorrect(question, attempt)) {
+                  quizCtrl.report.attempts[question.node.id].is_correct = true;
+                }
+              })
+            })
+            quizCtrl.practiceResult.analysis = attempts;
+            Quiz.saveAttempt(attempts, function(response) {}, function(error) {})
+          }, function(error) {
+
+          })
+          // Quiz.saveReport({
+          //     node: quizCtrl.quiz.node.id,
+          //     person: Auth.getProfileId(),
+          //     score:
+          //   }, function(success) {
+          //     var report_id = success.id;
+          //
+          //     angular.forEach(quizCtrl.report.attempts, function(value, key) {
+          //       // 1 - Attempted
+          //       // 2 - Skipped
+          //       // 3 - NotAttempted
+          //
+          //       angular.forEach(value,function(attempt){
+          //         var attempt = {
+          //           answer: value.length > 0 ? value : null,
+          //           score: quizCtrl.quizResult.score[key],
+          //           status: value.length > 0 ? 1 : 2,
+          //           person: Auth.getProfileId(),
+          //           report: report_id,
+          //           node: key
+          //         }
+          //         Quiz.saveAttempt(attempt, function(response) {}, function(error) {})
+          //       })
+          //     });
+          //   }, function(error) {
+          //
+          //   })
+      }
 
     }
 
@@ -2104,24 +2472,28 @@ window.createGame = function(scope, lessons, injector, log) {
     }
 
     function decide() {
-      if (!quizCtrl.isCorrectAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex])) {
-        $log.debug("!quizCtrl.isCorrectAttempted");
-        quizCtrl.submitAttempt(
-          quizCtrl.quiz.objects[quizCtrl.currentIndex].node.id,
-          quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted
-        );
-        quizCtrl.feedback(
-          quizCtrl.quiz.objects[quizCtrl.currentIndex],
-          quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted
-        );
-      } else if (quizCtrl.currentIndex < quizCtrl.quiz.objects.length - 1) {
-        quizCtrl.nextQuestion();
+      quizCtrl.submitAttempt(
+        quizCtrl.quiz.objects[quizCtrl.currentIndex].node.id,
+        quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted
+      );
+
+
+      if (quizCtrl.isCorrectAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex])) {
+        quizCtrl.practiceResult.scoredMarks += quizCtrl.quiz.objects[quizCtrl.currentIndex].node.type.score;
+        $log.debug("scored marks", quizCtrl.practiceResult.scoredMarks)
+        quizCtrl.practiceResult.percentCorrect = parseInt((quizCtrl.practiceResult.scoredMarks / quizCtrl.practiceResult.totalMarks) * 100);
+        $log.debug("percent", quizCtrl.practiceResult.percentCorrect)
+        quizCtrl.myStyle.width = quizCtrl.practiceResult.percentCorrect + "%";
       } else {
-        // final question -> go to summary
-        $state.go('quiz.summary', {
-          report: angular.copy(quizCtrl.report)
-        });
+        if (quizCtrl.report.attempts[quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.id].length == 2) {
+          quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].attempted = {};
+          quizCtrl.quiz.objects.push(angular.copy(quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()]))
+        }
+
       }
+      $scope.openModal();
+
+
     }
 
     function canSubmit() {
@@ -2135,7 +2507,7 @@ window.createGame = function(scope, lessons, injector, log) {
         //removes false keys
         quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted = _.pick(quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted, _.identity);
         // true if attempted and key count is more than one
-        return quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted && _.size(quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted) > 1;
+        return quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted && _.size(quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted) >= 1;
       }
       if (quizCtrl.quiz.objects[quizCtrl.currentIndex].node.type.type == "sentence ordering" || quizCtrl.quiz.objects[quizCtrl.currentIndex].node.type.type == "sentence structuring") {
         return quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted.length ? true : false;
@@ -2143,16 +2515,53 @@ window.createGame = function(scope, lessons, injector, log) {
     }
 
     function feedback(question, attempt) {
+      return;
 
-      return quizCtrl.isCorrect(question, attempt) ? $scope.openModal('correct') : $scope.openModal('wrong');
+      // if (quizCtrl.currentIndex < quizCtrl.quiz.objects.length - 1) {
+      //   quizCtrl.nextQuestion();
+      // } else {
+      //   $log.debug("Final")
+      //     // final question -> go to summary
+      //   $state.go('quiz.practice.summary', {
+      //     report: angular.copy(quizCtrl.report)
+      //   });
+      // }
+      $log.debug("b")
+
+      if (isCorrectAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex])) {
+
+      } else {
+        if (quizCtrl.report.attempts[quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.id].length == 2) {
+          quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].attempted = {};
+          quizCtrl.quiz.objects.push(angular.copy(quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()]))
+        }
+
+      }
+      $scope.openModal();
     }
 
     function submitAttempt(question_id, attempt) {
       quizCtrl.report.attempts[question_id].push(angular.copy(attempt));
     }
 
-    function isAttempted(question_id) {
-      return quizCtrl.report.attempts[question_id].length ? true : false;
+
+    function isAttempted(question) {
+      // multiple choice
+      if (question.node.type.type == 'choicequestion' && question.node.type.content.is_multiple) {
+        for (var i = 0; i < quizCtrl.report.attempts[question.node.id].length; i++) {
+          if (_.chain(quizCtrl.report.attempts[question.node.id][i]).map(function(num, key) {
+              return num ? parseInt(key) : false;
+            }).reject(function(num) {
+              return !num;
+            }).value().length > 0)
+            return true;
+        }
+        return false;
+      }
+      // single choice
+      if (question.node.type.type == 'choicequestion' && !question.node.type.content.is_multiple) {
+        return quizCtrl.report.attempts[question.node.id].length > 0;
+      }
     }
 
     function isCorrect(question, attempt) {
@@ -2161,7 +2570,7 @@ window.createGame = function(scope, lessons, injector, log) {
       if (question.node.type.type == 'choicequestion' && question.node.type.content.is_multiple) {
         return _.chain(attempt).map(function(num, key) {
           return parseInt(key);
-        }).isEqual(question.node.type.answer).value();
+        }).sort().isEqual(question.node.type.answer.sort()).value();
       }
       // single choice
       if (question.node.type.type == 'choicequestion' && !question.node.type.content.is_multiple) {
@@ -2179,14 +2588,13 @@ window.createGame = function(scope, lessons, injector, log) {
 
     function isCorrectAttempted(question) {
       // multiple choice
-
       if (question.node.type.type == 'choicequestion' && question.node.type.content.is_multiple) {
         for (var i = 0; i < quizCtrl.report.attempts[question.node.id].length; i++) {
           if (_.chain(quizCtrl.report.attempts[question.node.id][i]).map(function(num, key) {
               return num ? parseInt(key) : false;
             }).reject(function(num) {
               return !num;
-            }).isEqual(question.node.type.answer).value())
+            }).sort().isEqual(question.node.type.answer.sort()).value())
             return true;
         }
         return false;
@@ -2226,7 +2634,9 @@ window.createGame = function(scope, lessons, injector, log) {
     function playAudio(key) {
       angular.element("#audioplayer")[0].pause();
       if (key) {
-        angular.element("#audioSource")[0].src = key;
+
+        $log.debug(quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.type.content.widgets.sounds[key])
+        angular.element("#audioSource")[0].src = 'http://cc-test.zaya.in/' + quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.type.content.widgets.sounds[key];
       } else {
         angular.element("#audioSource")[0].src = 'sound/water-drop.mp3';
       }
@@ -2235,7 +2645,7 @@ window.createGame = function(scope, lessons, injector, log) {
     }
 
 
-    $ionicModal.fromTemplateUrl(CONSTANT.PATH.QUIZ + '/quiz.feedback' + CONSTANT.VIEW, {
+    $ionicModal.fromTemplateUrl(CONSTANT.PATH.QUIZ + '/practice.feedback' + CONSTANT.VIEW, {
       scope: $scope,
       animation: 'slide-in-up'
     }).then(function(modal) {
@@ -2246,8 +2656,28 @@ window.createGame = function(scope, lessons, injector, log) {
       return true;
     };
     $scope.closeModal = function() {
-      $scope.modal.hide();
-    }
+      if (isCorrectAttempted(quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()]) || quizCtrl.report.attempts[quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.id].length >= 2) {
+        $log.debug("Correct or last attempt");
+        if (quizCtrl.currentIndex >= quizCtrl.quiz.objects.length - 1) {
+          $log.debug("Last question exiting now");
+          $scope.modal.hide().then(function() {
+            $state.go('quiz.practice.summary', {
+              quiz: angular.copy(quizCtrl.quiz),
+              practiceResult: angular.copy(quizCtrl.practiceResult),
+              report: angular.copy(quizCtrl.report)
+            });
+          });
+        } else {
+          $scope.modal.hide().then(function() {
+            quizCtrl.nextQuestion();
+          });
+        }
+      } else {
+        $scope.modal.hide()
+      }
+
+
+    };
 
     function attemptAndNext() {
       quizCtrl.submitAttempt(
@@ -2281,41 +2711,156 @@ window.createGame = function(scope, lessons, injector, log) {
         analysis: {},
         marks: 0,
         correct_questions: 0,
-        stars: 0
+        stars: 0,
+        score: {}
       };
-      $log.debug(quiz);
       angular.forEach(quiz.objects, function(value) {
-        if (isAttempted(value.node.id)) {
+        if (isAttempted(value)) {
+          $log.debug("d")
+          $log.debug(value);
+
           if (quizCtrl.isCorrectAttempted(value)) {
-            result.analysis[value.node.id] = "Correct";
-            result.marks += parseInt(value.node.level) * quizCtrl.MARKS_MULTIPIER;
+            $log.debug("coorect attempted");
+            result.analysis[value.node.id] = {
+              title: value.node.title,
+              status: 1
+            };
+            result.score[value.node.id] = value.node.type.score;
+            result.marks += value.node.type.score;
             result.correct_questions++;
           } else {
-            result.analysis[value.node.id] = "Wrong";
+            $log.debug("in coorect attempted");
+
+            result.analysis[value.node.id] = {
+              title: value.node.title,
+              status: 0
+            };
+            result.score[value.node.id] = 0;
           }
         } else {
-          result.analysis[value.node.id] = "Unattemted"
+          result.analysis[value.node.id] = {
+            title: value.node.title,
+            status: -1
+          }
+          result.score[value.node.id] = 0;
         }
 
-      })
-      var percent_correct = parseInt((result.correct_questions / quiz.objects.length) * 100);
-      $log.debug(percent_correct);
-      if (percent_correct >= 80) {
-        if (percent_correct >= 90) {
-          if (percent_correct >= 95) {
-            result.stars = 3;
-          } else {
-            result.stars = 2;
-          }
-        } else {
-          result.stars = 1;
-        }
-      }
+      });
+      // $log.debug(result)
+      var percent_correct = parseInt((result.marks / quiz.node.type.score) * 100);
+      $log.debug('see the score', result.marks, quiz.node.type.score, percent_correct);
+      if (percent_correct >= CONSTANT.STAR.ONE && percent_correct < CONSTANT.STAR.TWO) {
+        result.stars = 1;
+      } else if (percent_correct >= CONSTANT.STAR.TWO && percent_correct < CONSTANT.STAR.THREE) {
+        result.stars = 2;
+      } else if (percent_correct >= CONSTANT.STAR.THREE) {
+        result.stars = 3;
+      } else {}
       return result;
     }
 
     function range(num) {
       return new Array(num);
+    }
+
+    function submitQuiz() {
+
+      $ionicPopup.confirm({
+        title: 'Submit Quiz?',
+        template: 'Are you sure you want to submit quiz?'
+      }).then(function(res) {
+        if (res) {
+          angular.forEach(quiz.objects, function(value, key) {
+            $log.debug("here");
+            if (value.node.type.type == 'choicequestion' && !value.node.type.content.is_multiple && value.attempted !== '') {
+              quizCtrl.submitAttempt(value.node.id,
+                value.attempted);
+            } else if (value.node.type.type == 'choicequestion' && value.node.type.content.is_multiple && value.attempted.length > 0) {
+              $log.debug("Multiple found");
+
+              quizCtrl.submitAttempt(value.node.id,
+                value.attempted);
+            }
+
+          });
+          $log.debug("Report");
+          $log.debug(quizCtrl.report);
+
+          $state.go('quiz.summary', {
+            report: angular.copy(quizCtrl.report),
+            quiz: angular.copy(quizCtrl.quiz)
+          });
+        } else {
+          void 0;
+        }
+      });
+    }
+
+    function endQuiz() {
+
+      $ionicPopup.confirm({
+        title: 'End Quiz?',
+        template: 'Are you sure you want to end quiz?'
+      }).then(function(res) {
+        if (res) {
+          $ionicLoading.show({
+            noBackdrop: false,
+            hideOnStateChange: true
+          });
+          $state.go('map.navigate', {});
+        } else {
+          void 0;
+        }
+      });
+    }
+    $ionicModal.fromTemplateUrl(CONSTANT.PATH.QUIZ + '/quiz.pause.modal' + CONSTANT.VIEW, {
+      scope: $scope,
+      animation: 'slide-in-up'
+    }).then(function(modal) {
+      quizCtrl.pauseModal = modal;
+    });
+
+    function pauseQuiz() {
+      quizCtrl.pauseModal.show();
+    }
+
+    function restartQuiz() {
+      $ionicLoading.show({
+        noBackdrop: false,
+        hideOnStateChange: true
+      });
+      $state.go($state.current, {}, {
+        reload: true
+      });
+    }
+
+
+    function getSoundId(string) {
+      if (quizCtrl.soundIdRegex.exec(string))
+        return quizCtrl.soundIdRegex.exec(string)[1];
+    }
+
+    function getImageId(string) {
+      if (quizCtrl.imageTagRegex.exec(string))
+        return quizCtrl.imageTagRegex.exec(string)[1];
+    }
+
+    function getImageSrc(id) {
+      return quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.type.content.widgets.images[id];
+    }
+
+    function parseToDisplay(string) {
+      var text = quizCtrl.replaceImageTag(quizCtrl.removeSoundTag(string));
+      return text.trim() || '<img class="card-image" src="' + CONSTANT.ASSETS.IMG.SOUND_PLACEHOLDER + '"></img>';
+
+    }
+
+    function removeSoundTag(string) {
+      return string.replace(quizCtrl.soundIdRegex, "");
+    }
+
+    function replaceImageTag(string) {
+      return string.replace(quizCtrl.imageTagRegex, "<img class='card-image' src='http://cc-test.zaya.in/" + quizCtrl.getImageSrc(quizCtrl.getImageId(string)) + "'></img>");
     }
   }
 })();
@@ -2327,23 +2872,23 @@ window.createGame = function(scope, lessons, injector, log) {
     .factory('Quiz', Quiz)
   Quiz.$inject = ['Restangular', 'CONSTANT', '$cookies', '$log', '$window'];
   function Quiz(Restangular, CONSTANT, $cookies, $log, $window) {
-    var rest = Restangular.withConfig(function (RestangularConfigurer) {
+    var report = Restangular.withConfig(function (RestangularConfigurer) {
       RestangularConfigurer.setBaseUrl(CONSTANT.BACKEND_SERVICE_DOMAIN + '/api/v1');
       RestangularConfigurer.setRequestSuffix('/');
       RestangularConfigurer.setDefaultHeaders({
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/json',
       });
     });
     return {
       saveReport : function(data,success,failure){
-        rest.all('reports').post($.param(data)).then(function(response){
+        report.all('reports').post(data).then(function(response){
           success(response);
         },function(error){
           failure(error);
         })
       },
       saveAttempt : function(data,success,failure){
-        rest.all('attempts').post($.param(data)).then(function(response){
+        report.all('attempts').post(data).then(function(response){
           success(response);
         },function(error){
           failure(error);
@@ -2371,9 +2916,9 @@ window.createGame = function(scope, lessons, injector, log) {
         template : '<ion-nav-view name="state-quiz"></ion-nav-view>',
         resolve: {
             quiz: ['$stateParams', 'Rest', function($stateParams, Rest) {
-
+                // return {"node":{"id":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type_name":"assessment","type":{"id":"a74c7b03-f132-4b16-ab7e-9a5ff3744c26","type":"assessment","score":600},"created":"2016-05-12T12:56:59.275501Z","updated":"2016-05-12T12:56:59.275564Z","title":"Beginning Blends (L, R, S)","description":"","object_id":"a74c7b03-f132-4b16-ab7e-9a5ff3744c26","stauts":"PUBLISHED","lft":2,"rght":63,"tree_id":1,"level":1,"parent":"9adb6c64-773a-4217-8627-f0b6f8336382","content_type":26,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[{"node":{"id":"162c100c-a295-4a9e-8fa4-35cc37c62b19","content_type_name":"json question","type":{"id":"1dde30df-0826-4fec-919e-728420c0db73","created":"2016-05-12T12:56:59.351763Z","updated":"2016-05-12T12:56:59.351798Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":1,"answer":[2],"score":10,"content":{"hints":"[]","widgets":{"sounds":{},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":"globe","key":4},{"option":"crop","key":3},{"option":"block","key":1},{"option":"drop","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:56:59.390021Z","updated":"2016-05-12T12:56:59.390059Z","title":"dr","description":"","object_id":"1dde30df-0826-4fec-919e-728420c0db73","stauts":"PUBLISHED","lft":3,"rght":4,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"eabcce21-0be5-4702-a5ef-e6bca75caed1","content_type_name":"json question","type":{"id":"91844612-5ee0-4246-a486-5fa4b4ff4fb6","created":"2016-05-12T12:56:59.413639Z","updated":"2016-05-12T12:56:59.413697Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":1,"answer":[3,2],"score":10,"content":{"hints":"[]","widgets":{"sounds":{},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":"plan","key":4},{"option":"skate","key":3},{"option":"broom","key":1},{"option":"sky","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:56:59.448045Z","updated":"2016-05-12T12:56:59.448100Z","title":"sk","description":"","object_id":"91844612-5ee0-4246-a486-5fa4b4ff4fb6","stauts":"PUBLISHED","lft":5,"rght":6,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"29b256e1-5712-481d-9605-e8549faa27aa","content_type_name":"json question","type":{"id":"11dd51e1-8101-4198-9d53-9149d875ea88","created":"2016-05-12T12:56:59.478796Z","updated":"2016-05-12T12:56:59.478848Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":1,"answer":[1,2],"score":10,"content":{"hints":"[]","widgets":{"sounds":{},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":"sky","key":4},{"option":"sleep","key":3},{"option":"class","key":1},{"option":"clock","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:56:59.503543Z","updated":"2016-05-12T12:56:59.503601Z","title":"cl","description":"","object_id":"11dd51e1-8101-4198-9d53-9149d875ea88","stauts":"PUBLISHED","lft":7,"rght":8,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"cfa822c2-51bd-4788-bc91-d9bc27c7b550","content_type_name":"json question","type":{"id":"cda7393f-3503-46b0-9652-2f903a826d96","created":"2016-05-12T12:56:59.527382Z","updated":"2016-05-12T12:56:59.527445Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":1,"answer":[3,1,2],"score":10,"content":{"hints":"[]","widgets":{"sounds":{},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":"drum","key":4},{"option":"black","key":3},{"option":"blue","key":1},{"option":"bland","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:56:59.569805Z","updated":"2016-05-12T12:56:59.569870Z","title":"bl","description":"","object_id":"cda7393f-3503-46b0-9652-2f903a826d96","stauts":"PUBLISHED","lft":9,"rght":10,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"df28d4b8-0754-455a-a971-04fced5fcd0a","content_type_name":"json question","type":{"id":"36b247a6-7c46-4b6f-b650-cf8b7e1d9e8c","created":"2016-05-12T12:56:59.616159Z","updated":"2016-05-12T12:56:59.616190Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":1,"answer":[3,2],"score":10,"content":{"hints":"[]","widgets":{"sounds":{},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":"drone","key":4},{"option":"prune","key":3},{"option":"stick","key":1},{"option":"probe","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:56:59.648250Z","updated":"2016-05-12T12:56:59.648282Z","title":"pr","description":"","object_id":"36b247a6-7c46-4b6f-b650-cf8b7e1d9e8c","stauts":"PUBLISHED","lft":11,"rght":12,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"22228584-fd44-4e79-9726-9f09e1c83f42","content_type_name":"json question","type":{"id":"160d9f4b-0a5f-4bc7-a9ae-210576df9129","created":"2016-05-12T12:56:59.772696Z","updated":"2016-05-12T12:56:59.772724Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":2,"answer":[4,3],"score":20,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/broom_ZNMYTK.mp3","2":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/brain_OVTQIC.mp3","3":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/crop_6T4O8Y.mp3","4":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/drop_3XQU5G.mp3"},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":" [[sound id=1]] ","key":4},{"option":" [[sound id=2]] ","key":3},{"option":" [[sound id=3]] ","key":1},{"option":" [[sound id=4]] ","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:56:59.784011Z","updated":"2016-05-12T12:56:59.784045Z","title":"br","description":"","object_id":"160d9f4b-0a5f-4bc7-a9ae-210576df9129","stauts":"PUBLISHED","lft":13,"rght":14,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"df95755c-e63b-4c7a-9693-176e7a871fa5","content_type_name":"json question","type":{"id":"3b841ec9-2ddf-41f4-9e42-fd795b2c8d0b","created":"2016-05-12T12:56:59.905118Z","updated":"2016-05-12T12:56:59.905145Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":2,"answer":[3,1],"score":20,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/drone_9DG8IR.mp3","2":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/plum_JHQWVY.mp3","3":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/plane_KZUN6Z.mp3","4":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/block_KUKM0A.mp3"},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":" [[sound id=1]] ","key":4},{"option":" [[sound id=2]] ","key":3},{"option":" [[sound id=3]] ","key":1},{"option":" [[sound id=4]] ","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:56:59.915732Z","updated":"2016-05-12T12:56:59.915768Z","title":"pl","description":"","object_id":"3b841ec9-2ddf-41f4-9e42-fd795b2c8d0b","stauts":"PUBLISHED","lft":15,"rght":16,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"4f0fbd8b-96d8-49b5-8e6a-bd3b54d12953","content_type_name":"json question","type":{"id":"af7acd05-8f6e-4a1e-b729-d24f22be7c49","created":"2016-05-12T12:57:00.037034Z","updated":"2016-05-12T12:57:00.037062Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":2,"answer":[4,2],"score":20,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/prune_3U3CWQ.mp3","2":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/drum_C2VZ4E.mp3","3":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/brick_YCDGJF.mp3","4":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/prize_DTZX5A.mp3"},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":" [[sound id=1]] ","key":4},{"option":" [[sound id=2]] ","key":3},{"option":" [[sound id=3]] ","key":1},{"option":" [[sound id=4]] ","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:00.046799Z","updated":"2016-05-12T12:57:00.046832Z","title":"pr","description":"","object_id":"af7acd05-8f6e-4a1e-b729-d24f22be7c49","stauts":"PUBLISHED","lft":17,"rght":18,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"2edce18a-97c9-4df5-a85c-8e023590435a","content_type_name":"json question","type":{"id":"15bd0dd4-390c-42cd-8e12-64ef6f27fcee","created":"2016-05-12T12:57:00.210211Z","updated":"2016-05-12T12:57:00.210237Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":2,"answer":[3,2],"score":20,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/clock_7WSP6T.mp3","2":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/31/globe_FM9F07.mp3","3":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/class_2L8I2P.mp3","4":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/glass_X3U7RT.mp3"},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":" [[sound id=1]] ","key":4},{"option":" [[sound id=2]] ","key":3},{"option":" [[sound id=3]] ","key":1},{"option":" [[sound id=4]] ","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:00.220483Z","updated":"2016-05-12T12:57:00.220517Z","title":"gl","description":"","object_id":"15bd0dd4-390c-42cd-8e12-64ef6f27fcee","stauts":"PUBLISHED","lft":19,"rght":20,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"64152db3-6eb9-46af-9616-9184eaa7be20","content_type_name":"json question","type":{"id":"34105ac8-ac4b-49eb-852b-7a6f1ecf293a","created":"2016-05-12T12:57:00.336373Z","updated":"2016-05-12T12:57:00.336402Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":2,"answer":[2],"score":20,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/stairs_1RX5DY.mp3","2":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/stop_QBR2CP.mp3","3":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/31/smile_7YJFPP.mp3","4":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/snake_PYHRCY.mp3"},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":" [[sound id=1]] ","key":4},{"option":" [[sound id=2]] ","key":3},{"option":" [[sound id=3]] ","key":1},{"option":" [[sound id=4]] ","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:00.346098Z","updated":"2016-05-12T12:57:00.346130Z","title":"sn","description":"","object_id":"34105ac8-ac4b-49eb-852b-7a6f1ecf293a","stauts":"PUBLISHED","lft":21,"rght":22,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"24b49946-72ea-47fb-aff8-6d72d4ac8d6f","content_type_name":"json question","type":{"id":"81bde716-67df-41c3-97c9-185c2b9b4991","created":"2016-05-12T12:57:00.463194Z","updated":"2016-05-12T12:57:00.463222Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":2,"answer":[1,2],"score":20,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/black_MGSQ93.mp3","2":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/block_346JMX.mp3","3":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/flock_787RJT.mp3","4":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/flag_9EZSHM.mp3"},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":" [[sound id=1]] ","key":4},{"option":" [[sound id=2]] ","key":3},{"option":" [[sound id=3]] ","key":1},{"option":" [[sound id=4]] ","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:00.491059Z","updated":"2016-05-12T12:57:00.491093Z","title":"fl","description":"","object_id":"81bde716-67df-41c3-97c9-185c2b9b4991","stauts":"PUBLISHED","lft":23,"rght":24,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"e0c2fd9f-7eb3-43e9-b9e4-6645c7256360","content_type_name":"json question","type":{"id":"9de167cb-5f2b-448b-8664-3bac685bea4c","created":"2016-05-12T12:57:00.619500Z","updated":"2016-05-12T12:57:00.619528Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":2,"answer":[1],"score":20,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/broom_CGPY6N.mp3","2":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/truck_JBQ5ZB.mp3","3":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/trap_VQ6ND7.mp3","4":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/grab_XF6QA9.mp3"},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":" [[sound id=1]] ","key":4},{"option":" [[sound id=2]] ","key":3},{"option":" [[sound id=3]] ","key":1},{"option":" [[sound id=4]] ","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:00.629023Z","updated":"2016-05-12T12:57:00.629055Z","title":"tr","description":"","object_id":"9de167cb-5f2b-448b-8664-3bac685bea4c","stauts":"PUBLISHED","lft":25,"rght":26,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"d64892d6-0bbd-4c33-b8e0-a4d1c49bbddc","content_type_name":"json question","type":{"id":"7681b51a-97ca-4f17-8e99-267f09829237","created":"2016-05-12T12:57:00.745204Z","updated":"2016-05-12T12:57:00.745232Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":2,"answer":[3,2],"score":20,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/small_DH96E0.mp3","2":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/stairs_H7P48Q.mp3","3":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/clam_5OVPWR.mp3","4":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/stick_46RMWG.mp3"},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":" [[sound id=1]] ","key":4},{"option":" [[sound id=2]] ","key":3},{"option":" [[sound id=3]] ","key":1},{"option":" [[sound id=4]] ","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:00.754843Z","updated":"2016-05-12T12:57:00.754874Z","title":"st","description":"","object_id":"7681b51a-97ca-4f17-8e99-267f09829237","stauts":"PUBLISHED","lft":27,"rght":28,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"64f8d91d-eabb-4845-85f7-c639b309ffa9","content_type_name":"json question","type":{"id":"cb1f21eb-8a75-41f9-87f3-b49632365ff8","created":"2016-05-12T12:57:00.870675Z","updated":"2016-05-12T12:57:00.870702Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":2,"answer":[1,2],"score":20,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/broke_DM7876.mp3","2":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/tap_L7GUWJ.mp3","3":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/drop_N9E3E2.mp3","4":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/drum_CPBOBH.mp3"},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":" [[sound id=1]] ","key":4},{"option":" [[sound id=2]] ","key":3},{"option":" [[sound id=3]] ","key":1},{"option":" [[sound id=4]] ","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:00.880871Z","updated":"2016-05-12T12:57:00.880905Z","title":"dr","description":"","object_id":"cb1f21eb-8a75-41f9-87f3-b49632365ff8","stauts":"PUBLISHED","lft":29,"rght":30,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"82a3af56-481c-4fb4-ba35-e8d9ee0f6630","content_type_name":"json question","type":{"id":"017edec0-ed45-442f-b279-385aa871b395","created":"2016-05-12T12:57:00.950347Z","updated":"2016-05-12T12:57:00.950383Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":3,"answer":[3],"score":30,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/stick_ELFKB2.mp3"},"videos":{},"images":{"1":"http://curate.zaya.in/media/contents/zaya/photos/2015/09/01/stick_1QBKAF.png"}},"is_multiple":false,"options":[{"option":"sp","key":4},{"option":"st","key":3},{"option":"sc","key":1},{"option":"sm","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:00.960589Z","updated":"2016-05-12T12:57:00.960625Z","title":"[[img id=1]] [[sound id=1]]","description":"","object_id":"017edec0-ed45-442f-b279-385aa871b395","stauts":"PUBLISHED","lft":31,"rght":32,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"cccd9128-686b-43e1-81ac-1c8ae8f8a66c","content_type_name":"json question","type":{"id":"adc718ac-d422-4e39-915f-87f1f5340882","created":"2016-05-12T12:57:01.023555Z","updated":"2016-05-12T12:57:01.023584Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":3,"answer":[2],"score":30,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/spoon_J5UK1S.mp3"},"videos":{},"images":{"1":"http://curate.zaya.in/media/contents/zaya/photos/2016/02/25/spoon_FA5AXI.png"}},"is_multiple":false,"options":[{"option":"sn","key":4},{"option":"sm","key":3},{"option":"st","key":1},{"option":"sp","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.033477Z","updated":"2016-05-12T12:57:01.033512Z","title":"[[img id=1]] [[sound id=1]]","description":"","object_id":"adc718ac-d422-4e39-915f-87f1f5340882","stauts":"PUBLISHED","lft":33,"rght":34,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"d71d7e44-fdd9-4b8a-9c61-f1e74e30c825","content_type_name":"json question","type":{"id":"5d640c50-012c-4e4b-bcda-4011bd2ce063","created":"2016-05-12T12:57:01.098546Z","updated":"2016-05-12T12:57:01.098572Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":3,"answer":[3],"score":30,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/truck_SQT9AH.mp3"},"videos":{},"images":{"1":"http://curate.zaya.in/media/contents/zaya/photos/2016/02/25/truck_VNUB0N.png"}},"is_multiple":false,"options":[{"option":"dr","key":4},{"option":"tr","key":3},{"option":"br","key":1},{"option":"bl","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.120818Z","updated":"2016-05-12T12:57:01.120853Z","title":"[[img id=1]] [[sound id=1]]","description":"","object_id":"5d640c50-012c-4e4b-bcda-4011bd2ce063","stauts":"PUBLISHED","lft":35,"rght":36,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"1fe67424-f2a4-440b-99bb-8483c7c63166","content_type_name":"json question","type":{"id":"f95c5838-14e2-4fc5-afce-2ffd98637386","created":"2016-05-12T12:57:01.158963Z","updated":"2016-05-12T12:57:01.159027Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":3,"answer":[4],"score":30,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/31/globe_R5JK2S.mp3"},"videos":{},"images":{}},"is_multiple":false,"options":[{"option":"gl","key":4},{"option":"sl","key":3},{"option":"dr","key":1},{"option":"br","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.171821Z","updated":"2016-05-12T12:57:01.171858Z","title":"[[sound id=1]]","description":"","object_id":"f95c5838-14e2-4fc5-afce-2ffd98637386","stauts":"PUBLISHED","lft":37,"rght":38,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"52875d13-70f8-4703-ac7f-2360b4b9553d","content_type_name":"json question","type":{"id":"c3e26cb2-4c70-4b6d-b3f3-e6be3638b379","created":"2016-05-12T12:57:01.234455Z","updated":"2016-05-12T12:57:01.234486Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":3,"answer":[1],"score":30,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/snail_5CQD1E.mp3"},"videos":{},"images":{"1":"http://curate.zaya.in/media/contents/zaya/photos/2016/02/25/snail_XBPKXF.png"}},"is_multiple":false,"options":[{"option":"gr","key":4},{"option":"tr","key":3},{"option":"sn","key":1},{"option":"sm","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.244582Z","updated":"2016-05-12T12:57:01.244616Z","title":"[[img id=1]] [[sound id=1]]","description":"","object_id":"c3e26cb2-4c70-4b6d-b3f3-e6be3638b379","stauts":"PUBLISHED","lft":39,"rght":40,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"47d34dbf-01ee-4a26-b03d-3c892d1e1fec","content_type_name":"json question","type":{"id":"3a220a4b-cfa3-400e-b27e-e175ce7b1d62","created":"2016-05-12T12:57:01.356434Z","updated":"2016-05-12T12:57:01.356462Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":3,"answer":[3],"score":30,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/plane_CYJYTP.mp3"},"videos":{},"images":{"1":"http://curate.zaya.in/media/contents/zaya/photos/2016/02/25/plane_UTJREM.png"}},"is_multiple":false,"options":[{"option":"pr","key":4},{"option":"pl","key":3},{"option":"cl","key":1},{"option":"cr","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.366632Z","updated":"2016-05-12T12:57:01.366666Z","title":"[[img id=1]] [[sound id=1]]","description":"","object_id":"3a220a4b-cfa3-400e-b27e-e175ce7b1d62","stauts":"PUBLISHED","lft":41,"rght":42,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"f629ada9-2cc8-4753-9344-7f3ceadf5000","content_type_name":"json question","type":{"id":"b9a7f3f2-7fe4-4ed4-83ef-c87313cb77f8","created":"2016-05-12T12:57:01.429291Z","updated":"2016-05-12T12:57:01.429319Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":3,"answer":[3],"score":30,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/clock_H8EFGC.mp3"},"videos":{},"images":{"1":"http://curate.zaya.in/media/contents/zaya/photos/2015/09/01/clock_CPC46R.png"}},"is_multiple":false,"options":[{"option":"pl","key":4},{"option":"cl","key":3},{"option":"bl","key":1},{"option":"dr","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.438882Z","updated":"2016-05-12T12:57:01.438922Z","title":"[[img id=1]] [[sound id=1]]","description":"","object_id":"b9a7f3f2-7fe4-4ed4-83ef-c87313cb77f8","stauts":"PUBLISHED","lft":43,"rght":44,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"18026752-d923-4f00-9677-545eb4a4fc5e","content_type_name":"json question","type":{"id":"143ec4c5-31e4-446f-a234-313427e93f02","created":"2016-05-12T12:57:01.505779Z","updated":"2016-05-12T12:57:01.505808Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":3,"answer":[2],"score":30,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/grass_NX9C3F.mp3"},"videos":{},"images":{"1":"http://curate.zaya.in/media/contents/zaya/photos/2016/02/25/grass_ZDH9LM.png"}},"is_multiple":false,"options":[{"option":"cl","key":4},{"option":"bl","key":3},{"option":"cr","key":1},{"option":"gr","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.516721Z","updated":"2016-05-12T12:57:01.516754Z","title":"[[img id=1]] [[sound id=1]]","description":"","object_id":"143ec4c5-31e4-446f-a234-313427e93f02","stauts":"PUBLISHED","lft":45,"rght":46,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"0e79e883-fa3d-483d-ac37-703967b7afab","content_type_name":"json question","type":{"id":"28266a54-d6c6-4a3f-ab45-eecd295dc390","created":"2016-05-12T12:57:01.586509Z","updated":"2016-05-12T12:57:01.586556Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":3,"answer":[3],"score":30,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/tree_M10F9T.mp3"},"videos":{},"images":{"1":"http://curate.zaya.in/media/contents/zaya/photos/2016/02/25/tree_FOUJ6U.png"}},"is_multiple":false,"options":[{"option":"dr","key":4},{"option":"tr","key":3},{"option":"pr","key":1},{"option":"cr","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.601463Z","updated":"2016-05-12T12:57:01.601524Z","title":"[[img id=1]] [[sound id=1]]","description":"","object_id":"28266a54-d6c6-4a3f-ab45-eecd295dc390","stauts":"PUBLISHED","lft":47,"rght":48,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"50d65cf2-309b-427e-a44f-dccba6de2752","content_type_name":"json question","type":{"id":"cb8a0d73-f9da-4af9-a562-9e10a343f6b6","created":"2016-05-12T12:57:01.726150Z","updated":"2016-05-12T12:57:01.726220Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":3,"answer":[1],"score":30,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/31/crane_Q4CM4X.mp3"},"videos":{},"images":{}},"is_multiple":false,"options":[{"option":"tr","key":4},{"option":"gr","key":3},{"option":"cr","key":1},{"option":"pl","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.762503Z","updated":"2016-05-12T12:57:01.762560Z","title":"[[sound id=1]]","description":"","object_id":"cb8a0d73-f9da-4af9-a562-9e10a343f6b6","stauts":"PUBLISHED","lft":49,"rght":50,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"455ae052-e71c-4152-865f-41c8ae34bf8d","content_type_name":"json question","type":{"id":"0aca89a3-780a-4b12-b9ba-8de2d628eede","created":"2016-05-12T12:57:01.782073Z","updated":"2016-05-12T12:57:01.782104Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":1,"answer":[2],"score":10,"content":{"hints":"[]","widgets":{"sounds":{},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":"stock","key":4},{"option":"crop","key":3},{"option":"snail","key":1},{"option":"small","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.807064Z","updated":"2016-05-12T12:57:01.807126Z","title":"sm","description":"","object_id":"0aca89a3-780a-4b12-b9ba-8de2d628eede","stauts":"PUBLISHED","lft":51,"rght":52,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"e9a5a5c5-636c-45e7-9d5d-4f5f719159a7","content_type_name":"json question","type":{"id":"d372277a-1e43-4736-9e18-782848fa4e97","created":"2016-05-12T12:57:01.818575Z","updated":"2016-05-12T12:57:01.818616Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":1,"answer":[2],"score":10,"content":{"hints":"[]","widgets":{"sounds":{},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":"throw","key":4},{"option":"glow","key":3},{"option":"blow","key":1},{"option":"place","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.839624Z","updated":"2016-05-12T12:57:01.839695Z","title":"pl","description":"","object_id":"d372277a-1e43-4736-9e18-782848fa4e97","stauts":"PUBLISHED","lft":53,"rght":54,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"9beaaaf0-9075-4988-9b51-0550f1f782b6","content_type_name":"json question","type":{"id":"12f80277-19bd-4b66-89bf-ab91954d81a8","created":"2016-05-12T12:57:01.855058Z","updated":"2016-05-12T12:57:01.855131Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":1,"answer":[4,3,2],"score":10,"content":{"hints":"[]","widgets":{"sounds":{},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":"trick","key":4},{"option":"trap","key":3},{"option":"club","key":1},{"option":"truck","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.870469Z","updated":"2016-05-12T12:57:01.870504Z","title":"tr","description":"","object_id":"12f80277-19bd-4b66-89bf-ab91954d81a8","stauts":"PUBLISHED","lft":55,"rght":56,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"27681226-4c60-4719-bb4f-63a7de8b2e6a","content_type_name":"json question","type":{"id":"df1db188-8658-49c6-a7af-4570da5f26fa","created":"2016-05-12T12:57:01.881038Z","updated":"2016-05-12T12:57:01.881070Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":1,"answer":[1],"score":10,"content":{"hints":"[]","widgets":{"sounds":{},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":"blend","key":4},{"option":"prize","key":3},{"option":"glow","key":1},{"option":"clam","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.893994Z","updated":"2016-05-12T12:57:01.894055Z","title":"gl","description":"","object_id":"df1db188-8658-49c6-a7af-4570da5f26fa","stauts":"PUBLISHED","lft":57,"rght":58,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"2616f02f-047d-4700-af74-108e2ed716b3","content_type_name":"json question","type":{"id":"51f50a96-4d2e-4b4d-b079-f059193bf0fa","created":"2016-05-12T12:57:01.909467Z","updated":"2016-05-12T12:57:01.909524Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":1,"answer":[1],"score":10,"content":{"hints":"[]","widgets":{"sounds":{},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":"skate","key":4},{"option":"spot","key":3},{"option":"stairs","key":1},{"option":"black","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.931146Z","updated":"2016-05-12T12:57:01.931209Z","title":"st","description":"","object_id":"51f50a96-4d2e-4b4d-b079-f059193bf0fa","stauts":"PUBLISHED","lft":59,"rght":60,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"41995ffd-2548-4965-857d-9ab76d4adf82","content_type_name":"json question","type":{"id":"0f858462-1490-40ce-8f86-3ce3c850325b","created":"2016-05-12T12:57:02.186295Z","updated":"2016-05-12T12:57:02.186330Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":2,"answer":[3,1],"score":20,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/smile_GXPK1Z.mp3","2":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/skate_QV9MJB.mp3","3":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/sky_JAY7YD.mp3","4":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/dry_9R37SR.mp3"},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":" [[sound id=1]] ","key":4},{"option":" [[sound id=2]] ","key":3},{"option":" [[sound id=3]] ","key":1},{"option":" [[sound id=4]] ","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:02.202258Z","updated":"2016-05-12T12:57:02.202298Z","title":"sk","description":"","object_id":"0f858462-1490-40ce-8f86-3ce3c850325b","stauts":"PUBLISHED","lft":61,"rght":62,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]}]}
+                // eturn {"node":{"id":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type_name":"assessment","type":{"id":"a74c7b03-f132-4b16-ab7e-9a5ff3744c26","type":"assessment","score":600},"created":"2016-05-12T12:56:59.275501Z","updated":"2016-05-12T12:56:59.275564Z","title":"Beginning Blends (L, R, S)","description":"","object_id":"a74c7b03-f132-4b16-ab7e-9a5ff3744c26","stauts":"PUBLISHED","lft":2,"rght":63,"tree_id":1,"level":1,"parent":"9adb6c64-773a-4217-8627-f0b6f8336382","content_type":26,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[{"node":{"id":"162c100c-a295-4a9e-8fa4-35cc37c62b19","content_type_name":"json question","type":{"id":"1dde30df-0826-4fec-919e-728420c0db73","created":"2016-05-12T12:56:59.351763Z","updated":"2016-05-12T12:56:59.351798Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":1,"answer":[2],"score":10,"content":{"hints":"[]","widgets":{"sounds":{},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":"globe","key":4},{"option":"crop","key":3},{"option":"block","key":1},{"option":"drop","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:56:59.390021Z","updated":"2016-05-12T12:56:59.390059Z","title":"dr","description":"","object_id":"1dde30df-0826-4fec-919e-728420c0db73","stauts":"PUBLISHED","lft":3,"rght":4,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"eabcce21-0be5-4702-a5ef-e6bca75caed1","content_type_name":"json question","type":{"id":"91844612-5ee0-4246-a486-5fa4b4ff4fb6","created":"2016-05-12T12:56:59.413639Z","updated":"2016-05-12T12:56:59.413697Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":1,"answer":[3,2],"score":10,"content":{"hints":"[]","widgets":{"sounds":{},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":"plan","key":4},{"option":"skate","key":3},{"option":"broom","key":1},{"option":"sky","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:56:59.448045Z","updated":"2016-05-12T12:56:59.448100Z","title":"sk","description":"","object_id":"91844612-5ee0-4246-a486-5fa4b4ff4fb6","stauts":"PUBLISHED","lft":5,"rght":6,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"29b256e1-5712-481d-9605-e8549faa27aa","content_type_name":"json question","type":{"id":"11dd51e1-8101-4198-9d53-9149d875ea88","created":"2016-05-12T12:56:59.478796Z","updated":"2016-05-12T12:56:59.478848Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":1,"answer":[1,2],"score":10,"content":{"hints":"[]","widgets":{"sounds":{},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":"sky","key":4},{"option":"sleep","key":3},{"option":"class","key":1},{"option":"clock","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:56:59.503543Z","updated":"2016-05-12T12:56:59.503601Z","title":"cl","description":"","object_id":"11dd51e1-8101-4198-9d53-9149d875ea88","stauts":"PUBLISHED","lft":7,"rght":8,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"cfa822c2-51bd-4788-bc91-d9bc27c7b550","content_type_name":"json question","type":{"id":"cda7393f-3503-46b0-9652-2f903a826d96","created":"2016-05-12T12:56:59.527382Z","updated":"2016-05-12T12:56:59.527445Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":1,"answer":[3,1,2],"score":10,"content":{"hints":"[]","widgets":{"sounds":{},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":"drum","key":4},{"option":"black","key":3},{"option":"blue","key":1},{"option":"bland","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:56:59.569805Z","updated":"2016-05-12T12:56:59.569870Z","title":"bl","description":"","object_id":"cda7393f-3503-46b0-9652-2f903a826d96","stauts":"PUBLISHED","lft":9,"rght":10,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"df28d4b8-0754-455a-a971-04fced5fcd0a","content_type_name":"json question","type":{"id":"36b247a6-7c46-4b6f-b650-cf8b7e1d9e8c","created":"2016-05-12T12:56:59.616159Z","updated":"2016-05-12T12:56:59.616190Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":1,"answer":[3,2],"score":10,"content":{"hints":"[]","widgets":{"sounds":{},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":"drone","key":4},{"option":"prune","key":3},{"option":"stick","key":1},{"option":"probe","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:56:59.648250Z","updated":"2016-05-12T12:56:59.648282Z","title":"pr","description":"","object_id":"36b247a6-7c46-4b6f-b650-cf8b7e1d9e8c","stauts":"PUBLISHED","lft":11,"rght":12,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"22228584-fd44-4e79-9726-9f09e1c83f42","content_type_name":"json question","type":{"id":"160d9f4b-0a5f-4bc7-a9ae-210576df9129","created":"2016-05-12T12:56:59.772696Z","updated":"2016-05-12T12:56:59.772724Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":2,"answer":[4,3],"score":20,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/broom_ZNMYTK.mp3","2":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/brain_OVTQIC.mp3","3":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/crop_6T4O8Y.mp3","4":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/drop_3XQU5G.mp3"},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":" [[sound id=1]] ","key":4},{"option":" [[sound id=2]] ","key":3},{"option":" [[sound id=3]] ","key":1},{"option":" [[sound id=4]] ","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:56:59.784011Z","updated":"2016-05-12T12:56:59.784045Z","title":"br","description":"","object_id":"160d9f4b-0a5f-4bc7-a9ae-210576df9129","stauts":"PUBLISHED","lft":13,"rght":14,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"df95755c-e63b-4c7a-9693-176e7a871fa5","content_type_name":"json question","type":{"id":"3b841ec9-2ddf-41f4-9e42-fd795b2c8d0b","created":"2016-05-12T12:56:59.905118Z","updated":"2016-05-12T12:56:59.905145Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":2,"answer":[3,1],"score":20,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/drone_9DG8IR.mp3","2":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/plum_JHQWVY.mp3","3":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/plane_KZUN6Z.mp3","4":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/block_KUKM0A.mp3"},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":" [[sound id=1]] ","key":4},{"option":" [[sound id=2]] ","key":3},{"option":" [[sound id=3]] ","key":1},{"option":" [[sound id=4]] ","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:56:59.915732Z","updated":"2016-05-12T12:56:59.915768Z","title":"pl","description":"","object_id":"3b841ec9-2ddf-41f4-9e42-fd795b2c8d0b","stauts":"PUBLISHED","lft":15,"rght":16,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"4f0fbd8b-96d8-49b5-8e6a-bd3b54d12953","content_type_name":"json question","type":{"id":"af7acd05-8f6e-4a1e-b729-d24f22be7c49","created":"2016-05-12T12:57:00.037034Z","updated":"2016-05-12T12:57:00.037062Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":2,"answer":[4,2],"score":20,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/prune_3U3CWQ.mp3","2":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/drum_C2VZ4E.mp3","3":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/brick_YCDGJF.mp3","4":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/prize_DTZX5A.mp3"},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":" [[sound id=1]] ","key":4},{"option":" [[sound id=2]] ","key":3},{"option":" [[sound id=3]] ","key":1},{"option":" [[sound id=4]] ","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:00.046799Z","updated":"2016-05-12T12:57:00.046832Z","title":"pr","description":"","object_id":"af7acd05-8f6e-4a1e-b729-d24f22be7c49","stauts":"PUBLISHED","lft":17,"rght":18,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"2edce18a-97c9-4df5-a85c-8e023590435a","content_type_name":"json question","type":{"id":"15bd0dd4-390c-42cd-8e12-64ef6f27fcee","created":"2016-05-12T12:57:00.210211Z","updated":"2016-05-12T12:57:00.210237Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":2,"answer":[3,2],"score":20,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/clock_7WSP6T.mp3","2":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/31/globe_FM9F07.mp3","3":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/class_2L8I2P.mp3","4":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/glass_X3U7RT.mp3"},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":" [[sound id=1]] ","key":4},{"option":" [[sound id=2]] ","key":3},{"option":" [[sound id=3]] ","key":1},{"option":" [[sound id=4]] ","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:00.220483Z","updated":"2016-05-12T12:57:00.220517Z","title":"gl","description":"","object_id":"15bd0dd4-390c-42cd-8e12-64ef6f27fcee","stauts":"PUBLISHED","lft":19,"rght":20,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"64152db3-6eb9-46af-9616-9184eaa7be20","content_type_name":"json question","type":{"id":"34105ac8-ac4b-49eb-852b-7a6f1ecf293a","created":"2016-05-12T12:57:00.336373Z","updated":"2016-05-12T12:57:00.336402Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":2,"answer":[2],"score":20,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/stairs_1RX5DY.mp3","2":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/stop_QBR2CP.mp3","3":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/31/smile_7YJFPP.mp3","4":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/snake_PYHRCY.mp3"},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":" [[sound id=1]] ","key":4},{"option":" [[sound id=2]] ","key":3},{"option":" [[sound id=3]] ","key":1},{"option":" [[sound id=4]] ","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:00.346098Z","updated":"2016-05-12T12:57:00.346130Z","title":"sn","description":"","object_id":"34105ac8-ac4b-49eb-852b-7a6f1ecf293a","stauts":"PUBLISHED","lft":21,"rght":22,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"24b49946-72ea-47fb-aff8-6d72d4ac8d6f","content_type_name":"json question","type":{"id":"81bde716-67df-41c3-97c9-185c2b9b4991","created":"2016-05-12T12:57:00.463194Z","updated":"2016-05-12T12:57:00.463222Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":2,"answer":[1,2],"score":20,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/black_MGSQ93.mp3","2":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/block_346JMX.mp3","3":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/flock_787RJT.mp3","4":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/flag_9EZSHM.mp3"},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":" [[sound id=1]] ","key":4},{"option":" [[sound id=2]] ","key":3},{"option":" [[sound id=3]] ","key":1},{"option":" [[sound id=4]] ","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:00.491059Z","updated":"2016-05-12T12:57:00.491093Z","title":"fl","description":"","object_id":"81bde716-67df-41c3-97c9-185c2b9b4991","stauts":"PUBLISHED","lft":23,"rght":24,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"e0c2fd9f-7eb3-43e9-b9e4-6645c7256360","content_type_name":"json question","type":{"id":"9de167cb-5f2b-448b-8664-3bac685bea4c","created":"2016-05-12T12:57:00.619500Z","updated":"2016-05-12T12:57:00.619528Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":2,"answer":[1],"score":20,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/broom_CGPY6N.mp3","2":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/truck_JBQ5ZB.mp3","3":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/trap_VQ6ND7.mp3","4":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/grab_XF6QA9.mp3"},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":" [[sound id=1]] ","key":4},{"option":" [[sound id=2]] ","key":3},{"option":" [[sound id=3]] ","key":1},{"option":" [[sound id=4]] ","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:00.629023Z","updated":"2016-05-12T12:57:00.629055Z","title":"tr","description":"","object_id":"9de167cb-5f2b-448b-8664-3bac685bea4c","stauts":"PUBLISHED","lft":25,"rght":26,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"d64892d6-0bbd-4c33-b8e0-a4d1c49bbddc","content_type_name":"json question","type":{"id":"7681b51a-97ca-4f17-8e99-267f09829237","created":"2016-05-12T12:57:00.745204Z","updated":"2016-05-12T12:57:00.745232Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":2,"answer":[3,2],"score":20,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/small_DH96E0.mp3","2":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/stairs_H7P48Q.mp3","3":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/clam_5OVPWR.mp3","4":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/stick_46RMWG.mp3"},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":" [[sound id=1]] ","key":4},{"option":" [[sound id=2]] ","key":3},{"option":" [[sound id=3]] ","key":1},{"option":" [[sound id=4]] ","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:00.754843Z","updated":"2016-05-12T12:57:00.754874Z","title":"st","description":"","object_id":"7681b51a-97ca-4f17-8e99-267f09829237","stauts":"PUBLISHED","lft":27,"rght":28,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"64f8d91d-eabb-4845-85f7-c639b309ffa9","content_type_name":"json question","type":{"id":"cb1f21eb-8a75-41f9-87f3-b49632365ff8","created":"2016-05-12T12:57:00.870675Z","updated":"2016-05-12T12:57:00.870702Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":2,"answer":[1,2],"score":20,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/broke_DM7876.mp3","2":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/tap_L7GUWJ.mp3","3":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/drop_N9E3E2.mp3","4":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/drum_CPBOBH.mp3"},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":" [[sound id=1]] ","key":4},{"option":" [[sound id=2]] ","key":3},{"option":" [[sound id=3]] ","key":1},{"option":" [[sound id=4]] ","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:00.880871Z","updated":"2016-05-12T12:57:00.880905Z","title":"dr","description":"","object_id":"cb1f21eb-8a75-41f9-87f3-b49632365ff8","stauts":"PUBLISHED","lft":29,"rght":30,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"82a3af56-481c-4fb4-ba35-e8d9ee0f6630","content_type_name":"json question","type":{"id":"017edec0-ed45-442f-b279-385aa871b395","created":"2016-05-12T12:57:00.950347Z","updated":"2016-05-12T12:57:00.950383Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":3,"answer":[3],"score":30,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/stick_ELFKB2.mp3"},"videos":{},"images":{"1":"http://curate.zaya.in/media/contents/zaya/photos/2015/09/01/stick_1QBKAF.png"}},"is_multiple":false,"options":[{"option":"sp","key":4},{"option":"st","key":3},{"option":"sc","key":1},{"option":"sm","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:00.960589Z","updated":"2016-05-12T12:57:00.960625Z","title":"[[img id=1]] [[sound id=1]]","description":"","object_id":"017edec0-ed45-442f-b279-385aa871b395","stauts":"PUBLISHED","lft":31,"rght":32,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"cccd9128-686b-43e1-81ac-1c8ae8f8a66c","content_type_name":"json question","type":{"id":"adc718ac-d422-4e39-915f-87f1f5340882","created":"2016-05-12T12:57:01.023555Z","updated":"2016-05-12T12:57:01.023584Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":3,"answer":[2],"score":30,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/spoon_J5UK1S.mp3"},"videos":{},"images":{"1":"http://curate.zaya.in/media/contents/zaya/photos/2016/02/25/spoon_FA5AXI.png"}},"is_multiple":false,"options":[{"option":"sn","key":4},{"option":"sm","key":3},{"option":"st","key":1},{"option":"sp","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.033477Z","updated":"2016-05-12T12:57:01.033512Z","title":"[[img id=1]] [[sound id=1]]","description":"","object_id":"adc718ac-d422-4e39-915f-87f1f5340882","stauts":"PUBLISHED","lft":33,"rght":34,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"d71d7e44-fdd9-4b8a-9c61-f1e74e30c825","content_type_name":"json question","type":{"id":"5d640c50-012c-4e4b-bcda-4011bd2ce063","created":"2016-05-12T12:57:01.098546Z","updated":"2016-05-12T12:57:01.098572Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":3,"answer":[3],"score":30,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/truck_SQT9AH.mp3"},"videos":{},"images":{"1":"http://curate.zaya.in/media/contents/zaya/photos/2016/02/25/truck_VNUB0N.png"}},"is_multiple":false,"options":[{"option":"dr","key":4},{"option":"tr","key":3},{"option":"br","key":1},{"option":"bl","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.120818Z","updated":"2016-05-12T12:57:01.120853Z","title":"[[img id=1]] [[sound id=1]]","description":"","object_id":"5d640c50-012c-4e4b-bcda-4011bd2ce063","stauts":"PUBLISHED","lft":35,"rght":36,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"1fe67424-f2a4-440b-99bb-8483c7c63166","content_type_name":"json question","type":{"id":"f95c5838-14e2-4fc5-afce-2ffd98637386","created":"2016-05-12T12:57:01.158963Z","updated":"2016-05-12T12:57:01.159027Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":3,"answer":[4],"score":30,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/31/globe_R5JK2S.mp3"},"videos":{},"images":{}},"is_multiple":false,"options":[{"option":"gl","key":4},{"option":"sl","key":3},{"option":"dr","key":1},{"option":"br","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.171821Z","updated":"2016-05-12T12:57:01.171858Z","title":"[[sound id=1]]","description":"","object_id":"f95c5838-14e2-4fc5-afce-2ffd98637386","stauts":"PUBLISHED","lft":37,"rght":38,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"52875d13-70f8-4703-ac7f-2360b4b9553d","content_type_name":"json question","type":{"id":"c3e26cb2-4c70-4b6d-b3f3-e6be3638b379","created":"2016-05-12T12:57:01.234455Z","updated":"2016-05-12T12:57:01.234486Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":3,"answer":[1],"score":30,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/snail_5CQD1E.mp3"},"videos":{},"images":{"1":"http://curate.zaya.in/media/contents/zaya/photos/2016/02/25/snail_XBPKXF.png"}},"is_multiple":false,"options":[{"option":"gr","key":4},{"option":"tr","key":3},{"option":"sn","key":1},{"option":"sm","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.244582Z","updated":"2016-05-12T12:57:01.244616Z","title":"[[img id=1]] [[sound id=1]]","description":"","object_id":"c3e26cb2-4c70-4b6d-b3f3-e6be3638b379","stauts":"PUBLISHED","lft":39,"rght":40,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"47d34dbf-01ee-4a26-b03d-3c892d1e1fec","content_type_name":"json question","type":{"id":"3a220a4b-cfa3-400e-b27e-e175ce7b1d62","created":"2016-05-12T12:57:01.356434Z","updated":"2016-05-12T12:57:01.356462Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":3,"answer":[3],"score":30,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/plane_CYJYTP.mp3"},"videos":{},"images":{"1":"http://curate.zaya.in/media/contents/zaya/photos/2016/02/25/plane_UTJREM.png"}},"is_multiple":false,"options":[{"option":"pr","key":4},{"option":"pl","key":3},{"option":"cl","key":1},{"option":"cr","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.366632Z","updated":"2016-05-12T12:57:01.366666Z","title":"[[img id=1]] [[sound id=1]]","description":"","object_id":"3a220a4b-cfa3-400e-b27e-e175ce7b1d62","stauts":"PUBLISHED","lft":41,"rght":42,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"f629ada9-2cc8-4753-9344-7f3ceadf5000","content_type_name":"json question","type":{"id":"b9a7f3f2-7fe4-4ed4-83ef-c87313cb77f8","created":"2016-05-12T12:57:01.429291Z","updated":"2016-05-12T12:57:01.429319Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":3,"answer":[3],"score":30,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/clock_H8EFGC.mp3"},"videos":{},"images":{"1":"http://curate.zaya.in/media/contents/zaya/photos/2015/09/01/clock_CPC46R.png"}},"is_multiple":false,"options":[{"option":"pl","key":4},{"option":"cl","key":3},{"option":"bl","key":1},{"option":"dr","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.438882Z","updated":"2016-05-12T12:57:01.438922Z","title":"[[img id=1]] [[sound id=1]]","description":"","object_id":"b9a7f3f2-7fe4-4ed4-83ef-c87313cb77f8","stauts":"PUBLISHED","lft":43,"rght":44,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"18026752-d923-4f00-9677-545eb4a4fc5e","content_type_name":"json question","type":{"id":"143ec4c5-31e4-446f-a234-313427e93f02","created":"2016-05-12T12:57:01.505779Z","updated":"2016-05-12T12:57:01.505808Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":3,"answer":[2],"score":30,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/grass_NX9C3F.mp3"},"videos":{},"images":{"1":"http://curate.zaya.in/media/contents/zaya/photos/2016/02/25/grass_ZDH9LM.png"}},"is_multiple":false,"options":[{"option":"cl","key":4},{"option":"bl","key":3},{"option":"cr","key":1},{"option":"gr","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.516721Z","updated":"2016-05-12T12:57:01.516754Z","title":"[[img id=1]] [[sound id=1]]","description":"","object_id":"143ec4c5-31e4-446f-a234-313427e93f02","stauts":"PUBLISHED","lft":45,"rght":46,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"0e79e883-fa3d-483d-ac37-703967b7afab","content_type_name":"json question","type":{"id":"28266a54-d6c6-4a3f-ab45-eecd295dc390","created":"2016-05-12T12:57:01.586509Z","updated":"2016-05-12T12:57:01.586556Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":3,"answer":[3],"score":30,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/tree_M10F9T.mp3"},"videos":{},"images":{"1":"http://curate.zaya.in/media/contents/zaya/photos/2016/02/25/tree_FOUJ6U.png"}},"is_multiple":false,"options":[{"option":"dr","key":4},{"option":"tr","key":3},{"option":"pr","key":1},{"option":"cr","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.601463Z","updated":"2016-05-12T12:57:01.601524Z","title":"[[img id=1]] [[sound id=1]]","description":"","object_id":"28266a54-d6c6-4a3f-ab45-eecd295dc390","stauts":"PUBLISHED","lft":47,"rght":48,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"50d65cf2-309b-427e-a44f-dccba6de2752","content_type_name":"json question","type":{"id":"cb8a0d73-f9da-4af9-a562-9e10a343f6b6","created":"2016-05-12T12:57:01.726150Z","updated":"2016-05-12T12:57:01.726220Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":3,"answer":[1],"score":30,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/31/crane_Q4CM4X.mp3"},"videos":{},"images":{}},"is_multiple":false,"options":[{"option":"tr","key":4},{"option":"gr","key":3},{"option":"cr","key":1},{"option":"pl","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.762503Z","updated":"2016-05-12T12:57:01.762560Z","title":"[[sound id=1]]","description":"","object_id":"cb8a0d73-f9da-4af9-a562-9e10a343f6b6","stauts":"PUBLISHED","lft":49,"rght":50,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"455ae052-e71c-4152-865f-41c8ae34bf8d","content_type_name":"json question","type":{"id":"0aca89a3-780a-4b12-b9ba-8de2d628eede","created":"2016-05-12T12:57:01.782073Z","updated":"2016-05-12T12:57:01.782104Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":1,"answer":[2],"score":10,"content":{"hints":"[]","widgets":{"sounds":{},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":"stock","key":4},{"option":"crop","key":3},{"option":"snail","key":1},{"option":"small","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.807064Z","updated":"2016-05-12T12:57:01.807126Z","title":"sm","description":"","object_id":"0aca89a3-780a-4b12-b9ba-8de2d628eede","stauts":"PUBLISHED","lft":51,"rght":52,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"e9a5a5c5-636c-45e7-9d5d-4f5f719159a7","content_type_name":"json question","type":{"id":"d372277a-1e43-4736-9e18-782848fa4e97","created":"2016-05-12T12:57:01.818575Z","updated":"2016-05-12T12:57:01.818616Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":1,"answer":[2],"score":10,"content":{"hints":"[]","widgets":{"sounds":{},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":"throw","key":4},{"option":"glow","key":3},{"option":"blow","key":1},{"option":"place","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.839624Z","updated":"2016-05-12T12:57:01.839695Z","title":"pl","description":"","object_id":"d372277a-1e43-4736-9e18-782848fa4e97","stauts":"PUBLISHED","lft":53,"rght":54,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"9beaaaf0-9075-4988-9b51-0550f1f782b6","content_type_name":"json question","type":{"id":"12f80277-19bd-4b66-89bf-ab91954d81a8","created":"2016-05-12T12:57:01.855058Z","updated":"2016-05-12T12:57:01.855131Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":1,"answer":[4,3,2],"score":10,"content":{"hints":"[]","widgets":{"sounds":{},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":"trick","key":4},{"option":"trap","key":3},{"option":"club","key":1},{"option":"truck","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.870469Z","updated":"2016-05-12T12:57:01.870504Z","title":"tr","description":"","object_id":"12f80277-19bd-4b66-89bf-ab91954d81a8","stauts":"PUBLISHED","lft":55,"rght":56,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"27681226-4c60-4719-bb4f-63a7de8b2e6a","content_type_name":"json question","type":{"id":"df1db188-8658-49c6-a7af-4570da5f26fa","created":"2016-05-12T12:57:01.881038Z","updated":"2016-05-12T12:57:01.881070Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":1,"answer":[1],"score":10,"content":{"hints":"[]","widgets":{"sounds":{},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":"blend","key":4},{"option":"prize","key":3},{"option":"glow","key":1},{"option":"clam","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.893994Z","updated":"2016-05-12T12:57:01.894055Z","title":"gl","description":"","object_id":"df1db188-8658-49c6-a7af-4570da5f26fa","stauts":"PUBLISHED","lft":57,"rght":58,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"2616f02f-047d-4700-af74-108e2ed716b3","content_type_name":"json question","type":{"id":"51f50a96-4d2e-4b4d-b079-f059193bf0fa","created":"2016-05-12T12:57:01.909467Z","updated":"2016-05-12T12:57:01.909524Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":1,"answer":[1],"score":10,"content":{"hints":"[]","widgets":{"sounds":{},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":"skate","key":4},{"option":"spot","key":3},{"option":"stairs","key":1},{"option":"black","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:01.931146Z","updated":"2016-05-12T12:57:01.931209Z","title":"st","description":"","object_id":"51f50a96-4d2e-4b4d-b079-f059193bf0fa","stauts":"PUBLISHED","lft":59,"rght":60,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]},{"node":{"id":"41995ffd-2548-4965-857d-9ab76d4adf82","content_type_name":"json question","type":{"id":"0f858462-1490-40ce-8f86-3ce3c850325b","created":"2016-05-12T12:57:02.186295Z","updated":"2016-05-12T12:57:02.186330Z","microstandard":"ELL.1.RE.PA.58","is_critical_thinking":false,"level":2,"answer":[3,1],"score":20,"content":{"hints":"[]","widgets":{"sounds":{"1":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/smile_GXPK1Z.mp3","2":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/skate_QV9MJB.mp3","3":"http://curate.zaya.in/media/contents/zaya/soundclips/2015/08/26/sky_JAY7YD.mp3","4":"http://curate.zaya.in/media/contents/zaya/soundclips/2016/01/14/dry_9R37SR.mp3"},"videos":{},"images":{}},"is_multiple":true,"options":[{"option":" [[sound id=1]] ","key":4},{"option":" [[sound id=2]] ","key":3},{"option":" [[sound id=3]] ","key":1},{"option":" [[sound id=4]] ","key":2}]},"type":"choicequestion"},"created":"2016-05-12T12:57:02.202258Z","updated":"2016-05-12T12:57:02.202298Z","title":"sk","description":"","object_id":"0f858462-1490-40ce-8f86-3ce3c850325b","stauts":"PUBLISHED","lft":61,"rght":62,"tree_id":1,"level":2,"parent":"aa92134b-40da-495c-bad6-3ffbd11a6aca","content_type":22,"account":"438bab7f-d05d-4ad1-b4e8-197cef8c4747","tag":null},"objects":[]}]}
                 return Rest.one('accounts',CONSTANT.CLIENTID.ELL).one('assessments',$stateParams.id).get().then(function(quiz){
-                  
                   return quiz.plain();
                 });
             }]
@@ -2398,6 +2943,7 @@ window.createGame = function(scope, lessons, injector, log) {
           }
         }
       })
+
       .state('quiz.summary',{
         url : '/summary',
         params: {
@@ -2407,6 +2953,38 @@ window.createGame = function(scope, lessons, injector, log) {
         views : {
           'state-quiz' : {
             templateUrl : CONSTANT.PATH.QUIZ+'/quiz.summary'+CONSTANT.VIEW,
+            controller : 'QuizController as quizCtrl'
+          }
+        }
+      })
+      .state('quiz.practice',{
+        url : '/practice',
+        views: {
+          'state-quiz': {
+            template : '<ion-nav-view name="state-quiz-practice"></ion-nav-view>'
+          }
+        }
+      })
+      .state('quiz.practice.questions',{
+        url : '/questions',
+        nativeTransitions: null,
+        views : {
+          'state-quiz-practice' : {
+            templateUrl : CONSTANT.PATH.QUIZ+'/practice.questions'+CONSTANT.VIEW,
+            controller : 'QuizController as quizCtrl'
+          }
+        }
+      })
+      .state('quiz.practice.summary',{
+        url : '/summary',
+        params: {
+          report: null,
+          quiz : null,
+          practiceResult: null
+        },
+        views : {
+          'state-quiz-practice' : {
+            templateUrl : CONSTANT.PATH.QUIZ+'/practice.summary'+CONSTANT.VIEW,
             controller : 'QuizController as quizCtrl'
           }
         }

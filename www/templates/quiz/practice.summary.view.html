@@ -1,0 +1,49 @@
+<ion-view class="bg-green">
+  <ion-content overflow-scroll="true">
+    <div class="row padding-y-40">
+      <div class="col font-lg text-white text-center">
+        LESSON COMPLETE!
+      </div>
+    </div>
+    <div class="row">
+      <div class="col text-center font-sl text-white"><strong>{{quizCtrl.practiceResult.scoredMarks}} / {{quizCtrl.practiceResult.totalMarks}}</strong></div>
+    </div>
+    <div class="row center">
+      <div class="col stars">
+
+          <img ng-repeat="limit in [quizCtrl.CONSTANT.STAR.ONE,quizCtrl.CONSTANT.STAR.TWO,quizCtrl.CONSTANT.STAR.THREE] track by $index"
+          ng-src="{{ quizCtrl.practiceResult.percentCorrect >= limit ? 'img/icons/icon-star.png' : 'img/icons/icon-nostar.png'}}">
+      </div>
+    </div>
+    <div class="row padding-30">
+      <div class="col">
+        <button class="button bg-pale button-round button-block" ui-sref="quiz.practice.questions({id : quizCtrl.quiz.node.id})">REDO</button>
+      </div>
+      <div class="col">
+        <button class="button bg-brand-yellow button-round button-block" ui-sref="map.navigate">NEXT</button>
+      </div>
+    </div>
+    <div class="row bg-pale padding-y-20">
+        <div class="col text-center">
+            <u class="font-lg">QUESTIONS</u>
+        </div>
+    </div>
+    <div class="row bg-pale padding-x-30">
+      <div class="col">
+        <div class="list card" ng-repeat="attempt in quizCtrl.report.attempts">
+          <div>
+            <div class="item item-divider padding-20 font-md" ng-class="{'color-assertive-light':attempt.is_correct == false,'color-green' : attempt.is_correct == true}">
+              Question {{$index + 1}}
+            </div>
+            <div class="item item-text-wrap">
+                <!-- <p class="font-md">{{item.title}}</p> -->
+              <span ng-class="{'color-assertive-light':attempt.is_correct == false,'color-green' : attempt.is_correct = true}">
+                  {{attempt.is_correct == true ? 'CORRECT' : 'WRONG' }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ion-content>
+</ion-view>

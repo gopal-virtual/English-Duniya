@@ -7,5 +7,7 @@ plugins/
 /www/modules
 /www/_js/
 .idea/
-angryape.apk
+*.apk
 /www/build/
+/www/css/
+.DS_Store

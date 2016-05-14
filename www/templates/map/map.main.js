@@ -10,7 +10,6 @@ window.createGame = function(scope, lessons, injector, log) {
       this.load.image('cactus', 'img/assets/cactus.png');
       this.load.image('tent', 'img/assets/tent_fire.png');
       this.load.image('tent_green', 'img/assets/tent_green.png');
-      this.load.image('practice', 'img/icons/practice_active.png');
       this.load.image('two_stone', 'img/assets/two_stone.png');
       this.load.image('one_stone', 'img/assets/one_stone.png');
       this.load.image('particle1', 'img/assets/particle1.png');
@@ -19,7 +18,13 @@ window.createGame = function(scope, lessons, injector, log) {
 
       this.load.spritesheet('fire_animation', 'img/assets/fire_animation.png', 322,452, 20);
       this.load.spritesheet('cactus_animation', 'img/assets/cactus_animation.png', 30,52, 5);
+
       this.load.image('node', 'img/icons/node.png');
+      this.load.image('node-locked', 'img/icons/icon-node-locked.png');
+      this.load.image('read', 'img/icons/icon-read.png');
+      this.load.image('read_deactive', 'img/icons/icon-read-deactive.png');
+      this.load.image('star', 'img/icons/icon-star-small.png');
+      this.load.image('nostar', 'img/icons/icon-nostar.png');
       // debug value
       this.game.time.advancedTiming = true;
     },
@@ -102,8 +107,8 @@ window.createGame = function(scope, lessons, injector, log) {
       // path
       log.debug('desert', desert.width);
       this.points = {
-        'x': [101,113,170,202,216,201,180,172,172,179,195,211,207,160,138,144,167,197,204,197,165,126,101,161,256,223,134,102,138,200,235,200,180,180,180,180,180,180,180,180,180],
-        'y': [50,64,109,148,189,235,287,346,404,456,495,529,574,644,693,748,803,854,877,941,980,1022,1091,1116,1116,1171,1209,1266,1318,1342,1371,1433,1494,1577,1659,1742,1824,1907,1989,2072,2155]
+        'x': [101,113,170,202,216,201,180,172,172,179,195,211,207,160,138,144,167,197,204,197,165,126,101,161,256,223,134,102,138,200,235,200,180,180,180,180,180,180,180,180],
+        'y': [50,64,109,148,189,235,287,346,404,456,495,529,574,644,693,748,803,854,877,941,980,1022,1091,1116,1116,1171,1209,1266,1318,1342,1371,1433,1494,1577,1659,1742,1824,1907,1950,2050]
       };
 
       for (var i = 0, points_count = this.points.x.length; i < points_count; i++) {
@@ -121,15 +126,59 @@ window.createGame = function(scope, lessons, injector, log) {
         var posy = this.math.catmullRomInterpolation(this.points.y, j);
         this.bmd.rect(posx, posy, 4, 4, '#219C7F');
       }
+    //   var stars = this.game.add.group();
+      function createStars(count, x, y){
+          for (var i = 0; i < count; i++) {
+            //   var startype = count ? 'star' : 'nostar';
+            //   log.debug(startype);
+              var star = stars.create(x[0] + x[i+1], y[0] + y[i+1], 'star');
+              star.anchor.setTo(0.5,0.5);
+            //   star.scale.setTo(0.2,0.2);
+            //   count -= count > 0 ? 1 : 0;
+          }
+      }
+      var star_x = [-12,0,12];
+      var star_y = [-10,-15,-10];
+
       // Place nodes
-      for (var j = 0, i = lessons.length-1, nodeCount = 1/lessons.length; j < 1; j += nodeCount, i--) {
+      for (var j = 0, i = lessons.length-1, nodeCount = 1/(lessons.length-1); j <= 1; j += nodeCount, i--) {
+        var currentLesson = lessons[i];
+        log.debug('lesson status', currentLesson);
+        var locked = currentLesson.locked ? '-locked' : '';
         var posx = this.math.catmullRomInterpolation(this.points.x, j);
         var posy = this.math.catmullRomInterpolation(this.points.y, j);
-        var node = this.game.add.button(posx, posy, 'node', function (node) {
-          scope.$emit('openNode',node);
-        }, this, 2, 1, 0);
+        var node = this.game.add.button(posx, posy, 'node'+locked);
+        node.inputEnabled = true;
+        node.events.onInputDown.add(function(currentLesson){
+            return function(){
+                if(!currentLesson.locked)
+                    scope.$emit('openNode',currentLesson);
+            }
+        }(currentLesson));
+        // var icon = this.game.add.sprite(posx, posy, 'read'+locked);
+        // icon.anchor.setTo(0.5,0.5);
+        // icon.scale.setTo(0.3,0.3);
         node.anchor.setTo(0.5, 0.5);
-        node.id = lessons[i].id;
+        // node.scale.setTo(1.8, 1.8);
+
+        // add stars
+        if(currentLesson.stars >= 0){
+            var stars = this.game.add.group();
+            log.debug('stars in lesson',currentLesson.stars);
+            if(currentLesson.stars == 0){
+                createStars(0,$.merge([posx],star_x),$.merge([posy],star_y));
+            }
+            else if(currentLesson.stars == 1){
+                createStars(1,$.merge([posx],star_x),$.merge([posy],star_y));
+            }
+            else if(currentLesson.stars == 2){
+                createStars(2,$.merge([posx],star_x),$.merge([posy],star_y));
+            }
+            else if(currentLesson.stars == 3){
+                createStars(3,$.merge([posx],star_x),$.merge([posy],star_y));
+            }
+            else{}
+        }
       }
       for (var i = 0; i < 100; i++)
       {
@@ -144,22 +193,16 @@ window.createGame = function(scope, lessons, injector, log) {
           s.events.onOutOfBounds.add(this.resetSprite, this);
       }
 
-      var logout = this.game.add.button(this.game.width - 100, 0, 'practice',function () {
-        scope.$emit('logout');
-      },this, 2 , 1 , 0);
-      logout.scale.setTo(0.3,0.3);
-      logout.fixedToCamera = true;
-      logout.cameraOffset.setTo(this.game.width - 70, 20);
+      // fire animation
+    //   var fire_animation = this.game.add.sprite(20,20, 'fire_animation');
+    //   fire_animation.scale.setTo(0.5,0.5);
+    //   var light = fire_animation.animations.add('light');
+    //   fire_animation.animations.play('light', 20, true);
 
-
-      var fire_animation = this.game.add.sprite(20,20, 'fire_animation');
-      fire_animation.scale.setTo(0.5,0.5);
-      var light = fire_animation.animations.add('light');
-      fire_animation.animations.play('light', 20, true);
       // cactus
-      var cactus_animation = this.game.add.sprite(20,20, 'cactus_animation');
-      var wind = cactus_animation.animations.add('wind');
-      cactus_animation.animations.play('wind', 5, true);
+    //   var cactus_animation = this.game.add.sprite(20,20, 'cactus_animation');
+    //   var wind = cactus_animation.animations.add('wind');
+    //   cactus_animation.animations.play('wind', 5, true);
 
       this.init();
       this.game.kineticScrolling.start();

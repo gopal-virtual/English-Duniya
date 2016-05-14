@@ -1,55 +1,89 @@
-.card{
+.card {
   border-radius: $border-radius;
   box-sizing: content-box;
+  -webkit-box-shadow: 2px 3px 4px 0 rgba(0, 68, 54, 0.69);
+  -moz-box-shadow: 2px 3px 4px 0 rgba(0, 68, 54, 0.69);
+  box-shadow: 2px 3px 4px 0 rgba(0, 68, 54, 0.69);
 }
-.list.card
-{
+.list.card {
   border-radius: $border-radius !important;
   box-shadow: 0 0 10px transparentize(black, 0.8);
 }
-.list.card > .item:first-child{
+.list.card > .item:first-child {
   border-radius: $border-radius $border-radius 0 0 !important;
 }
-.list.card > .item:last-child{
+.list.card > .item:last-child {
   border-radius: 0 0 $border-radius $border-radius !important;
 }
-.list.card > .item:not(:last-child):not(:first-child){
+.list.card > .item:not(:last-child):not(:first-child) {
   border-radius: 0 !important;
 }
-.card-transparent{
+.card-transparent {
   background-color: transparent;
   box-shadow: none !important;
-  padding : $padding-y 0;
+  padding: $padding-y 0;
 }
-@each $name , $color in $color-list{
-  .card-#{$name}{
+@each $name , $color in $color-list {
+  .card-#{$name} {
     background-color: $color;
   }
 }
-@each $name , $color in $color-list{
-  .card-#{$name}-light{
+@each $name , $color in $color-list {
+  .card-#{$name}-light {
     background-color: lighten($color,10%);
   }
 }
-@each $name , $color in $color-list{
-  .card-#{$name}-dark{
+@each $name , $color in $color-list {
+  .card-#{$name}-dark {
     background-color: darken($color,10%);
   }
 }
-.card-list{
+.card-list {
   display: inline-block;
-  width: 100%;
-  margin: 0px;
+  width: 90%;
+  margin: 10px 0px 0px 0px;
 }
-.card-grid{
+.card-grid {
   display: inline-block;
   width: 40%;
+  height: 124px;
+  margin: 10px 10px 0px 10px;
+}
+.option-image {
+  width: 100px;
+  height: 100px;
+}
+.question-image {
+  height: 100px;
 }
 
- .option-image{
-  width:100px;
-  height:100px;
+.selected.wrong-attempt,
+.card-brand.wrong-attempt,
+.wrong-attempt
+{
+  background-color: lighten($assertive, 20%);
 }
- .question-image{
+.selected.correct-attempt,
+.card-brand.correct-attempt,
+.correct-attempt
+{
+  background-color: lighten($balanced, 20%);
+}
+.card.selected{
+  background-color: $brand-yellow;
+}
+.card.practice-feedback{
+box-shadow: none;
+}
+.practice-feedback.correct{
+  background: url($feedback-image-correct) no-repeat center center;
+  background-size: auto 70%;
+}
+.practice-feedback.wrong{
+  background: url($feedback-image-incorrect) no-repeat center center;
+  background-size: auto 70%;
+}
+.card-image{
   height: 100px;
+  width: 100px;
 }

@@ -20,6 +20,7 @@ var paths = {
   script : [
     './www/templates/common/common.module.js',
     './www/templates/map/map.module.js',
+    './www/templates/content/content.module.js',
     './www/templates/intro/intro.module.js',
     './www/templates/search/search.module.js',
     './www/templates/auth/auth.module.js',

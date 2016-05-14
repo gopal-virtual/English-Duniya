@@ -44,6 +44,17 @@
         event.preventDefault();
         $state.go('map.navigate');
       }
+      if (toState.name == 'quiz.practice.summary' && !toParams.report) {
+        $log.debug("Practice summary page cannot be accessed : No quiz data present");
+        event.preventDefault();
+        $state.go('map.navigate');
+      }
+      // block content state
+      if (toState.name == 'content.video' && !toParams.video) {
+        $log.debug("Video value is not present");
+        event.preventDefault();
+        $state.go('map.navigate');
+      }
 
       if(toState.name == 'auth.verify.phone'){
         $log.debug("verify");
@@ -55,6 +66,9 @@
 
     });
     $ionicPlatform.ready(function () {
+    //   if (window.StatusBar) {
+    //     StatusBar.hide();
+    //   }
       // detect app activity
       document.addEventListener("pause", function(){
         $log.debug("paused");
