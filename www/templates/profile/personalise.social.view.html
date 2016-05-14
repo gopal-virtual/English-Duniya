@@ -1,42 +1,68 @@
-<ion-view>
-</div>
+<ion-view class="bg-pale">
   <ion-content>
-    <div class="row">
-      <div class="col padding-30">
-        <form name="personaliseForm" class="list" novalidate ng-submit="profileCtrl.closeKeyboard() && profileCtrl.validatePersonaliseForm(personaliseForm) && profileCtrl.createProfile({ age : profileCtrl.calcAge(profileCtrl.user.dob), grade : profileCtrl.user.grade, gender : profileCtrl.user.gender, dob : profileCtrl.convertDate(profileCtrl.user.dob), user : profileCtrl.user.username, first_name : profileCtrl.user.first_name})">
-          <label for="" class="item item-input item-floating-label"><span class="input-label">Child's name</span>
-            <input name="first_name" type="text" placeholder="Child's name" ng-model="profileCtrl.user.first_name" required>
-          </label>
-          <label for="" class="item item-input"><span class="input-label">Date of Birth</span>
-            <input name="dob" type="date" placeholder="Date of birth" ng-model="profileCtrl.user.dob" required>
-          </label>
-          <label for="" class="item item-input item-select">
-            <span class="input-label">Grade</span>
-            <select name="grade" ng-model="profileCtrl.user.grade" required>
-              <option value="1">Grade 1</option>
-              <option value="2">Grade 2</option>
-              <option value="3">Grade 3</option>
-            </select>
-          </label>
-          <div class="list">
-
-        <div class="item item-divider">
-            Gender
-        </div>
-
-        <ion-radio name="gender" value="M" ng-model="profileCtrl.user.gender">
-        Male
-        </ion-radio>
-        <ion-radio name="gender" value="F" ng-model="profileCtrl.user.gender">
-        Female
-        </ion-radio>
-
-          <div class="item">
-            <button type="submit"  class="button button-positive button-block">CONTINUE</button>
-            <button type="button" class="button button-positive button-block" ui-sref="map.navigate">go to map</button>
+      <form name="personaliseForm" class="row padding-20" novalidate ng-submit="profileCtrl.closeKeyboard() && profileCtrl.validatePersonaliseForm(personaliseForm) && profileCtrl.createProfile({ age : profileCtrl.calcAge(profileCtrl.user.dob), grade : profileCtrl.user.grade, gender : profileCtrl.user.gender, user : profileCtrl.user.username, first_name : profileCtrl.user.first_name})">
+          <div class="col">
+              <div class="row">
+                  <div class="col text-center">
+                      <h3>Help us get to know you better</h3>
+                  </div>
+              </div>
+              <div class="row">
+                  <div class="col text-center">
+                      <label for="" class="radio radio-male" ng-class="{'checked':profileCtrl.user.gender=='M'}">
+                          <input type="radio" name="gender" value="M" ng-model="profileCtrl.user.gender">
+                      </label>
+                  </div>
+                  <div class="col text-center">
+                      <label for="" class="radio radio-female" ng-class="{'checked':profileCtrl.user.gender=='F'}">
+                          <input type="radio" name="gender" value="F" ng-model="profileCtrl.user.gender">
+                      </label>
+                  </div>
+              </div>
+              <div class="row">
+                  <div class="col text-center font-md">BOY</div>
+                  <div class="col text-center font-md">GIRL</div>
+              </div>
+              <div class="row">
+                  <div class="col">
+                      <div class="input-group">
+                          <input type="text" name="first_name" class="input-control input-default font-md" tabindex="2" placeholder="Name" ng-model="profileCtrl.user.first_name">
+                          <!-- <button type="button" class="input-group-item input-group-addon input-group-addon-light font-md icon-profile icon-fit-width">
+                          </button> -->
+                      </div>
+                  </div>
+              </div>
+              <div class="row">
+                  <div class="col">
+                      <label for="" class="item item-input item-select">
+                          <span class="input-label font-md">Grade</span>
+                          <select name="grade" class="font-md" ng-model="profileCtrl.user.grade" required>
+                              <option value="1">Grade 1</option>
+                              <option value="2">Grade 2</option>
+                              <option value="3">Grade 3</option>
+                          </select>
+                      </label>
+                  </div>
+              </div>
+              <div class="row">
+                  <div class="col">
+                      <label for="" class="item item-input item-select">
+                          <span class="input-label font-md">Mothertongue</span>
+                          <select name="grade" class="font-md" ng-model="profileCtrl.user.language" required>
+                              <option value="2">Hindi</option>
+                              <option value="1">Bengali</option>
+                              <option value="3">Gujrati</option>
+                              <option value="3">Punjabi</option>
+                          </select>
+                      </label>
+                  </div>
+              </div>
+              <div class="row">
+                  <div class="col text-center">
+                      <button type="submit"  class="button button-green button-round padding-x-40">DONE</button>
+                  </div>
+              </div>
           </div>
-        </form>
-      </div>
-    </div>
+      </form>
   </ion-content>
 </ion-view>
