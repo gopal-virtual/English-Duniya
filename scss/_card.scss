@@ -46,17 +46,27 @@
 .card-grid {
   display: inline-block;
   width: 40%;
-  height: 124px;
+  height: 34%;
   margin: 10px 10px 0px 10px;
 }
-.option-image {
-  width: 100px;
-  height: 100px;
+.content-image {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
-.question-image {
-  height: 100px;
+.question{
+  height: 100%;
+  font-size: 1.5em;
 }
+.question>.content-image {
+  max-height: 75%;
+  max-width: 95%;
+}
+.option>.content-image {
+  max-height: 95%;
+  max-width: 95%;
 
+}
 .selected.wrong-attempt,
 .card-brand.wrong-attempt,
 .wrong-attempt
@@ -86,4 +96,7 @@ box-shadow: none;
 .card-image{
   height: 100px;
   width: 100px;
+}
+.card-grid > label > div {
+  height: 100%;
 }

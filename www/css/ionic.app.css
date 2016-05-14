@@ -10168,6 +10168,15 @@ input[type=radio].hide {
 .padding-x-40 {
   padding: 0 40px !important; }
 
+.margin-0 {
+  margin: 0px !important; }
+
+.margin-y-0 {
+  margin: 0px 0 !important; }
+
+.margin-x-0 {
+  margin: 0 0px !important; }
+
 .margin-10 {
   margin: 10px !important; }
 
@@ -10721,15 +10730,25 @@ p * {
 .card-grid {
   display: inline-block;
   width: 40%;
-  height: 124px;
+  height: 34%;
   margin: 10px 10px 0px 10px; }
 
-.option-image {
-  width: 100px;
-  height: 100px; }
+.content-image {
+  display: block;
+  margin-left: auto;
+  margin-right: auto; }
 
-.question-image {
-  height: 100px; }
+.question {
+  height: 100%;
+  font-size: 1.5em; }
+
+.question > .content-image {
+  max-height: 75%;
+  max-width: 95%; }
+
+.option > .content-image {
+  max-height: 95%;
+  max-width: 95%; }
 
 .selected.wrong-attempt,
 .card-brand.wrong-attempt,
@@ -10758,6 +10777,9 @@ p * {
 .card-image {
   height: 100px;
   width: 100px; }
+
+.card-grid > label > div {
+  height: 100%; }
 
 .bar-transparent {
   background-color: transparent;
@@ -10791,7 +10813,7 @@ progress[value] {
 
 progress[value]::-webkit-progress-bar {
   background-color: #727271;
-  border-radius: 2px;
+  border-radius: 5px;
   height: 5px; }
 
 progress[value]::-webkit-progress-value {
@@ -11098,11 +11120,11 @@ progress[value]::-webkit-progress-value {
   height: 90px; }
 
 .question-subheader {
-  height: 190px !important;
-  top: 55px !important; }
+  height: 25% !important;
+  top: 8% !important; }
 
 .has-question-subheader {
-  top: 245px !important; }
+  top: 33% !important; }
 
 .fading-scroll-top::before {
   content: '';
@@ -11125,7 +11147,7 @@ progress[value]::-webkit-progress-value {
 
 .quiz-header {
   border: 0 !important;
-  height: 55px; }
+  height: 8%; }
 
 .header-icon {
   width: 35px;

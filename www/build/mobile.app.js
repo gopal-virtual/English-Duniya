@@ -2280,7 +2280,7 @@ window.createGame = function(scope, lessons, injector, log) {
     quizCtrl.parseToDisplay = parseToDisplay;
     quizCtrl.replaceImageTag = replaceImageTag;
     quizCtrl.removeSoundTag = removeSoundTag;
-
+    quizCtrl.getLayout = getLayout;
 
     quizCtrl.myStyle = {
       height: '10px',
@@ -2636,7 +2636,7 @@ window.createGame = function(scope, lessons, injector, log) {
       if (key) {
 
         $log.debug(quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.type.content.widgets.sounds[key])
-        angular.element("#audioSource")[0].src = 'http://cc-test.zaya.in/' + quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.type.content.widgets.sounds[key];
+        angular.element("#audioSource")[0].src = 'http://cc-test.zaya.in' + quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.type.content.widgets.sounds[key];
       } else {
         angular.element("#audioSource")[0].src = 'sound/water-drop.mp3';
       }
@@ -2851,7 +2851,7 @@ window.createGame = function(scope, lessons, injector, log) {
 
     function parseToDisplay(string) {
       var text = quizCtrl.replaceImageTag(quizCtrl.removeSoundTag(string));
-      return text.trim() || '<img class="card-image" src="' + CONSTANT.ASSETS.IMG.SOUND_PLACEHOLDER + '"></img>';
+      return text.trim() || '<img class="content-image" src="' + CONSTANT.ASSETS.IMG.SOUND_PLACEHOLDER + '"></img>';
 
     }
 
@@ -2860,7 +2860,18 @@ window.createGame = function(scope, lessons, injector, log) {
     }
 
     function replaceImageTag(string) {
-      return string.replace(quizCtrl.imageTagRegex, "<img class='card-image' src='http://cc-test.zaya.in/" + quizCtrl.getImageSrc(quizCtrl.getImageId(string)) + "'></img>");
+      return string.replace(quizCtrl.imageTagRegex, "<img class='content-image' src='http://cc-test.zaya.in" + quizCtrl.getImageSrc(quizCtrl.getImageId(string)) + "'></img>");
+    }
+
+    function getLayout(question){
+      angular.forEach(question.node.type.content.options,function(option){
+        var text = quizCtrl.replaceImageTag(quizCtrl.removeSoundTag(option.option));
+        text = text.trim();
+        if(text.length >= 55){
+          return 'list';
+        }
+      })
+      return 'grid';
     }
   }
 })();

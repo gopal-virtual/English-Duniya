@@ -1,12 +1,11 @@
 <ion-pane class="bg-pale" ng-if="quizCtrl.quiz.objects.length">
-  {{quizCtrl.quiz.objects.length}}
   <div class="bar bar-header bg-pale quiz-header">
     <div class="row padding-0">
       <div class="col">
         <a ng-click="quizCtrl.pauseQuiz()" class="header-icon icon-pause"></a>
       </div>
       <div class="padding-10 row">
-      <progress max="1" value="{{quizCtrl.currentIndex/quizCtrl.quiz.objects.length}}"></progress>
+      <progress max="1" value="{{(quizCtrl.currentIndex+1)/quizCtrl.quiz.objects.length}}"></progress>
         </div>
       <div class="col" align="right">
         <a ui-sref="map.navigate" class="header-icon icon-question-mark"></a>
@@ -16,28 +15,25 @@
   </div>
   <ion-slide-box on-slide-changed="quizCtrl.slideHasChanged($index)" show-pager="false">
     <ion-slide ng-repeat="question in quizCtrl.quiz.objects" ng-class="{'animation-question-slide':quizCtrl.isCurrentIndex($index)}">
-      <div class="bar bar-subheader question-subheader bg-pale fading-scroll-bottom">
+      <div class="bar bar-subheader question-subheader bg-pale fading-scroll-bottom ">
 
-        <div class="card card-transparent center" ng-click="quizCtrl.playAudio(quizCtrl.getSoundId(question.node.title))">
-          <p>
-            <strong ng-if="question.node.title" ng-bind-html="quizCtrl.parseToDisplay(question.node.title)"></strong>
-          </p>
+        <div ng-if="question.node.title" ng-bind-html="quizCtrl.parseToDisplay(question.node.title)" class="question card card-transparent center margin-x-0 margin-y-0" ng-click="quizCtrl.playAudio(quizCtrl.getSoundId(question.node.title))">
+
           <!-- <div ng-if="question.node.type.content.image"><img class="question-image" ng-src="{{question.node.type.content.image}}"></div> -->
           <!-- <div ng-if="!question.node.title && !question.node.type.content.image"><img height="100" width="100" src="img/icons/sound.png"> </div> -->
         </div>
       </div>
       <ion-content overflow-scroll="false" has-bouncing="true" class="has-header has-question-subheader center padding-20 bg-green " ng-class="{'has-footer-large':quizCtrl.currentIndex == quizCtrl.quiz.objects.length - 1}">
         <!-- SCQ -->
-        <div>
           <div
             ng-click="question.attempted=(question.attempted==option.key)?'':option.key"
             ng-if="question.node.type.type=='choicequestion' && !question.node.type.content.is_multiple"
-            ng-class="{'selected':option.key==question.attempted,'card-list':quizCtrl.LIST_TYPE.indexOf(question.node.type.content.layout_type) >= 0,'card-grid':quizCtrl.GRID_TYPE.indexOf(question.node.type.content.layout_type) >= 0}"
+            ng-class="{'selected':option.key==question.attempted,'card-list':quizCtrl.getLayout(question) == 'list','card-grid':quizCtrl.getLayout(question) == 'grid'}"
             class="card center card-pale card-radius"
             ng-repeat="option in question.node.type.content.options">
             <label ng-click="quizCtrl.playAudio(quizCtrl.getSoundId(option.option))">
               <input class="hide">
-              <div class="padding-10 font-md" ng-if="option" ng-bind-html="quizCtrl.parseToDisplay(option.option)"></div>
+              <div class="padding-10 font-md option" ng-if="option" ng-bind-html="quizCtrl.parseToDisplay(option.option)"></div>
               <!-- <div class="padding-10" ng-if="option.image"><img ng-src="{{option.image}}" class="option-image"></div>
           <div class="padding-10" ng-if="!option.option && !option.image">
             <img  height="100" width="100" src="img/icons/sound.png" >
@@ -47,26 +43,18 @@
           <!-- MCQ options -->
           <div
             ng-if="question.node.type.type=='choicequestion' && question.node.type.content.is_multiple"
-            ng-class="{'selected':question.attempted[option.key],'card-list':quizCtrl.LIST_TYPE.indexOf(question.node.type.content.layout_type) >= 0,'card-grid':quizCtrl.GRID_TYPE.indexOf(question.node.type.content.layout_type) >= 0}"
+            ng-class="{'selected':question.attempted[option.key],'card-list':quizCtrl.getLayout(question) == 'list','card-grid':quizCtrl.getLayout(question) == 'grid'}"
             class="card center card-pale card-radius"
             ng-repeat="option in question.node.type.content.options">
             <label ng-click="quizCtrl.playAudio(quizCtrl.getSoundId(option.option))">
               <input class="hide" type="checkbox" ng-model="question.attempted[option.key]" ng-value="option.key">
-              <div class="padding-10 font-md" ng-if="option" ng-bind-html="quizCtrl.parseToDisplay(option.option)"></div>
+              <div class="padding-10 font-md option" ng-if="option" ng-bind-html="quizCtrl.parseToDisplay(option.option)"></div>
               <!-- <div class="padding-10" ng-if="option.image"><img ng-src="{{option.image}}" class="option-image"></div> -->
               <!-- <div class="padding-10" ng-if="!option.option && !option.image"><img height="100" width="100" src="img/icons/sound.png"> </div> -->
             </label>
           </div>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
 
-        </div>
+
 
         <!--<label ng-if="question.node.type.type=='choicequestion' && question.node.type.content.is_multiple" ng-repeat="option in question.info.question_type.choices" class="list card padding block" >-->
         <!--<input class="hide" type="checkbox" ng-model="question.attempted[$index+1]" ng-value="option.key" ng-disabled="quizCtrl.isCorrectAttempted(question)">-->

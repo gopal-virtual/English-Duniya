@@ -42,7 +42,7 @@
     padding : 0 $value !important;
   }
 }
-@each $size,$value in ('10':10px,'20':20px,'30':30px,'40':40px){
+@each $size,$value in ('0':0px,'10':10px,'20':20px,'30':30px,'40':40px){
   .margin-#{$size}{
     margin : $value !important;
   }
