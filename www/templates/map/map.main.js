@@ -20,9 +20,11 @@ window.createGame = function(scope, lessons, injector, log) {
       this.load.spritesheet('cactus_animation', 'img/assets/cactus_animation.png', 30,52, 5);
 
       this.load.image('node', 'img/icons/node.png');
+      this.load.image('node-vocabulary', 'img/icons/icon-vocabulary-node.png');
+      this.load.image('node-listening', 'img/icons/icon-listening-node.png');
+      this.load.image('node-grammar', 'img/icons/icon-grammar-node.png');
+      this.load.image('node-reading', 'img/icons/icon-reading-node.png');
       this.load.image('node-locked', 'img/icons/icon-node-locked.png');
-      this.load.image('read', 'img/icons/icon-read.png');
-      this.load.image('read_deactive', 'img/icons/icon-read-deactive.png');
       this.load.image('star', 'img/icons/icon-star-small.png');
       this.load.image('nostar', 'img/icons/icon-nostar.png');
       // debug value
@@ -149,14 +151,18 @@ window.createGame = function(scope, lessons, injector, log) {
       var star_x = [-12,0,12];
       var star_y = [-10,-15,-10];
 
+      function lessonType(lesson, locked){
+          return !locked ? '-'+lesson.tag.toLowerCase() : '';
+      };
       // Place nodes
       for (var j = 0, i = lessons.length-1, nodeCount = 1/(lessons.length-1); j <= 1; j += nodeCount, i--) {
         var currentLesson = lessons[i];
         log.debug('lesson status', currentLesson);
         var locked = currentLesson.locked ? '-locked' : '';
+        var type = lessonType(currentLesson, currentLesson.locked);
         var posx = this.math.catmullRomInterpolation(this.points.x, j);
         var posy = this.math.catmullRomInterpolation(this.points.y, j);
-        var node = this.game.add.button(posx, posy, 'node'+locked);
+        var node = this.game.add.button(posx, posy, 'node'+type+locked);
         node.inputEnabled = true;
         node.events.onInputDown.add(function(currentLesson){
             return function(){
@@ -164,7 +170,6 @@ window.createGame = function(scope, lessons, injector, log) {
                     scope.$emit('openNode',currentLesson);
             }
         }(currentLesson));
-        // var icon = this.game.add.sprite(posx, posy, 'read'+locked);
         // icon.anchor.setTo(0.5,0.5);
         // icon.scale.setTo(0.3,0.3);
         node.anchor.setTo(0.5, 0.5);

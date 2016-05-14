@@ -12,8 +12,7 @@
       orientation.setPortrait();
     });
     var mapCtrl = this;
-    mapCtrl.lessons = lessons;
-    // mapCtrl.lessons = extendLesson.getLesson(lessons, scores);
+    mapCtrl.lessons = CONSTANT.LOCK ? extendLesson.getLesson(lessons, scores) : lessons;
 
     mapCtrl.getLesson = getLesson;
     mapCtrl.getSrc = getSrc;

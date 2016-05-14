@@ -1112,6 +1112,7 @@
   angular
     .module('common')
     .constant('CONSTANT', {
+        'LOCK' : false,
       'BACKEND_SERVICE_DOMAIN': 'http://cc-test.zaya.in/',
       // 'BACKEND_SERVICE_DOMAIN' : 'http://192.168.1.6:9000/',
       'PATH': {
@@ -1504,6 +1505,63 @@
 })();
 
 (function() {
+    'use strict';
+
+    angular
+        .module('zaya-intro')
+        .controller('introController', introController);
+
+    introController.$inject = [];
+
+    /* @ngInject */
+    function introController() {
+        var introCtrl = this;
+
+        introCtrl.tabIndex = 0;
+        introCtrl.slides = [
+          {
+            title : "Hello this Title",
+            description : "some description is theresome description is theresome description is there",
+            img : "img/01.png",
+            color : "bg-brand-light"
+          },
+          {
+            title : "Hello this Title",
+            description : "some description is theresome description is theresome description is there",
+            img : "img/02.png",
+            // color : "bg-brand-light"
+            color : "bg-assertive-light"
+          },
+          {
+            title : "Hello this Title",
+            description : "some description is theresome description is theresome description is there",
+            img : "img/03.png",
+            // color : "bg-brand-light"
+            color : "bg-royal-light"
+          }
+        ];
+    }
+})();
+
+(function() {
+  'use strict';
+
+  mainRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
+  angular
+    .module('zaya-intro')
+    .config(mainRoute);
+
+  function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
+    $stateProvider
+      .state('intro',{
+        url : '/intro',
+        templateUrl : CONSTANT.PATH.INTRO+'/intro'+CONSTANT.VIEW,
+        controller : "introController as introCtrl"
+      })
+  }
+})();
+
+(function() {
   'use strict';
 
   angular
@@ -1517,8 +1575,7 @@
       orientation.setPortrait();
     });
     var mapCtrl = this;
-    mapCtrl.lessons = lessons;
-    // mapCtrl.lessons = extendLesson.getLesson(lessons, scores);
+    mapCtrl.lessons = CONSTANT.LOCK ? extendLesson.getLesson(lessons, scores) : lessons;
 
     mapCtrl.getLesson = getLesson;
     mapCtrl.getSrc = getSrc;
@@ -1825,9 +1882,11 @@ window.createGame = function(scope, lessons, injector, log) {
       this.load.spritesheet('cactus_animation', 'img/assets/cactus_animation.png', 30,52, 5);
 
       this.load.image('node', 'img/icons/node.png');
+      this.load.image('node-vocabulary', 'img/icons/icon-vocabulary-node.png');
+      this.load.image('node-listening', 'img/icons/icon-listening-node.png');
+      this.load.image('node-grammar', 'img/icons/icon-grammar-node.png');
+      this.load.image('node-reading', 'img/icons/icon-reading-node.png');
       this.load.image('node-locked', 'img/icons/icon-node-locked.png');
-      this.load.image('read', 'img/icons/icon-read.png');
-      this.load.image('read_deactive', 'img/icons/icon-read-deactive.png');
       this.load.image('star', 'img/icons/icon-star-small.png');
       this.load.image('nostar', 'img/icons/icon-nostar.png');
       // debug value
@@ -1954,14 +2013,18 @@ window.createGame = function(scope, lessons, injector, log) {
       var star_x = [-12,0,12];
       var star_y = [-10,-15,-10];
 
+      function lessonType(lesson, locked){
+          return !locked ? '-'+lesson.tag.toLowerCase() : '';
+      };
       // Place nodes
       for (var j = 0, i = lessons.length-1, nodeCount = 1/(lessons.length-1); j <= 1; j += nodeCount, i--) {
         var currentLesson = lessons[i];
         log.debug('lesson status', currentLesson);
         var locked = currentLesson.locked ? '-locked' : '';
+        var type = lessonType(currentLesson, currentLesson.locked);
         var posx = this.math.catmullRomInterpolation(this.points.x, j);
         var posy = this.math.catmullRomInterpolation(this.points.y, j);
-        var node = this.game.add.button(posx, posy, 'node'+locked);
+        var node = this.game.add.button(posx, posy, 'node'+type+locked);
         node.inputEnabled = true;
         node.events.onInputDown.add(function(currentLesson){
             return function(){
@@ -1969,7 +2032,6 @@ window.createGame = function(scope, lessons, injector, log) {
                     scope.$emit('openNode',currentLesson);
             }
         }(currentLesson));
-        // var icon = this.game.add.sprite(posx, posy, 'read'+locked);
         // icon.anchor.setTo(0.5,0.5);
         // icon.scale.setTo(0.3,0.3);
         node.anchor.setTo(0.5, 0.5);
@@ -2069,9 +2131,9 @@ window.createGame = function(scope, lessons, injector, log) {
             })
           }],
           scores: ['Rest', '$log', function(Rest, $log) {
-            return Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('profiles', JSON.parse(localStorage.user_details).profile).getList('lessons-score').then(function(score) {
+            return Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('profiles', JSON.parse(localStorage.user_details).profile).customGET('lessons-score',{limit : 25}).then(function(score) {
               $log.debug('scores rest', score.plain());
-              return score.plain();
+              return score.plain().results;
             })
           }]
 
@@ -2086,63 +2148,6 @@ window.createGame = function(scope, lessons, injector, log) {
             controller: 'mapController as mapCtrl'
           }
         }
-      })
-  }
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('zaya-intro')
-        .controller('introController', introController);
-
-    introController.$inject = [];
-
-    /* @ngInject */
-    function introController() {
-        var introCtrl = this;
-
-        introCtrl.tabIndex = 0;
-        introCtrl.slides = [
-          {
-            title : "Hello this Title",
-            description : "some description is theresome description is theresome description is there",
-            img : "img/01.png",
-            color : "bg-brand-light"
-          },
-          {
-            title : "Hello this Title",
-            description : "some description is theresome description is theresome description is there",
-            img : "img/02.png",
-            // color : "bg-brand-light"
-            color : "bg-assertive-light"
-          },
-          {
-            title : "Hello this Title",
-            description : "some description is theresome description is theresome description is there",
-            img : "img/03.png",
-            // color : "bg-brand-light"
-            color : "bg-royal-light"
-          }
-        ];
-    }
-})();
-
-(function() {
-  'use strict';
-
-  mainRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
-  angular
-    .module('zaya-intro')
-    .config(mainRoute);
-
-  function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
-    $stateProvider
-      .state('intro',{
-        url : '/intro',
-        templateUrl : CONSTANT.PATH.INTRO+'/intro'+CONSTANT.VIEW,
-        controller : "introController as introCtrl"
       })
   }
 })();

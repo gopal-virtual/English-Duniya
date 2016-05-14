@@ -4,6 +4,7 @@
   angular
     .module('common')
     .constant('CONSTANT', {
+        'LOCK' : false,
       'BACKEND_SERVICE_DOMAIN': 'http://cc-test.zaya.in/',
       // 'BACKEND_SERVICE_DOMAIN' : 'http://192.168.1.6:9000/',
       'PATH': {

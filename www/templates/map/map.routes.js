@@ -18,9 +18,9 @@
             })
           }],
           scores: ['Rest', '$log', function(Rest, $log) {
-            return Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('profiles', JSON.parse(localStorage.user_details).profile).getList('lessons-score').then(function(score) {
+            return Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('profiles', JSON.parse(localStorage.user_details).profile).customGET('lessons-score',{limit : 25}).then(function(score) {
               $log.debug('scores rest', score.plain());
-              return score.plain();
+              return score.plain().results;
             })
           }]
 

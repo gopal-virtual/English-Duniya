@@ -1,12 +1,23 @@
-.modal-light{
+.modal-light {
   background-color: rgba(255,255,255,0.9);
 }
-.modal-dark{
+.modal-dark {
   background-color: rgba(0,0,0,0.7);
 }
-.modal-black{
+.modal-black {
   background-color: rgba(0,0,0,1);
 }
-.modal-transparent{
-    background-color: transparent;
+.modal-transparent {
+  background-color: transparent;
+}
+.modal-gradient {
+
+   background: rgba(19,19,19,1);
+   background: -moz-linear-gradient(top, rgba(19,19,19,1) 70%, rgba(76,76,76,0) 100%);
+   background: -webkit-gradient(left top, left bottom, color-stop(70%, rgba(19,19,19,1)), color-stop(100%, rgba(76,76,76,0)));
+   background: -webkit-linear-gradient(top, rgba(19,19,19,1) 70%, rgba(76,76,76,0) 100%);
+   background: -o-linear-gradient(top, rgba(19,19,19,1) 70%, rgba(76,76,76,0) 100%);
+   background: -ms-linear-gradient(top, rgba(19,19,19,1) 70%, rgba(76,76,76,0) 100%);
+   background: linear-gradient(to bottom, rgba(19,19,19,1) 70%, rgba(76,76,76,0) 100%);
+   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#131313', endColorstr='#4c4c4c', GradientType=0 );
 }
