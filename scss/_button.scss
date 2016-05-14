@@ -17,5 +17,26 @@
   border-radius: $border-radius-round;
 }
 .button.icon-left-align{
-  
+
+}
+
+.button-group{
+  color: $brand-white;
+}
+
+.button-group > .button:first-child{
+  border-radius: $border-radius-round 0 0 $border-radius-round !important;
+  max-width: 15% !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.36);
+}
+.button-group > .button:last-child{
+  border-radius:  0 $border-radius-round $border-radius-round 0 !important;
+}
+
+.button-group > .button{
+  border: 0;
+}
+
+.button-no-shadow{
+  box-shadow: none;
 }
