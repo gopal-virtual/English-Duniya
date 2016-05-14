@@ -1870,13 +1870,16 @@ window.createGame = function(scope, lessons, injector, log) {
     preload : function () {
       this.load.image('desert', 'img/assets/desert.png');
       this.load.image('cactus', 'img/assets/cactus.png');
-      this.load.image('tent', 'img/assets/tent_fire.png');
+      this.load.image('tent', 'img/assets/tent.png');
       this.load.image('tent_green', 'img/assets/tent_green.png');
       this.load.image('two_stone', 'img/assets/two_stone.png');
       this.load.image('one_stone', 'img/assets/one_stone.png');
       this.load.image('particle1', 'img/assets/particle1.png');
       this.load.image('particle2', 'img/assets/particle2.png');
       this.load.image('particle3', 'img/assets/particle3.png');
+      this.load.image('catus-fat', 'img/assets/cactus_fat.png');
+      this.load.image('grass', 'img/assets/stone-grass.png');
+      this.load.image('scorpion', 'img/assets/scorpion.png');
 
       this.load.spritesheet('fire_animation', 'img/assets/fire_animation.png', 322,452, 20);
       this.load.spritesheet('cactus_animation', 'img/assets/cactus_animation.png', 30,52, 5);
@@ -1937,6 +1940,13 @@ window.createGame = function(scope, lessons, injector, log) {
         tent.anchor.setTo(0.5,0.5);
         tent.scale.setTo(tent_points[i].scale);
       }
+      // fire animation
+      var fire_animation = this.game.add.sprite(tent_points[0].x - 80,tent_points[0].y + 20, 'fire_animation');
+      fire_animation.scale.setTo(0.2,0.2);
+      fire_animation.anchor.setTo(0.5,0.5);
+      var light = fire_animation.animations.add('light');
+      fire_animation.animations.play('light', 20, true);
+
       for (var i = 0, tent_count = tent_green_points.length ; i < tent_count; i++) {
         var tent = this.game.add.sprite(tent_green_points[i].x, tent_green_points[i].y,'tent_green');
         tent.anchor.setTo(0.5,0.5);
@@ -2057,11 +2067,6 @@ window.createGame = function(scope, lessons, injector, log) {
         }
       }
 
-      // fire animation
-    //   var fire_animation = this.game.add.sprite(20,20, 'fire_animation');
-    //   fire_animation.scale.setTo(0.5,0.5);
-    //   var light = fire_animation.animations.add('light');
-    //   fire_animation.animations.play('light', 20, true);
 
       // cactus
     //   var cactus_animation = this.game.add.sprite(20,20, 'cactus_animation');

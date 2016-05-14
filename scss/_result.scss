@@ -34,9 +34,9 @@
   background-color: $pale;
   border-radius : 0 0 $border-radius $border-radius;
   top : $result-height - $border-thin;
-  margin-left : -5%;
+  margin-left : -10%;
   padding : $padding-x 0;
-  width : 30%;
+  width : 40%;
   z-index: 8;
 }
 .result > .result-item:first-child {
@@ -51,4 +51,5 @@
 }
 .result > .result-item:nth-child(4) > .result-item-dropdown {
   margin-left: -10% !important;
+  width : 30%;
 }
