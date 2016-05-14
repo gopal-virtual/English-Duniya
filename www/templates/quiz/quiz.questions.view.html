@@ -23,7 +23,7 @@
           <!-- <div ng-if="!question.node.title && !question.node.type.content.image"><img height="100" width="100" src="img/icons/sound.png"> </div> -->
         </div>
       </div>
-      <ion-content overflow-scroll="false" has-bouncing="true" class="has-header has-question-subheader center padding-20 bg-green " ng-class="{'has-footer-large':quizCtrl.currentIndex == quizCtrl.quiz.objects.length - 1}">
+      <ion-content overflow-scroll="false" has-bouncing="true" class="has-header has-question-subheader center padding-20 bg-green" >
         <!-- SCQ -->
           <div
             ng-click="question.attempted=(question.attempted==option.key)?'':option.key"
