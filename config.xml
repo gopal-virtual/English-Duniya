@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-
 <widget id="com.ionicframework.zayamobile694033" version="0.0.5" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
   <name>English Dunia - Build 0.0.5</name>
   <description>
@@ -8,7 +7,7 @@
   <author email="gopal@zaya.in" href="http://www.zaya.in/">
       Gopal Ojha
     </author>
-  <content src="index.html"/>
+  <content src="http://192.168.1.24:8100" original-src="index.html"/>
   <access origin="*"/>
   <preference name="orientation" value="portrait"/>
   <preference name="webviewbounce" value="true"/>
@@ -30,7 +29,6 @@
     <param name="android-package" value="org.apache.cordova.plugin.SmsInboxPlugin"/>
   </feature>
   <platform name="android">
-
     <splash density="port-ldpi" src="resources/android/drawable-ldpi/screen.png"/>
     <splash density="port-mdpi" src="resources/android/drawable-mdpi/screen.png"/>
     <splash density="port-hdpi" src="resources/android/drawable-xhdpi/screen.png"/>
