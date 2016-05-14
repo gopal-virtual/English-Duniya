@@ -9646,10 +9646,16 @@ input[type=number].input-control {
   padding: 30px 15px;
   margin: 0; }
 
+.item-select {
+  border: thin solid #c4c4c4;
+  padding: 10px 15px;
+  margin: 0; }
+
 input[type=text].input-control:not(.input-group-item),
 input[type=password].input-control:not(.input-group-item),
 input[type=email].input-control:not(.input-group-item),
-input[type=number].input-control:not(.input-group-item) {
+input[type=number].input-control:not(.input-group-item),
+.item-select {
   border-radius: 10px; }
 
 .input-block {
@@ -9795,6 +9801,30 @@ input[type=radio].hide {
   border-right: thin solid #c4c4c4;
   border-bottom: thin solid #c4c4c4;
   border-left: 0; }
+
+.radio > input[type="radio"] {
+  visibility: hidden; }
+
+.radio {
+  margin: 0 auto; }
+
+.radio-male {
+  width: 144px;
+  height: 144px;
+  background: url("../img/icons/icon-boy.png") no-repeat 0 0;
+  display: block; }
+
+.radio-male.checked {
+  background: url("../img/icons/icon-boy.png") no-repeat -144px 0 !important; }
+
+.radio-female {
+  width: 144px;
+  height: 144px;
+  background: url("../img/icons/icon-girl.png") no-repeat 0 0;
+  display: block; }
+
+.radio-female.checked {
+  background: url("../img/icons/icon-girl.png") no-repeat -144px 0 !important; }
 
 .button {
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.5);

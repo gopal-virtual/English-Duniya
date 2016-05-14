@@ -5,9 +5,9 @@
         .module('zaya-profile')
         .controller('profileController', profileController);
 
-    profileController.$inject = ['CONSTANT','$state','Auth','Rest','$log','$ionicPopup'];
+    profileController.$inject = ['CONSTANT','$state','Auth','Rest','$log','$ionicPopup','$ionicLoading'];
 
-    function profileController(CONSTANT, $state, Auth, Rest, $log, $ionicPopup) {
+    function profileController(CONSTANT, $state, Auth, Rest, $log, $ionicPopup, $ionicLoading) {
         var profileCtrl = this;
         profileCtrl.createProfile = createProfile;
         profileCtrl.updateProfile = updateProfile;
@@ -43,6 +43,10 @@
         }
 
         function createProfile (userdata) {
+            $ionicLoading.show({
+              noBackdrop: false,
+              hideOnStateChange: true
+            });
           Rest.all('profiles').post(userdata).then(function(response){
               Auth.getUser(function(){
                 $state.go('map.navigate',{});
@@ -50,6 +54,7 @@
                 profileCtrl.showError('Error', 'Error making profile');
               })
           },function(error){
+              $ionicLoading.hide();
             $ionicPopup.alert({
               title : _.chain(error.data).keys().first(),
               template : error.data[_.chain(error.data).keys().first()].toString(),
@@ -78,19 +83,19 @@
 
         function validatePersonaliseForm(formData) {
           $log.debug(formData);
-          if (!formData.first_name.$viewValue) {
+          if (formData.first_name && !formData.first_name.$viewValue) {
             profileCtrl.showError("Child's name", "Please enter child's name");
             return false;
           }
-          if (!formData.dob.$viewValue) {
+          if (formData.dob && !formData.dob.$viewValue) {
             profileCtrl.showError("DOB", "Please select a DOB");
             return false;
           }
-          if (!formData.gender.$viewValue) {
+          if (formData.gender && !formData.gender.$viewValue) {
             profileCtrl.showError("Gender", "Please select a gender");
             return false;
           }
-          if (!formData.gender.$viewValue) {
+          if (formData.gender && !formData.gender.$viewValue) {
             profileCtrl.showError("Grade", "Please select a grade");
             return false;
           }

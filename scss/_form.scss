@@ -1,15 +1,22 @@
 input[type=text].input-control,
 input[type=password].input-control,
 input[type=email].input-control,
-input[type=number].input-control{
+input[type=number].input-control,
+{
   border: thin solid lighten($dark, 50%);
   padding : $padding-x * 3 $padding-x * 1.5;
   margin : 0;
 }
+.item-select{
+    border: thin solid lighten($dark, 50%);
+    padding : $padding-x $padding-x * 1.5;
+    margin : 0;
+}
 input[type=text].input-control:not(.input-group-item),
 input[type=password].input-control:not(.input-group-item),
 input[type=email].input-control:not(.input-group-item),
-input[type=number].input-control:not(.input-group-item){
+input[type=number].input-control:not(.input-group-item),
+.item-select{
   border-radius: $border-radius;
 }
 .input-block{
@@ -81,4 +88,29 @@ input[type=radio].hide{
   border-right : thin solid lighten($dark, 50%) ;
   border-bottom : thin solid lighten($dark, 50%) ;
   border-left : 0 ;
+}
+.radio > input[type="radio"]{
+    visibility: hidden;
+}
+.radio {
+    margin: 0 auto;
+}
+
+.radio-male{
+    width: 144px;
+    height: 144px;
+    background: url('#{$icon-path}/icon-boy.png') no-repeat 0 0;
+    display: block;
+}
+.radio-male.checked{
+    background: url('#{$icon-path}/icon-boy.png') no-repeat -144px 0 !important;
+}
+.radio-female{
+    width: 144px;
+    height: 144px;
+    background: url('#{$icon-path}/icon-girl.png') no-repeat 0 0;
+    display: block;
+}
+.radio-female.checked{
+    background: url('#{$icon-path}/icon-girl.png') no-repeat -144px 0 !important;
 }
