@@ -1,42 +1,53 @@
 <ion-view class="bg-pink">
   <ion-content>
     <div class="row padding-10">
-      <div class="col text-center"><img src="img/icons/practice_active.png" alt="" height="60px" width="auto"></div>
+      <div class="col text-center"><img src="img/assets/logo.png" alt="" height="80px" width="auto"></div>
     </div>
-    <div class="row">
-      <div class="col text-center">
-        <h3 class="color-dark-light">Register</h3>
-      </div>
-    </div>
+
     <div class="row padding-x-20">
       <div class="col">
-        <button tabindex="5" ng-click="authCtrl.googleSignIn()" class="button button-block button-assertive icon-left ion-social-googleplus">Google+</button>
+        <div class="button-bar button-group">
+          <button type="button" ng-click="authCtrl.googleSignIn()" class="button button-no-shadow button-round button-block button-assertive icon-left ion-social-googleplus"></button>
+          <button tabindex="4" type="button" ng-click="authCtrl.googleSignIn()" class="button button-no-shadow button-round button-block button-assertive icon-left">Google+</button>
+        </div>
       </div>
       <div class="col">
-        <button tabindex="6" ng-click="authCtrl.facebookSignIn()" class="button button-block bg-brand text-white icon-left ion-social-facebook">facebook</button>
+        <div class="button-bar button-group">
+          <button type="button" ng-click="authCtrl.facebookSignIn()" class="button button-no-shadow button-round button-block button-positive icon-left ion-social-facebook"></button>
+          <button tabindex="5" type="button" ng-click="authCtrl.googleSignIn()" class="button button-no-shadow button-round button-block button-positive icon-left">Facebook</button>
+        </div>
       </div>
     </div>
-    <div class="row">
+    <div class="row center">
       <form autocomplete="on" novalidate name="authForm" class="col padding-x-20" ng-submit="authCtrl.closeKeyboard() && authCtrl.validCredential(authForm) && authCtrl.signup({'useridentity':authCtrl.user.useridentity,'password1':authCtrl.user.password,'password2':authCtrl.user.password,'email':authCtrl.user.email})" ng-init="show_password = false">
-        <div class="input-group">
-          <input class="input-control input-default input-block font-md" tabindex="1" name="useridentity" type="text" placeholder="Phone" ng-model="authCtrl.user.useridentity">
-        </div>
-        <div class="input-group">
-          <input class="input-control input-default input-block font-md" tabindex="2" ng-trim="false" valid-input name="email" type="text" placeholder="Email" ng-model="authCtrl.user.email" autocomplete="on">
-        </div>
-        <div class="input-group">
-          <input class="input-control input-group-item input-default input-block font-md" tabindex="3" onPaste="return false" autocomplete="off" name="password"  type="{{show_password==false?'password':'text'}}" placeholder="Password" ng-model="authCtrl.user.password">
-          <button type="button" class="input-group-item input-group-addon input-group-addon-light font-md" ng-click="show_password=!show_password">
-            <i class="icon" ng-class="{'ion-ios-glasses-outline' : !show_password, 'ion-ios-glasses' : show_password}"></i>
+
+        <div class="input-group input-group-social">
+          <button type="button" class="icon icon-profile icon-fit-width input-group-item input-group-addon input-group-addon-light font-md" ng-click="show_password=!show_password">
           </button>
+          <input class="input-control input-group-item input-default input-block font-md" tabindex="1" name="useridentity" type="text" placeholder="Phone" ng-model="authCtrl.user.useridentity">
         </div>
-        <button ng-disabled="authCtrl.signUpDisabled" tabindex="4" class="button button-block button-green">SIGN UP</button>
+        <div class="input-group input-group-social">
+          <button type="button" class="icon icon-mail icon-fit-width input-group-item input-group-addon input-group-addon-light font-md" ng-click="show_password=!show_password">
+          </button>
+          <input class="input-control input-group-item input-default input-block font-md" tabindex="2" ng-trim="false" valid-input name="email" type="text" placeholder="Email" ng-model="authCtrl.user.email" autocomplete="on">
+        </div>
+        <div class="input-group input-group-social">
+          <button type="button" class="icon icon-password icon-fit-width input-group-item input-group-addon input-group-addon-light font-md" ng-click="show_password=!show_password">
+          </button>
+          <input class="input-control input-group-item input-group-item input-default input-block font-md" tabindex="3" onPaste="return false" autocomplete="off" name="password"  type="{{show_password==false?'password':'text'}}" placeholder="Password" ng-model="authCtrl.user.password">
+          <!-- <button type="button" class="input-group-item input-group-addon input-group-addon-light font-md" ng-click="show_password=!show_password">
+            <i class="icon" ng-class="{'ion-ios-glasses-outline' : !show_password, 'ion-ios-glasses' : show_password}"></i>
+          </button> -->
+        </div>
+        <div class="margin-20">
+          <button ng-disabled="authCtrl.signUpDisabled" tabindex="4" class="button button-round padding-x-40 button-green button-no-shadow">SIGN UP</button>
+          <div>
         </form>
     </div>
     <hr>
     <div class="row">
       <div class="col text-center">
-        <h4><span class="color-dark-light">Already a member? </span><a ui-sref="auth.signin">Sign In</a></h4>
+        <h4><span class="color-dark-light">Already a member? </span><span class="color-positive" ui-sref="auth.signin">Sign In</span></h4>
       </div>
     </div>
   </ion-content>

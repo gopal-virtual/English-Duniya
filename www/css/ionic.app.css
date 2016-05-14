@@ -9826,6 +9826,13 @@ input[type=radio].hide {
 .radio-female.checked {
   background: url("../img/icons/icon-girl.png") no-repeat -144px 0 !important; }
 
+.input-group-social > .input-group-item:first-child {
+  border-radius: 10px 0 0 10px !important;
+  border-top: thin solid #c4c4c4;
+  border-left: thin solid #c4c4c4;
+  border-bottom: thin solid #c4c4c4;
+  max-width: 15%; }
+
 .button {
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.5);
   vertical-align: center;
@@ -9843,6 +9850,23 @@ input[type=radio].hide {
 
 .button-round {
   border-radius: 50px; }
+
+.button-group {
+  color: white; }
+
+.button-group > .button:first-child {
+  border-radius: 50px 0 0 50px !important;
+  max-width: 15% !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.36); }
+
+.button-group > .button:last-child {
+  border-radius: 0 50px 50px 0 !important; }
+
+.button-group > .button {
+  border: 0; }
+
+.button-no-shadow {
+  box-shadow: none; }
 
 .bg-light {
   background: #fff; }
@@ -10543,12 +10567,12 @@ p * {
   background-repeat: no-repeat;
   background-position: center center; }
 
-.icon-email {
+.icon-mail {
   background-image: url("../img/icons/icon-mail.png");
   background-repeat: no-repeat;
   background-position: center center; }
 
-.icon-email.active {
+.icon-mail.active {
   background-image: url("../img/icons/icon-mail-active.png");
   background-repeat: no-repeat;
   background-position: center center; }
@@ -10600,6 +10624,16 @@ p * {
 
 .icon-logout.active {
   background-image: url("../img/icons/icon-logout-active.png");
+  background-repeat: no-repeat;
+  background-position: center center; }
+
+.icon-password {
+  background-image: url("../img/icons/icon-password.png");
+  background-repeat: no-repeat;
+  background-position: center center; }
+
+.icon-password.active {
+  background-image: url("../img/icons/icon-password-active.png");
   background-repeat: no-repeat;
   background-position: center center; }
 

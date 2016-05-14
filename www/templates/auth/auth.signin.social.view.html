@@ -1,40 +1,46 @@
 <ion-view class="bg-pink" ng-init="show_password = false">
   <ion-content>
     <div class="row padding-10">
-      <div class="col text-center"><img src="img/icons/practice_active.png" alt="" height="60px" width="auto"></div>
+      <div class="col text-center"><img src="img/assets/logo.png" alt="" height="80px" width="auto"></div>
     </div>
-    <div class="row">
-      <div class="col text-center">
-        <h3 class="color-dark-light">Sign In</h3>
-      </div>
-    </div>
+
     <div class="row padding-x-20">
       <div class="col">
-        <button tabindex="4" type="button" ng-click="authCtrl.googleSignIn()" class="button button-block button-assertive icon-left ion-social-googleplus">Google+</button>
+        <div class="button-bar button-group">
+          <button type="button" ng-click="authCtrl.googleSignIn()" class="button button-no-shadow button-round button-block button-assertive icon-left ion-social-googleplus"></button>
+          <button tabindex="4" type="button" ng-click="authCtrl.googleSignIn()" class="button button-no-shadow button-round button-block button-assertive icon-left">Google+</button>
+        </div>
       </div>
       <div class="col">
-        <button tabindex="5" type="button" ng-click="authCtrl.facebookSignIn()" class="button button-block button-positive icon-left ion-social-facebook">Facebook</button>
+        <div class="button-bar button-group">
+          <button type="button" ng-click="authCtrl.facebookSignIn()" class="button button-no-shadow button-round button-block button-positive icon-left ion-social-facebook"></button>
+          <button tabindex="5" type="button" ng-click="authCtrl.googleSignIn()" class="button button-no-shadow button-round button-block button-positive icon-left">Facebook</button>
+        </div>
       </div>
     </div>
-    <div class="row padding-x-20">
+    <div class="row padding-x-20 center">
       <form name="authForm" class="col" ng-submit="authCtrl.closeKeyboard() && authCtrl.validCredential(authForm) && authCtrl.login('login',{'useridentity':authCtrl.user.useridentity, 'password':authCtrl.user.password})">
-        <div class="input-group">
-          <input class="input-control input-default font-md" valid-input ng-trim="false" tabindex="1" name="useridentity" type="text" placeholder="Phone / Email" ng-model="authCtrl.user.useridentity">
-        </div>
-        <div class="input-group">
-          <input class="input-control input-default input-group-item font-md" tabindex="2" onPaste="return false" autocomplete="off" name="password" type="{{show_password==false?'password':'text'}}" placeholder="Password" ng-model="authCtrl.user.password">
-          <button type="button" class="input-group-item input-group-addon input-group-addon-light font-md" ng-click="show_password=!show_password">
-            <i class="icon" ng-class="{'ion-ios-glasses-outline' : !show_password, 'ion-ios-glasses' : show_password}"></i>
+        <div class="input-group input-group-social">
+          <button type="button" class="icon icon-profile icon-fit-width input-group-item input-group-addon input-group-addon-light font-md" ng-click="show_password=!show_password">
           </button>
+          <input class="input-control input-group-item input-default font-md" valid-input ng-trim="false" tabindex="1" name="useridentity" type="text" placeholder="Phone / Email" ng-model="authCtrl.user.useridentity">
         </div>
-        <h4 class="text-right"><a ng-click="authCtrl.recoverAccount()">forgot password?</a></h4>
-        <button tabindex="3" type="submit" class="button button-green button-block">LOG IN</button>
+        <div class="input-group input-group-social">
+          <button type="button" class="icon icon-password icon-fit-width input-group-item input-group-addon input-group-addon-light font-md" ng-click="show_password=!show_password">
+          </button>
+          <input class="input-control input-group-item input-default input-group-item font-md" tabindex="2" onPaste="return false" autocomplete="off" name="password" type="{{show_password==false?'password':'text'}}" placeholder="Password" ng-model="authCtrl.user.password">
+          <!-- <button type="button" class="input-group-item input-group-addon input-group-addon-light font-md" ng-click="show_password=!show_password">
+            <i class="icon" ng-class="{'ion-ios-glasses-outline' : !show_password, 'ion-ios-glasses' : show_password}"></i>
+          </button> -->
+        </div>
+        <h4 class="text-right"><p class="color-dark-light" ng-click="authCtrl.recoverAccount()">Forgot password?</p></h4>
+        <button tabindex="3" type="submit" class="button button-no-shadow button-round button-green padding-x-40">LOG IN</button>
       </form>
     </div>
     <hr>
     <div class="row">
       <div class="col text-center">
-        <h4><span class="color-dark-light">No account yet? </span><a ui-sref="auth.signup">Sign up</a></h4>
+        <h4><span class="color-dark-light">No account yet? </span><span class="color-positive" ui-sref="auth.signup">Sign up</span></h4>
       </div>
     </div>
   </ion-content>
