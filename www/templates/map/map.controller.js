@@ -5,9 +5,9 @@
     .module('zaya-map')
     .controller('mapController', mapController);
 
-  mapController.$inject = ['$scope', '$rootScope', '$log', '$ionicModal', '$state', 'lessons', 'scores', 'extendLesson', 'Rest', 'CONSTANT', '$sce', '$ionicLoading', '$timeout', '$ionicBackdrop', 'orientation'];
+  mapController.$inject = ['$scope', '$rootScope', '$log', '$ionicModal', '$state', 'lessons', 'scores', 'extendLesson', 'Rest', 'CONSTANT', '$sce', '$ionicLoading', '$timeout', '$ionicBackdrop', 'orientation', 'Auth'];
 
-  function mapController($scope, $rootScope, $log, $ionicModal, $state, lessons, scores, extendLesson, Rest, CONSTANT, $sce, $ionicLoading, $timeout, $ionicBackdrop, orientation) {
+  function mapController($scope, $rootScope, $log, $ionicModal, $state, lessons, scores, extendLesson, Rest, CONSTANT, $sce, $ionicLoading, $timeout, $ionicBackdrop, orientation, Auth) {
     $scope.$on("$ionicView.beforeEnter", function(event, data) {
       orientation.setPortrait();
     });
@@ -19,8 +19,11 @@
     mapCtrl.getIcon = getIcon;
     mapCtrl.resourceType = resourceType;
     mapCtrl.playResource = playResource;
+    mapCtrl.logout = logout;
     mapCtrl.backdrop = false;
     mapCtrl.showScore = -1;
+    mapCtrl.user = JSON.parse(localStorage.user_details) || {};
+    mapCtrl.user['name'] = mapCtrl.user.first_name + ' ' + mapCtrl.user.last_name;
 
     // mapCtrl.openModal = openModal;
     // mapCtrl.closeModal = closeModal;
@@ -41,11 +44,25 @@
       score: 3000
     }];
 
-    function openSettings(){
-        $scope.settings.show();
+    function logout() {
+      mapCtrl.closeSettings();
+      $ionicLoading.show({
+        noBackdrop: false,
+        hideOnStateChange: true
+      });
+      Auth.logout(function() {
+        $state.go('auth.signin', {})
+      }, function() {
+        // body...
+      })
     }
-    function closeSettings(){
-        $scope.settings.hide();
+
+    function openSettings() {
+      $scope.settings.show();
+    }
+
+    function closeSettings() {
+      $scope.settings.hide();
     }
 
     function playResource(resource) {

@@ -7,12 +7,16 @@
     background-image: url("#{$icon-path}/#{$icon-name}#{$icon-type}");
     background-repeat: no-repeat;
     background-position: center center;
-    background-size: auto 50%;
   }
   .icon-#{$icon}.active{
     background-image: url("#{$icon-path}/#{$icon-name}-active#{$icon-type}");
     background-repeat: no-repeat;
     background-position: center center;
-    background-size: auto 50%;
   }
+}
+.icon-fit-width{
+    background-size: 50% auto;
+}
+.icon-fit-height{
+    background-size: auto 50%;
 }

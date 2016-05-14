@@ -10358,157 +10358,137 @@ p * {
 .icon-vocabulary {
   background-image: url("../img/icons/icon-vocab.png");
   background-repeat: no-repeat;
-  background-position: center center;
-  background-size: auto 50%; }
+  background-position: center center; }
 
 .icon-vocabulary.active {
   background-image: url("../img/icons/icon-vocab-active.png");
   background-repeat: no-repeat;
-  background-position: center center;
-  background-size: auto 50%; }
+  background-position: center center; }
 
 .icon-reading {
   background-image: url("../img/icons/icon-read.png");
   background-repeat: no-repeat;
-  background-position: center center;
-  background-size: auto 50%; }
+  background-position: center center; }
 
 .icon-reading.active {
   background-image: url("../img/icons/icon-read-active.png");
   background-repeat: no-repeat;
-  background-position: center center;
-  background-size: auto 50%; }
+  background-position: center center; }
 
 .icon-grammar {
   background-image: url("../img/icons/icon-grammar.png");
   background-repeat: no-repeat;
-  background-position: center center;
-  background-size: auto 50%; }
+  background-position: center center; }
 
 .icon-grammar.active {
   background-image: url("../img/icons/icon-grammar-active.png");
   background-repeat: no-repeat;
-  background-position: center center;
-  background-size: auto 50%; }
+  background-position: center center; }
 
 .icon-listening {
   background-image: url("../img/icons/icon-listen.png");
   background-repeat: no-repeat;
-  background-position: center center;
-  background-size: auto 50%; }
+  background-position: center center; }
 
 .icon-listening.active {
   background-image: url("../img/icons/icon-listen-active.png");
   background-repeat: no-repeat;
-  background-position: center center;
-  background-size: auto 50%; }
+  background-position: center center; }
 
 .icon-settings {
   background-image: url("../img/icons/icon-settings.png");
   background-repeat: no-repeat;
-  background-position: center center;
-  background-size: auto 50%; }
+  background-position: center center; }
 
 .icon-settings.active {
   background-image: url("../img/icons/icon-settings-active.png");
   background-repeat: no-repeat;
-  background-position: center center;
-  background-size: auto 50%; }
+  background-position: center center; }
 
 .icon-pause {
   background-image: url("../img/icons/icon-pause.png");
   background-repeat: no-repeat;
-  background-position: center center;
-  background-size: auto 50%; }
+  background-position: center center; }
 
 .icon-pause.active {
   background-image: url("../img/icons/icon-pause-active.png");
   background-repeat: no-repeat;
-  background-position: center center;
-  background-size: auto 50%; }
+  background-position: center center; }
 
 .icon-question-mark {
   background-image: url("../img/icons/icon-question-mark.png");
   background-repeat: no-repeat;
-  background-position: center center;
-  background-size: auto 50%; }
+  background-position: center center; }
 
 .icon-question-mark.active {
   background-image: url("../img/icons/icon-question-mark-active.png");
   background-repeat: no-repeat;
-  background-position: center center;
-  background-size: auto 50%; }
+  background-position: center center; }
 
 .icon-email {
   background-image: url("../img/icons/icon-mail.png");
   background-repeat: no-repeat;
-  background-position: center center;
-  background-size: auto 50%; }
+  background-position: center center; }
 
 .icon-email.active {
   background-image: url("../img/icons/icon-mail-active.png");
   background-repeat: no-repeat;
-  background-position: center center;
-  background-size: auto 50%; }
+  background-position: center center; }
 
 .icon-profile {
   background-image: url("../img/icons/icon-profile.png");
   background-repeat: no-repeat;
-  background-position: center center;
-  background-size: auto 50%; }
+  background-position: center center; }
 
 .icon-profile.active {
   background-image: url("../img/icons/icon-profile-active.png");
   background-repeat: no-repeat;
-  background-position: center center;
-  background-size: auto 50%; }
+  background-position: center center; }
 
 .icon-show-password {
   background-image: url("../img/icons/icon-show-password.png");
   background-repeat: no-repeat;
-  background-position: center center;
-  background-size: auto 50%; }
+  background-position: center center; }
 
 .icon-show-password.active {
   background-image: url("../img/icons/icon-show-password-active.png");
   background-repeat: no-repeat;
-  background-position: center center;
-  background-size: auto 50%; }
+  background-position: center center; }
 
 .icon-hide-password {
   background-image: url("../img/icons/icon-hide-password.png");
   background-repeat: no-repeat;
-  background-position: center center;
-  background-size: auto 50%; }
+  background-position: center center; }
 
 .icon-hide-password.active {
   background-image: url("../img/icons/icon-hide-password-active.png");
   background-repeat: no-repeat;
-  background-position: center center;
-  background-size: auto 50%; }
+  background-position: center center; }
 
 .icon-phone {
   background-image: url("../img/icons/icon-phone.png");
   background-repeat: no-repeat;
-  background-position: center center;
-  background-size: auto 50%; }
+  background-position: center center; }
 
 .icon-phone.active {
   background-image: url("../img/icons/icon-phone-active.png");
   background-repeat: no-repeat;
-  background-position: center center;
-  background-size: auto 50%; }
+  background-position: center center; }
 
 .icon-logout {
   background-image: url("../img/icons/icon-logout.png");
   background-repeat: no-repeat;
-  background-position: center center;
-  background-size: auto 50%; }
+  background-position: center center; }
 
 .icon-logout.active {
   background-image: url("../img/icons/icon-logout-active.png");
   background-repeat: no-repeat;
-  background-position: center center;
+  background-position: center center; }
+
+.icon-fit-width {
+  background-size: 50% auto; }
+
+.icon-fit-height {
   background-size: auto 50%; }
 
 .card {
