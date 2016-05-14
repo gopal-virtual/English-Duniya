@@ -126,15 +126,24 @@ window.createGame = function(scope, lessons, injector, log) {
         var posy = this.math.catmullRomInterpolation(this.points.y, j);
         this.bmd.rect(posx, posy, 4, 4, '#219C7F');
       }
+      // sand particles
+      for (var i = 0; i < 100; i++)
+      {
+          var s = this.game.add.sprite(this.world.randomX, this.game.world.randomY, 'particle' + this.game.rnd.between(1, 3));
+
+          s.scale.setTo(this.game.rnd.between(1, 2)/20);
+          this.game.physics.arcade.enable(s);
+          s.body.velocity.x = this.game.rnd.between(-200, -550);
+          s.body.velocity.y = this.game.rnd.between(50, 70);
+          s.autoCull = true;
+          s.checkWorldBounds = true;
+          s.events.onOutOfBounds.add(this.resetSprite, this);
+      }
     //   var stars = this.game.add.group();
       function createStars(count, x, y){
           for (var i = 0; i < count; i++) {
-            //   var startype = count ? 'star' : 'nostar';
-            //   log.debug(startype);
               var star = stars.create(x[0] + x[i+1], y[0] + y[i+1], 'star');
               star.anchor.setTo(0.5,0.5);
-            //   star.scale.setTo(0.2,0.2);
-            //   count -= count > 0 ? 1 : 0;
           }
       }
       var star_x = [-12,0,12];
@@ -179,18 +188,6 @@ window.createGame = function(scope, lessons, injector, log) {
             }
             else{}
         }
-      }
-      for (var i = 0; i < 100; i++)
-      {
-          var s = this.game.add.sprite(this.world.randomX, this.game.world.randomY, 'particle' + this.game.rnd.between(1, 3));
-
-          s.scale.setTo(this.game.rnd.between(1, 2)/20);
-          this.game.physics.arcade.enable(s);
-          s.body.velocity.x = this.game.rnd.between(-55, -70);
-          s.body.velocity.y = this.game.rnd.between(10, 20);
-          s.autoCull = true;
-          s.checkWorldBounds = true;
-          s.events.onOutOfBounds.add(this.resetSprite, this);
       }
 
       // fire animation

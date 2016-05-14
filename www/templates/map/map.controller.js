@@ -5,9 +5,9 @@
     .module('zaya-map')
     .controller('mapController', mapController);
 
-  mapController.$inject = ['$scope', '$rootScope', '$log', '$ionicModal', '$state', 'lessons', 'scores', 'extendLesson', 'Rest', 'CONSTANT', '$sce', '$ionicLoading', '$timeout', '$ionicBackdrop', 'orientation'];
+  mapController.$inject = ['$scope', '$rootScope', '$log', '$ionicModal', '$state', 'lessons', 'scores', 'extendLesson', 'Rest', 'CONSTANT', '$sce', '$ionicLoading', '$timeout', '$ionicBackdrop', 'orientation', 'Auth'];
 
-  function mapController($scope, $rootScope, $log, $ionicModal, $state, lessons, scores, extendLesson, Rest, CONSTANT, $sce, $ionicLoading, $timeout, $ionicBackdrop, orientation) {
+  function mapController($scope, $rootScope, $log, $ionicModal, $state, lessons, scores, extendLesson, Rest, CONSTANT, $sce, $ionicLoading, $timeout, $ionicBackdrop, orientation, Auth) {
     $scope.$on("$ionicView.beforeEnter", function(event, data) {
       orientation.setPortrait();
     });
@@ -21,11 +21,16 @@
     mapCtrl.getIcon = getIcon;
     mapCtrl.resourceType = resourceType;
     mapCtrl.playResource = playResource;
+    mapCtrl.logout = logout;
     mapCtrl.backdrop = false;
     mapCtrl.showScore = -1;
+    mapCtrl.user = JSON.parse(localStorage.user_details) || {};
+    mapCtrl.user['name'] = mapCtrl.user.first_name + ' ' + mapCtrl.user.last_name;
 
     // mapCtrl.openModal = openModal;
     // mapCtrl.closeModal = closeModal;
+    mapCtrl.openSettings = openSettings;
+    mapCtrl.closeSettings = closeSettings;
 
     mapCtrl.skillSet = [{
       name: 'reading',
@@ -40,6 +45,27 @@
       name: 'grammar',
       score: 3000
     }];
+
+    function logout() {
+      mapCtrl.closeSettings();
+      $ionicLoading.show({
+        noBackdrop: false,
+        hideOnStateChange: true
+      });
+      Auth.logout(function() {
+        $state.go('auth.signin', {})
+      }, function() {
+        // body...
+      })
+    }
+
+    function openSettings() {
+      $scope.settings.show();
+    }
+
+    function closeSettings() {
+      $scope.settings.hide();
+    }
 
     function playResource(resource) {
       $scope.closeModal();
@@ -110,12 +136,20 @@
       return true;
     }
 
+
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal' + CONSTANT.VIEW, {
       scope: $scope,
       animation: 'slide-in-up',
-      hardwareBackButtonClose: false
+      //   hardwareBackButtonClose: false
     }).then(function(modal) {
       $scope.modal = modal;
+    });
+    $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.settings' + CONSTANT.VIEW, {
+      scope: $scope,
+      animation: 'slide-in-up',
+      //   hardwareBackButtonClose: false
+    }).then(function(settings) {
+      $scope.settings = settings;
     });
 
     function resetNode() {

@@ -1,0 +1,63 @@
+<ion-modal-view class="modal-transparent">
+  <ion-content overflow-scroll="true">
+    <div class="row">
+      <div class="col">
+        <div class="card card-dark padding-x-20">
+          <div class="row">
+            <div class="col">
+                <button class="button button-clear font-lg color-pale button-block" ng-click="mapCtrl.closeSettings()">
+                    <i class="icon ion-arrow-left-c"></i>
+                    <strong>SETTINGS</strong>
+                </button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div>
+                <div class="input-group">
+                  <button type="button" class="input-group-item input-group-addon input-group-addon-light font-md icon-profile icon-fit-width">
+                  </button>
+                  <input type="text" class="input-control input-default input-group-item font-md" tabindex="2" placeholder="Username" ng-model="mapCtrl.user.name">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div>
+                <div class="input-group">
+                  <button type="button" class="input-group-item input-group-addon input-group-addon-light font-md icon-phone icon-fit-width">
+                  </button>
+                  <input type="text" class="input-control input-default input-group-item font-md" tabindex="2" placeholder="Phonenumber" ng-model="mapCtrl.user.phone_number">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div>
+                <div class="input-group">
+                  <button type="button" class="input-group-item input-group-addon input-group-addon-light font-md icon-email icon-fit-width">
+                  </button>
+                  <input type="text" class="input-control input-default input-group-item font-md" tabindex="2" placeholder="Email" ng-model="mapCtrl.user.email">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <button class="button button-block button-assertive font-md icon-left ion-power" ng-click="mapCtrl.logout()">
+                logout
+              </button>
+            </div>
+          </div>
+          <div class="row padding-y-20">
+            <div class="col text-center">
+              <button class="button button-green font-lg padding-x-40" ng-click="mapCtrl.closeSettings()">DONE</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ion-content>
+</ion-modal-view>

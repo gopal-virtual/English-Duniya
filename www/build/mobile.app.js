@@ -1567,9 +1567,9 @@
     .module('zaya-map')
     .controller('mapController', mapController);
 
-  mapController.$inject = ['$scope', '$rootScope', '$log', '$ionicModal', '$state', 'lessons', 'scores', 'extendLesson', 'Rest', 'CONSTANT', '$sce', '$ionicLoading', '$timeout', '$ionicBackdrop', 'orientation'];
+  mapController.$inject = ['$scope', '$rootScope', '$log', '$ionicModal', '$state', 'lessons', 'scores', 'extendLesson', 'Rest', 'CONSTANT', '$sce', '$ionicLoading', '$timeout', '$ionicBackdrop', 'orientation', 'Auth'];
 
-  function mapController($scope, $rootScope, $log, $ionicModal, $state, lessons, scores, extendLesson, Rest, CONSTANT, $sce, $ionicLoading, $timeout, $ionicBackdrop, orientation) {
+  function mapController($scope, $rootScope, $log, $ionicModal, $state, lessons, scores, extendLesson, Rest, CONSTANT, $sce, $ionicLoading, $timeout, $ionicBackdrop, orientation, Auth) {
     $scope.$on("$ionicView.beforeEnter", function(event, data) {
       orientation.setPortrait();
     });
@@ -1583,11 +1583,16 @@
     mapCtrl.getIcon = getIcon;
     mapCtrl.resourceType = resourceType;
     mapCtrl.playResource = playResource;
+    mapCtrl.logout = logout;
     mapCtrl.backdrop = false;
     mapCtrl.showScore = -1;
+    mapCtrl.user = JSON.parse(localStorage.user_details) || {};
+    mapCtrl.user['name'] = mapCtrl.user.first_name + ' ' + mapCtrl.user.last_name;
 
     // mapCtrl.openModal = openModal;
     // mapCtrl.closeModal = closeModal;
+    mapCtrl.openSettings = openSettings;
+    mapCtrl.closeSettings = closeSettings;
 
     mapCtrl.skillSet = [{
       name: 'reading',
@@ -1602,6 +1607,27 @@
       name: 'grammar',
       score: 3000
     }];
+
+    function logout() {
+      mapCtrl.closeSettings();
+      $ionicLoading.show({
+        noBackdrop: false,
+        hideOnStateChange: true
+      });
+      Auth.logout(function() {
+        $state.go('auth.signin', {})
+      }, function() {
+        // body...
+      })
+    }
+
+    function openSettings() {
+      $scope.settings.show();
+    }
+
+    function closeSettings() {
+      $scope.settings.hide();
+    }
 
     function playResource(resource) {
       $scope.closeModal();
@@ -1672,12 +1698,20 @@
       return true;
     }
 
+
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal' + CONSTANT.VIEW, {
       scope: $scope,
       animation: 'slide-in-up',
-      hardwareBackButtonClose: false
+      //   hardwareBackButtonClose: false
     }).then(function(modal) {
       $scope.modal = modal;
+    });
+    $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.settings' + CONSTANT.VIEW, {
+      scope: $scope,
+      animation: 'slide-in-up',
+      //   hardwareBackButtonClose: false
+    }).then(function(settings) {
+      $scope.settings = settings;
     });
 
     function resetNode() {
@@ -1943,15 +1977,24 @@ window.createGame = function(scope, lessons, injector, log) {
         var posy = this.math.catmullRomInterpolation(this.points.y, j);
         this.bmd.rect(posx, posy, 4, 4, '#219C7F');
       }
+      // sand particles
+      for (var i = 0; i < 100; i++)
+      {
+          var s = this.game.add.sprite(this.world.randomX, this.game.world.randomY, 'particle' + this.game.rnd.between(1, 3));
+
+          s.scale.setTo(this.game.rnd.between(1, 2)/20);
+          this.game.physics.arcade.enable(s);
+          s.body.velocity.x = this.game.rnd.between(-200, -550);
+          s.body.velocity.y = this.game.rnd.between(50, 70);
+          s.autoCull = true;
+          s.checkWorldBounds = true;
+          s.events.onOutOfBounds.add(this.resetSprite, this);
+      }
     //   var stars = this.game.add.group();
       function createStars(count, x, y){
           for (var i = 0; i < count; i++) {
-            //   var startype = count ? 'star' : 'nostar';
-            //   log.debug(startype);
               var star = stars.create(x[0] + x[i+1], y[0] + y[i+1], 'star');
               star.anchor.setTo(0.5,0.5);
-            //   star.scale.setTo(0.2,0.2);
-            //   count -= count > 0 ? 1 : 0;
           }
       }
       var star_x = [-12,0,12];
@@ -1996,18 +2039,6 @@ window.createGame = function(scope, lessons, injector, log) {
             }
             else{}
         }
-      }
-      for (var i = 0; i < 100; i++)
-      {
-          var s = this.game.add.sprite(this.world.randomX, this.game.world.randomY, 'particle' + this.game.rnd.between(1, 3));
-
-          s.scale.setTo(this.game.rnd.between(1, 2)/20);
-          this.game.physics.arcade.enable(s);
-          s.body.velocity.x = this.game.rnd.between(-55, -70);
-          s.body.velocity.y = this.game.rnd.between(10, 20);
-          s.autoCull = true;
-          s.checkWorldBounds = true;
-          s.events.onOutOfBounds.add(this.resetSprite, this);
       }
 
       // fire animation
@@ -2113,9 +2144,9 @@ window.createGame = function(scope, lessons, injector, log) {
         .module('zaya-profile')
         .controller('profileController', profileController);
 
-    profileController.$inject = ['CONSTANT','$state','Auth','Rest','$log','$ionicPopup'];
+    profileController.$inject = ['CONSTANT','$state','Auth','Rest','$log','$ionicPopup','$ionicLoading'];
 
-    function profileController(CONSTANT, $state, Auth, Rest, $log, $ionicPopup) {
+    function profileController(CONSTANT, $state, Auth, Rest, $log, $ionicPopup, $ionicLoading) {
         var profileCtrl = this;
         profileCtrl.createProfile = createProfile;
         profileCtrl.updateProfile = updateProfile;
@@ -2151,6 +2182,10 @@ window.createGame = function(scope, lessons, injector, log) {
         }
 
         function createProfile (userdata) {
+            $ionicLoading.show({
+              noBackdrop: false,
+              hideOnStateChange: true
+            });
           Rest.all('profiles').post(userdata).then(function(response){
               Auth.getUser(function(){
                 $state.go('map.navigate',{});
@@ -2158,6 +2193,7 @@ window.createGame = function(scope, lessons, injector, log) {
                 profileCtrl.showError('Error', 'Error making profile');
               })
           },function(error){
+              $ionicLoading.hide();
             $ionicPopup.alert({
               title : _.chain(error.data).keys().first(),
               template : error.data[_.chain(error.data).keys().first()].toString(),
@@ -2186,19 +2222,19 @@ window.createGame = function(scope, lessons, injector, log) {
 
         function validatePersonaliseForm(formData) {
           $log.debug(formData);
-          if (!formData.first_name.$viewValue) {
+          if (formData.first_name && !formData.first_name.$viewValue) {
             profileCtrl.showError("Child's name", "Please enter child's name");
             return false;
           }
-          if (!formData.dob.$viewValue) {
+          if (formData.dob && !formData.dob.$viewValue) {
             profileCtrl.showError("DOB", "Please select a DOB");
             return false;
           }
-          if (!formData.gender.$viewValue) {
+          if (formData.gender && !formData.gender.$viewValue) {
             profileCtrl.showError("Gender", "Please select a gender");
             return false;
           }
-          if (!formData.gender.$viewValue) {
+          if (formData.gender && !formData.gender.$viewValue) {
             profileCtrl.showError("Grade", "Please select a grade");
             return false;
           }
@@ -3015,7 +3051,7 @@ window.createGame = function(scope, lessons, injector, log) {
         abstract : true,
         views : {
           'state-user':{
-            templateUrl : CONSTANT.PATH.PROFILE+'/personalise'+CONSTANT.VIEW,
+            template : '<ion-nav-view name="state-personalise"></ion-nav-view>',
           }
         }
       })

@@ -1,9 +1,6 @@
 .card {
   border-radius: $border-radius;
   box-sizing: content-box;
-  -webkit-box-shadow: 2px 3px 4px 0 rgba(0, 68, 54, 0.69);
-  -moz-box-shadow: 2px 3px 4px 0 rgba(0, 68, 54, 0.69);
-  box-shadow: 2px 3px 4px 0 rgba(0, 68, 54, 0.69);
 }
 .list.card {
   border-radius: $border-radius !important;
@@ -26,16 +23,25 @@
 @each $name , $color in $color-list {
   .card-#{$name} {
     background-color: $color;
+    -webkit-box-shadow: 2px 3px 4px 0 transparentize(darken($color,20),0.5);
+    -moz-box-shadow: 2px 3px 4px 0 transparentize(darken($color,20),0.5);
+    box-shadow: 2px 3px 4px 0 transparentize(darken($color,20),0.5);
   }
 }
 @each $name , $color in $color-list {
   .card-#{$name}-light {
     background-color: lighten($color,10%);
+    -webkit-box-shadow: 2px 3px 4px 0 transparentize(darken($color,20),0.5);
+    -moz-box-shadow: 2px 3px 4px 0 transparentize(darken($color,20),0.5);
+    box-shadow: 2px 3px 4px 0 transparentize(darken($color,20),0.5);
   }
 }
 @each $name , $color in $color-list {
   .card-#{$name}-dark {
     background-color: darken($color,10%);
+    -webkit-box-shadow: 2px 3px 4px 0 transparentize(darken($color,20),0.5);
+    -moz-box-shadow: 2px 3px 4px 0 transparentize(darken($color,20),0.5);
+    box-shadow: 2px 3px 4px 0 transparentize(darken($color,20),0.5);
   }
 }
 .card-list {

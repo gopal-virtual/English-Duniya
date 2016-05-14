@@ -20,7 +20,7 @@
         abstract : true,
         views : {
           'state-user':{
-            templateUrl : CONSTANT.PATH.PROFILE+'/personalise'+CONSTANT.VIEW,
+            template : '<ion-nav-view name="state-personalise"></ion-nav-view>',
           }
         }
       })
