@@ -450,7 +450,9 @@
           });
         } else {
           $scope.modal.hide().then(function() {
-            quizCtrl.nextQuestion();
+            
+            quizCtrl.slideTo(quizCtrl.getCurrentIndex()+1);
+            // quizCtrl.nextQuestion();
           });
         }
       } else {

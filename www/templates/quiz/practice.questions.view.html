@@ -18,7 +18,10 @@
       <!-- <a ui-sref="map.navigate" class="header-icon icon-question-mark"></a> -->
     </div>
   </div>
-  <div ng-repeat="question in quizCtrl.quiz.objects" ng-if="$index == quizCtrl.getCurrentIndex()">
+  <ion-slide-box on-slide-changed="quizCtrl.slideHasChanged($index)" show-pager="false">
+    <ion-slide ng-repeat="question in quizCtrl.quiz.objects" ng-class="{'animation-question-slide':quizCtrl.isCurrentIndex($index)}">
+
+  <!-- <div ng-repeat="question in quizCtrl.quiz.objects" ng-if="$index == quizCtrl.getCurrentIndex()"> -->
     <div class="bar bar-subheader question-subheader bg-pale ">
       <div ng-if="question.node.title" ng-bind-html="quizCtrl.parseToDisplay(question.node.title)" class="question card card-transparent center margin-x-0 margin-y-0" ng-click="quizCtrl.playAudio(quizCtrl.getSoundId(question.node.title))">
       </div>
@@ -60,7 +63,8 @@
       <!--<div ng-if="!option.option && !option.image.key"><img height="100" width="100" ng-src="img/speaker.png"> </div>-->
       <!--</label>-->
     </ion-content>
-
+</ion-slide>
+</ion-slide-box>
 
   </div>
   <audio id="audioplayer">
