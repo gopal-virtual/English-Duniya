@@ -243,9 +243,9 @@
 
       if(toState.name == 'auth.verify.phone'){
         $log.debug("verify");
-        document.addEventListener('onSMSArrive',function(e){
-          $rootScope.$broadcast('smsArrived',{'message':e})
-        });
+        // document.addEventListener('onSMSArrive',function(e){
+        //   $rootScope.$broadcast('smsArrived',{'message':e})
+        // });
 
       }
 
@@ -638,42 +638,42 @@
         $interval.cancel(authCtrl.start);
       }
     }
-
-    $scope.$on('smsArrived', function (event, data) {
-      $ionicLoading.show({
-        template: 'Getting OTP From SMS'
-      });
-      authCtrl.autoVerifyPhoneStatus = 'Getting OTP From SMS';
-      Auth.getOTPFromSMS(data.message, function (otp) {
-        $ionicLoading.show({
-          template: 'OTP received. Verifying..'
-        });
-        authCtrl.autoVerifyPhoneStatus = 'OTP received. Verifying..';
-        Auth.verifyOtp({'code': otp}, function (success) {
-          authCtrl.autoVerifyPhoneStatus = 'Verified';
-          otpVerifiedSuccessHandler(success);
-        }, function () {
-          $ionicLoading.hide();
-          authCtrl.autoVerifyPhoneStatus = 'Error Verifying OTP. Try Again';
-        });
-      }, function () {
-        $ionicLoading.hide();
-        authCtrl.autoVerifyPhoneStatus = 'Error Getting OTP From SMS';
-        //authCtrl.showError("Could not get OTP","Error fetching OTP");
-      });
-      if (SMS) {
-        SMS.stopWatch(function () {
-          $log.debug('watching', 'watching stopped');
-        }, function () {
-          updateStatus('failed to stop watching');
-        });
-        SMS.startWatch(function () {
-          $log.debug('watching', 'watching started');
-        }, function () {
-          updateStatus('failed to start watching');
-        });
-      }
-    });
+    //
+    // $scope.$on('smsArrived', function (event, data) {
+    //   $ionicLoading.show({
+    //     template: 'Getting OTP From SMS'
+    //   });
+    //   authCtrl.autoVerifyPhoneStatus = 'Getting OTP From SMS';
+    //   Auth.getOTPFromSMS(data.message, function (otp) {
+    //     $ionicLoading.show({
+    //       template: 'OTP received. Verifying..'
+    //     });
+    //     authCtrl.autoVerifyPhoneStatus = 'OTP received. Verifying..';
+    //     Auth.verifyOtp({'code': otp}, function (success) {
+    //       authCtrl.autoVerifyPhoneStatus = 'Verified';
+    //       otpVerifiedSuccessHandler(success);
+    //     }, function () {
+    //       $ionicLoading.hide();
+    //       authCtrl.autoVerifyPhoneStatus = 'Error Verifying OTP. Try Again';
+    //     });
+    //   }, function () {
+    //     $ionicLoading.hide();
+    //     authCtrl.autoVerifyPhoneStatus = 'Error Getting OTP From SMS';
+    //     //authCtrl.showError("Could not get OTP","Error fetching OTP");
+    //   });
+    //   if (SMS) {
+    //     SMS.stopWatch(function () {
+    //       $log.debug('watching', 'watching stopped');
+    //     }, function () {
+    //       updateStatus('failed to stop watching');
+    //     });
+    //     SMS.startWatch(function () {
+    //       $log.debug('watching', 'watching started');
+    //     }, function () {
+    //       updateStatus('failed to start watching');
+    //     });
+    //   }
+    // });
     function otpVerifiedSuccessHandler(success) {
       Auth.getUser(function (success) {
         $ionicLoading.hide();
@@ -1107,6 +1107,68 @@
 })();
 
 (function() {
+  'use strict';
+
+  angular
+    .module('zaya-content')
+    .controller('contentController', contentController);
+
+  contentController.$inject = ['$stateParams', 'orientation', '$log','$scope'];
+
+  /* @ngInject */
+  function contentController($stateParams, orientation, $log, $scope) {
+    var contentCtrl = this;
+    contentCtrl.onPlayerReady = onPlayerReady;
+    contentCtrl.config = {
+      sources: [$stateParams.video],
+      autoplay : true,
+      theme: "lib/videogular-themes-default/videogular.css"
+    };
+
+    function onPlayerReady(API) {
+      contentCtrl.API = API;
+    }
+
+    $scope.$on("$ionicView.beforeEnter", function(event, data) {
+      orientation.setLandscape();
+    });
+
+  }
+
+})();
+
+(function() {
+  'use strict';
+
+  mainRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
+  angular
+    .module('zaya-content')
+    .config(mainRoute);
+
+  function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
+
+    $stateProvider
+      .state('content', {
+          url : '/content',
+          abstract : true,
+          template : '<ion-nav-view name="state-content"></ion-nav-view>'
+      })
+      .state('content.video', {
+          url : '/video',
+          params: {
+            video: null,
+          },
+          views : {
+              'state-content' : {
+                  templateUrl : CONSTANT.PATH.CONTENT + '/content.video' + CONSTANT.VIEW,
+                  controller : 'contentController as contentCtrl'
+              }
+          }
+      })
+  }
+})();
+
+(function() {
   var ROOT = 'templates';
 
   angular
@@ -1440,68 +1502,6 @@
     });
   }
 
-})();
-
-(function() {
-  'use strict';
-
-  angular
-    .module('zaya-content')
-    .controller('contentController', contentController);
-
-  contentController.$inject = ['$stateParams', 'orientation', '$log','$scope'];
-
-  /* @ngInject */
-  function contentController($stateParams, orientation, $log, $scope) {
-    var contentCtrl = this;
-    contentCtrl.onPlayerReady = onPlayerReady;
-    contentCtrl.config = {
-      sources: [$stateParams.video],
-      autoplay : true,
-      theme: "lib/videogular-themes-default/videogular.css"
-    };
-
-    function onPlayerReady(API) {
-      contentCtrl.API = API;
-    }
-
-    $scope.$on("$ionicView.beforeEnter", function(event, data) {
-      orientation.setLandscape();
-    });
-
-  }
-
-})();
-
-(function() {
-  'use strict';
-
-  mainRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
-  angular
-    .module('zaya-content')
-    .config(mainRoute);
-
-  function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
-
-    $stateProvider
-      .state('content', {
-          url : '/content',
-          abstract : true,
-          template : '<ion-nav-view name="state-content"></ion-nav-view>'
-      })
-      .state('content.video', {
-          url : '/video',
-          params: {
-            video: null,
-          },
-          views : {
-              'state-content' : {
-                  templateUrl : CONSTANT.PATH.CONTENT + '/content.video' + CONSTANT.VIEW,
-                  controller : 'contentController as contentCtrl'
-              }
-          }
-      })
-  }
 })();
 
 (function() {
@@ -2293,7 +2293,7 @@ window.createGame = function(scope, lessons, injector, log) {
     quizCtrl.getCurrentIndex = getCurrentIndex;
     quizCtrl.prevQuestion = prevQuestion;
     quizCtrl.nextQuestion = nextQuestion;
-
+    quizCtrl.disableSwipe = disableSwipe;
     //log attempts & feedback
     quizCtrl.decide = decide;
     quizCtrl.canSubmit = canSubmit;
@@ -2725,7 +2725,7 @@ window.createGame = function(scope, lessons, injector, log) {
           });
         } else {
           $scope.modal.hide().then(function() {
-            
+
             quizCtrl.slideTo(quizCtrl.getCurrentIndex()+1);
             // quizCtrl.nextQuestion();
           });
@@ -2932,6 +2932,9 @@ window.createGame = function(scope, lessons, injector, log) {
       })
       return 'grid';
     }
+    function disableSwipe() {
+   $ionicSlideBoxDelegate.enableSlide(false);
+      }
   }
 })();
 

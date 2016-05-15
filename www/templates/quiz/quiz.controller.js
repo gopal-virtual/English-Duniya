@@ -18,7 +18,7 @@
     quizCtrl.getCurrentIndex = getCurrentIndex;
     quizCtrl.prevQuestion = prevQuestion;
     quizCtrl.nextQuestion = nextQuestion;
-
+    quizCtrl.disableSwipe = disableSwipe;
     //log attempts & feedback
     quizCtrl.decide = decide;
     quizCtrl.canSubmit = canSubmit;
@@ -450,7 +450,7 @@
           });
         } else {
           $scope.modal.hide().then(function() {
-            
+
             quizCtrl.slideTo(quizCtrl.getCurrentIndex()+1);
             // quizCtrl.nextQuestion();
           });
@@ -657,5 +657,8 @@
       })
       return 'grid';
     }
+    function disableSwipe() {
+   $ionicSlideBoxDelegate.enableSlide(false);
+      }
   }
 })();
