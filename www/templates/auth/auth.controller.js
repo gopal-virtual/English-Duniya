@@ -340,42 +340,42 @@
         $interval.cancel(authCtrl.start);
       }
     }
-
-    $scope.$on('smsArrived', function (event, data) {
-      $ionicLoading.show({
-        template: 'Getting OTP From SMS'
-      });
-      authCtrl.autoVerifyPhoneStatus = 'Getting OTP From SMS';
-      Auth.getOTPFromSMS(data.message, function (otp) {
-        $ionicLoading.show({
-          template: 'OTP received. Verifying..'
-        });
-        authCtrl.autoVerifyPhoneStatus = 'OTP received. Verifying..';
-        Auth.verifyOtp({'code': otp}, function (success) {
-          authCtrl.autoVerifyPhoneStatus = 'Verified';
-          otpVerifiedSuccessHandler(success);
-        }, function () {
-          $ionicLoading.hide();
-          authCtrl.autoVerifyPhoneStatus = 'Error Verifying OTP. Try Again';
-        });
-      }, function () {
-        $ionicLoading.hide();
-        authCtrl.autoVerifyPhoneStatus = 'Error Getting OTP From SMS';
-        //authCtrl.showError("Could not get OTP","Error fetching OTP");
-      });
-      if (SMS) {
-        SMS.stopWatch(function () {
-          $log.debug('watching', 'watching stopped');
-        }, function () {
-          updateStatus('failed to stop watching');
-        });
-        SMS.startWatch(function () {
-          $log.debug('watching', 'watching started');
-        }, function () {
-          updateStatus('failed to start watching');
-        });
-      }
-    });
+    //
+    // $scope.$on('smsArrived', function (event, data) {
+    //   $ionicLoading.show({
+    //     template: 'Getting OTP From SMS'
+    //   });
+    //   authCtrl.autoVerifyPhoneStatus = 'Getting OTP From SMS';
+    //   Auth.getOTPFromSMS(data.message, function (otp) {
+    //     $ionicLoading.show({
+    //       template: 'OTP received. Verifying..'
+    //     });
+    //     authCtrl.autoVerifyPhoneStatus = 'OTP received. Verifying..';
+    //     Auth.verifyOtp({'code': otp}, function (success) {
+    //       authCtrl.autoVerifyPhoneStatus = 'Verified';
+    //       otpVerifiedSuccessHandler(success);
+    //     }, function () {
+    //       $ionicLoading.hide();
+    //       authCtrl.autoVerifyPhoneStatus = 'Error Verifying OTP. Try Again';
+    //     });
+    //   }, function () {
+    //     $ionicLoading.hide();
+    //     authCtrl.autoVerifyPhoneStatus = 'Error Getting OTP From SMS';
+    //     //authCtrl.showError("Could not get OTP","Error fetching OTP");
+    //   });
+    //   if (SMS) {
+    //     SMS.stopWatch(function () {
+    //       $log.debug('watching', 'watching stopped');
+    //     }, function () {
+    //       updateStatus('failed to stop watching');
+    //     });
+    //     SMS.startWatch(function () {
+    //       $log.debug('watching', 'watching started');
+    //     }, function () {
+    //       updateStatus('failed to start watching');
+    //     });
+    //   }
+    // });
     function otpVerifiedSuccessHandler(success) {
       Auth.getUser(function (success) {
         $ionicLoading.hide();

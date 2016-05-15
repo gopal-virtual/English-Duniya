@@ -58,9 +58,9 @@
 
       if(toState.name == 'auth.verify.phone'){
         $log.debug("verify");
-        document.addEventListener('onSMSArrive',function(e){
-          $rootScope.$broadcast('smsArrived',{'message':e})
-        });
+        // document.addEventListener('onSMSArrive',function(e){
+        //   $rootScope.$broadcast('smsArrived',{'message':e})
+        // });
 
       }
 
