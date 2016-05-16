@@ -11024,11 +11024,11 @@ p * {
 
 .practice-feedback.correct {
   background: url("../img/correct.png") no-repeat center center;
-  background-size: auto 70%; }
+  background-size: auto 40%; }
 
 .practice-feedback.wrong {
   background: url("../img/incorrect.png") no-repeat center center;
-  background-size: auto 70%; }
+  background-size: auto 40%; }
 
 .card-image {
   height: 100px;
