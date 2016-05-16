@@ -97,11 +97,11 @@ box-shadow: none;
 }
 .practice-feedback.correct{
   background: url($feedback-image-correct) no-repeat center center;
-  background-size: auto 70%;
+  background-size: auto 40%;
 }
 .practice-feedback.wrong{
   background: url($feedback-image-incorrect) no-repeat center center;
-  background-size: auto 70%;
+  background-size: auto 40%;
 }
 .card-image{
   height: 100px;

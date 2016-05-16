@@ -9742,7 +9742,7 @@ input[type=radio].hide {
 
 .input-group > .input-group-addon-energised {
   background-color: #ffc900;
-  color: black; }
+  color: white; }
 
 .input-group > .input-group-addon-assertive {
   background-color: #ef473a;
@@ -11024,11 +11024,11 @@ p * {
 
 .practice-feedback.correct {
   background: url("../img/correct.png") no-repeat center center;
-  background-size: auto 70%; }
+  background-size: auto 40%; }
 
 .practice-feedback.wrong {
   background: url("../img/incorrect.png") no-repeat center center;
-  background-size: auto 70%; }
+  background-size: auto 40%; }
 
 .card-image {
   height: 100px;
@@ -11314,7 +11314,7 @@ progress[value]::-webkit-progress-value {
 
 .alert-energised {
   background-color: #ffc900;
-  color: black; }
+  color: white; }
 
 .alert-assertive {
   background-color: #ef473a;
