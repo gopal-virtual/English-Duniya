@@ -1112,7 +1112,7 @@
   angular
     .module('common')
     .constant('CONSTANT', {
-        'LOCK' : false,
+        'LOCK' : true,
       'BACKEND_SERVICE_DOMAIN': 'http://cc-test.zaya.in/',
       // 'BACKEND_SERVICE_DOMAIN' : 'http://192.168.1.6:9000/',
       'PATH': {
@@ -1443,6 +1443,74 @@
 })();
 
 (function() {
+  'use strict';
+
+  angular
+    .module('zaya-content')
+    .controller('contentController', contentController);
+
+  contentController.$inject = ['$stateParams', 'orientation', '$log','$scope'];
+
+  /* @ngInject */
+  function contentController($stateParams, orientation, $log, $scope) {
+    var contentCtrl = this;
+    contentCtrl.onPlayerReady = onPlayerReady;
+    contentCtrl.config = {
+      sources: [$stateParams.video],
+      autoplay : true,
+      plugins : {
+          controls: {
+              autoHide: true,
+              autoHideTime: 500,
+          },
+      },
+      theme: "lib/videogular-themes-default/videogular.css"
+    };
+
+    function onPlayerReady(API) {
+      contentCtrl.API = API;
+    }
+
+    $scope.$on("$ionicView.beforeEnter", function(event, data) {
+      orientation.setLandscape();
+    });
+
+  }
+
+})();
+
+(function() {
+  'use strict';
+
+  mainRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
+  angular
+    .module('zaya-content')
+    .config(mainRoute);
+
+  function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
+
+    $stateProvider
+      .state('content', {
+          url : '/content',
+          abstract : true,
+          template : '<ion-nav-view name="state-content"></ion-nav-view>'
+      })
+      .state('content.video', {
+          url : '/video',
+          params: {
+            video: null,
+          },
+          views : {
+              'state-content' : {
+                  templateUrl : CONSTANT.PATH.CONTENT + '/content.video' + CONSTANT.VIEW,
+                  controller : 'contentController as contentCtrl'
+              }
+          }
+      })
+  }
+})();
+
+(function() {
     'use strict';
 
     angular
@@ -1495,68 +1563,6 @@
         url : '/intro',
         templateUrl : CONSTANT.PATH.INTRO+'/intro'+CONSTANT.VIEW,
         controller : "introController as introCtrl"
-      })
-  }
-})();
-
-(function() {
-  'use strict';
-
-  angular
-    .module('zaya-content')
-    .controller('contentController', contentController);
-
-  contentController.$inject = ['$stateParams', 'orientation', '$log','$scope'];
-
-  /* @ngInject */
-  function contentController($stateParams, orientation, $log, $scope) {
-    var contentCtrl = this;
-    contentCtrl.onPlayerReady = onPlayerReady;
-    contentCtrl.config = {
-      sources: [$stateParams.video],
-      autoplay : true,
-      theme: "lib/videogular-themes-default/videogular.css"
-    };
-
-    function onPlayerReady(API) {
-      contentCtrl.API = API;
-    }
-
-    $scope.$on("$ionicView.beforeEnter", function(event, data) {
-      orientation.setLandscape();
-    });
-
-  }
-
-})();
-
-(function() {
-  'use strict';
-
-  mainRoute.$inject = ["$stateProvider", "$urlRouterProvider", "CONSTANT"];
-  angular
-    .module('zaya-content')
-    .config(mainRoute);
-
-  function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
-
-    $stateProvider
-      .state('content', {
-          url : '/content',
-          abstract : true,
-          template : '<ion-nav-view name="state-content"></ion-nav-view>'
-      })
-      .state('content.video', {
-          url : '/video',
-          params: {
-            video: null,
-          },
-          views : {
-              'state-content' : {
-                  templateUrl : CONSTANT.PATH.CONTENT + '/content.video' + CONSTANT.VIEW,
-                  controller : 'contentController as contentCtrl'
-              }
-          }
       })
   }
 })();
@@ -2036,12 +2042,16 @@ window.createGame = function(scope, lessons, injector, log) {
         var posy = this.math.catmullRomInterpolation(this.points.y, j);
         var node = this.game.add.button(posx, posy, 'node'+type+locked);
         node.inputEnabled = true;
-        node.events.onInputDown.add(function(currentLesson){
-            return function(){
-                if(!currentLesson.locked)
-                    scope.$emit('openNode',currentLesson);
-            }
-        }(currentLesson));
+        node.events.onInputUp.add(
+            function(currentLesson, game){
+                return function(){
+                    var displacement = game.kineticScrolling.velocityY > -20 && game.kineticScrolling.velocityY < 20;
+                    if(!currentLesson.locked && displacement){
+                        scope.$emit('openNode',currentLesson);
+                    }
+                }
+            }(currentLesson,this.game)
+        );
         // icon.anchor.setTo(0.5,0.5);
         // icon.scale.setTo(0.3,0.3);
         node.anchor.setTo(0.5, 0.5);
@@ -2155,6 +2165,122 @@ window.createGame = function(scope, lessons, injector, log) {
         }
       })
   }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('zaya-profile')
+        .controller('profileController', profileController);
+
+    profileController.$inject = ['CONSTANT','$state','Auth','Rest','$log','$ionicPopup','$ionicLoading'];
+
+    function profileController(CONSTANT, $state, Auth, Rest, $log, $ionicPopup, $ionicLoading) {
+        var profileCtrl = this;
+        profileCtrl.createProfile = createProfile;
+        profileCtrl.updateProfile = updateProfile;
+        profileCtrl.logout = logout;
+        profileCtrl.calcAge = calcAge;
+        profileCtrl.closeKeyboard = closeKeyboard;
+        profileCtrl.validatePersonaliseForm = validatePersonaliseForm;
+        profileCtrl.showError = showError;
+        profileCtrl.convertDate = convertDate;
+        profileCtrl.tabIndex = 0;
+        profileCtrl.tab = [
+          {
+            type : 'group',
+            path : CONSTANT.PATH.PROFILE + '/profile.groups' + CONSTANT.VIEW,
+            icon : 'ion-person-stalker'
+          },
+          {
+            type : 'badge',
+            path : CONSTANT.PATH.PROFILE + '/profile.badges' + CONSTANT.VIEW,
+            icon : 'ion-trophy'
+          }
+        ]
+
+        function calcAge(dateString) {
+          var birthday = +new Date(dateString);
+          return ~~((Date.now() - birthday) / (31557600000));
+        }
+        function convertDate(date) {
+          function pad(s) { return (s < 10) ? '0' + s : s; }
+          var d = new Date(date);
+          $log.debug([d.getFullYear(),pad(d.getMonth()+1),pad(d.getDate())  ].join('-'))
+          return [d.getFullYear(),pad(d.getMonth()+1),pad(d.getDate())  ].join('-');
+        }
+
+        function createProfile (userdata) {
+            $ionicLoading.show({
+              noBackdrop: false,
+              hideOnStateChange: true
+            });
+          Rest.all('profiles').post(userdata).then(function(response){
+              Auth.getUser(function(){
+                $state.go('map.navigate',{});
+              },function(){
+                profileCtrl.showError('Error', 'Error making profile');
+              })
+          },function(error){
+              $ionicLoading.hide();
+            $ionicPopup.alert({
+              title : _.chain(error.data).keys().first(),
+              template : error.data[_.chain(error.data).keys().first()].toString(),
+            });
+          })
+        }
+
+        function updateProfile(userdata) {
+          // body...
+        }
+
+        function logout() {
+          Auth.logout(function () {
+            $state.go('auth.signin',{})
+          },function () {
+            // body...
+          })
+        }
+        function showError(title, msg) {
+          $log.debug(title, msg);
+          $ionicPopup.alert({
+            title: title,
+            template: msg
+          });
+        }
+
+        function validatePersonaliseForm(formData) {
+          $log.debug(formData);
+          if (formData.first_name && !formData.first_name.$viewValue) {
+            profileCtrl.showError("Child's name", "Please enter child's name");
+            return false;
+          }
+          if (formData.dob && !formData.dob.$viewValue) {
+            profileCtrl.showError("DOB", "Please select a DOB");
+            return false;
+          }
+          if (formData.gender && !formData.gender.$viewValue) {
+            profileCtrl.showError("Gender", "Please select a gender");
+            return false;
+          }
+          if (formData.gender && !formData.gender.$viewValue) {
+            profileCtrl.showError("Grade", "Please select a grade");
+            return false;
+          }
+          return true;
+        }
+        function closeKeyboard() {
+          try{
+            cordova.plugins.Keyboard.close();
+          }
+          catch(e){
+            $log.debug(e);
+          }
+          return true;
+        }
+
+    }
 })();
 
 (function() {
@@ -2945,122 +3071,6 @@ window.createGame = function(scope, lessons, injector, log) {
         }
       })
   }
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('zaya-profile')
-        .controller('profileController', profileController);
-
-    profileController.$inject = ['CONSTANT','$state','Auth','Rest','$log','$ionicPopup','$ionicLoading'];
-
-    function profileController(CONSTANT, $state, Auth, Rest, $log, $ionicPopup, $ionicLoading) {
-        var profileCtrl = this;
-        profileCtrl.createProfile = createProfile;
-        profileCtrl.updateProfile = updateProfile;
-        profileCtrl.logout = logout;
-        profileCtrl.calcAge = calcAge;
-        profileCtrl.closeKeyboard = closeKeyboard;
-        profileCtrl.validatePersonaliseForm = validatePersonaliseForm;
-        profileCtrl.showError = showError;
-        profileCtrl.convertDate = convertDate;
-        profileCtrl.tabIndex = 0;
-        profileCtrl.tab = [
-          {
-            type : 'group',
-            path : CONSTANT.PATH.PROFILE + '/profile.groups' + CONSTANT.VIEW,
-            icon : 'ion-person-stalker'
-          },
-          {
-            type : 'badge',
-            path : CONSTANT.PATH.PROFILE + '/profile.badges' + CONSTANT.VIEW,
-            icon : 'ion-trophy'
-          }
-        ]
-
-        function calcAge(dateString) {
-          var birthday = +new Date(dateString);
-          return ~~((Date.now() - birthday) / (31557600000));
-        }
-        function convertDate(date) {
-          function pad(s) { return (s < 10) ? '0' + s : s; }
-          var d = new Date(date);
-          $log.debug([d.getFullYear(),pad(d.getMonth()+1),pad(d.getDate())  ].join('-'))
-          return [d.getFullYear(),pad(d.getMonth()+1),pad(d.getDate())  ].join('-');
-        }
-
-        function createProfile (userdata) {
-            $ionicLoading.show({
-              noBackdrop: false,
-              hideOnStateChange: true
-            });
-          Rest.all('profiles').post(userdata).then(function(response){
-              Auth.getUser(function(){
-                $state.go('map.navigate',{});
-              },function(){
-                profileCtrl.showError('Error', 'Error making profile');
-              })
-          },function(error){
-              $ionicLoading.hide();
-            $ionicPopup.alert({
-              title : _.chain(error.data).keys().first(),
-              template : error.data[_.chain(error.data).keys().first()].toString(),
-            });
-          })
-        }
-
-        function updateProfile(userdata) {
-          // body...
-        }
-
-        function logout() {
-          Auth.logout(function () {
-            $state.go('auth.signin',{})
-          },function () {
-            // body...
-          })
-        }
-        function showError(title, msg) {
-          $log.debug(title, msg);
-          $ionicPopup.alert({
-            title: title,
-            template: msg
-          });
-        }
-
-        function validatePersonaliseForm(formData) {
-          $log.debug(formData);
-          if (formData.first_name && !formData.first_name.$viewValue) {
-            profileCtrl.showError("Child's name", "Please enter child's name");
-            return false;
-          }
-          if (formData.dob && !formData.dob.$viewValue) {
-            profileCtrl.showError("DOB", "Please select a DOB");
-            return false;
-          }
-          if (formData.gender && !formData.gender.$viewValue) {
-            profileCtrl.showError("Gender", "Please select a gender");
-            return false;
-          }
-          if (formData.gender && !formData.gender.$viewValue) {
-            profileCtrl.showError("Grade", "Please select a grade");
-            return false;
-          }
-          return true;
-        }
-        function closeKeyboard() {
-          try{
-            cordova.plugins.Keyboard.close();
-          }
-          catch(e){
-            $log.debug(e);
-          }
-          return true;
-        }
-
-    }
 })();
 
 (function() {

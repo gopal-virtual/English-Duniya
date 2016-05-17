@@ -4,7 +4,7 @@
             <vg-media vg-src="contentCtrl.config.sources">
             </vg-media>
             <vg-buffering></vg-buffering>
-            <vg-controls>
+            <vg-controls vg-autohide="contentCtrl.config.plugins.controls.autoHide" vg-autohide-time="contentCtrl.config.plugins.controls.autoHideTime">
                 <vg-play-pause-button></vg-play-pause-button>
                 <vg-time-display>{{ currentTime | date:"mm:ss" : 'UTC' }}</vg-time-display>
                 <vg-scrub-bar>
@@ -15,7 +15,6 @@
                     <vg-mute-button></vg-mute-button>
                     <vg-volume-bar></vg-volume-bar>
                 </vg-volume>
-                <vg-fullscreen-button></vg-fullscreen-button>
             </vg-controls>
         </videogular>
     </ion-content>

@@ -14,6 +14,12 @@
     contentCtrl.config = {
       sources: [$stateParams.video],
       autoplay : true,
+      plugins : {
+          controls: {
+              autoHide: true,
+              autoHideTime: 500,
+          },
+      },
       theme: "lib/videogular-themes-default/videogular.css"
     };
 

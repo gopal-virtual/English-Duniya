@@ -174,12 +174,16 @@ window.createGame = function(scope, lessons, injector, log) {
         var posy = this.math.catmullRomInterpolation(this.points.y, j);
         var node = this.game.add.button(posx, posy, 'node'+type+locked);
         node.inputEnabled = true;
-        node.events.onInputDown.add(function(currentLesson){
-            return function(){
-                if(!currentLesson.locked)
-                    scope.$emit('openNode',currentLesson);
-            }
-        }(currentLesson));
+        node.events.onInputUp.add(
+            function(currentLesson, game){
+                return function(){
+                    var displacement = game.kineticScrolling.velocityY > -20 && game.kineticScrolling.velocityY < 20;
+                    if(!currentLesson.locked && displacement){
+                        scope.$emit('openNode',currentLesson);
+                    }
+                }
+            }(currentLesson,this.game)
+        );
         // icon.anchor.setTo(0.5,0.5);
         // icon.scale.setTo(0.3,0.3);
         node.anchor.setTo(0.5, 0.5);
