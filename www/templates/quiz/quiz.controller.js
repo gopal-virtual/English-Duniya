@@ -85,7 +85,6 @@
 
         function onBackKeyDown(e) {
           e.preventDefault();
-          quizCpauseQuiz()
           $ionicLoading.show({
             noBackdrop: false,
             hideOnStateChange: true
@@ -161,7 +160,6 @@
       } else if ($state.current.name == 'quiz.practice.summary') {
         function onBackKeyDown(e) {
           e.preventDefault();
-          quizCpauseQuiz()
           $ionicLoading.show({
             noBackdrop: false,
             hideOnStateChange: true
