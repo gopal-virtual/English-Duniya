@@ -617,6 +617,10 @@
     }
 
     function restartQuiz() {
+      $ionicLoading.show({
+        noBackdrop: false,
+        hideOnStateChange: true
+      });
       $state.go($state.current, {}, {
         reload: true
       });
