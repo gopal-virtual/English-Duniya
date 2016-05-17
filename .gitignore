@@ -8,6 +8,7 @@ plugins/
 /www/_js/
 .idea/
 *.apk
-/www/build/
+/www/build/mobile.app.js
+/www/build/*
 /www/css/
 .DS_Store
