@@ -3,9 +3,9 @@
     .module('zaya-quiz')
     .controller('QuizController', QuizController)
 
-  QuizController.$inject = ['quiz', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Quiz', 'Auth', '$ionicLoading', '$ionicPopup'];
+  QuizController.$inject = ['$ionicPlatform','quiz', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Quiz', 'Auth', '$ionicLoading', '$ionicPopup'];
 
-  function QuizController(quiz, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Quiz, Auth, $ionicLoading, $ionicPopup) {
+  function QuizController($ionicPlatform,quiz, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Quiz, Auth, $ionicLoading, $ionicPopup) {
     var quizCtrl = this;
 
     quizCtrl.quiz = quiz;
@@ -78,19 +78,24 @@
     }
 
     function init(quiz) {
-
+        $ionicPlatform.registerBackButtonAction(function (event) {
+            if ($state.current.name == "quiz.summary || quiz.practice.summary"){
+                $ionicLoading.show({
+                  noBackdrop: false,
+                  hideOnStateChange: true
+                });
+                $state.go('map.navigate');
+            }
+            else if ($state.current.name == "quiz.questions" || $state.current.name == "quiz.practice.questions") {
+                quizCtrl.pauseQuiz();
+          }
+        }, 100);
+    
       // init report object
       if ($state.current.name == "quiz.summary") {
         document.addEventListener("backbutton", onBackKeyDown, false);
 
-        function onBackKeyDown(e) {
-          e.preventDefault();
-          $ionicLoading.show({
-            noBackdrop: false,
-            hideOnStateChange: true
-          });
-          $state.go('map.navigate');
-        }
+
 
         quizCtrl.report = $stateParams.report;
         $log.debug("Summary")
@@ -128,6 +133,7 @@
       } else if ($state.current.name == "quiz.questions" || $state.current.name == "quiz.practice.questions") {
         function onBackKeyDown(e) {
           e.preventDefault();
+          $log.debug("ok")
           quizCtrl.pauseQuiz();
         }
         quizCtrl.report = {};
