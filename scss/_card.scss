@@ -53,7 +53,7 @@
   display: inline-block;
   width: 40%;
   height: 33%;
-  margin: 10px 10px 0px 10px;
+  margin: 5px 5px 0;
 }
 .content-image {
   display: block;
@@ -63,6 +63,9 @@
 .question{
   height: 100%;
   font-size: 1.5em;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 .question>.content-image {
   max-height: 75%;
