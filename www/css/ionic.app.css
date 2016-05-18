@@ -9831,7 +9831,11 @@ input[type=radio].hide {
   border-top: thin solid #c4c4c4;
   border-left: thin solid #c4c4c4;
   border-bottom: thin solid #c4c4c4;
-  max-width: 15%; }
+  max-width: 15%;
+  min-width: 15%; }
+
+.input-group-social > .input-group-item:not(:first-child) {
+  max-width: 85%; }
 
 .button {
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.5);
