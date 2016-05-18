@@ -13,7 +13,6 @@
     });
     var mapCtrl = this;
     mapCtrl.lessons = CONSTANT.LOCK ? extendLesson.getLesson(lessons, scores) : lessons;
-
     mapCtrl.getLesson = getLesson;
     mapCtrl.getSrc = getSrc;
     mapCtrl.resetNode = resetNode;
@@ -45,17 +44,24 @@
       score: 3000
     }];
 
-    function logout() {
+    function logout(type) {
       mapCtrl.closeSettings();
       $ionicLoading.show({
         noBackdrop: false,
         hideOnStateChange: true
       });
-      Auth.logout(function() {
-        $state.go('auth.signin', {})
-      }, function() {
-        // body...
-      })
+      if(type=='clean'){
+          Auth.clean(function(){
+              $state.go('auth.signin', {})
+          })
+      }
+      else{
+          Auth.logout(function() {
+              $state.go('auth.signin', {})
+          }, function() {
+              // body...
+          })
+      }
     }
 
     function openSettings() {
@@ -181,7 +187,7 @@
     }
 
     $timeout(function functionName() {
-      if (localStorage.lesson) {
+      if (mapCtrl.lessons && localStorage.lesson) {
         $scope.openModal();
         mapCtrl.selectedNode = JSON.parse(localStorage.lesson);
       }
