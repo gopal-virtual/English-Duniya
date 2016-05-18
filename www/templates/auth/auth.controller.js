@@ -282,6 +282,8 @@
         }
         else {
           authCtrl.showAlert("Reset Password", "We have send a link to your email");
+            authCtrl.closeModal('recover');
+                $state.go('auth.signin');
         }
         authCtrl.resetPasswordLinkSent = true;
         $ionicLoading.hide();
