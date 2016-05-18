@@ -177,7 +177,7 @@ window.createGame = function(scope, lessons, injector, log) {
         node.events.onInputUp.add(
             function(currentLesson, game){
                 return function(){
-                    var displacement = game.kineticScrolling.velocityY > -20 && game.kineticScrolling.velocityY < 20;
+                    var displacement = game.kineticScrolling.velocityY > -30 && game.kineticScrolling.velocityY < 30;
                     if(!currentLesson.locked && displacement){
                         scope.$emit('openNode',currentLesson);
                     }
