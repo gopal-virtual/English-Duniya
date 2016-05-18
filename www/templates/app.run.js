@@ -70,29 +70,33 @@
     //     StatusBar.hide();
     //   }
       // detect app activity
-      document.addEventListener("pause", function(){
-        $log.debug("paused");
-        try{
-          var video = document.querySelector('video');
-          if(!video.paused){
-            video.pause();
-          }
-        }
-        catch(e){
-          $log.debug(e);
-        }
-      }, false);
+      if(navigator.splashscreen){
+          navigator.splashscreen.hide();
+      }
+
+    //   document.addEventListener("pause", function(){
+    //     $log.debug("paused");
+    //     try{
+    //       var video = document.querySelector('video');
+    //       if(!video.paused){
+    //         video.pause();
+    //       }
+    //     }
+    //     catch(e){
+    //       $log.debug(e);
+    //     }
+    //   }, false);
       // sms watch
-      try{
-        SMS && SMS.startWatch(function () {
-          $log.debug('start watching sms');
-        }, function () {
-          $log.debug('Failed to start sms watching');
-        });
-      }
-      catch(error){
-        $log.debug(error);
-      }
+    //   try{
+    //     SMS && SMS.startWatch(function () {
+    //       $log.debug('start watching sms');
+    //     }, function () {
+    //       $log.debug('Failed to start sms watching');
+    //     });
+    //   }
+    //   catch(error){
+    //     $log.debug(error);
+    //   }
 
       if (window.cordova && window.cordova.plugins.Keyboard) {
         // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard

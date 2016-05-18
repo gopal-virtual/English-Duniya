@@ -16,6 +16,7 @@
   <preference name="android-minSdkVersion" value="16"/>
   <preference name="BackupWebStorage" value="none"/>
   <preference name="SplashScreen" value="screen"/>
+  <preference name="AutoHideSplashScreen" value="false"/>
   <preference name="ShowSplashScreenSpinner" value="false"/>
   <preference name="SplashScreenDelay" value="10000"/>
   <preference name="xwalkVersion" value="xwalk_core_library_beta:18+"/>
