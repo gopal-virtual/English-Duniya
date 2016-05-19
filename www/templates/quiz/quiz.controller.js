@@ -18,7 +18,7 @@
     quizCtrl.getCurrentIndex = getCurrentIndex;
     quizCtrl.prevQuestion = prevQuestion;
     quizCtrl.nextQuestion = nextQuestion;
-
+    quizCtrl.disableSwipe = disableSwipe;
     //log attempts & feedback
     quizCtrl.decide = decide;
     quizCtrl.canSubmit = canSubmit;
@@ -664,6 +664,9 @@
           $('<img/>')[0].src = 'http://cc-test.zaya.in'+image;
         })
       })
+    }
+    function disableSwipe(){
+      $ionicSlideBoxDelegate.enableSlide(false);
     }
   }
 })();
