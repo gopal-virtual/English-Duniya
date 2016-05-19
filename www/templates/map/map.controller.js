@@ -153,10 +153,15 @@
     }
 
 
-    $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal' + CONSTANT.VIEW, {
+    // $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal' + CONSTANT.VIEW, {
+    //   scope: $scope,
+    //   animation: 'slide-in-down',
+    // }).then(function(modal) {
+    //   $scope.modal = modal;
+    // });
+    $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal-rope' + CONSTANT.VIEW, {
       scope: $scope,
-      animation: 'slide-in-up',
-      //   hardwareBackButtonClose: false
+      animation: 'slide-in-down',
     }).then(function(modal) {
       $scope.modal = modal;
     });
@@ -169,7 +174,10 @@
     });
 
     function resetNode() {
-      mapCtrl.selectedNode = {};
+    $timeout(function(){
+        mapCtrl.selectedNode = {};
+
+    },400)
     }
 
     function getLesson(id) {
