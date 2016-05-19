@@ -259,8 +259,6 @@
         quizCtrl.quiz.objects[quizCtrl.currentIndex].node.id,
         quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted
       );
-
-
       if (quizCtrl.isCorrectAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex])) {
         quizCtrl.practiceResult.scoredMarks += quizCtrl.quiz.objects[quizCtrl.currentIndex].node.type.score;
         $log.debug("scored marks", quizCtrl.practiceResult.scoredMarks)
@@ -268,21 +266,29 @@
         $log.debug("percent", quizCtrl.practiceResult.percentCorrect)
         quizCtrl.myStyle.width = quizCtrl.practiceResult.percentCorrect + "%";
       } else {
-        if (quizCtrl.report.attempts[quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.id].length == 2) {
-          quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].attempted = {};
-          quizCtrl.quiz.objects.push(angular.copy(quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()]))
-        }
 
+        // SCQ
+        if ((quizCtrl.quiz.objects[quizCtrl.currentIndex].node.type.type == "choicequestion" && !quizCtrl.quiz.objects[quizCtrl.currentIndex].node.type.content.is_multiple)) {
+          quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].attempted = '';
+        }
+        // MCQ
+        if (quizCtrl.quiz.objects[quizCtrl.currentIndex].node.type.type == "choicequestion" && quizCtrl.quiz.objects[quizCtrl.currentIndex].node.type.content.is_multiple) {
+          quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].attempted = {};
+        }
+        if (quizCtrl.report.attempts[quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.id].length == 2) {
+          quizCtrl.quiz.objects.push(angular.copy(quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()]));
+        }
       }
       $scope.openModal();
-
-
     }
 
     function canSubmit() {
 
+      $log.debug("can submit for",quizCtrl.currentIndex);
+
       // SCQ | DR
       if ((quizCtrl.quiz.objects[quizCtrl.currentIndex].node.type.type == "choicequestion" && !quizCtrl.quiz.objects[quizCtrl.currentIndex].node.type.content.is_multiple) || quizCtrl.quiz.objects[quizCtrl.currentIndex].node.type.type == "dr question") {
+        $log.debug(quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted);
         return quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted;
       }
       // MCQ
