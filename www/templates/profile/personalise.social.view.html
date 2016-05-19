@@ -33,27 +33,24 @@
                   </div>
               </div>
               <div class="row">
-                  <div class="col">
+                  <div class="col" ng-init="profileCtrl.grades = [{id : 1, name : 'Grade 1'}, {id : 2, name : 'Grade 2'}, { id : 3, name : 'Grade 3'}]">
                       <label for="" class="item item-input item-select">
                           <span class="input-label font-md">Grade</span>
-                          <select name="grade" class="font-md" ng-model="profileCtrl.user.grade" required>
-                              <option value="1">Grade 1</option>
-                              <option value="2">Grade 2</option>
-                              <option value="3">Grade 3</option>
+                          <select name="grade" class="font-md" ng-model="profileCtrl.user.grade"
+                          ng-options="option.id as option.name for option in profileCtrl.grades track by option.id"required>
+                          <option value="" selected hidden />
                           </select>
                       </label>
                   </div>
               </div>
               <div class="row">
-                  <div class="col">
+                  <div class="col" ng-init="profileCtrl.langs = [{id : 1, name : 'Hindi'}, {id : 2, name : 'Bengali'}, {id : 3, name : 'Gujrati'}, {id : 4, name : 'Punjabi'}]">
                       <label for="" class="item item-input item-select">
-                          <span class="input-label font-md">Mothertongue</span>
-                          <select name="grade" class="font-md" ng-model="profileCtrl.user.language" required>
-                              <option value="2">Hindi</option>
-                              <option value="1">Bengali</option>
-                              <option value="3">Gujrati</option>
-                              <option value="3">Punjabi</option>
-                          </select>
+                          <span class="input-label font-md">Mother Tongue</span>
+                          <select name="grade" class="font-md" ng-model="profileCtrl.user.language"
+                          ng-options="option.id as option.name for option in profileCtrl.langs track by option.id" required>
+                          <option value="" selected hidden />
+                              </select>
                       </label>
                   </div>
               </div>

@@ -4,6 +4,10 @@
   padding: 10px;
   border-radius: $border-radius;
 }
+.button[disabled]{
+  background-color: $brand-grey;
+  color: darken($brand-grey,80%);
+}
 .button-green{
   background-color: $brand-green;
   color : $brand-white;
