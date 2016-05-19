@@ -1,10 +1,10 @@
 <ion-pane class="bg-pale" ng-if="quizCtrl.quiz.objects.length">
-  <div class="bar bar-header bg-pale quiz-header">
+  <div class="bar bar-header bg-pale quiz-header padding-0">
     <div class="row padding-0 ">
       <div class="col padding-0 vertical-center">
         <div  ng-click="quizCtrl.pauseQuiz()" class="header-icon icon-pause icon-fit-height padding-10"></div>
       </div>
-      <div class="row">
+      <div class="row margin-10">
         <progress max="1" class="progress-bar-quiz" value="{{(quizCtrl.currentIndex+1)/quizCtrl.quiz.objects.length}}"></progress>
       </div>
       <div class="col" align="right">
@@ -15,13 +15,13 @@
   </div>
   <ion-slide-box on-slide-changed="quizCtrl.slideHasChanged($index)" show-pager="false">
     <ion-slide ng-repeat="question in quizCtrl.quiz.objects" ng-class="{'animation-question-slide':quizCtrl.isCurrentIndex($index)}">
-      <div class="bar bar-subheader question-subheader bg-pale ">
+      <div class="bar bar-subheader question-subheader bg-pale padding-0">
 
         <div
           ng-class="{'font-sl':quizCtrl.parseToDisplay(question.node.title).length == 1}"
           ng-if="question.node.title"
           ng-bind-html="quizCtrl.parseToDisplay(question.node.title)"
-          class="question card card-transparent center margin-x-0 margin-y-0"
+          class="question card card-transparent center margin-x-0 margin-y-0 padding-0"
           ng-click="quizCtrl.playAudio(quizCtrl.getSoundId(question.node.title))">
 
           <!-- <div ng-if="question.node.type.content.image"><img class="question-image" ng-src="{{question.node.type.content.image}}"></div> -->
