@@ -3,9 +3,12 @@
     .module('zaya-quiz')
     .controller('QuizController', QuizController)
 
-  QuizController.$inject = ['quiz', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Quiz', 'Auth', '$ionicLoading', '$ionicPopup','lessonutils'];
+  QuizController.$inject = ['quiz', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Quiz', 'Auth', '$ionicLoading', '$ionicPopup','lessonutils','orientation'];
 
-  function QuizController(quiz, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Quiz, Auth, $ionicLoading, $ionicPopup, lessonutils) {
+  function QuizController(quiz, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Quiz, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation) {
+      $scope.$on("$ionicView.beforeEnter", function(event, data) {
+        orientation.setPortrait();
+      });
     var quizCtrl = this;
 
     quizCtrl.quiz = quiz;

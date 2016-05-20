@@ -13,9 +13,9 @@ window.createGame = function(scope, lessons, injector, log) {
       Phaser.Canvas.setSmoothingEnabled(this.game.context, true);  //also for Canvas, legacy approach
     //   PIXI.scaleModes.DEFAULT = PIXI.scaleModes.NEAREST; //for WebGL
 
-      this.load.image('desert', 'img/assets/desert.png');
-    //   this.load.image('cactus', 'img/assets/cactus.png');
-      this.load.image('cactus', 'img/assets/cactus_test.png');
+      this.load.image('desert', 'img/assets/region.png');
+      this.load.image('cactus', 'img/assets/cactus.png');
+    //   this.load.image('cactus', 'img/assets/cactus_test.png');
       this.load.image('tent', 'img/assets/tent.png');
       this.load.image('tent_green', 'img/assets/tent_green.png');
       this.load.image('two_stone', 'img/assets/two_stone.png');
@@ -44,10 +44,13 @@ window.createGame = function(scope, lessons, injector, log) {
     create: function() {
       var desert = this.game.add.sprite(0, 0, 'desert');
       var game_scale = game.world.width / desert.width;
+      var desert_height = 2155;
+      var iceregion_height = 2886 - desert_height
       desert.scale.setTo(game_scale, 1);
       this.game.world.setBounds(0, 0, this.game.width, desert.height);
       log.debug(this.world.height - 30);
-      var cactus_points = [{
+      var cactus_points = [
+          {
         x: 42 * game_scale,
         y: 2050,
         scale: 1
@@ -63,7 +66,8 @@ window.createGame = function(scope, lessons, injector, log) {
         x: 304 * game_scale,
         y: 1798,
         scale: 1
-      }, {
+      },
+      {
         x: 26 * game_scale,
         y: 1772,
         scale: 1
@@ -87,27 +91,29 @@ window.createGame = function(scope, lessons, injector, log) {
         x: 40 * game_scale,
         y: 1096,
         scale: 1
-      }, {
-        x: 76 * game_scale,
-        y: 913,
-        scale: 1
-      }, {
-        x: 306 * game_scale,
-        y: 768,
-        scale: 1
-      }, {
-        x: 40 * game_scale,
-        y: 475,
-        scale: 1
-      }, {
-        x: 42 * game_scale,
-        y: 254,
-        scale: 1
-      }, {
-        x: 310 * game_scale,
-        y: 184,
-        scale: 1
-      }, ];
+      },
+    //   {
+    //     x: 76 * game_scale,
+    //     y: 913,
+    //     scale: 1
+    //   }, {
+    //     x: 306 * game_scale,
+    //     y: 768,
+    //     scale: 1
+    //   }, {
+    //     x: 40 * game_scale,
+    //     y: 475,
+    //     scale: 1
+    //   }, {
+    //     x: 42 * game_scale,
+    //     y: 254,
+    //     scale: 1
+    //   }, {
+    //     x: 310 * game_scale,
+    //     y: 184,
+    //     scale: 1
+    //   }, 
+  ];
       var tent_points = [{
         x: 258 * game_scale,
         y: 950,
@@ -143,36 +149,36 @@ window.createGame = function(scope, lessons, injector, log) {
 
       // place tent
       for (var i = 0, tent_count = tent_points.length; i < tent_count; i++) {
-        var tent = this.game.add.sprite(tent_points[i].x, tent_points[i].y, 'tent');
+        var tent = this.game.add.sprite(tent_points[i].x, tent_points[i].y + iceregion_height, 'tent');
         tent.anchor.setTo(0.5, 0.5);
         tent.scale.setTo(tent_points[i].scale);
       }
       // fire animation
-      var fire_animation = this.game.add.sprite(tent_points[0].x - 80, tent_points[0].y + 20, 'fire_animation');
+      var fire_animation = this.game.add.sprite(tent_points[0].x - 80, tent_points[0].y + 20 + iceregion_height, 'fire_animation');
       fire_animation.scale.setTo(0.2, 0.2);
       fire_animation.anchor.setTo(0.5, 0.5);
       var light = fire_animation.animations.add('light');
       fire_animation.animations.play('light', 20, true);
 
       for (var i = 0, tent_count = tent_green_points.length; i < tent_count; i++) {
-        var tent = this.game.add.sprite(tent_green_points[i].x, tent_green_points[i].y, 'tent_green');
+        var tent = this.game.add.sprite(tent_green_points[i].x, tent_green_points[i].y + iceregion_height, 'tent_green');
         tent.anchor.setTo(0.5, 0.5);
         tent.scale.setTo(tent_green_points[i].scale);
       }
       // place stone
       for (var i = 0, one_stone_count = one_stone_points.length; i < one_stone_count; i++) {
-        var tent = this.game.add.sprite(one_stone_points[i].x, one_stone_points[i].y, 'one_stone');
+        var tent = this.game.add.sprite(one_stone_points[i].x, one_stone_points[i].y + iceregion_height, 'one_stone');
         tent.anchor.setTo(0.5, 0.5);
         tent.scale.setTo(one_stone_points[i].scale);
       }
       for (var i = 0, two_stone_count = two_stone_points.length; i < two_stone_count; i++) {
-        var tent = this.game.add.sprite(two_stone_points[i].x, two_stone_points[i].y, 'two_stone');
+        var tent = this.game.add.sprite(two_stone_points[i].x, two_stone_points[i].y + iceregion_height, 'two_stone');
         tent.anchor.setTo(0.5, 0.5);
         tent.scale.setTo(two_stone_points[i].scale);
       }
       // place cactus
       for (var i = 0, cactus_count = cactus_points.length; i < cactus_count; i++) {
-        var cactus = this.game.add.sprite(cactus_points[i].x, cactus_points[i].y, 'cactus');
+        var cactus = this.game.add.sprite(cactus_points[i].x, cactus_points[i].y + iceregion_height, 'cactus');
         cactus.anchor.setTo(0.5, 0.5);
         cactus.scale.setTo(cactus_points[i].scale);
         // catcus animation
@@ -194,17 +200,19 @@ window.createGame = function(scope, lessons, injector, log) {
 
       for (var i = 0, points_count = this.points.x.length; i < points_count; i++) {
         this.points.x[i] *= game_scale;
+        this.points.y[i] += iceregion_height;
       }
 
-      this.increment = 1 / game.world.height;
+      this.increment = 1 / desert_height;
 
       // Somewhere to draw to
-      this.bmd = this.add.bitmapData(this.game.width, this.game.world.height);
+      this.bmd = this.add.bitmapData(this.game.width, desert_height);
       this.bmd.addToWorld();
       // Draw the path
       for (var j = 0; j < 1; j += this.increment) {
         var posx = this.math.catmullRomInterpolation(this.points.x, j);
         var posy = this.math.catmullRomInterpolation(this.points.y, j);
+        log.debug(posx,posy);
         this.bmd.rect(posx, posy, 4, 4, '#219C7F');
       }
       // sand particles
@@ -239,7 +247,7 @@ window.createGame = function(scope, lessons, injector, log) {
         var locked = currentLesson.locked ? '-locked' : '';
         var type = lessonType(currentLesson, currentLesson.locked);
         var posx = this.math.catmullRomInterpolation(this.points.x, j);
-        var posy = this.math.catmullRomInterpolation(this.points.y, j);
+        var posy = this.math.catmullRomInterpolation(this.points.y , j);
         var node = this.game.add.button(posx, posy, 'node' + type + locked);
         node.inputEnabled = true;
         node.events.onInputUp.add(

@@ -108,9 +108,19 @@ hr{
     .row-#{$size}{
         height: $percent;
     }
-}
-@each $size, $percent in $height-list{
     .height-#{$size}{
         height: $percent;
     }
+    .width-#{$size}{
+        width : $percent;
+    }
+}
+.height-auto{
+    height: auto;
+}
+.width-auto{
+    width : auto;
+}
+.resource-list img.active{
+    width : 70% !important;
 }
