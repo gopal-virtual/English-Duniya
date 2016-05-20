@@ -37,6 +37,9 @@
 .quiz-header {
   border: 0 !important;
   height: $quiz-header-height;
+  -webkit-box-shadow: 2px 3px 4px 0 transparentize(darken($brand-grey,20),0.5);
+  -moz-box-shadow: 2px 3px 4px 0 transparentize(darken($brand-grey,20),0.5);
+  box-shadow: 2px 3px 4px 0 transparentize(darken($brand-grey,20),0.5);
 }
 .header-icon {
   width: 35px;

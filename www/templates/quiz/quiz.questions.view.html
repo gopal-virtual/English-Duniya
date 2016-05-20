@@ -1,21 +1,34 @@
 <ion-pane class="bg-pale" ng-if="quizCtrl.quiz.objects.length">
-  <div class="bar bar-header bg-pale quiz-header padding-0">
-    <div class="row padding-0 ">
+  <div class="bar bar-header bg-pale quiz-header padding-0" style="border-bottom:1px ridge #EFE6CB">
+    <div class="row padding-10 ">
       <div class="col padding-0 vertical-center">
-        <div  ng-click="quizCtrl.pauseQuiz()" class="header-icon icon-pause icon-fit-height padding-10"></div>
+        <div ng-click="quizCtrl.pauseQuiz()" class="header-icon icon-pause icon-fit-height padding-10"></div>
       </div>
       <div class="row margin-10">
         <progress max="1" class="progress-bar-quiz" value="{{(quizCtrl.currentIndex+1)/quizCtrl.quiz.objects.length}}"></progress>
       </div>
-      <div class="col" align="right">
+      <div class="col" align="right" style="border : 2px solid #39B89A;border-radius: 50px; height: 100%;">
+        <div class="wrapper">
+          <div class="spinner pie"></div>
+          <div class="filler pie"></div>
+          <div class="mask"></div>
+        </div>
+        <!-- <div style="border-radius:50px;width:50px;height:50px;border:2px solid #38B89A;padding:5px">
+          <div style="background-color:#FA660C"></div>
+        </div> -->
         <!-- <a ui-sref="map.navigate" class="header-icon icon-question-mark"></a> -->
       </div>
     </div>
 
   </div>
-  <ion-slide-box on-slide-changed="quizCtrl.slideHasChanged($index)" show-pager="false">
-    <ion-slide ng-repeat="question in quizCtrl.quiz.objects" ng-class="{'animation-question-slide':quizCtrl.isCurrentIndex($index)}">
-      <div class="bar bar-subheader question-subheader bg-pale padding-0">
+  <ion-content overflow-scroll="false" has-bouncing="true" style="top:12%">
+
+    <!-- <ion-slide-box on-slide-changed="quizCtrl.slideHasChanged($index)" show-pager="false"> -->
+    <div ng-repeat="question in quizCtrl.quiz.objects" class="card card-white margin-0 border-radius-0" style="margin-bottom:20px !important">
+      {{quizCtrl.setCurrentIndex($index)}}
+      <div style="
+    height: 180px;
+" class="padding-0">
 
         <div
           ng-class="{'font-sl':quizCtrl.parseToDisplay(question.node.title).length == 1}"
@@ -28,7 +41,7 @@
           <!-- <div ng-if="!question.node.title && !question.node.type.content.image"><img height="100" width="100" src="img/icons/sound.png"> </div> -->
         </div>
       </div>
-      <ion-content overflow-scroll="false" has-bouncing="true" class="has-header has-question-subheader center padding-20 bg-green">
+      <div style="height:343px" class="has-header center">
         <!-- SCQ -->
         <div
           ng-click="question.attempted=(question.attempted==option.key)?'':option.key"
@@ -39,11 +52,11 @@
           <label ng-click="quizCtrl.playAudio(quizCtrl.getSoundId(option.option))">
             <input class="hide">
             <!-- <div class="option-container"  ng-if="option"> -->
-                <div class="padding-10 font-md option" ng-bind-html="quizCtrl.parseToDisplay(option.option)">
-                </div>
+            <div class="padding-10 font-md option" ng-bind-html="quizCtrl.parseToDisplay(option.option)"></div>
             <!-- </div> -->
           </label>
         </div>
+
         <!-- MCQ options -->
         <div
           ng-if="question.node.type.type=='choicequestion' && question.node.type.content.is_multiple"
@@ -53,8 +66,7 @@
           <label ng-click="quizCtrl.playAudio(quizCtrl.getSoundId(option.option))">
             <input class="hide" type="checkbox" ng-model="question.attempted[option.key]" ng-value="option.key">
             <!-- <div class="option-container"  ng-if="option"> -->
-                <div class="padding-10 font-md option" ng-bind-html="quizCtrl.parseToDisplay(option.option)">
-                </div>
+            <div class="padding-10 font-md option" ng-bind-html="quizCtrl.parseToDisplay(option.option)"></div>
             <!-- </div> -->
           </label>
         </div>
@@ -65,37 +77,44 @@
         <!--<div ng-if="option.image.key"><img ng-src="{{'img/quiz/1.jpg'}}"></div>-->
         <!--<div ng-if="!option.option && !option.image.key"><img height="100" width="100" ng-src="img/speaker.png"> </div>-->
         <!--</label>-->
-      </ion-content>
+      </div>
 
-      <audio id="audioplayer">
-        <source id="audioSource" type="audio/mpeg">
-      </audio>
+    </div>
+    <!-- </ion-slide-box> -->
+    <!--<div class="bar bar-footer bar-footer-large bg-green">-->
+    <!--<div class="row">-->
+    <!--<div class="col">-->
 
-      <div class="bar bar-footer bar-footer-large bg-green padding-x-20">
-        <div class="row ">
-          <div class="col">
-            <button ng-if="quizCtrl.currentIndex != quizCtrl.quiz.objects.length - 1" class="icon-next animation-fade-in-from-bottom button button-block bg-brand-yellow padding-20 button-round icon-fit-height" ng-click="quizCtrl.slideTo($index+1)"></button>
-            <button ng-if="quizCtrl.currentIndex == quizCtrl.quiz.objects.length - 1" class=" animation-fade-in-from-bottom button button-block bg-brand-yellow padding-y-10 button-round" ng-click="quizCtrl.submitQuiz()">
-              SUBMIT
-            </button>
-          </div>
+    <!--</div>-->
+    <!--</div>-->
+    <!--<div class="row">-->
+    <!--<div class="col">-->
+    <!--a-->
+    <!--</div>-->
+    <!--</div>-->
+
+    <!--</div>-->
+    <audio id="audioplayer">
+      <source id="audioSource" type="audio/mpeg">
+    </audio>
+    <div class="bg-green padding-x-20">
+      <div class="row ">
+        <div class="col">
+          <button ng-if="quizCtrl.currentIndex != quizCtrl.quiz.objects.length - 1" class="icon-next animation-fade-in-from-bottom button button-block bg-brand-yellow padding-20 button-round icon-fit-height" ng-click="quizCtrl.slideTo($index+1)"></button>
+          <button ng-if="quizCtrl.currentIndex == quizCtrl.quiz.objects.length - 1" class=" animation-fade-in-from-bottom button button-block bg-brand-yellow padding-y-10 button-round" ng-click="quizCtrl.submitQuiz()">
+            SUBMIT
+          </button>
         </div>
       </div>
-    </ion-slide>
-  </ion-slide-box>
-  <!--<div class="bar bar-footer bar-footer-large bg-green">-->
-  <!--<div class="row">-->
-  <!--<div class="col">-->
-
-  <!--</div>-->
-  <!--</div>-->
-  <!--<div class="row">-->
-  <!--<div class="col">-->
-  <!--a-->
-  <!--</div>-->
-  <!--</div>-->
-
-  <!--</div>-->
+    </div>
+  </ion-content>
+  <button class="button-round button button-calm icon-down icon-fit-height no-shadow" style="
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    z-index: 100;
+">
+  </button>
 </ion-pane>
 <ion-view ng-if="!quizCtrl.quiz.objects.length" class="bg-pale">
   <ion-content>

@@ -10,12 +10,12 @@ $brand : #0D618A;
 $brand-white : rgb(255,255,255);
 $brand-grey : rgb(170, 170, 170);
 $brand-green : #39B89A;
-
+$brand-orange : #FA660C;
 $brand-pink : #FCF3D8;
 $pale : #FCF3D8;
 $neutral : #e4eff2;
 $brand-yellow : #FFBC1D;
-$color-list : ("light" : $light, "stable" : $stable, "positive" : $positive, "calm" : $calm, "balanced" : $balanced, "energised" : $energized, "assertive" :$assertive, "royal" : $royal, "dark" :$dark, "brand" : $brand, "neutral" : $neutral, "green" : $brand-green, "pale" : $pale, "brand-yellow": $brand-yellow, "pink" : $brand-pink, "transparent" : transparent, "grey" : $brand-grey);
+$color-list : ("light" : $light, "stable" : $stable, "positive" : $positive, "calm" : $calm, "balanced" : $balanced, "energised" : $energized, "assertive" :$assertive, "royal" : $royal, "dark" :$dark, "brand" : $brand, "neutral" : $neutral, "green" : $brand-green, "pale" : $pale, "brand-yellow": $brand-yellow, "pink" : $brand-pink, "transparent" : transparent, "grey" : $brand-grey, "orange" : $brand-orange);
 $font-size : ("sl" : 3em, "xl" : 2em,"lg" : 1.75em, "md" : 1.5em, "sm" : 1.25em, "xs" : 1em);
 
 $icon-path : '../img/icons';
@@ -42,13 +42,14 @@ $icon-list : (
 'phone' : 'icon-phone',
 'logout' : 'icon-logout',
 'password' : 'icon-password',
+'down' : 'icon-down',
 );
 
 // size
 $cover-height : 250px;
 $bar-height-large : 90px;
 $result-height : 53px;
-$quiz-header-height : 8%;
+$quiz-header-height : 12%;
 $question-subheader-height : 25%;
 $quiz-subfooter-height : 85px;
 

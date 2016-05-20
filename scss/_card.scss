@@ -23,9 +23,9 @@
 @each $name , $color in $color-list {
   .card-#{$name} {
     background-color: $color;
-    -webkit-box-shadow: 2px 3px 4px 0 transparentize(darken($color,20),0.5);
-    -moz-box-shadow: 2px 3px 4px 0 transparentize(darken($color,20),0.5);
-    box-shadow: 2px 3px 4px 0 transparentize(darken($color,20),0.5);
+    -webkit-box-shadow: 2px 3px 4px 0 transparentize(darken($brand-grey,20),0.5);
+    -moz-box-shadow: 2px 3px 4px 0 transparentize(darken($brand-grey,20),0.5);
+    box-shadow: 2px 3px 4px 0 transparentize(darken($brand-grey,20),0.5);
   }
 }
 @each $name , $color in $color-list {
@@ -51,8 +51,8 @@
 }
 .card-grid {
   display: inline-block;
-  width: 40%;
-  height: 33%;
+  width: 46%;
+  height: 40%;
   margin: 5px 5px 0;
 }
 .content-image {
