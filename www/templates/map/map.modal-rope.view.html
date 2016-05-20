@@ -1,53 +1,33 @@
-<ion-modal-view class="modal-transparent">
+<ion-modal-view class="modal-dark">
   <ion-content ng-init="mapCtrl.selected=false" overflow-scroll="true">
-      <div class="row row-20" style="background:url('img/assets/pause_menu_top.png') no-repeat center center; background-size : 95% 110%">
+      <div class="row row-20" style="background:url('img/assets/pause_menu_top.png') no-repeat center center; background-size : 95% 105%">
           <div class="col"></div>
       </div>
-      <div class="height-60" style="background:url('img/assets/pause_menu_middle.png') no-repeat center center; background-size : 95% 110%">
+      <div class="height-60" style="background:url('img/assets/pause_menu_middle.png') no-repeat center center; background-size : 95% 105%">
           <div class="row">
             <div class="col text-center font-md">
-                {{mapCtrl.selectedNode.node.title}}
+                {{selectedNode.node.title}}
             </div>
           </div>
-          <div class="row">
+          <div class="row" style="margin:0">
               <div class="col" style="background:url('img/assets/avatar-boy.png') no-repeat center center; background-size : auto 80%"></div>
               <div class="col col-center">
                   <ul >
-                      <li ng-repeat="resource in mapCtrl.selectedNode.objects">
+                      <li ng-repeat="resource in selectedNode.objects">
                           <div class="text-center capitalize">
-                              <img ng-src="{{mapCtrl.getIcon(resource)}}" width="50%" height="auto" alt="resource icon" ng-click="selected=true;$event.stopPropagation();mapCtrl.playResource(resource);" />
+                              <img ng-src="{{lessonutils.getIcon(resource)}}" width="50%" height="auto" alt="resource icon" ng-click="selected=true;$event.stopPropagation();closeNodeMenu();lessonutils.playResource(resource);" />
                               <br>
-                              {{mapCtrl.resourceType(resource)}}
+                              {{lessonutils.resourceType(resource)}}
                           </div>
                       </li>
                   </ul>
               </div>
           </div>
       </div>
-      <div class="row row-10" style="background:url('img/assets/pause_menu_bottom.png') no-repeat center center; background-size : 95% 110%;">
+      <div class="row row-10" style="background:url('img/assets/pause_menu_bottom.png') no-repeat center center; background-size : 95% 105%;">
           <div class="col text-center">
-              <button class="button button-green button-round padding-x-30" ng-click="closeModal();mapCtrl.resetNode()">Leave Lesson</button>
+              <a class="button button-green button-round padding-x-30" ui-sref="map.navigate" ng-click="closeNodeMenu();mapCtrl && mapCtrl.resetNode()">Leave Lesson</a>
           </div>
       </div>
-
-    <!-- <div class="row padding-30">
-      <div class="col text-center text-white font-xl">
-        {{mapCtrl.selectedNode.node.title}}
-      </div>
-    </div>
-    <div class="row" ng-repeat="resource in mapCtrl.selectedNode.objects">
-      <div class="col" ng-init="selected=false">
-        <div class="text-center">
-          <img ng-src="{{mapCtrl.getIcon(resource)}}" width="40%" height="auto" alt="resource icon" ng-click="selected=true;$event.stopPropagation();mapCtrl.playResource(resource);" />
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <div class="text-center">
-          <img ng-src="img/icons/icon-{{mapCtrl.selectedNode.node.tag.toLowerCase()}}-node.png" alt="practice icon" ng-click="$event.stopPropagation()" />
-        </div>
-      </div>
-    </div> -->
   </ion-content>
 </ion-modal-view>

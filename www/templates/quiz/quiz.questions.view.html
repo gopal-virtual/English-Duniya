@@ -2,7 +2,7 @@
   <div class="bar bar-header bg-pale quiz-header">
     <div class="row padding-0 ">
       <div class="col padding-0 vertical-center">
-        <div  ng-click="quizCtrl.pauseQuiz()" class="header-icon icon-pause icon-fit-height padding-10"></div>
+        <div  ng-click="showNodeMenu()" class="header-icon icon-pause icon-fit-height padding-10"></div>
       </div>
       <div class="row">
         <progress max="1" class="progress-bar-quiz" value="{{(quizCtrl.currentIndex+1)/quizCtrl.quiz.objects.length}}"></progress>
