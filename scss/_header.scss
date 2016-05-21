@@ -1,6 +1,6 @@
 .question-subheader {
   height: $question-subheader-height !important;
-  top: $quiz-header-height !important;
+  top: $practice-header-height !important;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -10,10 +10,7 @@
   // box-shadow: 5px 2px 3px 2px rgba(23, 103, 86, 2.6);
   box-shadow: 1px 1px 1px gray;
 }
-.has-question-subheader {
-  top: $question-subheader-height+$quiz-header-height !important;
-  // box-shadow:inset 0px 5px 8px -2px rgba(29,94,78,1);
-}
+
 
 .fading-scroll-top::before {
   content: '';
@@ -37,6 +34,13 @@
 .quiz-header {
   border: 0 !important;
   height: $quiz-header-height;
+  -webkit-box-shadow: 2px 3px 4px 0 transparentize(darken($brand-grey,20),0.5);
+  -moz-box-shadow: 2px 3px 4px 0 transparentize(darken($brand-grey,20),0.5);
+  box-shadow: 2px 3px 4px 0 transparentize(darken($brand-grey,20),0.5);
+}
+.practice-header {
+  border: 0 !important;
+  height: $practice-header-height;
   -webkit-box-shadow: 2px 3px 4px 0 transparentize(darken($brand-grey,20),0.5);
   -moz-box-shadow: 2px 3px 4px 0 transparentize(darken($brand-grey,20),0.5);
   box-shadow: 2px 3px 4px 0 transparentize(darken($brand-grey,20),0.5);

@@ -26,3 +26,9 @@
 .has-quiz-header{
   top : $quiz-header-height !important;
 }
+.has-practice-header{
+  top : $practice-header-height !important;
+}
+.has-question-subheader {
+  top: $question-subheader-height+$practice-header-height !important;
+}
