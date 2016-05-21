@@ -32,7 +32,7 @@
           <label ng-click="quizCtrl.playAudio(quizCtrl.getSoundId(option.option))" >
             <input class="hide" >
             <!-- <div class="option-container"  ng-if="option"> -->
-                <div class="padding-10 font-md option" ng-bind-html="quizCtrl.parseToDisplay(option.option)">
+                <div ng-class="{'font-sl':quizCtrl.parseToDisplay(option.option).length == 1,'font-md':quizCtrl.parseToDisplay(option.option).length != 1}" class="padding-10 font-md option" ng-bind-html="quizCtrl.parseToDisplay(option.option)">
                 </div>
             <!-- </div> -->
         </label>
@@ -43,7 +43,7 @@
         <label ng-click="quizCtrl.playAudio(quizCtrl.getSoundId(option.option))" >
           <input class="hide" type="checkbox" ng-model="question.attempted[option.key]" ng-value="option.key" >
           <!-- <div class="option-container"  ng-if="option"> -->
-              <div class="padding-10 font-md option" ng-bind-html="quizCtrl.parseToDisplay(option.option)">
+              <div ng-class="{'font-sl':quizCtrl.parseToDisplay(option.option).length == 1,'font-md':quizCtrl.parseToDisplay(option.option).length != 1}" class="padding-10 font-md option" ng-bind-html="quizCtrl.parseToDisplay(option.option)">
               <!-- </div> -->
           </div>
             </label>
@@ -72,7 +72,7 @@
   <div class="bar bar-footer bar-footer-large bg-pale">
     <div class="row padding-0">
       <div class="col">
-        <button class="animation-fade-in-from-bottom button button-block button-green padding-10 margin-0 button-round" ng-click="quizCtrl.decide()" ng-disabled="!quizCtrl.canSubmit()">
+        <button class="animation-fade-in-from-bottom button button-block button-green margin-0 button-round" ng-click="quizCtrl.decide()" ng-disabled="!quizCtrl.canSubmit()">
             SUBMIT
           <!-- {{quizCtrl.isCorrectAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex]) ? quizCtrl.currentIndex < quizCtrl.quiz.objects.length - 1 ? 'CONTINUE' : 'DONE' : 'SUBMIT'}} -->
         </button>
