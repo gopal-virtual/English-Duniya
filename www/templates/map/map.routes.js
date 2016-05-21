@@ -42,6 +42,9 @@
             $state.go('map.unauthorised');
           }
         }],
+        onExit: ['audio', function(audio) {
+          audio.stop('background');
+        }],
         views: {
           'state-map': {
             templateUrl: CONSTANT.PATH.MAP + '/map' + CONSTANT.VIEW,
