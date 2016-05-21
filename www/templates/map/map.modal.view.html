@@ -1,6 +1,6 @@
 <ion-modal-view class="modal-dark" ng-click="closeNodeMenu();;mapCtrl.resetNode()">
   <ion-content ng-init="mapCtrl.selected=false" overflow-scroll="true">
-      <div class="row row-15 padding-30 modal-gradient" >
+      <div class="row row-15 padding-30 modal-gradient" ng-if="!orientation.isLandscape()" >
           <div class="col text-center text-white font-xl ellipses">
               {{selectedNode.node.title}}
           </div>
