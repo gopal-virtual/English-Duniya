@@ -6,7 +6,7 @@
         .directive('mapCanvas', mapCanvas)
 
     /* @ngInject */
-    function mapCanvas($injector, $timeout, $log) {
+    function mapCanvas($injector, $timeout, $log, audio) {
         var mapCanvas = {
             restrict: 'A',
             template: '<div id="map_canvas"></div>',
@@ -21,7 +21,7 @@
         function linkFunc(scope, el, attr, ctrl) {
           $timeout(
               function(){
-                  createGame(scope, scope.lessons, $injector, $log)
+                  createGame(scope, scope.lessons, audio, $injector, $log)
               }
           );
         }

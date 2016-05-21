@@ -14,6 +14,7 @@
 
     quizCtrl.quiz = quiz;
     quizCtrl.audio = audio;
+    $scope.audio = audio;
     quizCtrl.init = init;
 
     // traversing the question
@@ -103,6 +104,24 @@
       return count > 0 ? count : 0;
     }
 
+    if ($state.current.name == "quiz.summary" || $state.current.name == "quiz.practice.summary") {
+        if(quizCtrl.quizResult.stars){
+            var star = quizCtrl.quizResult.stars;
+        }
+        else if(quizCtrl.practiceResult.percentCorrect){
+            var star = quizCtrl.practiceResult.percentCorrect > CONSTANT.STAR.THREE ? 3 : quizCtrl.practiceResult.percentCorrect > CONSTANT.STAR.TWO ? 2 : quizCtrl.practiceResult.percentCorrect > CONSTANT.STAR.ONE ? 1 : 0 ;
+        }
+        else{
+            var star = 0;
+        }
+        $log.debug(star);
+        for (var i = 0; i < star; i++) {
+            $log.debug('star sound',star);
+            (i+1)==1 && $timeout(function(){ audio.play('one_star') },1000);
+            (i+1)==2 && $timeout(function(){ audio.play('two_star') },2000);
+            (i+1)==3 && $timeout(function(){ audio.play('three_star') },3000);
+        }
+    }
     function init(quiz) {
 
       // init report object
@@ -288,8 +307,10 @@
         quizCtrl.practiceResult.percentCorrect = parseInt((quizCtrl.practiceResult.scoredMarks / quizCtrl.practiceResult.totalMarks) * 100);
         $log.debug("percent", quizCtrl.practiceResult.percentCorrect)
         quizCtrl.myStyle.width = quizCtrl.practiceResult.percentCorrect + "%";
+        audio.play('correct');
       } else {
 
+          audio.play('wrong');
         // SCQ
         if ((quizCtrl.quiz.objects[quizCtrl.currentIndex].node.type.type == "choicequestion" && !quizCtrl.quiz.objects[quizCtrl.currentIndex].node.type.content.is_multiple)) {
           quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].attempted = '';

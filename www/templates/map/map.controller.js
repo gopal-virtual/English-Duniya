@@ -12,6 +12,7 @@
       orientation.setPortrait();
       audio.loop('background');
     });
+    $scope.audio = audio;
     $scope.orientation= orientation;
     function preload(arrayOfImages) {
           $(arrayOfImages).each(function(){

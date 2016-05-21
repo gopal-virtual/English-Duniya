@@ -12,6 +12,11 @@
         $cordovaNativeAudio.preloadSimple('correct', 'sound/correct.mp3');
         $cordovaNativeAudio.preloadSimple('wrong', 'sound/wrong.mp3');
         $cordovaNativeAudio.preloadSimple('background', 'sound/background.mp3');
+        $cordovaNativeAudio.preloadSimple('one_star', 'sound/one_star.mp3');
+        $cordovaNativeAudio.preloadSimple('two_star', 'sound/two_star.mp3');
+        $cordovaNativeAudio.preloadSimple('three_star', 'sound/three_star.mp3');
+        $cordovaNativeAudio.preloadSimple('locked', 'sound/locked.mp3');
+        $cordovaNativeAudio.preloadSimple('press', 'sound/press.mp3');
       }
       catch(error){
         console.log('native audio not supported');

@@ -10,9 +10,9 @@
           <img
           ng-src="{{lessonutils.getIcon(resource)}}"
           width="auto" height="100%" alt="resource icon"
-          ng-click="selected=true;$event.stopPropagation();closeNodeMenu();lessonutils.playResource(resource,contentCtrl.API);"
+          ng-click="audio.play('press');selected=true;$event.stopPropagation();closeNodeMenu();lessonutils.playResource(resource,contentCtrl.API);"
           ng-class="{'fade' : lessonutils.currentState(resource)}"/>
-          <button ng-if="lessonutils.currentState(resource)" ng-click="contentCtrl.API && contentCtrl.API.play();" class="button button-green button-round font-xl button-resume" style="line-height: 30px !important;">resume</button>
+          <button ng-if="lessonutils.currentState(resource)" ng-click="audio.play('press');contentCtrl.API && contentCtrl.API.play();" class="button button-green button-round font-xl button-resume" style="line-height: 30px !important;">resume</button>
           <!-- <h3 class="color-pale">{{lessonutils.resourceType(resource)}}</h3> -->
       </div>
     </div>
@@ -21,15 +21,15 @@
           <img
           ng-src="{{lessonutils.getIcon(resource)}}"
           width="auto" height="100%" alt="resource icon"
-          ng-click="selected=true;$event.stopPropagation();closeNodeMenu();lessonutils.playResource(resource,contentCtrl.API);"
+          ng-click="audio.play('press');selected=true;$event.stopPropagation();closeNodeMenu();lessonutils.playResource(resource,contentCtrl.API);"
           ng-class="{'fade' : lessonutils.currentState(resource)}"/>
-          <button ng-if="lessonutils.currentState(resource)" ng-click="contentCtrl.API && contentCtrl.API.play();" class="button button-green button-round font-xl button-resume" style="line-height: 30px !important;">resume</button>
+          <button ng-if="lessonutils.currentState(resource)" ng-click="audio.play('press');contentCtrl.API && contentCtrl.API.play();" class="button button-green button-round font-xl button-resume" style="line-height: 30px !important;">resume</button>
           <!-- <h3 class="color-pale">{{lessonutils.resourceType(resource)}}</h3> -->
       </div>
     </div>
     <div class="row row-10">
         <div class="col text-center">
-            <a class="button button-green button-round padding-x-30 font-xl" ng-click="closeNodeMenu();lessonutils.leaveLesson();mapCtrl && mapCtrl.resetNode()">Leave Lesson</a>
+            <a class="button button-green button-round padding-x-30 font-xl" ng-click="audio.play('press');closeNodeMenu();lessonutils.leaveLesson();mapCtrl && mapCtrl.resetNode()">Leave Lesson</a>
         </div>
     </div>
     <!-- <div class="row">
