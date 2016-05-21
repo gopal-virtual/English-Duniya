@@ -11,6 +11,17 @@
     $scope.$on("$ionicView.beforeEnter", function(event, data) {
       orientation.setPortrait();
     });
+    function preload(arrayOfImages) {
+          $(arrayOfImages).each(function(){
+              $('<img/>')[0].src = this;
+          });
+      }
+      preload([
+          '/img/assets/avatar-boy.png',
+          '/img/assets/pause_menu_top.png',
+          '/img/assets/pause_menu_middle.png',
+          '/img/assets/pause_menu_bottom.png'
+      ]);
     var mapCtrl = this;
     mapCtrl.lessons = CONSTANT.LOCK ? extendLesson.getLesson(lessons, scores) : lessons;
     // mapCtrl.getLesson = getLesson;
