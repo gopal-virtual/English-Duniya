@@ -241,8 +241,9 @@
     }
 
     function setCurrentIndex(index) {
-
+      $log.debug(index)
       quizCtrl.currentIndex = index;
+      return true;
     }
 
     function getCurrentIndex() {
@@ -426,12 +427,17 @@
       }
     }
 
-    function playAudio(key) {
+    function playAudio(key,index) {
+      $log.debug('key,index',key,index);
       angular.element("#audioplayer")[0].pause();
       if (key) {
+        if(index){
+          angular.element("#audioSource")[0].src = 'http://cc-test.zaya.in' + quizCtrl.quiz.objects[index].node.type.content.widgets.sounds[key];
+        }else {
 
-        $log.debug(quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.type.content.widgets.sounds[key])
-        angular.element("#audioSource")[0].src = 'http://cc-test.zaya.in' + quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.type.content.widgets.sounds[key];
+          angular.element("#audioSource")[0].src = 'http://cc-test.zaya.in' + quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.type.content.widgets.sounds[key];
+        }
+          $log.debug(angular.element("#audioSource")[0].src);
         angular.element("#audioplayer")[0].load();
         angular.element("#audioplayer")[0].play();
       }
@@ -642,12 +648,16 @@
         return quizCtrl.imageTagRegex.exec(string)[1];
     }
 
-    function getImageSrc(id) {
+    function getImageSrc(id,index) {
+      if(index){
+        return quizCtrl.quiz.objects[index].node.type.content.widgets.images[id];
+      }
       return quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.type.content.widgets.images[id];
+
     }
 
-    function parseToDisplay(string) {
-      var text = quizCtrl.replaceImageTag(quizCtrl.removeSoundTag(string));
+    function parseToDisplay(string,index) {
+      var text = quizCtrl.replaceImageTag(quizCtrl.removeSoundTag(string,index),index);
       return text.trim() || '<img class="content-image sound-image" src="' + CONSTANT.ASSETS.IMG.SOUND_PLACEHOLDER + '"></img>';
 
     }
@@ -656,8 +666,8 @@
       return string.replace(quizCtrl.soundIdRegex, "");
     }
 
-    function replaceImageTag(string) {
-      return string.replace(quizCtrl.imageTagRegex, "<img class='content-image' src='http://cc-test.zaya.in" + quizCtrl.getImageSrc(quizCtrl.getImageId(string)) + "'></img>");
+    function replaceImageTag(string,index) {
+      return string.replace(quizCtrl.imageTagRegex, "<img class='content-image' src='http://cc-test.zaya.in" + quizCtrl.getImageSrc(quizCtrl.getImageId(string),index) + "'></img>");
     }
 
     function getLayout(question) {

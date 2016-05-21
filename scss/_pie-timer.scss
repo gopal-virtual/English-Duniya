@@ -1,19 +1,21 @@
+.timer-container {
+  border: 2px solid $brand-green;
+  border-radius: $border-radius-round;
+  height: 100%;
+}
 .wrapper {
   position: relative;
 }
-
-.wrapper, .wrapper * {
+.wrapper,
+.wrapper * {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
 }
-
 .wrapper {
   width: 45px;
   height: 45px;
-
 }
-
 .wrapper .pie {
   width: 50%;
   height: 100%;
@@ -22,20 +24,17 @@
   background: $brand-orange;
   border: 2px solid $brand-yellow;
 }
-
 .wrapper .spinner {
   border-radius: 100% 0 0 100% / 50% 0 0 50%;
   z-index: 200;
   border-right: none;
   animation: rota 5s linear infinite;
 }
-
-.wrapper:hover .spinner,
 .wrapper:hover .filler,
-.wrapper:hover .mask {
+.wrapper:hover .mask,
+.wrapper:hover .spinner {
   animation-play-state: running;
 }
-
 .wrapper .filler {
   border-radius: 0 100% 100% 0 / 0 50% 50% 0;
   left: 50%;
@@ -44,7 +43,6 @@
   animation: opa 5s steps(1, end) infinite reverse;
   border-left: none;
 }
-
 .wrapper .mask {
   width: 50%;
   height: 100%;
@@ -55,7 +53,6 @@
   border-radius: 20px 0 0 20px;
   animation: opa 5s steps(1, end) infinite;
 }
-
 @keyframes rota {
   0% {
     transform: rotate(0deg);
@@ -68,7 +65,8 @@
   0% {
     opacity: 1;
   }
-  50%, 100% {
+  100%,
+  50% {
     opacity: 0;
   }
 }
