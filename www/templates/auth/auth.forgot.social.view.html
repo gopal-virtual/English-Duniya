@@ -1,15 +1,23 @@
 <ion-modal-view class="modal-light">
   <ion-content>
     <div class="row">
-      <form novalidate name="forgotPasswordForm" class="col padding-30" ng-submit="authCtrl.closeKeyboard() && authCtrl.validateForgotPasswordForm(forgotPasswordForm) && authCtrl.passwordResetRequest({'useridentity':authCtrl.password_reset_credentials.useridentity})">
+      <form
+        novalidate
+        name="forgotPasswordForm"
+        class="col padding-30"
+        ng-submit="authCtrl.closeKeyboard() && authCtrl.validateForgotPasswordForm(forgotPasswordForm) && authCtrl.passwordResetRequest({'useridentity':authCtrl.password_reset_credentials.useridentity})">
         <div class="card card-pink padding-20">
           <h2 class="text-center color-dark-light">Forgot password</h2>
-          <h4 class="text-center color-dark-light" ng-if="authCtrl.resetPasswordLinkSent == false">We will send a reset password link to your email or phone no.</h4>
-          <h4 class="text-center color-dark-light" ng-if="authCtrl.resetPasswordLinkSent == true">We have sent a reset password link to your email or phone no.</h4>
-          <div class="input-group">
-            <input class="input-control input-default input-block" name="useridentity" type="text" ng-model="authCtrl.password_reset_credentials.useridentity" placeholder="Phone / Email">
+          <h4 class="text-center color-dark-light padding-10">
+            {{authCtrl.resetPasswordLinkSent == false ? 'We will send a reset password link to your email or phone no.' : 'We have sent a reset password link to your email or phone no.'}}
+          </h4>
+          <div class="input-group input-group-social">
+            <button type="button" class="icon icon-profile icon-fit-width input-group-item input-group-addon input-group-addon-light font-md"></button>
+            <input class="input-control input-group-item input-default font-md" name="useridentity" type="text" ng-model="authCtrl.password_reset_credentials.useridentity" placeholder="Phone / Email" autocomplete="off">
           </div>
-          <button type="submit" class="button button-green button-block">SEND</button>
+          <button type="submit" class="button button-green button-round button-block">
+            {{authCtrl.resetPasswordLinkSent == false ? 'SEND' : 'DONE'}}
+          </button>
         </div>
       </form>
     </div>

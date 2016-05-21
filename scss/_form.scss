@@ -124,4 +124,8 @@ input[type=radio].hide{
   border-left : thin solid lighten($dark, 50%) ;
   border-bottom : thin solid lighten($dark, 50%) ;
   max-width: 15%;
+  min-width: 15%;
+}
+.input-group-social > .input-group-item:not(:first-child){
+  max-width: 85%;
 }

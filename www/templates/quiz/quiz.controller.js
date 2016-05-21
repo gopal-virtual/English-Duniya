@@ -3,9 +3,12 @@
     .module('zaya-quiz')
     .controller('QuizController', QuizController)
 
-  QuizController.$inject = ['quiz', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Quiz', 'Auth', '$ionicLoading', '$ionicPopup', '$location', '$anchorScroll', '$document', '$ionicScrollDelegate', '$ionicPosition'];
+  QuizController.$inject = ['quiz', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Quiz', 'Auth', '$ionicLoading', '$ionicPopup','lessonutils','orientation','$location', '$anchorScroll', '$document', '$ionicScrollDelegate', '$ionicPosition'];
 
-  function QuizController(quiz, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Quiz, Auth, $ionicLoading, $ionicPopup, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition) {
+  function QuizController(quiz, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Quiz, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition) {
+      $scope.$on("$ionicView.beforeEnter", function(event, data) {
+        orientation.setPortrait();
+      });
     var quizCtrl = this;
 
     quizCtrl.quiz = quiz;
@@ -36,7 +39,7 @@
     quizCtrl.utilities = Utilities;
     quizCtrl.submitQuiz = submitQuiz;
     quizCtrl.endQuiz = endQuiz;
-    quizCtrl.pauseQuiz = pauseQuiz;
+    // quizCtrl.pauseQuiz = pauseQuiz;
     quizCtrl.restartQuiz = restartQuiz;
     quizCtrl.CONSTANT = CONSTANT;
     //audio
@@ -79,6 +82,8 @@
     // initialisation call
     quizCtrl.setCurrentIndex(0);
     quizCtrl.init(quizCtrl.quiz);
+    $scope.lessonutils = lessonutils;
+    $scope.selectedNode = lessonutils.getLocalLesson();
 
     $scope.modal = {};
 
@@ -615,15 +620,25 @@
       //   }
       // });
     }
-    $ionicModal.fromTemplateUrl(CONSTANT.PATH.QUIZ + '/quiz.pause.modal' + CONSTANT.VIEW, {
+    // $ionicModal.fromTemplateUrl(CONSTANT.PATH.QUIZ + '/quiz.pause.modal' + CONSTANT.VIEW, {
+    //   scope: $scope,
+    //   animation: 'slide-in-up'
+    // }).then(function(modal) {
+    //   quizCtrl.pauseModal = modal;
+    // });
+    $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal-rope' + CONSTANT.VIEW, {
       scope: $scope,
-      animation: 'slide-in-up'
+      animation: 'slide-in-down'
     }).then(function(modal) {
       quizCtrl.pauseModal = modal;
     });
 
-    function pauseQuiz() {
+    $scope.showNodeMenu = function() {
+        $log.debug('opening modal');
       quizCtrl.pauseModal.show();
+    }
+    $scope.closeNodeMenu = function() {
+      quizCtrl.pauseModal.hide();
     }
 
     function restartQuiz() {

@@ -9,8 +9,8 @@
     var email_regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     var indian_phone_regex = /^[7-9][0-9]{9}$/;
     //var username_regex = /^[a-z0-9]*$/;
-    var min = 6;
-    var max = 15;
+    var min = 3;
+    var max = 10;
     var country_code = '+91';
     authCtrl.audio = audio;
     authCtrl.login = login;
@@ -282,6 +282,8 @@
         }
         else {
           authCtrl.showAlert("Reset Password", "We have send a link to your email");
+            authCtrl.closeModal('recover');
+                $state.go('auth.signin');
         }
         authCtrl.resetPasswordLinkSent = true;
         $ionicLoading.hide();

@@ -14,21 +14,22 @@
       <div class="col">
         <div class="button-bar button-group">
           <button type="button" ng-click="authCtrl.facebookSignIn()" class="button button-no-shadow button-round button-block button-positive icon-left ion-social-facebook"></button>
-          <button tabindex="5" type="button" ng-click="authCtrl.googleSignIn()" class="button button-no-shadow button-round button-block button-positive icon-left">Facebook</button>
+          <button tabindex="5" type="button" ng-click="authCtrl.facebookSignIn()" class="button button-no-shadow button-round button-block button-positive icon-left">Facebook</button>
         </div>
       </div>
     </div>
     <div class="row padding-x-20 center">
       <form name="authForm" class="col" ng-submit="authCtrl.closeKeyboard() && authCtrl.validCredential(authForm) && authCtrl.login('login',{'useridentity':authCtrl.user.useridentity, 'password':authCtrl.user.password})">
         <div class="input-group input-group-social">
-          <button type="button" class="icon icon-profile icon-fit-width input-group-item input-group-addon input-group-addon-light font-md" ng-click="show_password=!show_password">
+          <button type="button" class="icon icon-profile icon-fit-width input-group-item input-group-addon input-group-addon-light font-md" >
           </button>
-          <input class="input-control input-group-item input-default font-md" valid-input ng-trim="false" tabindex="1" name="useridentity" type="text" placeholder="Phone / Email" ng-model="authCtrl.user.useridentity">
+          <input class="input-control input-group-item input-default font-md" valid-input ng-trim="false" tabindex="1" name="useridentity" type="text" placeholder="Phone / Email" ng-model="authCtrl.user.useridentity" autocomplete="off">
         </div>
         <div class="input-group input-group-social">
-          <button type="button" class="icon icon-password icon-fit-width input-group-item input-group-addon input-group-addon-light font-md" ng-click="show_password=!show_password">
+          <button type="button" class="icon icon-password icon-fit-width input-group-item input-group-addon input-group-addon-light font-md" >
           </button>
           <input class="input-control input-group-item input-default input-group-item font-md" tabindex="2" onPaste="return false" autocomplete="off" name="password" type="{{show_password==false?'password':'text'}}" placeholder="Password" ng-model="authCtrl.user.password">
+
           <!-- <button type="button" class="input-group-item input-group-addon input-group-addon-light font-md" ng-click="show_password=!show_password">
             <i class="icon" ng-class="{'ion-ios-glasses-outline' : !show_password, 'ion-ios-glasses' : show_password}"></i>
           </button> -->

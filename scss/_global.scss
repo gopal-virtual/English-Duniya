@@ -103,3 +103,46 @@ hr{
 .stars> img:last-child {
     -webkit-transform: rotateZ(15deg) translateY(10px);
 }
+
+@each $size, $percent in $height-list{
+    .row-#{$size}{
+        height: $percent;
+    }
+    .height-#{$size}{
+        height: $percent;
+    }
+    .width-#{$size}{
+        width : $percent;
+    }
+}
+.height-auto{
+    height: auto;
+}
+.width-auto{
+    width : auto;
+}
+.resource-list img.active{
+    width : 70% !important;
+}
+
+@media all and (orientation:portrait) {
+    .resource-list > li {
+        display: block;
+        height: 30%;
+    }
+    .avatar{
+        @include flex(0, 0, 50%);
+        max-width: 50%;
+    }
+}
+@media all and (orientation:landscape) {
+    .resource-list > li {
+        display: inline-block;
+        height: 100%;
+    }
+    .avatar{
+        @include flex(0, 0, 25%);
+        max-width: 25%;
+    }
+
+}
