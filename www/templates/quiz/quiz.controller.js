@@ -3,12 +3,12 @@
     .module('zaya-quiz')
     .controller('QuizController', QuizController)
 
-  QuizController.$inject = ['quiz', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Quiz', 'Auth', '$ionicLoading', '$ionicPopup','lessonutils','orientation','$location', '$anchorScroll', '$document', '$ionicScrollDelegate', '$ionicPosition'];
+  QuizController.$inject = ['quiz', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Quiz', 'Auth', '$ionicLoading', '$ionicPopup', 'lessonutils', 'orientation', '$location', '$anchorScroll', '$document', '$ionicScrollDelegate', '$ionicPosition', '$timeout'];
 
-  function QuizController(quiz, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Quiz, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition) {
-      $scope.$on("$ionicView.beforeEnter", function(event, data) {
-        orientation.setPortrait();
-      });
+  function QuizController(quiz, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Quiz, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition, $timeout) {
+    $scope.$on("$ionicView.beforeEnter", function(event, data) {
+      orientation.setPortrait();
+    });
     var quizCtrl = this;
 
     quizCtrl.quiz = quiz;
@@ -78,6 +78,16 @@
     quizCtrl.nextScrollQuestion = 1;
     quizCtrl.questionInView = questionInView;
     quizCtrl.scrollToNext = scrollToNext;
+
+    //timer
+    quizCtrl.counter = 0;
+    quizCtrl.timer = new Date(1970, 0, 1).setSeconds(quizCtrl.counter);
+    quizCtrl.onTimeout = function() {
+      quizCtrl.counter++;
+      quizCtrl.timer +=  1000;
+      quizCtrl.mytimeout = $timeout(quizCtrl.onTimeout, 1000);
+    }
+    quizCtrl.mytimeout = $timeout(quizCtrl.onTimeout, 1000);
 
     // initialisation call
     quizCtrl.setCurrentIndex(0);
@@ -432,17 +442,17 @@
       }
     }
 
-    function playAudio(key,index) {
-      $log.debug('key,index',key,index);
+    function playAudio(key, index) {
+      $log.debug('key,index', key, index);
       angular.element("#audioplayer")[0].pause();
       if (key) {
-        if(index){
+        if (index) {
           angular.element("#audioSource")[0].src = 'http://cc-test.zaya.in' + quizCtrl.quiz.objects[index].node.type.content.widgets.sounds[key];
-        }else {
+        } else {
 
           angular.element("#audioSource")[0].src = 'http://cc-test.zaya.in' + quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.type.content.widgets.sounds[key];
         }
-          $log.debug(angular.element("#audioSource")[0].src);
+        $log.debug(angular.element("#audioSource")[0].src);
         angular.element("#audioplayer")[0].load();
         angular.element("#audioplayer")[0].play();
       }
@@ -634,11 +644,13 @@
     });
 
     $scope.showNodeMenu = function() {
-        $log.debug('opening modal');
+      $timeout.cancel(quizCtrl.mytimeout);
+      $log.debug('opening modal');
       quizCtrl.pauseModal.show();
     }
     $scope.closeNodeMenu = function() {
       quizCtrl.pauseModal.hide();
+      quizCtrl.mytimeout = $timeout(quizCtrl.onTimeout, 1000);
     }
 
     function restartQuiz() {
@@ -663,16 +675,16 @@
         return quizCtrl.imageTagRegex.exec(string)[1];
     }
 
-    function getImageSrc(id,index) {
-      if(index){
+    function getImageSrc(id, index) {
+      if (index) {
         return quizCtrl.quiz.objects[index].node.type.content.widgets.images[id];
       }
       return quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.type.content.widgets.images[id];
 
     }
 
-    function parseToDisplay(string,index) {
-      var text = quizCtrl.replaceImageTag(quizCtrl.removeSoundTag(string,index),index);
+    function parseToDisplay(string, index) {
+      var text = quizCtrl.replaceImageTag(quizCtrl.removeSoundTag(string, index), index);
       return text.trim() || '<img class="content-image sound-image" src="' + CONSTANT.ASSETS.IMG.SOUND_PLACEHOLDER + '"></img>';
 
     }
@@ -681,8 +693,8 @@
       return string.replace(quizCtrl.soundIdRegex, "");
     }
 
-    function replaceImageTag(string,index) {
-      return string.replace(quizCtrl.imageTagRegex, "<img class='content-image' src='http://cc-test.zaya.in" + quizCtrl.getImageSrc(quizCtrl.getImageId(string),index) + "'></img>");
+    function replaceImageTag(string, index) {
+      return string.replace(quizCtrl.imageTagRegex, "<img class='content-image' src='http://cc-test.zaya.in" + quizCtrl.getImageSrc(quizCtrl.getImageId(string), index) + "'></img>");
     }
 
     function getLayout(question) {
@@ -717,25 +729,26 @@
     function scrollToNext() {
       var id = 'question-' + quizCtrl.nextScrollQuestion;
       $log.debug(id);
-      quizCtrl.position = $ionicPosition.position(angular.element(document.getElementById(id)));
-      $log.debug(quizCtrl.position)
-      $ionicScrollDelegate.$getByHandle('questions-box').scrollTop();
-      quizCtrl.nextScrollQuestion++;
+      // quizCtrl.position = $ionicPosition.position(angular.element(document.getElementById(id)));
+      // $log.debug(quizCtrl.position)
+      // $ionicScrollDelegate.$getByHandle('questions-box').scrollTop();
 
-      // var element = angular.element(document.getElementById(id));
+      var element = angular.element(document.getElementById(id));
       // $log.debug(element)
-      // $document.scrollToElement(element);
+      $document.scrollToElement(element);
+      quizCtrl.nextScrollQuestion++;
     }
+
     function preloadMapImages(arrayOfImages) {
-          $(arrayOfImages).each(function(){
-              $('<img/>')[0].src = this;
-          });
-      }
-      preloadMapImages([
-          '/img/assets/avatar-boy.png',
-          '/img/assets/pause_menu_top.png',
-          '/img/assets/pause_menu_middle.png',
-          '/img/assets/pause_menu_bottom.png'
-      ]);
+      $(arrayOfImages).each(function() {
+        $('<img/>')[0].src = this;
+      });
+    }
+    preloadMapImages([
+      '/img/assets/avatar-boy.png',
+      '/img/assets/pause_menu_top.png',
+      '/img/assets/pause_menu_middle.png',
+      '/img/assets/pause_menu_bottom.png'
+    ]);
   }
 })();

@@ -74,6 +74,8 @@
           navigator.splashscreen.hide();
       }
 
+
+
     //   document.addEventListener("pause", function(){
     //     $log.debug("paused");
     //     try{

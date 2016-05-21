@@ -13,8 +13,8 @@
   box-sizing: border-box;
 }
 .wrapper {
-  width: 45px;
-  height: 45px;
+  width: 30px;
+  height: 30px;
 }
 .wrapper .pie {
   width: 50%;
@@ -28,7 +28,7 @@
   border-radius: 100% 0 0 100% / 50% 0 0 50%;
   z-index: 200;
   border-right: none;
-  animation: rota 5s linear infinite;
+  // animation: rota 60s linear infinite;
 }
 .wrapper:hover .filler,
 .wrapper:hover .mask,
@@ -40,7 +40,7 @@
   left: 50%;
   opacity: 0;
   z-index: 100;
-  animation: opa 5s steps(1, end) infinite reverse;
+  // animation: opa 60s steps(1, end) infinite reverse;
   border-left: none;
 }
 .wrapper .mask {
@@ -51,15 +51,10 @@
   opacity: 1;
   z-index: 300;
   border-radius: 20px 0 0 20px;
-  animation: opa 5s steps(1, end) infinite;
+  // animation: opa 60s steps(1, end) infinite;
 }
 @keyframes rota {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+
 }
 @keyframes opa {
   0% {
