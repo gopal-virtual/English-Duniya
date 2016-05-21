@@ -3,9 +3,9 @@
     .module('zaya-quiz')
     .controller('QuizController', QuizController)
 
-  QuizController.$inject = ['quiz', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Quiz', 'Auth', '$ionicLoading', '$ionicPopup'];
+  QuizController.$inject = ['quiz', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Quiz', 'Auth', '$ionicLoading', '$ionicPopup', '$location', '$anchorScroll', '$document', '$ionicScrollDelegate', '$ionicPosition'];
 
-  function QuizController(quiz, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Quiz, Auth, $ionicLoading, $ionicPopup) {
+  function QuizController(quiz, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Quiz, Auth, $ionicLoading, $ionicPopup, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition) {
     var quizCtrl = this;
 
     quizCtrl.quiz = quiz;
@@ -70,6 +70,12 @@
     }
     quizCtrl.practiceResult = {};
     quizCtrl.preloadImages = preloadImages;
+
+    // scroll quiz
+    quizCtrl.nextScrollQuestion = 1;
+    quizCtrl.questionInView = questionInView;
+    quizCtrl.scrollToNext = scrollToNext;
+
     // initialisation call
     quizCtrl.setCurrentIndex(0);
     quizCtrl.init(quizCtrl.quiz);
@@ -188,7 +194,7 @@
                   node: question.node.id
                 });
                 if (quizCtrl.isCorrect(question, attempt)) {
-                  $log.debug(quizCtrl.isCorrect(question, attempt),'is correct');
+                  $log.debug(quizCtrl.isCorrect(question, attempt), 'is correct');
                   quizCtrl.report.attempts[question.node.id].is_correct = true;
                 }
               })
@@ -284,7 +290,7 @@
 
     function canSubmit() {
 
-      $log.debug("can submit for",quizCtrl.currentIndex);
+      $log.debug("can submit for", quizCtrl.currentIndex);
 
       // SCQ | DR
       if ((quizCtrl.quiz.objects[quizCtrl.currentIndex].node.type.type == "choicequestion" && !quizCtrl.quiz.objects[quizCtrl.currentIndex].node.type.content.is_multiple) || quizCtrl.quiz.objects[quizCtrl.currentIndex].node.type.type == "dr question") {
@@ -458,7 +464,7 @@
         } else {
           $scope.modal.hide().then(function() {
 
-            quizCtrl.slideTo(quizCtrl.getCurrentIndex()+1);
+            quizCtrl.slideTo(quizCtrl.getCurrentIndex() + 1);
             // quizCtrl.nextQuestion();
           });
         }
@@ -654,25 +660,46 @@
       return string.replace(quizCtrl.imageTagRegex, "<img class='content-image' src='http://cc-test.zaya.in" + quizCtrl.getImageSrc(quizCtrl.getImageId(string)) + "'></img>");
     }
 
-    function getLayout(question){
-      angular.forEach(question.node.type.content.options,function(option){
+    function getLayout(question) {
+      angular.forEach(question.node.type.content.options, function(option) {
         var text = quizCtrl.replaceImageTag(quizCtrl.removeSoundTag(option.option));
         text = text.trim();
-        if(text.length >= 55){
+        if (text.length >= 55) {
           return 'list';
         }
       })
       return 'grid';
     }
-    function preloadImages(quiz){
-      angular.forEach(quiz.objects,function(question){
-        angular.forEach(question.node.type.content.widgets.images,function(image){
-          $('<img/>')[0].src = 'http://cc-test.zaya.in'+image;
+
+    function preloadImages(quiz) {
+      angular.forEach(quiz.objects, function(question) {
+        angular.forEach(question.node.type.content.widgets.images, function(image) {
+          $('<img/>')[0].src = 'http://cc-test.zaya.in' + image;
         })
       })
     }
-    function disableSwipe(){
+
+    function disableSwipe() {
       $ionicSlideBoxDelegate.enableSlide(false);
+    }
+
+    function questionInView(index, viewPart) {
+      if (viewPart == 'bottom' || viewPart == 'both') {
+        quizCtrl.nextScrollQuestion = index + 1;
+      }
+    }
+
+    function scrollToNext() {
+      var id = 'question-' + quizCtrl.nextScrollQuestion;
+      $log.debug(id);
+      quizCtrl.position = $ionicPosition.position(angular.element(document.getElementById(id)));
+      $log.debug(quizCtrl.position)
+      $ionicScrollDelegate.$getByHandle('questions-box').scrollTop();
+      quizCtrl.nextScrollQuestion++;
+
+      // var element = angular.element(document.getElementById(id));
+      // $log.debug(element)
+      // $document.scrollToElement(element);
     }
   }
 })();

@@ -1,5 +1,7 @@
 <ion-pane class="bg-pale" ng-if="quizCtrl.quiz.objects.length">
   <div class="bar bar-header bg-pale quiz-header padding-0" style="border-bottom:1px ridge #EFE6CB">
+    {{quizCtrl.nextScrollQuestion}}
+    {{quizCtrl.position}}
     <div class="row padding-10 ">
       <div class="col padding-0 vertical-center">
         <div ng-click="quizCtrl.pauseQuiz()" class="header-icon icon-pause icon-fit-height padding-10"></div>
@@ -21,11 +23,13 @@
     </div>
 
   </div>
-  <ion-content overflow-scroll="false" has-bouncing="true" style="top:12%">
+  <ion-content delegate-handle="questions-box"  du-scroll-container overflow-scroll="false" has-bouncing="true" style="top:12%">
 
     <!-- <ion-slide-box on-slide-changed="quizCtrl.slideHasChanged($index)" show-pager="false"> -->
-    <div ng-repeat="question in quizCtrl.quiz.objects" class="card card-white margin-0 border-radius-0" style="margin-bottom:20px !important">
+    <div ng-repeat="question in quizCtrl.quiz.objects" ng-attr-id="{{'question-'+$index}}" class="card card-white margin-0 border-radius-0" style="margin-bottom:20px !important" >
       {{quizCtrl.setCurrentIndex($index)}}
+      {{$index}}
+      <div   in-view="quizCtrl.questionInView($index, $inviewpart)" class="has-header center padding-20" >
       <div style="
     height: 180px;
 " class="padding-0">
@@ -41,7 +45,6 @@
           <!-- <div ng-if="!question.node.title && !question.node.type.content.image"><img height="100" width="100" src="img/icons/sound.png"> </div> -->
         </div>
       </div>
-      <div style="height:343px" class="has-header center">
         <!-- SCQ -->
         <div
           ng-click="question.attempted=(question.attempted==option.key)?'':option.key"
@@ -108,7 +111,7 @@
       </div>
     </div>
   </ion-content>
-  <button class="button-round button button-calm icon-down icon-fit-height no-shadow" style="
+  <button ng-click="quizCtrl.scrollToNext()" class="button-round button button-calm icon-down icon-fit-height no-shadow" style="
     position: fixed;
     bottom: 10px;
     right: 10px;
@@ -128,3 +131,6 @@
     </div>
   </ion-content>
 </ion-view>
+<script>
+
+</script>
