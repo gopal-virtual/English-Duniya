@@ -4788,7 +4788,7 @@ function splitClasses(classes) {
 // if any other type of options value besides an Object value is
 // passed into the $animate.method() animation then this helper code
 // will be run which will ignore it. While this patch is not the
-// greatest solution to this, a lot of existing plugin depend on
+// greatest solution to this, a lot of existing plugins depend on
 // $animate to either call the callback (< 1.2) or return a promise
 // that can be changed. This helper function ensures that the options
 // are wiped clean incase a callback function is provided.
