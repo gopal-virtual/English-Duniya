@@ -124,3 +124,25 @@ hr{
 .resource-list img.active{
     width : 70% !important;
 }
+
+@media all and (orientation:portrait) {
+    .resource-list > li {
+        display: block;
+        height: 30%;
+    }
+    .avatar{
+        @include flex(0, 0, 50%);
+        max-width: 50%;
+    }
+}
+@media all and (orientation:landscape) {
+    .resource-list > li {
+        display: inline-block;
+        height: 100%;
+    }
+    .avatar{
+        @include flex(0, 0, 25%);
+        max-width: 25%;
+    }
+
+}
