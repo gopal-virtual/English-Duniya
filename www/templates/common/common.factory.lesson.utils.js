@@ -10,17 +10,38 @@
   /* @ngInject */
   function lessonutils($ionicLoading, $state, Rest, $log, CONSTANT, $timeout, $sce) {
     var utils = {
+        leaveLesson : leaveLesson,
       getLesson: getLesson,
       getLocalLesson: getLocalLesson,
       setLocalLesson: setLocalLesson,
       resourceType: resourceType,
       getIcon: getIcon,
       playResource: playResource,
-      getSrc: getSrc
+      getSrc: getSrc,
+      currentState : currentState
     };
 
     return utils;
 
+    function leaveLesson(){
+        $timeout(function(){
+            $state.go('map.navigate');
+        })
+    }
+    function currentState(resource){
+        if($state.is('quiz.questions') && utils.resourceType(resource) == 'assessment'){
+            return true;
+        }
+        else if($state.is('quiz.practice.questions') && utils.resourceType(resource) == 'practice'){
+            return true;
+        }
+        else if($state.is('content.video') && utils.resourceType(resource) == 'video'){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
     function getLesson(id, scope, callback) {
       $ionicLoading.show({
         noBackdrop: false,

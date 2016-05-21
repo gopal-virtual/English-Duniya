@@ -12,6 +12,7 @@
       orientation.setPortrait();
       audio.loop('background');
     });
+    $scope.orientation= orientation;
     function preload(arrayOfImages) {
           $(arrayOfImages).each(function(){
               $('<img/>')[0].src = this;
@@ -107,18 +108,18 @@
     }
 
 
-    // $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal' + CONSTANT.VIEW, {
+    $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal' + CONSTANT.VIEW, {
+      scope: $scope,
+      animation: 'slide-in-up',
+    }).then(function(modal) {
+      $scope.modal = modal;
+    });
+    // $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal-rope' + CONSTANT.VIEW, {
     //   scope: $scope,
     //   animation: 'slide-in-down',
     // }).then(function(modal) {
     //   $scope.modal = modal;
     // });
-    $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal-rope' + CONSTANT.VIEW, {
-      scope: $scope,
-      animation: 'slide-in-down',
-    }).then(function(modal) {
-      $scope.modal = modal;
-    });
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.settings' + CONSTANT.VIEW, {
       scope: $scope,
       animation: 'slide-in-up',

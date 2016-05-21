@@ -9,6 +9,7 @@
       $scope.$on("$ionicView.beforeEnter", function(event, data) {
         orientation.setPortrait();
       });
+      $scope.orientation = orientation;
     var quizCtrl = this;
 
     quizCtrl.quiz = quiz;
@@ -626,9 +627,9 @@
     // }).then(function(modal) {
     //   quizCtrl.pauseModal = modal;
     // });
-    $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal-rope' + CONSTANT.VIEW, {
+    $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal' + CONSTANT.VIEW, {
       scope: $scope,
-      animation: 'slide-in-down'
+      animation: 'slide-in-up'
     }).then(function(modal) {
       quizCtrl.pauseModal = modal;
     });

@@ -1,47 +1,52 @@
-.button{
+.button {
   box-shadow: 0 2px 2px rgba(0,0,0,0.5);
   vertical-align: center;
   padding: 10px;
   border-radius: $border-radius;
-  border : 0;
+  border: 0;
 }
-.button[disabled]{
+.button-resume {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: 50%;
+  height: 30%;
+}
+.button[disabled] {
   background-color: $brand-grey;
   color: darken($brand-grey,80%);
 }
-.button-green{
+.button-green {
+  line-height: 50px !important;
   background-color: $brand-green;
-  color : $brand-white;
+  color: $brand-white;
 }
 .button-green.active,
 .button-green.activated {
   background-color: darken($brand-green,10%);
-  color : $brand-white;
-}
-.button-round{
-  border-radius: $border-radius-round;
-}
-.button.icon-left-align{
-
-}
-
-.button-group{
   color: $brand-white;
 }
-
-.button-group > .button:first-child{
+.button-round {
+  border-radius: $border-radius-round;
+}
+.button.icon-left-align {}
+.button-group {
+  color: $brand-white;
+}
+.button-group > .button:first-child {
   border-radius: $border-radius-round 0 0 $border-radius-round !important;
   max-width: 15% !important;
   border-right: 1px solid rgba(255, 255, 255, 0.36);
 }
-.button-group > .button:last-child{
-  border-radius:  0 $border-radius-round $border-radius-round 0 !important;
+.button-group > .button:last-child {
+  border-radius: 0 $border-radius-round $border-radius-round 0 !important;
 }
-
-.button-group > .button{
+.button-group > .button {
   border: 0;
 }
-
-.button-no-shadow{
+.button-no-shadow {
   box-shadow: none;
 }

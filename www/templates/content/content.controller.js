@@ -5,11 +5,12 @@
     .module('zaya-content')
     .controller('contentController', contentController);
 
-  contentController.$inject = ['$stateParams', 'orientation', '$log','$scope','CONSTANT','$ionicModal','lessonutils'];
+  contentController.$inject = ['$stateParams', 'orientation', '$log','$scope','CONSTANT','$ionicModal','lessonutils','$timeout'];
 
   /* @ngInject */
-  function contentController($stateParams, orientation, $log, $scope, CONSTANT, $ionicModal, lessonutils) {
+  function contentController($stateParams, orientation, $log, $scope, CONSTANT, $ionicModal, lessonutils,$timeout) {
     var contentCtrl = this;
+    $scope.orientation=orientation;
     contentCtrl.onPlayerReady = onPlayerReady;
     contentCtrl.onStateChange = onStateChange;
     $scope.lessonutils = lessonutils;
@@ -31,7 +32,7 @@
       plugins : {
           controls: {
               autoHide: true,
-              autoHideTime: 500,
+              autoHideTime: 1000,
           },
       },
       theme: "lib/videogular-themes-default/videogular.css"
@@ -42,9 +43,11 @@
     }
     function onStateChange(state){
         $log.debug(state);
-        if(state == 'pause'){
-            $scope.openNodeMenu();
-        }
+        $timeout(function(){
+            if(state == 'pause'){
+                // $scope.openNodeMenu();
+            }
+        })
     }
 
     $scope.$on("$ionicView.beforeEnter", function(event, data) {
@@ -62,9 +65,9 @@
       $scope.modal.hide();
       return true;
     }
-    $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal-rope' + CONSTANT.VIEW, {
+    $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal' + CONSTANT.VIEW, {
       scope: $scope,
-      animation: 'slide-in-down',
+      animation: 'slide-in-up',
     }).then(function(modal) {
       $scope.modal = modal;
     });

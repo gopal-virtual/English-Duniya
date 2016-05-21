@@ -1,26 +1,43 @@
-<ion-modal-view class="modal-dark" style="background-image:url('img/interlink.png'); background-repeat : repeat-y; background-position : center center" ng-click="closeModal();mapCtrl.resetNode()">
+<ion-modal-view class="modal-dark" ng-click="closeNodeMenu();;mapCtrl.resetNode()">
   <ion-content ng-init="mapCtrl.selected=false" overflow-scroll="true">
-      <div class="row padding-30 modal-gradient">
+      <div class="row row-15 padding-30 modal-gradient">
           <div class="col text-center text-white font-xl">
-              {{mapCtrl.selectedNode.node.title}}
+              {{selectedNode.node.title}}
           </div>
       </div>
-    <div class="row" ng-repeat="resource in mapCtrl.selectedNode.objects">
-      <div class="col" ng-init="selected=false">
-        <div class="text-center">
+    <div class="row row-25" ng-repeat="resource in selectedNode.objects" ng-if="orientation.isPortrait()">
+      <div class="col text-center height-100 position-relative" ng-init="selected=false">
           <img
-          ng-src="{{mapCtrl.getIcon(resource)}}"
-          width="40%" height="auto" alt="resource icon"
-          ng-click="selected=true;$event.stopPropagation();mapCtrl.playResource(resource);"/>
-        </div>
+          ng-src="{{lessonutils.getIcon(resource)}}"
+          width="auto" height="100%" alt="resource icon"
+          ng-click="selected=true;$event.stopPropagation();closeNodeMenu();lessonutils.playResource(resource,contentCtrl.API);"
+          ng-class="{'fade' : lessonutils.currentState(resource)}"/>
+          <button ng-if="lessonutils.currentState(resource)" ng-click="contentCtrl.API && contentCtrl.API.play();" class="button button-green button-round font-xl button-resume" style="line-height: 30px !important;">resume</button>
+          <!-- <h3 class="color-pale">{{lessonutils.resourceType(resource)}}</h3> -->
       </div>
     </div>
-    <div class="row">
+    <div class="row row-60"  ng-if="orientation.isLandscape()">
+      <div class="col text-center height-100 position-relative" ng-init="selected=false" ng-repeat="resource in selectedNode.objects">
+          <img
+          ng-src="{{lessonutils.getIcon(resource)}}"
+          width="auto" height="100%" alt="resource icon"
+          ng-click="selected=true;$event.stopPropagation();closeNodeMenu();lessonutils.playResource(resource,contentCtrl.API);"
+          ng-class="{'fade' : lessonutils.currentState(resource)}"/>
+          <button ng-if="lessonutils.currentState(resource)" ng-click="contentCtrl.API && contentCtrl.API.play();" class="button button-green button-round font-xl button-resume" style="line-height: 30px !important;">resume</button>
+          <!-- <h3 class="color-pale">{{lessonutils.resourceType(resource)}}</h3> -->
+      </div>
+    </div>
+    <div class="row row-10">
+        <div class="col text-center">
+            <a class="button button-green button-round padding-x-30 font-xl" ng-click="closeNodeMenu();lessonutils.leaveLesson();mapCtrl && mapCtrl.resetNode()">Leave Lesson</a>
+        </div>
+    </div>
+    <!-- <div class="row">
       <div class="col">
         <div class="text-center">
           <img ng-src="img/icons/icon-{{mapCtrl.selectedNode.node.tag.toLowerCase()}}-node.png" alt="practice icon" ng-click="$event.stopPropagation()"/>
         </div>
       </div>
-    </div>
+    </div> -->
   </ion-content>
 </ion-modal-view>

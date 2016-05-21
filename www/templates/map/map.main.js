@@ -47,7 +47,7 @@ window.createGame = function(scope, lessons, injector, log) {
       var desert = this.game.add.sprite(0, 0, 'desert');
       var game_scale = game.world.width / desert.width;
       var desert_height = 2155;
-      this.iceregion_height = 2886 - desert_height
+      this.iceregion_height = 3358 - desert_height
       desert.scale.setTo(game_scale, 1);
       this.game.world.setBounds(0, 0, this.game.width, desert.height);
       log.debug(this.world.height - 30);
@@ -163,11 +163,11 @@ window.createGame = function(scope, lessons, injector, log) {
       var light = fire_animation.animations.add('light');
       fire_animation.animations.play('light', 20, true);
 
-      for (var i = 0, tent_count = tent_green_points.length; i < tent_count; i++) {
-        var tent = this.game.add.sprite(tent_green_points[i].x, tent_green_points[i].y + this.iceregion_height, 'tent_green');
-        tent.anchor.setTo(0.5, 0.5);
-        tent.scale.setTo(tent_green_points[i].scale);
-      }
+    //   for (var i = 0, tent_count = tent_green_points.length; i < tent_count; i++) {
+    //     var tent = this.game.add.sprite(tent_green_points[i].x, tent_green_points[i].y + this.iceregion_height, 'tent_green');
+    //     tent.anchor.setTo(0.5, 0.5);
+    //     tent.scale.setTo(tent_green_points[i].scale);
+    //   }
       // place stone
       for (var i = 0, one_stone_count = one_stone_points.length; i < one_stone_count; i++) {
         var tent = this.game.add.sprite(one_stone_points[i].x, one_stone_points[i].y + this.iceregion_height, 'one_stone');
@@ -215,7 +215,6 @@ window.createGame = function(scope, lessons, injector, log) {
       for (var j = 0; j < 1; j += this.increment) {
         var posx = this.math.catmullRomInterpolation(this.points.x, j);
         var posy = this.math.catmullRomInterpolation(this.points.y, j);
-        log.debug(posx,posy);
         this.bmd.rect(posx, posy, 4, 4, '#219C7F');
       }
       // sand particles
@@ -232,7 +231,7 @@ window.createGame = function(scope, lessons, injector, log) {
       }
       // snow particles
       for (var i = 0; i < 100; i++) {
-        var s = this.game.add.sprite(this.world.randomX, this.game.rnd.between(0, this.iceregion_height), 'snow' + this.game.rnd.between(1, 2));
+        var s = this.game.add.sprite(this.world.randomX, this.game.rnd.between(0, this.iceregion_height - 500), 'snow' + this.game.rnd.between(1, 2));
 
         s.scale.setTo(this.game.rnd.between(1, 2) / 10);
         this.game.physics.arcade.enable(s);
@@ -321,7 +320,7 @@ window.createGame = function(scope, lessons, injector, log) {
     resetSprite: function(sprite) {
       sprite.x = this.game.world.bounds.right;
       if (sprite.y > this.world.height)
-        sprite.y = this.iceregion_height * 1.3;
+        sprite.y = this.iceregion_height;
     },
     resetSnowSprite: function(sprite) {
       sprite.x = this.game.world.bounds.right;
