@@ -6,16 +6,19 @@
 
     <div class="row padding-x-20">
       <div class="col">
-        <div class="button-bar button-group">
+        <!-- <div class="button-bar button-group">
           <button type="button" ng-click="authCtrl.googleSignIn()" class="button button-no-shadow button-round button-block button-assertive icon-left ion-social-googleplus"></button>
-          <button tabindex="4" type="button" ng-click="authCtrl.googleSignIn()" class="button button-no-shadow button-round button-block button-assertive icon-left">Google+</button>
-        </div>
+        </div> -->
+        <button tabindex="4" type="button" ng-click="authCtrl.googleSignIn()" class="button button-no-shadow button-round button-block font-lg button-assertive icon-middle ion-social-googleplus" style="padding: 0;line-height:10px !important"></button>
+      </div>
+      <div class="col col-10">
+          <h3 style="display:block;line-height:70px">or</h3>
       </div>
       <div class="col">
-        <div class="button-bar button-group">
+        <!-- <div class="button-bar button-group">
           <button type="button" ng-click="authCtrl.facebookSignIn()" class="button button-no-shadow button-round button-block button-positive icon-left ion-social-facebook"></button>
-          <button tabindex="5" type="button" ng-click="authCtrl.facebookSignIn()" class="button button-no-shadow button-round button-block button-positive icon-left">Facebook</button>
-        </div>
+        </div> -->
+        <button tabindex="5" type="button" ng-click="authCtrl.facebookSignIn()" class="button button-no-shadow button-round button-block font-lg button-positive icon-middle ion-social-facebook" style="padding: 0;line-height:10px !important"></button>
       </div>
     </div>
     <div class="row center">
@@ -39,8 +42,8 @@
             <i class="icon" ng-class="{'ion-ios-glasses-outline' : !show_password, 'ion-ios-glasses' : show_password}"></i>
           </button> -->
         </div>
-        <div class="margin-20">
-          <button ng-disabled="authCtrl.signUpDisabled" tabindex="4" class="button button-round padding-x-40 button-green button-no-shadow">SIGN UP</button>
+        <div class="margin-y-20">
+          <button ng-disabled="authCtrl.signUpDisabled" tabindex="4" class="button button-round button-block padding-x-40 button-green button-no-shadow" style="padding: 0;line-height:20px !important">SIGN UP</button>
           <div>
         </form>
     </div>
