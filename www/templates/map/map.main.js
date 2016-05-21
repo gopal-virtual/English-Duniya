@@ -23,6 +23,8 @@ window.createGame = function(scope, lessons, injector, log) {
       this.load.image('particle1', 'img/assets/particle1.png');
       this.load.image('particle2', 'img/assets/particle2.png');
       this.load.image('particle3', 'img/assets/particle3.png');
+      this.load.image('snow1', 'img/assets/snow.png');
+      this.load.image('snow2', 'img/assets/snow1.png');
       this.load.image('catus-fat', 'img/assets/cactus_fat.png');
       this.load.image('grass', 'img/assets/stone-grass.png');
       this.load.image('scorpion', 'img/assets/scorpion.png');
@@ -45,7 +47,7 @@ window.createGame = function(scope, lessons, injector, log) {
       var desert = this.game.add.sprite(0, 0, 'desert');
       var game_scale = game.world.width / desert.width;
       var desert_height = 2155;
-      var iceregion_height = 2886 - desert_height
+      this.iceregion_height = 2886 - desert_height
       desert.scale.setTo(game_scale, 1);
       this.game.world.setBounds(0, 0, this.game.width, desert.height);
       log.debug(this.world.height - 30);
@@ -92,15 +94,16 @@ window.createGame = function(scope, lessons, injector, log) {
         y: 1096,
         scale: 1
       },
-    //   {
-    //     x: 76 * game_scale,
-    //     y: 913,
-    //     scale: 1
-    //   }, {
-    //     x: 306 * game_scale,
-    //     y: 768,
-    //     scale: 1
-    //   }, {
+      {
+        x: 76 * game_scale,
+        y: 913,
+        scale: 1
+      }, {
+        x: 306 * game_scale,
+        y: 768,
+        scale: 1
+      },
+    // {
     //     x: 40 * game_scale,
     //     y: 475,
     //     scale: 1
@@ -112,7 +115,7 @@ window.createGame = function(scope, lessons, injector, log) {
     //     x: 310 * game_scale,
     //     y: 184,
     //     scale: 1
-    //   }, 
+    //   },
   ];
       var tent_points = [{
         x: 258 * game_scale,
@@ -149,36 +152,36 @@ window.createGame = function(scope, lessons, injector, log) {
 
       // place tent
       for (var i = 0, tent_count = tent_points.length; i < tent_count; i++) {
-        var tent = this.game.add.sprite(tent_points[i].x, tent_points[i].y + iceregion_height, 'tent');
+        var tent = this.game.add.sprite(tent_points[i].x, tent_points[i].y + this.iceregion_height, 'tent');
         tent.anchor.setTo(0.5, 0.5);
         tent.scale.setTo(tent_points[i].scale);
       }
       // fire animation
-      var fire_animation = this.game.add.sprite(tent_points[0].x - 80, tent_points[0].y + 20 + iceregion_height, 'fire_animation');
+      var fire_animation = this.game.add.sprite(tent_points[0].x, tent_points[0].y + 40 + this.iceregion_height, 'fire_animation');
       fire_animation.scale.setTo(0.2, 0.2);
       fire_animation.anchor.setTo(0.5, 0.5);
       var light = fire_animation.animations.add('light');
       fire_animation.animations.play('light', 20, true);
 
       for (var i = 0, tent_count = tent_green_points.length; i < tent_count; i++) {
-        var tent = this.game.add.sprite(tent_green_points[i].x, tent_green_points[i].y + iceregion_height, 'tent_green');
+        var tent = this.game.add.sprite(tent_green_points[i].x, tent_green_points[i].y + this.iceregion_height, 'tent_green');
         tent.anchor.setTo(0.5, 0.5);
         tent.scale.setTo(tent_green_points[i].scale);
       }
       // place stone
       for (var i = 0, one_stone_count = one_stone_points.length; i < one_stone_count; i++) {
-        var tent = this.game.add.sprite(one_stone_points[i].x, one_stone_points[i].y + iceregion_height, 'one_stone');
+        var tent = this.game.add.sprite(one_stone_points[i].x, one_stone_points[i].y + this.iceregion_height, 'one_stone');
         tent.anchor.setTo(0.5, 0.5);
         tent.scale.setTo(one_stone_points[i].scale);
       }
       for (var i = 0, two_stone_count = two_stone_points.length; i < two_stone_count; i++) {
-        var tent = this.game.add.sprite(two_stone_points[i].x, two_stone_points[i].y + iceregion_height, 'two_stone');
+        var tent = this.game.add.sprite(two_stone_points[i].x, two_stone_points[i].y + this.iceregion_height, 'two_stone');
         tent.anchor.setTo(0.5, 0.5);
         tent.scale.setTo(two_stone_points[i].scale);
       }
       // place cactus
       for (var i = 0, cactus_count = cactus_points.length; i < cactus_count; i++) {
-        var cactus = this.game.add.sprite(cactus_points[i].x, cactus_points[i].y + iceregion_height, 'cactus');
+        var cactus = this.game.add.sprite(cactus_points[i].x, cactus_points[i].y + this.iceregion_height, 'cactus');
         cactus.anchor.setTo(0.5, 0.5);
         cactus.scale.setTo(cactus_points[i].scale);
         // catcus animation
@@ -200,13 +203,13 @@ window.createGame = function(scope, lessons, injector, log) {
 
       for (var i = 0, points_count = this.points.x.length; i < points_count; i++) {
         this.points.x[i] *= game_scale;
-        this.points.y[i] += iceregion_height;
+        this.points.y[i] += this.iceregion_height;
       }
 
-      this.increment = 1 / desert_height;
+      this.increment = 1 / this.world.height;
 
       // Somewhere to draw to
-      this.bmd = this.add.bitmapData(this.game.width, desert_height);
+      this.bmd = this.add.bitmapData(this.game.width, this.world.height);
       this.bmd.addToWorld();
       // Draw the path
       for (var j = 0; j < 1; j += this.increment) {
@@ -217,7 +220,7 @@ window.createGame = function(scope, lessons, injector, log) {
       }
       // sand particles
       for (var i = 0; i < 100; i++) {
-        var s = this.game.add.sprite(this.world.randomX, this.game.world.randomY, 'particle' + this.game.rnd.between(1, 3));
+        var s = this.game.add.sprite(this.world.randomX, this.game.rnd.between(this.iceregion_height, this.world.height), 'particle' + this.game.rnd.between(1, 3));
 
         s.scale.setTo(this.game.rnd.between(1, 2) / 20);
         this.game.physics.arcade.enable(s);
@@ -226,6 +229,18 @@ window.createGame = function(scope, lessons, injector, log) {
         s.autoCull = true;
         s.checkWorldBounds = true;
         s.events.onOutOfBounds.add(this.resetSprite, this);
+      }
+      // snow particles
+      for (var i = 0; i < 100; i++) {
+        var s = this.game.add.sprite(this.world.randomX, this.game.rnd.between(0, this.iceregion_height), 'snow' + this.game.rnd.between(1, 2));
+
+        s.scale.setTo(this.game.rnd.between(1, 2) / 10);
+        this.game.physics.arcade.enable(s);
+        s.body.velocity.x = this.game.rnd.between(-50, -200);
+        s.body.velocity.y = this.game.rnd.between(50, 70);
+        s.autoCull = true;
+        s.checkWorldBounds = true;
+        s.events.onOutOfBounds.add(this.resetSnowSprite, this);
       }
       //   var stars = this.game.add.group();
       function createStars(count, x, y) {
@@ -306,6 +321,11 @@ window.createGame = function(scope, lessons, injector, log) {
     resetSprite: function(sprite) {
       sprite.x = this.game.world.bounds.right;
       if (sprite.y > this.world.height)
+        sprite.y = this.iceregion_height * 1.3;
+    },
+    resetSnowSprite: function(sprite) {
+      sprite.x = this.game.world.bounds.right;
+      if (sprite.y > this.iceregion_height)
         sprite.y = this.game.world.bounds.top;
     },
     update: function() {
@@ -313,7 +333,7 @@ window.createGame = function(scope, lessons, injector, log) {
     },
 
     render: function() {
-      // this.game.debug.text("fps : "+game.time.fps || '--', 2, 14, "#00ff00");
+    //   this.game.debug.text("fps : "+game.time.fps || '--', 2, 100, "#00ff00");
     }
   }
 
