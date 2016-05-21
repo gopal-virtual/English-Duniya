@@ -14,7 +14,17 @@
     contentCtrl.onStateChange = onStateChange;
     $scope.lessonutils = lessonutils;
     $scope.selectedNode = lessonutils.getLocalLesson();
-    
+    function preload(arrayOfImages) {
+          $(arrayOfImages).each(function(){
+              $('<img/>')[0].src = this;
+          });
+      }
+      preload([
+          '/img/assets/avatar-boy.png',
+          '/img/assets/pause_menu_y_top.png',
+          '/img/assets/pause_menu_y_middle.png',
+          '/img/assets/pause_menu_y_bottom.png'
+      ]);
     contentCtrl.config = {
       sources: [$stateParams.video],
       autoplay : true,
