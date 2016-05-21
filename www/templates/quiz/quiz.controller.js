@@ -711,5 +711,16 @@
       // $log.debug(element)
       // $document.scrollToElement(element);
     }
+    function preloadMapImages(arrayOfImages) {
+          $(arrayOfImages).each(function(){
+              $('<img/>')[0].src = this;
+          });
+      }
+      preloadMapImages([
+          '/img/assets/avatar-boy.png',
+          '/img/assets/pause_menu_top.png',
+          '/img/assets/pause_menu_middle.png',
+          '/img/assets/pause_menu_bottom.png'
+      ]);
   }
 })();
