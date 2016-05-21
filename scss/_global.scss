@@ -103,3 +103,24 @@ hr{
 .stars> img:last-child {
     -webkit-transform: rotateZ(15deg) translateY(10px);
 }
+
+@each $size, $percent in $height-list{
+    .row-#{$size}{
+        height: $percent;
+    }
+    .height-#{$size}{
+        height: $percent;
+    }
+    .width-#{$size}{
+        width : $percent;
+    }
+}
+.height-auto{
+    height: auto;
+}
+.width-auto{
+    width : auto;
+}
+.resource-list img.active{
+    width : 70% !important;
+}

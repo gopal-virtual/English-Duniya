@@ -1,0 +1,31 @@
+<ion-modal-view class="modal-dark">
+  <ion-content ng-init="mapCtrl.selected=false" overflow-scroll="true">
+      <div class="row row-20" style="background:url('img/assets/pause_menu_top.png') no-repeat center center; background-size : 95% 105%">
+          <div class="col"></div>
+      </div>
+      <div class="height-60" style="background:url('img/assets/pause_menu_middle.png') no-repeat center center; background-size : 95% 105%">
+          <div class="row height-10">
+            <div class="col text-center font-md">
+                {{selectedNode.node.title}}
+            </div>
+          </div>
+          <div class="row height-90" style="margin:0">
+              <div class="col" style="background:url('img/assets/avatar-boy.png') no-repeat center center; background-size : auto 80%"></div>
+              <div class="col col-center height-90">
+                  <ul class="resource-list height-100">
+                      <li ng-repeat="resource in selectedNode.objects" class="height-30 text-center capitalize">
+                          <img ui-sref-active="active" class="width-auto height-70" ng-src="{{lessonutils.getIcon(resource)}}" alt="resource icon" ng-click="selected=true;$event.stopPropagation();closeNodeMenu();lessonutils.playResource(resource,contentCtrl.API);" />
+                          <br>
+                          {{lessonutils.resourceType(resource)}}
+                      </li>
+                  </ul>
+              </div>
+          </div>
+      </div>
+      <div class="row row-10" style="background:url('img/assets/pause_menu_bottom.png') no-repeat center center; background-size : 95% 105%;">
+          <div class="col text-center">
+              <a class="button button-green button-round padding-x-30" ui-sref="map.navigate" ng-click="closeNodeMenu();mapCtrl && mapCtrl.resetNode()" style="top:-20px;">Leave Lesson</a>
+          </div>
+      </div>
+  </ion-content>
+</ion-modal-view>

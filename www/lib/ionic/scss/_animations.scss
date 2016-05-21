@@ -19,6 +19,23 @@
   @include transition(all ease-in-out 250ms);
 }
 
+.slide-in-down {
+  @include translate3d(0, -100%, 0);
+}
+.slide-in-down.ng-enter,
+.slide-in-down > .ng-enter {
+  @include transition(all cubic-bezier(.68,.09,.34,1.25) 400ms);
+}
+.slide-in-down.ng-enter-active,
+.slide-in-down > .ng-enter-active {
+  @include translate3d(0, 0, 0);
+}
+
+.slide-in-down.ng-leave,
+.slide-in-down > .ng-leave {
+  @include transition(all ease-in-out 250ms);
+}
+
 
 // Scale Out
 // Scale from hero (1 in this case) to zero
