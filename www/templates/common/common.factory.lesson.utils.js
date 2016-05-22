@@ -5,10 +5,10 @@
     .module('common')
     .factory('lessonutils', lessonutils);
 
-  lessonutils.$inject = ['$ionicLoading', '$state', 'Rest', '$log', 'CONSTANT', '$timeout', '$sce'];
+  lessonutils.$inject = ['$ionicLoading', '$state', 'Rest', '$log', 'CONSTANT', '$timeout', '$sce','$ionicPopup'];
 
   /* @ngInject */
-  function lessonutils($ionicLoading, $state, Rest, $log, CONSTANT, $timeout, $sce) {
+  function lessonutils($ionicLoading, $state, Rest, $log, CONSTANT, $timeout, $sce, $ionicPopup) {
     var utils = {
         leaveLesson : leaveLesson,
       getLesson: getLesson,
@@ -45,12 +45,17 @@
     function getLesson(id, scope, callback) {
       $ionicLoading.show({
         noBackdrop: false,
-        hideOnStateChange: true
       });
       Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('lessons', id).get().then(function(response) {
         $ionicLoading.hide();
         utils.setLocalLesson(JSON.stringify(response.plain()));
         callback && callback(response.plain());
+      },function(error){
+        $ionicLoading.hide();
+        $ionicPopup.alert({
+           title: 'Sorry',
+           template: 'You need to be online!'
+         });
       })
     }
 
