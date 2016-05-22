@@ -9,6 +9,7 @@
       $scope.$on("$ionicView.beforeEnter", function(event, data) {
         orientation.setPortrait();
       });
+      audio.stop('background');
       $scope.orientation = orientation;
     var quizCtrl = this;
 

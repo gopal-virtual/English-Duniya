@@ -37,13 +37,16 @@
       })
       .state('map.navigate', {
         url: '/navigate',
-        onEnter: ['$state', 'lessons', function($state, lessons) {
+        onEnter: ['$state', 'lessons','audio', function($state, lessons, audio) {
           if (!lessons) {
             $state.go('map.unauthorised');
           }
+          audio.preloadSimple('background');
+          audio.play('background');
         }],
         onExit: ['audio', function(audio) {
           audio.stop('background');
+          // audio.unload('background');
         }],
         views: {
           'state-map': {

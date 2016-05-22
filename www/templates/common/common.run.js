@@ -11,7 +11,7 @@
         $cordovaNativeAudio.preloadSimple('water-drop', 'sound/water-drop.mp3');
         $cordovaNativeAudio.preloadSimple('correct', 'sound/correct.mp3');
         $cordovaNativeAudio.preloadSimple('wrong', 'sound/wrong.mp3');
-        $cordovaNativeAudio.preloadSimple('background', 'sound/background.mp3');
+        // $cordovaNativeAudio.preloadSimple('background', 'sound/background.mp3');
         $cordovaNativeAudio.preloadSimple('one_star', 'sound/one_star.mp3');
         $cordovaNativeAudio.preloadSimple('two_star', 'sound/two_star.mp3');
         $cordovaNativeAudio.preloadSimple('three_star', 'sound/three_star.mp3');
