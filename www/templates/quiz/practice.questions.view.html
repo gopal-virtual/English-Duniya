@@ -32,7 +32,7 @@
           <label ng-click="quizCtrl.playAudio(quizCtrl.getSoundId(option.option))" >
             <input class="hide" >
             <!-- <div class="option-container"  ng-if="option"> -->
-                <div ng-class="{'font-sl':quizCtrl.parseToDisplay(option.option).length == 1,'font-md':quizCtrl.parseToDisplay(option.option).length != 1}" class="padding-10 font-md option" ng-bind-html="quizCtrl.parseToDisplay(option.option)">
+                <div ng-class="{'font-sl':quizCtrl.parseToDisplay(option.option).length < 5,'font-md':quizCtrl.parseToDisplay(option.option).length >= 5}" class="padding-10 option" ng-bind-html="quizCtrl.parseToDisplay(option.option)">
                 </div>
             <!-- </div> -->
         </label>
@@ -43,7 +43,7 @@
         <label ng-click="quizCtrl.playAudio(quizCtrl.getSoundId(option.option))" >
           <input class="hide" type="checkbox" ng-model="question.attempted[option.key]" ng-value="option.key" >
           <!-- <div class="option-container"  ng-if="option"> -->
-              <div ng-class="{'font-sl':quizCtrl.parseToDisplay(option.option).length == 1,'font-md':quizCtrl.parseToDisplay(option.option).length != 1}" class="padding-10 font-md option" ng-bind-html="quizCtrl.parseToDisplay(option.option)">
+              <div ng-class="{'font-sl':quizCtrl.parseToDisplay(option.option).length < 5,'font-md':quizCtrl.parseToDisplay(option.option).length >= 5}" class="padding-10 option" ng-bind-html="quizCtrl.parseToDisplay(option.option)">
               <!-- </div> -->
           </div>
             </label>
