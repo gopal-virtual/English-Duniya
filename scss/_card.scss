@@ -120,11 +120,11 @@
 }
 .practice-feedback.correct {
   background: url($feedback-image-correct) no-repeat center center;
-  background-size: auto 40%;
+  background-size: auto 30%;
 }
 .practice-feedback.wrong {
   background: url($feedback-image-incorrect) no-repeat center center;
-  background-size: auto 40%;
+  background-size: auto 30%;
 }
 .card-image {
   height: 100px;
