@@ -3,9 +3,9 @@
     .module('zaya-quiz')
     .controller('QuizController', QuizController)
 
-  QuizController.$inject = ['quiz', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Quiz', 'Auth', '$ionicLoading', '$ionicPopup', 'lessonutils', 'orientation', '$location', '$anchorScroll', '$document', '$ionicScrollDelegate', '$ionicPosition', '$timeout'];
+  QuizController.$inject = ['quiz', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Quiz', 'Auth', '$ionicLoading', '$ionicPopup', 'lessonutils', 'orientation', '$location', '$anchorScroll', '$document', '$ionicScrollDelegate', '$ionicPosition', '$timeout', '$window'];
 
-  function QuizController(quiz, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Quiz, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition, $timeout) {
+  function QuizController(quiz, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Quiz, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition, $timeout, $window) {
       $scope.$on("$ionicView.beforeEnter", function(event, data) {
         orientation.setPortrait();
       });
@@ -720,24 +720,22 @@
     function disableSwipe() {
       $ionicSlideBoxDelegate.enableSlide(false);
     }
-
+    quizCtrl.view_data = {}
     function questionInView(index, viewPart) {
+      quizCtrl.view_data[index] = viewPart;
       if (viewPart == 'bottom' || viewPart == 'both') {
         quizCtrl.nextScrollQuestion = index + 1;
       }
     }
 
     function scrollToNext() {
-      var id = 'question-' + quizCtrl.nextScrollQuestion;
-      $log.debug(id);
-      // quizCtrl.position = $ionicPosition.position(angular.element(document.getElementById(id)));
-      // $log.debug(quizCtrl.position)
-      // $ionicScrollDelegate.$getByHandle('questions-box').scrollTop();
-
-      var element = angular.element(document.getElementById(id));
-      // $log.debug(element)
-      $document.scrollToElement(element);
-      quizCtrl.nextScrollQuestion++;
+      angular.element(window).trigger("checkInView");
+      $timeout(function(){
+        var id = 'question-' + quizCtrl.nextScrollQuestion;
+        var position = $('#'+id).position();
+        $ionicScrollDelegate.scrollBy(position.left,position.top ,true);
+        $log.debug($ionicScrollDelegate.getScrollView())
+      },500)
     }
 
     function preloadMapImages(arrayOfImages) {

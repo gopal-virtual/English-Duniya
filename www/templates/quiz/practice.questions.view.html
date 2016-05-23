@@ -26,7 +26,7 @@
       <div ng-if="question.node.title" ng-bind-html="quizCtrl.parseToDisplay(question.node.title)" class="question practice-question card card-transparent center margin-x-0 margin-y-0 padding-0" ng-click="quizCtrl.playAudio(quizCtrl.getSoundId(question.node.title))">
       </div>
     </div>
-    <ion-content  overflow-scroll="false" has-bouncing="true" class="has-practice-header has-question-subheader padding-20 center bg-pale">
+    <ion-content in-view-container overflow-scroll="false" has-bouncing="true" class="has-practice-header has-question-subheader padding-20 center bg-pale">
       <!-- SCQ -->
         <div ng-click="question.attempted=(question.attempted==option.key)?'':option.key" ng-if="question.node.type.type=='choicequestion' && !question.node.type.content.is_multiple" ng-class="{'selected':option.key==question.attempted,'card-list':quizCtrl.getLayout(question) == 'list','card-grid practice-card':quizCtrl.getLayout(question) == 'grid'}" class="card center bg-white card-radius" ng-repeat="option in question.node.type.content.options">
           <label ng-click="quizCtrl.playAudio(quizCtrl.getSoundId(option.option))" >
