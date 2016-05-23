@@ -12,7 +12,7 @@
       <div class="col stars">
 
           <img ng-repeat="limit in [quizCtrl.CONSTANT.STAR.ONE,quizCtrl.CONSTANT.STAR.TWO,quizCtrl.CONSTANT.STAR.THREE] track by $index"
-          ng-src="{{ quizCtrl.practiceResult.percentCorrect >= limit ? 'img/icons/icon-star.png' : 'img/icons/icon-nostar.png'}}">
+          ng-src="{{ quizCtrl.practiceResult.percentCorrect >= limit ? 'img/icons/icon-star.png' : 'img/icons/icon-nostar.png'}}" class="animation-zoom-out-{{$index+1}}" style="-webkit-animation-delay: {{$index+1}}s;">
       </div>
     </div>
     <div class="row padding-30">
@@ -20,7 +20,7 @@
         <button class="button bg-pale button-round button-block" ui-sref="quiz.practice.questions({id : quizCtrl.quiz.node.id})">REDO</button>
       </div>
       <div class="col">
-        <button class="button bg-brand-yellow button-round button-block" ui-sref="map.navigate">NEXT</button>
+        <button class="button bg-brand-yellow button-round button-block" ng-click="showNodeMenu()">NEXT</button>
       </div>
     </div>
     <!-- <div class="row bg-pale padding-y-20">

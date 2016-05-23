@@ -5,11 +5,12 @@
     .module('zaya-content')
     .controller('contentController', contentController);
 
-  contentController.$inject = ['$stateParams', 'orientation', '$log','$scope','CONSTANT','$ionicModal','lessonutils','$timeout'];
+  contentController.$inject = ['$stateParams', 'orientation', '$log','$scope','CONSTANT','$ionicModal','lessonutils','$timeout','audio'];
 
   /* @ngInject */
-  function contentController($stateParams, orientation, $log, $scope, CONSTANT, $ionicModal, lessonutils,$timeout) {
+  function contentController($stateParams, orientation, $log, $scope, CONSTANT, $ionicModal, lessonutils,$timeout,audio) {
     var contentCtrl = this;
+    $scope.audio = audio;
     $scope.orientation=orientation;
     contentCtrl.onPlayerReady = onPlayerReady;
     contentCtrl.onStateChange = onStateChange;

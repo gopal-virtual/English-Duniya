@@ -1,4 +1,4 @@
-window.createGame = function(scope, lessons, injector, log) {
+window.createGame = function(scope, lessons, audio, injector, log) {
   'use strict';
 
   var lessons = lessons;
@@ -271,6 +271,10 @@ window.createGame = function(scope, lessons, injector, log) {
               if (!currentLesson.locked && displacement) {
                 scope.$emit('openNode', currentLesson);
               }
+              else if(currentLesson.locked && displacement){
+                  audio.play('locked');
+              }
+              else{}
             }
           }(currentLesson, this.game)
         );
