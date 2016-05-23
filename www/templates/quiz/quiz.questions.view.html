@@ -12,7 +12,7 @@
         </div>
         <div class="row padding-0" style="flex-direction:row">
           <div  class="col padding-0" ng-repeat="question in quizCtrl.quiz.objects">
-            <span class="row padding-0" style="white-space:nowrap;padding-top:10px !important" ng-if="quizCtrl.nextScrollQuestion-1 == $index">Q {{$index+1}}</span>
+            <span class="row padding-0 font-md" style="white-space:nowrap;padding-top:10px !important" ng-if="quizCtrl.nextScrollQuestion-1 == $index">Q{{$index+1}}</span>
           </div>
         </div>
       </div>
@@ -25,7 +25,7 @@
           <div class="mask" style="opacity:{{((quizCtrl.timer | date:'ss')<=30)?1:0}}"></div>
         </div>
 </div>
-<div class="center">{{quizCtrl.timer | date:'mm:ss'}}</div>
+<div class="center"><span >{{quizCtrl.timer | date:'mm:ss'}}</span></div>
 
         <!-- <div style="border-radius:50px;width:50px;height:50px;border:2px solid #38B89A;padding:5px">
           <div style="background-color:#FA660C"></div>
@@ -63,7 +63,7 @@
             <!-- <div class="option-container"  ng-if="option"> -->
             <div
               class="padding-10 option"
-              ng-class="{'font-sl':quizCtrl.parseToDisplay(option.option,$parent.$parent.$index).length == 1,'font-md':quizCtrl.parseToDisplay(option.option,$parent.$parent.$index).length != 1}"
+                  ng-class="{'font-sl':quizCtrl.parseToDisplay(option.option,$parent.$parent.$index).length < 5,'font-md':quizCtrl.parseToDisplay(option.option,$parent.$parent.$index).length >= 5}"
               ng-bind-html="quizCtrl.parseToDisplay(option.option,$parent.$parent.$index)"></div>
             <!-- </div> -->
           </label>
@@ -79,7 +79,7 @@
             <input class="hide" type="checkbox" ng-model="question.attempted[option.key]" ng-value="option.key">
             <div
               class="padding-10 option"
-              ng-class="{'font-sl':quizCtrl.parseToDisplay(option.option,$parent.$parent.$index).length == 1,'font-md':quizCtrl.parseToDisplay(option.option,$parent.$parent.$index).length != 1}"
+              ng-class="{'font-sl':quizCtrl.parseToDisplay(option.option,$parent.$parent.$index).length < 5,'font-md':quizCtrl.parseToDisplay(option.option,$parent.$parent.$index).length >= 5}"
               ng-bind-html="quizCtrl.parseToDisplay(option.option,$parent.$parent.$index)"></div>
             <!-- <div class="option-container"  ng-if="option"> -->
             <!-- </div> -->
@@ -122,13 +122,13 @@
       </div>
     </div>
   </ion-content>
-  <button ng-click="quizCtrl.scrollToNext()" class="button-round button button-calm icon-down icon-fit-height no-shadow" style="
+  <!-- <button ng-click="quizCtrl.scrollToNext()" class="button-round button button-calm icon-down icon-fit-height no-shadow" style="
     position: fixed;
     bottom: 10px;
     right: 10px;
     z-index: 100;
 ">
-  </button>
+  </button> -->
 </ion-pane>
 <ion-view ng-if="!quizCtrl.quiz.objects.length" class="bg-pale">
   <ion-content>
