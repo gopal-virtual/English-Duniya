@@ -35,11 +35,10 @@
     </div>
 
   </div>
-  <ion-content class="has-quiz-header" delegate-handle="questions-box" du-scroll-container overflow-scroll="false" has-bouncing="true">
-
+  <ion-content class="has-quiz-header" in-view-container delegate-handle="questions-box" du-scroll-container overflow-scroll="false" has-bouncing="true">
     <!-- <ion-slide-box on-slide-changed="quizCtrl.slideHasChanged($index)" show-pager="false"> -->
     <div ng-repeat="question in quizCtrl.quiz.objects" ng-attr-id="{{'question-'+$index}}" class="card card-white margin-0 border-radius-0" style="margin-bottom:20px !important">
-      <div in-view="quizCtrl.questionInView($index, $inviewpart)" class="has-header center padding-20">
+      <div in-view="quizCtrl.questionInView($index, $inviewpart)" in-view-options="{debounce:0}" class="has-header center padding-20">
         <!-- <div class="padding-0"> -->
         <div
           ng-class="{'font-sl':quizCtrl.parseToDisplay(question.node.title,$index).length == 1}"
@@ -123,17 +122,17 @@
       </div>
     </div>
   </ion-content>
-  <!-- <button ng-click="quizCtrl.scrollToNext()" class="button-round button button-calm icon-down icon-fit-height no-shadow" style="
+  <button ng-click="quizCtrl.scrollToNext()" class="button-round button button-calm icon-down icon-fit-height no-shadow" style="
     position: fixed;
     bottom: 10px;
     right: 10px;
     z-index: 100;
 ">
-  </button> -->
+  </button>
 </ion-pane>
 <ion-view ng-if="!quizCtrl.quiz.objects.length" class="bg-pale">
   <ion-content>
-    <div class="row">
+  <div class="row">
       <div class="col">
         <div class="card text-center font-lg padding-20">
           No questions
