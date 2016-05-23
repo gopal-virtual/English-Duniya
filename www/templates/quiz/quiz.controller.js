@@ -3,9 +3,9 @@
     .module('zaya-quiz')
     .controller('QuizController', QuizController)
 
-  QuizController.$inject = ['quiz', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Quiz', 'Auth', '$ionicLoading', '$ionicPopup', 'lessonutils', 'orientation', '$location', '$anchorScroll', '$document', '$ionicScrollDelegate', '$ionicPosition', '$timeout', '$window'];
+  QuizController.$inject = ['quiz', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Quiz', 'Auth', '$ionicLoading', '$ionicPopup', 'lessonutils', 'orientation', '$location', '$anchorScroll', '$document', '$ionicScrollDelegate', '$ionicPosition', '$timeout', '$window', 'soundManager', '$cordovaFileTransfer', '$cordovaFile'];
 
-  function QuizController(quiz, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Quiz, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition, $timeout, $window) {
+  function QuizController(quiz, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Quiz, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition, $timeout, $window, soundManager, $cordovaFileTransfer, $cordovaFile) {
     $scope.$on("$ionicView.beforeEnter", function(event, data) {
       orientation.setPortrait();
     });
@@ -48,7 +48,7 @@
     //audio
     quizCtrl.playAudio = playAudio;
     quizCtrl.starCount = starCount;
-
+    quizCtrl.preloadSounds = preloadSounds;
     //question layouts
     quizCtrl.GRID_TYPE = ['audio_to_text', 'text_to_pic', 'pic_to_text', 'audio_to_pic'];
     quizCtrl.LIST_TYPE = ['audio_to_text_longer', 'text_to_pic_longer', 'pic_to_text_longer', 'audio_to_pic_longer'];
@@ -473,14 +473,22 @@
     function playAudio(key, index) {
       $log.debug('key,index', key, index);
       angular.element("#audioplayer")[0].pause();
+      var src;
+      $log.debug("a");
       if (key) {
         if (index) {
-          angular.element("#audioSource")[0].src = 'http://cc-test.zaya.in' + quizCtrl.quiz.objects[index].node.type.content.widgets.sounds[key];
+          src = quizCtrl.quiz.objects[index].node.type.content.widgets.sounds[key];
+          // angular.element("#audioSource")[0].src = quizCtrl.quiz.objects[index].node.type.content.widgets.sounds[key];
         } else {
 
-          angular.element("#audioSource")[0].src = 'http://cc-test.zaya.in' + quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.type.content.widgets.sounds[key];
+          src =  quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.type.content.widgets.sounds[key];
         }
-        $log.debug(angular.element("#audioSource")[0].src);
+
+        src = cordova.file.dataDirectory + 'sounds/' + src.split("/").pop();
+        // var target = cordova.file.dataDirectory + 'sounds/' + filename;
+        $log.debug(this.loadUrl(src));
+        angular.element("#audioSource")[0].src = src;
+
         angular.element("#audioplayer")[0].load();
         angular.element("#audioplayer")[0].play();
       }
@@ -775,5 +783,63 @@
       '/img/assets/pause_menu_middle.png',
       '/img/assets/pause_menu_bottom.png'
     ]);
+
+    function preloadSounds() {
+      // soundManager.download("http://cc-test.zaya.in/media/ell/sounds/i-mein_885SAB.mp3")
+      ionic.Platform.ready(function(){
+        angular.forEach(quiz.objects, function(question) {
+            angular.forEach(question.node.type.content.widgets.sounds, function(sound) {
+              try {
+                soundManager.download("http://cc-test.zaya.in"+sound)
+              } catch (e) {
+                $log.debug("Error Downloading sound")
+              }
+            })
+          });
+        // $log.debug("insidePreload")
+
+          //  var url = "http://cc-test.zaya.in/media/ell/sounds/i-mein_885SAB.mp3";
+          //  soundManager.download(url);
+          //  var filename = url.split("/").pop();
+          //  var targetPath = cordova.file.dataDirectory + 'sounds/' + filename;
+
+          //  $log.debug(targetPath)
+            // $cordovaFileTransfer.download(url, targetPath, {}, true).then(function (result) {
+              // $log.debug("Succ")
+                  // $scope.hasil = 'Save file on '+targetPath+' success!';
+                  // $scope.mywallpaper=targetPath;
+            // }, function (error) {
+              // $log.debug("Error")
+            // }, function (progress) {
+              // $log.debug("P")
+              // $scope.downloadProgress = (progress.loaded / progress.total) * 100;
+              // $scope.hasil = 'Error Download file';
+            // });
+    });
+    // return;
+      // File for download
+      // var url = "http://www.gajotres.net/wp-content/uploads/2015/04/logo_radni.png";
+
+      // var filename = url.split("/").pop();
+      // File name only
+
+      // Save location
+      // var targetPath = cordova.file.dataDirectory + filename;
+      // $log.debug(targetPath);
+      // $log.debug(cordova.file.dataDirectory);
+      // $cordovaFileTransfer.download(url, targetPath, {}, true).then(function(result) {
+      //   console.log('Success');
+      // }, function(error) {
+      //   console.log('Error d');
+      // }, function(progress) {
+      //   console.log('p');
+
+        // PROGRESS HANDLING GOES HERE
+      // });
+        // return;
+
+        // angular.forEach(quizCtrl.quiz.objects)
+    }
+    quizCtrl.preloadSounds()
   }
 })();
