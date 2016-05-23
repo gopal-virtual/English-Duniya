@@ -59,7 +59,8 @@
       $scope.modal.remove();
     });
     $scope.openNodeMenu = function() {
-      $scope.modal.show();
+        if(contentCtrl.API.currentState == 'pause')
+              $scope.modal.show();
       return true;
     }
     $scope.closeNodeMenu = function() {

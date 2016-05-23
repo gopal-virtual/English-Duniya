@@ -117,7 +117,7 @@
         });
       }, function (response) {
         $ionicLoading.hide();
-        if(response.data.details){
+        if(response.data && response.data.details){
           authCtrl.showError("Error Login", response.data.details);
         }
         else{
