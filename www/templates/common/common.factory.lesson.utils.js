@@ -24,6 +24,10 @@
     return utils;
 
     function leaveLesson(){
+        $ionicLoading.show({
+          noBackdrop: false,
+          hideOnStateChange: true
+        });
         $timeout(function(){
             $state.go('map.navigate');
         })
