@@ -6,11 +6,11 @@
   QuizController.$inject = ['quiz', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Quiz', 'Auth', '$ionicLoading', '$ionicPopup', 'lessonutils', 'orientation', '$location', '$anchorScroll', '$document', '$ionicScrollDelegate', '$ionicPosition', '$timeout', '$window'];
 
   function QuizController(quiz, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Quiz, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition, $timeout, $window) {
-      $scope.$on("$ionicView.beforeEnter", function(event, data) {
-        orientation.setPortrait();
-      });
-      audio.stop('background');
-      $scope.orientation = orientation;
+    $scope.$on("$ionicView.beforeEnter", function(event, data) {
+      orientation.setPortrait();
+    });
+    audio.stop('background');
+    $scope.orientation = orientation;
     var quizCtrl = this;
 
     quizCtrl.quiz = quiz;
@@ -87,7 +87,7 @@
     quizCtrl.timer = new Date(1970, 0, 1).setSeconds(quizCtrl.counter);
     quizCtrl.onTimeout = function() {
       quizCtrl.counter++;
-      quizCtrl.timer +=  1000;
+      quizCtrl.timer += 1000;
       quizCtrl.mytimeout = $timeout(quizCtrl.onTimeout, 1000);
     }
     quizCtrl.mytimeout = $timeout(quizCtrl.onTimeout, 1000);
@@ -106,23 +106,28 @@
     }
 
     if ($state.current.name == "quiz.summary" || $state.current.name == "quiz.practice.summary") {
-        if(quizCtrl.quizResult.stars){
-            var star = quizCtrl.quizResult.stars;
-        }
-        else if(quizCtrl.practiceResult.percentCorrect){
-            var star = quizCtrl.practiceResult.percentCorrect > CONSTANT.STAR.THREE ? 3 : quizCtrl.practiceResult.percentCorrect > CONSTANT.STAR.TWO ? 2 : quizCtrl.practiceResult.percentCorrect > CONSTANT.STAR.ONE ? 1 : 0 ;
-        }
-        else{
-            var star = 0;
-        }
-        $log.debug(star);
-        for (var i = 0; i < star; i++) {
-            $log.debug('star sound',star);
-            (i+1)==1 && $timeout(function(){ audio.play('one_star') },1000);
-            (i+1)==2 && $timeout(function(){ audio.play('two_star') },2000);
-            (i+1)==3 && $timeout(function(){ audio.play('three_star') },3000);
-        }
+      if (quizCtrl.quizResult.stars) {
+        var star = quizCtrl.quizResult.stars;
+      } else if (quizCtrl.practiceResult.percentCorrect) {
+        var star = quizCtrl.practiceResult.percentCorrect > CONSTANT.STAR.THREE ? 3 : quizCtrl.practiceResult.percentCorrect > CONSTANT.STAR.TWO ? 2 : quizCtrl.practiceResult.percentCorrect > CONSTANT.STAR.ONE ? 1 : 0;
+      } else {
+        var star = 0;
+      }
+      $log.debug(star);
+      for (var i = 0; i < star; i++) {
+        $log.debug('star sound', star);
+        (i + 1) == 1 && $timeout(function() {
+          audio.play('one_star')
+        }, 1000);
+        (i + 1) == 2 && $timeout(function() {
+          audio.play('two_star')
+        }, 2000);
+        (i + 1) == 3 && $timeout(function() {
+          audio.play('three_star')
+        }, 3000);
+      }
     }
+
     function init(quiz) {
 
       // init report object
@@ -311,7 +316,7 @@
         audio.play('correct');
       } else {
 
-          audio.play('wrong');
+        audio.play('wrong');
         // SCQ
         if ((quizCtrl.quiz.objects[quizCtrl.currentIndex].node.type.type == "choicequestion" && !quizCtrl.quiz.objects[quizCtrl.currentIndex].node.type.content.is_multiple)) {
           quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].attempted = '';
@@ -743,6 +748,7 @@
       $ionicSlideBoxDelegate.enableSlide(false);
     }
     quizCtrl.view_data = {}
+
     function questionInView(index, viewPart) {
       quizCtrl.view_data[index] = viewPart;
       if (viewPart == 'bottom' || viewPart == 'both') {
@@ -751,13 +757,11 @@
     }
 
     function scrollToNext() {
-      angular.element(window).trigger("checkInView");
-      $timeout(function(){
+      if (quizCtrl.nextScrollQuestion < quizCtrl.quiz.objects.length) {
         var id = 'question-' + quizCtrl.nextScrollQuestion;
-        var position = $('#'+id).position();
-        $ionicScrollDelegate.scrollBy(position.left,position.top ,true);
-        $log.debug($ionicScrollDelegate.getScrollView())
-      },500)
+        var position = $('#' + id).position();
+        $ionicScrollDelegate.scrollBy(position.left, position.top, true);
+      }
     }
 
     function preloadMapImages(arrayOfImages) {
