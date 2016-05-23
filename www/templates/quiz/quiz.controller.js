@@ -486,7 +486,7 @@
 
         src = cordova.file.dataDirectory + 'sounds/' + src.split("/").pop();
         // var target = cordova.file.dataDirectory + 'sounds/' + filename;
-        $log.debug(this.loadUrl(src));
+        // $log.debug(this.loadUrl(src));
         angular.element("#audioSource")[0].src = src;
 
         angular.element("#audioplayer")[0].load();
