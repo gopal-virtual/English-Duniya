@@ -8,9 +8,12 @@
     <div class="row">
       <div class="col text-center font-sl text-white"><strong>{{quizCtrl.quizResult.marks}} / {{quizCtrl.quiz.node.type.score}}</strong></div>
     </div>
-    <div class="row center">
-      <div class="col stars">
-          <img ng-repeat="star in [1,2,3]" class="animation-zoom-out-{{star}}" style="-webkit-animation-delay: {{$index+1}}s;" ng-src="{{ quizCtrl.starCount($index) ? 'img/icons/icon-star.png' : 'img/icons/icon-nostar.png'}}">
+    <div class="row center position-relative" style="height:100px">
+      <div class="col stars position-absolute">
+          <img ng-repeat="star in [1,2,3]" ng-src="img/icons/icon-nostar.png">
+      </div>
+      <div class="col stars position-absolute">
+          <img ng-repeat="star in [1,2,3]" class="animation-zoom-out-{{quizCtrl.starCount($index) ? star : ''}}" style="-webkit-animation-delay: {{$index+1}}s;" ng-src="{{ quizCtrl.starCount($index) ? 'img/icons/icon-star.png' : 'img/icons/icon-nostar.png'}}">
       </div>
     </div>
     <div class="row padding-30">

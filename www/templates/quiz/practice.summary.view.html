@@ -8,11 +8,14 @@
     <div class="row">
       <div class="col text-center font-sl text-white"><strong>{{quizCtrl.practiceResult.scoredMarks}} / {{quizCtrl.practiceResult.totalMarks}}</strong></div>
     </div>
-    <div class="row center">
-      <div class="col stars">
-
+    <div class="row center position-relative" style="height:100px;">
+      <div class="col stars position-absolute">
           <img ng-repeat="limit in [quizCtrl.CONSTANT.STAR.ONE,quizCtrl.CONSTANT.STAR.TWO,quizCtrl.CONSTANT.STAR.THREE] track by $index"
-          ng-src="{{ quizCtrl.practiceResult.percentCorrect >= limit ? 'img/icons/icon-star.png' : 'img/icons/icon-nostar.png'}}" class="animation-zoom-out-{{$index+1}}" style="-webkit-animation-delay: {{$index+1}}s;">
+          ng-src="img/icons/icon-nostar.png">
+      </div>
+      <div class="col stars position-absolute">
+          <img ng-repeat="limit in [quizCtrl.CONSTANT.STAR.ONE,quizCtrl.CONSTANT.STAR.TWO,quizCtrl.CONSTANT.STAR.THREE] track by $index"
+          ng-src="{{ quizCtrl.practiceResult.percentCorrect >= limit ? 'img/icons/icon-star.png' : 'img/icons/icon-nostar.png'}}" class="animation-zoom-out-{{quizCtrl.practiceResult.percentCorrect >= limit? $index+1 : ''}}" style="-webkit-animation-delay: {{$index+1}}s;">
       </div>
     </div>
     <div class="row padding-30">

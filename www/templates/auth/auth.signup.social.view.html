@@ -11,15 +11,17 @@
         </div> -->
         <button tabindex="4" type="button" ng-click="authCtrl.googleSignIn()" class="button button-no-shadow button-round button-block font-lg button-assertive icon-middle ion-social-googleplus" style="padding: 0;line-height:10px !important"></button>
       </div>
-      <div class="col col-10">
-          <h3 style="display:block;line-height:70px">or</h3>
-      </div>
       <div class="col">
         <!-- <div class="button-bar button-group">
           <button type="button" ng-click="authCtrl.facebookSignIn()" class="button button-no-shadow button-round button-block button-positive icon-left ion-social-facebook"></button>
         </div> -->
         <button tabindex="5" type="button" ng-click="authCtrl.facebookSignIn()" class="button button-no-shadow button-round button-block font-lg button-positive icon-middle ion-social-facebook" style="padding: 0;line-height:10px !important"></button>
       </div>
+    </div>
+    <div class="row">
+        <div class="col center">
+            <h3>or</h3>
+        </div>
     </div>
     <div class="row center">
       <form autocomplete="on" novalidate name="authForm" class="col padding-x-20" ng-submit="authCtrl.closeKeyboard() && authCtrl.validCredential(authForm) && authCtrl.signup({'useridentity':authCtrl.user.useridentity,'password1':authCtrl.user.password,'password2':authCtrl.user.password,'email':authCtrl.user.email})" ng-init="show_password = false">

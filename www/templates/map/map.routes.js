@@ -41,12 +41,10 @@
           if (!lessons) {
             $state.go('map.unauthorised');
           }
-          audio.preloadSimple('background');
           audio.play('background');
         }],
         onExit: ['audio', function(audio) {
           audio.stop('background');
-          // audio.unload('background');
         }],
         views: {
           'state-map': {
