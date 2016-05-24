@@ -18,6 +18,9 @@
           params: {
             video: null,
           },
+          onEnter: ['orientation', function(orientation) {
+            orientation.setLandscape();
+          }],
           views : {
               'state-content' : {
                   templateUrl : CONSTANT.PATH.CONTENT + '/content.video' + CONSTANT.VIEW,
