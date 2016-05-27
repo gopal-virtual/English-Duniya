@@ -45,7 +45,7 @@
     quizCtrl.nextQuestion = nextQuestion;
     quizCtrl.inViewData = {}
     quizCtrl.inViewTrigger = inViewTrigger;
-
+    quizCtrl.inViewFlag = true;
     //log attempts & feedback
     quizCtrl.getFeedback = getFeedback;
     quizCtrl.generateSummary = generateSummary;
@@ -524,8 +524,12 @@
 
     function inViewTrigger(index, viewPart) {
       quizCtrl.inViewData[index] = viewPart;
-      if (viewPart == 'bottom' || viewPart == 'both' || viewPart == 'neither' || (viewPart == 'top' && quizCtrl.inViewData[index - 1] === undefined)) {
-        quizCtrl.setCurrentIndex(index);
+      if(quizCtrl.inViewFlag)
+      {
+        if (viewPart == 'bottom' || viewPart == 'both' || viewPart == 'neither' || (viewPart == 'top' && quizCtrl.inViewData[index - 1] === undefined)) {
+          quizCtrl.setCurrentIndex(index);
+        }
+
       }
     }
 

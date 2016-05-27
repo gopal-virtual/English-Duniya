@@ -35,7 +35,8 @@
     </div>
 
   </div>
-  <ion-content class="has-quiz-header" in-view-container delegate-handle="questions-box" du-scroll-container overflow-scroll="false" has-bouncing="true">
+  <ion-content class="has-quiz-header" on-scroll="quizCtrl.inViewFlag = false" on-scroll-complete="quizCtrl.inViewFlag = true" in-view-container delegate-handle="questions-box" du-scroll-container overflow-scroll="false" has-bouncing="true">
+
     <!-- <ion-slide-box on-slide-changed="quizCtrl.slideHasChanged($index)" show-pager="false"> -->
     <div ng-repeat="question in quizCtrl.quiz.objects" ng-attr-id="{{'question-'+$index}}" class="card card-white margin-0 border-radius-0" style="margin-bottom:20px !important">
       <div in-view="quizCtrl.inViewTrigger($index, $inviewpart)" in-view-options="{debounce:0}" class="has-header center padding-20">
