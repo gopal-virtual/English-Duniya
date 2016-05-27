@@ -67,7 +67,6 @@
     quizCtrl.playAudio = playAudio;
     quizCtrl.starCount = starCount;
 
-    quizCtrl.summary = {};
     quizCtrl.calculateStars = calculateStars;
 
     //timer
@@ -114,9 +113,7 @@
       } else {
         star = 0;
       }
-      $log.debug(star);
       for (var i = 0; i < star; i++) {
-        $log.debug('star sound', star);
         (i + 1) == 1 && $timeout(function() {
           audio.play('one_star')
         }, 1000);
@@ -130,7 +127,6 @@
     }
 
     function submitReport(quiz, report, summary) {
-      $log.debug(summary);
       Quiz.saveReport({
         node: quiz.node.id,
         person: Auth.getProfileId(),
@@ -161,7 +157,8 @@
         quizCtrl.quiz = $stateParams.quiz;
         quizCtrl.summary = $stateParams.summary;
         quizCtrl.playStarSound();
-        $log.debug(quizCtrl.report,quizCtrl.quiz,quizCtrl.summary)
+        $log.debug("summary")
+        $log.debug(quizCtrl.summary)
         // quizCtrl.summary = quizCtrl.generateSummary(quizCtrl.report, quizCtrl.quiz);
         quizCtrl.submitReport(quizCtrl.quiz, quizCtrl.report, quizCtrl.summary);
       } else if ($state.current.name == "quiz.questions") {
@@ -252,7 +249,6 @@
           var id = 'question-' + (quizCtrl.getCurrentIndex() + 1);
           var position = $('#' + id).position();
           $ionicScrollDelegate.scrollBy(position.left, position.top, true);
-          $log.debug(quizCtrl.currentIndex);
         }
         ++quizCtrl.currentIndex;
       }
@@ -261,6 +257,7 @@
     function getFeedback(question) {
       quizCtrl.submitAttempt(question.node.id,question.attempted);
       if (quizCtrl.isCorrectAttempted(question)) {
+          audio.play('correct');
         quizCtrl.summary.analysis[question.node.id] = {
           title: question.node.title,
           status: 'correct',
@@ -379,9 +376,10 @@
     }
 
     function playAudio(key, index) {
+            $log.debug('playAdio')
+        $log.debug(key,index)
       angular.element("#audioplayer")[0].pause();
       var src;
-      $log.debug("a");
       if (key) {
         if (index) {
           src = quizCtrl.quiz.objects[index].node.type.content.widgets.sounds[key];
@@ -389,6 +387,7 @@
           src = quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.type.content.widgets.sounds[key];
         }
         src = cordova.file.dataDirectory + 'sounds/' + src.split("/").pop();
+            $log.debug(src)
         angular.element("#audioSource")[0].src = src;
         angular.element("#audioplayer")[0].load();
         angular.element("#audioplayer")[0].play();
@@ -435,10 +434,9 @@
 
 
     function calculateStars(percentScore){
-      $log.debug(percentScore);
-      if(percentScore > CONSTANT.STAR.ONE){
-        if(percentScore > CONSTANT.STAR.TWO){
-          if(percentScore > CONSTANT.STAR.THREE){
+      if(percentScore >= CONSTANT.STAR.ONE){
+        if(percentScore >= CONSTANT.STAR.TWO){
+          if(percentScore >= CONSTANT.STAR.THREE){
             return 3;
           }
           return 2;
@@ -544,9 +542,13 @@
     }
 
     function preloadSounds(quiz) {
+        $log.debug("Preload sounds");
       ionic.Platform.ready(function() {
+          $log.debug("Preload sounds triggered");
+
         angular.forEach(quiz.objects, function(question) {
           angular.forEach(question.node.type.content.widgets.sounds, function(sound) {
+               $log.debug(CONSTANT.RESOURCE_SERVER + sound);
             try {
               soundManager.download(CONSTANT.RESOURCE_SERVER + sound)
             } catch (e) {

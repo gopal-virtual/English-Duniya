@@ -45,7 +45,7 @@
           ng-if="question.node.title"
           ng-bind-html="quizCtrl.widgetParser.parseToDisplay(question.node.title,$index,quizCtrl.quiz)"
           class="question card card-transparent center margin-x-0 margin-y-0 padding-0"
-          ng-click="quizCtrl.playAudio(quizCtrl.getSoundId(question.node.title),$index)">
+          ng-click="quizCtrl.playAudio(quizCtrl.widgetParser.getSoundId(question.node.title),$index)">
 
           <!-- <div ng-if="question.node.type.content.image"><img class="question-image" ng-src="{{question.node.type.content.image}}"></div> -->
           <!-- <div ng-if="!question.node.title && !question.node.type.content.image"><img height="100" width="100" src="img/icons/sound.png"> </div> -->
@@ -59,7 +59,7 @@
           class="card center card-pale card-radius"
           ng-repeat="option in question.node.type.content.options">
           <!-- {{quizCtrl.widgetParser.parseToDisplay(option.option,$parent.$parent.$index,quizCtrl.quiz)}} -->
-          <label ng-click="quizCtrl.playAudio(quizCtrl.getSoundId(option.option),$parent.$parent.$index)">
+          <label ng-click="quizCtrl.playAudio(quizCtrl.widgetParser.getSoundId(option.option),$parent.$parent.$index)">
             <input class="hide">
             <!-- <div class="option-container"  ng-if="option"> -->
             <div
@@ -76,7 +76,7 @@
           ng-class="{'selected':question.attempted[option.key],'card-list':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'list','card-grid':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'grid'}"
           class="card center card-pale card-radius"
           ng-repeat="option in question.node.type.content.options">
-          <label ng-click="quizCtrl.playAudio(quizCtrl.getSoundId(option.option),$parent.$parent.$index)">
+          <label ng-click="quizCtrl.playAudio(quizCtrl.widgetParser.getSoundId(option.option),$parent.$parent.$index)">
             <input class="hide" type="checkbox" ng-model="question.attempted[option.key]" ng-value="option.key">
             <div
               class="padding-10 option"
@@ -123,13 +123,13 @@
       </div>
     </div>
   </ion-content>
-  <!-- <button ng-click="quizCtrl.nextQuestion(true)" class="button-round button button-calm icon-down icon-fit-height no-shadow" style="
+  <button ng-click="quizCtrl.nextQuestion(true)" class="button-round button button-calm icon-down icon-fit-height no-shadow" style="
     position: fixed;
     bottom: 10px;
     right: 10px;
     z-index: 100;
 ">
-  </button> -->
+  </button>
 </ion-pane>
 <ion-view ng-if="!quizCtrl.quiz.objects.length" class="bg-pale">
   <ion-content>

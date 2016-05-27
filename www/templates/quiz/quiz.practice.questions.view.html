@@ -27,7 +27,7 @@
           ng-if="question.node.title"
           ng-bind-html="quizCtrl.widgetParser.parseToDisplay(question.node.title,$index,quizCtrl.quiz)"
           class="question practice-question card card-transparent center margin-x-0 margin-y-0 padding-0"
-          ng-click="quizCtrl.playAudio(quizCtrl.getSoundId(question.node.title))"></div>
+          ng-click="quizCtrl.widgetParser.playAudio(quizCtrl.getSoundId(question.node.title),$index)"></div>
       </div>
       <ion-content in-view-container overflow-scroll="false" has-bouncing="true" class="has-practice-header has-question-subheader padding-20 center bg-pale">
         <!-- SCQ -->
@@ -37,7 +37,7 @@
           ng-class="{'selected':option.key==question.attempted,'card-list':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'list','card-grid practice-card':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'grid'}"
           class="card center bg-white card-radius"
           ng-repeat="option in question.node.type.content.options">
-          <label ng-click="quizCtrl.playAudio(quizCtrl.getSoundId(option.option))">
+          <label ng-click="quizCtrl.playAudio(quizCtrl.widgetParser.getSoundId(option.option),$parent.$parent.$index)">
             <input class="hide">
             <!-- <div class="option-container"  ng-if="option"> -->
             <div
@@ -54,7 +54,7 @@
           ng-class="{'selected':question.attempted[option.key],'card-list':quizCtrl.getLayout(question) == 'list','card-grid':quizCtrl.getLayout(question) == 'grid'}"
           class="card center bg-white card-radius"
           ng-repeat="option in question.node.type.content.options">
-          <label ng-click="quizCtrl.playAudio(quizCtrl.getSoundId(option.option))">
+          <label ng-click="quizCtrl.playAudio(quizCtrl.widgetParser.getSoundId(option.option),$parent.$parent.$index)">
             <input class="hide" type="checkbox" ng-model="question.attempted[option.key]" ng-value="option.key">
             <!-- <div class="option-container"  ng-if="option"> -->
             <div
