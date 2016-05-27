@@ -11,13 +11,15 @@ var rename = require('gulp-rename');
 var autoprefixer = require('gulp-autoprefixer');
 var sh = require('shelljs');
 var stripDebug = require('gulp-strip-debug');
+var templateCache = require('gulp-angular-templatecache');
 
 var paths = {
   sass: [
     './scss/**/*.scss',
     './scss/*.scss'
   ],
-  script : [
+  script: [
+    './www/templates/templates.js',
     './www/templates/common/common.module.js',
     './www/templates/map/map.module.js',
     './www/templates/content/content.module.js',
@@ -30,31 +32,34 @@ var paths = {
     './www/templates/group/group.module.js',
     './www/templates/app.module.js',
     './www/templates/**/*.js'
+  ],
+  html: [
+    './www/templates/**/*.html'
   ]
 };
 
-gulp.task('default', ['sass','watch']);
+gulp.task('default', ['sass', 'watch']);
 
 gulp.task('scripts', function() {
-    gulp.src(paths.script)
-        .pipe(plumber({
-            handleError: function(err) {
-                console.log(err);
-                this.emit('end');
-            }
-        }))
-        .pipe(print(function(filepath) {
-            return "MrGopal modified : " + filepath;
-        }))
-        .pipe(ngAnnotate())
-        .pipe(stripDebug())
-        .pipe(concate('mobile.app.js'))
-        // .pipe(rename({
-        //     suffix: '.min'
-        // }))
-        // .pipe(uglify())
-        .pipe(gulp.dest('www/build'))
-        // .pipe(broswerSync.stream())
+  gulp.src(paths.script)
+    .pipe(plumber({
+      handleError: function(err) {
+        console.log(err);
+        this.emit('end');
+      }
+    }))
+    .pipe(print(function(filepath) {
+      return "MrGopal modified : " + filepath;
+    }))
+    .pipe(ngAnnotate())
+    .pipe(stripDebug())
+    .pipe(concate('mobile.app.js'))
+    // .pipe(rename({
+    //     suffix: '.min'
+    // }))
+    // .pipe(uglify())
+    .pipe(gulp.dest('www/build'))
+    // .pipe(broswerSync.stream())
 })
 
 gulp.task('sass', function(done) {
@@ -62,21 +67,40 @@ gulp.task('sass', function(done) {
     .pipe(sass())
     .on('error', sass.logError)
     // .pipe(autoprefixer({
-		// 	browsers: ['last 2 versions'],
-		// 	cascade: false
-		// }))
+    // 	browsers: ['last 2 versions'],
+    // 	cascade: false
+    // }))
     .pipe(gulp.dest('./www/css/'))
     .pipe(minifyCss({
       keepSpecialComments: 0
     }))
-    .pipe(rename({ extname: '.min.css' }))
+    .pipe(rename({
+      extname: '.min.css'
+    }))
     .pipe(gulp.dest('./www/css/'))
     .on('end', done);
 });
 
+gulp.task('html', function() {
+  return gulp.src(paths.html)
+    .pipe(print(function(filepath) {
+      return "html modified : " + filepath;
+    }))
+    .pipe(templateCache({
+      base: function(file) {
+        var filename = file.relative.replace('www/','');
+        return 'templates/' + filename;
+      },
+      standalone: true,
+      moduleSystem: 'IIFE'
+    }))
+    .pipe(gulp.dest('./www/templates/'));
+});
+
 gulp.task('watch', function() {
   gulp.watch(paths.sass, ['sass']);
-  gulp.watch(paths.script,['scripts']);
+  gulp.watch(paths.script, ['scripts']);
+  gulp.watch(paths.html, ['html']);
 });
 
 // gulp.task('install', ['git-check'], function() {

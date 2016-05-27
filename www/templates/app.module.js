@@ -15,6 +15,7 @@
       'com.2fdevs.videogular.plugins.buffering',
       'angular-inview',
       // core
+      'templates',
       'common',
       'zaya-map',
       'zaya-user',
