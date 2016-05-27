@@ -52,7 +52,8 @@
         url: '/summary',
         params: {
           report: null,
-          quiz: null
+          quiz: null,
+          summary: null
         },
         views: {
           'state-quiz': {

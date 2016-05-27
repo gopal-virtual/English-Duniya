@@ -79,27 +79,11 @@ progress[value]::-webkit-progress-value {
 .mark-filled {
   background-color: $brand-green !important;
 }
-.progress-bar-container > .mark-60 {
+.progress-bar-container > .mark-star {
   z-index: 2;
   position: absolute;
   width: 25px;
-  left: calc(60% - 12px);
-  height: 40px;
-  top: calc(50% - 20px);
-}
-.progress-bar-container > .mark-80 {
-  z-index: 2;
-  position: absolute;
-  width: 25px;
-  left: calc(80% - 12px);
-  height: 40px;
-  top: calc(50% - 20px);
-}
-.progress-bar-container > .mark-100 {
-  z-index: 2;
-  position: absolute;
-  width: 25px;
-  left: calc(100% - 12px);
+
   height: 40px;
   top: calc(50% - 20px);
 }

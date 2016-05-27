@@ -4,8 +4,9 @@
   angular
     .module('common')
     .constant('CONSTANT', {
-        'LOCK' : true,
+      'LOCK': true,
       'BACKEND_SERVICE_DOMAIN': 'http://cc-test.zaya.in/',
+      'RESOURCE_SERVER': 'http://cc-test.zaya.in/',
       // 'BACKEND_SERVICE_DOMAIN' : 'http://192.168.1.6:9000/',
       'PATH': {
         'INTRO': ROOT + '/intro',
@@ -28,16 +29,35 @@
         'GOOGLE': '1011514043276-7q3kvn29jkegl2d1v7dtlbtipqqgo1rr.apps.googleusercontent.com',
         'ELL': '1e7aa89f-3f50-433a-90ca-e485a92bbda6'
       },
-      'ASSETS' : {
-        'IMG' : {
-          'ICON' : 'img/icons',
-          'SOUND_PLACEHOLDER' : 'img/icons/sound.png'
+      'ASSETS': {
+        'IMG': {
+          'ICON': 'img/icons',
         }
       },
       'STAR': {
-        'ONE': 80,
-        'TWO': 85,
-        'THREE': 95
+        'ONE': 60,
+        'TWO': 80,
+        'THREE':100
+      },
+      'WIDGETS': {
+        'SPEAKER_IMAGE': '<img class="content-image sound-image" src="img/icons/sound.png"></img>',
+        'OPTIONS_LAYOUT_THRESHOLD': 55,
+        'QUESTION_TYPES': {
+          'CHOICE_QUESTION': 'choicequestion',
+          'SCQ': 'scq',
+          'MCQ': 'mcq'
+        },
+        'LAYOUT' : {
+          'LIST' : 'list',
+          'GRID' : 'grid'
+        }
+      },
+      'ATTEMPT': {
+        'STATUS': {
+          'ATTEMPTED': 1,
+          'SKIPPED': 2,
+          'NOT_ATTEMPTED': 3
+        }
       }
     })
 })();
