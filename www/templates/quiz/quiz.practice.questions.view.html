@@ -27,7 +27,7 @@
           ng-if="question.node.title"
           ng-bind-html="quizCtrl.widgetParser.parseToDisplay(question.node.title,$index,quizCtrl.quiz)"
           class="question practice-question card card-transparent center margin-x-0 margin-y-0 padding-0"
-          ng-click="quizCtrl.widgetParser.playAudio(quizCtrl.getSoundId(question.node.title),$index)"></div>
+          ng-click="quizCtrl.playAudio(quizCtrl.widgetParser.getSoundId(question.node.title),$index)"></div>
       </div>
       <ion-content in-view-container overflow-scroll="false" has-bouncing="true" class="has-practice-header has-question-subheader padding-20 center bg-pale">
         <!-- SCQ -->

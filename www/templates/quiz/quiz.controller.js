@@ -53,7 +53,7 @@
     quizCtrl.submitQuiz = submitQuiz;
     quizCtrl.endQuiz = endQuiz;
     quizCtrl.playStarSound = playStarSound;
-
+    quizCtrl.disableSwipe = disableSwipe;
     //preload resources
     quizCtrl.preloadResources = preloadResources;
     quizCtrl.preloadSounds = preloadSounds;
@@ -149,7 +149,9 @@
 
       })
     }
-
+    function disableSwipe(){
+         $ionicSlideBoxDelegate.enableSlide(false);
+    }
 
     function init(quiz) {
       if ($state.current.name == "quiz.summary") {
