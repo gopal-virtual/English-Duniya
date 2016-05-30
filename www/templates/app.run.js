@@ -67,7 +67,6 @@
     });
     $ionicPlatform.ready(function () {
 
-
     //   if (window.StatusBar) {
     //     StatusBar.hide();
     //   }
