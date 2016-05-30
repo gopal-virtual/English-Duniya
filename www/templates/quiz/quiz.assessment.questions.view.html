@@ -35,18 +35,18 @@
     </div>
 
   </div>
-  <ion-content class="has-quiz-header" on-scroll="quizCtrl.inViewFlag = false" on-scroll-complete="quizCtrl.inViewFlag = true" in-view-container delegate-handle="questions-box" du-scroll-container overflow-scroll="false" has-bouncing="true">
+  <ion-content class="has-quiz-header"  on-scroll-complete="quizCtrl.inViewFlag = true" in-view-container delegate-handle="questions-box"  overflow-scroll="false" has-bouncing="true">
 
     <!-- <ion-slide-box on-slide-changed="quizCtrl.slideHasChanged($index)" show-pager="false"> -->
     <div ng-repeat="question in quizCtrl.quiz.objects" ng-attr-id="{{'question-'+$index}}" class="card card-white margin-0 border-radius-0" style="margin-bottom:20px !important">
       <div in-view="quizCtrl.inViewTrigger($index, $inviewpart)" in-view-options="{debounce:0}" class="has-header center padding-20">
         <!-- <div class="padding-0"> -->
         <div
-          ng-class="{'font-sl':quizCtrl.widgetParser.parseToDisplay(question.node.title,$index,quizCtrl.quiz).length == 1}"
+          ng-class="{'font-sl':question.node.widgetHtml.length == 1,'font-sl':question.node.widgetHtml.length > 1 && question.node.widgetHtml.length < 7,'font-md':question.node.widgetHtml.length >= 7}"
           ng-if="question.node.title"
-          ng-bind-html="quizCtrl.widgetParser.parseToDisplay(question.node.title,$index,quizCtrl.quiz)"
+          ng-bind-html="question.node.widgetHtml"
           class="question card card-transparent center margin-x-0 margin-y-0 padding-0"
-          ng-click="quizCtrl.playAudio(quizCtrl.widgetParser.getSoundId(question.node.title),$index)">
+          ng-click="quizCtrl.playAudio(question.node.widgetSound,$index)">
 
           <!-- <div ng-if="question.node.type.content.image"><img class="question-image" ng-src="{{question.node.type.content.image}}"></div> -->
           <!-- <div ng-if="!question.node.title && !question.node.type.content.image"><img height="100" width="100" src="img/icons/sound.png"> </div> -->
@@ -60,13 +60,15 @@
           class="card center card-pale card-radius"
           ng-repeat="option in question.node.type.content.options">
           <!-- {{quizCtrl.widgetParser.parseToDisplay(option.option,$parent.$parent.$index,quizCtrl.quiz)}} -->
-          <label ng-click="quizCtrl.playAudio(quizCtrl.widgetParser.getSoundId(option.option),$parent.$parent.$index)">
+          <label ng-click="quizCtrl.playAudio(option.widgetSound,$parent.$parent.$index)">
             <input class="hide">
             <!-- <div class="option-container"  ng-if="option"> -->
             <div
               class="padding-10 option"
-                  ng-class="{'font-sl':quizCtrl.widgetParser.parseToDisplay(option.option,$parent.$parent.$index,quizCtrl.quiz).length < 5,'font-md':quizCtrl.widgetParser.parseToDisplay(option.option,$parent.$parent.$index,quizCtrl.quiz).length >= 5}"
-              ng-bind-html="quizCtrl.widgetParser.parseToDisplay(option.option,$parent.$parent.$index,quizCtrl.quiz)"></div>
+                  ng-class="{'font-sl':option.widgetHtml.length < 7,'font-md':option.widgetHtml.length >= 7}"
+              ng-bind-html="::option.widgetHtml"
+
+              ></div>
             <!-- </div> -->
           </label>
         </div>
@@ -77,12 +79,14 @@
           ng-class="{'selected':question.attempted[option.key],'card-list':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'list','card-grid':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'grid'}"
           class="card center card-pale card-radius"
           ng-repeat="option in question.node.type.content.options">
-          <label ng-click="quizCtrl.playAudio(quizCtrl.widgetParser.getSoundId(option.option),$parent.$parent.$index)">
+          <label ng-click="quizCtrl.playAudio(option.widgetSound,$parent.$parent.$index)">
             <input class="hide" type="checkbox" ng-model="question.attempted[option.key]" ng-value="option.key">
             <div
               class="padding-10 option"
-              ng-class="{'font-sl':quizCtrl.widgetParser.parseToDisplay(option.option,$parent.$parent.$index,quizCtrl.quiz).length < 5,'font-md':quizCtrl.widgetParser.parseToDisplay(option.option,$parent.$parent.$index,quizCtrl.quiz).length >= 5}"
-              ng-bind-html="quizCtrl.widgetParser.parseToDisplay(option.option,$parent.$parent.$index,quizCtrl.quiz)"></div>
+              ng-class="{'font-sl':option.widgetHtml.length < 7,'font-md':option.widgetHtml.length >= 7}"
+              ng-bind="::option.widgetHtml"
+
+              ></div>
             <!-- <div class="option-container"  ng-if="option"> -->
             <!-- </div> -->
           </label>

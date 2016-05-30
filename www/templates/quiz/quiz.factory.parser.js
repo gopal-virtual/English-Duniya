@@ -44,7 +44,7 @@
 
     function replaceImageTag(string, index, quiz) {
       return string.replace(imageTagRegex, "<img class='content-image' src='" +
-        CONSTANT.RESOURCE_SERVER + this.getImageSrc(this.getImageId(string), index , quiz) + "'></img>");
+        CONSTANT.RESOURCE_SERVER + this.getImageSrc(this.getImageId(string), index , quiz) + "'>");
     }
 
     function getLayout(question,index,quiz) {

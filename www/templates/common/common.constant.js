@@ -4,7 +4,7 @@
   angular
     .module('common')
     .constant('CONSTANT', {
-      'LOCK': true,
+      'LOCK': false,
       'BACKEND_SERVICE_DOMAIN': 'http://cc-test.zaya.in/',
       'RESOURCE_SERVER': 'http://cc-test.zaya.in/',
       // 'BACKEND_SERVICE_DOMAIN' : 'http://192.168.1.6:9000/',
@@ -40,7 +40,7 @@
         'THREE':100
       },
       'WIDGETS': {
-        'SPEAKER_IMAGE': '<img class="content-image sound-image" src="img/icons/sound.png"></img>',
+        'SPEAKER_IMAGE': '<img class="content-image sound-image" src="img/icons/sound.png">',
         'OPTIONS_LAYOUT_THRESHOLD': 55,
         'QUESTION_TYPES': {
           'CHOICE_QUESTION': 'choicequestion',

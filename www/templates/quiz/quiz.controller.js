@@ -199,7 +199,20 @@
         quizCtrl.summary.score = {percent:0,marks:0};
         quizCtrl.summary.analysis = {};
         quizCtrl.report.attempts = {};
-        for (var i = 0; i < quiz.objects.length; i++) {
+        //parse all the options and questions to html
+        for (i = 0; i < quiz.objects.length; i++) {
+          quizCtrl.quiz.objects[i].node.widgetHtml = quizCtrl.widgetParser.parseToDisplay(quizCtrl.quiz.objects[i].node.title,i,quizCtrl.quiz);
+          $log.debug(quizCtrl.quiz.objects[i].node.widgetHtml);
+
+          quizCtrl.quiz.objects[i].node.widgetSound = quizCtrl.widgetParser.getSoundId(quizCtrl.quiz.objects[i].node.title);
+          for (j = 0; j < quizCtrl.quiz.objects[i].node.type.content.options.length ; j++) {
+            quizCtrl.quiz.objects[i].node.type.content.options[j].widgetHtml = quizCtrl.widgetParser.parseToDisplay(quizCtrl.quiz.objects[i].node.type.content.options[j].option,i,quizCtrl.quiz)
+            $log.debug(quizCtrl.quiz.objects[i].node.type.content.options[j].widgetHtml);
+            quizCtrl.quiz.objects[i].node.type.content.options[j].widgetSound = quizCtrl.widgetParser.getSoundId(quizCtrl.quiz.objects[i].node.type.content.options[j].option);
+          }
+        }
+        //init report
+        for (i = 0; i < quiz.objects.length; i++) {
           quizCtrl.report.attempts[quiz.objects[i].node.id] = [];
         }
         // init attempted
@@ -248,6 +261,7 @@
       $log.debug("nextQuestion");
       if (quizCtrl.currentIndex < quizCtrl.quiz.objects.length - 1) {
         if (shouldScroll) {
+          quizCtrl.inViewFlag = false;
           var id = 'question-' + (quizCtrl.getCurrentIndex() + 1);
           var position = $('#' + id).position();
           $ionicScrollDelegate.scrollBy(position.left, position.top, true);
