@@ -12,7 +12,8 @@
      $scope.$on("$ionicView.beforeEnter", function(event, data) {
       orientation.setPortrait();
     });
-    data.getQuestion();
+    data.setQuestion();
+    data.getQuestions();
     $scope.audio = audio;
     $scope.orientation= orientation;
     function preload(arrayOfImages) {

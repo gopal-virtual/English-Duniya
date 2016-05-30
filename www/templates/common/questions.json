@@ -1,7 +1,5 @@
 [{
-  "_id": {
-    "_str": "574814c51d41c8170fed4dec"
-  },
+  "_id":"574814c51d41c8170fed4dec",
   "q_id": 68431,
   "q_title": "he _________",
   "difficulty": "1",
@@ -16,9 +14,7 @@
   "options": ["write", "writes"],
   "lesson_id": 10449
 }, {
-  "_id": {
-    "_str": "574814c51d41c8170fed4ded"
-  },
+  "_id":"574814c51d41c8170fed4ded",
   "q_id": 68471,
   "q_title": "she ________",
   "difficulty": "2",
@@ -33,9 +29,7 @@
   "options": ["take", "takes"],
   "lesson_id": 10449
 }, {
-  "_id": {
-    "_str": "574814c51d41c8170fed4dee"
-  },
+  "_id":"574814c51d41c8170fed4dee",
   "q_id": 68478,
   "q_title": "it __________",
   "difficulty": "2",
@@ -50,9 +44,7 @@
   "options": ["give", "gives"],
   "lesson_id": 10449
 }, {
-  "_id": {
-    "_str": "574814c51d41c8170fed4def"
-  },
+  "_id":"574814c51d41c8170fed4def",
   "q_id": 69467,
   "q_title": "Which bird is blue?",
   "difficulty": "1",
@@ -67,9 +59,7 @@
   "options": ["bird A", "bird B", "bird C", "bird D"],
   "lesson_id": 13089
 }, {
-  "_id": {
-    "_str": "574814c51d41c8170fed4df0"
-  },
+  "_id":"574814c51d41c8170fed4df0",
   "q_id": 70307,
   "q_title": "How are you?",
   "difficulty": "2",
@@ -84,9 +74,7 @@
   "options": ["0", "0"],
   "lesson_id": 13218
 }, {
-  "_id": {
-    "_str": "574814c51d41c8170fed4df3"
-  },
+  "_id":"574814c51d41c8170fed4df3",
   "q_id": 71369,
   "q_title": "",
   "difficulty": "3",
@@ -101,9 +89,7 @@
   "options": ["cheap", "poor", "expensive", "rich"],
   "lesson_id": 13939
 }, {
-  "_id": {
-    "_str": "574814c51d41c8170fed4df4"
-  },
+  "_id":"574814c51d41c8170fed4df4",
   "q_id": 78736,
   "q_title": "",
   "difficulty": "1",
@@ -118,9 +104,7 @@
   "options": ["t", "q", "p", "u"],
   "lesson_id": 8377
 }, {
-  "_id": {
-    "_str": "574814c51d41c8170fed4df5"
-  },
+  "_id":"574814c51d41c8170fed4df5",
   "q_id": 85226,
   "q_title": "Priya has ___________ than Ankur",
   "difficulty": "1",
@@ -135,9 +119,7 @@
   "options": ["more pencils", "less pencils"],
   "lesson_id": 16563
 }, {
-  "_id": {
-    "_str": "574814c51d41c8170fed4df6"
-  },
+  "_id":"574814c51d41c8170fed4df6",
   "q_id": 89743,
   "q_title": "<strong></strong><strong>Select the future form of the missing verb.</strong>Tomorrow, I ______ to the cinema.",
   "difficulty": "1",
@@ -152,9 +134,7 @@
   "options": ["go", "will go", "went", "am going"],
   "lesson_id": 14921
 }, {
-  "_id": {
-    "_str": "574814c51d41c8170fed4df7"
-  },
+  "_id":"574814c51d41c8170fed4df7",
   "q_id": 89744,
   "q_title": "<strong>Select the future form of the missing verb.</strong>On Saturday, we ______ cricket.",
   "difficulty": "1",
@@ -169,9 +149,7 @@
   "options": ["are playing", "played", "play", "will play"],
   "lesson_id": 14921
 }, {
-  "_id": {
-    "_str": "574814c51d41c8170fed4df8"
-  },
+  "_id":"574814c51d41c8170fed4df8",
   "q_id": 89746,
   "q_title": "<strong>Select the future form of the missing verb.</strong>She _______ me my book tomorrow.",
   "difficulty": "1",
@@ -186,9 +164,7 @@
   "options": ["will give", "read", "i giving", "gave"],
   "lesson_id": 14921
 }, {
-  "_id": {
-    "_str": "574814c51d41c8170fed4dfc"
-  },
+  "_id":"574814c51d41c8170fed4dfc",
   "q_id": 89971,
   "q_title": "",
   "difficulty": "3",
@@ -203,9 +179,7 @@
   "options": ["tailor", "builder", "policeman", "carpenter"],
   "lesson_id": 18959
 }, {
-  "_id": {
-    "_str": "574814c51d41c8170fed4de0"
-  },
+  "_id":"574814c51d41c8170fed4de0",
   "q_id": 65209,
   "q_title": "",
   "difficulty": "3",
@@ -220,9 +194,7 @@
   "options": ["pen", "pencil", "book", "paper"],
   "lesson_id": 9690
 }, {
-  "_id": {
-    "_str": "574814c51d41c8170fed4de1"
-  },
+  "_id":"574814c51d41c8170fed4de1",
   "q_id": 65210,
   "q_title": "",
   "difficulty": "3",
@@ -237,9 +209,7 @@
   "options": ["book", "paper", "pen", "pencil"],
   "lesson_id": 9690
 }, {
-  "_id": {
-    "_str": "574814c51d41c8170fed4de2"
-  },
+  "_id":"574814c51d41c8170fed4de2",
   "q_id": 65212,
   "q_title": "",
   "difficulty": "3",
@@ -254,9 +224,7 @@
   "options": ["paper", "book", "pencil", "pen"],
   "lesson_id": 9690
 }, {
-  "_id": {
-    "_str": "574814c51d41c8170fed4de3"
-  },
+  "_id":"574814c51d41c8170fed4de3",
   "q_id": 65294,
   "q_title": "orange",
   "difficulty": "1",
@@ -271,9 +239,7 @@
   "options": ["a", "an"],
   "lesson_id": 9698
 }, {
-  "_id": {
-    "_str": "574814c51d41c8170fed4de4"
-  },
+  "_id":"574814c51d41c8170fed4de4",
   "q_id": 65295,
   "q_title": "elephant",
   "difficulty": "1",
@@ -288,9 +254,7 @@
   "options": ["a", "an"],
   "lesson_id": 9698
 }, {
-  "_id": {
-    "_str": "574814c51d41c8170fed4de5"
-  },
+  "_id":"574814c51d41c8170fed4de5",
   "q_id": 65298,
   "q_title": "apple",
   "difficulty": "1",
@@ -305,9 +269,7 @@
   "options": ["a", "an"],
   "lesson_id": 9698
 }, {
-  "_id": {
-    "_str": "574814c51d41c8170fed4de6"
-  },
+  "_id":"574814c51d41c8170fed4de6",
   "q_id": 65470,
   "q_title": "",
   "difficulty": "2",
@@ -322,9 +284,7 @@
   "options": ["shirt", "t-shirt", "shoes", "trousers"],
   "lesson_id": 9706
 }, {
-  "_id": {
-    "_str": "574814c51d41c8170fed4de7"
-  },
+  "_id":"574814c51d41c8170fed4de7",
   "q_id": 65559,
   "q_title": "",
   "difficulty": "3",
@@ -339,9 +299,7 @@
   "options": ["black", "white", "green", "blue"],
   "lesson_id": 9710
 }, {
-  "_id": {
-    "_str": "574814c51d41c8170fed4de8"
-  },
+  "_id":"574814c51d41c8170fed4de8",
   "q_id": 65603,
   "q_title": "",
   "difficulty": "2",
@@ -356,9 +314,7 @@
   "options": ["train", "bicycle", "bus", "motorbike"],
   "lesson_id": 9718
 }, {
-  "_id": {
-    "_str": "574814c51d41c8170fed4de9"
-  },
+  "_id":"574814c51d41c8170fed4de9",
   "q_id": 66435,
   "q_title": "",
   "difficulty": "3",
@@ -373,9 +329,7 @@
   "options": ["under", "behind", "in front of", "on"],
   "lesson_id": 9731
 }, {
-  "_id": {
-    "_str": "574814c51d41c8170fed4dea"
-  },
+  "_id":"574814c51d41c8170fed4dea",
   "q_id": 67214,
   "q_title": "<strong><em>Select the correct translation</em></strong>",
   "difficulty": "3",
@@ -390,9 +344,7 @@
   "options": ["How are you?", "My name is Priya.", "What is your name?", "My name is Ankur."],
   "lesson_id": 10384
 }, {
-  "_id": {
-    "_str": "574814c51d41c8170fed4deb"
-  },
+  "_id":"574814c51d41c8170fed4deb",
   "q_id": 67215,
   "q_title": "<strong><em>Select the correct translation</em></strong>",
   "difficulty": "3",
@@ -407,9 +359,7 @@
   "options": ["How are you?", "I am fine, thanks.", "What is your name?", "My name is Ankur."],
   "lesson_id": 10384
 }, {
-  "_id": {
-    "_str": "574814c51d41c8170fed4df1"
-  },
+  "_id":"574814c51d41c8170fed4df1",
   "q_id": 71163,
   "q_title": "<strong><em>Read the text. Then answer the questions.</em></strong><strong>Hello!My name is Ram.I am eight years old.I am from Kolkata.I live in Mumbai.</strong>What is the name of the boy?",
   "difficulty": "1",
@@ -424,9 +374,7 @@
   "options": ["Ankur.", "Priya.", "Ram.", "Rahul"],
   "lesson_id": 13856
 }, {
-  "_id": {
-    "_str": "574814c51d41c8170fed4df2"
-  },
+  "_id":"574814c51d41c8170fed4df2",
   "q_id": 71166,
   "q_title": "<strong><em>Read the text. Then answer the questions.</em></strong><strong>Hello!My name is Ram.I am eight years old.I am from Kolkata.I live in Mumbai.</strong><strong></strong>How old is Ram?",
   "difficulty": "1",
@@ -441,9 +389,7 @@
   "options": ["six years", "eight years", "nine years", "ten years"],
   "lesson_id": 13856
 }, {
-  "_id": {
-    "_str": "574814c51d41c8170fed4df9"
-  },
+  "_id":"574814c51d41c8170fed4df9",
   "q_id": 89886,
   "q_title": "<strong><em>Listen to Veena. Then answer the questions.</em></strong><strong><em></em></strong>Which dog is small?",
   "difficulty": "1",
@@ -458,9 +404,7 @@
   "options": ["Raj", "Batuk", "Akash", "Mohan"],
   "lesson_id": 18948
 }, {
-  "_id": {
-    "_str": "574814c51d41c8170fed4dfa"
-  },
+  "_id":"574814c51d41c8170fed4dfa",
   "q_id": 89887,
   "q_title": "<strong><em>Listen to Veena. Then answer the questions.</em></strong><strong><em></em></strong>Which dog is black and white?",
   "difficulty": "1",
@@ -475,9 +419,7 @@
   "options": ["Raj", "Batuk", "Akash", "Mohan"],
   "lesson_id": 18948
 }, {
-  "_id": {
-    "_str": "574814c51d41c8170fed4dfb"
-  },
+  "_id":"574814c51d41c8170fed4dfb",
   "q_id": 89922,
   "q_title": "<em><strong>Listen to Reena. Then answer the questions.</strong></em>What is Riya’s favourite place?<em><strong></strong></em>",
   "difficulty": "1",
@@ -492,9 +434,7 @@
   "options": ["Reena’s favourite place is the park.", "Reena’s favourite place is the cinema.", "Reena’s favourite place is her school.", "Reena’s favourite place is her house."],
   "lesson_id": 18954
 }, {
-  "_id": {
-    "_str": "574814c51d41c8170fed4dfd"
-  },
+  "_id":"574814c51d41c8170fed4dfd",
   "q_id": 92415,
   "q_title": "<strong><em>Read this text. Then answer the questions.</em></strong>Priya is a young student.Ankur is a young student.Priya is pretty and smart.Ankur is tall and smart.Priya is happy.Ankur is sad.<strong>Who is young?</strong>",
   "difficulty": "1",
@@ -509,9 +449,7 @@
   "options": ["Priya", "Ankur", "Priya and Ankur", "Ram"],
   "lesson_id": 19769
 }, {
-  "_id": {
-    "_str": "574814c51d41c8170fed4dfe"
-  },
+  "_id":"574814c51d41c8170fed4dfe",
   "q_id": 92419,
   "q_title": "<strong><em style=\"background-color: initial;\">Read this text. Then answer the questions.</em></strong>Priya is a young student.Ankur is a young student.Priya is pretty and smart.Ankur is tall and smart.Priya is happy.Ankur is sad.<strong>Who is pretty and smart?</strong>",
   "difficulty": "1",
@@ -526,9 +464,7 @@
   "options": ["Priya", "Ankur", "Priya and Ankur", "Ram"],
   "lesson_id": 19769
 }, {
-  "_id": {
-    "_str": "574814c51d41c8170fed4dff"
-  },
+  "_id":"574814c51d41c8170fed4dff",
   "q_id": 92421,
   "q_title": "<strong><em style=\"background-color: initial;\">Read this text. Then answer the questions.</em></strong>Priya is a young student.Ankur is a young student.Priya is pretty and smart.Ankur is tall and smart.Priya is happy.Ankur is sad.<strong>Who is tall?</strong>",
   "difficulty": "1",
@@ -543,9 +479,7 @@
   "options": ["Priya", "Ankur", "Priya and Ankur", "Ram"],
   "lesson_id": 19769
 }, {
-  "_id": {
-    "_str": "574814c51d41c8170fed4e00"
-  },
+  "_id":"574814c51d41c8170fed4e00",
   "q_id": 92423,
   "q_title": "<strong><em>Read the text. Then answer the question.</em></strong>In the morning, Jaya has breakfast and goes to school.At noon, she has lunch.In the afternoon, she does her homework.In the evening, Jaya has dinner.<strong>When does Jaya go to school?</strong>",
   "difficulty": "1",
@@ -560,9 +494,7 @@
   "options": ["at noon", "in the evening", "in the morning", "in the afternoon"],
   "lesson_id": 19769
 }, {
-  "_id": {
-    "_str": "574814c51d41c8170fed4e01"
-  },
+  "_id":"574814c51d41c8170fed4e01",
   "q_id": 92425,
   "q_title": "<strong><em style=\"background-color: initial;\">Read the text. Then answer the question.</em></strong>In the morning, Jaya has breakfast and goes to school.At noon, she has lunch.In the afternoon, she does her homework.In the evening, Jaya has dinner. <strong>When does Jaya have lunch?</strong>",
   "difficulty": "1",
@@ -577,9 +509,7 @@
   "options": ["in the afternoon", "at noon", "in the evening", "in the morning"],
   "lesson_id": 19769
 }, {
-  "_id": {
-    "_str": "574814c51d41c8170fed4e02"
-  },
+  "_id":"574814c51d41c8170fed4e02",
   "q_id": 92426,
   "q_title": "<em><strong>Read the text. Then answer the question.</strong></em>In the morning, Jaya has breakfast and goes to school.At noon, she has lunch.In the afternoon, she does her homework.In the evening, Jaya has dinner.<strong>When does Jaya do her homework?</strong>",
   "difficulty": "1",
@@ -594,9 +524,7 @@
   "options": ["in the morning", "at noon", "in the evening", "in the afternoon"],
   "lesson_id": 19769
 }, {
-  "_id": {
-    "_str": "574814c51d41c8170fed4e03"
-  },
+  "_id":"574814c51d41c8170fed4e03",
   "q_id": 92430,
   "q_title": "<strong><em>Read the text. Then answer the question.</em></strong>“Riya, the fridge is empty. We only have one bottle of water left. Please go buy some water.” “Okay. I will buy three bottles of water.”<strong>Why is Riya going to buy food?</strong>",
   "difficulty": "1",
@@ -611,9 +539,7 @@
   "options": ["Because she wants to cook.", "Because the fridge is empty.", "Because she is hungry.", "Because she is thirsty."],
   "lesson_id": 19769
 }, {
-  "_id": {
-    "_str": "574814c61d41c8170fed4e04"
-  },
+  "_id":"574814c61d41c8170fed4e04",
   "q_id": 92431,
   "q_title": "<strong><em>Read this text. Then answer the question.</em></strong>“Priya, school starts this Monday. Do you want me to drive you to school?”“No, mum, I will take the train.” \"Don’t you want to ride the bus?”“No.”<strong>How will Priya go to school on Monday?</strong>",
   "difficulty": "1",
@@ -628,9 +554,7 @@
   "options": ["by car", "by bus", "by train", "by bike"],
   "lesson_id": 19769
 }, {
-  "_id": {
-    "_str": "574814c61d41c8170fed4e05"
-  },
+  "_id":"574814c61d41c8170fed4e05",
   "q_id": 92433,
   "q_title": "<strong></strong><strong><em>Vijay talks to his mother on the phone. Read the text and then answer the questions.</em></strong>“Hi mum. I like football and I want to play it more often. I only play football two times a week, but I want to play it three times a week.”<strong>How often per week does Vijay want to play football?</strong>",
   "difficulty": "1",
@@ -645,9 +569,7 @@
   "options": ["once", "thrice", "twice", "four times"],
   "lesson_id": 19769
 }, {
-  "_id": {
-    "_str": "574814c61d41c8170fed4e06"
-  },
+  "_id":"574814c61d41c8170fed4e06",
   "q_id": 92443,
   "q_title": "<strong></strong><strong><em>Listen to Vidhi. Then answer the questions.</em></strong>What does Vidhi not like doing?",
   "difficulty": "1",
@@ -662,9 +584,7 @@
   "options": ["play football", "play cricket", "play video games", "read"],
   "lesson_id": 18956
 }, {
-  "_id": {
-    "_str": "574814c61d41c8170fed4e07"
-  },
+  "_id":"574814c61d41c8170fed4e07",
   "q_id": 92444,
   "q_title": "<strong><em>Listen to the woman on the radio. She talks about the weather. Then answer the questions below.</em></strong><strong><em></em></strong><strong>What will the weather be like on Monday?</strong>",
   "difficulty": "1",
@@ -679,9 +599,7 @@
   "options": ["sunny and cold", "sunny and hot", "rainy and cloudy", "stormy"],
   "lesson_id": 19770
 }, {
-  "_id": {
-    "_str": "574814c61d41c8170fed4e08"
-  },
+  "_id":"574814c61d41c8170fed4e08",
   "q_id": 92445,
   "q_title": "<strong></strong><strong><em>Listen to the woman on the radio. She talks about the weather. Then answer the questions below.</em></strong>What do people have to wear on Monday?",
   "difficulty": "1",
@@ -696,9 +614,7 @@
   "options": ["a raincoat", "a scarf", "their sunglasses", "a cap"],
   "lesson_id": 19770
 }, {
-  "_id": {
-    "_str": "574814c61d41c8170fed4e09"
-  },
+  "_id":"574814c61d41c8170fed4e09",
   "q_id": 92446,
   "q_title": "<strong><em>Listen to the woman on the radio. She talks about the weather. Then answer the questions below.</em></strong>What will the weather be like on Tuesday?",
   "difficulty": "1",
