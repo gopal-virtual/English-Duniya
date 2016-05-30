@@ -4,9 +4,9 @@
     .module('zaya-quiz')
     .controller('QuizController', QuizController)
 
-  QuizController.$inject = ['quiz', 'widgetParser', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Quiz', 'Auth', '$ionicLoading', '$ionicPopup', 'lessonutils', 'orientation', '$location', '$anchorScroll', '$document', '$ionicScrollDelegate', '$ionicPosition', '$timeout', '$window', 'soundManager', '$cordovaFileTransfer', '$cordovaFile', '$interval', '$q'];
+  QuizController.$inject = ['quiz', 'widgetParser', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Quiz', 'Auth', '$ionicLoading', '$ionicPopup', 'lessonutils', 'orientation', '$location', '$anchorScroll', '$document', '$ionicScrollDelegate', '$ionicPosition', '$timeout', '$window', 'soundManager', '$cordovaFileTransfer', '$cordovaFile', '$interval', '$q', '$ImageCacheFactory'];
 
-  function QuizController(quiz, widgetParser, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Quiz, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition, $timeout, $window, soundManager, $cordovaFileTransfer, $cordovaFile, $interval, $q) {
+  function QuizController(quiz, widgetParser, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Quiz, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition, $timeout, $window, soundManager, $cordovaFileTransfer, $cordovaFile, $interval, $q, $ImageCacheFactory) {
 
     var quizCtrl = this;
 
@@ -149,8 +149,9 @@
 
       })
     }
-    function disableSwipe(){
-         $ionicSlideBoxDelegate.enableSlide(false);
+
+    function disableSwipe() {
+      $ionicSlideBoxDelegate.enableSlide(false);
     }
 
     function init(quiz) {
@@ -161,10 +162,12 @@
         quizCtrl.playStarSound();
         $log.debug("summary")
         $log.debug(quizCtrl.summary)
-        // quizCtrl.summary = quizCtrl.generateSummary(quizCtrl.report, quizCtrl.quiz);
+          // quizCtrl.summary = quizCtrl.generateSummary(quizCtrl.report, quizCtrl.quiz);
         quizCtrl.submitReport(quizCtrl.quiz, quizCtrl.report, quizCtrl.summary);
       } else if ($state.current.name == "quiz.questions") {
-        quizCtrl.preloadResources(quiz);
+        quizCtrl.preloadResources(quiz).then(function(success) {
+
+        });
         quizCtrl.setCurrentIndex(0);
         if ($stateParams.type == 'assessment') {
           quizCtrl.startTimer();
@@ -196,18 +199,19 @@
             }
           };
         }
-        quizCtrl.summary.score = {percent:0,marks:0};
+        quizCtrl.summary.score = {
+          percent: 0,
+          marks: 0
+        };
         quizCtrl.summary.analysis = {};
         quizCtrl.report.attempts = {};
         //parse all the options and questions to html
         for (i = 0; i < quiz.objects.length; i++) {
-          quizCtrl.quiz.objects[i].node.widgetHtml = quizCtrl.widgetParser.parseToDisplay(quizCtrl.quiz.objects[i].node.title,i,quizCtrl.quiz);
-          $log.debug(quizCtrl.quiz.objects[i].node.widgetHtml);
+          quizCtrl.quiz.objects[i].node.widgetHtml = quizCtrl.widgetParser.parseToDisplay(quizCtrl.quiz.objects[i].node.title, i, quizCtrl.quiz);
 
           quizCtrl.quiz.objects[i].node.widgetSound = quizCtrl.widgetParser.getSoundId(quizCtrl.quiz.objects[i].node.title);
-          for (j = 0; j < quizCtrl.quiz.objects[i].node.type.content.options.length ; j++) {
-            quizCtrl.quiz.objects[i].node.type.content.options[j].widgetHtml = quizCtrl.widgetParser.parseToDisplay(quizCtrl.quiz.objects[i].node.type.content.options[j].option,i,quizCtrl.quiz)
-            $log.debug(quizCtrl.quiz.objects[i].node.type.content.options[j].widgetHtml);
+          for (j = 0; j < quizCtrl.quiz.objects[i].node.type.content.options.length; j++) {
+            quizCtrl.quiz.objects[i].node.type.content.options[j].widgetHtml = quizCtrl.widgetParser.parseToDisplay(quizCtrl.quiz.objects[i].node.type.content.options[j].option, i, quizCtrl.quiz)
             quizCtrl.quiz.objects[i].node.type.content.options[j].widgetSound = quizCtrl.widgetParser.getSoundId(quizCtrl.quiz.objects[i].node.type.content.options[j].option);
           }
         }
@@ -271,13 +275,13 @@
     }
 
     function getFeedback(question) {
-      quizCtrl.submitAttempt(question.node.id,question.attempted);
+      quizCtrl.submitAttempt(question.node.id, question.attempted);
       if (quizCtrl.isCorrectAttempted(question)) {
-          audio.play('correct');
+        audio.play('correct');
         quizCtrl.summary.analysis[question.node.id] = {
           title: question.node.title,
           status: 'correct',
-          score : question.node.type.score
+          score: question.node.type.score
         }
         quizCtrl.summary.score.marks += question.node.type.score;
         quizCtrl.summary.score.percent = parseInt((quizCtrl.summary.score.marks / quizCtrl.quiz.node.type.score) * 100);
@@ -286,7 +290,7 @@
         quizCtrl.summary.analysis[question.node.id] = {
           title: question.node.title,
           status: 'incorrect',
-          score : 0
+          score: 0
         }
         audio.play('wrong');
         // SCQ
@@ -392,22 +396,21 @@
     }
 
     function playAudio(key, index) {
-            $log.debug('playAdio')
-        $log.debug(key,index)
-      angular.element("#audioplayer")[0].pause();
-      var src;
-      if (key) {
-        if (index) {
-          src = quizCtrl.quiz.objects[index].node.type.content.widgets.sounds[key];
-        } else {
-          src = quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.type.content.widgets.sounds[key];
+      if(key !== undefined){
+        angular.element("#audioplayer")[0].pause();
+        var src;
+        try{
+          src = soundManager.getSound(CONSTANT.RESOURCE_SERVER + quizCtrl.quiz.objects[index].node.type.content.widgets.sounds[key]);
         }
-        src = cordova.file.dataDirectory + 'sounds/' + src.split("/").pop();
-            $log.debug(src)
+        catch(e){
+          src = CONSTANT.RESOURCE_SERVER + quizCtrl.quiz.objects[index].node.type.content.widgets.sounds[key];
+        }
+
         angular.element("#audioSource")[0].src = src;
         angular.element("#audioplayer")[0].load();
         angular.element("#audioplayer")[0].play();
       }
+
 
     }
 
@@ -416,7 +419,10 @@
     function generateSummary(report, quiz) {
       var result = {
         analysis: {},
-        score: {marks:0,percent:0},
+        score: {
+          marks: 0,
+          percent: 0
+        },
         stars: 0,
       };
       angular.forEach(quiz.objects, function(value) {
@@ -425,7 +431,7 @@
             result.analysis[value.node.id] = {
               title: value.node.title,
               status: 'correct',
-              score : value.node.type.score
+              score: value.node.type.score
             };
             result.score.marks += value.node.type.score;
           } else {
@@ -449,10 +455,10 @@
     }
 
 
-    function calculateStars(percentScore){
-      if(percentScore >= CONSTANT.STAR.ONE){
-        if(percentScore >= CONSTANT.STAR.TWO){
-          if(percentScore >= CONSTANT.STAR.THREE){
+    function calculateStars(percentScore) {
+      if (percentScore >= CONSTANT.STAR.ONE) {
+        if (percentScore >= CONSTANT.STAR.TWO) {
+          if (percentScore >= CONSTANT.STAR.THREE) {
             return 3;
           }
           return 2;
@@ -461,6 +467,7 @@
       }
       return 0;
     }
+
     function range(num) {
       return new Array(num);
     }
@@ -482,7 +489,7 @@
         }).then(function(res) {
           if (res) {
             quizCtrl.generateReport(quizCtrl.quiz);
-            quizCtrl.summary = quizCtrl.generateSummary(quizCtrl.report,quizCtrl.quiz);
+            quizCtrl.summary = quizCtrl.generateSummary(quizCtrl.report, quizCtrl.quiz);
             $state.go('quiz.summary', {
               report: angular.copy(quizCtrl.report),
               quiz: angular.copy(quizCtrl.quiz),
@@ -538,8 +545,7 @@
 
     function inViewTrigger(index, viewPart) {
       quizCtrl.inViewData[index] = viewPart;
-      if(quizCtrl.inViewFlag)
-      {
+      if (quizCtrl.inViewFlag) {
         if (viewPart == 'bottom' || viewPart == 'both' || viewPart == 'neither' || (viewPart == 'top' && quizCtrl.inViewData[index - 1] === undefined)) {
           quizCtrl.setCurrentIndex(index);
         }
@@ -548,35 +554,51 @@
     }
 
     function preloadResources(quiz) {
-      quizCtrl.preloadImages(quiz);
-      quizCtrl.preloadSounds(quiz);
+      var d = $q.defer();
+      $q.all([quizCtrl.preloadImages(quiz),
+        quizCtrl.preloadSounds(quiz)
+      ]).then(function(success) {
+        d.resolve(success);
+      }, function(error) {
+        d.reject(error)
+      });
+      return d.promise;
     }
 
 
     function preloadImages(quiz) {
+      var d = $q.defer();
+      var images = [];
       angular.forEach(quiz.objects, function(question) {
         angular.forEach(question.node.type.content.widgets.images, function(image) {
-          $('<img/>')[0].src = CONSTANT.RESOURCE_SERVER + image;
+          images.push(CONSTANT.RESOURCE_SERVER + image);
         })
       })
+      $ImageCacheFactory.Cache(images).then(function() {
+        d.resolve('Images Loaded Successfully');
+      }, function(failed) {
+        d.reject('Error Loading Image' + failed);
+      });
+      return d.promise;
     }
 
     function preloadSounds(quiz) {
-        $log.debug("Preload sounds");
+      var d = $q.defer();
       ionic.Platform.ready(function() {
-          $log.debug("Preload sounds triggered");
-
+        var promises = [];
         angular.forEach(quiz.objects, function(question) {
           angular.forEach(question.node.type.content.widgets.sounds, function(sound) {
-               $log.debug(CONSTANT.RESOURCE_SERVER + sound);
             try {
-              soundManager.download(CONSTANT.RESOURCE_SERVER + sound)
+              promises.push(soundManager.download(CONSTANT.RESOURCE_SERVER + sound));
             } catch (e) {
               $log.debug("Error Downloading sound")
             }
           })
         });
-
+        $q.all(promises).then(function(success) {
+          d.resolve("Sounds Loaded Successfully");
+        });
+        return d.promise;
       });
     }
   }
