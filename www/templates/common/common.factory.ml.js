@@ -55,10 +55,59 @@
 
 
 
-
-
+        var initializeTest = [{
+            "skill": "vocabulary",
+            "qSet": {},
+            "level": parseInt(realTimeGrade),
+            "previousAnswer": null,
+            "actualLevel": 0,
+            "count": 0,
+            set setPreviousAnswer(x) {
+                this["previousAnswer"] = x;
+                this["count"]++;
+            }
+        }, {
+            "skill": "reading",
+            "qSet": {},
+            "level": parseInt(realTimeGrade),
+            "previousAnswer": null,
+            "actualLevel": 0,
+            "count": 0,
+            set setPreviousAnswer(x) {
+                this["previousAnswer"] = x;
+                this["count"]++;
+            }
+        }, {
+            "skill": "grammar",
+            "qSet": {},
+            "level": parseInt(realTimeGrade),
+            "previousAnswer": null,
+            "actualLevel": 0,
+            "count": 0,
+            set setPreviousAnswer(x) {
+                this["previousAnswer"] = x;
+                this["count"]++;
+            }
+        }, {
+            "skill": "listening",
+            "qSet": {},
+            "level": parseInt(realTimeGrade),
+            "previousAnswer": null,
+            "actualLevel": 0,
+            "count": 0,
+            set setPreviousAnswer(x) {
+                this["previousAnswer"] = x;
+                this["count"]++;
+            }
+        }];
+        
 
         
+
+
+
+
+
 
 
 
