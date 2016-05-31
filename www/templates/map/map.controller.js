@@ -5,15 +5,15 @@
     .module('zaya-map')
     .controller('mapController', mapController);
 
-  mapController.$inject = ['$scope', '$rootScope', '$log', '$ionicModal', '$state', 'lessons', 'scores', 'extendLesson', 'Rest', 'CONSTANT', '$sce', '$ionicLoading', '$timeout', '$ionicBackdrop', 'orientation', 'Auth','lessonutils','audio','data'];
+  mapController.$inject = ['$scope', '$rootScope', '$log', '$ionicModal', '$state', 'lessons', 'scores', 'extendLesson', 'Rest', 'CONSTANT', '$sce', '$ionicLoading', '$timeout', '$ionicBackdrop', 'orientation', 'Auth','lessonutils','audio','data', 'ml'];
 
-  function mapController($scope, $rootScope, $log, $ionicModal, $state, lessons, scores, extendLesson, Rest, CONSTANT, $sce, $ionicLoading, $timeout, $ionicBackdrop, orientation, Auth, lessonutils, audio, data) {
+  function mapController($scope, $rootScope, $log, $ionicModal, $state, lessons, scores, extendLesson, Rest, CONSTANT, $sce, $ionicLoading, $timeout, $ionicBackdrop, orientation, Auth, lessonutils, audio, data, ml) {
 
      $scope.$on("$ionicView.beforeEnter", function(event, data) {
       orientation.setPortrait();
     });
-    data.setQuestion();
-    data.getQuestions();
+    // data.createDiagnosisQuestionDB();
+    // data.createKmapsDB();
     $scope.audio = audio;
     $scope.orientation= orientation;
     function preload(arrayOfImages) {
@@ -29,6 +29,7 @@
       ]);
     var mapCtrl = this;
     mapCtrl.lessons = CONSTANT.LOCK ? extendLesson.getLesson(lessons, scores) : lessons;
+    mapCtrl.ml = ml;
     // mapCtrl.getLesson = getLesson;
     // mapCtrl.getSrc = getSrc;
     mapCtrl.resetNode = resetNode;

@@ -1,0 +1,74 @@
+[{
+	"reading": {
+		"1": {
+			"microstandard": "ELL.DIA.R.1",
+			"questions": [92415, 92419, 92421]
+		},
+		"0": {
+			"microstandard": "ELL.1.WR.AP.22",
+			"questions": [71163, 71166, 78736]
+		},
+		"3": {
+			"microstandard": "ELL.DIA.R.1",
+			"questions": [92430, 92431, 92433]
+		},
+		"2": {
+			"microstandard": "ELL.DIA.R.1",
+			"questions": [92423, 92425, 92426]
+		}
+	},
+	"grammar": {
+		"1": {
+			"microstandard": "ELL.1.RE.V.10",
+			"questions": [65294, 65295, 65298]
+		},
+		"0": {
+			"microstandard": "ELL.1.RE.V.50",
+			"questions": [68478]
+		},
+		"3": {
+			"microstandard": "ELL.1.RE.V.267",
+			"questions": [89743, 89744, 89746]
+		},
+		"2": {
+			"microstandard": "ELL.1.RE.V.50",
+			"questions": [68431, 68471]
+		}
+	},
+	"vocabulary": {
+		"1": {
+			"microstandard": "ELL.1.RE.V.80",
+			"questions": [65470, 65559, 65603, 69467]
+		},
+		"0": {
+			"microstandard": "ELL.1.RE.V.104",
+			"questions": [65209, 65210, 65212, 67214, 67215, 70307]
+		},
+		"3": {
+			"microstandard": "ELL.1.MAL.V.09",
+			"questions": [71369, 85226]
+		},
+		"2": {
+			"microstandard": "ELL.1.MAL.V.95",
+			"questions": [66435, 89971]
+		}
+	},
+	"listening": {
+		"1": {
+			"microstandard": "ELL.1.MAL.V.85",
+			"questions": [89886, 89887]
+		},
+		"0": {
+			"microstandard": "ELL.1.MAL.V.110",
+			"questions": [92446]
+		},
+		"3": {
+			"microstandard": "ELL.1.MAL.V.110",
+			"questions": [92444, 92445]
+		},
+		"2": {
+			"microstandard": "ELL.1.MAL.V.93",
+			"questions": [89922, 92443]
+		}
+	}
+}]
