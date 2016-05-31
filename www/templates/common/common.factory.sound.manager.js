@@ -5,25 +5,29 @@
     .module('common')
     .factory('soundManager', soundManager)
 
-  function soundManager($cordovaNativeAudio, $log, $cordovaFile, $cordovaFileTransfer) {
+  function soundManager($cordovaNativeAudio, $log, $cordovaFile, $cordovaFileTransfer, $q) {
     return {
-      download: function(url){
+      download: function(url) {
         // $log.debug('Free space' ,cordova.getFreeDiskSpace());
         // $log.debug('Free space' ,cordova.getFreeDiskSpace());
         var filename = url.split("/").pop();
         var target = cordova.file.dataDirectory + 'sounds/' + filename;
+        $log.debug("here")
+        var sounds = JSON.parse(localStorage.getItem('sounds') || '{}');
+        sounds[url] = target;
+        localStorage.setItem('sounds',JSON.stringify(sounds));
+        var d = $q.defer();
         $cordovaFileTransfer.download(url, target)
-            .then(function(result) {
-              // var soundMap =
-              $log.debug("Success",target)
-            }, function(err) {
-              $log.debug("Error in Sound Manager",err)
-            }, function (progress) {
-              $log.debug("Progress",progress.loaded)
-            });
+          .then(function(result) {
+            d.resolve("Downloaded " + target);
+          }, function(err) {
+            d.reject("Error Downlaoding " + target);
+          }, function(progress) {});
+        return d.promise;
       },
-      getSound: function(url){
-
+      getSound: function(url) {
+        var sounds = JSON.parse(localStorage.getItem('sounds'));
+        return sounds[url];
       },
 
       play: function(sound) {

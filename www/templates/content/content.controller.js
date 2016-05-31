@@ -51,10 +51,6 @@
         })
     }
 
-    $scope.$on("$ionicView.beforeEnter", function(event, data) {
-      orientation.setLandscape();
-    });
-
     $scope.$on('$destroy', function() {
       $scope.modal.remove();
     });

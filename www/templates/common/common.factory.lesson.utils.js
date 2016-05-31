@@ -5,10 +5,10 @@
     .module('common')
     .factory('lessonutils', lessonutils);
 
-  lessonutils.$inject = ['$ionicLoading', '$state', 'Rest', '$log', 'CONSTANT', '$timeout', '$sce','$ionicPopup'];
+  lessonutils.$inject = ['$ionicLoading', '$state','$stateParams', 'Rest', '$log', 'CONSTANT', '$timeout', '$sce','$ionicPopup'];
 
   /* @ngInject */
-  function lessonutils($ionicLoading, $state, Rest, $log, CONSTANT, $timeout, $sce, $ionicPopup) {
+  function lessonutils($ionicLoading, $state, $stateParams, Rest, $log, CONSTANT, $timeout, $sce, $ionicPopup) {
     var utils = {
         leaveLesson : leaveLesson,
       getLesson: getLesson,
@@ -29,14 +29,15 @@
           hideOnStateChange: true
         });
         $timeout(function(){
+            $ionicLoading.hide();
             $state.go('map.navigate');
         })
     }
     function currentState(resource){
-        if($state.is('quiz.questions') && utils.resourceType(resource) == 'assessment'){
+        if($stateParams.type == 'assessment' && utils.resourceType(resource) == 'assessment'){
             return true;
         }
-        else if($state.is('quiz.practice.questions') && utils.resourceType(resource) == 'practice'){
+        else if($stateParams.type == 'practice' && utils.resourceType(resource) == 'practice'){
             return true;
         }
         else if($state.is('content.video') && utils.resourceType(resource) == 'video'){
@@ -94,26 +95,27 @@
     }
 
     function playResource(resource, video) {
-        $log.debug(video);
       $ionicLoading.show({
         noBackdrop: false,
         hideOnStateChange: true
       });
       if (utils.resourceType(resource) == 'assessment') {
         $timeout(function() {
-            !$state.is('quiz.question') &&
+            $stateParams.type != 'assessment' &&
               $state.go('quiz.questions', {
-                id: resource.node.id
+                id: resource.node.id,
+                type : 'assessment'
               });
-              $state.is('quiz.questions') && $ionicLoading.hide();
+              $stateParams.type == 'assessment' && $ionicLoading.hide();
         });
       } else if (utils.resourceType(resource) == 'practice') {
         $timeout(function() {
-            !$state.is('quiz.practice.questions') &&
-              $state.go('quiz.practice.questions', {
-                id: resource.node.id
+            $stateParams.type != 'practice' &&
+              $state.go('quiz.questions', {
+                id: resource.node.id,
+                type : 'practice'
               });
-              $state.is('quiz.practice.questions') && $ionicLoading.hide();
+              $stateParams.type == 'practice' && $ionicLoading.hide();
         });
       } else if (utils.resourceType(resource) == 'video') {
         $timeout(function() {

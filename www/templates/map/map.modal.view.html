@@ -1,4 +1,4 @@
-<ion-modal-view class="modal-dark" ng-click="closeNodeMenu();mapCtrl.resetNode()">
+<ion-modal-view class="modal-dark" ng-click="quizCtrl.interval && quizCtrl.startTimer();closeNodeMenu();mapCtrl.resetNode()">
   <ion-content ng-init="mapCtrl.selected=false" overflow-scroll="true">
       <div class="row row-15 padding-30 modal-gradient" ng-if="!orientation.isLandscape()" >
           <div class="col text-center text-white font-xl ellipses">
@@ -12,7 +12,7 @@
           width="auto" height="100%" alt="resource icon"
           ng-click="audio.play('press');selected=true;$event.stopPropagation();closeNodeMenu();lessonutils.playResource(resource,contentCtrl.API);"
           ng-class="{'fade' : lessonutils.currentState(resource)}"/>
-          <button ng-if="lessonutils.currentState(resource)" ng-click="audio.play('press');contentCtrl.API && contentCtrl.API.play();" class="button button-green button-round font-xl button-resume" style="line-height: 30px !important;">resume</button>
+          <button ng-show="lessonutils.currentState(resource)" ng-click="audio.play('press');quizCtrl.interval && quizCtrl.startTimer();contentCtrl.API && contentCtrl.API.play();" class="button button-green button-round font-xl button-resume" style="line-height: 30px !important;">resume</button>
           <!-- <h3 class="color-pale">{{lessonutils.resourceType(resource)}}</h3> -->
       </div>
     </div>
@@ -23,7 +23,7 @@
           width="auto" height="100%" alt="resource icon"
           ng-click="audio.play('press');selected=true;$event.stopPropagation();closeNodeMenu();lessonutils.playResource(resource,contentCtrl.API);"
           ng-class="{'fade' : lessonutils.currentState(resource)}"/>
-          <button ng-if="lessonutils.currentState(resource)" ng-click="audio.play('press');contentCtrl.API && contentCtrl.API.play();" class="button button-green button-round font-xl button-resume" style="line-height: 30px !important;">resume</button>
+          <button ng-show="lessonutils.currentState(resource)" ng-click="audio.play('press');quizCtrl.interval && quizCtrl.startTimer();contentCtrl.API && contentCtrl.API.play();" class="button button-green button-round font-xl button-resume" style="line-height: 30px !important;">resume</button>
           <!-- <h3 class="color-pale">{{lessonutils.resourceType(resource)}}</h3> -->
       </div>
     </div>
