@@ -18,8 +18,11 @@
           audio.stop('background');
         }],
         resolve: {
-          quiz: ['$stateParams', 'Rest', function($stateParams, Rest) {
+          quiz: ['$stateParams', 'Rest','$log', function($stateParams, Rest, $log) {
             if ($stateParams.type == 'litmus') {
+                Rest.one('profiles',JSON.parse(localStorage.user_details).profile).get().then(function(profile){
+                    $log.debug(profile.plain().grade);
+                });
               return {
                 "node": {
                   "id": "001",

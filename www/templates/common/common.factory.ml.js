@@ -51,31 +51,6 @@
         // });
 
 
-
-
-
-
-
-
-
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         return ml;
 
         function runDiagnostic(quiz, studentName) {
@@ -905,31 +880,6 @@
                 }
             }
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     }
