@@ -18,10 +18,19 @@
           audio.stop('background');
         }],
         resolve: {
-          quiz: ['$stateParams', 'Rest','$log', function($stateParams, Rest, $log) {
+          quiz: ['$stateParams', 'Rest','$log','data','ml', function($stateParams, Rest, $log, data,ml) {
             if ($stateParams.type == 'litmus') {
-                Rest.one('profiles',JSON.parse(localStorage.user_details).profile).get().then(function(profile){
-                    $log.debug(profile.plain().grade);
+                data.getDiagnosisLitmusMapping().then(function(res) {
+                    var params = data.getTestParams(JSON.parse(localStorage.profile).grade);
+                    var mapping = res;
+
+                    var q = ml.getNextQSr(params, mapping);
+
+                    $log.debug('mapping',q);
+                    q.test[0]['setPreviousAnswer'] = 1;
+                    q.test[0]["qSet"][q["actualLevel"]] = {"sr" : q.qSr, "answered" : 'right'};
+                    $log.debug('next bn',ml.getNextQSr(q.test, mapping));
+                    $log.debug('next bn',ml.getNextQSr(q.test, mapping));
                 });
               return {
                 "node": {

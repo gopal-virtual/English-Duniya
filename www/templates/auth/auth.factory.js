@@ -3,8 +3,8 @@
   angular
     .module('zaya-auth')
     .factory('Auth', Auth)
-  Auth.$inject = ['Restangular', 'CONSTANT', '$cookies', '$log', '$window'];
-  function Auth(Restangular, CONSTANT, $cookies, $log, $window) {
+  Auth.$inject = ['Restangular', 'CONSTANT', '$cookies', '$log', '$window','Rest'];
+  function Auth(Restangular, CONSTANT, $cookies, $log, $window, Rest) {
     var rest_auth = Restangular.withConfig(function (RestangularConfigurer) {
       RestangularConfigurer.setBaseUrl(CONSTANT.BACKEND_SERVICE_DOMAIN + '/rest-auth');
       RestangularConfigurer.setRequestSuffix('/');
@@ -144,8 +144,12 @@
         Restangular.oneUrl('user_details', CONSTANT.BACKEND_SERVICE_DOMAIN + 'rest-auth/user/').get().then(function (response) {
             localStorage.setItem('user_details', JSON.stringify(response));
             success(response);
+            return Rest.one('profiles',JSON.parse(localStorage.user_details).profile).get()
         }, function (response) {
             failure(response);
+        })
+        .then(function(profile){
+            localStorage.setItem('profile', JSON.stringify(profile));
         });
     }
     function isVerified () {

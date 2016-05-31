@@ -22,15 +22,63 @@
             getDiagnosisQuestionById: getDiagnosisQuestionById,
             getDiagnosisQuestionByLevelNSkill: getDiagnosisQuestionByLevelNSkill,
             getDiagnosisLitmusMapping: getDiagnosisLitmusMapping,
-            getKmapsLevels: getKmapsLevels
+            getKmapsLevels: getKmapsLevels,
+            getTestParams : getTestParams
             // diagnosisQuestionsDB: diagnosisQuestionsDB,
             // kmapsDB: kmapsDB,
             // diagLitmusMappingDB: diagLitmusMappingDB
         };
 
+
         return data;
 
-
+        function getTestParams(realTimeGrade){
+            return [{
+                "skill": "vocabulary",
+                "qSet": {},
+                "level": parseInt(realTimeGrade),
+                "previousAnswer": null,
+                "actualLevel": 0,
+                "count": 0,
+                set setPreviousAnswer(x) {
+                    this["previousAnswer"] = x;
+                    this["count"]++;
+                }
+            }, {
+                "skill": "reading",
+                "qSet": {},
+                "level": parseInt(realTimeGrade),
+                "previousAnswer": null,
+                "actualLevel": 0,
+                "count": 0,
+                set setPreviousAnswer(x) {
+                    this["previousAnswer"] = x;
+                    this["count"]++;
+                }
+            }, {
+                "skill": "grammar",
+                "qSet": {},
+                "level": parseInt(realTimeGrade),
+                "previousAnswer": null,
+                "actualLevel": 0,
+                "count": 0,
+                set setPreviousAnswer(x) {
+                    this["previousAnswer"] = x;
+                    this["count"]++;
+                }
+            }, {
+                "skill": "listening",
+                "qSet": {},
+                "level": parseInt(realTimeGrade),
+                "previousAnswer": null,
+                "actualLevel": 0,
+                "count": 0,
+                set setPreviousAnswer(x) {
+                    this["previousAnswer"] = x;
+                    this["count"]++;
+                }
+            }];
+        }
         function createDiagnosisQuestionDB() {
             $http.get('templates/common/questions.json').success(function(data) {
                 $log.debug('in createDiagnosisQuestionDB');
@@ -77,7 +125,7 @@
 
         function getDiagnosisQuestionByLevelNSkill(level, skill){
 
-          var result = diagnosisQuestionsDB.query(function(doc, emit) { 
+          var result = diagnosisQuestionsDB.query(function(doc, emit) {
                           emit(doc.level, doc);
                         }, { key: level })
                         .then(function(res) {
