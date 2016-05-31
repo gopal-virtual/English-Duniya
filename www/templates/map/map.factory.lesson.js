@@ -63,10 +63,11 @@
         }
         // unlock first lessons
         if (key == 0) {
-            setLock(key, value, false);
+          setLock(key, value, false);
         }
       })
 
+      // include litmus test
       return lessons;
     }
 

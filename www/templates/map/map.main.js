@@ -32,7 +32,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
       this.load.spritesheet('fire_animation', 'img/assets/fire_animation.png', 322, 452, 20);
       this.load.spritesheet('cactus_animation', 'img/assets/cactus_animation.png', 30, 52, 5);
 
-      this.load.image('node', 'img/icons/node.png');
+      this.load.image('node-litmus', 'img/icons/node.png');
       this.load.image('node-vocabulary', 'img/icons/icon-vocabulary-node.png');
       this.load.image('node-listening', 'img/icons/icon-listening-node.png');
       this.load.image('node-grammar', 'img/icons/icon-grammar-node.png');
@@ -198,7 +198,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
       log.debug('desert', desert.width);
       this.points = {
         'x': [101, 113, 170, 202, 216, 201, 180, 172, 172, 179, 195, 211, 207, 160, 138, 144, 167, 197, 204, 197, 165, 126, 101, 161, 256, 223, 134, 102, 138, 200, 235, 200, 180, 180, 180, 180, 180, 180, 180, 180],
-        'y': [50, 64, 109, 148, 189, 235, 287, 346, 404, 456, 495, 529, 574, 644, 693, 748, 803, 854, 877, 941, 980, 1022, 1091, 1116, 1116, 1171, 1209, 1266, 1318, 1342, 1371, 1433, 1494, 1577, 1659, 1742, 1824, 1907, 1950, 2050]
+        'y': [50, 64, 109, 148, 189, 235, 287, 346, 404, 456, 495, 529, 574, 644, 693, 748, 803, 854, 877, 941, 980, 1022, 1091, 1116, 1116, 1171, 1209, 1266, 1318, 1342, 1371, 1433, 1494, 1577, 1659, 1742, 1824, 1907, 1950, 2200]
       };
 
       for (var i = 0, points_count = this.points.x.length; i < points_count; i++) {
@@ -254,14 +254,16 @@ window.createGame = function(scope, lessons, audio, injector, log) {
       function lessonType(lesson, locked) {
         return !locked ? '-' + lesson.tag.toLowerCase() : '';
       };
+      log.debug('canvas lessons',lessons.length);
       // Place nodes
-      for (var j = 0, i = lessons.length - 1, nodeCount = 1 / (lessons.length - 1); j <= 1; j += nodeCount, i--) {
+      for (var j = 0, i = lessons.length - 1, nodeCount = 1 / (lessons.length); j < 1; j += nodeCount, i--) {
         var currentLesson = lessons[i];
-        log.debug('lesson status', currentLesson);
+        log.debug(i, currentLesson);
         var locked = currentLesson.locked ? '-locked' : '';
         var type = lessonType(currentLesson, currentLesson.locked);
         var posx = this.math.catmullRomInterpolation(this.points.x, j);
         var posy = this.math.catmullRomInterpolation(this.points.y , j);
+        log.debug('lesson status', 'node' + type + locked);
         var node = this.game.add.button(posx, posy, 'node' + type + locked);
         node.inputEnabled = true;
         node.events.onInputUp.add(
@@ -286,7 +288,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
         // add stars
         if (currentLesson.stars >= 0) {
           var stars = this.game.add.group();
-          log.debug('stars in lesson', currentLesson.stars);
+        //   log.debug('stars in lesson', currentLesson.stars);
           if (currentLesson.stars == 0) {
             createStars(0, $.merge([posx], star_x), $.merge([posy], star_y));
           } else if (currentLesson.stars == 1) {

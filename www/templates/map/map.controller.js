@@ -28,7 +28,17 @@
           '/img/assets/pause_menu_bottom.png'
       ]);
     var mapCtrl = this;
-    mapCtrl.lessons = CONSTANT.LOCK ? extendLesson.getLesson(lessons, scores) : lessons;
+    var litmus = {
+      "id": "001",
+      "content_type_name": "litmus",
+      "tag": "Litmus",
+      "locked": false
+    };
+
+    var lessonList = CONSTANT.LOCK ? extendLesson.getLesson(lessons, scores) : lessons;
+    lessonList.unshift(litmus);
+    mapCtrl.lessons = lessonList;
+    $log.debug('lessons',mapCtrl.lessons);
     // mapCtrl.getLesson = getLesson;
     // mapCtrl.getSrc = getSrc;
     mapCtrl.resetNode = resetNode;
@@ -93,10 +103,18 @@
       $state.go('user.main.settings', {});
     })
     $scope.$on('openNode', function(event, node) {
-      $scope.lessonutils.getLesson(node.id, $scope, function(response){
-          $scope.openNodeMenu();
-          $scope.selectedNode = response;
-      });
+        if(node.content_type_name == 'litmus'){
+            $state.go('quiz.questions',{
+                id: node.id,
+                type : 'litmus'
+            });
+        }
+        else{
+            $scope.lessonutils.getLesson(node.id, $scope, function(response){
+                $scope.openNodeMenu();
+                $scope.selectedNode = response;
+            });
+        }
     })
     $scope.$on('$destroy', function() {
       $scope.modal.remove();
