@@ -263,6 +263,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
         var posx = this.math.catmullRomInterpolation(this.points.x, j);
         var posy = this.math.catmullRomInterpolation(this.points.y , j);
         var node = this.game.add.button(posx, posy, 'node' + type + locked);
+        this.add.tween(node.scale).to({ x: [1.2,1], y: [1.2,1]},700, Phaser.Easing.Back.Out, true, 1000).loop(true);
         node.inputEnabled = true;
         node.events.onInputUp.add(
           function(currentLesson, game) {
