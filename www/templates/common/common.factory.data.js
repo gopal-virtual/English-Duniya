@@ -33,6 +33,18 @@
         return data;
 
         function getTestParams(realTimeGrade){
+
+            function setPreviousAnswerCallback(tests, x){
+                tests["previousAnswer"] = x[0];
+                tests["count"]++;
+                console.log('tests', tests);
+                if(x[0] == 1){
+                    x[1].test[0]["qSet"][x[1]["actualLevel"]] = { "sr": x[1].qSr, "answered": "right" };
+                }else{
+                    x[1].test[0]["qSet"][x[1]["actualLevel"]] = { "sr": x[1].qSr, "answered": "wrong" };
+                }
+            }
+
             return [{
                 "skill": "vocabulary",
                 "qSet": {},
@@ -41,8 +53,7 @@
                 "actualLevel": 0,
                 "count": 0,
                 set setPreviousAnswer(x) {
-                    this["previousAnswer"] = x;
-                    this["count"]++;
+                    setPreviousAnswerCallback(this, x);
                 }
             }, {
                 "skill": "reading",
@@ -52,8 +63,7 @@
                 "actualLevel": 0,
                 "count": 0,
                 set setPreviousAnswer(x) {
-                    this["previousAnswer"] = x;
-                    this["count"]++;
+                    setPreviousAnswerCallback(this, x);
                 }
             }, {
                 "skill": "grammar",
@@ -63,8 +73,7 @@
                 "actualLevel": 0,
                 "count": 0,
                 set setPreviousAnswer(x) {
-                    this["previousAnswer"] = x;
-                    this["count"]++;
+                    setPreviousAnswerCallback(this, x);
                 }
             }, {
                 "skill": "listening",
@@ -74,11 +83,11 @@
                 "actualLevel": 0,
                 "count": 0,
                 set setPreviousAnswer(x) {
-                    this["previousAnswer"] = x;
-                    this["count"]++;
+                    setPreviousAnswerCallback(this, x);
                 }
             }];
         }
+        
         function createDiagnosisQuestionDB() {
             $http.get('templates/common/questions.json').success(function(data) {
                 $log.debug('in createDiagnosisQuestionDB');

@@ -27,8 +27,7 @@
                     var q = ml.getNextQSr(params, mapping);
 
                     $log.debug('mapping',q);
-                    q.test[0]['setPreviousAnswer'] = 1;
-                    q.test[0]["qSet"][q["actualLevel"]] = {"sr" : q.qSr, "answered" : 'right'};
+                    q.test[0]['setPreviousAnswer'] = [1, q];
                     $log.debug('next bn',ml.getNextQSr(q.test, mapping));
                     $log.debug('next bn',ml.getNextQSr(q.test, mapping));
                 });
