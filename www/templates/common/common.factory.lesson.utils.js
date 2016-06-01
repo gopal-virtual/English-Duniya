@@ -96,7 +96,7 @@
 
     function playResource(resource, video) {
       $ionicLoading.show({
-        noBackdrop: false,
+        // noBackdrop: false,
         hideOnStateChange: true
       });
       if (utils.resourceType(resource) == 'assessment') {
@@ -107,7 +107,7 @@
                 type : 'assessment'
               });
               $stateParams.type == 'assessment' && $ionicLoading.hide();
-        });
+        },500);
       } else if (utils.resourceType(resource) == 'practice') {
         $timeout(function() {
             $stateParams.type != 'practice' &&
@@ -116,7 +116,7 @@
                 type : 'practice'
               });
               $stateParams.type == 'practice' && $ionicLoading.hide();
-        });
+        },500);
       } else if (utils.resourceType(resource) == 'video') {
         $timeout(function() {
             !$state.is('content.video') &&
@@ -130,7 +130,7 @@
              video.play();
              $ionicLoading.hide() ;
           }
-        });
+      },300);
         //   utils.config.sources[0].src = utils.getSrc(resource.node.type.path);
       } else {}
     }

@@ -19,7 +19,7 @@
     </div>
   </div>
   <ion-slide-box on-slide-changed="quizCtrl.slideHasChanged($index)" ng-init="(quizCtrl.disableSwipe())" show-pager="false">
-    <ion-slide ng-repeat="question in quizCtrl.quiz.objects" ng-class="{'animation-question-slide':quizCtrl.isCurrentIndex($index)}">
+    <ion-slide ng-repeat="question in quizCtrl.quiz.objects">
 
   <!-- <div ng-repeat="question in quizCtrl.quiz.objects" ng-if="$index == quizCtrl.getCurrentIndex()"> -->
     <div class="bar bar-subheader padding-0 question-subheader bg-pale no-shadow">

@@ -1,5 +1,6 @@
-<div class="result">
-  <div ng-click="mapCtrl.backdrop=true;mapCtrl.showScore=$index" class="result-item bg-pale icon-{{skill.name}} icon-fit-height" ng-class="{'result-hack active' : mapCtrl.showScore==$index}" ng-class="{'result-hack':mapCtrl.showScore==0}" ng-repeat="skill in mapCtrl.skillSet">
+<div class="result animation-delay-more animation-fade-bounce-from-top">
+  <div ng-click="mapCtrl.backdrop=true;mapCtrl.showScore=$index" class="result-item bg-pale" ng-class="{'result-hack active' : mapCtrl.showScore==$index}" ng-repeat="skill in mapCtrl.skillSet">
+      <div class="width-100 height-100 icon-fit-height icon-{{skill.name}} animation-fade-bounce-from-top" style="-webkit-animation-delay : {{($index+5)*100}}ms;"></div>
     <div class="result-item-dropdown text-center" ng-class="{'animation-bounce-in-from-top':mapCtrl.showScore==$index}" ng-show="mapCtrl.showScore==$index">
       <span class="color-green font-lg capitalize">{{skill.name}}</span>
       <br>
@@ -10,7 +11,7 @@
 </div>
 <div class="result-backdrop modal-dark" ng-show="mapCtrl.backdrop" ng-click="mapCtrl.backdrop=false;mapCtrl.showScore=-1"></div>
 <ion-view>
-  <ion-content class="has-header">
+  <ion-content>
     <div ng-if="mapCtrl.lessons" map-canvas lessons="mapCtrl.lessons" width="mapCtrl.width" height="mapCtrl.height"></div>
   </ion-content>
 </ion-view>
