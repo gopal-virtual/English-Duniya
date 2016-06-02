@@ -221,7 +221,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
       log.debug('desert', desert.width);
       this.points = {
         'x': [101, 113, 170, 202, 216, 201, 180, 172, 172, 179, 195, 211, 207, 160, 138, 144, 167, 197, 204, 197, 165, 126, 101, 161, 256, 223, 134, 102, 138, 200, 235, 200, 180, 180, 180, 180, 180, 180, 180, 180],
-        'y': [50, 64, 109, 148, 189, 235, 287, 346, 404, 456, 495, 529, 574, 644, 693, 748, 803, 854, 877, 941, 980, 1022, 1091, 1116, 1116, 1171, 1209, 1266, 1318, 1342, 1371, 1433, 1494, 1577, 1659, 1742, 1824, 1907, 1950, 2050]
+        'y': [50, 64, 109, 148, 189, 235, 287, 346, 404, 456, 495, 529, 574, 644, 693, 748, 803, 854, 877, 941, 980, 1022, 1091, 1116, 1116, 1171, 1209, 1266, 1318, 1342, 1371, 1433, 1494, 1577, 1659, 1742, 1824, 1907, 1950, 2200]
       };
 
       for (var i = 0, points_count = this.points.x.length; i < points_count; i++) {
@@ -278,9 +278,9 @@ window.createGame = function(scope, lessons, audio, injector, log) {
         return !locked ? '-' + lesson.tag.toLowerCase() : '';
       };
       // Place nodes
-      for (var j = 0, i = lessons.length - 1, nodeCount = 1 / (lessons.length - 1); j <= 1; j += nodeCount, i--) {
+      for (var j = 0, i = lessons.length - 1, nodeCount = 1 / (lessons.length); i >= 0; j += nodeCount, i--) {
         var currentLesson = lessons[i];
-        log.debug('lesson status', currentLesson);
+        log.debug('lesson status', i, currentLesson);
         var locked = currentLesson.locked ? '-locked' : '';
         var type = lessonType(currentLesson, currentLesson.locked);
         var posx = this.math.catmullRomInterpolation(this.points.x, j);

@@ -131,16 +131,20 @@ $percent in $height-list {
   width: auto;
 }
 .resource-list img.active {
+  width: 100% !important;
+}
+.resource-list img.not-active {
   width: 70% !important;
+  margin-top : 15%;
 }
 @media all and (orientation:portrait) {
   .resource-list > li {
     display: block;
-    height: 30%;
+    height: 50%;
   }
   .avatar {
     @include flex(0, 0, 50%);
-    max-width: 50%;
+    max-width: 40%;
   }
 }
 @media all and (orientation:landscape) {

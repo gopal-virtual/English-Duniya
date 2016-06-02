@@ -20,18 +20,35 @@ background: -ms-linear-gradient(top, rgba(0,0,0,1) 80%, rgba(76,76,76,0) 100%);
 background: linear-gradient(to bottom, rgba(0,0,0,1) 80%, rgba(76,76,76,0) 100%);
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#000000', endColorstr='#4c4c4c', GradientType=0 );
 }
+.modal-rope{
+    background-image:url('../img/assets/rope.png');
+    background-repeat: no-repeat;
+    background-position:  center top;
+    background-size : 20px auto;
+}
+.modal-knot{
+    background-size : 45px auto;
+    background-image:url('../img/assets/rope_knot.png');
+    background-repeat: no-repeat;
+    background-position:  center center;
+
+}
 @media all and (orientation:portrait){
-    .modal-top{
-        background:url('../img/assets/pause_menu_top.png') no-repeat center center;
-        background-size : 95% 105%;
+    .modal-top {
+        width : 90%;
+        margin : 0 auto;
     }
     .modal-middle{
-        background:url('../img/assets/pause_menu_middle.png') no-repeat center center;
-        background-size : 95% 105%;
+        // background:url('../img/assets/pause_menu_middle.png') no-repeat center center;
+        // background-size : auto 100%;
+        border-radius : $border-radius*4;
+        background-color: $brand-pink;
+        width : 90%;
+        margin : 0 auto;
     }
     .modal-bottom{
         background:url('../img/assets/pause_menu_bottom.png') no-repeat center center;
-        background-size : 95% 105%;
+        background-size : auto 100%;
     }
     .modal-button{
         top : -20px;
