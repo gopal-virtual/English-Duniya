@@ -1,8 +1,17 @@
-.popup-container .popup{
-  background-color: #FCF3D8;
-  border-radius: $border-radius;
+.popup-container{
+  background-color: rgba(255,255,255,.9);
+  color : #5e5e5e !important;
 }
-
+.popup-container .popup{
+  background-color: $pale !important;
+  border-radius: $border-radius;
+  box-shadow: 2px 3px 4px 0 rgba(119,119,119,.5)
+}
+.popup-container .popup-head{
+  border-bottom: 1px solid rgba(206,206,206,0.5);
+  color : #5e5e5e !important;
+}
 .popup-buttons > .button {
   background-color: $brand-green !important;
+  border-radius: $border-radius-round
 }

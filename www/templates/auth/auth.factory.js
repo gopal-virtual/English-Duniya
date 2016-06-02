@@ -1,11 +1,12 @@
-(function () {
+(function() {
   'use strict';
   angular
     .module('zaya-auth')
     .factory('Auth', Auth)
-  Auth.$inject = ['Restangular', 'CONSTANT', '$cookies', '$log', '$window'];
-  function Auth(Restangular, CONSTANT, $cookies, $log, $window) {
-    var rest_auth = Restangular.withConfig(function (RestangularConfigurer) {
+  Auth.$inject = ['Restangular', 'CONSTANT', '$cookies', '$log', '$window', '$q'];
+
+  function Auth(Restangular, CONSTANT, $cookies, $log, $window, $q) {
+    var rest_auth = Restangular.withConfig(function(RestangularConfigurer) {
       RestangularConfigurer.setBaseUrl(CONSTANT.BACKEND_SERVICE_DOMAIN + '/rest-auth');
       RestangularConfigurer.setRequestSuffix('/');
       RestangularConfigurer.setDefaultHeaders({
@@ -15,7 +16,8 @@
     var Auth = {};
     Auth.login = login;
     Auth.logout = logout;
-    Auth.clean = clean;
+    Auth.clean = clean; // find out where it is used
+    Auth.cleanLocalStorage = cleanLocalStorage;
     Auth.signup = signup;
     Auth.reset = reset;
     Auth.isAuthorised = isAuthorised;
@@ -33,168 +35,210 @@
     Auth.hasProfile = hasProfile;
     Auth.getProfileId = getProfileId;
 
-    return Auth ;
+    return Auth;
 
-    function login(url, user_credentials, success, failure) {
-        rest_auth.all(url).post($.param(user_credentials)).then(function (response) {
-            localStorage.setItem('Authorization', response.key || response.token);
-            success(response);
-        }, function (response) {
-            failure(response);
-        })
+    function login(url, user_credentials) {
+      var d = $q.defer();
+      rest_auth.all(url).post($.param(user_credentials)).then(function(response) {
+        localStorage.setItem('Authorization', response.key || response.token);
+        d.resolve(response);
+      }, function(response) {
+        $log.debug(response.data);
+        if (response.data.email) {
+          d.reject(response.data.email[0]);
+        } else if (response.data.phone_number) {
+          d.reject(response.data.phone_number[0]);
+        } else if (response.data.non_field_errors) {
+          d.reject(response.data.non_field_errors[0]);
+        } {
+          d.reject("Please try again.");
+        }
+      });
+      return d.promise;
     }
+
     function logout(success, failure) {
-        rest_auth.all('logout').post().then(function (response) {
-            if(localStorage.getItem('authProvider') == 'google')
-            {
-                window.plugins.googleplus.logout();
-            }
-            if(localStorage.getItem('authProvider') == 'facebook')
-            {
-                facebookConnectPlugin.logout();
-            }
-            //   localStorage.removeItem('Authorization');
-            //   localStorage.removeItem('user_details');
-            //   localStorage.removeItem('authProvider');
-            Auth.clean();
-            success();
-        }, function (error) {
-            failure();
-        })
+      rest_auth.all('logout').post().then(function(response) {
+        if (localStorage.getItem('authProvider') == 'google') {
+          window.plugins.googleplus.logout();
+        }
+        if (localStorage.getItem('authProvider') == 'facebook') {
+          facebookConnectPlugin.logout();
+        }
+        //   localStorage.removeItem('Authorization');
+        //   localStorage.removeItem('user_details');
+        //   localStorage.removeItem('authProvider');
+        Auth.cleanLocalStorage();
+        success();
+      }, function(error) {
+        failure();
+      })
     }
-    function clean(success){
-        localStorage.clear();
-        if(success)
+
+    function clean(success) {
+      localStorage.clear();
+      if (success)
         success();
     }
-    function signup (user_credentials, success, failure) {
-        rest_auth.all('registration').post($.param(user_credentials), success, failure).then(function (response) {
-            localStorage.setItem('Authorization', response.key);
-            success(response);
-        }, function (response) {
-            failure(response);
-        })
+
+    function cleanLocalStorage() {
+      $log.debug("ok");
+      localStorage.clear();
     }
-    function reset (email, atype, success, failure) {
-        type == 'password' && rest_auth.all('password').all('reset').post(email);
-        type == 'username' && rest_auth.all('username').all('reset').post(email);
+
+    function signup(user_credentials, success, failure) {
+      var d = $q.defer();
+      rest_auth.all('registration').post($.param(user_credentials), success, failure).then(function(response) {
+        localStorage.setItem('Authorization', response.key);
+        d.resolve(response)
+      }, function(error) {
+        d.reject(error.data.details || 'Please try again.');
+      })
+      return d.promise;
     }
-    function isAuthorised () {
-        return localStorage.Authorization;
+
+    function reset(email, atype, success, failure) {
+      type == 'password' && rest_auth.all('password').all('reset').post(email);
     }
-    function canSendOtp (max_otp_send_count) {
-        var last_otp_date = localStorage.getItem('last_otp_date');
-        var otp_sent_count = localStorage.getItem('otp_sent_count');
-        if (last_otp_date && otp_sent_count) {
-            if (this.dateCompare(new Date(), new Date((last_otp_date)))) {
-                localStorage.setItem('last_otp_date', new Date());
-                localStorage.setItem('otp_sent_count', 1);
-                return true;
-            } else {
-                if (otp_sent_count < max_otp_send_count) {
-                    localStorage.setItem('last_otp_date', new Date());
-                    localStorage.setItem('otp_sent_count', ++otp_sent_count);
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        }
-        else {
+
+    function isAuthorised() {
+      return localStorage.Authorization;
+    }
+
+    function canSendOtp(max_otp_send_count) {
+      var last_otp_date = localStorage.getItem('last_otp_date');
+      var otp_sent_count = localStorage.getItem('otp_sent_count');
+      if (last_otp_date && otp_sent_count) {
+        if (this.dateCompare(new Date(), new Date((last_otp_date)))) {
+          localStorage.setItem('last_otp_date', new Date());
+          localStorage.setItem('otp_sent_count', 1);
+          return true;
+        } else {
+          if (otp_sent_count < max_otp_send_count) {
             localStorage.setItem('last_otp_date', new Date());
-            localStorage.setItem('otp_sent_count', 1);
+            localStorage.setItem('otp_sent_count', ++otp_sent_count);
             return true;
+          } else {
+            return false;
+          }
         }
+      } else {
+        localStorage.setItem('last_otp_date', new Date());
+        localStorage.setItem('otp_sent_count', 1);
+        return true;
+      }
     }
     // remove util funstion from auth factory
-    function dateCompare (date_1, date_2) { // Checks if date_1 > date_2
-        var month_1 = date_1.getMonth();
-        var month_2 = date_2.getMonth();
-        var day_1 = date_1.getDate();
-        var day_2 = date_2.getDate();
-        if (month_1 > month_2) {
-            return true;
-        } else if (month_1 == month_2) {
-            return day_1 > day_2;
-        } else return false;
-    }
-    function verifyOtp (verification_credentials, success, failure) {
-        $log.debug(JSON.stringify(verification_credentials));
-        rest_auth.all('sms-verification').post($.param(verification_credentials), success, failure).then(function (response) {
-            success(response);
-        }, function (response) {
-            failure(response);
-        })
-    }
-    function resetPassword (reset_password_credentials, success, failure) {
-        rest_auth.all('password/reset').post($.param(reset_password_credentials), success, failure).then(function (response) {
-            success(response);
-        }, function (response) {
-            failure(response);
-        })
-    }
-    function resendOTP (success, failure) {
-        rest_auth.all('resend-sms-verification').post('', success, failure).then(function (response) {
-            success(response);
-        }, function (response) {
-            failure(response);
-        })
-    }
-    function getUser (success, failure) {
-        Restangular.oneUrl('user_details', CONSTANT.BACKEND_SERVICE_DOMAIN + 'rest-auth/user/').get().then(function (response) {
-            localStorage.setItem('user_details', JSON.stringify(response));
-            success(response);
-        }, function (response) {
-            failure(response);
-        });
-    }
-    function isVerified () {
-        var user_details = JSON.parse(localStorage.getItem('user_details'));
-        if (user_details) {
-            return user_details.is_verified;
-        }
-        else {
-            return false;
-        }
-    }
-    function getOTPFromSMS (message,success,failure) {
-        var string = message.data.body;
-        if(message.data.address == '+12023353814')
-        {
-            var e_position = string.indexOf("Enter");
-            var o_position = string.indexOf("on");
-            success(string.substring(e_position + 6, o_position - 1));
-        }
-        else{
-            failure();
-        }
-
-    }
-    function setAuthProvider (authProvider){
-        localStorage.setItem('authProvider',authProvider);
-        return authProvider;
-    }
-    function verifyOtpResetPassword(otp,success,failure){
-        rest_auth.all('password/reset/sms-verification').post($.param(otp), success, failure).then(function (response) {
-            success(response);
-        }, function (response) {
-            failure(response);
-        })
-    }
-    function changePassword (credentials, success, failure) {
-        rest_auth.all('password/change').post($.param(credentials), success, failure).then(function (response) {
-            localStorage.removeItem('Authorization');
-            success(response);
-        }, function (response) {
-            failure(response);
-        })
-    }
-    function hasProfile(){
-        return JSON.parse(localStorage.getItem('user_details')).profile == null ? false : true;
+    function dateCompare(date_1, date_2) { // Checks if date_1 > date_2
+      var month_1 = date_1.getMonth();
+      var month_2 = date_2.getMonth();
+      var day_1 = date_1.getDate();
+      var day_2 = date_2.getDate();
+      if (month_1 > month_2) {
+        return true;
+      } else if (month_1 == month_2) {
+        return day_1 > day_2;
+      } else return false;
     }
 
-    function getProfileId(){
-        return JSON.parse(localStorage.getItem('user_details')).profile;
+    function verifyOtp(credentials) {
+      var d = $q.defer();
+      rest_auth.all('sms-verification').post($.param(credentials)).then(function(response) {
+        d.resolve(response);
+      }, function(error) {
+        d.reject(error.data.details)
+      });
+      return d.promise;
+
+    }
+
+    function resetPassword(reset_password_credentials) {
+      var d = $q.defer();
+
+      rest_auth.all('password/reset').post($.param(reset_password_credentials)).then(function(response) {
+        d.resolve(response);
+      }, function(error) {
+        $log.debug(error)
+        d.reject(error.data.email || error.data.phone_number)
+      })
+      return d.promise;
+
+    }
+
+    function resendOTP() {
+      var d = $q.defer();
+      rest_auth.all('resend-sms-verification').post('').then(function(response) {
+        d.resolve(response);
+      }, function(error) {
+        d.reject(error);
+      })
+      return d.promise;
+    }
+
+    function getUser() {
+      var d = $q.defer();
+      Restangular.oneUrl('user_details', CONSTANT.BACKEND_SERVICE_DOMAIN + 'rest-auth/user/').get().then(function(response) {
+        localStorage.setItem('user_details', JSON.stringify(response));
+        d.resolve(response);
+      }, function(response) {
+        d.reject(response);
+      });
+      return d.promise;
+    }
+
+    function isVerified() {
+      var user_details = JSON.parse(localStorage.getItem('user_details'));
+      if (user_details) {
+        return user_details.is_verified;
+      } else {
+        return false;
+      }
+    }
+
+    function getOTPFromSMS(message, success, failure) {
+      var string = message.data.body;
+      if (message.data.address == '+12023353814') {
+        var e_position = string.indexOf("Enter");
+        var o_position = string.indexOf("on");
+        success(string.substring(e_position + 6, o_position - 1));
+      } else {
+        failure();
+      }
+
+    }
+
+    function setAuthProvider(authProvider) {
+      localStorage.setItem('authProvider', authProvider);
+      return authProvider;
+    }
+
+    function verifyOtpResetPassword(otp) {
+      var d = $q.defer();
+      rest_auth.all('password/reset/sms-verification').post($.param(otp)).then(function(response) {
+        d.resolve(response);
+      }, function(error) {
+        d.reject(error.data.details);
+      })
+      return d.promise;
+    }
+
+    function changePassword(credentials) {
+      var d = $q.defer();
+      rest_auth.all('password/change').post($.param(credentials)).then(function(response) {
+        localStorage.removeItem('Authorization');
+          d.resolve(response);
+      }, function(error) {
+        d.reject(error.data.details);
+      })
+      return d.promise;
+    }
+
+    function hasProfile() {
+      return JSON.parse(localStorage.getItem('user_details')).profile === null ? false : true;
+    }
+
+    function getProfileId() {
+      return JSON.parse(localStorage.getItem('user_details')).profile;
     }
 
   }
