@@ -5,12 +5,12 @@
     .module('common')
     .factory('lessonutils', lessonutils);
 
-  lessonutils.$inject = ['$ionicLoading', '$state','$stateParams', 'Rest', '$log', 'CONSTANT', '$timeout', '$sce','$ionicPopup'];
+  lessonutils.$inject = ['$ionicLoading', '$state', '$stateParams', 'Rest', '$log', 'CONSTANT', '$timeout', '$sce', '$ionicPopup'];
 
   /* @ngInject */
   function lessonutils($ionicLoading, $state, $stateParams, Rest, $log, CONSTANT, $timeout, $sce, $ionicPopup) {
     var utils = {
-        leaveLesson : leaveLesson,
+      leaveLesson: leaveLesson,
       getLesson: getLesson,
       getLocalLesson: getLocalLesson,
       setLocalLesson: setLocalLesson,
@@ -18,35 +18,33 @@
       getIcon: getIcon,
       playResource: playResource,
       getSrc: getSrc,
-      currentState : currentState
+      currentState: currentState
     };
 
     return utils;
 
-    function leaveLesson(){
+    function leaveLesson() {
+      !$state.is('map.navigate') &&
         $ionicLoading.show({
           noBackdrop: false,
-          hideOnStateChange: true
         });
-        $timeout(function(){
-            $ionicLoading.hide();
-            $state.go('map.navigate');
-        })
+      $timeout(function() {
+        $state.go('map.navigate');
+    },1000)
     }
-    function currentState(resource){
-        if($stateParams.type == 'assessment' && utils.resourceType(resource) == 'assessment'){
-            return true;
-        }
-        else if($stateParams.type == 'practice' && utils.resourceType(resource) == 'practice'){
-            return true;
-        }
-        else if($state.is('content.video') && utils.resourceType(resource) == 'video'){
-            return true;
-        }
-        else{
-            return false;
-        }
+
+    function currentState(resource) {
+      if ($stateParams.type == 'assessment' && utils.resourceType(resource) == 'assessment') {
+        return true;
+      } else if ($stateParams.type == 'practice' && utils.resourceType(resource) == 'practice') {
+        return true;
+      } else if ($state.is('content.video') && utils.resourceType(resource) == 'video') {
+        return true;
+      } else {
+        return false;
+      }
     }
+
     function getLesson(id, scope, callback) {
       $ionicLoading.show({
         noBackdrop: false,
@@ -55,12 +53,12 @@
         $ionicLoading.hide();
         utils.setLocalLesson(JSON.stringify(response.plain()));
         callback && callback(response.plain());
-      },function(error){
+      }, function(error) {
         $ionicLoading.hide();
         $ionicPopup.alert({
-           title: 'Sorry',
-           template: 'You need to be online!'
-         });
+          title: 'Sorry',
+          template: 'You need to be online!'
+        });
       })
     }
 
@@ -101,36 +99,36 @@
       });
       if (utils.resourceType(resource) == 'assessment') {
         $timeout(function() {
-            $stateParams.type != 'assessment' &&
-              $state.go('quiz.questions', {
-                id: resource.node.id,
-                type : 'assessment'
-              });
-              $stateParams.type == 'assessment' && $ionicLoading.hide();
-        },500);
+          $stateParams.type != 'assessment' &&
+            $state.go('quiz.questions', {
+              id: resource.node.id,
+              type: 'assessment'
+            });
+          $stateParams.type == 'assessment' && $ionicLoading.hide();
+      }, 1000);
       } else if (utils.resourceType(resource) == 'practice') {
         $timeout(function() {
-            $stateParams.type != 'practice' &&
-              $state.go('quiz.questions', {
-                id: resource.node.id,
-                type : 'practice'
-              });
-              $stateParams.type == 'practice' && $ionicLoading.hide();
-        },500);
+          $stateParams.type != 'practice' &&
+            $state.go('quiz.questions', {
+              id: resource.node.id,
+              type: 'practice'
+            });
+          $stateParams.type == 'practice' && $ionicLoading.hide();
+      }, 1000);
       } else if (utils.resourceType(resource) == 'video') {
         $timeout(function() {
-            !$state.is('content.video') &&
-          $state.go('content.video', {
-                video: {
-                  src: utils.getSrc(resource.node.type.path),
-                  type: 'video/mp4'
+          !$state.is('content.video') &&
+            $state.go('content.video', {
+              video: {
+                src: utils.getSrc(resource.node.type.path),
+                type: 'video/mp4'
               }
-          });
-          if($state.is('content.video')){
-             video.play();
-             $ionicLoading.hide() ;
+            });
+          if ($state.is('content.video')) {
+            video.play();
+            $ionicLoading.hide();
           }
-      },300);
+      }, 1000);
         //   utils.config.sources[0].src = utils.getSrc(resource.node.type.path);
       } else {}
     }

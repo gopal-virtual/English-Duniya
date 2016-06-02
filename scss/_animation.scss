@@ -11,7 +11,8 @@
 .animation-fade-in,
 .animation-fade-in-from-top,
 .animation-stack-in,
-.animation-zoom-in {
+.animation-zoom-in,
+.animation-fade-out {
   -webkit-animation-fill-mode: backwards;
   -webkit-animation-duration: 300ms;
 }
@@ -37,6 +38,17 @@
   }
   100% {
     opacity: 1;
+  }
+}
+.animation-fade-out {
+  -webkit-animation-name: fade-out;
+}
+@keyframes fade-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
   }
 }
 .animation-fade-in-from-top {
