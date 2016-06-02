@@ -45,7 +45,20 @@
       'otp': {
         'required': 'OTP  is Required',
         'otp': 'Invalid OTP'
+      },
+      'gender':{
+        'required': 'Gender is Required'
+      },
+      'motherTongue':{
+        'required': 'Mother Tongue is Required'
+      },
+      'firstName':{
+        'required': 'Name is Required'
+      },
+      'grade':{
+        'required': 'Grade is Required'
       }
+
     }
     var formHelper = {
       validateForm: validateForm,
@@ -115,9 +128,11 @@
     function validateForm(formData, validationRules) {
       var d = $q.defer();
       var errors = []
+      $log.debug(formData);
       angular.forEach(validationRules, function(fieldRules, fieldName) {
+        $log.debug('P',formData[fieldName]);
         var fieldValue = formData[fieldName].$viewValue
-        $log.debug(fieldName, fieldRules, fieldValue)
+        // $log.debug(fieldName, fieldRules, fieldValue)
         if (isFieldEmpty(fieldValue)) {
           if (fieldRules.indexOf('required') >= 0) {
             errors.push(error[fieldName].required);
@@ -182,6 +197,18 @@
         }
         if (fieldName === 'password2') {
           data.password2 = fieldValue
+        }
+        if (fieldName === 'motherTongue') {
+          data.mother_tongue = fieldValue
+        }
+        if (fieldName === 'gender') {
+          data.gender = fieldValue
+        }
+        if (fieldName === 'grade') {
+          data.grade = fieldValue
+        }
+        if (fieldName === 'firstName') {
+          data.first_name = fieldValue
         }
 
 

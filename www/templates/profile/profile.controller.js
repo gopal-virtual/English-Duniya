@@ -5,9 +5,9 @@
         .module('zaya-profile')
         .controller('profileController', profileController);
 
-    profileController.$inject = ['CONSTANT','$state','Auth','Rest','$log','$ionicPopup','$ionicLoading'];
+    profileController.$inject = ['CONSTANT','$state','Auth','Rest','$log','$ionicPopup','$ionicLoading','formHelper'];
 
-    function profileController(CONSTANT, $state, Auth, Rest, $log, $ionicPopup, $ionicLoading) {
+    function profileController(CONSTANT, $state, Auth, Rest, $log, $ionicPopup, $ionicLoading,formHelper) {
         var profileCtrl = this;
         profileCtrl.createProfile = createProfile;
         profileCtrl.updateProfile = updateProfile;
@@ -18,6 +18,7 @@
         profileCtrl.showError = showError;
         profileCtrl.convertDate = convertDate;
         profileCtrl.tabIndex = 0;
+        profileCtrl.personaliseFormValidations = {'gender':['required'],'firstName':['required'],'grade':['required'],'motherTongue':['required']};
         profileCtrl.tab = [
           {
             type : 'group',
@@ -42,24 +43,26 @@
           return [d.getFullYear(),pad(d.getMonth()+1),pad(d.getDate())  ].join('-');
         }
 
-        function createProfile (userdata) {
-            $ionicLoading.show({
-              noBackdrop: false,
-              hideOnStateChange: true
-            });
-          Rest.all('profiles').post(userdata).then(function(response){
-              Auth.getUser(function(){
-                $state.go('map.navigate',{});
-              },function(){
-                profileCtrl.showError('Error', 'Error making profile');
-              })
-          },function(error){
+        function createProfile (formData) {
+          $log.debug(formData)
+            $ionicLoading.show();
+            formHelper.validateForm(formData,profileCtrl.personaliseFormValidations)
+            .then(function(data){
+              return Rest.all('profiles').post(data);
+            })
+            .then(function(){
+              return Auth.getUser();
+            })
+            .then(function(){
+              $state.go('map.navigate',{});
+            })
+            .catch(function(error){
+              profileCtrl.showError('Could not make your profile', error || 'Please try again');
+            })
+            .finally(function(){
               $ionicLoading.hide();
-            $ionicPopup.alert({
-              title : _.chain(error.data).keys().first(),
-              template : error.data[_.chain(error.data).keys().first()].toString(),
-            });
-          })
+            })
+
         }
 
         function updateProfile(userdata) {
@@ -79,6 +82,21 @@
             title: title,
             template: msg
           });
+        }
+
+        function showAlert(title, msg) {
+          var d = $q.defer();
+          $log.debug(title, msg);
+          $ionicPopup.alert({
+            title: title,
+            template: msg
+          }).then(function(response) {
+            d.resolve(response)
+          }, function(error) {
+            d.reject(error)
+          });
+
+          return d.promise;
         }
 
         function validatePersonaliseForm(formData) {
@@ -108,7 +126,6 @@
           catch(e){
             $log.debug(e);
           }
-          return true;
         }
 
     }
