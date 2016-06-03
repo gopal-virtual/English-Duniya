@@ -1,14 +1,14 @@
 <ion-view class="bg-pale">
   <ion-content>
     <div class="row">
-      <form name="verifyOtpForm" class="col padding-30" ng-submit="authCtrl.closeKeyboard() ; authCtrl.verifyOtp(verifyOtpForm)">
+      <form name="verifyOtpForm"  class="col padding-30" ng-submit="authCtrl.closeKeyboard() ; authCtrl.verifyOtp(verifyOtpForm)">
 
         <div class="list">
             <div class="input-group">
                 <input class="input-control font-md" valid-otp name="otp" type="text" placeholder="Enter otp" ng-model="authCtrl.verification.otp">
             </div>
         </div>
-        <button type="submit" class="button button-green button-block button-round">SUBMIT</button>
+        <button type="submit" id="verifyOtpFormSubmit" class="button button-green button-block button-round">SUBMIT</button>
         <br><hr><br>
       </form>
     </div>

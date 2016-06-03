@@ -195,15 +195,23 @@
       }
     }
 
-    function getOTPFromSMS(message, success, failure) {
+    function getOTPFromSMS(message) {
+      var d = $q.defer()
       var string = message.data.body;
-      if (message.data.address == '+12023353814') {
+      if (message.data.address == '+12023353814' || message.data.address.indexOf('044')) {
         var e_position = string.indexOf("Enter");
         var o_position = string.indexOf("on");
-        success(string.substring(e_position + 6, o_position - 1));
+        var otp = (string.substring(e_position + 6, o_position - 1));
+        if(!isNaN(otp)){
+          d.resolve(otp)
+        }
+        else{
+          d.reject();
+        }
       } else {
-        failure();
+        d.reject();
       }
+      return d.promise;
 
     }
 

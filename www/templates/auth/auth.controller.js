@@ -3,9 +3,9 @@
   angular
     .module('zaya-auth')
     .controller('authController', authController)
-  authController.$inject = ['$q', '$ionicModal', '$state', 'Auth', 'audio', '$rootScope', '$ionicPopup', '$log', '$cordovaOauth', 'CONSTANT', '$interval', '$scope', '$ionicLoading', 'formHelper'];
+  authController.$inject = ['$q', '$ionicModal', '$state', 'Auth', 'audio', '$rootScope', '$ionicPopup', '$log', '$cordovaOauth', 'CONSTANT', '$interval', '$scope', '$ionicLoading', 'formHelper', '$ionicPlatform'];
 
-  function authController($q, $ionicModal, $state, Auth, audio, $rootScope, $ionicPopup, $log, $cordovaOauth, CONSTANT, $interval, $scope, $ionicLoading, formHelper) {
+  function authController($q, $ionicModal, $state, Auth, audio, $rootScope, $ionicPopup, $log, $cordovaOauth, CONSTANT, $interval, $scope, $ionicLoading, formHelper, $ionicPlatform) {
     var authCtrl = this;
     authCtrl.formHelper = formHelper;
     authCtrl.Auth = Auth;
@@ -43,38 +43,39 @@
     };
     authCtrl.changePasswordFormValidations = {
       'password1': ['required', 'password'],
-      'password2': ['required','equals-password1']
+      'password2': ['required', 'equals-password1']
     };
+
     function recoverAccount(formData) {
       var credentials;
       $ionicLoading.show();
-      authCtrl.formHelper.validateForm(formData,authCtrl.recoverAccountFormValidations)
-      .then(function(response){
-        credentials = response;
-        return Auth.resetPassword(credentials);
-      })
-      .then(function(success){
-        authCtrl.resetPasswordLinkSent = true;
-        if (credentials.hasOwnProperty('phone_number')) {
-           localStorage.setItem('Authorization', success.token);
-           authCtrl.recoveryModal.hide().then(function(){
-             $state.go('auth.forgot_verify_otp');
-           });
-         } else {
-           authCtrl.showAlert("Reset Password", "We have send a link to your email").then(function(){
-            authCtrl.recoveryModal.hide().then(function(){
-              $state.go('auth.signin');
+      authCtrl.formHelper.validateForm(formData, authCtrl.recoverAccountFormValidations)
+        .then(function(response) {
+          credentials = response;
+          return Auth.resetPassword(credentials);
+        })
+        .then(function(success) {
+          authCtrl.resetPasswordLinkSent = true;
+          if (credentials.hasOwnProperty('phone_number')) {
+            localStorage.setItem('Authorization', success.token);
+            authCtrl.recoveryModal.hide().then(function() {
+              $state.go('auth.forgot_verify_otp');
             });
-           });
-         }
+          } else {
+            authCtrl.showAlert("Reset Password", "We have send a link to your email").then(function() {
+              authCtrl.recoveryModal.hide().then(function() {
+                $state.go('auth.signin');
+              });
+            });
+          }
 
-      })
-      .catch(function(error) {
-        authCtrl.showError("Invalid Details", error || "Please try again");
-        authCtrl.audio.play('wrong');
-      }).finally(function() {
-        $ionicLoading.hide()
-      })
+        })
+        .catch(function(error) {
+          authCtrl.showError("Invalid Details", error || "Please try again");
+          authCtrl.audio.play('wrong');
+        }).finally(function() {
+          $ionicLoading.hide()
+        })
     }
 
 
@@ -188,6 +189,12 @@
 
     function verifyOtp(data) {
       $ionicLoading.show();
+      if (SMS) SMS.stopWatch(function() {
+        $log.debug('watching', 'watching stopped');
+      }, function() {
+        $log.debug('failed to stop watching');
+      });
+
       authCtrl.formHelper.validateForm(data, authCtrl.OtpFormValidations)
         .then(function(response) {
           $log.debug(response);
@@ -204,6 +211,11 @@
         })
         .catch(function(error) {
           authCtrl.showError("Could not verify", error);
+          if (SMS) SMS.startWatch(function() {
+            $log.debug('watching', 'watching started');
+          }, function() {
+            $log.debug('failed to start watching');
+          });
         })
         .finally(function() {
           $ionicLoading.hide();
@@ -297,47 +309,61 @@
 
     function verifyOtpResetPassword(formData) {
       $ionicLoading.show();
-      authCtrl.formHelper.validateForm(formData,authCtrl.OtpFormValidations)
-      .then(function(response){
-        return Auth.verifyOtpResetPassword(response);
-      })
-      .then(function(){
-        $state.go('auth.change_password', {});
-      }).catch(function(error){
-        authCtrl.showAlert("Could not verify", error || "You entered wrong OTP!");
-      })
-      .finally(function(){
-        $ionicLoading.hide();
-      })
+      authCtrl.formHelper.validateForm(formData, authCtrl.OtpFormValidations)
+        .then(function(response) {
+          return Auth.verifyOtpResetPassword(response);
+        })
+        .then(function() {
+          $state.go('auth.change_password', {});
+        }).catch(function(error) {
+          authCtrl.showAlert("Could not verify", error || "You entered wrong OTP!");
+        })
+        .finally(function() {
+          $ionicLoading.hide();
+        })
     }
 
 
     function changePassword(formData) {
       $ionicLoading.show();
-      authCtrl.formHelper.validateForm(formData,authCtrl.changePasswordFormValidations)
-      .then(function(credentials){
-        credentials.secret_key = '@#2i0-jn9($un1w8utqc2dms!$#5+5';
-        credentials.new_password1 = credentials.password1;
-        credentials.new_password2 = credentials.password2;
-        delete credentials.password1;
-        delete credentials.password2;
-        return Auth.changePassword(credentials)
-      })
-      .then(function(success){
-        $ionicLoading.hide();
-        return authCtrl.showAlert('Success', 'You have reset your password').then(function(){
-          $state.go('auth.signin', {});
-        });
-      })
-      .catch(function(error){
-        $ionicLoading.hide();
-        authCtrl.showError("Could not reset",error || "Please Try again");
-      })
+      authCtrl.formHelper.validateForm(formData, authCtrl.changePasswordFormValidations)
+        .then(function(credentials) {
+          credentials.secret_key = '@#2i0-jn9($un1w8utqc2dms!$#5+5';
+          credentials.new_password1 = credentials.password1;
+          credentials.new_password2 = credentials.password2;
+          delete credentials.password1;
+          delete credentials.password2;
+          return Auth.changePassword(credentials)
+        })
+        .then(function(success) {
+          $ionicLoading.hide();
+          return authCtrl.showAlert('Success', 'You have reset your password').then(function() {
+            $state.go('auth.signin', {});
+          });
+        })
+        .catch(function(error) {
+          $ionicLoading.hide();
+          authCtrl.showError("Could not reset", error || "Please Try again");
+        })
     }
 
-    function cleanLocalStorage(){
+    function cleanLocalStorage() {
       Auth.cleanLocalStorage();
       $state.go('auth.signin', {});
     }
+
+
+  $scope.$on('smsArrived',function(e,sms){
+    $log.debug("smsArrived",sms);
+    Auth.getOTPFromSMS(sms)
+    .then(function(otp){
+      authCtrl.verification = {'otp':otp};
+      document.getElementById('verifyOtpFormSubmit').click()
+      $log.debug(otp);
+    })
+    .catch(function(){
+      $log.debug("fail");
+    })
+  })
   }
 })();
