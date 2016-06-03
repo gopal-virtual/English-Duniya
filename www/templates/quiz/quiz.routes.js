@@ -18,19 +18,212 @@
           audio.stop('background');
         }],
         resolve: {
-          quiz: ['$stateParams', 'Rest','$log','data','ml', function($stateParams, Rest, $log, data,ml) {
+          quiz: ['$stateParams', 'Rest','$log','data','ml','$q', function($stateParams, Rest, $log, data,ml, $q) {
             if ($stateParams.type == 'litmus') {
-                data.getDiagnosisLitmusMapping().then(function(res) {
-                    var params = data.getTestParams(JSON.parse(localStorage.profile).grade);
-                    var mapping = res;
 
-                    var q = ml.getNextQSr(params, mapping);
+              // var q = $q.defer();
 
-                    $log.debug('mapping',q);
-                    q.test[0]['setPreviousAnswer'] = [1, q];
-                    $log.debug('next bn',ml.getNextQSr(q.test, mapping));
-                    $log.debug('next bn',ml.getNextQSr(q.test, mapping));
-                });
+              function tryMe(){
+                // try{
+                  var grade = JSON.parse(localStorage.profile).grade;
+                  $log.debug('grade', grade);
+                  var params = data.getTestParams(grade);
+                  // var mapping = res;
+
+                  $log.debug('params', params);
+                  $log.debug('mapping', ml.mapping);
+                  $log.debug('ml.dqQuiz', ml.dqQuiz);
+
+                  var result = ml.getNextQSr(params, ml.mapping);
+                  $log.debug('result', result);
+                  result.test[0]['setPreviousAnswer'] = 1;
+                  result.test[0]["qSet"][result["actualLevel"]] = { "sr": result.qSr, "answered": "right" };
+                  $log.debug('changed result', result);
+
+                  result = ml.getNextQSr(result.test, ml.mapping);
+                  $log.debug('result', result);
+                  result.test[0]['setPreviousAnswer'] = 0;
+                  result.test[0]["qSet"][result["actualLevel"]] = { "sr": result.qSr, "answered": "wrong" };
+                  $log.debug('changed result', result);
+
+                  result = ml.getNextQSr(result.test, ml.mapping);
+                  $log.debug('result', result);
+                  result.test[0]['setPreviousAnswer'] = 1;
+                  result.test[0]["qSet"][result["actualLevel"]] = { "sr": result.qSr, "answered": "right" };
+                  $log.debug('changed result', result);
+
+                  result = ml.getNextQSr(result.test, ml.mapping);
+                  $log.debug('result', result);
+                  result.test[0]['setPreviousAnswer'] = 0;
+                  result.test[0]["qSet"][result["actualLevel"]] = { "sr": result.qSr, "answered": "wrong" };
+                  $log.debug('changed result', result);
+
+                  var rec = ml.runDiagnostic(ml.dqQuiz);
+                  $log.debug('rec', rec);
+                // }catch(err){
+                //   console.log('err big quiz', err);
+                // }
+              }
+
+              // $log.debug('unready ml.kmapsJSON', ml.kmapsJSON);
+              // $log.debug('unready ml.dqJSON', ml.dqJSON);
+
+              // $log.debug('q here', $q);
+
+              var all_promises = [];
+              if(ml.kmapsJSON == undefined){
+                var promise = ml.setMLKmapsJSON;
+                all_promises.push(promise);
+              }
+              if(ml.dqJSON == undefined){
+                var promise = ml.setMLDqJSON;
+                all_promises.push(promise);
+              }
+              if(ml.mapping == undefined){
+                var promise = ml.setMapping;
+                all_promises.push(promise);
+              }
+
+              $log.debug('all_promises', all_promises);
+
+              if(all_promises.length == 0){
+                tryMe();
+              }else{
+                $log.debug('here in else $q');
+                $q.all(all_promises).then(function(){$log.debug('all promises returned');tryMe();})
+              }
+
+              // data.getDiagnosisLitmusMapping().then(function(res) {
+              //   var grade = JSON.parse(localStorage.profile).grade;
+              //   $log.debug('grade', grade);
+              //   var params = data.getTestParams(grade);
+              //   var mapping = res;
+
+              //   $log.debug('params', params);
+              //   $log.debug('mapping', mapping);
+              //   $log.debug('ml.dqQuiz', ml.dqQuiz);
+
+              //   var result = ml.getNextQSr(params, mapping);
+              //   $log.debug('result', result);
+              //   result.test[0]['setPreviousAnswer'] = 1;
+              //   result.test[0]["qSet"][result["actualLevel"]] = { "sr": result.qSr, "answered": "right" };
+              //   $log.debug('changed result', result);
+
+              //   result = ml.getNextQSr(result.test, mapping);
+              //   $log.debug('result', result);
+              //   result.test[0]['setPreviousAnswer'] = 0;
+              //   result.test[0]["qSet"][result["actualLevel"]] = { "sr": result.qSr, "answered": "wrong" };
+              //   $log.debug('changed result', result);
+
+              //   result = ml.getNextQSr(result.test, mapping);
+              //   $log.debug('result', result);
+              //   result.test[0]['setPreviousAnswer'] = 1;
+              //   result.test[0]["qSet"][result["actualLevel"]] = { "sr": result.qSr, "answered": "right" };
+              //   $log.debug('changed result', result);
+
+              //   result = ml.getNextQSr(result.test, mapping);
+              //   $log.debug('result', result);
+              //   result.test[0]['setPreviousAnswer'] = 0;
+              //   result.test[0]["qSet"][result["actualLevel"]] = { "sr": result.qSr, "answered": "wrong" };
+              //   $log.debug('changed result', result);
+
+              //   var rec = ml.runDiagnostic(ml.dqQuiz);
+              //   $log.debug('rec', rec);
+              // })
+
+
+
+
+                // var result = {"skill":"vocabulary","qSr":65559,"test":[{"skill":"vocabulary","qSet":{"1":{"sr":65559,"answered":"right"}},"level":1,"previousAnswer":1,"actualLevel":0,"count":1},{"skill":"reading","qSet":{},"level":1,"previousAnswer":null,"actualLevel":0,"count":0},{"skill":"grammar","qSet":{},"level":1,"previousAnswer":null,"actualLevel":0,"count":0},{"skill":"listening","qSet":{},"level":1,"previousAnswer":null,"actualLevel":0,"count":0}],"actualLevel":1,"microstandard":"ELL.1.RE.V.80"};
+                // var result = {"skill":"vocabulary","qSr":71369,"test":[{"skill":"vocabulary","qSet":{"1":{"sr":65559,"answered":"right"},"2":{"qSr":89971,"answered":"NA"},"3":{"sr":71369,"answered":"wrong"}},"level":1,"previousAnswer":0,"actualLevel":0,"count":2},{"skill":"reading","qSet":{},"level":1,"previousAnswer":null,"actualLevel":0,"count":0},{"skill":"grammar","qSet":{},"level":1,"previousAnswer":null,"actualLevel":0,"count":0},{"skill":"listening","qSet":{},"level":1,"previousAnswer":null,"actualLevel":0,"count":0}],"actualLevel":3,"microstandard":"ELL.1.MAL.V.09"};
+                
+                // $log.debug('ml.kmapsJSON', ml.kmapsJSON);
+                // $log.debug('ml.dqJSON', ml.dqJSON);
+
+                // $log.debug('result', JSON.stringify(result));
+                // ml.getNextQSr(result.test, mapping)
+                // .then(function(result1){
+                //   $log.debug('mapping',JSON.stringify(result1));
+                //   $log.debug('ml.dqQuiz', ml.dqQuiz)
+
+
+                  // result1.test[0]['setPreviousAnswer'] = 0;
+                  // result1.test[0]["previousAnswer"] = 0;
+                  // result1.test[0]["count"]++;
+                  // result1.test[0]["qSet"][result1["actualLevel"]] = { "sr": result1.qSr, "answered": "wrong" };
+                  // $log.debug('after changing',JSON.stringify(result1));
+                // })
+
+
+
+                // $log.debug('params', JSON.stringify(params));
+                // ml.getNextQSr(params, mapping)
+                // .then(function(result){
+                //   $log.debug('mapping',JSON.stringify(result));
+                //   // result.test[0]['setPreviousAnswer'] = 1;
+                //   result.test[0]["previousAnswer"] = 1;
+                //   result.test[0]["count"]++;
+                //   result.test[0]["qSet"][result["actualLevel"]] = { "sr": result.qSr, "answered": "right" };
+                //   $log.debug('after changing',JSON.stringify(result));
+                //   ml.getNextQSr(result.test, mapping)
+                //   .then(function(result1){
+                //     $log.debug('mapping',JSON.stringify(result1));
+                //     // result1.test[0]['setPreviousAnswer'] = 0;
+                //     result1.test[0]["previousAnswer"] = 0;
+                //     result1.test[0]["count"]++;
+                //     result1.test[0]["qSet"][result1["actualLevel"]] = { "sr": result1.qSr, "answered": "wrong" };
+                //     $log.debug('after changing',JSON.stringify(result1));
+                //     ml.getNextQSr(result1.test, mapping)
+                //     .then(function(result2){
+                //       $log.debug('mapping',JSON.stringify(result2));
+                //     })
+                //   })
+                // })
+
+
+                // $log.debug('params', JSON.stringify(params));
+                // var get1 = ml.getNextQSr(params, mapping)
+                // .then(function(result){
+                //   $log.debug('mapping',JSON.stringify(result));
+                //   result.test[0]['setPreviousAnswer'] = 1;
+                //   result.test[0]["qSet"][result["actualLevel"]] = { "sr": result.qSr, "answered": "right" };
+                //   $log.debug('after changing',JSON.stringify(result));
+                //   return result;
+                // }).catch(function(err){console.log('err here 1', err);});
+
+                // var get2 = get1.then(function(result1){
+                //   $log.debug('result1',JSON.stringify(result1));
+                //   return ml.getNextQSr(result1.test, mapping);
+                // }).catch(function(err){console.log('err here 2', err);});
+
+                // var get3 = get2.then(function(result2){
+                //   $log.debug('mapping',JSON.stringify(result2));
+                //   result2.test[0]['setPreviousAnswer'] = 0;
+                //   result2.test[0]["qSet"][result2["actualLevel"]] = { "sr": result2.qSr, "answered": "wrong" };
+                //   $log.debug('after changing',JSON.stringify(result2));
+                //   return result2;
+                // }).catch(function(err){console.log('err here 3', err);});
+
+                // var get4 = get3.then(function(result3){
+                //   $log.debug('result3',JSON.stringify(result3));
+                //   return ml.getNextQSr(result3.test, mapping);
+                // }).catch(function(err){console.log('err here 4', err);});
+
+                // var get5 = get4.then(function(result4){
+                //   $log.debug('mapping',JSON.stringify(result4));
+                // }).catch(function(err){console.log('err here 5', err);});
+                  
+
+                  // q = ml.getNextQSr(q.test, mapping);
+                  // $log.debug('mapping',q);
+                  // q.test[0]['setPreviousAnswer'] = [0, q];
+
+                  // q = ml.getNextQSr(q.test, mapping);
+                  // $log.debug('mapping',q);
+
+                  // $log.debug('next bn',ml.getNextQSr(q.test, mapping));
+                  // $log.debug('next bn',ml.getNextQSr(q.test, mapping));
+                // });
               return {
                 "node": {
                   "id": "001",

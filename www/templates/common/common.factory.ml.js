@@ -5,11 +5,12 @@
     .module('common')
     .factory('ml', ml);
 
-  ml.$inject = ['data', '$log'];
+  ml.$inject = ['data', '$log', '$q'];
 
   /* @ngInject */
-  function ml(data, $log) {
+  function ml(data, $log, $q) {
     var ml = {
+      MAX: 10,
       runDiagnostic: runDiagnostic,
       suggestBridge: suggestBridge,
       getUniqueArray: getUniqueArray,
@@ -23,13 +24,49 @@
       getNextQSr: getNextQSr,
       getChildren: getChildren,
       genTree: genTree,
-      generateTree: generateTree,
-      appendChildren: appendChildren,
       getRecPlaylist: getRecPlaylist,
       rankPlaylist: rankPlaylist,
       makeTree: makeTree,
+      setMLDqJSON: setMLDqJSON(),
+      setMLKmapsJSON: setMLKmapsJSON(),
+      setMapping: setMapping(),
+      dqQuiz: [{"0":{"sr":"54ada475-ce87-411b-a075-60572a36a111","answered":"right","skill":"vocabulary","level":0},"1":{"sr":"4eb50a81-bbe8-49c4-8efb-e284008d5f7f","answered":"NA","skill":"vocabulary","level":1},"2":{"sr":"e7c18a27-457f-422e-975b-b28ddd62fb87","answered":"wrong","skill":"vocabulary","level":2},"3":{"sr":"6d116141-c026-408d-8320-4daf805887a9","answered":"NA","skill":"vocabulary","level":3}},{"0":{"sr":"111f3f9f-0726-4fe2-9f09-c897ba162b53","answered":"right","skill":"reading","level":0},"1":{"sr":"b06d642c-fe00-4ac0-ba05-c13617574b2b","answered":"NA","skill":"reading","level":1},"2":{"sr":"06a0fdc5-0ffd-416f-ab37-fe9fddecfda1","answered":"wrong","skill":"reading","level":2},"-1":{"sr":"b89fc070-d415-4949-854d-591bcaf4f8ab","answered":"NA","skill":"reading","level":0}},{"0":{"sr":"bf7648c4-4f20-4c91-aa7a-a412883317d7","answered":"wrong","skill":"listening","level":0},"1":{"sr":"f76a0a14-023c-4dad-a48c-580ee6e14af0","answered":"NA","skill":"listening","level":1},"2":{"sr":"b7ac6b9a-5423-41b9-8cfb-a4a9efa94ecc","answered":"NA","skill":"listening","level":2},"3":{"sr":"07fddf47-c997-478a-99ce-3a6d20c0dc04","answered":"NA","skill":"listening","level":3}}]
     };
 
+    function setMLDqJSON(){
+      return data.getDQJSON()
+      .then(function(res){
+        ml.dqJSON = res;
+        $log.debug('ml.dqJSON', ml.dqJSON);
+        return ml.dqJSON;
+      })
+    }
+
+    function setMLKmapsJSON(){
+      return data.getKmapsJSON()
+      .then(function(res){
+        ml.kmapsJSON = res;
+        $log.debug('ml.kmapsJSON', ml.kmapsJSON);
+        return ml.kmapsJSON;
+      })
+    }
+
+    function setMapping(){
+      return data.getDiagnosisLitmusMapping()
+      .then(function(res){
+        ml.mapping = res;
+        $log.debug('ml.mapping', ml.mapping);
+        return ml.mapping;
+      })
+    }
+
+    // var q = $q.defer();
+    // $log.debug('ml $q', Object.keys($q));
+
+    // var result = data.getKmapsJSON();
+    // result.then(function(res) {
+    //     $log.debug('ml res', res);
+    // })
 
     // var result = data.getDiagnosisQuestionById(92423);
     // result.then(function(res) {
@@ -50,7 +87,6 @@
     // result.then(function(res) {
     //     $log.debug('ml res', res);
     // });
-
 
     return ml;
 
@@ -80,12 +116,10 @@
 
       var rankedUniqueRecommendations = {};
       for (var skill in recommendations) {
-        rankedUniqueRecommendations[skill] = rankPlaylist({
+        rankedUniqueRecommendations[skill] = ml.rankPlaylist({
           0: recommendations[skill]
         }, undefined, 1);
       }
-
-      // var rankedUniqueRecommendations = rankPlaylist({0: uniqueRecommendations}, undefined, 1);
 
       console.log('rankedUniqueRecommendations', rankedUniqueRecommendations);
 
@@ -97,16 +131,17 @@
         var rankedSrList = [];
         for (var i = 0; i < srList.length; i++) {
           var sr = srList[i];
-          var prereqs = makeTree(sr, undefined, undefined, 1);
+          var prereqs = ml.makeTree(sr, undefined, undefined, 1);
           var srIndex = prereqs.indexOf(sr);
           if (srIndex > -1) {
             prereqs.splice(srIndex, 1);
           }
 
           var sr_name = null;
-          var sr_data = KnowledgeMapsData.findOne({
-            "sr": sr
-          });
+          var sr_data = ml.kmapsJSON[sr];
+          // var sr_data = KnowledgeMapsData.findOne({
+          //   "sr": sr
+          // });
           if (sr_data != undefined) {
             sr_name = sr_data["name"];
           }
@@ -114,9 +149,10 @@
           var prereqs_names = [];
           var prereqs_skills = [];
           for (var j = 0; j < prereqs.length; j++) {
-            var sr_data = KnowledgeMapsData.findOne({
-              "sr": prereqs[j]
-            });
+            var sr_data = ml.kmapsJSON[prereqs[j]];
+            // var sr_data = KnowledgeMapsData.findOne({
+            //   "sr": prereqs[j]
+            // });
             if (sr_data != undefined) {
               prereqs_names.push(sr_data["name"]);
               prereqs_skills.push(sr_data["unit"]);
@@ -170,7 +206,7 @@
           }
 
           // rank the unsuccessfulPrereqs
-          var rankedPrereqList = rankPlaylist({
+          var rankedPrereqList = ml.rankPlaylist({
             0: unsuccessfulPrereqs
           }, undefined, 1);
           // return the first from unsuccessfulPrereqs
@@ -331,10 +367,11 @@
     }
 
     function checkIfInsufficientSrs(skillBasedSuggestedSrs) {
-      var insufficientSkillSrs = ["grammar", "vocabulary", "listening", "reading"];
+      // var insufficientSkillSrs = ["grammar", "vocabulary", "listening", "reading"];
+      var insufficientSkillSrs = Object.keys(skillBasedSuggestedSrs);
       for (var skill in skillBasedSuggestedSrs) {
         // skillBasedSuggestedSrs[skill].splice(0, skillBasedSuggestedSrs[skill].length - 4);
-        if (skillBasedSuggestedSrs[skill].length >= MAX) {
+        if (skillBasedSuggestedSrs[skill].length >= ml.MAX) {
           var index = insufficientSkillSrs.indexOf(skill);
           if (index > -1) {
             insufficientSkillSrs.splice(index, 1);
@@ -346,7 +383,7 @@
 
     function pushIfAbsent(original, additions) {
       while (additions.length > 0) {
-        if (original.length < MAX) {
+        if (original.length < ml.MAX) {
           var sr = additions.shift();
           if (original.indexOf(sr) == -1) {
             original.push(sr);
@@ -356,6 +393,16 @@
         }
       }
       return original;
+    }
+
+    function getDqsByLevelNSkill(level, skill){
+      var srs = [];
+      for(var q_id in ml.dqJSON){
+        if(ml.dqJSON[q_id]["level"] == level && ml.dqJSON[q_id]["skill_area"] == skill){
+          srs.push({"sr": ml.dqJSON[q_id]["sr"], "skill_area": skill});
+        }
+      }
+      return srs;
     }
 
 
@@ -373,17 +420,8 @@
         if (output == undefined) {
           continue;
         }
-        var srs = DiagnosticQuestionsData.find({
-          "level": output.level,
-          "skill_area": output.skill
-        }, {
-          "fields": {
-            "sr": 1,
-            "_id": 0,
-            "skill_area": 1
-          }
-        }).fetch();
-        // console.log('srs', srs);
+        
+        var srs = getDqsByLevelNSkill(output.level, output.skill);
         for (var i = 0; i < srs.length; i++) {
           suggestedRootSrs.push({
             "sr": srs[i].sr,
@@ -397,7 +435,7 @@
       // var suggestedSrs = [];
       var skillBasedSuggestedSrs = {};
       for (var i = 0; i < suggestedRootSrs.length; i++) {
-        var prereqSrs = makeTree(suggestedRootSrs[i].sr, undefined, undefined, 1); // makeTree will return the recommendations for a given sr
+        var prereqSrs = ml.makeTree(suggestedRootSrs[i].sr, undefined, undefined, 1); // makeTree will return the recommendations for a given sr
         // suggestedSrs = suggestedSrs.concat(prereqSrs);
         if (skillBasedSuggestedSrs[suggestedRootSrs[i].skill] == undefined) {
           skillBasedSuggestedSrs[suggestedRootSrs[i].skill] = [];
@@ -418,7 +456,7 @@
       for (var i = 0; i < insufficientSkillSrs.length; i++) {
         var rootSuggestedSrs = skillBasedSuggestedSrs[insufficientSkillSrs[i]];
         var prereqsRecommendations = ml.ifInsufficientSrs(rootSuggestedSrs, studentName);
-        // skillBasedSuggestedSrs[insufficientSkillSrs[i]] = rootSuggestedSrs.concat(prereqsRecommendations.slice(0, MAX - rootSuggestedSrs.length));
+        // skillBasedSuggestedSrs[insufficientSkillSrs[i]] = rootSuggestedSrs.concat(prereqsRecommendations.slice(0, ml.MAX - rootSuggestedSrs.length));
         skillBasedSuggestedSrs[insufficientSkillSrs[i]] = ml.pushIfAbsent(rootSuggestedSrs, prereqsRecommendations);
       }
 
@@ -438,29 +476,33 @@
         // if(uniqueSuggestedSrs[i] == "902c1cf0-82b9-483c-bdbd-84f750c05d90" || uniqueSuggestedSrs[i] == "ff894695-842b-4932-88ee-4509f779d4bc"){
         //     continue;
         // }
-        var prereqSr = makeTree(uniqueSuggestedSrs[i], undefined, undefined, 1); // makeTree will return the recommendations for a given sr
+        var prereqSr = ml.makeTree(uniqueSuggestedSrs[i], undefined, undefined, 1); // makeTree will return the recommendations for a given sr
         prereqList = ml.pushIfAbsent(prereqList, prereqSr);
       }
 
-      var rankedPrereqList = rankPlaylist({
+      var rankedPrereqList = ml.rankPlaylist({
         0: prereqList
       }, undefined, 1);
       console.log('rankedPrereqList', rankedPrereqList);
 
       // change to - check if student exist in db
-      var studentData = StudentLessonData.findOne({
-        "studentName": studentName
-      }, {
-        "fields": {
-          "lessonScores.sr": 1,
-          "lessonScores.result": 1
-        }
-      });
+      var studentData;
+
+      if (studentName != undefined && studentName != ""){
+        studentData= StudentLessonData.findOne({
+          "studentName": studentName
+        }, {
+          "fields": {
+            "lessonScores.sr": 1,
+            "lessonScores.result": 1
+          }
+        });
+      }
 
       if (studentData == undefined) {
         console.log('student not found in db');
         var recommendations = [];
-        // return rankedPrereqList.slice(0, MAX - uniqueSuggestedSrs.length).concat(uniqueSuggestedSrs);
+        // return rankedPrereqList.slice(0, ml.MAX - uniqueSuggestedSrs.length).concat(uniqueSuggestedSrs);
         return rankedPrereqList;
       }
 
@@ -494,20 +536,32 @@
       return "red";
     }
 
+    function getKmapsSRNParents(){
+      var srs = [];
+      for(var sr in ml.kmapsJSON){
+        srs.push({"sr": sr, "parent": ml.kmapsJSON[sr]["parent"]});
+      }
+      return srs;
+    }
+
     function lastResort(studentName, insufficientSkill) {
       console.log('in LR', studentName, insufficientSkill);
       // StudentLessonData has the mapping of student to lessons result
-      var studentData = StudentLessonData.findOne({
-        "studentName": studentName
-      }, {
-        "fields": {
-          "lessonScores.sr": 1,
-          "lessonScores.result": 1,
-          "lessonScores.unit": 1
-        }
-      });
-      var suggestedSrs = [];
+      var studentData;
 
+      if (studentName != undefined && studentName != ""){
+        studentData = StudentLessonData.findOne({
+          "studentName": studentName
+        }, {
+          "fields": {
+            "lessonScores.sr": 1,
+            "lessonScores.result": 1,
+            "lessonScores.unit": 1
+          }
+        });
+      }
+
+      var suggestedSrs = [];
       // if we have data of the student, else return []
       if (typeof(studentData) != "undefined") {
         var successfulSrs = []; // this has all the successful srs of the student
@@ -524,12 +578,13 @@
         // if there are successfulSrs, else return []
         if (successfulSrs.length > 0) {
           // fetch all the lesson from Kmaps DB
-          var allKmaps = KnowledgeMapsData.find({}, {
-            "fields": {
-              "sr": 1,
-              "parent": 1
-            }
-          }).fetch();
+          var allKmaps = getKmapsSRNParents();
+          // var allKmaps = KnowledgeMapsData.find({}, {
+          //   "fields": {
+          //     "sr": 1,
+          //     "parent": 1
+          //   }
+          // }).fetch();
           srParentCount = {};
 
           for (var i = 0; i < allKmaps.length; i++) {
@@ -567,7 +622,7 @@
 
           for (var i = 0; i < keysSorted.length; i++) {
             // rank all the lessons which have same percentage, and push to suggestedSrs
-            var rankedLessons = rankPlaylist({
+            var rankedLessons = ml.rankPlaylist({
               0: srParentCount[keysSorted[i]]
             }, undefined, 1);
             // suggestedSrs = suggestedSrs.concat(rankedLessons);
@@ -583,85 +638,110 @@
     }
 
     function getNextQSr(test,diagLitmusMapping) {
-      console.log('in function getNextQSr');
-      console.log('in getNextQSr', test[0]);
-      if (test.length > 0) {
-        if (test[0]["count"] >= 2) {
-          console.log('slicing');
-          test = displaySuggestedSr(test[0]["level"], test);
-          var newTest = test.slice(1, test.length);
-          return getNextQSr(newTest);
+      try{
+        console.log('in function getNextQSr');
+        console.log('in getNextQSr', JSON.stringify(test[0]));
+        if (test.length > 0) {
+          if (test[0]["count"] >= 2) {
+            console.log('slicing');
+            test = displaySuggestedSr(test, diagLitmusMapping);
+            var newTest = test.slice(1, test.length);
+            return getNextQSr(newTest, diagLitmusMapping);
+          }
+          if (test[0]["previousAnswer"] == null) {
+            if (diagLitmusMapping[test[0]["skill"]][test[0]["level"]] != undefined) {
+              console.log('if 1');
+              var q_set = diagLitmusMapping[test[0]["skill"]][test[0]["level"]]["questions"];
+              if(q_set.length == 0){
+                  console.log('q_set empty');
+                  var newTest = test.slice(1, test.length);
+                  return getNextQSr(newTest, diagLitmusMapping);
+              }
+              console.log('qSet', JSON.stringify(q_set));
+              return ({
+                "skill": test[0]["skill"],
+                "qSr": q_set[Math.floor(Math.random() * (q_set.length)) + 0],
+                "test": test,
+                "actualLevel": test[0]["level"],
+                "microstandard": diagLitmusMapping[test[0]["skill"]][test[0]["level"]]["microstandard"]
+              });
+            } else {
+              console.log('else 1');
+              test = displaySuggestedSr(test, diagLitmusMapping);
+              var newTest = test.slice(1, test.length);
+              return getNextQSr(newTest, diagLitmusMapping);
+            }
+          } else if (test[0]["previousAnswer"] == 0) {
+            if (diagLitmusMapping[test[0]["skill"]][test[0]["level"] - 2] != undefined) {
+              console.log('if 2');
+              var q_set = diagLitmusMapping[test[0]["skill"]][test[0]["level"] - 2]["questions"];
+              if(q_set.length == 0){
+                  console.log('q_set empty');
+                  var newTest = test.slice(1, test.length);
+                  return getNextQSr(newTest, diagLitmusMapping);
+              }
+              console.log('qSet', JSON.stringify(q_set));
+              var intermediate_q_set = diagLitmusMapping[test[0]["skill"]][test[0]["level"] - 1]["questions"];
+              test[0]["qSet"][test[0]["level"] - 1] = {
+                "qSr": intermediate_q_set[Math.floor(Math.random() * (intermediate_q_set.length)) + 0],
+                "answered": "NA"
+              };
+              return ({
+                "skill": test[0]["skill"],
+                "qSr": q_set[Math.floor(Math.random() * (q_set.length)) + 0],
+                "test": test,
+                "actualLevel": test[0]["level"] - 2,
+                "microstandard": diagLitmusMapping[test[0]["skill"]][test[0]["level"] - 2]["microstandard"]
+              });
+            } else {
+              console.log('else 2');
+              test = displaySuggestedSr(test, diagLitmusMapping);
+              var newTest = test.slice(1, test.length);
+              return getNextQSr(newTest, diagLitmusMapping);
+            }
+          } else if (test[0]["previousAnswer"] == 1) {
+            if (diagLitmusMapping[test[0]["skill"]][test[0]["level"] + 2] != undefined) {
+              console.log('if 3');
+              var q_set = diagLitmusMapping[test[0]["skill"]][test[0]["level"] + 2]["questions"];
+              if(q_set.length == 0){
+                  console.log('q_set empty');
+                  var newTest = test.slice(1, test.length);
+                  return getNextQSr(newTest, diagLitmusMapping);
+              }
+              console.log('qSet', JSON.stringify(q_set));
+              var intermediate_q_set = diagLitmusMapping[test[0]["skill"]][test[0]["level"] + 1]["questions"];
+              test[0]["qSet"][test[0]["level"] + 1] = {
+                "qSr": intermediate_q_set[Math.floor(Math.random() * (intermediate_q_set.length)) + 0],
+                "answered": "NA"
+              };
+              return ({
+                "skill": test[0]["skill"],
+                "qSr": q_set[Math.floor(Math.random() * (q_set.length)) + 0],
+                "test": test,
+                "actualLevel": test[0]["level"] + 2,
+                "microstandard": diagLitmusMapping[test[0]["skill"]][test[0]["level"] + 2]["microstandard"]
+              });
+            } else {
+              console.log('else 3');
+              test = displaySuggestedSr(test, diagLitmusMapping);
+              var newTest = test.slice(1, test.length);
+              return getNextQSr(newTest, diagLitmusMapping);
+            }
+          }
+        } else {
+          console.log('diagnosis complete');
+          return (null);
         }
-        if (test[0]["previousAnswer"] == null) {
-          if (diagLitmusMapping[test[0]["skill"]][test[0]["level"]] != undefined) {
-            console.log('if 1');
-            var q_set = diagLitmusMapping[test[0]["skill"]][test[0]["level"]]["questions"];
-            return {
-              "skill": test[0]["skill"],
-              "qSr": q_set[Math.floor(Math.random() * (q_set.length)) + 0],
-              "test": test,
-              "actualLevel": test[0]["level"],
-              "microstandard": diagLitmusMapping[test[0]["skill"]][test[0]["level"]]["microstandard"]
-            };
-          } else {
-            console.log('else 1');
-            test = displaySuggestedSr(test[0]["level"], test);
-            var newTest = test.slice(1, test.length);
-            return getNextQSr(newTest);
-          }
-        } else if (test[0]["previousAnswer"] == 0) {
-          if (diagLitmusMapping[test[0]["skill"]][test[0]["level"] - 2] != undefined) {
-            console.log('if 2');
-            var q_set = diagLitmusMapping[test[0]["skill"]][test[0]["level"] - 2]["questions"];
-            var intermediate_q_set = diagLitmusMapping[test[0]["skill"]][test[0]["level"] - 1]["questions"];
-            test[0]["qSet"][test[0]["level"] - 1] = {
-              "qSr": intermediate_q_set[Math.floor(Math.random() * (intermediate_q_set.length)) + 0],
-              "answered": "NA"
-            };
-            return {
-              "skill": test[0]["skill"],
-              "qSr": q_set[Math.floor(Math.random() * (q_set.length)) + 0],
-              "test": test,
-              "actualLevel": test[0]["level"] - 2,
-              "microstandard": diagLitmusMapping[test[0]["skill"]][test[0]["level"] - 2]["microstandard"]
-            };
-          } else {
-            console.log('else 2');
-            test = displaySuggestedSr(test[0]["level"], test);
-            var newTest = test.slice(1, test.length);
-            return getNextQSr(newTest);
-          }
-        } else if (test[0]["previousAnswer"] == 1) {
-          if (diagLitmusMapping[test[0]["skill"]][test[0]["level"] + 2] != undefined) {
-            console.log('if 3');
-            var q_set = diagLitmusMapping[test[0]["skill"]][test[0]["level"] + 2]["questions"];
-            var intermediate_q_set = diagLitmusMapping[test[0]["skill"]][test[0]["level"] + 1]["questions"];
-            test[0]["qSet"][test[0]["level"] + 1] = {
-              "qSr": intermediate_q_set[Math.floor(Math.random() * (intermediate_q_set.length)) + 0],
-              "answered": "NA"
-            };
-            return {
-              "skill": test[0]["skill"],
-              "qSr": q_set[Math.floor(Math.random() * (q_set.length)) + 0],
-              "test": test,
-              "actualLevel": test[0]["level"] + 2,
-              "microstandard": diagLitmusMapping[test[0]["skill"]][test[0]["level"] + 2]["microstandard"]
-            };
-          } else {
-            console.log('else 3');
-            test = displaySuggestedSr(test[0]["level"], test);
-            var newTest = test.slice(1, test.length);
-            return getNextQSr(newTest);
-          }
-        }
-      } else {
-        console.log('diagnosis complete');
-        return null;
+      }catch(err){
+        $log.debug('err skipping skill - ', test[0]["skill"]);
+        var newTest = test.slice(1, test.length);
+        return getNextQSr(newTest, diagLitmusMapping);
       }
     }
 
-    function displaySuggestedSr(level_one, test) {
-      console.log('in function displaySuggestedSr');
+    function displaySuggestedSr(test, diagLitmusMapping) {
+      var level_one = test[0]["level"];
+      console.log('in function displaySuggestedSr', diagLitmusMapping);
       var test_one = test[0];
       var oldqSet = test_one["qSet"];
       console.log('oldqSet', oldqSet);
@@ -704,26 +784,13 @@
           }
         }
       }
+      // ml.dqQuiz.push(newQSet);
       console.log('newQSet', newQSet);
-      var suggestedQ = getSuggestedSr2(newQSet)[0];
+      var suggestedQ = ml.getSuggestedSr2(newQSet)[0];
       console.log('suggestedQ', suggestedQ);
-      var q_data = DiagnosticQuestionsData.findOne({
-        "_id": suggestedQ
-      });
-      if (q_data != undefined) {
-        var suggestedSr = q_data["sr"];
-        var suggestedLessonName = q_data["lesson_name"];
-        console.log('suggestedSr', suggestedSr);
-        // document.getElementById("dispQuestion").innerHTML += " - suggestedSr " + String(suggestedSr) + " suggestedLessonName "+ suggestedLessonName;
-      }
-      quiz.push(newQSet);
       if (test.length > 1) {
         if (suggestedQ != undefined) {
-          console.log('hereeeee');
-          test[1]["level"] = parseInt(DiagnosticQuestionsData.findOne({
-            "_id": suggestedQ
-          })["level"]);
-          // test[1]["level"] = parseInt(srToQuestion[suggestedQ]["level"]);
+          test[1]["level"] = parseInt(ml.dqJSON[suggestedQ].level);
         } else {
           test[1]["level"] = Object.keys(diagLitmusMapping[test[1]["skill"]]).length - 1;
         }
@@ -732,15 +799,8 @@
     }
 
 
-
-
-
-
-
-
-
     function getChildren(nodeData, gatheredNodeNumbers, gatheredNodeDict, classWiseScores, noColorRequired) {
-      console.log('in function getChildren');
+      // console.log('in function getChildren');
 
       var children = [];
       if (typeof(nodeData.parent) != "undefined") {
@@ -748,9 +808,10 @@
           var child = {};
           child.sr = nodeData.parent[j];
           child.parent = nodeData.sr;
-          var childData = KnowledgeMapsData.findOne({
-            "sr": (child.sr)
-          });
+          var childData = ml.kmapsJSON[child.sr];
+          // var childData = KnowledgeMapsData.findOne({
+          //   "sr": (child.sr)
+          // });
 
           if (childData == undefined) {
             // console.log('no map found with sr ', nodeSr);
@@ -769,11 +830,11 @@
           gatheredNodeDict[(child.sr)]["name"] = child.name;
 
           if (typeof(noColorRequired) == "undefined") {
-            child.color = getRecPlaylist((child.sr), classWiseScores).color;
+            child.color = ml.getRecPlaylist((child.sr), classWiseScores).color;
             gatheredNodeDict[(child.sr)]["color"] = child.color;
           }
 
-          var getChildrenOutput = getChildren(childData, gatheredNodeNumbers, gatheredNodeDict, classWiseScores, noColorRequired);
+          var getChildrenOutput = ml.getChildren(childData, gatheredNodeNumbers, gatheredNodeDict, classWiseScores, noColorRequired);
 
           child.children = getChildrenOutput[0];
           gatheredNodeNumbers = getChildrenOutput[1];
@@ -786,15 +847,17 @@
     }
 
     function genTree(nodeSr, classWiseScores, noColorRequired) {
-      console.log('in function genTree');
+      // console.log('in function genTree');
 
       var node = {};
       node.sr = nodeSr;
       node.parent = null;
 
-      var nodeData = KnowledgeMapsData.findOne({
-        "sr": (node.sr)
-      });
+      var nodeData = ml.kmapsJSON[node.sr];
+
+      // var nodeData = KnowledgeMapsData.findOne({
+      //   "sr": (node.sr)
+      // });
       if (nodeData == undefined) {
         return null;
       }
@@ -808,11 +871,11 @@
       gatheredNodeDict[(node.sr)]["name"] = node.name;
 
       if (typeof(noColorRequired) == "undefined") {
-        node.color = getRecPlaylist((node.sr), classWiseScores).color;
+        node.color = ml.getRecPlaylist((node.sr), classWiseScores).color;
         gatheredNodeDict[(node.sr)]["color"] = node.color;
       }
 
-      var getChildrenOutput = getChildren(nodeData, gatheredNodeNumbers, gatheredNodeDict, classWiseScores, noColorRequired);
+      var getChildrenOutput = ml.getChildren(nodeData, gatheredNodeNumbers, gatheredNodeDict, classWiseScores, noColorRequired);
 
       node.children = getChildrenOutput[0];
       gatheredNodeNumbers = getChildrenOutput[1];
@@ -821,119 +884,13 @@
       return [node, gatheredNodeDict];
     }
 
-    function generateTree(root, classWiseScores, noColorRequired) {
-      console.log('in function generateTree');
-      // this will generate the KnowledgeMap tree for a particular lesson given by root and the classWiseScores will provide the data to traverse
-
-      var temp = KnowledgeMapsData.find({
-        "sr": (root)
-      }).fetch();
-      if (temp.length > 0) {
-        temp = temp[0];
-      } else {
-        // console.log('no map found with sr ', root);
-        return 0;
-      }
-
-      // console.log("temp parent " + temp.parent);
-      var tree = [];
-      var rootNode = {};
-      rootNode.name = temp.name;
-      rootNode.sr = temp.sr;
-      rootNode.parent = null;
-      rootNode.children = [];
-      // rootNode.parents = temp.parents;
-      gatheredNodeNumbers = [(temp.sr)];
-
-      if (typeof(noColorRequired) == "undefined") {
-        rootNode.color = getRecPlaylist((root), classWiseScores).color;
-      }
-
-      if (typeof(temp.parent) != "undefined") {
-        for (var j = 0; j < temp.parent.length; j++) {
-          // insideTemp = lookUpTest(temp.parent[j]);
-          insideTemp = KnowledgeMapsData.find({
-            "sr": (temp.parent[j])
-          }).fetch();
-          if (insideTemp.length > 0) {
-            insideTemp = insideTemp[0];
-          } else {
-            // console.log('no map found with sr in for loop ', temp.parent[j]);
-            continue;
-          }
-
-          gatheredNodeNumbers.push(temp.parent[j]);
-          var children = {};
-          children.parent = temp.parent[j];
-          children.name = insideTemp.name;
-          children.sr = insideTemp.sr;
-
-          if (typeof(noColorRequired) == "undefined") {
-            children.color = getRecPlaylist((temp.parent[j]), classWiseScores).color;
-          }
-
-          children.children = appendChildren(temp.parent[j], classWiseScores);
-          rootNode.children.push(children);
-        }
-      }
-      tree.push(rootNode);
-
-      if (typeof(noColorRequired) == "undefined") {
-        return tree;
-      } else {
-        return [tree, gatheredNodeNumbers];
-      }
-    }
-
-    function appendChildren(parent, classWiseScores) {
-      console.log('in function appendChildren');
-
-      // this will traverse through the whole tree of a root lesson, and find all the parents
-
-      var root = [];
-      insideParent = KnowledgeMapsData.find({
-        "sr": (parent)
-      }).fetch();
-      if (insideParent.length > 0) {
-        insideParent = insideParent[0];
-      } else {
-        return 0;
-      }
-      if (typeof(insideParent.parent) != "undefined") {
-        for (var i = 0; i < insideParent.parent.length; i++) {
-          if (gatheredNodeNumbers.indexOf((insideParent.parent[i])) > -1) {
-            continue;
-          }
-          var child = {};
-          insideChild = KnowledgeMapsData.find({
-            "sr": (insideParent.parent[i])
-          }).fetch();
-          if (insideChild.length > 0) {
-            insideChild = insideChild[0];
-          } else {
-            return 0;
-          }
-          if (typeof(noColorRequired) == "undefined") {
-            child.color = getRecPlaylist((insideChild.sr), classWiseScores).color;
-          }
-          gatheredNodeNumbers.push((insideChild.sr));
-          child.parent = insideParent.name;
-          child.name = insideChild.name;
-          child.sr = insideChild.sr;
-          root.push(child);
-        }
-      }
-
-      return root;
-    }
-
     function getRecPlaylist(n, classWiseScores) {
-      console.log('in function getRecPlaylist');
+      // console.log('in function getRecPlaylist');
 
       // this will determine the color of a node depending on the score of the student in that lesson node
 
       if (typeof(classWiseScores) == "undefined") {
-        console.log('classWiseScores empty');
+        // console.log('classWiseScores empty');
         return {
           "color": "blue"
         };
@@ -941,7 +898,7 @@
     }
 
     function rankPlaylist(playlistUnordered, playlistSrName, recommendationsOnly) {
-      console.log('in function rankPlaylist');
+      // console.log('in function rankPlaylist');
 
       // this will rank all the prerequisites according to the KnowledgeMapsLevels in sucha way that the nodes which are of level smaller that the others gets added to the playlist before
 
@@ -950,7 +907,8 @@
       for (var level in playlistUnordered) {
         rankedPlaylistLevels[level] = {};
         for (var srIndex = 0; srIndex < playlistUnordered[level].length; srIndex++) {
-          rankedPlaylistLevels[level][(playlistUnordered[level][srIndex])] = KnowledgeMapsLevelsJSON[playlistUnordered[level][srIndex]];
+          // rankedPlaylistLevels[level][(playlistUnordered[level][srIndex])] = KnowledgeMapsLevelsJSON[playlistUnordered[level][srIndex]];
+          rankedPlaylistLevels[level][(playlistUnordered[level][srIndex])] = ml.kmapsJSON[playlistUnordered[level][srIndex]]["kmap_level"];
         }
       }
 
@@ -972,11 +930,10 @@
     }
 
     function makeTree(node, classWiseScores, appendAll, recommendationsOnly) {
-      console.log('in function makeTree');
-      console.log('from makeTree', node, classWiseScores, appendAll, recommendationsOnly);
+      // console.log('in function makeTree');
+      // console.log('from makeTree', node, classWiseScores, appendAll, recommendationsOnly);
 
-      // tempTree = generateTree(node, classWiseScores);
-      var genTreeOutput = genTree(node, classWiseScores);
+      var genTreeOutput = ml.genTree(node, classWiseScores);
       var tempTree = genTreeOutput[0];
       var gatheredNodeDict = genTreeOutput[1];
 
@@ -999,7 +956,7 @@
           }
         }
 
-        var recommendations = rankPlaylist(playlistUnordered, playlistSrName, recommendationsOnly);
+        var recommendations = ml.rankPlaylist(playlistUnordered, playlistSrName, recommendationsOnly);
 
         if (typeof(recommendationsOnly) != "undefined") {
           return recommendations;
