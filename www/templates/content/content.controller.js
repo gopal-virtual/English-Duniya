@@ -63,9 +63,9 @@
       $scope.modal.hide();
       return true;
     }
-    $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal' + CONSTANT.VIEW, {
+    $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal-rope' + CONSTANT.VIEW, {
       scope: $scope,
-      animation: 'slide-in-up',
+      animation: 'slide-in-down',
     }).then(function(modal) {
       $scope.modal = modal;
     });

@@ -44,7 +44,7 @@
         onEnter: ['$state', 'lessons','audio','$ionicLoading', function($state, lessons, audio, $ionicLoading) {
             $ionicLoading.show({
                 templateUrl : 'templates/common/common.loader.view.html',
-                duration : 200
+                duration : 8000
             });
           if (!lessons) {
             $state.go('map.unauthorised');

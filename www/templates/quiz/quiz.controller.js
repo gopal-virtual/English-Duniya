@@ -521,9 +521,9 @@
       $state.go('map.navigate', {});
     }
 
-    $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal' + CONSTANT.VIEW, {
+    $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal-rope' + CONSTANT.VIEW, {
       scope: $scope,
-      animation: 'slide-in-up'
+      animation: 'slide-in-down'
     }).then(function(modal) {
       quizCtrl.pauseModal = modal;
     });

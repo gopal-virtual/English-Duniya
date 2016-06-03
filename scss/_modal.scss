@@ -33,42 +33,54 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#000000', end
     background-position:  center center;
 
 }
+.modal-top {
+    width : 90%;
+    margin : 0 auto;
+}
+.modal-middle{
+    border-radius : $border-radius*4;
+    background-color: $brand-pink;
+    width : 90%;
+    margin : 0 auto;
+}
 @media all and (orientation:portrait){
-    .modal-top {
-        width : 90%;
-        margin : 0 auto;
+    .modal-top{
+        height : 5%;
     }
     .modal-middle{
-        // background:url('../img/assets/pause_menu_middle.png') no-repeat center center;
-        // background-size : auto 100%;
-        border-radius : $border-radius*4;
-        background-color: $brand-pink;
-        width : 90%;
-        margin : 0 auto;
+        height : 90%;
     }
-    .modal-bottom{
-        background:url('../img/assets/pause_menu_bottom.png') no-repeat center center;
-        background-size : auto 100%;
+    .modal-knot-wrapper{
+        height : 15%;
     }
-    .modal-button{
-        top : -20px;
+    .modal-body-wrapper{
+        height : 60%;
+    }
+    .resource-list{
+        padding : 10px 0;
+    }
+    .resource-list > li img{
+        height : 100%;
     }
 }
 @media all and (orientation:landscape) {
     .modal-top{
-        background:url('../img/assets/pause_menu_y_top.png') no-repeat center center;
-        background-size : 95% 105%;
+        height : 10%;
     }
     .modal-middle{
-        background:url('../img/assets/pause_menu_y_middle.png') no-repeat center center;
-        background-size : 95% 105%;
+        height : 80%;
     }
-    .modal-bottom{
-        background:url('../img/assets/pause_menu_y_bottom.png') no-repeat center center;
-        background-size : 95% 105%;
+    .modal-knot-wrapper{
+        height : 25%;
     }
-    .modal-button{
-        top : -40px;
+    .resource-list > li {
+        display: inline-block;
+        width: 50%;
     }
-
+    .modal-body-wrapper{
+        height : 50%;
+    }
+    .resource-list > li img{
+        height : 100%;
+    }
 }

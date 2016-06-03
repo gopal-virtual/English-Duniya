@@ -8,7 +8,7 @@
                 <input class="input-control font-md" valid-otp name="otp" type="text" placeholder="Enter otp" ng-model="authCtrl.verification.otp">
             </div>
         </div>
-        <button type="submit" class="button button-green button-block button-round">SUBMIT</button>
+        <button type="submit" class="button button-balanced button-block button-round">SUBMIT</button>
         <br><hr><br>
       </form>
     </div>
@@ -18,7 +18,7 @@
     </div>
     <div class="row padding-30">
       <div class="col">
-        <button ng-disabled="authCtrl.counter > 0" ng-click="authCtrl.resendOTP()" class="button button-green button-block button-round">RESEND OTP<span ng-if="authCtrl.counter > 0"> IN {{authCtrl.counter}}s</span></button>
+        <button ng-disabled="authCtrl.counter > 0" ng-click="authCtrl.resendOTP()" class="button button-balanced button-block button-round">RESEND OTP<span ng-if="authCtrl.counter > 0"> IN {{authCtrl.counter}}s</span></button>
         <button class="button button-block bg-assertive-light color-stable button-round" ng-click="authCtrl.cancelOTP()">CANCEL</button>
       </div>
     </div>

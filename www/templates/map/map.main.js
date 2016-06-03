@@ -278,7 +278,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
         return !locked ? '-' + lesson.tag.toLowerCase() : '';
       };
       // Place nodes
-      for (var j = 0, i = lessons.length - 1, nodeCount = 1 / (lessons.length); i >= 0; j += nodeCount, i--) {
+      for (var j = 0, i = lessons.length - 1, nodeCount = 1 / (lessons.length - 1); i >= 0; j += nodeCount, i--) {
         var currentLesson = lessons[i];
         log.debug('lesson status', i, currentLesson);
         var locked = currentLesson.locked ? '-locked' : '';

@@ -25,7 +25,8 @@
   color: $brand-white;
 }
 .button-green.active,
-.button-green.activated {
+.button-green.active:focus,
+.button-green:active{
   background-color: darken($brand-green,10%);
   color: $brand-white;
 }
