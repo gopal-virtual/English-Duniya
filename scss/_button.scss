@@ -4,6 +4,7 @@
   padding: 10px;
   border-radius: $border-radius;
   border: 0;
+  text-transform: uppercase !important;
 }
 .button-resume {
   position: absolute;
@@ -25,7 +26,8 @@
   color: $brand-white;
 }
 .button-green.active,
-.button-green.activated {
+.button-green.active:focus,
+.button-green:active{
   background-color: darken($brand-green,10%);
   color: $brand-white;
 }

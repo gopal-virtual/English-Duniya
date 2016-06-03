@@ -26,7 +26,7 @@
         nativeTransitions: {
           "type": "slide",
           "direction": "left",
-          "duration" :  400
+          "duration" :  300
         },
         views: {
           'state-auth': {
@@ -41,7 +41,7 @@
         nativeTransitions: {
           "type": "slide",
           "direction": "left",
-          "duration" :  400
+          "duration" :  300
         },
         views: {
           'state-auth': {

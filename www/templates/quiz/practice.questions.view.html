@@ -19,7 +19,7 @@
     </div>
   </div>
   <ion-slide-box on-slide-changed="quizCtrl.slideHasChanged($index)" ng-init="(quizCtrl.disableSwipe())" show-pager="false">
-    <ion-slide ng-repeat="question in quizCtrl.quiz.objects" ng-class="{'animation-question-slide':quizCtrl.isCurrentIndex($index)}">
+    <ion-slide ng-repeat="question in quizCtrl.quiz.objects">
 
   <!-- <div ng-repeat="question in quizCtrl.quiz.objects" ng-if="$index == quizCtrl.getCurrentIndex()"> -->
     <div class="bar bar-subheader padding-0 question-subheader bg-pale no-shadow">
@@ -72,7 +72,7 @@
   <div class="bar bar-footer bar-footer-large bg-pale">
     <div class="row padding-0">
       <div class="col">
-        <button class="animation-fade-in-from-bottom button button-block button-green margin-0 button-round" ng-click="quizCtrl.decide()" ng-disabled="!quizCtrl.canSubmit()">
+        <button class="animation-fade-in-from-bottom button button-block button-balanced margin-0 button-round" ng-click="quizCtrl.decide()" ng-disabled="!quizCtrl.canSubmit()">
             SUBMIT
           <!-- {{quizCtrl.isCorrectAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex]) ? quizCtrl.currentIndex < quizCtrl.quiz.objects.length - 1 ? 'CONTINUE' : 'DONE' : 'SUBMIT'}} -->
         </button>

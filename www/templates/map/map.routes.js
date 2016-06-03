@@ -37,7 +37,15 @@
       })
       .state('map.navigate', {
         url: '/navigate',
-        onEnter: ['$state', 'lessons','audio', function($state, lessons, audio) {
+        nativeTransitions: {
+            "type": "fade",
+            "duration" :  1000,
+        },
+        onEnter: ['$state', 'lessons','audio','$ionicLoading', function($state, lessons, audio, $ionicLoading) {
+            $ionicLoading.show({
+                templateUrl : 'templates/common/common.loader.view.html',
+                duration : 8000
+            });
           if (!lessons) {
             $state.go('map.unauthorised');
           }

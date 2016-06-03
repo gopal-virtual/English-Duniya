@@ -1,6 +1,6 @@
 <ion-view class="bg-pale">
   <ion-content>
-      <form name="personaliseForm" class="row padding-20" novalidate ng-submit="profileCtrl.closeKeyboard() && profileCtrl.validatePersonaliseForm(personaliseForm) && profileCtrl.createProfile({ age : profileCtrl.calcAge(profileCtrl.user.dob), grade : profileCtrl.user.grade, gender : profileCtrl.user.gender, user : profileCtrl.user.username, first_name : profileCtrl.user.first_name})">
+      <form name="personaliseForm" class="row padding-20" novalidate ng-submit="profileCtrl.closeKeyboard();profileCtrl.createProfile(personaliseForm)">
           <div class="col">
               <div class="row">
                   <div class="col text-center">
@@ -26,7 +26,7 @@
               <div class="row">
                   <div class="col">
                       <div class="input-group">
-                          <input type="text" name="first_name" class="input-control input-default font-md" tabindex="2" placeholder="Name" ng-model="profileCtrl.user.first_name">
+                          <input type="text" name="firstName" class="input-control input-default font-md" tabindex="2" placeholder="Name" ng-model="profileCtrl.user.first_name">
                           <!-- <button type="button" class="input-group-item input-group-addon input-group-addon-light font-md icon-profile icon-fit-width">
                           </button> -->
                       </div>
@@ -37,7 +37,7 @@
                       <label for="" class="item item-input item-select">
                           <span class="input-label font-md">Grade</span>
                           <select name="grade" class="font-md" ng-model="profileCtrl.user.grade"
-                          ng-options="option.id as option.name for option in profileCtrl.grades track by option.id"required>
+                          ng-options="option.id as option.name for option in profileCtrl.grades track by option.id" required>
                           <option value="" selected hidden />
                           </select>
                       </label>
@@ -47,7 +47,7 @@
                   <div class="col" ng-init="profileCtrl.langs = [{id : 1, name : 'Hindi'}, {id : 2, name : 'Bengali'}, {id : 3, name : 'Gujrati'}, {id : 4, name : 'Punjabi'}]">
                       <label for="" class="item item-input item-select">
                           <span class="input-label font-md">Mother Tongue</span>
-                          <select name="grade" class="font-md" ng-model="profileCtrl.user.language"
+                          <select name="motherTongue" class="font-md" ng-model="profileCtrl.user.language"
                           ng-options="option.id as option.name for option in profileCtrl.langs track by option.id" required>
                           <option value="" selected hidden />
                               </select>
@@ -56,7 +56,7 @@
               </div>
               <div class="row">
                   <div class="col text-center">
-                      <button type="submit"  class="button button-green button-round padding-x-40">DONE</button>
+                      <button type="submit"  class="button button-balanced button-round padding-x-40">DONE</button>
                   </div>
               </div>
           </div>

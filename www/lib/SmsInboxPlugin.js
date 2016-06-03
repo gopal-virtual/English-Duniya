@@ -19,6 +19,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+try{
 
 cordova.define("cordova/plugin/smsinboxplugin", function(require, exports, module) {
   var exec = require('cordova/exec');
@@ -53,3 +54,8 @@ cordova.define("cordova/plugin/smsinboxplugin", function(require, exports, modul
   var smsinboxplugin = new SmsInboxPlugin();
   module.exports = smsinboxplugin;
 });
+
+}
+catch(e){
+  console.log("SmsInboxPlugin ",e)
+}

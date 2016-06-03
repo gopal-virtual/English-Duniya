@@ -29,8 +29,12 @@ window.createGame = function(scope, lessons, audio, injector, log) {
       this.load.image('grass', 'img/assets/stone-grass.png');
       this.load.image('scorpion', 'img/assets/scorpion.png');
 
-      this.load.spritesheet('fire_animation', 'img/assets/fire_animation.png', 322, 452, 20);
-      this.load.spritesheet('cactus_animation', 'img/assets/cactus_animation.png', 30, 52, 5);
+      this.load.spritesheet('fire_animation', 'img/assets/fire_animation.png', 122, 193, 39);
+    //   this.load.spritesheet('cactus_animation', 'img/assets/cactus_animation.png', 802, 1350, 35);
+    //   this.load.spritesheet('cactus_second_animation', 'img/assets/cactus_second_animation.png', 551, 754);
+    //   this.load.spritesheet('camel_animation', 'img/assets/camel_animation.png', 336, 256);
+    //   this.load.spritesheet('scorpion_animation', 'img/assets/scorpion_animation.png', 103, 95);
+    //   this.load.spritesheet('tent_animation', 'img/assets/tent_animation.png', 734, 394);
 
       this.load.image('node-litmus', 'img/icons/node.png');
       this.load.image('node-vocabulary', 'img/icons/icon-vocabulary-node.png');
@@ -158,7 +162,6 @@ window.createGame = function(scope, lessons, audio, injector, log) {
       }
       // fire animation
       var fire_animation = this.game.add.sprite(tent_points[0].x, tent_points[0].y + 40 + this.iceregion_height, 'fire_animation');
-      fire_animation.scale.setTo(0.2, 0.2);
       fire_animation.anchor.setTo(0.5, 0.5);
       var light = fire_animation.animations.add('light');
       fire_animation.animations.play('light', 20, true);
@@ -184,12 +187,32 @@ window.createGame = function(scope, lessons, audio, injector, log) {
         var cactus = this.game.add.sprite(cactus_points[i].x, cactus_points[i].y + this.iceregion_height, 'cactus');
         cactus.anchor.setTo(0.5, 0.5);
         cactus.scale.setTo(cactus_points[i].scale);
-        // catcus animation
-        // var cactus_animation = this.game.add.sprite(this.game.rnd.between(10,this.game.world.width-10), this.game.rnd.between(0,this.game.world.height), 'cactus_animation');
-        // cactus_animation.scale.setTo(3,3);
-        // var walk = cactus_animation.animations.add('walk');
-        // cactus_animation.animations.play('walk', 10, true);
       }
+
+    //   // catcus animation
+    //   var cactus_animation = this.game.add.sprite(0,0, 'cactus_animation');
+    //   var wind = cactus_animation.animations.add('wind');
+    //   cactus_animation.animations.play('wind', 20, true);
+      //
+    //   // catcus animation
+    //   var cactus_second_animation = this.game.add.sprite(0,1000, 'cactus_second_animation');
+    //   var wind_second = cactus_second_animation.animations.add('wind_second');
+    //   cactus_second_animation.animations.play('wind_second', 20, true);
+      //
+    //   // camel animation
+    //   var camel_animation = this.game.add.sprite(0,100, 'camel_animation');
+    //   var neck_move = camel_animation.animations.add('neck_move');
+    //   camel_animation.animations.play('neck_move', 60, true);
+      //
+    //   // scorpion animation
+    //   var scorpion_animation = this.game.add.sprite(0,100, 'scorpion_animation');
+    //   var walk = scorpion_animation.animations.add('walk');
+    //   scorpion_animation.animations.play('walk', 20, true);
+      //
+    //   // tent animation
+    //   var tent_animation = this.game.add.sprite(0,2000, 'tent_animation');
+    //   var walk = tent_animation.animations.add('walk');
+    //   tent_animation.animations.play('walk', 20, true);
 
       // placing lesson node
       // 1. lesson node count
@@ -265,6 +288,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
         var posy = this.math.catmullRomInterpolation(this.points.y , j);
         log.debug('lesson status', 'node' + type + locked);
         var node = this.game.add.button(posx, posy, 'node' + type + locked);
+        this.add.tween(node.scale).to({ x: [1.2,1], y: [1.2,1]},700, Phaser.Easing.Back.Out, true, 1000).loop(true);
         node.inputEnabled = true;
         node.events.onInputUp.add(
           function(currentLesson, game) {
@@ -300,12 +324,6 @@ window.createGame = function(scope, lessons, audio, injector, log) {
           } else {}
         }
       }
-
-
-      // cactus
-      //   var cactus_animation = this.game.add.sprite(20,20, 'cactus_animation');
-      //   var wind = cactus_animation.animations.add('wind');
-      //   cactus_animation.animations.play('wind', 5, true);
 
       this.init();
       this.game.kineticScrolling.start();

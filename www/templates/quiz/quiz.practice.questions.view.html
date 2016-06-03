@@ -34,7 +34,7 @@
       <div class="bar bar-subheader padding-0 question-subheader bg-pale no-shadow">
         <div ng-if="question.node.title" ng-bind-html="question.node.widgetHtml" class="question practice-question card card-transparent center margin-x-0 margin-y-0 padding-0" ng-click="quizCtrl.playAudio(question.node.widgetSound,$index)"></div>
       </div>
-      <ion-content in-view-container overflow-scroll="false" has-bouncing="true" class="has-practice-header has-question-subheader padding-20 center bg-pale">
+      <ion-content in-view-container overflow-scroll="false" has-bouncing="true" class="has-practice-header has-question-subheader has-footer-large center bg-pale">
         <!-- SCQ -->
         <div
           ng-click="question.attempted=(question.attempted==option.key)?'':option.key"
@@ -63,14 +63,6 @@
             <!-- </div> -->
           </label>
         </div>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
         <!--<label ng-if="question.node.type.type=='choicequestion' && question.node.type.content.is_multiple" ng-repeat="option in question.info.question_type.choices" class="list card padding block" >-->
         <!--<input class="hide" type="checkbox" ng-model="question.attempted[$index+1]" ng-value="option.key" ng-disabled="quizCtrl.isCorrectAttempted(question)">-->
         <!--<div ng-if="option.option">{{option.option}}</div>-->
@@ -87,7 +79,7 @@
   <div class="bar bar-footer bar-footer-large bg-pale">
     <div class="row padding-0">
       <div class="col">
-        <button class="animation-fade-in-from-bottom button button-block button-green margin-0 button-round" ng-click="quizCtrl.getFeedback(quizCtrl.quiz.objects[quizCtrl.currentIndex])" ng-disabled="!quizCtrl.canSubmit()">
+        <button class="animation-fade-in-from-bottom button button-block button-balanced margin-0 button-round" ng-click="quizCtrl.getFeedback(quizCtrl.quiz.objects[quizCtrl.currentIndex])" ng-disabled="!quizCtrl.canSubmit()">
           SUBMIT
           <!-- {{quizCtrl.isCorrectAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex]) ? quizCtrl.currentIndex < quizCtrl.quiz.objects.length - 1 ? 'CONTINUE' : 'DONE' : 'SUBMIT'}} -->
         </button>

@@ -15,6 +15,7 @@
       })
       .state('content.video', {
           url : '/video',
+          nativeTransitions: null,
           params: {
             video: null,
           },

@@ -16,6 +16,7 @@ $dark:                            #444 !default;
 */
 
 // The path for our ionicons font files, relative to the built CSS in www/css
+$balanced:                        #39B89A !default;
 $ionicons-font-path: "../lib/ionic/fonts" !default;
 // Include all of Ionic
 @import
@@ -39,4 +40,5 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
   "footer",
   "header",
   "result",
+  "popup",
   "pie-timer";
