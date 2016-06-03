@@ -70,5 +70,4 @@
         <icon height="87" src="resources/ios/icon/icon-small@3x.png" width="87" />
     </platform>
     <icon src="resources/android/icon/drawable-xhdpi-icon.png" />
-    <preference name="xwalk64bit" value="xwalk64bit" />
 </widget>
