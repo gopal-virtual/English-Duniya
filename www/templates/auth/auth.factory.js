@@ -178,12 +178,12 @@
       var d = $q.defer();
       Restangular.oneUrl('user_details', CONSTANT.BACKEND_SERVICE_DOMAIN + 'rest-auth/user/').get().then(function(response) {
         localStorage.setItem('user_details', JSON.stringify(response));
+        Rest.one('profiles',JSON.parse(localStorage.user_details).profile).get().then(function(profile){
+            localStorage.setItem('profile', JSON.stringify(profile));
+        });
         d.resolve(response);
       }, function(response) {
         d.reject(response);
-      });
-       Rest.one('profiles',JSON.parse(localStorage.user_details).profile).get().then(function(profile){
-          localStorage.setItem('profile', JSON.stringify(profile));
       });
       return d.promise;
     }

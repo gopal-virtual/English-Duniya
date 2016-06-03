@@ -103,6 +103,7 @@
       $state.go('user.main.settings', {});
     })
     $scope.$on('openNode', function(event, node) {
+        $log.debug('open node emitted',node);
         if(node.content_type_name == 'litmus'){
             $state.go('quiz.questions',{
                 id: node.id,
