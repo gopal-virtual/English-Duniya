@@ -9,13 +9,13 @@
         <!-- <div class="button-bar button-group">
           <button type="button" ng-click="authCtrl.googleSignIn()" class="button button-no-shadow button-round button-block button-assertive icon-left ion-social-googleplus"></button>
         </div> -->
-        <button tabindex="4" type="button" ng-click="authCtrl.googleSignIn()" class="button button-no-shadow button-round button-block font-lg button-assertive icon-middle ion-social-googleplus" style="padding: 0;line-height:10px !important"></button>
+        <button tabindex="4" type="button" ng-click="authCtrl.signIn('google')" class="button button-no-shadow button-round button-block font-lg button-assertive icon-middle ion-social-googleplus" style="padding: 0;line-height:10px !important"></button>
       </div>
       <div class="col">
         <!-- <div class="button-bar button-group">
           <button type="button" ng-click="authCtrl.facebookSignIn()" class="button button-no-shadow button-round button-block button-positive icon-left ion-social-facebook"></button>
         </div> -->
-        <button tabindex="5" type="button" ng-click="authCtrl.facebookSignIn()" class="button button-no-shadow button-round button-block font-lg button-positive icon-middle ion-social-facebook" style="padding: 0;line-height:10px !important"></button>
+        <button tabindex="5" type="button" ng-click="authCtrl.signIn('facebook')" class="button button-no-shadow button-round button-block font-lg button-positive icon-middle ion-social-facebook" style="padding: 0;line-height:10px !important"></button>
       </div>
     </div>
     <div class="row">
@@ -24,17 +24,18 @@
         </div>
     </div>
     <div class="row center">
-      <form autocomplete="on" novalidate name="authForm" class="col padding-x-20" ng-submit="authCtrl.closeKeyboard() && authCtrl.validCredential(authForm) && authCtrl.signup({'useridentity':authCtrl.user.useridentity,'password1':authCtrl.user.password,'password2':authCtrl.user.password,'email':authCtrl.user.email})" ng-init="show_password = false">
+      <form autocomplete="on" novalidate name="signUpForm" class="col padding-x-20" ng-submit="authCtrl.closeKeyboard();authCtrl.signup(signUpForm)
+       " ng-init="show_password = false">
 
         <div class="input-group input-group-social">
-          <button type="button" class="icon icon-profile icon-fit-width input-group-item input-group-addon input-group-addon-light font-md">
+          <button type="button" class="icon icon-phone icon-fit-width input-group-item input-group-addon input-group-addon-light font-md">
           </button>
-          <input class="input-control input-group-item input-default input-block font-md" tabindex="1" name="useridentity" type="text" placeholder="Phone" ng-model="authCtrl.user.useridentity" autocomplete="off">
+          <input class="input-control input-group-item input-default input-block font-md" tabindex="1" name="phoneNumber" type="text" placeholder="Phone" ng-model="authCtrl.user.phoneNumber" autocomplete="off">
         </div>
         <div class="input-group input-group-social">
           <button type="button" class="icon icon-mail icon-fit-width input-group-item input-group-addon input-group-addon-light font-md" >
           </button>
-          <input class="input-control input-group-item input-default input-block font-md" tabindex="2" ng-trim="false" valid-input name="email" type="text" placeholder="Email" ng-model="authCtrl.user.email" autocomplete="off">
+          <input class="input-control input-group-item input-default input-block font-md" tabindex="2" ng-trim="false" valid-input name="emailAddress" type="text" placeholder="Email" ng-model="authCtrl.user.emailAddress" autocomplete="off">
         </div>
         <div class="input-group input-group-social">
           <button type="button" class="icon icon-password icon-fit-width input-group-item input-group-addon input-group-addon-light font-md" >
@@ -45,7 +46,7 @@
           </button> -->
         </div>
         <div class="margin-y-20">
-          <button ng-disabled="authCtrl.signUpDisabled" tabindex="4" class="button button-round button-block padding-x-40 button-balanced button-no-shadow" style="padding: 0;line-height:20px !important">SIGN UP</button>
+          <button tabindex="4" class="button button-round button-block padding-x-40 button-green button-no-shadow" style="padding: 0;line-height:20px !important">SIGN UP</button>
           <div>
         </form>
     </div>

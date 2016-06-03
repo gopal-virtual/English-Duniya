@@ -11,4 +11,5 @@ plugins/
 /www/build/mobile.app.js
 /www/build/*
 /www/css/
+/www/templates/templates.js
 .DS_Store

@@ -9,13 +9,13 @@
         <!-- <div class="button-bar button-group">
           <button type="button" ng-click="authCtrl.googleSignIn()" class="button button-no-shadow button-round button-block button-assertive icon-left ion-social-googleplus"></button>
         </div> -->
-        <button tabindex="4" type="button" ng-click="authCtrl.googleSignIn()" class="button button-no-shadow button-round button-block font-lg button-assertive icon-middle ion-social-googleplus" style="padding: 0;line-height:10px !important"></button>
+        <button tabindex="4" type="button" ng-click="authCtrl.signIn('google')" class="button button-no-shadow button-round button-block font-lg button-assertive icon-middle ion-social-googleplus" style="padding: 0;line-height:10px !important"></button>
       </div>
       <div class="col">
         <!-- <div class="button-bar button-group">
           <button type="button" ng-click="authCtrl.facebookSignIn()" class="button button-no-shadow button-round button-block button-positive icon-left ion-social-facebook"></button>
         </div> -->
-        <button tabindex="5" type="button" ng-click="authCtrl.facebookSignIn()" class="button button-no-shadow button-round button-block font-lg button-positive icon-middle ion-social-facebook" style="padding: 0;line-height:10px !important"></button>
+        <button tabindex="5" type="button" ng-click="authCtrl.signIn('facebook')" class="button button-no-shadow button-round button-block font-lg button-positive icon-middle ion-social-facebook" style="padding: 0;line-height:10px !important"></button>
       </div>
     </div>
     <div class="row">
@@ -24,11 +24,12 @@
         </div>
     </div>
     <div class="row padding-x-20 center">
-      <form name="authForm" class="col" ng-submit="authCtrl.closeKeyboard() && authCtrl.validCredential(authForm) && authCtrl.login('login',{'useridentity':authCtrl.user.useridentity, 'password':authCtrl.user.password})">
+      <form name="loginForm" class="col" ng-submit="authCtrl.closeKeyboard(); authCtrl.signin('login',loginForm)
+      ">
         <div class="input-group input-group-social">
           <button type="button" class="icon icon-profile icon-fit-width input-group-item input-group-addon input-group-addon-light font-md" >
           </button>
-          <input class="input-control input-group-item input-default font-md" valid-input ng-trim="false" tabindex="1" name="useridentity" type="text" placeholder="Phone / Email" ng-model="authCtrl.user.useridentity" autocomplete="off">
+          <input class="input-control input-group-item input-default font-md" valid-input ng-trim="false" tabindex="1" name="userIdentity" type="text" placeholder="Phone  / Email" ng-model="authCtrl.user.userIdentity" autocomplete="off">
         </div>
         <div class="input-group input-group-social">
           <button type="button" class="icon icon-password icon-fit-width input-group-item input-group-addon input-group-addon-light font-md" >
@@ -39,8 +40,8 @@
             <i class="icon" ng-class="{'ion-ios-glasses-outline' : !show_password, 'ion-ios-glasses' : show_password}"></i>
           </button> -->
         </div>
-        <h4 class="text-right"><p class="color-dark-light" ng-click="authCtrl.recoverAccount()">Forgot password?</p></h4>
-        <button tabindex="3" type="submit" class="button button-block button-no-shadow button-round button-balanced padding-x-40" style="padding: 0;line-height:20px !important">LOG IN</button>
+        <h4 class="text-right"><p class="color-dark-light" ng-click="authCtrl.recoveryModal.show()">Forgot password?</p></h4>
+        <button tabindex="3" type="submit" class="button button-block button-no-shadow button-round button-green padding-x-40" style="padding: 0;line-height:20px !important">LOG IN</button>
       </form>
     </div>
     <hr>

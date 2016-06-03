@@ -8,6 +8,7 @@
       'BACKEND_SERVICE_DOMAIN': 'http://cc-test.zaya.in/',
       'RESOURCE_SERVER': 'http://cc-test.zaya.in/',
       // 'BACKEND_SERVICE_DOMAIN' : 'http://192.168.1.6:9000/',
+
       'PATH': {
         'INTRO': ROOT + '/intro',
         'AUTH': ROOT + '/auth',
@@ -24,6 +25,16 @@
         'CONTENT': ROOT + '/content'
       },
       'VIEW': '.view.html',
+      'CONFIG': {
+        'AUTH': {
+          'GOOGLEPLUS': {
+            'scopes': 'email profile',
+            'webApiKey': '306430510808-i5onn06gvm82lhuiopm6l6188133j5r4.apps.googleusercontent.com',
+            'offline': true
+          },
+          'FB': ['email', 'public_profile']
+        }
+      },
       'CLIENTID': {
         'FACEBOOK': '1159750564044149',
         'GOOGLE': '1011514043276-7q3kvn29jkegl2d1v7dtlbtipqqgo1rr.apps.googleusercontent.com',
@@ -37,7 +48,7 @@
       'STAR': {
         'ONE': 60,
         'TWO': 80,
-        'THREE':100
+        'THREE': 100
       },
       'WIDGETS': {
         'SPEAKER_IMAGE': '<img class="content-image sound-image" src="img/icons/sound.png">',
@@ -47,9 +58,9 @@
           'SCQ': 'scq',
           'MCQ': 'mcq'
         },
-        'LAYOUT' : {
-          'LIST' : 'list',
-          'GRID' : 'grid'
+        'LAYOUT': {
+          'LIST': 'list',
+          'GRID': 'grid'
         }
       },
       'ATTEMPT': {

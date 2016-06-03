@@ -58,14 +58,19 @@
 
       if(toState.name == 'auth.verify.phone'){
         $log.debug("verify");
-        // document.addEventListener('onSMSArrive',function(e){
-        //   $rootScope.$broadcast('smsArrived',{'message':e})
-        // });
+        $ionicPlatform.ready(function() {
+          if (SMS) SMS.startWatch(function() {
+            $log.debug('watching', 'watching started');
+          }, function() {
+            $log.debug('failed to start watching');
+          });
+        })
 
       }
 
     });
     $ionicPlatform.ready(function () {
+
 
 
     //   if (window.StatusBar) {
@@ -76,7 +81,10 @@
           navigator.splashscreen.hide();
       }
 
-
+      document.addEventListener('onSMSArrive', function(e) {
+        $rootScope.$broadcast('smsArrived',e);
+        $log.debug(e);
+      });
 
     //   document.addEventListener("pause", function(){
     //     $log.debug("paused");
@@ -115,23 +123,7 @@
         StatusBar.styleDefault();
       }
     })
-  //   .then(function() {
-  //   return $cordovaFile.createDir('downloads', false);
-  // })
-  // .then(function() {
-  //   return $cordovaFile.createFile('downloads' + '/' + '1.png', false);
-  // })
-  // .then(function(newFile) {
-  //   return $cordovaFile.downloadFile('http://www.imagenspng.com.br/wp-content/uploads/2015/02/small-super-mario.png', newFile.nativeURL);
-  // })
-  // .then(function(result) {
-  //   // Success!
-  // }, function(err) {
-  //   // Error
-  // }, function (progress) {
-  //   // constant progress updates
-  //   $log.debug('Downloading: '+(progress.loaded/progress.total).toFixed()+'%');
-  // });
+
   }
 }
 )();
