@@ -279,7 +279,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
       };
       log.debug('canvas lessons',lessons.length);
       // Place nodes
-      for (var j = 0, i = lessons.length - 1, nodeCount = 1 / (lessons.length); i >= 0 ; j += nodeCount, i--) {
+      for (var j = 0, i = lessons.length - 1, nodeCount = 1 / (lessons.length); i >= 0; j += nodeCount, i--) {
         var currentLesson = lessons[i];
         log.debug(i, currentLesson);
         var locked = currentLesson.locked ? '-locked' : '';

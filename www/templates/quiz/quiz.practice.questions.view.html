@@ -79,7 +79,7 @@
   <div class="bar bar-footer bar-footer-large bg-pale">
     <div class="row padding-0">
       <div class="col">
-        <button class="animation-fade-in-from-bottom button button-block button-balanced margin-0 button-round" ng-click="quizCtrl.getFeedback(quizCtrl.quiz.objects[quizCtrl.currentIndex])" ng-disabled="!quizCtrl.canSubmit()">
+        <button class="animation-fade-in-from-bottom button button-block button-balanced margin-0 button-round" style="height:40px;line-height:45px" ng-click="quizCtrl.getFeedback(quizCtrl.quiz.objects[quizCtrl.currentIndex])" ng-disabled="!quizCtrl.canSubmit()">
           SUBMIT
           <!-- {{quizCtrl.isCorrectAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex]) ? quizCtrl.currentIndex < quizCtrl.quiz.objects.length - 1 ? 'CONTINUE' : 'DONE' : 'SUBMIT'}} -->
         </button>
