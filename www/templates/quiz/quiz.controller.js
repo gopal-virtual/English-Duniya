@@ -177,13 +177,18 @@
 
           $ionicModal.fromTemplateUrl(CONSTANT.PATH.QUIZ + '/practice.feedback' + CONSTANT.VIEW, {
             scope: $scope,
-            animation: 'slide-in-up'
+            animation: 'slide-in-down'
           }).then(function(modal) {
             $scope.modal = modal;
           });
           $scope.openModal = function() {
             $scope.modal.show();
-            return true;
+            $timeout(function () {
+              if($scope.modal.isShown())
+              {
+                $scope.closeModal();
+              }
+            }, 2000);
           };
           $scope.closeModal = function() {
             if (isCorrectAttempted(quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()]) || quizCtrl.report.attempts[quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.id].length >= 2) {
