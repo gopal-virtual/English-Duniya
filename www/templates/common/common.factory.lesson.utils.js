@@ -100,7 +100,7 @@
       if (utils.resourceType(resource) == 'assessment') {
         $timeout(function() {
           $stateParams.type != 'assessment' &&
-            $state.go('quiz.questions', {
+            $state.go('quiz.start', {
               id: resource.node.id,
               type: 'assessment'
             });
@@ -109,7 +109,7 @@
       } else if (utils.resourceType(resource) == 'practice') {
         $timeout(function() {
           $stateParams.type != 'practice' &&
-            $state.go('quiz.questions', {
+            $state.go('quiz.start', {
               id: resource.node.id,
               type: 'practice'
             });

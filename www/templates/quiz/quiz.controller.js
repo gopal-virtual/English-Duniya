@@ -155,6 +155,12 @@
     }
 
     function init(quiz) {
+      if($state.current.name == "quiz.start"){
+        $ionicLoading.show();
+        quizCtrl.preloadResources(quiz).then(function(success) {
+          $ionicLoading.hide();
+        });
+      }
       if ($state.current.name == "quiz.summary") {
         quizCtrl.report = $stateParams.report;
         quizCtrl.quiz = $stateParams.quiz;
@@ -165,9 +171,7 @@
           // quizCtrl.summary = quizCtrl.generateSummary(quizCtrl.report, quizCtrl.quiz);
         quizCtrl.submitReport(quizCtrl.quiz, quizCtrl.report, quizCtrl.summary);
       } else if ($state.current.name == "quiz.questions") {
-        quizCtrl.preloadResources(quiz).then(function(success) {
 
-        });
         quizCtrl.setCurrentIndex(0);
         if ($stateParams.type == 'assessment') {
           quizCtrl.startTimer();
@@ -191,17 +195,26 @@
             }, 2000);
           };
           $scope.closeModal = function() {
-            if (isCorrectAttempted(quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()]) || quizCtrl.report.attempts[quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.id].length >= 2) {
-              if (quizCtrl.currentIndex >= quizCtrl.quiz.objects.length - 1) {
-                quizCtrl.submitQuiz('practice');
-              } else {
+            if (quizCtrl.currentIndex >= quizCtrl.quiz.objects.length - 1) {
                 $scope.modal.hide().then(function() {
-                  $ionicSlideBoxDelegate.slide(quizCtrl.getCurrentIndex() + 1);
+                  quizCtrl.submitQuiz('practice');
                 });
-              }
-            } else {
-              $scope.modal.hide()
+            }else {
+              $scope.modal.hide().then(function() {
+                $ionicSlideBoxDelegate.slide(quizCtrl.getCurrentIndex() + 1);
+              });
             }
+            // if (isCorrectAttempted(quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()]) || quizCtrl.report.attempts[quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.id].length >= 2) {
+            //   if (quizCtrl.currentIndex >= quizCtrl.quiz.objects.length - 1) {
+            //     quizCtrl.submitQuiz('practice');
+            //   } else {
+            //     $scope.modal.hide().then(function() {
+            //       $ionicSlideBoxDelegate.slide(quizCtrl.getCurrentIndex() + 1);
+            //     });
+            //   }
+            // } else {
+            //   $scope.modal.hide()
+            // }
           };
         }
         quizCtrl.summary.score = {
@@ -299,16 +312,16 @@
         }
         audio.play('wrong');
         // SCQ
-        if (quizCtrl.getQuestionType(question) == CONSTANT.WIDGETS.QUESTION_TYPES.SCQ) {
-          question.attempted = '';
-        }
-        // MCQ
-        if (quizCtrl.getQuestionType(question) == CONSTANT.WIDGETS.QUESTION_TYPES.MCQ) {
-          question.attempted = {};
-        }
-        if (quizCtrl.report.attempts[question.node.id].length == 2) {
-          quizCtrl.quiz.objects.push(angular.copy(question));
-        }
+        // if (quizCtrl.getQuestionType(question) == CONSTANT.WIDGETS.QUESTION_TYPES.SCQ) {
+        //   question.attempted = '';
+        // }
+        // // MCQ
+        // if (quizCtrl.getQuestionType(question) == CONSTANT.WIDGETS.QUESTION_TYPES.MCQ) {
+        //   question.attempted = {};
+        // }
+        // if (quizCtrl.report.attempts[question.node.id].length == 2) {
+        //   quizCtrl.quiz.objects.push(angular.copy(question));
+        // }
       }
       $scope.openModal();
     }
