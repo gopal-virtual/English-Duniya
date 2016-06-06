@@ -36,7 +36,8 @@ window.createGame = function(scope, lessons, audio, injector, log) {
     //   this.load.spritesheet('scorpion_animation', 'img/assets/scorpion_animation.png', 103, 95);
     //   this.load.spritesheet('tent_animation', 'img/assets/tent_animation.png', 734, 394);
 
-      this.load.image('node-litmus', 'img/icons/node.png');
+      this.load.image('node', 'img/icons/node.png');
+      this.load.image('node-litmus', 'img/icons/icon-litmus-node.png');
       this.load.image('node-vocabulary', 'img/icons/icon-vocabulary-node.png');
       this.load.image('node-listening', 'img/icons/icon-listening-node.png');
       this.load.image('node-grammar', 'img/icons/icon-grammar-node.png');
@@ -281,7 +282,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
       // Place nodes
       for (var j = 0, i = lessons.length - 1, nodeCount = 1 / (lessons.length); i >= 0; j += nodeCount, i--) {
         var currentLesson = lessons[i];
-        log.debug(i, currentLesson);
+        // log.debug(i, currentLesson);
         var locked = currentLesson.locked ? '-locked' : '';
         var type = lessonType(currentLesson, currentLesson.locked);
         var posx = this.math.catmullRomInterpolation(this.points.x, j);

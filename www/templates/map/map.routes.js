@@ -38,14 +38,37 @@
       .state('map.navigate', {
         url: '/navigate',
         nativeTransitions: {
-            "type": "fade",
-            "duration" :  1000,
+          "type": "fade",
+          "duration": 1000,
         },
-        onEnter: ['$state', 'lessons','audio','$ionicLoading', function($state, lessons, audio, $ionicLoading) {
-            $ionicLoading.show({
-                templateUrl : 'templates/common/common.loader.view.html',
-                duration : 8000
-            });
+        data : {
+            litmus : {
+              "id": "001",
+              "content_type_name": "litmus",
+              "tag": "Litmus",
+              "locked": false
+          },
+          skillset : [{
+            name: 'reading',
+            score: 300
+          }, {
+            name: 'listening',
+            score: 200
+          }, {
+            name: 'vocabulary',
+            score: 250
+          }, {
+            name: 'grammar',
+            score: 3000
+          }]
+
+      },
+        onEnter: ['$state', 'lessons', 'audio', '$ionicLoading', 'orientation', function($state, lessons, audio, $ionicLoading, orientation) {
+          orientation.setPortrait();
+          $ionicLoading.show({
+            templateUrl: 'templates/common/common.loader.view.html',
+            duration: 8000
+          });
           if (!lessons) {
             $state.go('map.unauthorised');
           }
