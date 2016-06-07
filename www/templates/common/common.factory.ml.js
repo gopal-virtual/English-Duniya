@@ -399,8 +399,8 @@
     function getDqsByLevelNSkill(level, skill){
       var srs = [];
       for(var q_id in ml.dqJSON){
-        if(ml.dqJSON[q_id]["level"] == level && ml.dqJSON[q_id]["skill_area"] == skill){
-          srs.push({"sr": ml.dqJSON[q_id]["sr"], "skill_area": skill});
+        if(ml.dqJSON[q_id]["node"]["level"] == level && ml.dqJSON[q_id]["node"]["skill_area"] == skill){
+          srs.push({"sr": ml.dqJSON[q_id]["node"]["sr"], "skill_area": skill});
         }
       }
       return srs;
