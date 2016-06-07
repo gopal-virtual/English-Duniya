@@ -37,6 +37,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
     //   this.load.spritesheet('tent_animation', 'img/assets/tent_animation.png', 734, 394);
 
       this.load.image('node', 'img/icons/node.png');
+      this.load.image('node-litmus', 'img/icons/icon-litmus-node.png');
       this.load.image('node-vocabulary', 'img/icons/icon-vocabulary-node.png');
       this.load.image('node-listening', 'img/icons/icon-listening-node.png');
       this.load.image('node-grammar', 'img/icons/icon-grammar-node.png');
@@ -277,14 +278,16 @@ window.createGame = function(scope, lessons, audio, injector, log) {
       function lessonType(lesson, locked) {
         return !locked ? '-' + lesson.tag.toLowerCase() : '';
       };
+      log.debug('canvas lessons',lessons.length);
       // Place nodes
       for (var j = 0, i = lessons.length - 1, nodeCount = 1 / (lessons.length); i >= 0; j += nodeCount, i--) {
         var currentLesson = lessons[i];
-        log.debug('lesson status', i, currentLesson);
+        // log.debug(i, currentLesson);
         var locked = currentLesson.locked ? '-locked' : '';
         var type = lessonType(currentLesson, currentLesson.locked);
         var posx = this.math.catmullRomInterpolation(this.points.x, j);
         var posy = this.math.catmullRomInterpolation(this.points.y , j);
+        log.debug('lesson status', 'node' + type + locked);
         var node = this.game.add.button(posx, posy, 'node' + type + locked);
         this.add.tween(node.scale).to({ x: [1.2,1], y: [1.2,1]},700, Phaser.Easing.Back.Out, true, 1000).loop(true);
         node.inputEnabled = true;
@@ -310,7 +313,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
         // add stars
         if (currentLesson.stars >= 0) {
           var stars = this.game.add.group();
-          log.debug('stars in lesson', currentLesson.stars);
+        //   log.debug('stars in lesson', currentLesson.stars);
           if (currentLesson.stars == 0) {
             createStars(0, $.merge([posx], star_x), $.merge([posy], star_y));
           } else if (currentLesson.stars == 1) {

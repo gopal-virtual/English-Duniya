@@ -14,6 +14,7 @@
       'com.2fdevs.videogular.plugins.controls',
       'com.2fdevs.videogular.plugins.buffering',
       'angular-inview',
+      'pouchdb',
       'ionic.ion.imageCacheFactory',
       // core
       'templates',

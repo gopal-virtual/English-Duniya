@@ -63,7 +63,7 @@
     }
 
     function getLocalLesson() {
-      return JSON.parse(localStorage.lesson);
+      return localStorage.lesson? JSON.parse(localStorage.lesson) : {};
     }
 
     function setLocalLesson(lesson) {

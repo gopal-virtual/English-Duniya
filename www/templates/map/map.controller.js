@@ -5,58 +5,28 @@
     .module('zaya-map')
     .controller('mapController', mapController);
 
-  mapController.$inject = ['$scope', '$rootScope', '$log', '$ionicModal', '$state', 'lessons', 'scores', 'extendLesson', 'Rest', 'CONSTANT', '$sce', '$ionicLoading', '$timeout', '$ionicBackdrop', 'orientation', 'Auth','lessonutils','audio'];
+  mapController.$inject = ['$scope', '$rootScope', '$log', '$ionicModal', '$state', 'lessons', 'scores', 'extendLesson', 'Rest', 'CONSTANT', '$sce', '$ionicLoading', '$timeout', '$ionicBackdrop', 'orientation', 'Auth','lessonutils','audio','data', 'ml'];
 
-  function mapController($scope, $rootScope, $log, $ionicModal, $state, lessons, scores, extendLesson, Rest, CONSTANT, $sce, $ionicLoading, $timeout, $ionicBackdrop, orientation, Auth, lessonutils, audio) {
-    $scope.$on("$ionicView.beforeEnter", function(event, data) {
-      orientation.setPortrait();
-    });
+  function mapController($scope, $rootScope, $log, $ionicModal, $state, lessons, scores, extendLesson, Rest, CONSTANT, $sce, $ionicLoading, $timeout, $ionicBackdrop, orientation, Auth, lessonutils, audio, data, ml) {
     $scope.audio = audio;
     $scope.orientation= orientation;
-    function preload(arrayOfImages) {
-          $(arrayOfImages).each(function(){
-              $('<img/>')[0].src = this;
-          });
-      }
-      preload([
-          '/img/assets/avatar-boy.png',
-          '/img/assets/pause_menu_top.png',
-          '/img/assets/pause_menu_middle.png',
-          '/img/assets/pause_menu_bottom.png'
-      ]);
     var mapCtrl = this;
-    mapCtrl.lessons = CONSTANT.LOCK ? extendLesson.getLesson(lessons, scores) : lessons;
-    // mapCtrl.getLesson = getLesson;
-    // mapCtrl.getSrc = getSrc;
+    var lessonList = CONSTANT.LOCK ? extendLesson.getLesson(lessons, scores) : lessons;
+    lessonList.unshift($state.current.data.litmus);
+    mapCtrl.lessons = lessonList;
+    $log.debug('lessons',mapCtrl.lessons);
     mapCtrl.resetNode = resetNode;
     $scope.lessonutils = lessonutils;
-    // mapCtrl.getIcon = getIcon;
-    // mapCtrl.resourceType = resourceType;
-    // mapCtrl.playResource = playResource;
     mapCtrl.logout = logout;
     mapCtrl.backdrop = false;
     mapCtrl.showScore = -1;
     mapCtrl.user = JSON.parse(localStorage.user_details) || {};
     mapCtrl.user['name'] = mapCtrl.user.first_name + ' ' + mapCtrl.user.last_name;
 
-    // mapCtrl.openModal = openModal;
-    // mapCtrl.closeModal = closeModal;
     mapCtrl.openSettings = openSettings;
     mapCtrl.closeSettings = closeSettings;
 
-    mapCtrl.skillSet = [{
-      name: 'reading',
-      score: 300
-    }, {
-      name: 'listening',
-      score: 200
-    }, {
-      name: 'vocabulary',
-      score: 250
-    }, {
-      name: 'grammar',
-      score: 3000
-    }];
+    mapCtrl.skillSet = $state.current.data.skillset;
 
     function logout(type) {
       mapCtrl.closeSettings();
@@ -90,10 +60,19 @@
       $state.go('user.main.settings', {});
     })
     $scope.$on('openNode', function(event, node) {
-      $scope.lessonutils.getLesson(node.id, $scope, function(response){
-          $scope.openNodeMenu();
-          $scope.selectedNode = response;
-      });
+        $log.debug('open node emitted',node);
+        if(node.content_type_name == 'litmus'){
+            $state.go('quiz.questions',{
+                id: node.id,
+                type : 'litmus'
+            });
+        }
+        else{
+            $scope.lessonutils.getLesson(node.id, $scope, function(response){
+                $scope.openNodeMenu();
+                $scope.selectedNode = response;
+            });
+        }
     })
     $scope.$on('$destroy', function() {
       $scope.modal.remove();

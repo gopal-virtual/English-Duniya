@@ -125,6 +125,9 @@
           return Auth.getUser();
         })
         .then(function() {
+          return Auth.getProfile();
+        })
+        .then(function() {
           $state.go('map.navigate', {});
         })
         .catch(function(error) {
