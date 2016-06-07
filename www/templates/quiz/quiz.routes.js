@@ -107,10 +107,11 @@
 
 
               return $q.all(all_promises).then(function() {
-                  var id = ml.getNextQSr(data.getTestParams(JSON.parse(localStorage.profile).grade), ml.mapping);
-                  var question = ml.dqJSON[id.qSr];
-                  $log.debug('question node', question);
+                  var suggestion = ml.getNextQSr(data.getTestParams(JSON.parse(localStorage.profile).grade), ml.mapping);
+                  var question = ml.dqJSON[suggestion.qSr];
+                  $log.debug('question node', suggestion);
                   question && litmus.objects.push(question);
+                  litmus['suggestion'] = suggestion;
                   return litmus;
               })
 

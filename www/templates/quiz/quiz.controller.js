@@ -4,9 +4,9 @@
     .module('zaya-quiz')
     .controller('QuizController', QuizController)
 
-  QuizController.$inject = ['quiz', 'widgetParser', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Quiz', 'Auth', '$ionicLoading', '$ionicPopup', 'lessonutils', 'orientation', '$location', '$anchorScroll', '$document', '$ionicScrollDelegate', '$ionicPosition', '$timeout', '$window', 'soundManager', '$cordovaFileTransfer', '$cordovaFile', '$interval', '$q', '$ImageCacheFactory'];
+  QuizController.$inject = ['quiz', 'widgetParser', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Quiz', 'Auth', '$ionicLoading', '$ionicPopup', 'lessonutils', 'orientation', '$location', '$anchorScroll', '$document', '$ionicScrollDelegate', '$ionicPosition', '$timeout', '$window', 'soundManager', '$cordovaFileTransfer', '$cordovaFile', '$interval', '$q', '$ImageCacheFactory', 'ml'];
 
-  function QuizController(quiz, widgetParser, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Quiz, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition, $timeout, $window, soundManager, $cordovaFileTransfer, $cordovaFile, $interval, $q, $ImageCacheFactory) {
+  function QuizController(quiz, widgetParser, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Quiz, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition, $timeout, $window, soundManager, $cordovaFileTransfer, $cordovaFile, $interval, $q, $ImageCacheFactory, ml) {
 
     var quizCtrl = this;
 
@@ -26,6 +26,9 @@
     quizCtrl.isKeyCorrect = isKeyCorrect;
     quizCtrl.isKeyAttempted = isKeyAttempted;
     quizCtrl.canSubmit = canSubmit;
+    quizCtrl.setSuggestion = setSuggestion;
+    quizCtrl.updateSlide = updateSlide;
+    quizCtrl.parseHtml = parseHtml;
 
     //binding services to controller scope
     $scope.audio = audio;
@@ -173,7 +176,7 @@
           quizCtrl.startTimer();
         }
 
-        if ($stateParams.type == 'practice' || $stateParams.type == 'litmus') {
+        if ($stateParams.type == 'practice') {
           $ionicSlideBoxDelegate.enableSlide(false);
 
           $ionicModal.fromTemplateUrl(CONSTANT.PATH.QUIZ + '/practice.feedback' + CONSTANT.VIEW, {
@@ -208,14 +211,10 @@
         quizCtrl.report.attempts = {};
         //parse all the options and questions to html
         for (i = 0; i < quiz.objects.length; i++) {
-          quizCtrl.quiz.objects[i].node.widgetHtml = quizCtrl.widgetParser.parseToDisplay(quizCtrl.quiz.objects[i].node.title, i, quizCtrl.quiz);
-
-          quizCtrl.quiz.objects[i].node.widgetSound = quizCtrl.widgetParser.getSoundId(quizCtrl.quiz.objects[i].node.title);
-          for (j = 0; j < quizCtrl.quiz.objects[i].node.type.content.options.length; j++) {
-            quizCtrl.quiz.objects[i].node.type.content.options[j].widgetHtml = quizCtrl.widgetParser.parseToDisplay(quizCtrl.quiz.objects[i].node.type.content.options[j].option, i, quizCtrl.quiz)
-            quizCtrl.quiz.objects[i].node.type.content.options[j].widgetSound = quizCtrl.widgetParser.getSoundId(quizCtrl.quiz.objects[i].node.type.content.options[j].option);
-          }
+          quizCtrl.parseHtml(i);
         }
+
+
         //init report
         for (i = 0; i < quiz.objects.length; i++) {
           quizCtrl.report.attempts[quiz.objects[i].node.id] = [];
@@ -237,8 +236,18 @@
 
     }
 
+    function parseHtml(index) {
+      quizCtrl.quiz.objects[index].node.widgetHtml = quizCtrl.widgetParser.parseToDisplay(quizCtrl.quiz.objects[index].node.title, index, quizCtrl.quiz);
+
+      quizCtrl.quiz.objects[index].node.widgetSound = quizCtrl.widgetParser.getSoundId(quizCtrl.quiz.objects[index].node.title);
+      for (j = 0; j < quizCtrl.quiz.objects[index].node.type.content.options.length; j++) {
+        quizCtrl.quiz.objects[index].node.type.content.options[j].widgetHtml = quizCtrl.widgetParser.parseToDisplay(quizCtrl.quiz.objects[index].node.type.content.options[j].option, index, quizCtrl.quiz)
+        quizCtrl.quiz.objects[index].node.type.content.options[j].widgetSound = quizCtrl.widgetParser.getSoundId(quizCtrl.quiz.objects[index].node.type.content.options[j].option);
+      }
+    }
+
     function getQuestionType(question) {
-        $log.debug(question)
+      $log.debug(question)
       if (question.node.type.type == CONSTANT.WIDGETS.QUESTION_TYPES.CHOICE_QUESTION) {
         return question.node.type.content.is_multiple ? CONSTANT.WIDGETS.QUESTION_TYPES.MCQ : CONSTANT.WIDGETS.QUESTION_TYPES.SCQ;
       }
@@ -264,7 +273,7 @@
     }
 
     function nextQuestion(shouldScroll) {
-      $log.debug("nextQuestion");
+      $log.debug("nextQuestion", quizCtrl.quiz.objects.length);
       if (quizCtrl.currentIndex < quizCtrl.quiz.objects.length - 1) {
         if (shouldScroll) {
           quizCtrl.inViewFlag = false;
@@ -273,7 +282,9 @@
           $ionicScrollDelegate.scrollBy(position.left, position.top, true);
         }
         ++quizCtrl.currentIndex;
+        $log.debug("nextQuestion", quizCtrl.getCurrentIndex());
       }
+      return true;
     }
 
     function getFeedback(question) {
@@ -326,8 +337,44 @@
       }
     }
 
-    function submitAttempt(questionId, attempt) {
-      quizCtrl.report.attempts[questionId].push(angular.copy(attempt));
+    function submitAttempt(questionId, attempt, type) {
+      if (type == 'litmus') {
+        var isCorrect = quizCtrl.isCorrect(quizCtrl.quiz.objects[quizCtrl.currentIndex], attempt);
+        quizCtrl.quiz.suggestion.test[0]['setPreviousAnswer'] = isCorrect ? 1 : 0;
+        quizCtrl.quiz.suggestion.test[0]["qSet"][quizCtrl.quiz.suggestion["actualLevel"]] = {
+          "sr": quizCtrl.quiz.suggestion.qSr,
+          "answered": isCorrect ? "right" : "wrong"
+        };
+        return true;
+      } else {
+        quizCtrl.report.attempts[questionId].push(angular.copy(attempt));
+        return true;
+      }
+      return false;
+    }
+
+    function setSuggestion() {
+      quizCtrl.quiz.suggestion = ml.getNextQSr(quizCtrl.quiz.suggestion.test, ml.mapping);
+      $log.debug('suggestion comming ',quizCtrl.quiz.suggestion);
+      if (quizCtrl.quiz.suggestion) {
+        quizCtrl.quiz.objects.push(ml.dqJSON[quizCtrl.quiz.suggestion.qSr]);
+        $log.debug("suggestion new", quizCtrl.quiz.suggestion);
+        $log.debug("suggestion questions", quizCtrl.quiz);
+      } else {
+          $log.debug('bam!',ml.dqQuiz);
+          $log.debug('bam!',ml.runDiagnostic(ml.dqQuiz));
+          $state.go('map.navigate',{})
+      }
+      return true;
+    }
+
+    function updateSlide() {
+      $log.debug('slide updated');
+      $ionicSlideBoxDelegate.update();
+      quizCtrl.parseHtml(quizCtrl.getCurrentIndex());
+      $timeout(function(){
+          $ionicSlideBoxDelegate.next();
+      },300)
     }
 
 
@@ -398,13 +445,12 @@
     }
 
     function playAudio(key, index) {
-      if(key !== undefined){
+      if (key !== undefined) {
         angular.element("#audioplayer")[0].pause();
         var src;
-        try{
+        try {
           src = soundManager.getSound(CONSTANT.RESOURCE_SERVER + quizCtrl.quiz.objects[index].node.type.content.widgets.sounds[key]);
-        }
-        catch(e){
+        } catch (e) {
           src = CONSTANT.RESOURCE_SERVER + quizCtrl.quiz.objects[index].node.type.content.widgets.sounds[key];
         }
 
