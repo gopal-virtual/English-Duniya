@@ -45,7 +45,7 @@
           <label ng-click="quizCtrl.playAudio(quizCtrl.widgetParser.getSoundId(option.option),$parent.$parent.$index)">
             <input class="hide">
             <!-- <div class="option-container"  ng-if="option"> -->
-            <div class="padding-10 option" ng-class="optionsFontSize" ng-bind-html="::option.widgetHtml"></div>
+            <div class="padding-10 option"  ng-bind-html="::option.widgetHtml"></div>
             <!-- </div> -->
           </label>
         </div>
@@ -59,7 +59,7 @@
           <label ng-click="quizCtrl.playAudio(option.widgetSound,$parent.$parent.$index)">
             <input class="hide" type="checkbox" ng-model="question.attempted[option.key]" ng-value="option.key">
             <!-- <div class="option-container"  ng-if="option"> -->
-            <div class="padding-10 option" ng-class="optionsFontSize" ng-bind-html="::option.widgetHtml"></div>
+            <div class="padding-10 option"  ng-bind-html="::option.widgetHtml"></div>
             <!-- </div> -->
           </label>
         </div>

@@ -56,8 +56,8 @@
   margin: 5px 5px 0;
 }
 .card-grid.practice-card {
-  width: 35vw !important;
-  height: 31vw !important;
+  width: 45% !important;
+  height: 45% !important;
 }
 .content-image {
   display: block;
@@ -89,6 +89,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  font-size: 2em;
 }
 .option > .content-image {
   max-height: 95%;
