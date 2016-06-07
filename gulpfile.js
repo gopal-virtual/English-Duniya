@@ -52,7 +52,7 @@ gulp.task('scripts', function() {
       return "MrGopal modified : " + filepath;
     }))
     .pipe(ngAnnotate())
-    // .pipe(stripDebug())
+    .pipe(stripDebug())
     .pipe(concate('mobile.app.js'))
     // .pipe(rename({
     //     suffix: '.min'

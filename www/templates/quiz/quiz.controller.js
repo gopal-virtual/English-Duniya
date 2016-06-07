@@ -172,7 +172,8 @@
         if ($stateParams.type == 'assessment') {
           quizCtrl.startTimer();
         }
-        if ($stateParams.type == 'practice') {
+
+        if ($stateParams.type == 'practice' || $stateParams.type == 'litmus') {
           $ionicSlideBoxDelegate.enableSlide(false);
 
           $ionicModal.fromTemplateUrl(CONSTANT.PATH.QUIZ + '/practice.feedback' + CONSTANT.VIEW, {
@@ -237,6 +238,7 @@
     }
 
     function getQuestionType(question) {
+        $log.debug(question)
       if (question.node.type.type == CONSTANT.WIDGETS.QUESTION_TYPES.CHOICE_QUESTION) {
         return question.node.type.content.is_multiple ? CONSTANT.WIDGETS.QUESTION_TYPES.MCQ : CONSTANT.WIDGETS.QUESTION_TYPES.SCQ;
       }

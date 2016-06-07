@@ -3,9 +3,10 @@
   angular
     .module('zaya-auth')
     .factory('Auth', Auth)
-  Auth.$inject = ['Restangular', 'CONSTANT', '$cookies', '$log', '$window','Rest','$q'];
+  Auth.$inject = ['Restangular', 'CONSTANT', '$cookies', '$log', '$window', 'Rest', '$q'];
+
   function Auth(Restangular, CONSTANT, $cookies, $log, $window, Rest, $q) {
-    var rest_auth = Restangular.withConfig(function (RestangularConfigurer) {
+    var rest_auth = Restangular.withConfig(function(RestangularConfigurer) {
       RestangularConfigurer.setBaseUrl(CONSTANT.BACKEND_SERVICE_DOMAIN + '/rest-auth');
       RestangularConfigurer.setRequestSuffix('/');
       RestangularConfigurer.setDefaultHeaders({
@@ -26,6 +27,7 @@
     Auth.resetPassword = resetPassword;
     Auth.resendOTP = resendOTP;
     Auth.getUser = getUser;
+    Auth.getProfile = getProfile;
     Auth.isVerified = isVerified;
     Auth.getOTPFromSMS = getOTPFromSMS;
     Auth.setAuthProvider = setAuthProvider;
@@ -178,10 +180,18 @@
       var d = $q.defer();
       Restangular.oneUrl('user_details', CONSTANT.BACKEND_SERVICE_DOMAIN + 'rest-auth/user/').get().then(function(response) {
         localStorage.setItem('user_details', JSON.stringify(response));
-        Rest.one('profiles',JSON.parse(localStorage.user_details).profile).get().then(function(profile){
-            localStorage.setItem('profile', JSON.stringify(profile));
-        });
         d.resolve(response);
+      }, function(response) {
+        d.reject(response);
+      });
+      return d.promise;
+    }
+
+    function getProfile() {
+      var d = $q.defer();
+      Rest.one('profiles', JSON.parse(localStorage.user_details).profile).get().then(function(profile) {
+        localStorage.setItem('profile', JSON.stringify(profile));
+        d.resolve(profile);
       }, function(response) {
         d.reject(response);
       });
@@ -204,10 +214,9 @@
         var e_position = string.indexOf("Enter");
         var o_position = string.indexOf("on");
         var otp = (string.substring(e_position + 6, o_position - 1));
-        if(!isNaN(otp)){
+        if (!isNaN(otp)) {
           d.resolve(otp)
-        }
-        else{
+        } else {
           d.reject();
         }
       } else {
@@ -236,7 +245,7 @@
       var d = $q.defer();
       rest_auth.all('password/change').post($.param(credentials)).then(function(response) {
         localStorage.removeItem('Authorization');
-          d.resolve(response);
+        d.resolve(response);
       }, function(error) {
         d.reject(error.data.details);
       })

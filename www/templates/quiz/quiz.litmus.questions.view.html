@@ -1,74 +1,51 @@
-<ion-pane class="bg-pale" ng-if="quizCtrl.quiz.objects.length">
-  <div class="bar bar-header bg-pale quiz-header padding-0">
-    <div class="row ">
-      <div class="col padding-0 vertical-center">
-        <div ng-click="quizCtrl.interval && quizCtrl.stopTimer() ; showNodeMenu()" class="header-icon icon-pause icon-fit-height padding-10"></div>
-      </div>
-      <div class="row margin-10 padding-0" style="
-    flex-direction: column;
-">
-        <div class="row  bg-brand-yellow padding-0" style="border-radius:50px;height:5px;flex-direction:row">
-          <div style="border-radius:50px;" class="col padding-0" ng-repeat="question in quizCtrl.quiz.objects" ng-class="{'bg-orange':quizCtrl.getCurrentIndex() == $index}"></div>
-        </div>
-        <div class="row padding-0" style="flex-direction:row">
-          <div  class="col padding-0" ng-repeat="question in quizCtrl.quiz.objects">
-            <span class="row padding-0 font-md" style="white-space:nowrap;padding-top:10px !important" ng-if="quizCtrl.getCurrentIndex() == $index">Q{{$index+1}}</span>
-          </div>
-        </div>
-      </div>
-      <div class="col " align="right">
-
-        <div class="row timer-container">
-        <div class="wrapper" >
-          <div class="spinner pie" style="transform:rotate({{(quizCtrl.timer | date:'ss')*6}}deg)"></div>
-          <div class="filler pie" style="opacity:{{((quizCtrl.timer | date:'ss')<=30)?0:1}}"></div>
-          <div class="mask" style="opacity:{{((quizCtrl.timer | date:'ss')<=30)?1:0}}"></div>
-        </div>
-</div>
-<div class="center"><span >{{quizCtrl.timer | date:'mm:ss'}}</span></div>
-
-        <!-- <div style="border-radius:50px;width:50px;height:50px;border:2px solid #38B89A;padding:5px">
-          <div style="background-color:#FA660C"></div>
-        </div> -->
-        <!-- <a ui-sref="map.navigate" class="header-icon icon-question-mark"></a> -->
-      </div>
+<ion-pane class="bg-green">
+  <div class="bar bar-header bg-pale practice-header padding-0">
+    <div class="col padding-0 vertical-center">
+      <div ng-click="showNodeMenu()" class="header-icon icon-pause icon-fit-height padding-10"></div>
     </div>
 
+    <div class=" margin-10 row progress-bar-container">
+      <!-- <div class="col-5 mark-0" ng-class="{'mark-filled':quizCtrl.practiceResult.percentCorrect > 0}"  ></div> -->
+      <div
+        class="col-5 mark-star icon-fit-height"
+        style="left: calc({{quizCtrl.CONSTANT.STAR.ONE+'%'}} - 12px);"
+        ng-class="{'icon-greenstar':quizCtrl.summary.score.percent >= quizCtrl.CONSTANT.STAR.ONE,'icon-nostar':quizCtrl.summary.score.percent < quizCtrl.CONSTANT.STAR.ONE}"></div>
+      <div
+        class="col-5 mark-star icon-fit-height"
+        style="left: calc({{quizCtrl.CONSTANT.STAR.TWO+'%'}} - 12px);"
+        ng-class="{'icon-greenstar':quizCtrl.summary.score.percent >= quizCtrl.CONSTANT.STAR.TWO,'icon-nostar':quizCtrl.summary.score.percent < quizCtrl.CONSTANT.STAR.TWO}"></div>
+      <div
+        class="col-5 mark-star icon-fit-height"
+        style="left: calc({{quizCtrl.CONSTANT.STAR.THREE+'%'}} - 12px);"
+        ng-class="{'icon-greenstar':quizCtrl.summary.score.percent >= quizCtrl.CONSTANT.STAR.THREE,'icon-nostar':quizCtrl.summary.score.percent < quizCtrl.CONSTANT.STAR.THREE}"></div>
+
+      <!-- <div class="col" style="z-index:1"> -->
+      <progress max="100" class="progress-bar-practice" value="{{quizCtrl.summary.score.percent}}"></progress>
+      <!-- </div> -->
+    </div>
+    <div class="col" align="right">
+      <!-- <a ui-sref="map.navigate" class="header-icon icon-question-mark"></a> -->
+    </div>
   </div>
-  <ion-content class="has-quiz-header"  on-scroll-complete="quizCtrl.inViewFlag = true" in-view-container delegate-handle="questions-box"  overflow-scroll="false" has-bouncing="true">
-
-    <!-- <ion-slide-box on-slide-changed="quizCtrl.slideHasChanged($index)" show-pager="false"> -->
-    <div ng-repeat="question in quizCtrl.quiz.objects" ng-attr-id="{{'question-'+$index}}" class="card card-white margin-0 border-radius-0" style="margin-bottom:20px !important">
-      <div in-view="quizCtrl.inViewTrigger($index, $inviewpart)" in-view-options="{debounce:0}" class="has-header center padding-20">
-        <!-- <div class="padding-0"> -->
-        <div
-          ng-class="{'font-sl':question.node.widgetHtml.length == 1,'font-sl':question.node.widgetHtml.length > 1 && question.node.widgetHtml.length < 7,'font-md':question.node.widgetHtml.length >= 7}"
-          ng-if="question.node.title"
-          ng-bind-html="question.node.widgetHtml"
-          class="question card card-transparent center margin-x-0 margin-y-0 padding-0"
-          ng-click="quizCtrl.playAudio(question.node.widgetSound,$index)">
-
-          <!-- <div ng-if="question.node.type.content.image"><img class="question-image" ng-src="{{question.node.type.content.image}}"></div> -->
-          <!-- <div ng-if="!question.node.title && !question.node.type.content.image"><img height="100" width="100" src="img/icons/sound.png"> </div> -->
-        </div>
-        <!-- </div> -->
+  <ion-slide-box on-slide-changed="quizCtrl.setCurrentIndex(index);quizCtrl.quiz.objects[index].isVisited = true;" ng-init="(quizCtrl.disableSwipe())" show-pager="false">
+    <ion-slide ng-repeat="question in quizCtrl.quiz.objects" ng-class="{'animation-question-slide':quizCtrl.isCurrentIndex($index)}">
+        {{question | json}}
+      <!-- <div ng-repeat="question in quizCtrl.quiz.objects" ng-if="$index == quizCtrl.getCurrentIndex()"> -->
+      <div class="bar bar-subheader padding-0 question-subheader bg-pale no-shadow">
+        <div ng-if="question.node.title" ng-bind-html="question.node.widgetHtml" class="question practice-question card card-transparent center margin-x-0 margin-y-0 padding-0" ng-click="quizCtrl.playAudio(question.node.widgetSound,$index)"></div>
+      </div>
+      <ion-content in-view-container overflow-scroll="false" has-bouncing="true" class="has-practice-header has-question-subheader has-footer-large center bg-pale">
         <!-- SCQ -->
         <div
           ng-click="question.attempted=(question.attempted==option.key)?'':option.key"
           ng-if="question.node.type.type=='choicequestion' && !question.node.type.content.is_multiple"
-          ng-class="{'selected':option.key==question.attempted,'card-list':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'list','card-grid':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'grid'}"
-          class="card center card-pale card-radius"
+          ng-class="{'selected':option.key==question.attempted,'card-list':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'list','card-grid practice-card':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'grid'}"
+          class="card center bg-white card-radius"
           ng-repeat="option in question.node.type.content.options">
-          <!-- {{quizCtrl.widgetParser.parseToDisplay(option.option,$parent.$parent.$index,quizCtrl.quiz)}} -->
-          <label ng-click="quizCtrl.playAudio(option.widgetSound,$parent.$parent.$index)">
+          <label ng-click="quizCtrl.playAudio(quizCtrl.widgetParser.getSoundId(option.option),$parent.$parent.$index)">
             <input class="hide">
             <!-- <div class="option-container"  ng-if="option"> -->
-            <div
-              class="padding-10 option"
-                  ng-class="{'font-sl':option.widgetHtml.length < 7,'font-md':option.widgetHtml.length >= 7}"
-              ng-bind-html="::option.widgetHtml"
-
-              ></div>
+            <div class="padding-10 option" ng-class="{'font-sl':option.widgetHtml.length < 7,'font-md':option.widgetHtml.length >= 7}" ng-bind-html="::option.widgetHtml"></div>
             <!-- </div> -->
           </label>
         </div>
@@ -76,76 +53,40 @@
         <!-- MCQ options -->
         <div
           ng-if="question.node.type.type=='choicequestion' && question.node.type.content.is_multiple"
-          ng-class="{'selected':question.attempted[option.key],'card-list':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'list','card-grid':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'grid'}"
-          class="card center card-pale card-radius"
+          ng-class="{'selected':question.attempted[option.key],'card-list':quizCtrl.getLayout(question) == 'list','card-grid':quizCtrl.getLayout(question) == 'grid'}"
+          class="card center bg-white card-radius"
           ng-repeat="option in question.node.type.content.options">
           <label ng-click="quizCtrl.playAudio(option.widgetSound,$parent.$parent.$index)">
             <input class="hide" type="checkbox" ng-model="question.attempted[option.key]" ng-value="option.key">
-            <div
-              class="padding-10 option"
-              ng-class="{'font-sl':option.widgetHtml.length < 7,'font-md':option.widgetHtml.length >= 7}"
-              ng-bind="::option.widgetHtml"
-
-              ></div>
             <!-- <div class="option-container"  ng-if="option"> -->
+            <div class="padding-10 option" ng-class="{'font-sl':option.widgetHtml.length < 7,'font-md':option.widgetHtml.length >= 7}" ng-bind-html="::option.widgetHtml"></div>
             <!-- </div> -->
           </label>
         </div>
-
         <!--<label ng-if="question.node.type.type=='choicequestion' && question.node.type.content.is_multiple" ng-repeat="option in question.info.question_type.choices" class="list card padding block" >-->
         <!--<input class="hide" type="checkbox" ng-model="question.attempted[$index+1]" ng-value="option.key" ng-disabled="quizCtrl.isCorrectAttempted(question)">-->
         <!--<div ng-if="option.option">{{option.option}}</div>-->
         <!--<div ng-if="option.image.key"><img ng-src="{{'img/quiz/1.jpg'}}"></div>-->
         <!--<div ng-if="!option.option && !option.image.key"><img height="100" width="100" ng-src="img/speaker.png"> </div>-->
         <!--</label>-->
-      </div>
+      </ion-content>
+    </ion-slide>
+  </ion-slide-box>
 
-    </div>
-    <!-- </ion-slide-box> -->
-    <!--<div class="bar bar-footer bar-footer-large bg-green">-->
-    <!--<div class="row">-->
-    <!--<div class="col">-->
-
-    <!--</div>-->
-    <!--</div>-->
-    <!--<div class="row">-->
-    <!--<div class="col">-->
-    <!--a-->
-    <!--</div>-->
-    <!--</div>-->
-
-    <!--</div>-->
-    <audio id="audioplayer">
-      <source id="audioSource" type="audio/mpeg">
-    </audio>
-    <div class="bg-pale padding-x-20">
-      <div class="row padding-0">
-        <div class="col padding-x-10">
-          <button class=" animation-fade-in-from-bottom button button-block button-green  button-round padding-0" ng-click="quizCtrl.submitQuiz('assessment')">
-            SUBMIT
-          </button>
-        </div>
-      </div>
-    </div>
-  </ion-content>
-  <button ng-click="quizCtrl.nextQuestion(true)" class="button-round button button-calm icon-down icon-fit-height no-shadow" style="
-    position: fixed;
-    bottom: 10px;
-    right: 10px;
-    z-index: 100;
-">
-  </button>
-</ion-pane>
-<ion-view ng-if="!quizCtrl.quiz.objects.length" class="bg-pale">
-  <ion-content>
-  <div class="row">
+  <audio id="audioplayer">
+    <source id="audioSource" type="audio/mpeg">
+  </audio>
+  <div class="bar bar-footer bar-footer-large bg-pale">
+    <div class="row padding-0">
       <div class="col">
-        <div class="card text-center font-lg padding-20">
-          No questions
-          <button class="button button-block bg-brand-yellow padding-10 button-round" ui-sref="map.navigate">Go back to map</button>
-        </div>
+        <button class="animation-fade-in-from-bottom button button-block button-balanced margin-0 button-round" style="height:40px;line-height:45px" ng-click="quizCtrl.getFeedback(quizCtrl.quiz.objects[quizCtrl.currentIndex])" ng-disabled="!quizCtrl.canSubmit()">
+          SUBMIT
+          <!-- {{quizCtrl.isCorrectAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex]) ? quizCtrl.currentIndex < quizCtrl.quiz.objects.length - 1 ? 'CONTINUE' : 'DONE' : 'SUBMIT'}} -->
+        </button>
+
       </div>
     </div>
-  </ion-content>
-</ion-view>
-<script></script>
+
+  </div>
+
+</ion-pane>
