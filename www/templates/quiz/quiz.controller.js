@@ -363,7 +363,7 @@
       } else {
           $log.debug('bam!',ml.dqQuiz);
           $log.debug('bam!',ml.runDiagnostic(ml.dqQuiz));
-          $state.go('map.navigate',{})
+          quizCtrl.endQuiz();
       }
       return true;
     }
