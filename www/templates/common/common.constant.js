@@ -52,7 +52,10 @@
       },
       'WIDGETS': {
         'SPEAKER_IMAGE': '<img class="content-image sound-image" src="img/icons/sound.png">',
-        'OPTIONS_LAYOUT_THRESHOLD': 55,
+        'OPTIONS': {
+          'LAYOUT_THRESHOLD': 55,
+          'FONT_SIZE_THRESHOLD': 6
+        },
         'QUESTION_TYPES': {
           'CHOICE_QUESTION': 'choicequestion',
           'SCQ': 'scq',

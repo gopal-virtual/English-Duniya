@@ -24,6 +24,9 @@ p *{
 .text-positive{
   color : darken($positive, 40%);
 }
+.text-grey{
+  color : darken($brand-grey, 40%);
+}
 .title{
   display: inline-block;
   line-height: 70px;
