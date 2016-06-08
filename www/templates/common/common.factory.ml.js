@@ -34,30 +34,84 @@
         dqQuiz : []
     };
 
+    // function setMLDqJSON(){
+    //   return data.getDQJSON()
+    //   .then(function(res){
+    //     ml.dqJSON = res;
+    //     $log.debug('ml.dqJSON', ml.dqJSON);
+    //     return ml.dqJSON;
+    //   })
+    //   .catch(function(err){
+    //     $log.debug('ERR setMLDqJSON', err);
+    //   })
+    // }
+
+    // function setMLKmapsJSON(){
+    //   return data.getKmapsJSON()
+    //   .then(function(res){
+    //     ml.kmapsJSON = res;
+    //     $log.debug('ml.kmapsJSON', ml.kmapsJSON);
+    //     return ml.kmapsJSON;
+    //   })
+    //   .catch(function(err){
+    //     $log.debug('ERR setMLKmapsJSON', err);
+    //   })
+    // }
+
+    // function setMapping(){
+    //   return data.getDiagnosisLitmusMapping()
+    //   .then(function(res){
+    //     ml.mapping = res;
+    //     $log.debug('ml.mapping', ml.mapping);
+    //     return ml.mapping;
+    //   })
+    //   .catch(function(err){
+    //     $log.debug('ERR setMapping', err);
+    //   })
+    // }
+
     function setMLDqJSON(){
-      return data.getDQJSON()
+      return data.createDiagQJSON
+      .then(function(){
+        return data.getDQJSON()
+      })
       .then(function(res){
         ml.dqJSON = res;
         $log.debug('ml.dqJSON', ml.dqJSON);
         return ml.dqJSON;
       })
+      .catch(function(err){
+        $log.debug('ERR setMLDqJSON', err);
+      })
     }
 
     function setMLKmapsJSON(){
-      return data.getKmapsJSON()
+      return data.createKmapsJSON
+      .then(function(){
+        return data.getKmapsJSON();
+      })
       .then(function(res){
         ml.kmapsJSON = res;
         $log.debug('ml.kmapsJSON', ml.kmapsJSON);
         return ml.kmapsJSON;
       })
+      .catch(function(err){
+        $log.debug('ERR setMLKmapsJSON', err);
+      })
     }
 
     function setMapping(){
-      return data.getDiagnosisLitmusMapping()
+      return data.createDiagLitmusMappingDB
+      .then(function(){
+        return data.getDiagnosisLitmusMapping();
+      })
       .then(function(res){
         ml.mapping = res;
         $log.debug('ml.mapping', ml.mapping);
         return ml.mapping;
+      })
+      .catch(function(err){
+        $log.debug('ERR setMapping', err);
       })
     }
 
