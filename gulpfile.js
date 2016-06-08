@@ -8,7 +8,7 @@ var ngAnnotate = require('gulp-ng-annotate');
 var sass = require('gulp-sass');
 var minifyCss = require('gulp-minify-css');
 var rename = require('gulp-rename');
-var autoprefixer = require('gulp-autoprefixer');
+var uglify = require('gulp-uglify');
 var sh = require('shelljs');
 var stripDebug = require('gulp-strip-debug');
 var templateCache = require('gulp-angular-templatecache');
@@ -54,10 +54,11 @@ gulp.task('scripts', function() {
     .pipe(ngAnnotate())
     .pipe(stripDebug())
     .pipe(concate('mobile.app.js'))
-    // .pipe(rename({
-    //     suffix: '.min'
-    // }))
-    // .pipe(uglify())
+    .pipe(gulp.dest('www/build'))
+    .pipe(rename({
+        suffix: '.min'
+    }))
+    .pipe(uglify())
     .pipe(gulp.dest('www/build'))
     // .pipe(broswerSync.stream())
 })
