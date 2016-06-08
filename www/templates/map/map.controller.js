@@ -44,6 +44,8 @@
     mapCtrl.openSettings = openSettings;
     mapCtrl.closeSettings = closeSettings;
 
+    mapCtrl.updateProfile = updateProfile;
+
     mapCtrl.skillSet = [{
       name: 'reading',
       score: 300
@@ -140,6 +142,14 @@
     //     $scope.selectedNode = $scope.lessonutils.getLocalLesson();
     //   }
     // });
+    $scope.test = {"id":"cc28d813-3902-4f29-9f51-c50e2b804566","gender":"M"}
+    function updateProfile(params) {
+      Rest.all('profiles').patch(params).then(function(){
+
+      })
+    }
+    // updateProfile($scope.test);
+
 
   }
 })();

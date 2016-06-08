@@ -38,5 +38,6 @@ p *{
 @each $name, $size in $font-size{
   .font-#{$name}{
     font-size : $size !important;
+    line-height : $size - 0.2;
   }
 }
