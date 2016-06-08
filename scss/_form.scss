@@ -99,20 +99,53 @@ input[type=radio].hide{
 .radio-male{
     width: 144px;
     height: 144px;
+    position: relative;
     background: url('#{$icon-path}/icon-boy.png') no-repeat 0 0;
     display: block;
+    background-size: cover;
+    @include xs-screen{
+      height: 100px;
+      width: 100px;
+    }
 }
 .radio-male.checked{
-    background: url('#{$icon-path}/icon-boy.png') no-repeat -144px 0 !important;
+    background-position: 100% 0 !important;
+    background-size: cover !important;
 }
 .radio-female{
     width: 144px;
     height: 144px;
+    position: relative;
     background: url('#{$icon-path}/icon-girl.png') no-repeat 0 0;
     display: block;
+    background-size: cover;
+    @include xs-screen{
+      height: 100px;
+      width: 100px;
+    }
 }
 .radio-female.checked{
-    background: url('#{$icon-path}/icon-girl.png') no-repeat -144px 0 !important;
+    background-position: 100% 0 !important;
+    background-size: cover !important;
+}
+
+.radio-icon-check .icon{
+  text-shadow: 0 2px 2px rgba(0,0,0,.5);
+  position: absolute;
+  bottom: 0px;
+  right: 20%;
+  display: none;
+}
+
+.radio-icon-check.checked .icon{
+  display: block;
+}
+
+.radio-graphic-or{
+  padding-top: 72px;
+  @include xs-screen{
+    padding-top: 48px;
+  }
 }
 
 .input-group-social{
