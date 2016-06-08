@@ -21,58 +21,6 @@
           quiz: ['$stateParams', 'Rest', '$log', 'data', 'ml', '$q', '$http', function($stateParams, Rest, $log, data, ml, $q, $http) {
             if ($stateParams.type == 'litmus') {
 
-              // var q = $q.defer();
-
-            //   function tryMe() {
-            //     // try{
-            //     var grade = JSON.parse(localStorage.profile).grade;
-            //     $log.debug('grade', grade);
-            //     var params = data.getTestParams(grade);
-            //     // var mapping = res;
-              //
-            //     $log.debug('params', params);
-            //     $log.debug('mapping', ml.mapping);
-            //     $log.debug('ml.dqQuiz', ml.dqQuiz);
-              //
-            //     var result = ml.getNextQSr(params, ml.mapping);
-            //     $log.debug('result', result);
-            //     result.test[0]['setPreviousAnswer'] = 1;
-            //     result.test[0]["qSet"][result["actualLevel"]] = {
-            //       "sr": result.qSr,
-            //       "answered": "right"
-            //     };
-            //     $log.debug('changed result', result);
-              //
-            //     result = ml.getNextQSr(result.test, ml.mapping);
-            //     $log.debug('result', result);
-            //     result.test[0]['setPreviousAnswer'] = 0;
-            //     result.test[0]["qSet"][result["actualLevel"]] = {
-            //       "sr": result.qSr,
-            //       "answered": "wrong"
-            //     };
-            //     $log.debug('changed result', result);
-              //
-            //     result = ml.getNextQSr(result.test, ml.mapping);
-            //     $log.debug('result', result);
-            //     result.test[0]['setPreviousAnswer'] = 1;
-            //     result.test[0]["qSet"][result["actualLevel"]] = {
-            //       "sr": result.qSr,
-            //       "answered": "right"
-            //     };
-            //     $log.debug('changed result', result);
-              //
-            //     result = ml.getNextQSr(result.test, ml.mapping);
-            //     $log.debug('result', result);
-            //     result.test[0]['setPreviousAnswer'] = 0;
-            //     result.test[0]["qSet"][result["actualLevel"]] = {
-            //       "sr": result.qSr,
-            //       "answered": "wrong"
-            //     };
-            //     $log.debug('changed result', result);
-              //
-            //     var rec = ml.runDiagnostic(ml.dqQuiz);
-            //     $log.debug('rec', rec);
-            //   }
 
               var all_promises = [];
               if (ml.kmapsJSON == undefined) {
@@ -103,7 +51,6 @@
                   },
                   "objects": []
               };
-
 
 
               return $q.all(all_promises).then(function() {
