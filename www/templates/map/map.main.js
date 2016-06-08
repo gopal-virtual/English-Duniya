@@ -292,10 +292,11 @@ window.createGame = function(scope, lessons, audio, injector, log) {
         this.add.tween(node.scale).to({ x: [1.2,1], y: [1.2,1]},700, Phaser.Easing.Back.Out, true, 1000).loop(true);
         node.inputEnabled = true;
         node.events.onInputUp.add(
-          function(currentLesson, game) {
+          function(currentLesson, game, posy) {
             return function() {
               var displacement = game.kineticScrolling.velocityY > -30 && game.kineticScrolling.velocityY < 30;
               if (!currentLesson.locked && displacement) {
+                  localStorage.setItem('currentPosition',(posy - game.height/2));
                 scope.$emit('openNode', currentLesson);
               }
               else if(currentLesson.locked && displacement){
@@ -303,7 +304,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
               }
               else{}
             }
-          }(currentLesson, this.game)
+        }(currentLesson, this.game, posy)
         );
         // icon.anchor.setTo(0.5,0.5);
         // icon.scale.setTo(0.3,0.3);
@@ -311,7 +312,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
         // node.scale.setTo(1.8, 1.8);
 
         // add stars
-        if (currentLesson.stars >= 0) {
+        if (!locked && currentLesson.stars >= 0) {
           var stars = this.game.add.group();
         //   log.debug('stars in lesson', currentLesson.stars);
           if (currentLesson.stars == 0) {
@@ -340,7 +341,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
         verticalWheel: true,
         deltaWheel: 40
       });
-      this.game.camera.y = ((~~this.world.height / this.game.height) - 1) * this.game.height;
+      this.game.camera.y = localStorage.getItem('currentPosition') ? localStorage.getItem('currentPosition') : ((~~this.world.height / this.game.height) - 1) * this.game.height;
     },
     resetSprite: function(sprite) {
       sprite.x = this.game.world.bounds.right;
