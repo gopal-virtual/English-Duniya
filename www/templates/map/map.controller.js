@@ -142,14 +142,24 @@
     //     $scope.selectedNode = $scope.lessonutils.getLocalLesson();
     //   }
     // });
-    $scope.test = {"id":"cc28d813-3902-4f29-9f51-c50e2b804566","gender":"M"}
+    // $scope.test = {"phone_number":"+919393939193"};
     function updateProfile(params) {
-      Rest.all('profiles').patch(params).then(function(){
+      $log.log(JSON.stringify(params));
+      var updateParams = {
+        "phone_number" : params.phone_number,
+        "name" : params.name,
+        "email" : params.email          
+      };
+      Rest.one('users', params.id).patch(updateParams).then(function(){
 
-      })
+        $scope.user.mapCtrl.user.phone_number = params.phone_number;
+        $scope.user.mapCtrl.user.name = params.name;
+        $scope.user.mapCtrl.user.email = params.email;
+      }).catch(
+
+      );
     }
     // updateProfile($scope.test);
-
 
   }
 })();
