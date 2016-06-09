@@ -1,6 +1,6 @@
 <ion-view class="bg-pale">
   <ion-content>
-      <form name="personaliseForm" class="row padding-20" novalidate ng-submit="profileCtrl.closeKeyboard();profileCtrl.createProfile(personaliseForm)">
+      <form name="personaliseForm" class="row" novalidate ng-submit="profileCtrl.closeKeyboard();profileCtrl.createProfile(personaliseForm)">
           <div class="col">
               <div class="row">
                   <div class="col text-center">
@@ -27,20 +27,26 @@
                   <div class="font-md visible-none">or</div>
                   <div class="col text-center font-md">Girl</div>
               </div>
+              <div class="padding-10">
+                
+              </div>
               <div class="row">
                   <div class="col">
-                      <div class="input-group">
-                          <input type="text" name="firstName" class="input-control input-default font-md" tabindex="2" placeholder="Name" ng-model="profileCtrl.user.first_name">
-                          <!-- <button type="button" class="input-group-item input-group-addon input-group-addon-light font-md icon-profile icon-fit-width">
-                          </button> -->
+                      <div class="input-group input-group-social">
+                          <!-- <i class="icon ion-search placeholder-icon"></i> -->
+                          <div type="button" class="input-group-item input-group-addon input-group-addon-light font-sm">
+                            <i class="ed-icon icon-profile"></i>
+                          </div>
+                          <input type="text" name="firstName" class="input-control input-default input-group-item font-sm input-sm" tabindex="2" placeholder="Name" ng-model="profileCtrl.user.first_name">
+                          
                       </div>
                   </div>
               </div>
               <div class="row">
                   <div class="col" ng-init="profileCtrl.grades = [{id : 1, name : 'Grade 1'}, {id : 2, name : 'Grade 2'}, { id : 3, name : 'Grade 3'}]">
-                      <label for="" class="item item-input item-select">
-                          <span class="input-label font-md">Grade</span>
-                          <select name="grade" class="font-md" ng-model="profileCtrl.user.grade"
+                      <label for="" class="item item-input item-select select-group-sm">
+                          <div class="input-label font-sm"><i class="ed-icon icon-grade"></i>&nbsp;Grade</div>
+                          <select name="grade" class="font-sm" ng-model="profileCtrl.user.grade"
                           ng-options="option.id as option.name for option in profileCtrl.grades track by option.id" required>
                           <option value="" selected hidden />
                           </select>
@@ -49,9 +55,9 @@
               </div>
               <div class="row">
                   <div class="col" ng-init="profileCtrl.langs = [{id : 1, name : 'Hindi'}, {id : 2, name : 'Bengali'}, {id : 3, name : 'Gujrati'}, {id : 4, name : 'Punjabi'}]">
-                      <label for="" class="item item-input item-select">
-                          <span class="input-label font-md">Mother Tongue</span>
-                          <select name="motherTongue" class="font-md" ng-model="profileCtrl.user.language"
+                      <label for="motherTongue" class="item item-input item-select select-group-sm">
+                          <div class="input-label font-sm"><i class="ed-icon icon-language"></i>&nbsp;Mothertongue</div>
+                          <select id="motherTongue" name="motherTongue" class="font-sm" ng-model="profileCtrl.user.language"
                           ng-options="option.id as option.name for option in profileCtrl.langs track by option.id" required>
                           <option value="" selected hidden />
                               </select>
@@ -59,8 +65,8 @@
                   </div>
               </div>
               <div class="row">
-                  <div class="col text-center">
-                      <button type="submit"  class="button button-balanced button-round padding-x-40">DONE</button>
+                  <div class="col text-center padding-40">
+                      <button type="submit"  class="button button-balanced button-round padding-x-40 no-shadow">DONE</button>
                   </div>
               </div>
           </div>
