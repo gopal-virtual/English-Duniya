@@ -66,6 +66,7 @@
     //audio
     quizCtrl.playAudio = playAudio;
     quizCtrl.starCount = starCount;
+    quizCtrl.highlightSoundIcon = highlightSoundIcon;
 
     quizCtrl.calculateStars = calculateStars;
 
@@ -433,7 +434,6 @@
     }
 
 
-
     function generateSummary(report, quiz) {
       var result = {
         analysis: {},
@@ -618,6 +618,18 @@
         });
         return d.promise;
       });
+    }
+
+    function highlightSoundIcon(questionIndex){
+      if(quizCtrl.quiz.objects[questionIndex].node.widgetHtml.indexOf(CONSTANT.WIDGETS.SPEAKER_IMAGE) >= 0){
+        quizCtrl.quiz.objects[questionIndex].node.widgetHtml = quizCtrl.quiz.objects[questionIndex].node.widgetHtml.replace(CONSTANT.WIDGETS.SPEAKER_IMAGE,CONSTANT.WIDGETS.SPEAKER_IMAGE_SELECTED)
+      }
+      var watchAudio = $interval(function(){
+        if(angular.element("#audioplayer")[0].paused){
+          $interval.cancel(watchAudio)
+          quizCtrl.quiz.objects[questionIndex].node.widgetHtml = quizCtrl.quiz.objects[questionIndex].node.widgetHtml.replace(CONSTANT.WIDGETS.SPEAKER_IMAGE_SELECTED,CONSTANT.WIDGETS.SPEAKER_IMAGE)
+        }
+      },100)
     }
   }
 })();
