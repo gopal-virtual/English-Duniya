@@ -29,8 +29,8 @@ window.createGame = function(scope, lessons, audio, injector, log) {
       this.load.image('grass', 'img/assets/stone-grass.png');
       this.load.image('scorpion', 'img/assets/scorpion.png');
 
-      this.load.spritesheet('fire_animation', 'img/assets/fire_animation.png', 122, 193, 39);
-    //   this.load.spritesheet('cactus_animation', 'img/assets/cactus_animation.png', 802, 1350, 35);
+    //   this.load.spritesheet('fire_animation', 'img/assets/fire_animation.png', 122, 193, 39);
+      this.load.spritesheet('cactus_animation', 'img/assets/cactus_animation.png', 37, 63, 35);
     //   this.load.spritesheet('cactus_second_animation', 'img/assets/cactus_second_animation.png', 551, 754);
     //   this.load.spritesheet('camel_animation', 'img/assets/camel_animation.png', 336, 256);
     //   this.load.spritesheet('scorpion_animation', 'img/assets/scorpion_animation.png', 103, 95);
@@ -162,10 +162,10 @@ window.createGame = function(scope, lessons, audio, injector, log) {
         tent.scale.setTo(tent_points[i].scale);
       }
       // fire animation
-      var fire_animation = this.game.add.sprite(tent_points[0].x, tent_points[0].y + 40 + this.iceregion_height, 'fire_animation');
-      fire_animation.anchor.setTo(0.5, 0.5);
-      var light = fire_animation.animations.add('light');
-      fire_animation.animations.play('light', 20, true);
+    //   var fire_animation = this.game.add.sprite(tent_points[0].x, tent_points[0].y + 40 + this.iceregion_height, 'fire_animation');
+    //   fire_animation.anchor.setTo(0.5, 0.5);
+    //   var light = fire_animation.animations.add('light');
+    //   fire_animation.animations.play('light', 20, true);
 
     //   for (var i = 0, tent_count = tent_green_points.length; i < tent_count; i++) {
     //     var tent = this.game.add.sprite(tent_green_points[i].x, tent_green_points[i].y + this.iceregion_height, 'tent_green');
@@ -185,15 +185,14 @@ window.createGame = function(scope, lessons, audio, injector, log) {
       }
       // place cactus
       for (var i = 0, cactus_count = cactus_points.length; i < cactus_count; i++) {
-        var cactus = this.game.add.sprite(cactus_points[i].x, cactus_points[i].y + this.iceregion_height, 'cactus');
-        cactus.anchor.setTo(0.5, 0.5);
-        cactus.scale.setTo(cactus_points[i].scale);
+        var cactus_animation = this.game.add.sprite(cactus_points[i].x, cactus_points[i].y + this.iceregion_height, 'cactus_animation');
+        var wind = cactus_animation.animations.add('wind');
+        cactus_animation.animations.play('wind', 20, true);
+        cactus_animation.anchor.setTo(0.5, 0.5);
+        cactus_animation.scale.setTo(cactus_points[i].scale);
       }
 
-    //   // catcus animation
-    //   var cactus_animation = this.game.add.sprite(0,0, 'cactus_animation');
-    //   var wind = cactus_animation.animations.add('wind');
-    //   cactus_animation.animations.play('wind', 20, true);
+      // catcus animation
       //
     //   // catcus animation
     //   var cactus_second_animation = this.game.add.sprite(0,1000, 'cactus_second_animation');
