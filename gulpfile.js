@@ -12,6 +12,8 @@ var uglify = require('gulp-uglify');
 var sh = require('shelljs');
 var stripDebug = require('gulp-strip-debug');
 var templateCache = require('gulp-angular-templatecache');
+var optimization = require('gulp-imagemin');
+var preen = require('preen');
 
 var paths = {
   sass: [
@@ -35,10 +37,28 @@ var paths = {
   ],
   html: [
     './www/templates/**/*.html'
+  ],
+  image: [
+    './www/img/**/*.png',
+    './www/img/**/*.jpg',
+    './www/img/**/*.jpeg',
+    './www/img/*.png',
+    './www/img/*.jpg',
+    './www/img/*.jpeg'
   ]
 };
 
 gulp.task('default', ['sass', 'watch']);
+
+gulp.task('optimize', function(cb) {
+  gulp.src(paths.image)
+    .pipe(optimization())
+    .pipe(gulp.dest('www/img'))
+});
+
+gulp.task('preen', function(cb) {
+  preen.preen({}, cb);
+});
 
 gulp.task('scripts', function() {
   gulp.src(paths.script)
@@ -56,7 +76,7 @@ gulp.task('scripts', function() {
     .pipe(concate('mobile.app.js'))
     .pipe(gulp.dest('www/build'))
     .pipe(rename({
-        suffix: '.min'
+      suffix: '.min'
     }))
     .pipe(uglify())
     .pipe(gulp.dest('www/build'))
@@ -89,7 +109,7 @@ gulp.task('html', function() {
     }))
     .pipe(templateCache({
       base: function(file) {
-        var filename = file.relative.replace('www/','');
+        var filename = file.relative.replace('www/', '');
         return 'templates/' + filename;
       },
       standalone: true,

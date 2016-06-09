@@ -14,8 +14,6 @@ window.createGame = function(scope, lessons, audio, injector, log) {
     //   PIXI.scaleModes.DEFAULT = PIXI.scaleModes.NEAREST; //for WebGL
 
       this.load.image('desert', 'img/assets/region.png');
-      this.load.image('cactus', 'img/assets/cactus.png');
-    //   this.load.image('cactus', 'img/assets/cactus_test.png');
       this.load.image('tent', 'img/assets/tent.png');
       this.load.image('tent_green', 'img/assets/tent_green.png');
       this.load.image('two_stone', 'img/assets/two_stone.png');
@@ -25,9 +23,6 @@ window.createGame = function(scope, lessons, audio, injector, log) {
       this.load.image('particle3', 'img/assets/particle3.png');
       this.load.image('snow1', 'img/assets/snow.png');
       this.load.image('snow2', 'img/assets/snow1.png');
-      this.load.image('catus-fat', 'img/assets/cactus_fat.png');
-      this.load.image('grass', 'img/assets/stone-grass.png');
-      this.load.image('scorpion', 'img/assets/scorpion.png');
 
     //   this.load.spritesheet('fire_animation', 'img/assets/fire_animation.png', 122, 193, 39);
       this.load.spritesheet('cactus_animation', 'img/assets/cactus_animation.png', 37, 63, 35);

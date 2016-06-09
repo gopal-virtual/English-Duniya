@@ -22,7 +22,8 @@
         'GROUP': ROOT + '/group',
         'COMMON': ROOT + '/common',
         'MAP': ROOT + '/map',
-        'CONTENT': ROOT + '/content'
+        'CONTENT': ROOT + '/content',
+        'DATA': '/data'
       },
       'VIEW': '.view.html',
       'CONFIG': {
