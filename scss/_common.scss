@@ -87,3 +87,7 @@ progress[value]::-webkit-progress-value {
   height: 40px;
   top: calc(50% - 20px);
 }
+
+.no-align {
+  text-align: left !important;
+}
