@@ -125,6 +125,9 @@
           return Auth.getUser();
         })
         .then(function() {
+          return Auth.getProfile();
+        })
+        .then(function() {
           $state.go('map.navigate', {});
         })
         .catch(function(error) {
@@ -198,7 +201,7 @@
       } catch(e) {
 
       }
-      
+
 
       authCtrl.formHelper.validateForm(data, authCtrl.OtpFormValidations)
         .then(function(response) {
@@ -207,6 +210,9 @@
         })
         .then(function(response) {
           return Auth.getUser();
+        })
+        .then(function() {
+          return Auth.getProfile();
         })
         .then(function() {
           $ionicLoading.hide();
