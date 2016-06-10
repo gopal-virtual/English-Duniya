@@ -63,10 +63,10 @@
           }]
 
       },
-        onEnter: ['$state', 'lessons', 'audio', '$ionicLoading', 'orientation', function($state, lessons, audio, $ionicLoading, orientation) {
+        onEnter: ['$state', 'lessons', 'audio', '$ionicLoading', 'orientation','CONSTANT', function($state, lessons, audio, $ionicLoading, orientation, CONSTANT) {
           orientation.setPortrait();
           $ionicLoading.show({
-            templateUrl: 'templates/common/common.loader.view.html',
+            templateUrl: CONSTANT.PATH.COMMON + '/common.loader' + CONSTANT.VIEW,
             duration: 8000
           });
           if (!lessons) {
