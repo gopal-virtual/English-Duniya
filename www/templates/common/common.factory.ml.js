@@ -845,7 +845,7 @@
       console.log('suggestedQ', suggestedQ);
       if (test.length > 1) {
         if (suggestedQ != undefined) {
-          test[1]["level"] = parseInt(ml.dqJSON[suggestedQ].level);
+          test[1]["level"] = parseInt(ml.dqJSON[suggestedQ]["node"].level);
         } else {
           test[1]["level"] = Object.keys(diagLitmusMapping[test[1]["skill"]]).length - 1;
         }
