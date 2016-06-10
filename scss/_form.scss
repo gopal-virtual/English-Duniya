@@ -10,7 +10,7 @@ input[type=number].input-control,
 .item-select{
     border: thin solid lighten($dark, 50%);
     padding : $padding-x $padding-x * 1.5;
-    margin : 0;
+    margin : 0px;
 }
 input[type=text].input-control:not(.input-group-item),
 input[type=password].input-control:not(.input-group-item),
@@ -99,33 +99,72 @@ input[type=radio].hide{
 .radio-male{
     width: 144px;
     height: 144px;
+    position: relative;
     background: url('#{$icon-path}/icon-boy.png') no-repeat 0 0;
     display: block;
+    background-size: cover;
+    @include xs-screen{
+      height: 100px;
+      width: 100px;
+    }
 }
 .radio-male.checked{
-    background: url('#{$icon-path}/icon-boy.png') no-repeat -144px 0 !important;
+    background-position: 100% 0 !important;
+    background-size: cover !important;
 }
 .radio-female{
     width: 144px;
     height: 144px;
+    position: relative;
     background: url('#{$icon-path}/icon-girl.png') no-repeat 0 0;
     display: block;
+    background-size: cover;
+    @include xs-screen{
+      height: 100px;
+      width: 100px;
+    }
 }
 .radio-female.checked{
-    background: url('#{$icon-path}/icon-girl.png') no-repeat -144px 0 !important;
+    background-position: 100% 0 !important;
+    background-size: cover !important;
 }
 
-.input-group-social{
-
+.radio-icon-check .icon{
+  text-shadow: 0 2px 2px rgba(0,0,0,.5);
+  position: absolute;
+  bottom: 0px;
+  right: 20%;
+  display: none;
 }
+
+.radio-icon-check.checked .icon{
+  display: block;
+}
+
+.radio-graphic-or{
+  padding-top: 72px;
+  @include xs-screen{
+    padding-top: 48px;
+  }
+}
+
 .input-group-social > .input-group-item:first-child{
   border-radius: $border-radius 0 0 $border-radius !important;
   border-top : thin solid lighten($dark, 50%) ;
   border-left : thin solid lighten($dark, 50%) ;
   border-bottom : thin solid lighten($dark, 50%) ;
-  max-width: 15%;
-  min-width: 15%;
+  max-width: 40px;
+  min-width: 40px;
 }
 .input-group-social > .input-group-item:not(:first-child){
-  max-width: 85%;
+  max-width: calc(100% - 40px);
+}
+
+.input-sm{
+  padding: $padding-x*2.5 $padding-x*1.5 !important;
+  height: 52px;
+}
+
+.select-group-sm{
+  height: 52px;
 }
