@@ -51,3 +51,20 @@
 .button-no-shadow {
   box-shadow: none;
 }
+
+.button-sm.button{
+  padding: 4px 8px;
+  margin: 5px 0px;
+}
+
+.button-sm.button-round {
+  min-height: $button-sm;
+  min-width: $button-sm;
+  max-height: $button-sm;
+  max-width: $button-sm;
+}
+
+.button-sm.button-round .icon:before{
+  line-height: 22px;
+}
+

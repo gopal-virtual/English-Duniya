@@ -168,3 +168,7 @@ input[type=radio].hide{
 .select-group-sm{
   height: 52px;
 }
+
+.input-sm{
+  padding: $padding-x*2.5 $padding-x*1.5 !important;
+}
