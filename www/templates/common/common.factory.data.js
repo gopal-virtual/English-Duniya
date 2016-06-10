@@ -5,16 +5,20 @@
         .module('common')
         .factory('data', data);
 
-    data.$inject = ['pouchDB', '$http', '$log'];
+    data.$inject = ['pouchDB', '$http', '$log', 'Rest','CONSTANT'];
 
     /* @ngInject */
-    function data(pouchDB, $http, $log) {
+    function data(pouchDB, $http, $log, Rest, CONSTANT) {
         // var diagnosisQuestionsDB = pouchDB('diagnosisQuestions');
         // var kmapsDB = pouchDB('kmaps');
+
         var diagLitmusMappingDB = pouchDB('diagLitmusMapping');
         var kmapsJSONDB = pouchDB('kmapsJSON');
         var dqJSONDB = pouchDB('dqJSON');
+        var appDB = pouchDB('appDB');
+        var getDataSource = function(){
 
+        };
         var data = {
             // createDiagnosisQuestionDB: createDiagnosisQuestionDB(),
             // createKmapsDB: createKmapsDB(),
@@ -27,10 +31,18 @@
             getTestParams : getTestParams,
             // getFromKmapsBySr: getFromKmapsBySr,
             getKmapsJSON: getKmapsJSON,
-            getDQJSON: getDQJSON
+            getDQJSON: getDQJSON,
             // diagnosisQuestionsDB: diagnosisQuestionsDB,
             // kmapsDB: kmapsDB,
             // diagLitmusMappingDB: diagLitmusMappingDB
+            // getScore: getScore,
+            getLessonsScore : getLessonsScore,
+            getLessonsList : getLessonsList,
+            // getAssessment : getAssessment,
+            // createReport : createReport,
+            // createAttempts : createAttempts,
+            // getResults : getResults,
+            // downlaodNode : downlaodNode
         };
 
 
@@ -165,6 +177,27 @@
                           return doc.diagnostic_litmus_mapping;
                         })
           return result;
+        }
+
+        function getLessonsScore(limit){
+          return Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('profiles', JSON.parse(localStorage.user_details).profile).customGET('lessons-score', {
+            limit: limit
+          }).then(function(score) {
+            $log.debug('scores rest', score.plain());
+            return score.plain().results;
+          }, function(error) {
+            $log.debug('some error occured', error);
+          })
+        }
+        function getLessonsList(limit){
+          $log.debug("here")
+          return Rest.one('accounts', CONSTANT.CLIENTID.ELL).customGET('lessons', {
+            limit: limit
+          }).then(function(lessons) {
+            return lessons.plain().results;
+          }, function(error) {
+            $log.debug('some error occured', error);
+          })
         }
 
         // function getFromKmapsBySr(sr){

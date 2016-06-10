@@ -12,24 +12,11 @@
         url: '/map',
         abstract: true,
         resolve: {
-          lessons: ['Rest', '$log', '$http', function(Rest, $log, $http) {
-            return Rest.one('accounts', CONSTANT.CLIENTID.ELL).customGET('lessons', {
-              limit: 25
-            }).then(function(lessons) {
-              return lessons.plain().results;
-            }, function(error) {
-              $log.debug('some error occured', error);
-            })
+          lessons: ['Rest', '$log', '$http', 'data', function(Rest, $log, $http, data) {
+            return data.getLessonsList(25);
           }],
-          scores: ['Rest', '$log', function(Rest, $log) {
-            return Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('profiles', JSON.parse(localStorage.user_details).profile).customGET('lessons-score', {
-              limit: 25
-            }).then(function(score) {
-              $log.debug('scores rest', score.plain());
-              return score.plain().results;
-            }, function(error) {
-              $log.debug('some error occured', error);
-            })
+          scores: ['Rest', '$log', 'data', function(Rest, $log, data) {
+            return data.getLessonsScore(25);
           }]
 
         },
