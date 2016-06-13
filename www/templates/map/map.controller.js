@@ -12,7 +12,7 @@
     $scope.orientation= orientation;
     var mapCtrl = this;
     var lessonList = CONSTANT.LOCK ? extendLesson.getLesson(lessons, scores) : lessons;
-    lessonList.unshift($state.current.data.litmus);
+    $state.current.data && lessonList.unshift($state.current.data.litmus);
     mapCtrl.lessons = lessonList;
     $log.debug('lessons',mapCtrl.lessons);
     mapCtrl.resetNode = resetNode;
@@ -26,7 +26,7 @@
     mapCtrl.openSettings = openSettings;
     mapCtrl.closeSettings = closeSettings;
 
-    mapCtrl.skillSet = $state.current.data.skillset;
+    mapCtrl.skillSet = $state.current.data ? $state.current.data.skillset : {};
 
     function logout(type) {
       mapCtrl.closeSettings();
