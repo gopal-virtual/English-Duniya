@@ -38,10 +38,10 @@
             // getScore: getScore,
             getLessonsScore : getLessonsScore,
             getLessonsList : getLessonsList,
-            // getAssessment : getAssessment,
-            // createReport : createReport,
-            // createAttempts : createAttempts,
-            // getResults : getResults,
+            getAssessment : getAssessment,
+            saveReport : saveReport,
+            saveAttempts : saveAttempts,
+            // getResults : getResults, // for results in hud screen
             // downlaodNode : downlaodNode
         };
 
@@ -189,8 +189,8 @@
             $log.debug('some error occured', error);
           })
         }
+
         function getLessonsList(limit){
-          $log.debug("here")
           return Rest.one('accounts', CONSTANT.CLIENTID.ELL).customGET('lessons', {
             limit: limit
           }).then(function(lessons) {
@@ -200,6 +200,19 @@
           })
         }
 
+        function getAssessment(assessmentId){
+          return Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('assessments', assessmentId).get().then(function(quiz) {
+            return quiz.plain();
+          });
+        }
+
+        function saveAttempts(data){
+            return Rest.all('attempts').post(data);
+        }
+
+        function saveReport(data){
+          return Rest.all('reports').post(data);
+        }
         // function getFromKmapsBySr(sr){
         //     var result = kmapsDB.get(sr)
         //                     .then(function(doc){

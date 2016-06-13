@@ -64,9 +64,9 @@
 
 
             } else {
-              return Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('assessments', $stateParams.id).get().then(function(quiz) {
-                return quiz.plain();
-              });
+
+              return data.getAssessment($stateParams.id);
+
             }
           }]
         }
