@@ -12,7 +12,7 @@
     $scope.orientation= orientation;
     var mapCtrl = this;
     var lessonList = CONSTANT.LOCK ? extendLesson.getLesson(lessons, scores) : lessons;
-    lessonList.unshift($state.current.data.litmus);
+    $state.current.data && lessonList.unshift($state.current.data.litmus);
     mapCtrl.lessons = lessonList;
     $log.debug('lessons',mapCtrl.lessons);
     mapCtrl.resetNode = resetNode;
@@ -26,8 +26,10 @@
     mapCtrl.openSettings = openSettings;
     mapCtrl.closeSettings = closeSettings;
 	mapCtrl.updateProfile = updateProfile;
-    mapCtrl.skillSet = $state.current.data.skillset;
+    mapCtrl.skillSet = $state.current.data ? $state.current.data.skillset : {};
 
+    mapCtrl.downloadLesson = downloadLesson;
+    mapCtrl.isDownloaded = isDownloaded;
     function logout(type) {
       mapCtrl.closeSettings();
       $ionicLoading.show({
@@ -111,6 +113,14 @@
         $timeout(function(){
             $scope.selectedNode = {};
         },400)
+    }
+
+    function downloadLesson(id) {
+      data.downloadLesson(id)
+    }
+
+    function isDownloaded(id){
+      data.isDownloaded(id)
     }
 
     // $timeout(function functionName() {

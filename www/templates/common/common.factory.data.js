@@ -5,16 +5,99 @@
         .module('common')
         .factory('data', data);
 
-    data.$inject = ['pouchDB', '$http', '$log'];
+    data.$inject = ['pouchDB', '$http', '$log', 'Rest','CONSTANT','$q','$ImageCacheFactory', 'mediaManager'];
 
     /* @ngInject */
-    function data(pouchDB, $http, $log) {
+    function data(pouchDB, $http, $log, Rest, CONSTANT, $q, $ImageCacheFactory, mediaManager) {
         // var diagnosisQuestionsDB = pouchDB('diagnosisQuestions');
         // var kmapsDB = pouchDB('kmaps');
+
         var diagLitmusMappingDB = pouchDB('diagLitmusMapping');
         var kmapsJSONDB = pouchDB('kmapsJSON');
         var dqJSONDB = pouchDB('dqJSON');
+        var appDB = pouchDB('appDB');
+        var getDataSource = function(){
 
+        };
+
+        function preloadMedia(resource) {
+          var d = $q.defer();
+          $log.debug(resource,resource.node.content_type_name)
+          if(resource.node.content_type_name === 'assignment')
+          {
+            $q.all([preloadImages(resource),
+              preloadSounds(resource)
+            ]).then(function(success) {
+              d.resolve(success);
+            }, function(error) {
+              d.reject(error)
+            });
+          }
+          else if(resource.node.content_type_name === 'resource'){
+            $log.debug("resource",resource)
+            $q.all(preloadVideo([resource.node.type.path])).then(function(success){
+              d.resolve(success);
+            },function(error){
+              d.reject(error);
+            })
+          }
+          return d.promise;
+        }
+
+
+        function preloadImages(quiz) {
+          var d = $q.defer();
+          var images = [];
+          angular.forEach(quiz.objects, function(question) {
+            angular.forEach(question.node.type.content.widgets.images, function(image) {
+              images.push(CONSTANT.RESOURCE_SERVER + image);
+            })
+          })
+          $ImageCacheFactory.Cache(images).then(function() {
+            d.resolve('Images Loaded Successfully');
+          }, function(failed) {
+            d.reject('Error Loading Image' + failed);
+          });
+          return d.promise;
+        }
+
+        function preloadSounds(quiz) {
+          var d = $q.defer();
+          ionic.Platform.ready(function() {
+            var promises = [];
+            angular.forEach(quiz.objects, function(question) {
+              angular.forEach(question.node.type.content.widgets.sounds, function(sound) {
+                try {
+                  promises.push(mediaManager.downloadSound(CONSTANT.RESOURCE_SERVER + sound));
+                } catch (e) {
+                  $log.debug("Error Downloading sound")
+                }
+              })
+            });
+            $q.all(promises).then(function(success) {
+              d.resolve("Sounds Loaded Successfully");
+            });
+            return d.promise;
+          });
+        }
+        function preloadVideo(pathArray) {
+          var d = $q.defer();
+          ionic.Platform.ready(function() {
+            var promises = [];
+              angular.forEach(pathArray, function(path) {
+                try {
+                  $log.debug(mediaManager)
+                  promises.push(mediaManager.downloadVideo(CONSTANT.RESOURCE_SERVER + path));
+                } catch (e) {
+                  $log.debug("Error Downloading video",e)
+                }
+              })
+            $q.all(promises).then(function(success) {
+              d.resolve("Videos Loaded Successfully");
+            });
+            return d.promise;
+          });
+        }
         var data = {
             // createDiagnosisQuestionDB: createDiagnosisQuestionDB(),
             // createKmapsDB: createKmapsDB(),
@@ -27,10 +110,19 @@
             getTestParams : getTestParams,
             // getFromKmapsBySr: getFromKmapsBySr,
             getKmapsJSON: getKmapsJSON,
-            getDQJSON: getDQJSON
+            getDQJSON: getDQJSON,
             // diagnosisQuestionsDB: diagnosisQuestionsDB,
             // kmapsDB: kmapsDB,
             // diagLitmusMappingDB: diagLitmusMappingDB
+            // getScore: getScore,
+            getLessonsScore : getLessonsScore,
+            getLessonsList : getLessonsList,
+            getAssessment : getAssessment,
+            saveReport : saveReport,
+            saveAttempts : saveAttempts,
+            // getResults : getResults, // for results in hud screen
+            downloadLesson : downloadLesson,
+            isDownloaded : isDownloaded
         };
 
 
@@ -111,7 +203,7 @@
         // };
 
         function createDiagLitmusMappingDB() {
-            var promise = $http.get('templates/common/diagnosticLitmusMapping.json').success(function(data) {
+            var promise = $http.get(CONSTANT.PATH.DATA + '/diagnosticLitmusMapping.json').success(function(data) {
                 $log.debug('in createDiagLitmusMappingDB');
                 return diagLitmusMappingDB.put({ "_id": "diagnostic_litmus_mapping", "diagnostic_litmus_mapping": data[0] })
                 .then(function(){$log.debug('createDiagLitmusMappingDB success');})
@@ -122,7 +214,7 @@
         };
 
         function createKmapsJSON() {
-            var promise = $http.get('templates/common/kmapsJSON.json').success(function(data) {
+            var promise = $http.get(CONSTANT.PATH.DATA + '/kmapsJSON.json').success(function(data) {
                 $log.debug('in createKmapsJSON');
                 return kmapsJSONDB.put({ "_id": "kmapsJSON", "kmapsJSON": data[0] })
                 .then(function(){$log.debug('kmapsJSON success');})
@@ -133,7 +225,7 @@
         };
 
         function createDiagQJSON(){
-          var promise = $http.get('templates/common/diagnosisQJSON.json').success(function(data) {
+          var promise = $http.get(CONSTANT.PATH.DATA + '/diagnosisQJSON.json').success(function(data) {
               $log.debug('in createDiagQJSON');
               return dqJSONDB.put({ "_id": "dqJSON", "dqJSON": data[0] })
               .then(function(){$log.debug('dqJSONDBdqJSONDB success');})
@@ -167,6 +259,80 @@
           return result;
         }
 
+        function getLessonsScore(limit){
+          return Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('profiles', JSON.parse(localStorage.user_details).profile).customGET('lessons-score', {
+            limit: limit
+          }).then(function(score) {
+            $log.debug('scores rest', score.plain());
+            return score.plain().results;
+          }, function(error) {
+            $log.debug('some error occured', error);
+          })
+        }
+
+        function getLessonsList(limit){
+          return Rest.one('accounts', CONSTANT.CLIENTID.ELL).customGET('lessons', {
+            limit: limit
+          }).then(function(lessons) {
+            return lessons.plain().results;
+          }, function(error) {
+            $log.debug('some error occured', error);
+          })
+        }
+
+        function getAssessment(assessmentId){
+          return Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('assessments', assessmentId).get().then(function(quiz) {
+            return quiz.plain();
+          });
+        }
+
+        function saveAttempts(data){
+            return Rest.all('attempts').post(data);
+        }
+
+        function saveReport(data){
+          return Rest.all('reports').post(data);
+        }
+        function downloadLesson(id){
+          $log.debug("here");
+          var lesson = {};
+          return Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('lessons', id).get()
+          .then(function(response) {
+           lesson = response.plain();
+            $log.debug('lesson',lesson);
+            // return appDB.put({'_id':id,'lesson':lesson})
+          })
+          .then(function(response){
+            var d = $q.defer();
+            var promises = [];
+            var index = null;
+            angular.forEach(lesson.objects,function(object,key){
+                promises.push(preloadMedia(object));
+            })
+            $q.all(promises).then(function(success) {
+              d.resolve("Resources Loaded Successfully");
+            });
+            return d.promise;
+          })
+          .then(function(data){
+            $log.debug(data);
+          })
+          .catch(function(response){
+            $log.debug("err",response)
+          })
+        }
+        function isDownloaded(id){
+          if(id){
+            $log.debug("in isDownloaded");
+            return appDB.get(id).then(function(data){
+              $log.debug('found',data)
+            })
+            .catch(function(err){
+              $log.debug('not found',err)
+            })
+          }
+
+        }
         // function getFromKmapsBySr(sr){
         //     var result = kmapsDB.get(sr)
         //                     .then(function(doc){
