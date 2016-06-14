@@ -22,16 +22,18 @@
         </div>
       </div>
       <div class="row modal-body-wrapper" style="margin:0">
-        <div class="col col-40 avatar animation-delay-more animation-fade-in-from-left" style="background:url('img/assets/avatar-girl.png') no-repeat center center; background-size : auto 100%"></div>
+        <div class="col col-40 avatar animation-delay-more animation-fade-in-from-left" style="background:url('img/assets/avatar-{{lessonutils.getGender()=='M'? 'boy' : 'girl'}}.png') no-repeat center center; background-size : auto 100%"></div>
         <div class="col col-center col-60 height-100">
           <ul class="resource-list height-100">
             <li ng-repeat="resource in selectedNode.objects" class="text-center padding-10 capitalize position-relative" ng-hide="lessonutils.resourceType(resource)=='assessment'">
+            <span class="badge badge-assertive points font-sm padding-10 animation-zoom-in" style="-webkit-animation-delay : {{($index+3)*100}}ms;">20</span>
               <img
               ng-src="{{lessonutils.getIcon(resource)}}"
               alt="resource icon"
               ng-click="audio.play('press');selected=true;$event.stopPropagation();closeNodeMenu();lessonutils.playResource(resource,contentCtrl.API);"
               class="animation-zoom-in"
               style="-webkit-animation-delay : {{($index+3)*100}}ms;"
+              ng-class="{'brightness-50':lessonutils.currentState(resource)}"
               />
               <button
               ng-show="lessonutils.currentState(resource)"
@@ -47,9 +49,9 @@
         <div class="col text-center">
           <button class="button button-balanced button-round padding-x-30 font-xl animation-delay-more animation-fade-in-from-bottom" ng-click="audio.play('press');closeNodeMenu();lessonutils.leaveLesson();mapCtrl && mapCtrl.resetNode()">Leave Lesson</button>
         </div>
-        <div class="col text-center">
+        <!-- <div class="col text-center">
           <button class="button button-balanced button-round padding-x-30 font-xl animation-delay-more animation-fade-in-from-bottom" ng-click="mapCtrl.downloadLesson(selectedNode.node.id)">Download</button>
-        </div>
+        </div> -->
       </div>
     </div>
   </ion-content>

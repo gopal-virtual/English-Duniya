@@ -18,11 +18,15 @@
       getIcon: getIcon,
       playResource: playResource,
       getSrc: getSrc,
-      currentState: currentState
+      currentState: currentState,
+      getGender : getGender
     };
 
     return utils;
 
+    function getGender(){
+        return localStorage.profile ? JSON.parse(localStorage.profile).gender : false;
+    }
     function leaveLesson() {
       !$state.is('map.navigate') &&
         $ionicLoading.show({
@@ -34,9 +38,9 @@
     }
 
     function currentState(resource) {
-      if ($stateParams.type == 'assessment' && utils.resourceType(resource) == 'assessment') {
+      if ($stateParams.type == 'assessment' && utils.resourceType(resource) == 'assessment' && $state.current.name!='quiz.summary') {
         return true;
-      } else if ($stateParams.type == 'practice' && utils.resourceType(resource) == 'practice') {
+      } else if ($stateParams.type == 'practice' && utils.resourceType(resource) == 'practice' && $state.current.name!='quiz.summary') {
         return true;
       } else if ($state.is('content.video') && utils.resourceType(resource) == 'video') {
         return true;

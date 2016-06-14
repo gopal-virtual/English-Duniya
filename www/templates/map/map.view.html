@@ -1,13 +1,13 @@
 <div class="result animation-fade-in-from-top" style="-webkit-animation-delay : 8500ms;">
   <div ng-click="mapCtrl.backdrop=true;mapCtrl.showScore=$index" class="result-item bg-pale" ng-class="{'result-hack active' : mapCtrl.showScore==$index}" ng-repeat="skill in mapCtrl.skillSet">
-      <div class="width-100 height-100 icon-fit-height icon-{{skill.name}} animation-fade-bounce-from-top" style="-webkit-animation-delay : {{($index+85)*100}}ms;"></div>
+      <div class="width-100 height-100 icon-fit-height icon-{{skill.name}} animation-fade-bounce-from-top" ng-class="{'active' : mapCtrl.showScore==$index}" style="-webkit-animation-delay : {{($index+85)*100}}ms;"></div>
     <div class="result-item-dropdown text-center" ng-class="{'animation-bounce-in-from-top':mapCtrl.showScore==$index}" ng-show="mapCtrl.showScore==$index">
-      <span class="color-green font-lg capitalize">{{skill.name}}</span>
+      <span class="color-green font-lg capitalize">{{skill.name == 'vocabulary' ? 'words' : skill.name}}</span>
       <br>
-      <span class="font-md">{{skill.score}}</span>
+      <span class="font-md">Points {{skill.score}}</span>
     </div>
   </div>
-  <div class="result-item bg-grey-light icon-settings icon-fit-height" ng-click="mapCtrl.openSettings()"></div>
+  <div class="result-item bg-grey-light icon-profile icon-fit-height" ng-click="mapCtrl.openSettings()"></div>
 </div>
 <div class="result-backdrop modal-dark" ng-show="mapCtrl.backdrop" ng-click="mapCtrl.backdrop=false;mapCtrl.showScore=-1"></div>
 <ion-view>
