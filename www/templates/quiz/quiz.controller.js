@@ -4,9 +4,9 @@
     .module('zaya-quiz')
     .controller('QuizController', QuizController)
 
-  QuizController.$inject = ['quiz', 'widgetParser', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Auth', '$ionicLoading', '$ionicPopup', 'lessonutils', 'orientation', '$location', '$anchorScroll', '$document', '$ionicScrollDelegate', '$ionicPosition', '$timeout', '$window', 'soundManager', '$cordovaFileTransfer', '$cordovaFile', '$interval', '$q', '$ImageCacheFactory', 'ml', 'data'];
+  QuizController.$inject = ['quiz', 'widgetParser', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Auth', '$ionicLoading', '$ionicPopup', 'lessonutils', 'orientation', '$location', '$anchorScroll', '$document', '$ionicScrollDelegate', '$ionicPosition', '$timeout', '$window', 'mediaManager', '$cordovaFileTransfer', '$cordovaFile', '$interval', '$q', '$ImageCacheFactory', 'ml', 'data'];
 
-  function QuizController(quiz, widgetParser, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition, $timeout, $window, soundManager, $cordovaFileTransfer, $cordovaFile, $interval, $q, $ImageCacheFactory, ml, data) {
+  function QuizController(quiz, widgetParser, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition, $timeout, $window, mediaManager, $cordovaFileTransfer, $cordovaFile, $interval, $q, $ImageCacheFactory, ml, data) {
 
     var quizCtrl = this;
 
@@ -464,7 +464,7 @@
         angular.element("#audioplayer")[0].pause();
         var src;
         try {
-          src = soundManager.getSound(CONSTANT.RESOURCE_SERVER + quizCtrl.quiz.objects[index].node.type.content.widgets.sounds[key]);
+          src = mediaManager.getSound(CONSTANT.RESOURCE_SERVER + quizCtrl.quiz.objects[index].node.type.content.widgets.sounds[key]);
         } catch (e) {
           src = CONSTANT.RESOURCE_SERVER + quizCtrl.quiz.objects[index].node.type.content.widgets.sounds[key];
         }
@@ -652,7 +652,7 @@
         angular.forEach(quiz.objects, function(question) {
           angular.forEach(question.node.type.content.widgets.sounds, function(sound) {
             try {
-              promises.push(soundManager.download(CONSTANT.RESOURCE_SERVER + sound));
+              promises.push(soundManager.downloadSound(CONSTANT.RESOURCE_SERVER + sound));
             } catch (e) {
               $log.debug("Error Downloading sound")
             }

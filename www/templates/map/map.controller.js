@@ -28,6 +28,8 @@
 
     mapCtrl.skillSet = $state.current.data ? $state.current.data.skillset : {};
 
+    mapCtrl.downloadLesson = downloadLesson;
+    mapCtrl.isDownloaded = isDownloaded;
     function logout(type) {
       mapCtrl.closeSettings();
       $ionicLoading.show({
@@ -111,6 +113,14 @@
         $timeout(function(){
             $scope.selectedNode = {};
         },400)
+    }
+
+    function downloadLesson(id) {
+      data.downloadLesson(id)
+    }
+
+    function isDownloaded(id){
+      data.isDownloaded(id)
     }
 
     // $timeout(function functionName() {
