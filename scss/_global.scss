@@ -39,7 +39,7 @@ $color in $color-list {
   background-color: transparent;
 }
 @each $size,
-$value in ('0':0px, '10':10px, '20':20px, '30':30px, '40':40px) {
+$value in ('0':0px, '10':10px, '20':20px, '30':30px, '40':40px, '50':50px, '60':60px) {
   .padding-#{$size} {
     padding: $value !important;
   }
@@ -53,7 +53,7 @@ $value in ('0':0px, '10':10px, '20':20px, '30':30px, '40':40px) {
   }
 }
 @each $size,
-$value in ('0':0px, '10':10px, '20':20px, '30':30px, '40':40px) {
+$value in ('0':0px, '10':10px, '20':20px, '30':30px, '40':40px, '50':50px, '60':60px) {
   .margin-#{$size} {
     margin: $value !important;
   }

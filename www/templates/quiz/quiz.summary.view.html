@@ -16,12 +16,13 @@
           <img ng-repeat="star in [1,2,3]" class="animation-zoom-out-{{quizCtrl.starCount($index) ? star : ''}}" style="-webkit-animation-delay: {{$index+1}}s;" ng-src="{{ quizCtrl.starCount($index) ? 'img/icons/icon-star.png' : 'img/icons/icon-nostar.png'}}">
       </div>
     </div>
-    <div class="row padding-30">
+    <div class="padding-y-40"></div>
+    <div class="row padding-x-30">
       <div class="col">
-        <button class="button bg-pale button-round button-block" ui-sref="quiz.questions({id : quizCtrl.quiz.node.id})"><></button>
+        <button class="button bg-pale button-round button-block" ui-sref="quiz.questions({id : quizCtrl.quiz.node.id})"><i class="ed-icon icon-redo"></i></button>
       </div>
       <div class="col">
-        <button class="button bg-brand-yellow button-round button-block" ng-click="showNodeMenu()">NEXT</button>
+        <button class="button bg-brand-yellow button-round button-block" ng-click="showNodeMenu()"><i class="ed-icon icon-next"></i></button>
       </div>
     </div>
     <div ng-class="{'display-none':!quizCtrl.isAssessment}">
