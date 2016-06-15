@@ -52,7 +52,7 @@
           }]
 
       },
-        onEnter: ['$state', 'lessons', 'audio', '$ionicLoading', 'orientation', function($state, lessons, audio, $ionicLoading, orientation) {
+        onEnter: ['$state', 'lessons', 'audio', '$ionicLoading', 'orientation','CONSTANT', function($state, lessons, audio, $ionicLoading, orientation, CONSTANT) {
           orientation.setPortrait();
           // $ionicLoading.show({
           //   templateUrl: 'templates/common/common.loader.view.html',

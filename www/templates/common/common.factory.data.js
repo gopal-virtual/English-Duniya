@@ -212,60 +212,39 @@
       //     });
       // };
 
-      function createDiagLitmusMappingDB() {
-        var promise = $http.get('templates/common/diagnosticLitmusMapping.json').success(function(data) {
-          $log.debug('in createDiagLitmusMappingDB');
-          return diagLitmusMappingDB.put({
-              "_id": "diagnostic_litmus_mapping",
-              "diagnostic_litmus_mapping": data[0]
-            })
-            .then(function() {
-              $log.debug('createDiagLitmusMappingDB success');
-            })
-            .catch(function(err) {
-              $log.debug('err createDiagLitmusMappingDB', err)
-            });
-        });
-        // $log.debug('promise of createDiagLitmusMappingDB', promise);
-        return promise;
-      };
 
-      function createKmapsJSON() {
-        var promise = $http.get('templates/common/kmapsJSON.json').success(function(data) {
-          $log.debug('in createKmapsJSON');
-          return kmapsJSONDB.put({
-              "_id": "kmapsJSON",
-              "kmapsJSON": data[0]
-            })
-            .then(function() {
-              $log.debug('kmapsJSON success');
-            })
-            .catch(function(err) {
-              $log.debug('err kmapsJSON', err)
-            });
-        });
-        // $log.debug('promise of createKmapsJSON', promise);
-        return promise;
-      };
+          function createDiagLitmusMappingDB() {
+              var promise = $http.get(CONSTANT.PATH.DATA + '/diagnosticLitmusMapping.json').success(function(data) {
+                  $log.debug('in createDiagLitmusMappingDB');
+                  return diagLitmusMappingDB.put({ "_id": "diagnostic_litmus_mapping", "diagnostic_litmus_mapping": data[0] })
+                  .then(function(){$log.debug('createDiagLitmusMappingDB success');})
+                  .catch(function(err){$log.debug('err createDiagLitmusMappingDB', err)});
+              });
+              // $log.debug('promise of createDiagLitmusMappingDB', promise);
+              return promise;
+          };
 
-      function createDiagQJSON() {
-        var promise = $http.get('templates/common/diagnosisQJSON.json').success(function(data) {
-          $log.debug('in createDiagQJSON');
-          return dqJSONDB.put({
-              "_id": "dqJSON",
-              "dqJSON": data[0]
-            })
-            .then(function() {
-              $log.debug('dqJSONDBdqJSONDB success');
-            })
-            .catch(function(err) {
-              $log.debug('err dqJSONDB', err)
-            });
-        });
-        // $log.debug('promise of createDiagQJSON', promise);
-        return promise;
-      }
+          function createKmapsJSON() {
+              var promise = $http.get(CONSTANT.PATH.DATA + '/kmapsJSON.json').success(function(data) {
+                  $log.debug('in createKmapsJSON');
+                  return kmapsJSONDB.put({ "_id": "kmapsJSON", "kmapsJSON": data[0] })
+                  .then(function(){$log.debug('kmapsJSON success');})
+                  .catch(function(err){$log.debug('err kmapsJSON', err)});
+              });
+              // $log.debug('promise of createKmapsJSON', promise);
+              return promise;
+          };
 
+          function createDiagQJSON(){
+            var promise = $http.get(CONSTANT.PATH.DATA + '/diagnosisQJSON.json').success(function(data) {
+                $log.debug('in createDiagQJSON');
+                return dqJSONDB.put({ "_id": "dqJSON", "dqJSON": data[0] })
+                .then(function(){$log.debug('dqJSONDBdqJSONDB success');})
+                .catch(function(err){$log.debug('err dqJSONDB', err)});
+            });
+            // $log.debug('promise of createDiagQJSON', promise);
+            return promise;
+          }
 
       function getDQJSON() {
         var result = dqJSONDB.get("dqJSON")
