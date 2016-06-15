@@ -10,7 +10,7 @@
   display: inline-block;
 }
 .display-none{
-  display: none;
+  display: none !important;
 }
 
 .visible-none{
@@ -105,4 +105,7 @@ progress[value]::-webkit-progress-value {
 
 .no-align {
   text-align: left !important;
+}
+.fit-width *{
+  width: 100%;
 }

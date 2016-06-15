@@ -1,0 +1,35 @@
+/*
+ * http://docs.angularjs.org/api/ng/directive/ngShow#usage_animations
+ */
+.list .item.item-accordion {
+  line-height: 38px;
+  padding-top: 0;
+  padding-bottom: 0;
+  transition: 0.09s all linear;
+}
+.list .item.item-accordion.ng-hide {
+  line-height: 0px;
+}
+.list .item.item-accordion.ng-hide-add,
+.list .item.item-accordion.ng-hide-remove {
+  display: block !important;
+}
+
+.itemgroup-accordion:first-child>.item-stable{
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+}
+
+.itemgroup-accordion:last-child>.item-stable{
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+}
+
+.list-accordion .item{
+	border:none;
+}
+
+.list-accordion .list{
+	box-shadow: 0 0 10px rgba(0,0,0,.2);
+	border-radius: 10px !important;
+}
