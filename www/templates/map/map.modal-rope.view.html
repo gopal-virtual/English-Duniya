@@ -25,7 +25,8 @@
         <div class="col col-40 avatar animation-delay-more animation-fade-in-from-left" style="background:url('img/assets/avatar-girl.png') no-repeat center center; background-size : auto 100%"></div>
         <div class="col col-center col-60 height-100">
           <ul class="resource-list height-100">
-            <li ng-repeat="resource in selectedNode.objects" class="text-center padding-10 capitalize position-relative" ng-hide="lessonutils.resourceType(resource)=='assessment'">
+            <!-- <li ng-repeat="resource in selectedNode.objects" class="text-center padding-10 capitalize position-relative" ng-hide="lessonutils.resourceType(resource)=='assessment'"> -->
+            <li ng-repeat="resource in selectedNode.objects" class="text-center padding-10 capitalize position-relative">
               <img
               ng-src="{{lessonutils.getIcon(resource)}}"
               alt="resource icon"

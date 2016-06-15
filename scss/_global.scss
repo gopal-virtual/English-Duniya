@@ -1,19 +1,19 @@
 @each $name,
 $color in $color-list {
   .bg-#{$name} {
-    background: $color;
+    background-color: $color !important;
   }
 }
 @each $name,
 $color in $color-list {
   .bg-#{$name}-light {
-    background: lighten($color, 10%);
+    background-color: lighten($color, 10%) !important;
   }
 }
 @each $name,
 $color in $color-list {
   .bg-#{$name}-dark {
-    background: darken($color, 10%);
+    background-color: darken($color, 10%) !important;
   }
 }
 @each $name,
@@ -34,6 +34,7 @@ $color in $color-list {
     color: darken($color, 10%);
   }
 }
+
 .list-inset {
   background-color: transparent;
 }
@@ -43,10 +44,12 @@ $value in ('0':0px, '10':10px, '20':20px, '30':30px, '40':40px) {
     padding: $value !important;
   }
   .padding-y-#{$size} {
-    padding: $value 0 !important;
+    padding-top: $value !important;
+    padding-bottom: $value !important;
   }
   .padding-x-#{$size} {
-    padding: 0 $value !important;
+    padding-left: $value !important;
+    padding-right: $value !important;
   }
 }
 @each $size,

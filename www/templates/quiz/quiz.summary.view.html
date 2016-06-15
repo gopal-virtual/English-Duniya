@@ -1,12 +1,12 @@
 <ion-view class="bg-green">
-  <ion-content overflow-scroll="true">
-    <div class="row padding-y-40">
+  <ion-content overflow-scroll="false">
+    <div class="row">
       <div class="col font-lg text-white text-center">
         LESSON COMPLETE!
       </div>
     </div>
     <div class="row">
-     <div class="col text-center font-sl text-white"><strong>{{quizCtrl.summary.score.marks}} / {{quizCtrl.quiz.node.type.score}}</strong></div>
+     <div style="line-height:1.8em" class="col text-center font-sxl text-white"><strong>{{quizCtrl.summary.score.marks}}/{{quizCtrl.quiz.node.type.score}}</strong></div>
     </div>
     <div class="row center position-relative" style="height:100px">
       <div class="col stars position-absolute">
@@ -18,34 +18,51 @@
     </div>
     <div class="row padding-30">
       <div class="col">
-        <button class="button bg-pale button-round button-block" ui-sref="quiz.questions({id : quizCtrl.quiz.node.id})">REDO</button>
+        <button class="button bg-pale button-round button-block" ui-sref="quiz.questions({id : quizCtrl.quiz.node.id})"><></button>
       </div>
       <div class="col">
         <button class="button bg-brand-yellow button-round button-block" ng-click="showNodeMenu()">NEXT</button>
       </div>
     </div>
-    <!-- <div class="row bg-pale padding-y-20">
-        <div class="col text-center">
-            <u class="font-lg">QUESTIONS</u>
-        </div>
-    </div>
-    <div class="row bg-pale padding-x-30">
-      <div class="col">
-
-        <div class="list card" ng-repeat="item in quizCtrl.quizResult.analysis">
-          <div>
-            <div class="item item-divider padding-20 font-md" ng-class="{'bg-assertive-light':item.status==0,'bg-green' : item.status==1, 'bg-grey-light' : item.status==-1}">
-              Question {{$index + 1}}
-            </div>
-            <div class="item item-text-wrap">
-                <p class="font-md">{{item.title}}</p>
-              <span ng-class="{'color-assertive-light':item.status==0,'color-green' : item.status==1, 'color-grey' : item.status==-1}">
-                {{item.status == 1 ? 'CORRECT' : item.status == 0 ? 'WRONG' : 'SKIPPED'}}
-              </span>
-            </div>
+    <div ng-class="{'display-none':!quizCtrl.isAssessment}">
+      <div class="row bg-pale padding-y-20">
+          <div class="col text-center">
+              <u class="font-lg">QUESTIONS</u>
           </div>
+      </div>
+      <div  class="row bg-pale padding-x-30">
+        <div class="col">
+
+          <ion-list class="list-accordion">
+            <div class="itemgroup-accordion" ng-repeat="item in quizCtrl.summary.analysis" ng-init="showAccordian=-1">
+              <div class="item-stable padding-20" ng-class="{'bg-balanced-light':item.status=='correct','bg-assertive-light' : item.status=='incorrect', 'bg-grey-light' : item.status=='unattempted'}" ng-click="$parent.showAccordian=$index" ng-class="{active: isGroupShown(item)}">
+                <i class="icon" ng-class="isGroupShown(item) ? 'ion-minus' : 'ion-plus'"></i>
+                &nbsp;
+                Question {{$index + 1}}
+              </div>
+              <div class="item-accordion padding-y-20 padding-x-40" ng-show="$parent.showAccordian==$index">
+                <div class="fit-width" ng-bind-html="item.title">
+                  {{item.title}}
+                </div>
+                {{item.status}}
+              </div>
+            </div>
+          </ion-list>
+
+          <!-- <div class="list card" ng-repeat="item in quizCtrl.summary.analysis">
+            <div>
+              <div class="item item-divider padding-20 font-md" ng-class="{'bg-assertive-light':item.status==0,'bg-green' : item.status==1, 'bg-grey-light' : item.status==-1}">
+                Question {{$index + 1}}
+              </div>
+              <div class="item padding-40 item-text-wrap">
+                <div class="text-center" ng-class="{'color-assertive-light':item.status=='correct','color-green' : item.status==1, 'color-grey' : item.status==-1}">
+                  <h3>{{item.status}}</h3>
+                </div>
+              </div>
+            </div>
+          </div> -->
         </div>
       </div>
-    </div> -->
+    </div>
   </ion-content>
 </ion-view>
