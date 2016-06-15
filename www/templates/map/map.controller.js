@@ -11,6 +11,7 @@
     $scope.audio = audio;
     $scope.orientation= orientation;
     var mapCtrl = this;
+    $log.debug(scores)
     var lessonList = CONSTANT.LOCK ? extendLesson.getLesson(lessons, scores) : lessons;
     $state.current.data && lessonList.unshift($state.current.data.litmus);
     mapCtrl.lessons = lessonList;
