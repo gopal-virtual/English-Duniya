@@ -12,25 +12,17 @@
         url: '/map',
         abstract: true,
         resolve: {
-          lessons: ['Rest', '$log', '$http', function(Rest, $log, $http) {
-            return Rest.one('accounts', CONSTANT.CLIENTID.ELL).customGET('lessons', {
-              limit: 25
-            }).then(function(lessons) {
-              return lessons.plain().results;
-            }, function(error) {
-              $log.debug('some error occured', error);
-            })
+          lessons: ['Rest', '$log', '$http', 'data', function(Rest, $log, $http, data) {
+            return data.getLessonsList(25);
           }],
-          scores: ['Rest', '$log', function(Rest, $log) {
-            return Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('profiles', JSON.parse(localStorage.user_details).profile).customGET('lessons-score', {
-              limit: 25
-            }).then(function(score) {
-              $log.debug('scores rest', score.plain());
-              return score.plain().results;
-            }, function(error) {
-              $log.debug('some error occured', error);
-            })
-          }]
+          scores: ['Rest', '$log', 'data', function(Rest, $log, data) {
+            return data.getLessonsScore(25);
+        }],
+        skills : ['Rest', '$log', function(Rest, $log){
+            return Rest.one('profiles', JSON.parse(localStorage.user_details).profile).all('scores').all('skills').getList().then(function(profile) {
+              return profile.plain();
+            });
+        }]
 
         },
         template: '<ion-nav-view name="state-map"></ion-nav-view>'
@@ -48,20 +40,6 @@
               "tag": "Litmus",
               "locked": false
           },
-          skillset : [{
-            name: 'reading',
-            score: 300
-          }, {
-            name: 'listening',
-            score: 200
-          }, {
-            name: 'vocabulary',
-            score: 250
-          }, {
-            name: 'grammar',
-            score: 3000
-          }]
-
       },
         onEnter: ['$state', 'lessons', 'audio', '$ionicLoading', 'orientation','CONSTANT', function($state, lessons, audio, $ionicLoading, orientation, CONSTANT) {
           orientation.setPortrait();

@@ -176,3 +176,13 @@ $percent in $height-list {
   // overflow: hidden;
   text-overflow: ellipsis;
 }
+@each $name, $percent in $height-list{
+    .brightness-#{$name}{
+        -webkit-filter : brightness($percent);
+    }
+}
+.points{
+    position: absolute;
+    right : 20%;
+    top : 0;
+}
