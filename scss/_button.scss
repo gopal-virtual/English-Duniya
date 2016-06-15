@@ -5,6 +5,9 @@
   border: 0;
   text-transform: capitalize !important;
 }
+.button:hover{
+  color: #FFF;
+}
 .button-resume {
   position: absolute;
   top: 0;
@@ -26,7 +29,8 @@
 }
 .button-green.active,
 .button-green.active:focus,
-.button-green:active{
+.button-green:active,
+.button-green:focus{
   background-color: darken($brand-green,10%);
   color: $brand-white;
 }

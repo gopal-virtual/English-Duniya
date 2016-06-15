@@ -133,9 +133,10 @@
     function updateProfile(params) {
       $log.log(JSON.stringify(params));
       var updateParams = {
+        
         "phone_number" : params.phone_number,
-        "name" : params.name,
-        "email" : params.email
+        "first_name" : params.name,
+        "email" : params.email          
       };
       Rest.one('users', params.id).patch(updateParams).then(function(){
 

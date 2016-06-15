@@ -35,7 +35,15 @@
     "cordova-plugin-whitelist",
     "cordova-plugin-splashscreen",
     "cordova-plugin-statusbar",
-    "ionic-plugin-keyboard"
+    "ionic-plugin-keyboard",
+    {
+      "variables": {
+        "APP_ID": "1159750564044149",
+        "APP_NAME": "com.ionicframework.zayamobile694033"
+      },
+      "locator": "phonegap-facebook-plugin",
+      "id": "phonegap-facebook-plugin"
+    }
   ],
   "cordovaPlatforms": [
     "ios",

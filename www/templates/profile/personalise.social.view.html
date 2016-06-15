@@ -1,38 +1,38 @@
 <ion-view class="bg-pale">
   <ion-content>
       <form name="personaliseForm" class="row" novalidate ng-submit="profileCtrl.closeKeyboard();profileCtrl.createProfile(personaliseForm)">
-          <div class="col">
-              <div class="row">
+          <div class="col no-padding">
+              <div class="row ">
                   <div class="col text-center">
                       <h3>Are you a ...</h3>
                   </div>
               </div>
-              <div class="row">
-                  <div class="col text-center">
+              <div class="row no-padding">
+                  <div class="col text-center no-padding">
                       <label for="" class="radio radio-male radio-icon-check" ng-class="{'checked':profileCtrl.user.gender=='M'}">
                           <i class="font-xl color-blue icon ion-checkmark-circled"></i>
                           <input type="radio" name="gender" value="M" ng-model="profileCtrl.user.gender">
                       </label>
                   </div>
                   <div class="radio-graphic-or font-md">or</div>
-                  <div class="col text-center">
+                  <div class="col text-center no-padding">
                       <label for="" class="radio radio-female radio-icon-check" ng-class="{'checked':profileCtrl.user.gender=='F'}">
                           <i class="font-xl color-blue icon ion-checkmark-circled"></i>
                           <input type="radio" name="gender" value="F" ng-model="profileCtrl.user.gender">
                       </label>
                   </div>
               </div>
-              <div class="row" >
-                  <div class="col text-center font-md">Boy</div>
+              <div class="row no-padding" >
+                  <div class="col text-center font-md no-padding">Boy</div>
                   <div class="font-md visible-none">or</div>
-                  <div class="col text-center font-md">Girl</div>
+                  <div class="col text-center font-md no-padding">Girl</div>
               </div>
               <div class="padding-10">
                 
               </div>
               <div class="row">
                   <div class="col">
-                      <div class="input-group input-group-social">
+                      <div class="input-group input-group-social no-margin">
                           <!-- <i class="icon ion-search placeholder-icon"></i> -->
                           <div type="button" class="input-group-item input-group-addon input-group-addon-light font-sm">
                             <i class="ed-icon icon-profile"></i>
@@ -65,8 +65,8 @@
                   </div>
               </div>
               <div class="row">
-                  <div class="col text-center padding-40">
-                      <button type="submit"  class="button button-balanced button-round padding-x-40 no-shadow">DONE</button>
+                  <div class="col text-center padding-30">
+                      <button type="submit"  class="button button-balanced button-round padding-x-40 padding-y-0 no-shadow">DONE</button>
                   </div>
               </div>
           </div>
