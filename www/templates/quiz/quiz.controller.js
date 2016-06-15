@@ -4,9 +4,9 @@
     .module('zaya-quiz')
     .controller('QuizController', QuizController)
 
-  QuizController.$inject = ['quiz', 'widgetParser', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Quiz', 'Auth', '$ionicLoading', '$ionicPopup', 'lessonutils', 'orientation', '$location', '$anchorScroll', '$document', '$ionicScrollDelegate', '$ionicPosition', '$timeout', '$window', 'soundManager', '$cordovaFileTransfer', '$cordovaFile', '$interval', '$q', '$ImageCacheFactory', 'ml'];
+  QuizController.$inject = ['quiz', 'widgetParser', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Auth', '$ionicLoading', '$ionicPopup', 'lessonutils', 'orientation', '$location', '$anchorScroll', '$document', '$ionicScrollDelegate', '$ionicPosition', '$timeout', '$window', 'mediaManager', '$cordovaFileTransfer', '$cordovaFile', '$interval', '$q', '$ImageCacheFactory', 'ml', 'data'];
 
-  function QuizController(quiz, widgetParser, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Quiz, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition, $timeout, $window, soundManager, $cordovaFileTransfer, $cordovaFile, $interval, $q, $ImageCacheFactory, ml) {
+  function QuizController(quiz, widgetParser, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition, $timeout, $window, mediaManager, $cordovaFileTransfer, $cordovaFile, $interval, $q, $ImageCacheFactory, ml, data) {
 
     var quizCtrl = this;
 
@@ -130,11 +130,11 @@
     }
 
     function submitReport(quiz, report, summary) {
-      Quiz.saveReport({
+      data.saveReport({
         node: quiz.node.id,
         person: Auth.getProfileId(),
         score: summary.score.marks
-      }, function(success) {
+      }).then(function(success) {
         var report_id = success.id;
         var attempts = [];
         angular.forEach(report.attempts, function(value, key) {
@@ -147,9 +147,7 @@
             node: key
           });
         });
-        Quiz.saveAttempt(attempts, function(response) {}, function(error) {})
-      }, function(error) {
-
+        data.saveAttempts(attempts)
       })
     }
 
@@ -158,7 +156,7 @@
     }
 
     function init(quiz) {
-      if($state.current.name == "quiz.start"){
+      if ($state.current.name == "quiz.start") {
         $ionicLoading.show();
         quizCtrl.preloadResources(quiz).then(function(success) {
           $ionicLoading.hide();
@@ -191,19 +189,18 @@
           });
           $scope.openModal = function() {
             $scope.modal.show();
-            $timeout(function () {
-              if($scope.modal.isShown())
-              {
+            $timeout(function() {
+              if ($scope.modal.isShown()) {
                 $scope.closeModal();
               }
             }, 2000);
           };
           $scope.closeModal = function() {
             if (quizCtrl.currentIndex >= quizCtrl.quiz.objects.length - 1) {
-                $scope.modal.hide().then(function() {
-                  quizCtrl.submitQuiz('practice');
-                });
-            }else {
+              $scope.modal.hide().then(function() {
+                quizCtrl.submitQuiz('practice');
+              });
+            } else {
               $scope.modal.hide().then(function() {
                 $ionicSlideBoxDelegate.slide(quizCtrl.getCurrentIndex() + 1);
               });
@@ -373,15 +370,15 @@
 
     function setSuggestion() {
       quizCtrl.quiz.suggestion = ml.getNextQSr(quizCtrl.quiz.suggestion.test, ml.mapping);
-      $log.debug('suggestion comming ',quizCtrl.quiz.suggestion);
+      $log.debug('suggestion comming ', quizCtrl.quiz.suggestion);
       if (quizCtrl.quiz.suggestion) {
         quizCtrl.quiz.objects.push(ml.dqJSON[quizCtrl.quiz.suggestion.qSr]);
         $log.debug("suggestion new", quizCtrl.quiz.suggestion);
         $log.debug("suggestion questions", quizCtrl.quiz);
       } else {
-          $log.debug('bam!',ml.dqQuiz);
-          $log.debug('bam!',ml.runDiagnostic(ml.dqQuiz));
-          quizCtrl.endQuiz();
+        $log.debug('bam!', ml.dqQuiz);
+        $log.debug('bam!', ml.runDiagnostic(ml.dqQuiz));
+        quizCtrl.endQuiz();
       }
       return true;
     }
@@ -390,9 +387,9 @@
       $log.debug('slide updated');
       $ionicSlideBoxDelegate.update();
       quizCtrl.parseHtml(quizCtrl.getCurrentIndex());
-      $timeout(function(){
-          $ionicSlideBoxDelegate.next();
-      },300)
+      $timeout(function() {
+        $ionicSlideBoxDelegate.next();
+      }, 300)
     }
 
 
@@ -467,7 +464,7 @@
         angular.element("#audioplayer")[0].pause();
         var src;
         try {
-          src = soundManager.getSound(CONSTANT.RESOURCE_SERVER + quizCtrl.quiz.objects[index].node.type.content.widgets.sounds[key]);
+          src = mediaManager.getSound(CONSTANT.RESOURCE_SERVER + quizCtrl.quiz.objects[index].node.type.content.widgets.sounds[key]);
         } catch (e) {
           src = CONSTANT.RESOURCE_SERVER + quizCtrl.quiz.objects[index].node.type.content.widgets.sounds[key];
         }
@@ -655,7 +652,7 @@
         angular.forEach(quiz.objects, function(question) {
           angular.forEach(question.node.type.content.widgets.sounds, function(sound) {
             try {
-              promises.push(soundManager.download(CONSTANT.RESOURCE_SERVER + sound));
+              promises.push(soundManager.downloadSound(CONSTANT.RESOURCE_SERVER + sound));
             } catch (e) {
               $log.debug("Error Downloading sound")
             }

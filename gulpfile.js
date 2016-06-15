@@ -14,6 +14,7 @@ var stripDebug = require('gulp-strip-debug');
 var templateCache = require('gulp-angular-templatecache');
 var optimization = require('gulp-imagemin');
 var preen = require('preen');
+var strip = require('gulp-strip-comments');
 
 var paths = {
   sass: [
@@ -48,7 +49,7 @@ var paths = {
   ]
 };
 
-gulp.task('default', ['sass', 'watch']);
+gulp.task('default', ['sass','scripts','html','watch']);
 
 gulp.task('optimize', function(cb) {
   gulp.src(paths.image)
@@ -73,6 +74,7 @@ gulp.task('scripts', function() {
     }))
     .pipe(ngAnnotate())
     .pipe(stripDebug())
+    .pipe(strip())
     .pipe(concate('mobile.app.js'))
     .pipe(gulp.dest('www/build'))
     .pipe(rename({
@@ -93,7 +95,7 @@ gulp.task('sass', function(done) {
     // }))
     .pipe(gulp.dest('./www/css/'))
     .pipe(minifyCss({
-      keepSpecialComments: 0
+      keepSpecialComments: 1
     }))
     .pipe(rename({
       extname: '.min.css'
@@ -107,6 +109,7 @@ gulp.task('html', function() {
     .pipe(print(function(filepath) {
       return "html modified : " + filepath;
     }))
+    .pipe(strip())
     .pipe(templateCache({
       base: function(file) {
         var filename = file.relative.replace('www/', '');
