@@ -5,9 +5,9 @@
     .module('zaya-map')
     .controller('mapController', mapController);
 
-  mapController.$inject = ['$scope', '$rootScope', '$log', '$ionicModal', '$state', 'lessons', 'scores', 'extendLesson', 'Rest', 'CONSTANT', '$sce', '$ionicLoading', '$timeout', '$ionicBackdrop', 'orientation', 'Auth','lessonutils','audio','data', 'ml'];
+  mapController.$inject = ['$scope', '$rootScope', '$log', '$ionicModal', '$state', 'lessons', 'scores','skills', 'extendLesson', 'Rest', 'CONSTANT', '$sce', '$ionicLoading', '$timeout', '$ionicBackdrop', 'orientation', 'Auth','lessonutils','audio','data', 'ml'];
 
-  function mapController($scope, $rootScope, $log, $ionicModal, $state, lessons, scores, extendLesson, Rest, CONSTANT, $sce, $ionicLoading, $timeout, $ionicBackdrop, orientation, Auth, lessonutils, audio, data, ml) {
+  function mapController($scope, $rootScope, $log, $ionicModal, $state, lessons, scores,skills, extendLesson, Rest, CONSTANT, $sce, $ionicLoading, $timeout, $ionicBackdrop, orientation, Auth, lessonutils, audio, data, ml) {
     $scope.audio = audio;
     $scope.orientation= orientation;
     var mapCtrl = this;
@@ -26,7 +26,7 @@
     mapCtrl.openSettings = openSettings;
     mapCtrl.closeSettings = closeSettings;
 	mapCtrl.updateProfile = updateProfile;
-    mapCtrl.skillSet = $state.current.data ? $state.current.data.skillset : {};
+    mapCtrl.skillSet = skills;
 
     mapCtrl.downloadLesson = downloadLesson;
     mapCtrl.isDownloaded = isDownloaded;
@@ -135,7 +135,7 @@
       var updateParams = {
         "phone_number" : params.phone_number,
         "name" : params.name,
-        "email" : params.email          
+        "email" : params.email
       };
       Rest.one('users', params.id).patch(updateParams).then(function(){
 

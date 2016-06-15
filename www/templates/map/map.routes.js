@@ -17,7 +17,12 @@
           }],
           scores: ['Rest', '$log', 'data', function(Rest, $log, data) {
             return data.getLessonsScore(25);
-          }]
+        }],
+        skills : ['Rest', '$log', function(Rest, $log){
+            return Rest.one('profiles', JSON.parse(localStorage.user_details).profile).all('scores').all('skills').getList().then(function(profile) {
+              return profile.plain();
+            });
+        }]
 
         },
         template: '<ion-nav-view name="state-map"></ion-nav-view>'
@@ -35,20 +40,6 @@
               "tag": "Litmus",
               "locked": false
           },
-          skillset : [{
-            name: 'reading',
-            score: 300
-          }, {
-            name: 'listening',
-            score: 200
-          }, {
-            name: 'vocabulary',
-            score: 250
-          }, {
-            name: 'grammar',
-            score: 3000
-          }]
-
       },
         onEnter: ['$state', 'lessons', 'audio', '$ionicLoading', 'orientation','CONSTANT', function($state, lessons, audio, $ionicLoading, orientation, CONSTANT) {
           orientation.setPortrait();
