@@ -7,13 +7,11 @@
     background-image: url("#{$icon-path}/#{$icon-name}#{$icon-type}");
     background-repeat: no-repeat;
     background-position: center center;
-    background-size: contain; 
   }
   .icon-#{$icon}.active{
     background-image: url("#{$icon-path}/#{$icon-name}-active#{$icon-type}");
     background-repeat: no-repeat;
     background-position: center center;
-    background-size: contain; 
   }
 }
 
@@ -31,10 +29,6 @@ label .input-label{
   margin-left: -15px;
 }
 
-
-.input-group-social{
-}
-
 .icon-fit-width{
     background-size: 50% auto;
 }
@@ -47,4 +41,3 @@ label .input-label{
 .icon-left-align{
   background-position: 5% center;
 }
-
