@@ -9,7 +9,7 @@
 
     $stateProvider
       .state('quiz', {
-        url: '/quiz/:type/:id',
+        url: '/quiz/:type/:id/',
         abstract: true,
         cache: false,
         template: '<ion-nav-view name="state-quiz"></ion-nav-view>',
@@ -17,6 +17,9 @@
           orientation.setPortrait();
           audio.stop('background');
         }],
+        params : {
+          quiz : null
+        },
         resolve: {
           quiz: ['$stateParams', 'Rest', '$log', 'data', 'ml', '$q', '$http', function($stateParams, Rest, $log, data, ml, $q, $http) {
             if ($stateParams.type == 'litmus') {
@@ -64,8 +67,8 @@
 
 
             } else {
-
-              return data.getAssessment($stateParams.id);
+              $log.debug("aaaaaaaaaaa",$stateParams)
+              return $stateParams.quiz;
 
             }
           }]
@@ -73,6 +76,9 @@
       })
       .state('quiz.start', {
         url: '/start',
+        onEnter: function($stateParams,$log){
+          $log.debug("aa",$stateParams)
+        },
         views: {
           'state-quiz': {
             templateUrl: CONSTANT.PATH.QUIZ + '/quiz.start' + CONSTANT.VIEW,

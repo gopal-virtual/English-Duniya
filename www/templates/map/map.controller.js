@@ -11,6 +11,7 @@
     $scope.audio = audio;
     $scope.orientation= orientation;
     var mapCtrl = this;
+    $log.debug(scores)
     var lessonList = CONSTANT.LOCK ? extendLesson.getLesson(lessons, scores) : lessons;
     $state.current.data && lessonList.unshift($state.current.data.litmus);
     mapCtrl.lessons = lessonList;
@@ -27,9 +28,8 @@
     mapCtrl.closeSettings = closeSettings;
 	mapCtrl.updateProfile = updateProfile;
     mapCtrl.skillSet = skills;
-
+	mapCtrl.isLessonDownloaded = null;
     mapCtrl.downloadLesson = downloadLesson;
-    mapCtrl.isDownloaded = isDownloaded;
     function logout(type) {
       mapCtrl.closeSettings();
       $ionicLoading.show({
@@ -62,6 +62,11 @@
       $state.go('user.main.settings', {});
     })
     $scope.$on('openNode', function(event, node) {
+      data.isLessonDownloaded(node.id).then(function(response){
+        mapCtrl.isLessonDownloaded = response;
+      }).catch(function(error){
+        mapCtrl.isLessonDownloaded = false;
+      });
         $log.debug('open node emitted',node);
         if(node.content_type_name == 'litmus'){
             $state.go('quiz.questions',{
@@ -116,12 +121,17 @@
     }
 
     function downloadLesson(id) {
-      data.downloadLesson(id)
+      $ionicLoading.show();
+      data.downloadLesson(id).then(function(response){
+        mapCtrl.isLessonDownloaded = true;
+        $log.debug("Lesson Downlaoded",response);
+      }).catch(function(error){
+        $log.debug("error",error)
+      }).finally(function(){
+        $ionicLoading.hide()
+      })
     }
 
-    function isDownloaded(id){
-      data.isDownloaded(id)
-    }
 
     // $timeout(function functionName() {
     //   if (mapCtrl.lessons && localStorage.lesson) {

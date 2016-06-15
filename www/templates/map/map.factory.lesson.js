@@ -24,6 +24,7 @@
     }
 
     function getLesson(lessons, scores) {
+      $log.debug(lessons.length,scores.length)
 
       angular.forEach(lessons, function(value, key) {
         setLock(key, value, true);
@@ -32,7 +33,6 @@
 
         var total_score = 0;
         var obtained_score = 0;
-
         angular.forEach(scores[key].contents.assessment, function(value, key) {
           total_score += value.total_score;
           obtained_score += value.obtained_score;

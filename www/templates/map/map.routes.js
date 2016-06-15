@@ -13,6 +13,8 @@
         abstract: true,
         resolve: {
           lessons: ['Rest', '$log', '$http', 'data', function(Rest, $log, $http, data) {
+            $log.debug("---------",data)
+
             return data.getLessonsList(25);
           }],
           scores: ['Rest', '$log', 'data', function(Rest, $log, data) {
@@ -43,10 +45,10 @@
       },
         onEnter: ['$state', 'lessons', 'audio', '$ionicLoading', 'orientation','CONSTANT', function($state, lessons, audio, $ionicLoading, orientation, CONSTANT) {
           orientation.setPortrait();
-          $ionicLoading.show({
-            templateUrl: CONSTANT.PATH.COMMON + '/common.loader' + CONSTANT.VIEW,
-            duration: 8000
-          });
+          // $ionicLoading.show({
+          //   templateUrl: 'templates/common/common.loader.view.html',
+          //   duration: 8000
+          // });
           if (!lessons) {
             $state.go('map.unauthorised');
           }
