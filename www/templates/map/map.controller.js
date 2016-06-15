@@ -27,7 +27,7 @@
     mapCtrl.closeSettings = closeSettings;
 
     mapCtrl.skillSet = $state.current.data?$state.current.data.skillset:{};
-
+    mapCtrl.isLessonDownloaded = null;
     mapCtrl.downloadLesson = downloadLesson;
     function logout(type) {
       mapCtrl.closeSettings();
@@ -61,6 +61,11 @@
       $state.go('user.main.settings', {});
     })
     $scope.$on('openNode', function(event, node) {
+      data.isLessonDownloaded(node.id).then(function(response){
+        mapCtrl.isLessonDownloaded = response;
+      }).catch(function(error){
+        mapCtrl.isLessonDownloaded = false;
+      });
         $log.debug('open node emitted',node);
         if(node.content_type_name == 'litmus'){
             $state.go('quiz.questions',{
@@ -115,12 +120,17 @@
     }
 
     function downloadLesson(id) {
-      data.downloadLesson(id)
+      $ionicLoading.show();
+      data.downloadLesson(id).then(function(response){
+        mapCtrl.isLessonDownloaded = true;
+        $log.debug("Lesson Downlaoded",response);
+      }).catch(function(error){
+        $log.debug("error",error)
+      }).finally(function(){
+        $ionicLoading.hide()
+      })
     }
 
-    function isDownloaded(id){
-      data.isDownloaded(id)
-    }
 
     // $timeout(function functionName() {
     //   if (mapCtrl.lessons && localStorage.lesson) {

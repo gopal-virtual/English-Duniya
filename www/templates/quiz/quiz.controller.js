@@ -463,7 +463,9 @@
         var src;
         try {
           src = mediaManager.getSound(CONSTANT.RESOURCE_SERVER + quizCtrl.quiz.objects[index].node.type.content.widgets.sounds[key]);
+          $log.debug(src)
         } catch (e) {
+          $log.debug("here")
           src = CONSTANT.RESOURCE_SERVER + quizCtrl.quiz.objects[index].node.type.content.widgets.sounds[key];
         }
 
