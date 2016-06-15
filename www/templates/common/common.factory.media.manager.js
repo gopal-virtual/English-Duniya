@@ -39,6 +39,7 @@
         }
       },
       downloadVideo: function(url) {
+        return;
         // $log.debug('Free space' ,cordova.getFreeDiskSpace());
         // $log.debug('Free space' ,cordova.getFreeDiskSpace());
         var filename = url.split("/").pop();

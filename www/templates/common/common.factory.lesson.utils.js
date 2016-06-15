@@ -5,10 +5,10 @@
     .module('common')
     .factory('lessonutils', lessonutils);
 
-  lessonutils.$inject = ['$ionicLoading', '$state', '$stateParams', 'Rest', '$log', 'CONSTANT', '$timeout', '$sce', '$ionicPopup'];
+  lessonutils.$inject = ['$ionicLoading', '$state', '$stateParams', 'Rest', '$log', 'CONSTANT', '$timeout', '$sce', '$ionicPopup','data'];
 
   /* @ngInject */
-  function lessonutils($ionicLoading, $state, $stateParams, Rest, $log, CONSTANT, $timeout, $sce, $ionicPopup) {
+  function lessonutils($ionicLoading, $state, $stateParams, Rest, $log, CONSTANT, $timeout, $sce, $ionicPopup, data) {
     var utils = {
       leaveLesson: leaveLesson,
       getLesson: getLesson,
@@ -49,10 +49,11 @@
       $ionicLoading.show({
         noBackdrop: false,
       });
-      Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('lessons', id).get().then(function(response) {
+      data.getLesson(id).then(function(response) {
         $ionicLoading.hide();
-        utils.setLocalLesson(JSON.stringify(response.plain()));
-        callback && callback(response.plain());
+        utils.setLocalLesson(JSON.stringify(response));
+        $log.debug(response)
+        callback && callback(response);
       }, function(error) {
         $ionicLoading.hide();
         $ionicPopup.alert({
@@ -97,12 +98,14 @@
         // noBackdrop: false,
         hideOnStateChange: true
       });
+      $log.debug(resource);
       if (utils.resourceType(resource) == 'assessment') {
         $timeout(function() {
           $stateParams.type != 'assessment' &&
             $state.go('quiz.start', {
               id: resource.node.id,
-              type: 'assessment'
+              type: 'assessment',
+              quiz: resource
             });
           $stateParams.type == 'assessment' && $ionicLoading.hide();
       }, 1000);
@@ -111,7 +114,8 @@
           $stateParams.type != 'practice' &&
             $state.go('quiz.start', {
               id: resource.node.id,
-              type: 'practice'
+              type: 'practice',
+              quiz: resource
             });
           $stateParams.type == 'practice' && $ionicLoading.hide();
       }, 1000);

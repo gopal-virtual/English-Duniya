@@ -10,7 +10,6 @@
 
     var quizCtrl = this;
 
-
     //bind quiz resolved to controller
     quizCtrl.quiz = quiz;
 
@@ -57,11 +56,6 @@
     quizCtrl.endQuiz = endQuiz;
     quizCtrl.playStarSound = playStarSound;
     quizCtrl.disableSwipe = disableSwipe;
-    //preload resources
-    quizCtrl.preloadResources = preloadResources;
-    quizCtrl.preloadSounds = preloadSounds;
-    quizCtrl.preloadImages = preloadImages;
-
 
     // quizCtrl.pauseQuiz = pauseQuiz;
     quizCtrl.restartQuiz = restartQuiz;
@@ -157,10 +151,14 @@
 
     function init(quiz) {
       if ($state.current.name == "quiz.start") {
-        $ionicLoading.show();
-        quizCtrl.preloadResources(quiz).then(function(success) {
-          $ionicLoading.hide();
-        });
+        // $ionicLoading.show();
+        // if (data.isQuizDownloaded(quizCtrl.quiz.node.id)) {
+        //   $ionicLoading.hide();
+        // } else {
+        //   data.downloadNode(quizCtrl.quiz.node.id).then(function() {
+        //     $ionicLoading.hide();
+        //   })
+        // }
       }
       if ($state.current.name == "quiz.summary") {
         quizCtrl.report = $stateParams.report;
@@ -616,53 +614,5 @@
       }
     }
 
-    function preloadResources(quiz) {
-      var d = $q.defer();
-      $q.all([quizCtrl.preloadImages(quiz),
-        quizCtrl.preloadSounds(quiz)
-      ]).then(function(success) {
-        d.resolve(success);
-      }, function(error) {
-        d.reject(error)
-      });
-      return d.promise;
-    }
-
-
-    function preloadImages(quiz) {
-      var d = $q.defer();
-      var images = [];
-      angular.forEach(quiz.objects, function(question) {
-        angular.forEach(question.node.type.content.widgets.images, function(image) {
-          images.push(CONSTANT.RESOURCE_SERVER + image);
-        })
-      })
-      $ImageCacheFactory.Cache(images).then(function() {
-        d.resolve('Images Loaded Successfully');
-      }, function(failed) {
-        d.reject('Error Loading Image' + failed);
-      });
-      return d.promise;
-    }
-
-    function preloadSounds(quiz) {
-      var d = $q.defer();
-      ionic.Platform.ready(function() {
-        var promises = [];
-        angular.forEach(quiz.objects, function(question) {
-          angular.forEach(question.node.type.content.widgets.sounds, function(sound) {
-            try {
-              promises.push(soundManager.downloadSound(CONSTANT.RESOURCE_SERVER + sound));
-            } catch (e) {
-              $log.debug("Error Downloading sound")
-            }
-          })
-        });
-        $q.all(promises).then(function(success) {
-          d.resolve("Sounds Loaded Successfully");
-        });
-        return d.promise;
-      });
-    }
   }
 })();

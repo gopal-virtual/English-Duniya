@@ -15,14 +15,16 @@
         var diagLitmusMappingDB = pouchDB('diagLitmusMapping');
         var kmapsJSONDB = pouchDB('kmapsJSON');
         var dqJSONDB = pouchDB('dqJSON');
-        var appDB = pouchDB('appDB');
+        var lessonDB = pouchDB('lessonDB');
+        var lessonScoreDB = pouchDB('lessonScoreDB');
+        var resourceDB = pouchDB('resourceDB');
+
         var getDataSource = function(){
 
         };
 
         function preloadMedia(resource) {
           var d = $q.defer();
-          $log.debug(resource,resource.node.content_type_name)
           if(resource.node.content_type_name === 'assignment')
           {
             $q.all([preloadImages(resource),
@@ -104,6 +106,7 @@
             createDiagLitmusMappingDB: createDiagLitmusMappingDB(),
             createKmapsJSON: createKmapsJSON(),
             createDiagQJSON: createDiagQJSON(),
+            createLessonDB: createLessonDB,
             // getDiagnosisQuestionById: getDiagnosisQuestionById,
             // getDiagnosisQuestionByLevelNSkill: getDiagnosisQuestionByLevelNSkill,
             getDiagnosisLitmusMapping: getDiagnosisLitmusMapping,
@@ -122,7 +125,8 @@
             saveAttempts : saveAttempts,
             // getResults : getResults, // for results in hud screen
             downloadLesson : downloadLesson,
-            isDownloaded : isDownloaded
+            getLesson : getLesson,
+            isLessonDownloaded : isLessonDownloaded
         };
 
 
@@ -235,6 +239,7 @@
           return promise;
         }
 
+
         function getDQJSON(){
           var result = dqJSONDB.get("dqJSON")
                         .then(function(doc){
@@ -259,7 +264,28 @@
           return result;
         }
 
+        function createLessonDB(){
+          var d = $q.defer();
+          var promises = []
+          return  $http.get('templates/common/lessons.json').success(function(data) {
+              $log.debug('in createLessonDB',data);
+              for(var i = 0 ; i<data.length ; i ++){
+                $log.debug(data[i],data[i].node.id);
+                promises.push(lessonDB.put({ "_id": data[i].node.id, "lesson": data[i]}));
+              }
+              $q.all(promises).then(function(){
+                  d.resolve("Lesson Db created");
+              })
+              return d.promise;
+          });
+          // $log.debug('promise of createKmapsJSON', promise);
+
+        }
+
+
         function getLessonsScore(limit){
+
+
           return Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('profiles', JSON.parse(localStorage.user_details).profile).customGET('lessons-score', {
             limit: limit
           }).then(function(score) {
@@ -271,16 +297,31 @@
         }
 
         function getLessonsList(limit){
-          return Rest.one('accounts', CONSTANT.CLIENTID.ELL).customGET('lessons', {
-            limit: limit
-          }).then(function(lessons) {
-            return lessons.plain().results;
-          }, function(error) {
-            $log.debug('some error occured', error);
+          var d = $q.defer();
+          $log.debug("here")
+          lessonDB.allDocs({ include_docs: true}).then(function(data){
+            var lessons = [];
+            for(var i = 0; i < data.rows.length ; i++){
+              lessons.push(data.rows[i].doc.lesson.node);
+            }
+            d.resolve(lessons)
           })
+          .catch(function(error){
+            d.reject(error)
+          })
+          return d.promise;
+          // return Rest.one('accounts', CONSTANT.CLIENTID.ELL).customGET('lessons', {
+          //   limit: limit
+          // }).then(function(lessons) {
+          //   return lessons.plain().results;
+          // }, function(error) {
+          //   $log.debug('some error occured', error);
+          // })
         }
 
         function getAssessment(assessmentId){
+
+
           return Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('assessments', assessmentId).get().then(function(quiz) {
             return quiz.plain();
           });
@@ -293,14 +334,26 @@
         function saveReport(data){
           return Rest.all('reports').post(data);
         }
+
+        function downloadQuiz(id){
+        }
+
+        function getLesson(id){
+          var d = $q.defer();
+          lessonDB.get(id).then(function(data){
+            d.resolve(data.lesson)
+          }).catch(function(error){
+            d.reject(error)
+          })
+          return d.promise;
+        }
         function downloadLesson(id){
-          $log.debug("here");
           var lesson = {};
           return Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('lessons', id).get()
           .then(function(response) {
            lesson = response.plain();
-            $log.debug('lesson',lesson);
-            // return appDB.put({'_id':id,'lesson':lesson})
+            $log.debug('lesson');
+            return lessonDB.put({'_id':id,'lesson':lesson})
           })
           .then(function(response){
             var d = $q.defer();
@@ -308,6 +361,14 @@
             var index = null;
             angular.forEach(lesson.objects,function(object,key){
                 promises.push(preloadMedia(object));
+                if(object.node.content_type_name === 'assessment'){
+                  $log.debug("assessment");
+                  promises.push(quizDB.put({'_id':object.node.id,'quiz':object}));
+                }
+                if(object.node.content_type_name === 'resource'){
+                  $log.debug("resource");
+                  promises.push(resourceDB.put({'_id':object.node.id,'resource':object}));
+                }
             })
             $q.all(promises).then(function(success) {
               d.resolve("Resources Loaded Successfully");
@@ -321,7 +382,7 @@
             $log.debug("err",response)
           })
         }
-        function isDownloaded(id){
+        function isLessonDownloaded(id){
           if(id){
             $log.debug("in isDownloaded");
             return appDB.get(id).then(function(data){
