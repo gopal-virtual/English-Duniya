@@ -25,7 +25,7 @@
 
     mapCtrl.openSettings = openSettings;
     mapCtrl.closeSettings = closeSettings;
-
+	mapCtrl.updateProfile = updateProfile;
     mapCtrl.skillSet = $state.current.data.skillset;
 
     function logout(type) {
@@ -119,6 +119,24 @@
     //     $scope.selectedNode = $scope.lessonutils.getLocalLesson();
     //   }
     // });
+    // $scope.test = {"phone_number":"+919393939193"};
+    function updateProfile(params) {
+      $log.log(JSON.stringify(params));
+      var updateParams = {
+        "phone_number" : params.phone_number,
+        "name" : params.name,
+        "email" : params.email          
+      };
+      Rest.one('users', params.id).patch(updateParams).then(function(){
+
+        $scope.user.mapCtrl.user.phone_number = params.phone_number;
+        $scope.user.mapCtrl.user.name = params.name;
+        $scope.user.mapCtrl.user.email = params.email;
+      }).catch(
+
+      );
+    }
+    // updateProfile($scope.test);
 
   }
 })();

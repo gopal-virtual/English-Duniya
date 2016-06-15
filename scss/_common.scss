@@ -9,6 +9,13 @@
 .inline-block {
   display: inline-block;
 }
+.display-none{
+  display: none !important;
+}
+
+.visible-none{
+  visibility: hidden
+}
 .float-left {
   float: left;
 }
@@ -86,4 +93,11 @@ progress[value]::-webkit-progress-value {
 
   height: 40px;
   top: calc(50% - 20px);
+}
+
+.no-align {
+  text-align: left !important;
+}
+.fit-width *{
+  width: 100%;
 }

@@ -7,13 +7,34 @@
     background-image: url("#{$icon-path}/#{$icon-name}#{$icon-type}");
     background-repeat: no-repeat;
     background-position: center center;
+    background-size: contain; 
   }
   .icon-#{$icon}.active{
     background-image: url("#{$icon-path}/#{$icon-name}-active#{$icon-type}");
     background-repeat: no-repeat;
     background-position: center center;
+    background-size: contain; 
   }
 }
+
+.ed-icon{
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+  width: 28px;
+  margin-left: 10px;
+  margin-right: 10px;
+  min-height: 50px;
+}
+
+label .input-label{
+  margin-left: -15px;
+}
+
+
+.input-group-social{
+}
+
 .icon-fit-width{
     background-size: 50% auto;
 }
@@ -23,3 +44,4 @@
 .icon-left-align{
   background-position: 5% center;
 }
+

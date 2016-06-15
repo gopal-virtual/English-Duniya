@@ -192,11 +192,16 @@
 
     function verifyOtp(data) {
       $ionicLoading.show();
-      if (SMS) SMS.stopWatch(function() {
-        $log.debug('watching', 'watching stopped');
-      }, function() {
-        $log.debug('failed to stop watching');
-      });
+      try {
+        if (SMS) SMS.stopWatch(function() {
+          $log.debug('watching', 'watching stopped');
+        }, function() {
+          $log.debug('failed to stop watching');
+        });
+      } catch(e) {
+
+      }
+
 
       authCtrl.formHelper.validateForm(data, authCtrl.OtpFormValidations)
         .then(function(response) {
@@ -207,6 +212,9 @@
           return Auth.getUser();
         })
         .then(function() {
+          return Auth.getProfile();
+        })
+        .then(function() {
           $ionicLoading.hide();
           return authCtrl.showAlert("Correct!", "Phone Number verified!");
         }).then(function() {
@@ -214,11 +222,15 @@
         })
         .catch(function(error) {
           authCtrl.showError("Could not verify", error);
-          if (SMS) SMS.startWatch(function() {
-            $log.debug('watching', 'watching started');
-          }, function() {
-            $log.debug('failed to start watching');
-          });
+          try {
+            if (SMS) SMS.startWatch(function() {
+              $log.debug('watching', 'watching started');
+            }, function() {
+              $log.debug('failed to start watching');
+            });
+          } catch(e) {
+
+          }
         })
         .finally(function() {
           $ionicLoading.hide();

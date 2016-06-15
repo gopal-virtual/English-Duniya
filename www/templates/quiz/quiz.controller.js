@@ -4,9 +4,9 @@
     .module('zaya-quiz')
     .controller('QuizController', QuizController)
 
-  QuizController.$inject = ['quiz', 'widgetParser', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Quiz', 'Auth', '$ionicLoading', '$ionicPopup', 'lessonutils', 'orientation', '$location', '$anchorScroll', '$document', '$ionicScrollDelegate', '$ionicPosition', '$timeout', '$window', 'soundManager', '$cordovaFileTransfer', '$cordovaFile', '$interval', '$q', '$ImageCacheFactory', 'ml'];
+  QuizController.$inject = ['quiz', 'widgetParser', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Quiz', 'Auth', '$ionicLoading', '$ionicPopup', 'lessonutils', 'orientation', '$location', '$anchorScroll', '$document', '$ionicScrollDelegate', '$ionicPosition', '$timeout', '$window', 'soundManager', '$cordovaFileTransfer', '$cordovaFile', '$interval', '$q', '$ImageCacheFactory', 'ml','$ionicHistory'];
 
-  function QuizController(quiz, widgetParser, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Quiz, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition, $timeout, $window, soundManager, $cordovaFileTransfer, $cordovaFile, $interval, $q, $ImageCacheFactory, ml) {
+  function QuizController(quiz, widgetParser, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Quiz, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition, $timeout, $window, soundManager, $cordovaFileTransfer, $cordovaFile, $interval, $q, $ImageCacheFactory, ml,$ionicHistory) {
 
     var quizCtrl = this;
 
@@ -18,6 +18,7 @@
     quizCtrl.report = {};
     quizCtrl.submitReport = submitReport;
     quizCtrl.generateReport = generateReport;
+
     //attempts and submission
     quizCtrl.submitAttempt = submitAttempt;
     quizCtrl.isAttempted = isAttempted;
@@ -86,10 +87,26 @@
     // initialisation call
     quizCtrl.init(quizCtrl.quiz);
 
+    //state history
+    quizCtrl.isAssessment = ($stateParams.type == 'assessment');
+
     $scope.lessonutils = lessonutils;
     $scope.selectedNode = lessonutils.getLocalLesson();
 
     $scope.modal = {};
+
+
+    $scope.groups = [];
+      for (var i=0; i<10; i++) {
+        $scope.groups[i] = {
+          name: i,
+          items: []
+        };
+        for (var j=0; j<3; j++) {
+          $scope.groups[i].items.push(i + '-' + j);
+        }
+      }
+      
 
     function stopTimer() {
       $interval.cancel(quizCtrl.interval);
@@ -495,21 +512,21 @@
         if (isAttempted(value)) {
           if (quizCtrl.isCorrectAttempted(value)) {
             result.analysis[value.node.id] = {
-              title: value.node.title,
+              title: value.node.widgetHtml,
               status: 'correct',
               score: value.node.type.score
             };
             result.score.marks += value.node.type.score;
           } else {
             result.analysis[value.node.id] = {
-              title: value.node.title,
+              title: value.node.widgetHtml,
               status: 'incorrect',
               score: 0
             };
           }
         } else {
           result.analysis[value.node.id] = {
-            title: value.node.title,
+            title: value.node.widgetHtml,
             status: 'unattempted',
             score: 0
           }
@@ -667,5 +684,6 @@
         return d.promise;
       });
     }
+
   }
 })();

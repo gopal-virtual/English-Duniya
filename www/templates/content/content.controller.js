@@ -16,17 +16,6 @@
     contentCtrl.onStateChange = onStateChange;
     $scope.lessonutils = lessonutils;
     $scope.selectedNode = lessonutils.getLocalLesson();
-    function preload(arrayOfImages) {
-          $(arrayOfImages).each(function(){
-              $('<img/>')[0].src = this;
-          });
-      }
-      preload([
-          '/img/assets/avatar-boy.png',
-          '/img/assets/pause_menu_y_top.png',
-          '/img/assets/pause_menu_y_middle.png',
-          '/img/assets/pause_menu_y_bottom.png'
-      ]);
     contentCtrl.config = {
       sources: [$stateParams.video],
       autoplay : true,
@@ -43,10 +32,15 @@
       contentCtrl.API = API;
     }
     function onStateChange(state){
-        $log.debug(state);
         $timeout(function(){
             if(state == 'pause'){
                 // $scope.openNodeMenu();
+            }
+        })
+        $timeout(function(){
+            if(state == 'stop'){
+                $log.debug('video ended',state);
+                $scope.modal.show();
             }
         })
     }
