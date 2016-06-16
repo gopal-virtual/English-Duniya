@@ -4,9 +4,9 @@
     .module('zaya-quiz')
     .controller('QuizController', QuizController)
 
-  QuizController.$inject = ['quiz', 'widgetParser', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Auth', '$ionicLoading', '$ionicPopup', 'lessonutils', 'orientation', '$location', '$anchorScroll', '$document', '$ionicScrollDelegate', '$ionicPosition', '$timeout', '$window', 'mediaManager', '$cordovaFileTransfer', '$cordovaFile', '$interval', '$q', '$ImageCacheFactory', 'ml', 'data'];
+  QuizController.$inject = ['quiz', 'widgetParser', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Auth', '$ionicLoading', '$ionicPopup', 'lessonutils', 'orientation', '$location', '$anchorScroll', '$document', '$ionicScrollDelegate', '$ionicPosition', '$timeout', '$window', 'mediaManager', '$cordovaFileTransfer', '$cordovaFile', '$interval', '$q', '$ImageCacheFactory', 'ml', 'data' , 'lessonutils'];
 
-  function QuizController(quiz, widgetParser, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition, $timeout, $window, mediaManager, $cordovaFileTransfer, $cordovaFile, $interval, $q, $ImageCacheFactory, ml, data) {
+  function QuizController(quiz, widgetParser, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition, $timeout, $window, mediaManager, $cordovaFileTransfer, $cordovaFile, $interval, $q, $ImageCacheFactory, ml, data, lessonutils) {
 
     var quizCtrl = this;
 
@@ -91,16 +91,16 @@
 
 
     $scope.groups = [];
-      for (var i=0; i<10; i++) {
-        $scope.groups[i] = {
-          name: i,
-          items: []
-        };
-        for (var j=0; j<3; j++) {
-          $scope.groups[i].items.push(i + '-' + j);
-        }
+    for (var i = 0; i < 10; i++) {
+      $scope.groups[i] = {
+        name: i,
+        items: []
+      };
+      for (var j = 0; j < 3; j++) {
+        $scope.groups[i].items.push(i + '-' + j);
       }
-      
+    }
+
 
     function stopTimer() {
       $interval.cancel(quizCtrl.interval);
@@ -141,25 +141,38 @@
     }
 
     function submitReport(quiz, report, summary) {
-      data.saveReport({
-        node: quiz.node.id,
-        person: Auth.getProfileId(),
-        score: summary.score.marks
-      }).then(function(success) {
-        var report_id = success.id;
-        var attempts = [];
-        angular.forEach(report.attempts, function(value, key) {
-          attempts.push({
-            answer: value.length > 0 ? value : null,
-            score: summary.analysis[key].score,
-            status: value.length > 0 ? CONSTANT.ATTEMPT.STATUS.ATTEMPTED : CONSTANT.ATTEMPT.STATUS.SKIPPED,
+
+      lesson = lessonutils.getLocalLesson();
+      $log.debug(lesson)
+      return data.updateScores({
+        lessonId : lesson.node.id,
+          id: quiz.node.id,
+          title: quiz.title,
+          type: quiz.node.content_type_name
+        })
+        .then(function(response) {
+          return data.saveReport({
+            node: quiz.node.id,
             person: Auth.getProfileId(),
-            report: report_id,
-            node: key
+            score: summary.score.marks
+          })
+        })
+        .then(function(success) {
+          var report_id = success.id;
+          var attempts = [];
+          angular.forEach(report.attempts, function(value, key) {
+            attempts.push({
+              answer: value.length > 0 ? value : null,
+              score: summary.analysis[key].score,
+              status: value.length > 0 ? CONSTANT.ATTEMPT.STATUS.ATTEMPTED : CONSTANT.ATTEMPT.STATUS.SKIPPED,
+              person: Auth.getProfileId(),
+              report: report_id,
+              node: key
+            });
           });
-        });
-        data.saveAttempts(attempts)
-      })
+          return data.saveAttempts(attempts)
+        })
+
     }
 
     function disableSwipe() {
@@ -185,7 +198,12 @@
         $log.debug("summary")
         $log.debug(quizCtrl.summary)
           // quizCtrl.summary = quizCtrl.generateSummary(quizCtrl.report, quizCtrl.quiz);
-        quizCtrl.submitReport(quizCtrl.quiz, quizCtrl.report, quizCtrl.summary);
+        $ionicLoading.show();
+        quizCtrl.submitReport(quizCtrl.quiz, quizCtrl.report, quizCtrl.summary).finally(function() {
+          $ionicLoading.hide();
+        })
+
+        ;
       } else if ($state.current.name == "quiz.questions") {
 
         quizCtrl.setCurrentIndex(0);
