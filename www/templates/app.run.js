@@ -42,6 +42,16 @@
         $state.go('map.navigate');
       }
       // block access to quiz summary page if there is no quiz data
+      if (toState.name == 'quiz.questions' && !toParams.quiz) {
+        $log.debug("Quiz : No quiz data present");
+        event.preventDefault();
+        $state.go('map.navigate');
+      }
+      if (toState.name == 'quiz.start' && !toParams.quiz) {
+        $log.debug("Quiz summary page cannot be accessed : No quiz data present");
+        event.preventDefault();
+        $state.go('map.navigate');
+      }
       if (toState.name == 'quiz.summary' && !toParams.report) {
         $log.debug("Quiz summary page cannot be accessed : No quiz data present");
         event.preventDefault();

@@ -44,12 +44,12 @@
 }
 .result > .result-item:first-child > .result-item-dropdown {
   margin-left: 0 !important;
-  width : 30% !important;
+  width : 40% !important;
 }
 .result > .result-item:last-child {
   border-radius: 0 0 $border-radius 0;
 }
-.result > .result-item:nth-child(4) > .result-item-dropdown {
-  margin-left: -10% !important;
-  width : 30%;
+.result > .result-item:nth-child(5) > .result-item-dropdown {
+  margin-left: -20% !important;
+  width : 40%;
 }

@@ -26,7 +26,7 @@
         <div class="col col-center col-60 height-100">
           <ul class="resource-list height-100">
             <li ng-repeat="resource in selectedNode.objects" class="text-center padding-10 capitalize position-relative" ng-hide="lessonutils.resourceType(resource)=='assessment'">
-            <span class="badge badge-assertive points font-sm padding-10 animation-zoom-in" style="-webkit-animation-delay : {{($index+3)*100}}ms;">20</span>
+            <!-- <span class="badge badge-assertive points font-sm padding-10 animation-zoom-in" style="-webkit-animation-delay : {{($index+3)*100}}ms;">20</span> -->
               <img
               ng-src="{{lessonutils.getIcon(resource)}}"
               alt="resource icon"
@@ -45,12 +45,12 @@
           </ul>
         </div>
       </div>
-      <div class="row height-10">
-        <div class="col text-center">
-          <button class="button button-balanced button-round padding-x-30 font-xl animation-delay-more animation-fade-in-from-bottom" ng-click="audio.play('press');closeNodeMenu();lessonutils.leaveLesson();mapCtrl && mapCtrl.resetNode()">Leave</button>
+      <div class="row height-10 padding">
+        <div class="col-75 text-center padding">
+          <button class="button button-block button-balanced button-round font-xl animation-delay-more animation-fade-in-from-bottom" ng-click="audio.play('press');closeNodeMenu();lessonutils.leaveLesson();mapCtrl && mapCtrl.resetNode()">Leave</button>
         </div>
-        <div class="col text-center">
-          <button ng-disabled="mapCtrl.isLessonDownloaded" class="button button-balanced button-round padding-x-30 font-xl animation-delay-more animation-fade-in-from-bottom" ng-click="mapCtrl.downloadLesson(selectedNode.node.id)">{{mapCtrl.isLessonDownloaded?'Downloaded':'Download'}}</button>
+        <div class="col col-25 text-center padding">
+          <button class="button button-round button-balanced font-xl animation-delay-more animation-fade-in-from-bottom" ng-click="lessonutils.downloadLesson(selectedNode.node.id)"><i class="ion-android-download icon"></i></button>
         </div>
       </div>
     </div>

@@ -13,7 +13,7 @@
     var mapCtrl = this;
     $log.debug(scores)
     var lessonList = CONSTANT.LOCK ? extendLesson.getLesson(lessons, scores) : lessons;
-    $state.current.data && lessonList.unshift($state.current.data.litmus);
+    // $state.current.data && lessonList.unshift($state.current.data.litmus);
     mapCtrl.lessons = lessonList;
     $log.debug('lessons',mapCtrl.lessons);
     mapCtrl.resetNode = resetNode;
@@ -29,7 +29,6 @@
 	mapCtrl.updateProfile = updateProfile;
     mapCtrl.skillSet = skills;
 	mapCtrl.isLessonDownloaded = null;
-    mapCtrl.downloadLesson = downloadLesson;
     function logout(type) {
       mapCtrl.closeSettings();
       $ionicLoading.show({
@@ -120,18 +119,6 @@
         },400)
     }
 
-    function downloadLesson(id) {
-      $ionicLoading.show();
-      data.downloadLesson(id).then(function(response){
-        mapCtrl.isLessonDownloaded = true;
-        $log.debug("Lesson Downlaoded",response);
-      }).catch(function(error){
-        $log.debug("error",error)
-      }).finally(function(){
-        $ionicLoading.hide()
-      })
-    }
-
 
     // $timeout(function functionName() {
     //   if (mapCtrl.lessons && localStorage.lesson) {
@@ -143,10 +130,10 @@
     function updateProfile(params) {
       $log.log(JSON.stringify(params));
       var updateParams = {
-        
+
         "phone_number" : params.phone_number,
         "first_name" : params.name,
-        "email" : params.email          
+        "email" : params.email
       };
       Rest.one('users', params.id).patch(updateParams).then(function(){
 

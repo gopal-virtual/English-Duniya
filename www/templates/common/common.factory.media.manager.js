@@ -9,13 +9,27 @@
     return {
       getSound: function(url) {
         var filename = url.split("/").pop();
-        var target = cordova.file.dataDirectory + 'media/' + filename;
+        try {
+            var target = cordova.file.dataDirectory + 'media/' + filename;
+
+        } catch (e) {
+
+        } finally {
+
+        }
         $log.debug(target)
         return target;
       },
       getPath: function(url) {
         var filename = url.split("/").pop();
-        var target = cordova.file.dataDirectory + 'media/' + filename;
+        try {
+            var target = cordova.file.dataDirectory + 'media/' + filename;
+
+        } catch (e) {
+
+        } finally {
+
+        }
         return target;
       },
       play: function(sound) {
@@ -28,7 +42,14 @@
       },
       download: function(url) {
         var filename = url.split("/").pop();
-        var target = cordova.file.dataDirectory + 'media/' + filename;
+        try {
+            var target = cordova.file.dataDirectory + 'media/' + filename;
+
+        } catch (e) {
+
+        } finally {
+
+        }
         // $log.debug("here")
         // var sounds = JSON.parse(localStorage.getItem('sounds') || '{}');
         // sounds[url] = target;

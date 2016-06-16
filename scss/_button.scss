@@ -1,6 +1,5 @@
 .button {
   box-shadow: 0 2px 2px rgba(0,0,0,0.5);
-  padding: 10px;
   border-radius: $border-radius;
   border: 0;
   text-transform: capitalize !important;
@@ -71,4 +70,3 @@
 .button-sm.button-round .icon:before{
   line-height: 22px;
 }
-

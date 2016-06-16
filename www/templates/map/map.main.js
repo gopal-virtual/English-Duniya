@@ -270,7 +270,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
       var star_y = [-10, -15, -10];
 
       function lessonType(lesson, locked) {
-        return !locked ? '-' + lesson.tag.toLowerCase() : '';
+        return !locked && lesson.tag.toLowerCase()!='no tag'? '-' + lesson.tag.toLowerCase() : '';
       };
       log.debug('canvas lessons',lessons.length);
       // Place nodes
@@ -283,7 +283,8 @@ window.createGame = function(scope, lessons, audio, injector, log) {
         var posy = this.math.catmullRomInterpolation(this.points.y , j);
         log.debug('lesson status', 'node' + type + locked);
         var node = this.game.add.button(posx, posy, 'node' + type + locked);
-        this.add.tween(node.scale).to({ x: [1.2,1], y: [1.2,1]},700, Phaser.Easing.Back.Out, true, 1000).loop(true);
+
+        !locked && lessons[i+1] && lessons[i+1].locked && this.add.tween(node.scale).to({ x: [1.2,1], y: [1.2,1]},700, Phaser.Easing.Back.Out, true, 1000).loop(true);
         node.inputEnabled = true;
         node.events.onInputUp.add(
           function(currentLesson, game, posy) {
