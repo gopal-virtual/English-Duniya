@@ -396,7 +396,7 @@
             return data.updateLesson(response);
           }).then(function(data) {
             $log.debug(data, "Updated")
-            d.resolve("Lesson downlaodedadad");
+            d.resolve(data);
           });
         })
 

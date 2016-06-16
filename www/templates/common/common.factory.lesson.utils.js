@@ -124,13 +124,13 @@
               quiz: resource
             });
           $stateParams.type == 'practice' && $ionicLoading.hide();
-      }, 1000);
+      });
       } else if (utils.resourceType(resource) == 'video') {
         $timeout(function() {
           !$state.is('content.video') &&
             $state.go('content.video', {
               video: {
-                src: utils.getSrc(resource.node.type.path),
+                src: utils.getSrc(resource, resource.node.type.path),
                 type: 'video/mp4'
               }
             });
@@ -153,9 +153,10 @@
       })
     }
 
-    function getSrc(src) {
-    //   return $sce.trustAsResourceUrl(mediaManager.getPath(src));
-      return $sce.trustAsResourceUrl(CONSTANT.BACKEND_SERVICE_DOMAIN + src);
+    function getSrc(resource, src) {
+        var src = !JSON.parse(localStorage.lesson).media[0].downloaded ? CONSTANT.BACKEND_SERVICE_DOMAIN + src : mediaManager.getPath(src);
+        $log.debug('get source of resource',JSON.parse(localStorage.lesson).media[0].downloaded, src);
+      return $sce.trustAsResourceUrl(src);
     }
   }
 })();
