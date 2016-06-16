@@ -19,7 +19,8 @@
       playResource: playResource,
       getSrc: getSrc,
       currentState: currentState,
-      getGender : getGender
+      getGender : getGender,
+      downloadLesson : downloadLesson
     };
 
     return utils;
@@ -31,6 +32,7 @@
       !$state.is('map.navigate') &&
         $ionicLoading.show({
           noBackdrop: false,
+          hideOnStateChange: true
         });
       $timeout(function() {
         $state.go('map.navigate');
@@ -112,7 +114,7 @@
               quiz: resource
             });
           $stateParams.type == 'assessment' && $ionicLoading.hide();
-      }, 1000);
+      });
       } else if (utils.resourceType(resource) == 'practice') {
         $timeout(function() {
           $stateParams.type != 'practice' &&
@@ -136,13 +138,24 @@
             video.play();
             $ionicLoading.hide();
           }
-      }, 1000);
+      });
         //   utils.config.sources[0].src = utils.getSrc(resource.node.type.path);
       } else {}
     }
 
+    function downloadLesson(id) {
+      $ionicLoading.show();
+      data.downloadLesson(id).then(function(response){
+      }).catch(function(error){
+        $log.debug("error",error)
+      }).finally(function(){
+        $ionicLoading.hide()
+      })
+    }
+
     function getSrc(src) {
-      return $sce.trustAsResourceUrl(mediaManager.getPath(src));
+    //   return $sce.trustAsResourceUrl(mediaManager.getPath(src));
+      return $sce.trustAsResourceUrl(CONSTANT.BACKEND_SERVICE_DOMAIN + src);
     }
   }
 })();
