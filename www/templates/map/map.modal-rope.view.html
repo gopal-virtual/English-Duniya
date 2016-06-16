@@ -18,7 +18,7 @@
         </div>
       <div class="row height-10" ng-if="!orientation.isLandscape()">
         <div class="col text-center font-md animation-delay-more animation-fade-in-from-top">
-          <h5>{{selectedNode.node.title}}</h5>
+          <h5 class="padding-x-20">{{selectedNode.node.title.split('-', 2).join('-');}}</h5>
         </div>
       </div>
       <div class="row modal-body-wrapper" style="margin:0">

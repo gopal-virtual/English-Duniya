@@ -109,3 +109,14 @@ progress[value]::-webkit-progress-value {
 .fit-width *{
   width: 100%;
 }
+
+.text-trim-ellipsis{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.text-trim{
+    white-space: nowrap;
+    overflow: hidden;
+}
