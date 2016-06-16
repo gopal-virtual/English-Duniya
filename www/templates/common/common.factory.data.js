@@ -116,7 +116,8 @@
       // diagnosisQuestionsDB: diagnosisQuestionsDB,
       // kmapsDB: kmapsDB,
       // diagLitmusMappingDB: diagLitmusMappingDB
-      // getScore: getScore,
+      getQuizScore: getQuizScore,
+      getLessonScore: getLessonScore,
       getLessonsScore: getLessonsScore,
       getLessonsList: getLessonsList,
       getAssessment: getAssessment,
@@ -339,38 +340,49 @@
     }
 
     function updateScore(data) {
-
       return appDB.get(data.userId).then(function(response) {
         var doc = response.data;
-        $log.debug("USer found", doc)
         if (!doc.scores.hasOwnProperty(data.lessonId)) {
           doc.scores[data.lessonId] = {};
         }
         doc.scores[data.lessonId][data.id] = {
           'score': data.score,
-          'totalScore': data.totalScore,
-          'title': data.title
+          'totalScore': data.totalScore
         };
-        $log.debug(data.userId,response._rev,doc)
         return appDB.put({
           '_id': data.userId,
           '_rev': response._rev,
           'data': doc
+        }).catch(function(e){
         });
       }).catch(function(e) {
-
       })
 
     }
 
-    function getScore(data) {
+    function getLessonScore(data) {
       return appDB.get(data.userId).then(function(response) {
-        return response.data.scores[data.lessonId][data.id]
-      }).catch(function(e) {
-
+        return response.data.scores[data.lessonId];
       })
     }
-    
+    function getQuizScore(data) {
+      var d = $q.defer();
+      appDB.get(data.userId).then(function(response) {
+        var result = null;
+        if(response.data.scores.hasOwnProperty(data.lessonId))
+        {
+          if(response.data.scores[data.lessonId].hasOwnProperty(data.id))
+          {
+            result = (response.data.scores[data.lessonId][data.id])
+          }
+        }
+        d.resolve(result);
+      }).catch(function(e) {
+          d.reject();
+        })
+        return d.promise;
+    }
+
     function getLessonsScore(limit) {
       return Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('profiles', JSON.parse(localStorage.user_details).profile).customGET('lessons-score', {
         limit: limit
@@ -543,13 +555,13 @@
     }
 
     function updateScores(data) {
-      lessonDB.get(data.lessonId).then(function(doc) {
-        $log.debug("lllllll", doc)
-        if (doc.scores.hasOwnProperty(data.lessonId))
+      appDB.get(data.lessonId).then(function(doc) {
+        $log.debug("lllllll", doc.data)
+        if (doc.data.scores.hasOwnProperty(data.lessonId))
           return lessonDB.put({
             _id: data.lessonId,
             _rev: doc._rev,
-            lesson: doc.lesson
+            data: doc.lesson
           });
       });
     }

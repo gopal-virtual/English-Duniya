@@ -13,7 +13,6 @@
         abstract: true,
         resolve: {
           lessons: ['Rest', '$log', '$http', 'data', function(Rest, $log, $http, data) {
-            $log.debug("---------",data)
 
             return data.getLessonsList(25);
           }],
