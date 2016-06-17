@@ -20,12 +20,10 @@
     }
 
     function setStar(key, lesson, count) {
-      $log.debug("stars ",count)
       lesson.stars = count;
     }
 
     function getLesson(lessons) {
-      $log.debug(lessons, "ppppppget lesson")
       angular.forEach(lessons, function(value, key) {
         setLock(key, value, true);
       })
@@ -37,7 +35,6 @@
             'lessonId': value.id
           }).then(function(score) {
             if (score) {
-              $log.debug("scoreFound",score)
               for (var property in score) {
                 if (score.hasOwnProperty(property)) {
                   total_score = total_score + score[property].totalScore;
@@ -46,7 +43,6 @@
               }
               if (total_score > 0) {
                 var percent = (obtained_score / total_score) * 100;
-                $log.debug("totalScore > 0",total_score,obtained_score,percent)
 
                 // if score is >  80%, unlock the next lessons
                 if (percent >= CONSTANT.STAR.ONE) {

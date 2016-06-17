@@ -128,7 +128,6 @@
       getLesson: getLesson,
       updateLesson: updateLesson,
       isLessonDownloaded: isLessonDownloaded,
-      updateScores: updateScores,
       updateScore: updateScore,
       // addNewUser: addNewUser
       putUserifNotExist: putUserifNotExist
@@ -320,15 +319,12 @@
     function putUserifNotExist(data) {
       $log.debug("putUserifNotExist");
       return appDB.get(data.userId).then(function() {
-        $log.debug("Succes 1");
         return true;
       }).catch(function() {
-        $log.debug("Fail 1");
         return appDB.put({
           '_id': data.userId,
           'data': {'scores':{}}
         }).then(function() {
-          $log.debug("Success 2");
           return true;
         });
       })
@@ -554,17 +550,7 @@
       return d.promise;
     }
 
-    function updateScores(data) {
-      appDB.get(data.lessonId).then(function(doc) {
-        $log.debug("lllllll", doc.data)
-        if (doc.data.scores.hasOwnProperty(data.lessonId))
-          return lessonDB.put({
-            _id: data.lessonId,
-            _rev: doc._rev,
-            data: doc.lesson
-          });
-      });
-    }
+
 
 
     // function getFromKmapsBySr(sr){

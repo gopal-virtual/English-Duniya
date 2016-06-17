@@ -81,8 +81,7 @@
 
       }
 
-      if(Auth.isAuthorised() && Auth.isVerified()){
-        $log.debug("pppppppppp")
+      if(Auth.isAuthorised() && Auth.isVerified() ){
         data.putUserifNotExist({'userId':Auth.getProfileId()});
       }
     });
