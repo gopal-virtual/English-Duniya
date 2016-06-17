@@ -12,25 +12,19 @@
         url: '/map',
         abstract: true,
         resolve: {
-          lessons: ['Rest', '$log', '$http', function(Rest, $log, $http) {
-            return Rest.one('accounts', CONSTANT.CLIENTID.ELL).customGET('lessons', {
-              limit: 25
-            }).then(function(lessons) {
-              return lessons.plain().results;
-            }, function(error) {
-              $log.debug('some error occured', error);
-            })
+          lessons: ['Rest', '$log', '$http', 'data', function(Rest, $log, $http, data) {
+            $log.debug("---------",data)
+
+            return data.getLessonsList(25);
           }],
-          scores: ['Rest', '$log', function(Rest, $log) {
-            return Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('profiles', JSON.parse(localStorage.user_details).profile).customGET('lessons-score', {
-              limit: 25
-            }).then(function(score) {
-              $log.debug('scores rest', score.plain());
-              return score.plain().results;
-            }, function(error) {
-              $log.debug('some error occured', error);
-            })
-          }]
+          scores: ['Rest', '$log', 'data', function(Rest, $log, data) {
+            return data.getLessonsScore(25);
+        }],
+        skills : ['Rest', '$log', function(Rest, $log){
+            return Rest.one('profiles', JSON.parse(localStorage.user_details).profile).all('scores').all('skills').getList().then(function(profile) {
+              return profile.plain();
+            });
+        }]
 
         },
         template: '<ion-nav-view name="state-map"></ion-nav-view>'
@@ -38,14 +32,23 @@
       .state('map.navigate', {
         url: '/navigate',
         nativeTransitions: {
-            "type": "fade",
-            "duration" :  1000,
+          "type": "fade",
+          "duration": 1000,
         },
-        onEnter: ['$state', 'lessons','audio','$ionicLoading', function($state, lessons, audio, $ionicLoading) {
-            $ionicLoading.show({
-                templateUrl : 'templates/common/common.loader.view.html',
-                duration : 8000
-            });
+        data : {
+            litmus : {
+              "id": "001",
+              "content_type_name": "litmus",
+              "tag": "Litmus",
+              "locked": false
+          },
+      },
+        onEnter: ['$state', 'lessons', 'audio', '$ionicLoading', 'orientation','CONSTANT', function($state, lessons, audio, $ionicLoading, orientation, CONSTANT) {
+          orientation.setPortrait();
+          // $ionicLoading.show({
+          //   templateUrl: 'templates/common/common.loader.view.html',
+          //   duration: 8000
+          // });
           if (!lessons) {
             $state.go('map.unauthorised');
           }

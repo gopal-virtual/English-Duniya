@@ -14,11 +14,29 @@
     background-position: center center;
   }
 }
+
+.ed-icon{
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+  width: 28px;
+  margin-left: 10px;
+  margin-right: 10px;
+  min-height: 50px;
+}
+
+label .input-label{
+  margin-left: -15px;
+}
+
 .icon-fit-width{
     background-size: 50% auto;
 }
 .icon-fit-height{
     background-size: auto 50%;
+}
+.icon-contain{
+    background-size : contain;
 }
 .icon-left-align{
   background-position: 5% center;

@@ -22,6 +22,7 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 @import
   "www/lib/ionic/scss/ionic",
   "variables",
+  "mixins",
   "font",
   "tabs",
   "function",
@@ -41,4 +42,5 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
   "header",
   "result",
   "popup",
-  "pie-timer";
+  "pie-timer",
+  "list";

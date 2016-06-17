@@ -14,8 +14,6 @@ window.createGame = function(scope, lessons, audio, injector, log) {
     //   PIXI.scaleModes.DEFAULT = PIXI.scaleModes.NEAREST; //for WebGL
 
       this.load.image('desert', 'img/assets/region.png');
-      this.load.image('cactus', 'img/assets/cactus.png');
-    //   this.load.image('cactus', 'img/assets/cactus_test.png');
       this.load.image('tent', 'img/assets/tent.png');
       this.load.image('tent_green', 'img/assets/tent_green.png');
       this.load.image('two_stone', 'img/assets/two_stone.png');
@@ -25,18 +23,16 @@ window.createGame = function(scope, lessons, audio, injector, log) {
       this.load.image('particle3', 'img/assets/particle3.png');
       this.load.image('snow1', 'img/assets/snow.png');
       this.load.image('snow2', 'img/assets/snow1.png');
-      this.load.image('catus-fat', 'img/assets/cactus_fat.png');
-      this.load.image('grass', 'img/assets/stone-grass.png');
-      this.load.image('scorpion', 'img/assets/scorpion.png');
 
-      this.load.spritesheet('fire_animation', 'img/assets/fire_animation.png', 122, 193, 39);
-    //   this.load.spritesheet('cactus_animation', 'img/assets/cactus_animation.png', 802, 1350, 35);
+    //   this.load.spritesheet('fire_animation', 'img/assets/fire_animation.png', 122, 193, 39);
+      this.load.spritesheet('cactus_animation', 'img/assets/cactus_animation.png', 37, 63, 35);
     //   this.load.spritesheet('cactus_second_animation', 'img/assets/cactus_second_animation.png', 551, 754);
     //   this.load.spritesheet('camel_animation', 'img/assets/camel_animation.png', 336, 256);
     //   this.load.spritesheet('scorpion_animation', 'img/assets/scorpion_animation.png', 103, 95);
     //   this.load.spritesheet('tent_animation', 'img/assets/tent_animation.png', 734, 394);
 
       this.load.image('node', 'img/icons/node.png');
+      this.load.image('node-litmus', 'img/icons/icon-litmus-node.png');
       this.load.image('node-vocabulary', 'img/icons/icon-vocabulary-node.png');
       this.load.image('node-listening', 'img/icons/icon-listening-node.png');
       this.load.image('node-grammar', 'img/icons/icon-grammar-node.png');
@@ -161,10 +157,10 @@ window.createGame = function(scope, lessons, audio, injector, log) {
         tent.scale.setTo(tent_points[i].scale);
       }
       // fire animation
-      var fire_animation = this.game.add.sprite(tent_points[0].x, tent_points[0].y + 40 + this.iceregion_height, 'fire_animation');
-      fire_animation.anchor.setTo(0.5, 0.5);
-      var light = fire_animation.animations.add('light');
-      fire_animation.animations.play('light', 20, true);
+    //   var fire_animation = this.game.add.sprite(tent_points[0].x, tent_points[0].y + 40 + this.iceregion_height, 'fire_animation');
+    //   fire_animation.anchor.setTo(0.5, 0.5);
+    //   var light = fire_animation.animations.add('light');
+    //   fire_animation.animations.play('light', 20, true);
 
     //   for (var i = 0, tent_count = tent_green_points.length; i < tent_count; i++) {
     //     var tent = this.game.add.sprite(tent_green_points[i].x, tent_green_points[i].y + this.iceregion_height, 'tent_green');
@@ -184,15 +180,14 @@ window.createGame = function(scope, lessons, audio, injector, log) {
       }
       // place cactus
       for (var i = 0, cactus_count = cactus_points.length; i < cactus_count; i++) {
-        var cactus = this.game.add.sprite(cactus_points[i].x, cactus_points[i].y + this.iceregion_height, 'cactus');
-        cactus.anchor.setTo(0.5, 0.5);
-        cactus.scale.setTo(cactus_points[i].scale);
+        var cactus_animation = this.game.add.sprite(cactus_points[i].x, cactus_points[i].y + this.iceregion_height, 'cactus_animation');
+        var wind = cactus_animation.animations.add('wind');
+        cactus_animation.animations.play('wind', 20, true);
+        cactus_animation.anchor.setTo(0.5, 0.5);
+        cactus_animation.scale.setTo(cactus_points[i].scale);
       }
 
-    //   // catcus animation
-    //   var cactus_animation = this.game.add.sprite(0,0, 'cactus_animation');
-    //   var wind = cactus_animation.animations.add('wind');
-    //   cactus_animation.animations.play('wind', 20, true);
+      // catcus animation
       //
     //   // catcus animation
     //   var cactus_second_animation = this.game.add.sprite(0,1000, 'cactus_second_animation');
@@ -275,24 +270,28 @@ window.createGame = function(scope, lessons, audio, injector, log) {
       var star_y = [-10, -15, -10];
 
       function lessonType(lesson, locked) {
-        return !locked ? '-' + lesson.tag.toLowerCase() : '';
+        return !locked && lesson.tag.toLowerCase()!='no tag'? '-' + lesson.tag.toLowerCase() : '';
       };
+      log.debug('canvas lessons',lessons.length);
       // Place nodes
       for (var j = 0, i = lessons.length - 1, nodeCount = 1 / (lessons.length); i >= 0; j += nodeCount, i--) {
         var currentLesson = lessons[i];
-        log.debug('lesson status', i, currentLesson);
+        // log.debug(i, currentLesson);
         var locked = currentLesson.locked ? '-locked' : '';
         var type = lessonType(currentLesson, currentLesson.locked);
         var posx = this.math.catmullRomInterpolation(this.points.x, j);
         var posy = this.math.catmullRomInterpolation(this.points.y , j);
+        log.debug('lesson status', 'node' + type + locked);
         var node = this.game.add.button(posx, posy, 'node' + type + locked);
-        this.add.tween(node.scale).to({ x: [1.2,1], y: [1.2,1]},700, Phaser.Easing.Back.Out, true, 1000).loop(true);
+
+        !locked && lessons[i+1] && lessons[i+1].locked && this.add.tween(node.scale).to({ x: [1.2,1], y: [1.2,1]},700, Phaser.Easing.Back.Out, true, 1000).loop(true);
         node.inputEnabled = true;
         node.events.onInputUp.add(
-          function(currentLesson, game) {
+          function(currentLesson, game, posy) {
             return function() {
               var displacement = game.kineticScrolling.velocityY > -30 && game.kineticScrolling.velocityY < 30;
               if (!currentLesson.locked && displacement) {
+                  localStorage.setItem('currentPosition',(posy - game.height/2));
                 scope.$emit('openNode', currentLesson);
               }
               else if(currentLesson.locked && displacement){
@@ -300,7 +299,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
               }
               else{}
             }
-          }(currentLesson, this.game)
+        }(currentLesson, this.game, posy)
         );
         // icon.anchor.setTo(0.5,0.5);
         // icon.scale.setTo(0.3,0.3);
@@ -308,9 +307,9 @@ window.createGame = function(scope, lessons, audio, injector, log) {
         // node.scale.setTo(1.8, 1.8);
 
         // add stars
-        if (currentLesson.stars >= 0) {
+        if (!locked && currentLesson.stars >= 0) {
           var stars = this.game.add.group();
-          log.debug('stars in lesson', currentLesson.stars);
+        //   log.debug('stars in lesson', currentLesson.stars);
           if (currentLesson.stars == 0) {
             createStars(0, $.merge([posx], star_x), $.merge([posy], star_y));
           } else if (currentLesson.stars == 1) {
@@ -337,7 +336,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
         verticalWheel: true,
         deltaWheel: 40
       });
-      this.game.camera.y = ((~~this.world.height / this.game.height) - 1) * this.game.height;
+      this.game.camera.y = localStorage.getItem('currentPosition') ? localStorage.getItem('currentPosition') : ((~~this.world.height / this.game.height) - 1) * this.game.height;
     },
     resetSprite: function(sprite) {
       sprite.x = this.game.world.bounds.right;

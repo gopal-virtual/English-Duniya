@@ -4,12 +4,11 @@
     .module('zaya-quiz')
     .controller('QuizController', QuizController)
 
-  QuizController.$inject = ['quiz', 'widgetParser', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Quiz', 'Auth', '$ionicLoading', '$ionicPopup', 'lessonutils', 'orientation', '$location', '$anchorScroll', '$document', '$ionicScrollDelegate', '$ionicPosition', '$timeout', '$window', 'soundManager', '$cordovaFileTransfer', '$cordovaFile', '$interval', '$q', '$ImageCacheFactory'];
+  QuizController.$inject = ['quiz', 'widgetParser', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Auth', '$ionicLoading', '$ionicPopup', 'lessonutils', 'orientation', '$location', '$anchorScroll', '$document', '$ionicScrollDelegate', '$ionicPosition', '$timeout', '$window', 'mediaManager', '$cordovaFileTransfer', '$cordovaFile', '$interval', '$q', '$ImageCacheFactory', 'ml', 'data'];
 
-  function QuizController(quiz, widgetParser, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Quiz, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition, $timeout, $window, soundManager, $cordovaFileTransfer, $cordovaFile, $interval, $q, $ImageCacheFactory) {
+  function QuizController(quiz, widgetParser, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition, $timeout, $window, mediaManager, $cordovaFileTransfer, $cordovaFile, $interval, $q, $ImageCacheFactory, ml, data) {
 
     var quizCtrl = this;
-
 
     //bind quiz resolved to controller
     quizCtrl.quiz = quiz;
@@ -18,6 +17,7 @@
     quizCtrl.report = {};
     quizCtrl.submitReport = submitReport;
     quizCtrl.generateReport = generateReport;
+
     //attempts and submission
     quizCtrl.submitAttempt = submitAttempt;
     quizCtrl.isAttempted = isAttempted;
@@ -26,6 +26,9 @@
     quizCtrl.isKeyCorrect = isKeyCorrect;
     quizCtrl.isKeyAttempted = isKeyAttempted;
     quizCtrl.canSubmit = canSubmit;
+    quizCtrl.setSuggestion = setSuggestion;
+    quizCtrl.updateSlide = updateSlide;
+    quizCtrl.parseHtml = parseHtml;
 
     //binding services to controller scope
     $scope.audio = audio;
@@ -55,10 +58,6 @@
     quizCtrl.playStarSound = playStarSound;
     quizCtrl.disableSwipe = disableSwipe;
     quizCtrl.canRemoveFeedback = true;
-    //preload resources
-    quizCtrl.preloadResources = preloadResources;
-    quizCtrl.preloadSounds = preloadSounds;
-    quizCtrl.preloadImages = preloadImages;
 
 
     // quizCtrl.pauseQuiz = pauseQuiz;
@@ -85,10 +84,26 @@
     // initialisation call
     quizCtrl.init(quizCtrl.quiz);
 
+    //state history
+    quizCtrl.isAssessment = ($stateParams.type == 'assessment');
+
     $scope.lessonutils = lessonutils;
     $scope.selectedNode = lessonutils.getLocalLesson();
 
     $scope.modal = {};
+
+
+    $scope.groups = [];
+      for (var i=0; i<10; i++) {
+        $scope.groups[i] = {
+          name: i,
+          items: []
+        };
+        for (var j=0; j<3; j++) {
+          $scope.groups[i].items.push(i + '-' + j);
+        }
+      }
+
 
     function stopTimer() {
       $interval.cancel(quizCtrl.interval);
@@ -129,11 +144,11 @@
     }
 
     function submitReport(quiz, report, summary) {
-      Quiz.saveReport({
+      data.saveReport({
         node: quiz.node.id,
         person: Auth.getProfileId(),
         score: summary.score.marks
-      }, function(success) {
+      }).then(function(success) {
         var report_id = success.id;
         var attempts = [];
         angular.forEach(report.attempts, function(value, key) {
@@ -146,9 +161,7 @@
             node: key
           });
         });
-        Quiz.saveAttempt(attempts, function(response) {}, function(error) {})
-      }, function(error) {
-
+        data.saveAttempts(attempts)
       })
     }
 
@@ -158,10 +171,10 @@
 
     function init(quiz) {
       if ($state.current.name == "quiz.start") {
-        $ionicLoading.show();
-        quizCtrl.preloadResources(quiz).then(function(success) {
-          $ionicLoading.hide();
-        });
+        // $ionicLoading.show();
+        // quizCtrl.preloadResources(quiz).then(function(success) {
+        //   $ionicLoading.hide();
+        // });
       }
       if ($state.current.name == "quiz.summary") {
         quizCtrl.report = $stateParams.report;
@@ -178,6 +191,7 @@
         if ($stateParams.type == 'assessment') {
           quizCtrl.startTimer();
         }
+
         if ($stateParams.type == 'practice') {
           $ionicSlideBoxDelegate.enableSlide(false);
 
@@ -226,14 +240,10 @@
         quizCtrl.report.attempts = {};
         //parse all the options and questions to html
         for (i = 0; i < quiz.objects.length; i++) {
-          quizCtrl.quiz.objects[i].node.widgetHtml = quizCtrl.widgetParser.parseToDisplay(quizCtrl.quiz.objects[i].node.title, i, quizCtrl.quiz);
-
-          quizCtrl.quiz.objects[i].node.widgetSound = quizCtrl.widgetParser.getSoundId(quizCtrl.quiz.objects[i].node.title);
-          for (j = 0; j < quizCtrl.quiz.objects[i].node.type.content.options.length; j++) {
-            quizCtrl.quiz.objects[i].node.type.content.options[j].widgetHtml = quizCtrl.widgetParser.parseToDisplay(quizCtrl.quiz.objects[i].node.type.content.options[j].option, i, quizCtrl.quiz)
-            quizCtrl.quiz.objects[i].node.type.content.options[j].widgetSound = quizCtrl.widgetParser.getSoundId(quizCtrl.quiz.objects[i].node.type.content.options[j].option);
-          }
+          quizCtrl.parseHtml(i);
         }
+
+
         //init report
         for (i = 0; i < quiz.objects.length; i++) {
           quizCtrl.report.attempts[quiz.objects[i].node.id] = [];
@@ -255,7 +265,18 @@
 
     }
 
+    function parseHtml(index) {
+      quizCtrl.quiz.objects[index].node.widgetHtml = quizCtrl.widgetParser.parseToDisplay(quizCtrl.quiz.objects[index].node.title, index, quizCtrl.quiz);
+
+      quizCtrl.quiz.objects[index].node.widgetSound = quizCtrl.widgetParser.getSoundId(quizCtrl.quiz.objects[index].node.title);
+      for (j = 0; j < quizCtrl.quiz.objects[index].node.type.content.options.length; j++) {
+        quizCtrl.quiz.objects[index].node.type.content.options[j].widgetHtml = quizCtrl.widgetParser.parseToDisplay(quizCtrl.quiz.objects[index].node.type.content.options[j].option, index, quizCtrl.quiz)
+        quizCtrl.quiz.objects[index].node.type.content.options[j].widgetSound = quizCtrl.widgetParser.getSoundId(quizCtrl.quiz.objects[index].node.type.content.options[j].option);
+      }
+    }
+
     function getQuestionType(question) {
+      $log.debug(question)
       if (question.node.type.type == CONSTANT.WIDGETS.QUESTION_TYPES.CHOICE_QUESTION) {
         return question.node.type.content.is_multiple ? CONSTANT.WIDGETS.QUESTION_TYPES.MCQ : CONSTANT.WIDGETS.QUESTION_TYPES.SCQ;
       }
@@ -281,7 +302,7 @@
     }
 
     function nextQuestion(shouldScroll) {
-      $log.debug("nextQuestion");
+      $log.debug("nextQuestion", quizCtrl.quiz.objects.length);
       if (quizCtrl.currentIndex < quizCtrl.quiz.objects.length - 1) {
         if (shouldScroll) {
           quizCtrl.inViewFlag = false;
@@ -290,7 +311,9 @@
           $ionicScrollDelegate.scrollBy(position.left, position.top, true);
         }
         ++quizCtrl.currentIndex;
+        $log.debug("nextQuestion", quizCtrl.getCurrentIndex());
       }
+      return true;
     }
 
     function getFeedback(question) {
@@ -343,8 +366,44 @@
       }
     }
 
-    function submitAttempt(questionId, attempt) {
-      quizCtrl.report.attempts[questionId].push(angular.copy(attempt));
+    function submitAttempt(questionId, attempt, type) {
+      if (type == 'litmus') {
+        var isCorrect = quizCtrl.isCorrect(quizCtrl.quiz.objects[quizCtrl.currentIndex], attempt);
+        quizCtrl.quiz.suggestion.test[0]['setPreviousAnswer'] = isCorrect ? 1 : 0;
+        quizCtrl.quiz.suggestion.test[0]["qSet"][quizCtrl.quiz.suggestion["actualLevel"]] = {
+          "sr": quizCtrl.quiz.suggestion.qSr,
+          "answered": isCorrect ? "right" : "wrong"
+        };
+        return true;
+      } else {
+        quizCtrl.report.attempts[questionId].push(angular.copy(attempt));
+        return true;
+      }
+      return false;
+    }
+
+    function setSuggestion() {
+      quizCtrl.quiz.suggestion = ml.getNextQSr(quizCtrl.quiz.suggestion.test, ml.mapping);
+      $log.debug('suggestion comming ', quizCtrl.quiz.suggestion);
+      if (quizCtrl.quiz.suggestion) {
+        quizCtrl.quiz.objects.push(ml.dqJSON[quizCtrl.quiz.suggestion.qSr]);
+        $log.debug("suggestion new", quizCtrl.quiz.suggestion);
+        $log.debug("suggestion questions", quizCtrl.quiz);
+      } else {
+        $log.debug('bam!', ml.dqQuiz);
+        $log.debug('bam!', ml.runDiagnostic(ml.dqQuiz));
+        quizCtrl.endQuiz();
+      }
+      return true;
+    }
+
+    function updateSlide() {
+      $log.debug('slide updated');
+      $ionicSlideBoxDelegate.update();
+      quizCtrl.parseHtml(quizCtrl.getCurrentIndex());
+      $timeout(function() {
+        $ionicSlideBoxDelegate.next();
+      }, 300)
     }
 
 
@@ -446,21 +505,21 @@
         if (isAttempted(value)) {
           if (quizCtrl.isCorrectAttempted(value)) {
             result.analysis[value.node.id] = {
-              title: value.node.title,
+              title: value.node.widgetHtml,
               status: 'correct',
               score: value.node.type.score
             };
             result.score.marks += value.node.type.score;
           } else {
             result.analysis[value.node.id] = {
-              title: value.node.title,
+              title: value.node.widgetHtml,
               status: 'incorrect',
               score: 0
             };
           }
         } else {
           result.analysis[value.node.id] = {
-            title: value.node.title,
+            title: value.node.widgetHtml,
             status: 'unattempted',
             score: 0
           }
@@ -569,66 +628,17 @@
 
       }
     }
-
-    function preloadResources(quiz) {
-      var d = $q.defer();
-      $q.all([quizCtrl.preloadImages(quiz),
-        quizCtrl.preloadSounds(quiz)
-      ]).then(function(success) {
-        d.resolve(success);
-      }, function(error) {
-        d.reject(error)
-      });
-      return d.promise;
-    }
-
-
-    function preloadImages(quiz) {
-      var d = $q.defer();
-      var images = [];
-      angular.forEach(quiz.objects, function(question) {
-        angular.forEach(question.node.type.content.widgets.images, function(image) {
-          images.push(CONSTANT.RESOURCE_SERVER + image);
-        })
-      })
-      $ImageCacheFactory.Cache(images).then(function() {
-        d.resolve('Images Loaded Successfully');
-      }, function(failed) {
-        d.reject('Error Loading Image' + failed);
-      });
-      return d.promise;
-    }
-
-    function preloadSounds(quiz) {
-      var d = $q.defer();
-      ionic.Platform.ready(function() {
-        var promises = [];
-        angular.forEach(quiz.objects, function(question) {
-          angular.forEach(question.node.type.content.widgets.sounds, function(sound) {
-            try {
-              promises.push(soundManager.download(CONSTANT.RESOURCE_SERVER + sound));
-            } catch (e) {
-              $log.debug("Error Downloading sound")
-            }
-          })
-        });
-        $q.all(promises).then(function(success) {
-          d.resolve("Sounds Loaded Successfully");
-        });
-        return d.promise;
-      });
-    }
-
     function highlightSoundIcon(questionIndex) {
-      if (quizCtrl.quiz.objects[questionIndex].node.widgetHtml.indexOf(CONSTANT.WIDGETS.SPEAKER_IMAGE) >= 0) {
-        quizCtrl.quiz.objects[questionIndex].node.widgetHtml = quizCtrl.quiz.objects[questionIndex].node.widgetHtml.replace(CONSTANT.WIDGETS.SPEAKER_IMAGE, CONSTANT.WIDGETS.SPEAKER_IMAGE_SELECTED)
-      }
-      var watchAudio = $interval(function() {
-        if (angular.element("#audioplayer")[0].paused) {
-          $interval.cancel(watchAudio)
-          quizCtrl.quiz.objects[questionIndex].node.widgetHtml = quizCtrl.quiz.objects[questionIndex].node.widgetHtml.replace(CONSTANT.WIDGETS.SPEAKER_IMAGE_SELECTED, CONSTANT.WIDGETS.SPEAKER_IMAGE)
-        }
-      }, 100)
-    }
+     if (quizCtrl.quiz.objects[questionIndex].node.widgetHtml.indexOf(CONSTANT.WIDGETS.SPEAKER_IMAGE) >= 0) {
+       quizCtrl.quiz.objects[questionIndex].node.widgetHtml = quizCtrl.quiz.objects[questionIndex].node.widgetHtml.replace(CONSTANT.WIDGETS.SPEAKER_IMAGE, CONSTANT.WIDGETS.SPEAKER_IMAGE_SELECTED)
+     }
+     var watchAudio = $interval(function() {
+       if (angular.element("#audioplayer")[0].paused) {
+         $interval.cancel(watchAudio)
+         quizCtrl.quiz.objects[questionIndex].node.widgetHtml = quizCtrl.quiz.objects[questionIndex].node.widgetHtml.replace(CONSTANT.WIDGETS.SPEAKER_IMAGE_SELECTED, CONSTANT.WIDGETS.SPEAKER_IMAGE)
+       }
+     }, 100)
+   }
+
   }
 })();

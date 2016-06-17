@@ -3,9 +3,9 @@
   angular
     .module('zaya-quiz')
     .factory('widgetParser', widgetParser)
-  widgetParser.$inject = ['CONSTANT', '$log'];
+  widgetParser.$inject = ['CONSTANT', '$log','mediaManager'];
 
-  function widgetParser(CONSTANT, $log) {
+  function widgetParser(CONSTANT, $log, mediaManager) {
     var soundIdRegex = /(?:\[\[)(?:sound)(?:\s)(?:id=)([0-9]+)(?:\]\])/;
     var imageTagRegex = /(?:\[\[)(?:img)(?:\s)(?:id=)([0-9]+)(?:\]\])/;
     return {
@@ -31,11 +31,17 @@
     }
 
     function getImageSrc(id, index, quiz) {
-      return quiz.objects[index].node.type.content.widgets.images[id];
+      $log.debug(quiz.objects[index],index,id,quiz.objects[index].node.type.content.widgets.images[id])
+      return mediaManager.getPath(quiz.objects[index].node.type.content.widgets.images[id]);
     }
 
     function parseToDisplay(string, index, quiz) {
-      var text = this.replaceImageTag(this.removeSoundTag(string, index), index, quiz);
+        $log.debug(string,index);
+        var text = this.removeSoundTag(string, index);
+        if(this.getImageId(text))
+        {
+          text = this.replaceImageTag(text, index, quiz);
+        }
       return text.trim().length > 0 ? text.trim() : CONSTANT.WIDGETS.SPEAKER_IMAGE;
 
     }
@@ -47,8 +53,9 @@
       return string.replace(imageTagRegex, "");
     }
     function replaceImageTag(string, index, quiz) {
+      $log.debug(string,index);
       return string.replace(imageTagRegex, "<img class='content-image' src='" +
-        CONSTANT.RESOURCE_SERVER + this.getImageSrc(this.getImageId(string), index, quiz) + "'>");
+        this.getImageSrc(this.getImageId(string), index, quiz) + "'>");
     }
 
     function getLayout(question, index, quiz) {

@@ -10,7 +10,8 @@
     "videogular": "~1.4.3",
     "videogular-themes-default": "~1.4.3",
     "videogular-controls": "~1.4.3",
-    "videogular-buffering": "~1.4.3"
+    "videogular-buffering": "~1.4.3",
+    "pouchdb": "~5.3.2"
   },
   "dependencies": {
     "ngCordova": "~0.1.24-alpha",
@@ -20,5 +21,29 @@
   },
   "resolutions": {
     "angular": ">= 1.0.8"
+  },
+  "preen": {
+    "jquery": ["dist/*.js"],
+    "jquery-ui": ["*.js"],
+    "angular": ["*.js"],
+    "angular-animate": ["*.js"],
+    "angular-inview": ["*.js"],
+    "pouchdb": ["dist/*.js"],
+    "angular-pouchdb": ["*.js"],
+    "angular-sanitize": ["*.js"],
+    "angular-scroll": ["*.js"],
+    "angular-ui-router": ["release/*.js"],
+    "angular-ui-sortable": ["*.js"],
+    "ionic-native-transitions": ["dist/*.js"],
+    "ngCordova": ["dist/*.js"],
+    "ng-cordova-oauth": ["dist/*.js"],
+    "phaser-kinetic-scrolling-plugin": ["dist/*.js"],
+    "restangular": ["dist/*.js"],
+    "videogular-buffering": ["*.js"],
+    "videogular-controls": ["*.js"],
+    "videogular": ["*.js"],
+    "underscore": ["*.js"],
+    "ionic-ion-imageCacheFactory": ["*.js"],
+    "lodash": ["dist/*.js"]
   }
 }
