@@ -59,13 +59,18 @@
     }
 
     function getLayout(question, index, quiz) {
+      $log.debug("getting layout")
       var layout = CONSTANT.WIDGETS.LAYOUT.GRID;
       angular.forEach(question.node.type.content.options, function(option) {
-        var text = this.removeImageTag(this.removeSoundTag(option.option));
-        text = text.trim();
-        if (text.length >= CONSTANT.WIDGETS.OPTIONS.LAYOUT_THRESHOLD) {
+        $log.debug(this.getImageId(option.option) , this.getSoundId(option.option, this.getImageId(option.option) || this.getSoundId(option.option)))
+        if(this.getImageId(option.option) || this.getSoundId(option.option)){
           layout =  CONSTANT.WIDGETS.LAYOUT.LIST;
         }
+        // var text = this.removeImageTag(this.removeSoundTag(option.option));
+        // text = text.trim();
+        // if (text.length >= CONSTANT.WIDGETS.OPTIONS.LAYOUT_THRESHOLD) {
+        //   layout =  CONSTANT.WIDGETS.LAYOUT.LIST;
+        // }
       }, this, CONSTANT);
       return layout;
     }

@@ -81,6 +81,9 @@
 
       }
 
+      if(Auth.isAuthorised() && Auth.isVerified() ){
+        data.putUserifNotExist({'userId':Auth.getProfileId()});
+      }
     });
     $ionicPlatform.ready(function() {
 
