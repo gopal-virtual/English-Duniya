@@ -4,9 +4,9 @@
     .module('zaya-quiz')
     .controller('QuizController', QuizController)
 
-  QuizController.$inject = ['quiz', 'widgetParser', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Auth', '$ionicLoading', '$ionicPopup', 'lessonutils', 'orientation', '$location', '$anchorScroll', '$document', '$ionicScrollDelegate', '$ionicPosition', '$timeout', '$window', 'mediaManager', '$cordovaFileTransfer', '$cordovaFile', '$interval', '$q', '$ImageCacheFactory', 'ml', 'data'];
+  QuizController.$inject = ['quiz', 'widgetParser', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Auth', '$ionicLoading', '$ionicPopup', 'lessonutils', 'orientation', '$location', '$anchorScroll', '$document', '$ionicScrollDelegate', '$ionicPosition', '$timeout', '$window', 'mediaManager', '$cordovaFileTransfer', '$cordovaFile', '$interval', '$q', '$ImageCacheFactory', 'ml', 'data', 'lessonutils'];
 
-  function QuizController(quiz, widgetParser, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition, $timeout, $window, mediaManager, $cordovaFileTransfer, $cordovaFile, $interval, $q, $ImageCacheFactory, ml, data) {
+  function QuizController(quiz, widgetParser, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition, $timeout, $window, mediaManager, $cordovaFileTransfer, $cordovaFile, $interval, $q, $ImageCacheFactory, ml, data, lessonutils) {
 
     var quizCtrl = this;
 
@@ -91,16 +91,16 @@
 
 
     $scope.groups = [];
-      for (var i=0; i<10; i++) {
-        $scope.groups[i] = {
-          name: i,
-          items: []
-        };
-        for (var j=0; j<3; j++) {
-          $scope.groups[i].items.push(i + '-' + j);
-        }
+    for (var i = 0; i < 10; i++) {
+      $scope.groups[i] = {
+        name: i,
+        items: []
+      };
+      for (var j = 0; j < 3; j++) {
+        $scope.groups[i].items.push(i + '-' + j);
       }
-      
+    }
+
 
     function stopTimer() {
       $interval.cancel(quizCtrl.interval);
@@ -141,25 +141,53 @@
     }
 
     function submitReport(quiz, report, summary) {
-      data.saveReport({
-        node: quiz.node.id,
-        person: Auth.getProfileId(),
-        score: summary.score.marks
-      }).then(function(success) {
-        var report_id = success.id;
-        var attempts = [];
-        angular.forEach(report.attempts, function(value, key) {
-          attempts.push({
-            answer: value.length > 0 ? value : null,
-            score: summary.analysis[key].score,
-            status: value.length > 0 ? CONSTANT.ATTEMPT.STATUS.ATTEMPTED : CONSTANT.ATTEMPT.STATUS.SKIPPED,
+      $log.debug("submit report called",summary,quiz)
+      lesson = lessonutils.getLocalLesson();
+      $log.debug("Lesson rec", lesson)
+      data.getQuizScore({
+          'userId': Auth.getProfileId(),
+          'lessonId': lesson.node.id,
+          'id': quizCtrl.quiz.node.id
+        })
+        .then(function(previousScore) {
+          // $log.debug(previousScore,previousScore.score,parseInt(previousScore.score),parseInt(previousScore.score) < summary.score.marks,summary.score.marks)
+          if ((!previousScore) || (!previousScore.hasOwnProperty('score')) || (previousScore && parseInt(previousScore.score) < summary.score.marks)) {
+            $log.debug("about to update score");
+            return data.updateScore({
+              userId: Auth.getProfileId(),
+              lessonId: lesson.node.id,
+              id: quiz.node.id,
+              score: summary.score.marks,
+              totalScore: quizCtrl.quiz.node.type.score,
+            })
+          } else {
+            $log.debug("Do not update score")
+          }
+        })
+        .then(function(response) {
+          $log.debug("Score done,Saving report")
+          return data.saveReport({
+            node: quiz.node.id,
             person: Auth.getProfileId(),
-            report: report_id,
-            node: key
+            score: summary.score.marks
+          })
+        })
+        .then(function(success) {
+          $log.debug("Repport Saved")
+          var report_id = success.id;
+          var attempts = [];
+          angular.forEach(report.attempts, function(value, key) {
+            attempts.push({
+              answer: value.length > 0 ? value : null,
+              score: summary.analysis[key].score,
+              status: value.length > 0 ? CONSTANT.ATTEMPT.STATUS.ATTEMPTED : CONSTANT.ATTEMPT.STATUS.SKIPPED,
+              person: Auth.getProfileId(),
+              report: report_id,
+              node: key
+            });
           });
-        });
-        data.saveAttempts(attempts)
-      })
+          return data.saveAttempts(attempts)
+        })
     }
 
     function disableSwipe() {
@@ -182,10 +210,8 @@
         quizCtrl.quiz = $stateParams.quiz;
         quizCtrl.summary = $stateParams.summary;
         quizCtrl.playStarSound();
-        $log.debug("summary")
-        $log.debug(quizCtrl.summary)
-          // quizCtrl.summary = quizCtrl.generateSummary(quizCtrl.report, quizCtrl.quiz);
-        quizCtrl.submitReport(quizCtrl.quiz, quizCtrl.report, quizCtrl.summary);
+        $log.debug("summaryaa")
+        $log.debug(quizCtrl.submitReport(quizCtrl.quiz, quizCtrl.report, quizCtrl.summary));
       } else if ($state.current.name == "quiz.questions") {
 
         quizCtrl.setCurrentIndex(0);
@@ -204,11 +230,11 @@
           });
           $scope.openModal = function() {
             $scope.modal.show();
-            $timeout(function() {
-              if ($scope.modal.isShown()) {
-                $scope.closeModal();
-              }
-            }, 2000);
+            // $timeout(function() {
+            //   if ($scope.modal.isShown()) {
+            //     $scope.closeModal();
+            //   }
+            // }, 2000);
           };
           $scope.closeModal = function() {
             if (quizCtrl.currentIndex >= quizCtrl.quiz.objects.length - 1) {
@@ -277,7 +303,6 @@
     }
 
     function getQuestionType(question) {
-      $log.debug(question)
       if (question.node.type.type == CONSTANT.WIDGETS.QUESTION_TYPES.CHOICE_QUESTION) {
         return question.node.type.content.is_multiple ? CONSTANT.WIDGETS.QUESTION_TYPES.MCQ : CONSTANT.WIDGETS.QUESTION_TYPES.SCQ;
       }
@@ -303,7 +328,6 @@
     }
 
     function nextQuestion(shouldScroll) {
-      $log.debug("nextQuestion", quizCtrl.quiz.objects.length);
       if (quizCtrl.currentIndex < quizCtrl.quiz.objects.length - 1) {
         if (shouldScroll) {
           quizCtrl.inViewFlag = false;
@@ -312,7 +336,7 @@
           $ionicScrollDelegate.scrollBy(position.left, position.top, true);
         }
         ++quizCtrl.currentIndex;
-        $log.debug("nextQuestion", quizCtrl.getCurrentIndex());
+
       }
       return true;
     }
@@ -385,7 +409,6 @@
 
     function setSuggestion() {
       quizCtrl.quiz.suggestion = ml.getNextQSr(quizCtrl.quiz.suggestion.test, ml.mapping);
-      $log.debug('suggestion comming ', quizCtrl.quiz.suggestion);
       if (quizCtrl.quiz.suggestion) {
         quizCtrl.quiz.objects.push(ml.dqJSON[quizCtrl.quiz.suggestion.qSr]);
         $log.debug("suggestion new", quizCtrl.quiz.suggestion);
@@ -479,7 +502,7 @@
         angular.element("#audioplayer")[0].pause();
         var src;
         try {
-          src = mediaManager.getSound(CONSTANT.RESOURCE_SERVER + quizCtrl.quiz.objects[index].node.type.content.widgets.sounds[key]);
+          src = mediaManager.getPath(quizCtrl.quiz.objects[index].node.type.content.widgets.sounds[key]);
           $log.debug(src)
         } catch (e) {
           $log.debug("here")
@@ -555,6 +578,7 @@
     function submitQuiz(quizType) {
 
       if (quizType === 'practice') {
+        $log.debug("ok");
         $scope.modal.remove().then(function() {
           $state.go('quiz.summary', {
             quiz: angular.copy(quizCtrl.quiz),
@@ -563,6 +587,7 @@
           });
         });
       } else if (quizType === 'assessment') {
+        $log.debug("ok");
         $ionicPopup.confirm({
           title: 'Submit Quiz?',
           template: 'Are you sure you want to submit quiz?'

@@ -13,12 +13,10 @@
         abstract: true,
         resolve: {
           lessons: ['Rest', '$log', '$http', 'data', function(Rest, $log, $http, data) {
-            $log.debug("---------",data)
-
             return data.getLessonsList(25);
           }],
           scores: ['Rest', '$log', 'data', function(Rest, $log, data) {
-            return data.getLessonsScore(25);
+            return [];
         }],
         skills : ['Rest', '$log', function(Rest, $log){
             return Rest.one('profiles', JSON.parse(localStorage.user_details).profile).all('scores').all('skills').getList().then(function(profile) {

@@ -5,10 +5,10 @@
     .module('zaya-map')
     .factory('extendLesson', extendLesson);
 
-  extendLesson.$inject = ['$log', 'CONSTANT'];
+  extendLesson.$inject = ['$log', 'CONSTANT', 'data', 'Auth'];
 
   /* @ngInject */
-  function extendLesson($log, CONSTANT) {
+  function extendLesson($log, CONSTANT, data, Auth) {
     var extendLesson = {
       getLesson: getLesson
     };
@@ -23,48 +23,54 @@
       lesson.stars = count;
     }
 
-    function getLesson(lessons, scores) {
-      $log.debug(lessons.length,scores.length)
-
+    function getLesson(lessons) {
       angular.forEach(lessons, function(value, key) {
         setLock(key, value, true);
       })
       angular.forEach(lessons, function(value, key) {
-
         var total_score = 0;
         var obtained_score = 0;
-        angular.forEach(scores[key].contents.assessment, function(value, key) {
-          total_score += value.total_score;
-          obtained_score += value.obtained_score;
-        })
+        data.getLessonScore({
+            'userId': Auth.getProfileId(),
+            'lessonId': value.id
+          }).then(function(score) {
+            if (score) {
+              for (var property in score) {
+                if (score.hasOwnProperty(property)) {
+                  total_score = total_score + score[property].totalScore;
+                  obtained_score = obtained_score + score[property].score;
+                }
+              }
+              if (total_score > 0) {
+                var percent = (obtained_score / total_score) * 100;
 
-        if (total_score > 0) {
-          var score = (obtained_score / total_score) * 100;
+                // if score is >  80%, unlock the next lessons
+                if (percent >= CONSTANT.STAR.ONE) {
+                  if (lessons[key + 1])
+                    setLock(key, lessons[key + 1], false);
+                }
 
-          // if score is > 80%, unlock the next lessons
-          if (score >= CONSTANT.STAR.ONE) {
-            if (lessons[key + 1])
-              setLock(key, lessons[key + 1], false);
-          }
+                // give stars
+                if (obtained_score == 0) {
+                  setStar(key, lessons[key], -1);
+                } else if (percent > 0 && percent < CONSTANT.STAR.ONE) {
+                  setStar(key, lessons[key], 0);
+                } else if (percent >= CONSTANT.STAR.ONE && percent < CONSTANT.STAR.TWO) {
+                  setStar(key, lessons[key], 1);
+                } else if (percent >= CONSTANT.STAR.TWO && percent < CONSTANT.STAR.THREE) {
+                  setStar(key, lessons[key], 2);
+                } else if (percent >= CONSTANT.STAR.THREE) {
+                  setStar(key, lessons[key], 3);
+                } else {}
 
-          // give stars
-          if (obtained_score == 0) {
-            setStar(key, lessons[key], -1);
-          } else if (score > 0 && score < CONSTANT.STAR.ONE) {
-            setStar(key, lessons[key], 0);
-          } else if (score >= CONSTANT.STAR.ONE && score < CONSTANT.STAR.TWO) {
-            setStar(key, lessons[key], 1);
-          } else if (score >= CONSTANT.STAR.TWO && score < CONSTANT.STAR.THREE) {
-            setStar(key, lessons[key], 2);
-          } else if (score >= CONSTANT.STAR.THREE) {
-            setStar(key, lessons[key], 3);
-          } else {}
+              }
+            }
+            // unlock first lessons
+            if (key == 0) {
+              setLock(key, value, false);
+            }
 
-        }
-        // unlock first lessons
-        if (key == 0) {
-          setLock(key, value, false);
-        }
+          })
       })
 
       // include litmus test
