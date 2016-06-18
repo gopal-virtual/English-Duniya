@@ -5,13 +5,13 @@
     .module('zaya-map')
     .controller('mapController', mapController);
 
-  mapController.$inject = ['$scope', '$rootScope', '$log', '$ionicModal', '$state', 'lessons', 'scores', 'skills', 'extendLesson', 'Rest', 'CONSTANT', '$sce', '$ionicLoading', '$timeout', '$ionicBackdrop', 'orientation', 'Auth', 'lessonutils', 'audio', 'data', 'ml','lesson2'];
+  mapController.$inject = ['$scope', '$rootScope', '$log', '$ionicModal', '$state', 'lessons', 'scores', 'skills', 'extendLesson', 'Rest', 'CONSTANT', '$sce', '$ionicLoading', '$timeout', '$ionicBackdrop', 'orientation', 'Auth', 'lessonutils', 'audio', 'data', 'ml','lessonLocked'];
 
-  function mapController($scope, $rootScope, $log, $ionicModal, $state, lessons, scores, skills, extendLesson, Rest, CONSTANT, $sce, $ionicLoading, $timeout, $ionicBackdrop, orientation, Auth, lessonutils, audio, data, ml, lesson2) {
+  function mapController($scope, $rootScope, $log, $ionicModal, $state, lessons, scores, skills, extendLesson, Rest, CONSTANT, $sce, $ionicLoading, $timeout, $ionicBackdrop, orientation, Auth, lessonutils, audio, data, ml, lessonLocked) {
     $scope.audio = audio;
     $scope.orientation = orientation;
     var mapCtrl = this;
-    var lessonList = CONSTANT.LOCK ? lesson2 : lessons;
+    var lessonList = CONSTANT.LOCK ? lessonLocked : lessons;
     // $state.current.data && lessonList.unshift($state.current.data.litmus);
     mapCtrl.lessons = lessonList;
     mapCtrl.resetNode = resetNode;
