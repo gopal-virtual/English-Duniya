@@ -258,7 +258,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
       fire_animation.animations.play('light', 20, true);
 
       // camel animation
-      var camel_animation = this.game.add.sprite(90, 1640 + this.desert_offset, 'camel_animation');
+      var camel_animation = this.game.add.sprite(130, 1660 + this.desert_offset, 'camel_animation');
       camel_animation.anchor.setTo(0.5, 0.5);
       camel_animation.angle = -10;
       var neck_move = camel_animation.animations.add('neck_move');
@@ -272,7 +272,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
       scorpion_animation.animations.play('walk', 20, true);
       //
       // seal animation
-      var seal_animation = this.game.add.sprite(206, 1365 + this.tundra_offest, 'seal_animation');
+      var seal_animation = this.game.add.sprite(306, 1365 + this.tundra_offest, 'seal_animation');
       seal_animation.anchor.setTo(0.5, 0.5);
       var oink = seal_animation.animations.add('oink');
       seal_animation.animations.play('oink', 20, true);
@@ -291,8 +291,9 @@ window.createGame = function(scope, lessons, audio, injector, log) {
       }
       //
       // whale animation
-      var whale_animation = this.game.add.sprite(172, 858, 'whale_animation');
+      var whale_animation = this.game.add.sprite(172, 880, 'whale_animation');
       whale_animation.anchor.setTo(0.5, 0.5);
+      whale_animation.scale.setTo(0.8);
       var tailwave = whale_animation.animations.add('tailwave');
       whale_animation.animations.play('tailwave', 10, true);
     
