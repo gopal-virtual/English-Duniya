@@ -269,16 +269,26 @@ window.createGame = function(scope, lessons, audio, injector, log) {
       var star_x = [-12, 0, 12];
       var star_y = [-10, -15, -10];
 
-      function lessonType(lesson, locked) {
-        return !locked && lesson.tag.toLowerCase()!='no tag'? '-' + lesson.tag.toLowerCase() : '';
+      function lessonType(lesson, test) {
+        log.debug("Lesson Type("+test+")-----"+lesson.locked)
+        log.debug(lesson,lesson.locked,lesson.tag.toLowerCase()!='no tag'? '-' + lesson.tag.toLowerCase() : '')
+        if(!lesson.locked){
+          log.debug("returning ",lesson.tag.toLowerCase()!='no tag'? '-' + lesson.tag.toLowerCase() : '')
+          return lesson.tag.toLowerCase()!='no tag'? '-' + lesson.tag.toLowerCase() : '';
+        }
+        else{
+          log.debug("return here")
+          return ''
+        }
       };
-      log.debug('canvas lessons',lessons.length);
       // Place nodes
       for (var j = 0, i = lessons.length - 1, nodeCount = 1 / (lessons.length); i >= 0; j += nodeCount, i--) {
         var currentLesson = lessons[i];
         // log.debug(i, currentLesson);
         var locked = currentLesson.locked ? '-locked' : '';
-        var type = lessonType(currentLesson, currentLesson.locked);
+        log.debug('FOR: ',i)
+        var type = lessonType(currentLesson, i);
+        log.debug(type,"type")
         var posx = this.math.catmullRomInterpolation(this.points.x, j);
         var posy = this.math.catmullRomInterpolation(this.points.y , j);
         log.debug('lesson status', 'node' + type + locked);

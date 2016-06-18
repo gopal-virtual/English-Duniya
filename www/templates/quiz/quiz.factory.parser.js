@@ -37,12 +37,10 @@
     }
 
     function getImageSrc(id, index, quiz) {
-      $log.debug(quiz.objects[index],index,id,quiz.objects[index].node.type.content.widgets.images[id])
       return mediaManager.getPath(quiz.objects[index].node.type.content.widgets.images[id]);
     }
 
     function parseToDisplay(string, index, quiz) {
-        $log.debug(string,index);
         var text = this.removeSoundTag(string, index);
         if(this.getImageId(text))
         {
@@ -59,13 +57,11 @@
       return string.replace(imageTagRegex, "");
     }
     function replaceImageTag(string, index, quiz) {
-      $log.debug(string,index);
       return string.replace(imageTagRegex, "<img class='content-image' src='" +
         this.getImageSrc(this.getImageId(string), index, quiz) + "'>");
     }
 
     function getLayout(question, index, quiz) {
-      $log.debug("getting layout")
       var layout = CONSTANT.WIDGETS.LAYOUT.LIST;
 
       angular.forEach(question.node.type.content.options, function(option) {
@@ -78,7 +74,6 @@
         //   layout =  CONSTANT.WIDGETS.LAYOUT.LIST;
         // }
       }, this, CONSTANT);
-      $log.debug(layout)
       return layout;
     }
 

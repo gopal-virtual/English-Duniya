@@ -5,10 +5,10 @@
     .module('zaya-map')
     .factory('extendLesson', extendLesson);
 
-  extendLesson.$inject = ['$log', 'CONSTANT', 'data', 'Auth'];
+  extendLesson.$inject = ['$log', 'CONSTANT', 'data', 'Auth','$q'];
 
   /* @ngInject */
-  function extendLesson($log, CONSTANT, data, Auth) {
+  function extendLesson($log, CONSTANT, data, Auth, $q) {
     var extendLesson = {
       getLesson: getLesson
     };
@@ -16,6 +16,7 @@
     return extendLesson;
 
     function setLock(key, lesson, bool) {
+      $log.debug("setlock: ",key, lesson, bool);
       lesson.locked = bool;
     }
 
@@ -24,12 +25,17 @@
     }
 
     function getLesson(lessons) {
+      var d = $q.defer();
+      var promises = []
       angular.forEach(lessons, function(value, key) {
         setLock(key, value, true);
       })
       angular.forEach(lessons, function(value, key) {
+        $log.debug("danger")
         var total_score = 0;
         var obtained_score = 0;
+
+        promises.push(
         data.getLessonScore({
             'userId': Auth.getProfileId(),
             'lessonId': value.id
@@ -67,14 +73,22 @@
             }
             // unlock first lessons
             if (key == 0) {
+              $log.debug("first lesson unlocked")
               setLock(key, value, false);
             }
-
-          })
+            $log.debug("danger 2")
+            return lessons[key];
+          }))
       })
+      $log.debug("promises array",promises)
 
+      $q.all(promises).then(function(success) {
+        $log.debug("RESOLVED",success);
+
+        d.resolve(success);
+      });
       // include litmus test
-      return lessons;
+      return d.promise;
     }
 
   }

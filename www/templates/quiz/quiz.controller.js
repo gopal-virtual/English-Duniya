@@ -169,27 +169,27 @@
         })
         .then(function(response) {
           $log.debug("Score done,Saving report")
-          return data.saveReport({
-            node: quiz.node.id,
-            person: Auth.getProfileId(),
-            score: summary.score.marks
-          })
+          // return data.saveReport({
+          //   node: quiz.node.id,
+          //   person: Auth.getProfileId(),
+          //   score: summary.score.marks
+          // })
         })
         .then(function(success) {
-          $log.debug("Repport Saved")
-          var report_id = success.id;
-          var attempts = [];
-          angular.forEach(report.attempts, function(value, key) {
-            attempts.push({
-              answer: value.length > 0 ? value : null,
-              score: summary.analysis[key].score,
-              status: value.length > 0 ? CONSTANT.ATTEMPT.STATUS.ATTEMPTED : CONSTANT.ATTEMPT.STATUS.SKIPPED,
-              person: Auth.getProfileId(),
-              report: report_id,
-              node: key
-            });
-          });
-          return data.saveAttempts(attempts)
+          // $log.debug("Repport Saved")
+          // var report_id = success.id;
+          // var attempts = [];
+          // angular.forEach(report.attempts, function(value, key) {
+          //   attempts.push({
+          //     answer: value.length > 0 ? value : null,
+          //     score: summary.analysis[key].score,
+          //     status: value.length > 0 ? CONSTANT.ATTEMPT.STATUS.ATTEMPTED : CONSTANT.ATTEMPT.STATUS.SKIPPED,
+          //     person: Auth.getProfileId(),
+          //     report: report_id,
+          //     node: key
+          //   });
+          // });
+          // return data.saveAttempts(attempts)
         })
     }
 

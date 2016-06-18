@@ -15,6 +15,11 @@
           lessons: ['Rest', '$log', '$http', 'data', function(Rest, $log, $http, data) {
             return data.getLessonsList(25);
           }],
+          lesson2: ['Rest', '$log', '$http', 'data','extendLesson', function(Rest, $log, $http, data,extendLesson) {
+            return data.getLessonsList(25).then(function(lessons){
+              return extendLesson.getLesson(lessons,[])
+            })
+          }],
           scores: ['Rest', '$log', 'data', function(Rest, $log, data) {
             return [];
         }],
