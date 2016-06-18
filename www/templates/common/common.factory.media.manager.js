@@ -22,16 +22,13 @@
       },
       getPath: function(url) {
         var filename = url.split("/").pop();
-        var target;
         try {
-          $cordovaFile.checkFile(cordova.file.dataDirectory, 'media/' + filename).then(function() {
-            target = cordova.file.dataDirectory + 'media/' + filename;
-          }, function() {
-            target = CONSTANT.RESOURCE_SERVER + url;
-          })
+          var target = cordova.file.dataDirectory + 'media/' + filename;
 
         } catch (e) {
-          target = CONSTANT.RESOURCE_SERVER + url;
+
+        } finally {
+
         }
         return target;
       },
