@@ -229,11 +229,11 @@
           });
           $scope.openModal = function() {
             $scope.modal.show();
-            // $timeout(function() {
-            //   if ($scope.modal.isShown()) {
-            //     $scope.closeModal();
-            //   }
-            // }, 2000);
+            $timeout(function() {
+              if ($scope.modal.isShown()) {
+                $scope.closeModal();
+              }
+            }, 2000);
           };
           $scope.closeModal = function() {
             quizCtrl.canRemoveFeedback = false;
