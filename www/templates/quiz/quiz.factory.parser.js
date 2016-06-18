@@ -24,12 +24,16 @@
       if (soundIdRegex.exec(string))
       {
         return soundIdRegex.exec(string)[1];
+      }
+      return false;
     }
 
     function getImageId(string) {
       if (imageTagRegex.exec(string))
       {
         return imageTagRegex.exec(string)[1];
+      }
+      return false;
     }
 
     function getImageSrc(id, index, quiz) {
@@ -63,6 +67,7 @@
     function getLayout(question, index, quiz) {
       $log.debug("getting layout")
       var layout = CONSTANT.WIDGETS.LAYOUT.LIST;
+
       angular.forEach(question.node.type.content.options, function(option) {
         if(this.getImageId(option.option) || this.getSoundId(option.option)){
           layout =  CONSTANT.WIDGETS.LAYOUT.GRID;
