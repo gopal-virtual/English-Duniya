@@ -506,7 +506,7 @@
         } catch (e) {
           src = CONSTANT.RESOURCE_SERVER + quizCtrl.quiz.objects[index].node.type.content.widgets.sounds[key];
         }
-
+        $log.debug("play Audio ",src)
         angular.element("#audioSource")[0].src = src;
         angular.element("#audioplayer")[0].load();
         angular.element("#audioplayer")[0].play();
