@@ -81,7 +81,7 @@
       $log.debug("Download node triggered");
       data.isLessonDownloaded(node.id).then(function(response) {
         if (response === false) {
-          lessonutils.downloadLesson(node.id);
+          lessonutils.downloadLesson(node.id,[]);
         }
       }).catch(function(error) {
         $log.debug("error", error)

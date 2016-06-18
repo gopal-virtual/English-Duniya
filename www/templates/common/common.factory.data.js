@@ -301,10 +301,12 @@
       return $http.get('templates/common/lessons.json').success(function(data) {
         $log.debug('in createLessonDB', data);
         for (var i = 0; i < data.length; i++) {
-          $log.debug(data[i], data[i].node.id);
+          data[i].key = i;
           promises.push(lessonDB.put({
             "_id": data[i].node.id,
-            "lesson": data[i]
+            "lesson": data[i],
+
+
           }));
         }
         $q.all(promises).then(function() {
@@ -323,7 +325,9 @@
       }).catch(function() {
         return appDB.put({
           '_id': data.userId,
-          'data': {'scores':{}}
+          'data': {
+            'scores': {}
+          }
         }).then(function() {
           return true;
         });
@@ -349,10 +353,8 @@
           '_id': data.userId,
           '_rev': response._rev,
           'data': doc
-        }).catch(function(e){
-        });
-      }).catch(function(e) {
-      })
+        }).catch(function(e) {});
+      }).catch(function(e) {})
 
     }
 
@@ -361,22 +363,21 @@
         return response.data.scores[data.lessonId];
       })
     }
+
     function getQuizScore(data) {
       var d = $q.defer();
       appDB.get(data.userId).then(function(response) {
         var result = null;
-        if(response.data.scores.hasOwnProperty(data.lessonId))
-        {
-          if(response.data.scores[data.lessonId].hasOwnProperty(data.id))
-          {
+        if (response.data.scores.hasOwnProperty(data.lessonId)) {
+          if (response.data.scores[data.lessonId].hasOwnProperty(data.id)) {
             result = (response.data.scores[data.lessonId][data.id])
           }
         }
         d.resolve(result);
       }).catch(function(e) {
-          d.reject();
-        })
-        return d.promise;
+        d.reject();
+      })
+      return d.promise;
     }
 
     function getLessonsScore(limit) {
@@ -395,10 +396,14 @@
       lessonDB.allDocs({
           include_docs: true
         }).then(function(data) {
+          $log.debug("ALl lessons",data)
           var lessons = [];
           for (var i = 0; i < data.rows.length; i++) {
+            data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key
             lessons.push(data.rows[i].doc.lesson.node);
           }
+            lessons = _.sortBy(lessons, 'key');
+            $log.debug(lessons)
           d.resolve(lessons)
         })
         .catch(function(error) {
@@ -423,10 +428,12 @@
     }
 
     function saveAttempts(data) {
+      return;
       return Rest.all('attempts').post(data);
     }
 
     function saveReport(data) {
+      return;
       return Rest.all('reports').post(data);
     }
 
@@ -454,35 +461,33 @@
       });
     }
 
-    function downloadLesson(id) {
+    function downloadLesson(id, mediaTypes) {
+      $log.debug("insid downloadLesson", id,mediaTypes)
       var d = $q.defer();
       var promises = [];
       data.getLesson(id).then(function(response) {
-        $log.debug(response)
         angular.forEach(response.media, function(file) {
-          ionic.Platform.ready(function() {
+          if (!mediaTypes || (mediaTypes.length > 0 && mediaTypes.indexOf(file.url.split('.').pop()) >= 0)) {
             try {
               promises.push(
                 mediaManager.download(CONSTANT.RESOURCE_SERVER + file.url).then(function() {
                   file.downloaded = true;
-                  $log.debug("file downloaded")
                 })
 
               );
             } catch (e) {
               $log.debug("Error Downloading")
             }
-
-
-          });
+          }
         })
         $q.all(promises).then(function(success) {
-          $log.debug("111111111", response)
-          return data.updateLesson(response);
-        }).then(function(data) {
-          $log.debug(data, "Updated")
-          d.resolve("Lesson downlaodedadad");
-        });
+            return data.updateLesson(response);
+          }).then(function(data) {
+            d.resolve(data);
+          })
+          .catch(function(err) {
+            $log.debug(err)
+          });
       })
 
       return d.promise;
@@ -530,25 +535,75 @@
       //     $log.debug("err", response)
       //   })
     }
+    function isLessonDownloaded(id,mediaTypes) {
 
-    function isLessonDownloaded(id) {
+          var d = $q.defer();
+          lessonDB.get(id).then(function(data) {
+              var downloaded = true;
+              for (var i = 0; i < data.lesson.media.length; i++) {
+                if ((!mediaTypes || mediaTypes.length > 0 || mediaTypes.indexOf(file.url.split('.').pop()) >= 0) && data.lesson.media[i].downloaded === false) {
+                  downloaded = false;
+                  break;
+                }
+              }
+              d.resolve(downloaded);
+            })
+            .catch(function(err) {
+              d.reject(err);
+            })
+          return d.promise;
+        }
 
-      var d = $q.defer();
-      lessonDB.get(id).then(function(data) {
-          var downloaded = true;
-          for (var i = 0; i < data.lesson.media.length; i++) {
-            if (data.lesson.media[i].downloaded === false) {
-              downloaded = false;
-              break;
-            }
-          }
-          d.resolve(downloaded);
-        })
-        .catch(function(err) {
-          d.reject(err);
-        })
-      return d.promise;
-    }
+    // function isLessonDownloaded(id, mediaTypes) {
+    //   $log.debug("isLessonDownloaded", id, mediaTypes)
+    //   var d = $q.defer();
+    //   var toCheckMedia = [];
+    //   var downloaded = true;
+    //   lessonDB.get(id).then(function(data) {
+    //       if (!mediaTypes) {
+    //         toCheckMedia = data.lesson.media;
+    //       } else if (mediaTypes.length > 0) {
+    //         angular.forEach(mediaTypes, function(mediaType) {
+    //           if (mediaType === 'video') {
+    //             for (var i = 0; i < data.lesson.media.length; i++) {
+    //               if (data.lesson.media[i].url.split('.').pop() === 'mp4') {
+    //                 toCheckMedia.push(data.lesson.media[i])
+    //               }
+    //             }
+    //           }
+    //           if (mediaType === 'audio') {
+    //             for (var i = 0; i < data.lesson.media.length; i++) {
+    //               if (data.lesson.media[i].url.split('.').pop() === 'mp3') {
+    //                 toCheckMedia.push(data.lesson.media[i])
+    //               }
+    //             }
+    //           }
+    //           if (mediaType === 'image') {
+    //             for (var i = 0; i < data.lesson.media.length; i++) {
+    //               if (data.lesson.media[i].url.split('.').pop() === 'png') {
+    //                 toCheckMedia.push(data.lesson.media[i])
+    //               }
+    //             }
+    //           }
+    //         })
+    //       }
+    //
+    //       for (var i = 0; i < toCheckMedia.length; i++) {
+    //         if (toCheckMedia[i].downloaded === false) {
+    //           downloaded = false;
+    //           break;
+    //         }
+    //       }
+    //       d.resolve(downloaded);
+    //     })
+    //     .catch(function(err) {
+    //       $log.debug("out", err)
+    //       d.reject(err);
+    //     })
+    //
+    //
+    //   return d.promise;
+    // }
 
 
 

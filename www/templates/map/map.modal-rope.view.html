@@ -46,12 +46,10 @@
         </div>
       </div>
       <div class="row height-10 padding">
-        <div class="col-75 text-center padding">
-          <button class="button button-block button-balanced button-round font-xl animation-delay-more animation-fade-in-from-bottom" ng-click="audio.play('press');closeNodeMenu();lessonutils.leaveLesson();mapCtrl && mapCtrl.resetNode()">Leave</button>
+        <div class="col text-center padding">
+          <button class="button button-block button-balanced button-round font-xl animation-delay-more animation-fade-in-from-bottom" ng-click="audio.play('press');closeNodeMenu();lessonutils.leaveLesson();mapCtrl && mapCtrl.resetNode()">Leave Lesson</button>
         </div>
-        <div class="col col-25 text-center padding">
-          <button class="button button-round button-balanced font-xl animation-delay-more animation-fade-in-from-bottom" ng-click="lessonutils.downloadLesson(selectedNode.node.id)"><i class="ion-android-download icon"></i></button>
-        </div>
+
       </div>
     </div>
   </ion-content>

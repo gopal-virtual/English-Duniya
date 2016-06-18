@@ -64,11 +64,12 @@
                 } else {}
 
               }
-              // unlock first lessons
-              if (key == 0) {
-                setLock(key, value, false);
-              }
             }
+            // unlock first lessons
+            if (key == 0) {
+              setLock(key, value, false);
+            }
+
           })
       })
 

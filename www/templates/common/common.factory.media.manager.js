@@ -5,12 +5,12 @@
     .module('common')
     .factory('mediaManager', mediaManager)
 
-  function mediaManager($cordovaNativeAudio, $log, $cordovaFile, $cordovaFileTransfer, $q) {
+  function mediaManager($cordovaNativeAudio, $log, $cordovaFile, $cordovaFileTransfer, $q,CONSTANT) {
     return {
       getSound: function(url) {
         var filename = url.split("/").pop();
         try {
-            var target = cordova.file.dataDirectory + 'media/' + filename;
+          var target = cordova.file.dataDirectory + 'media/' + filename;
 
         } catch (e) {
 
@@ -22,13 +22,16 @@
       },
       getPath: function(url) {
         var filename = url.split("/").pop();
+        var target;
         try {
-            var target = cordova.file.dataDirectory + 'media/' + filename;
+          $cordovaFile.checkFile(cordova.file.dataDirectory, 'media/' + filename).then(function() {
+            target = cordova.file.dataDirectory + 'media/' + filename;
+          }, function() {
+            target = CONSTANT.RESOURCE_SERVER + url;
+          })
 
         } catch (e) {
-
-        } finally {
-
+          target = CONSTANT.RESOURCE_SERVER + url;
         }
         return target;
       },
@@ -43,7 +46,7 @@
       download: function(url) {
         var filename = url.split("/").pop();
         try {
-            var target = cordova.file.dataDirectory + 'media/' + filename;
+          var target = cordova.file.dataDirectory + 'media/' + filename;
 
         } catch (e) {
 

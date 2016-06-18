@@ -502,7 +502,7 @@
         angular.element("#audioplayer")[0].pause();
         var src;
         try {
-          src = mediaManager.getSound(CONSTANT.RESOURCE_SERVER + quizCtrl.quiz.objects[index].node.type.content.widgets.sounds[key]);
+          src = mediaManager.getPath(quizCtrl.quiz.objects[index].node.type.content.widgets.sounds[key]);
           $log.debug(src)
         } catch (e) {
           $log.debug("here")
