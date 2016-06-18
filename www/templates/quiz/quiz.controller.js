@@ -57,6 +57,8 @@
     quizCtrl.endQuiz = endQuiz;
     quizCtrl.playStarSound = playStarSound;
     quizCtrl.disableSwipe = disableSwipe;
+    quizCtrl.canRemoveFeedback = true;
+
 
     // quizCtrl.pauseQuiz = pauseQuiz;
     quizCtrl.restartQuiz = restartQuiz;
@@ -64,6 +66,7 @@
     //audio
     quizCtrl.playAudio = playAudio;
     quizCtrl.starCount = starCount;
+    quizCtrl.highlightSoundIcon = highlightSoundIcon;
 
     quizCtrl.calculateStars = calculateStars;
 
@@ -197,13 +200,9 @@
     function init(quiz) {
       if ($state.current.name == "quiz.start") {
         // $ionicLoading.show();
-        // if (data.isQuizDownloaded(quizCtrl.quiz.node.id)) {
+        // quizCtrl.preloadResources(quiz).then(function(success) {
         //   $ionicLoading.hide();
-        // } else {
-        //   data.downloadNode(quizCtrl.quiz.node.id).then(function() {
-        //     $ionicLoading.hide();
-        //   })
-        // }
+        // });
       }
       if ($state.current.name == "quiz.summary") {
         quizCtrl.report = $stateParams.report;
@@ -237,15 +236,15 @@
             // }, 2000);
           };
           $scope.closeModal = function() {
-            if (quizCtrl.currentIndex >= quizCtrl.quiz.objects.length - 1) {
-              $scope.modal.hide().then(function() {
+            quizCtrl.canRemoveFeedback = false;
+            $scope.modal.hide().then(function() {
+              if (quizCtrl.currentIndex >= quizCtrl.quiz.objects.length - 1) {
                 quizCtrl.submitQuiz('practice');
-              });
-            } else {
-              $scope.modal.hide().then(function() {
+              } else {
                 $ionicSlideBoxDelegate.slide(quizCtrl.getCurrentIndex() + 1);
-              });
-            }
+              }
+              quizCtrl.canRemoveFeedback = true;
+            });
             // if (isCorrectAttempted(quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()]) || quizCtrl.report.attempts[quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.id].length >= 2) {
             //   if (quizCtrl.currentIndex >= quizCtrl.quiz.objects.length - 1) {
             //     quizCtrl.submitQuiz('practice');
@@ -505,7 +504,6 @@
           src = mediaManager.getPath(quizCtrl.quiz.objects[index].node.type.content.widgets.sounds[key]);
           $log.debug(src)
         } catch (e) {
-          $log.debug("here")
           src = CONSTANT.RESOURCE_SERVER + quizCtrl.quiz.objects[index].node.type.content.widgets.sounds[key];
         }
 
@@ -516,7 +514,6 @@
 
 
     }
-
 
 
     function generateSummary(report, quiz) {

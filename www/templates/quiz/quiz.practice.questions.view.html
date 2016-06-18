@@ -4,7 +4,7 @@
       <div ng-click="showNodeMenu()" class="header-icon icon-pause icon-fit-height padding-10"></div>
     </div>
 
-    <div class=" margin-10 row progress-bar-container">
+    <div class=" margin-x-10 margin-y-0 row progress-bar-container">
       <!-- <div class="col-5 mark-0" ng-class="{'mark-filled':quizCtrl.practiceResult.percentCorrect > 0}"  ></div> -->
       <div
         class="col-5 mark-star icon-fit-height"
@@ -32,7 +32,7 @@
 
       <!-- <div ng-repeat="question in quizCtrl.quiz.objects" ng-if="$index == quizCtrl.getCurrentIndex()"> -->
       <div class="bar bar-subheader padding-0 question-subheader bg-pale no-shadow">
-        <div ng-if="question.node.title" ng-bind-html="question.node.widgetHtml" class="question practice-question card card-transparent center margin-x-0 margin-y-0 padding-0" ng-click="quizCtrl.playAudio(question.node.widgetSound,$index)"></div>
+        <div ng-if="question.node.title" ng-bind-html="question.node.widgetHtml" class="question practice-question card card-transparent center margin-x-0 margin-y-0 padding-0" ng-click="quizCtrl.playAudio(question.node.widgetSound,$index);quizCtrl.highlightSoundIcon($parent.$index)"></div>
       </div>
       <ion-content in-view-container overflow-scroll="false" has-bouncing="true" class="has-practice-header has-question-subheader has-footer-large center bg-pale" ng-init="optionsFontSize=quizCtrl.widgetParser.getOptionsFontSize(question.node.type.content.options)">
         <!-- SCQ -->
@@ -42,10 +42,11 @@
           ng-class="{'selected':option.key==question.attempted,'card-list':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'list','card-grid practice-card':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'grid'}"
           class="card center bg-white card-radius"
           ng-repeat="option in question.node.type.content.options" >
-          <label ng-click="quizCtrl.playAudio(quizCtrl.widgetParser.getSoundId(option.option),$parent.$parent.$index)">
-            <input class="hide">
+          <label
+          ng-click="quizCtrl.playAudio(quizCtrl.widgetParser.getSoundId(option.option),$parent.$parent.$index);">
+            <input class="hide" >
             <!-- <div class="option-container"  ng-if="option"> -->
-            <div class="padding-10 option" ng-class="optionsFontSize" ng-bind-html="::option.widgetHtml"></div>
+            <div class="padding-10 option"  ng-bind-html="option.widgetHtml"></div>
             <!-- </div> -->
           </label>
         </div>
@@ -59,7 +60,7 @@
           <label ng-click="quizCtrl.playAudio(option.widgetSound,$parent.$parent.$index)">
             <input class="hide" type="checkbox" ng-model="question.attempted[option.key]" ng-value="option.key">
             <!-- <div class="option-container"  ng-if="option"> -->
-            <div class="padding-10 option" ng-class="optionsFontSize" ng-bind-html="::option.widgetHtml"></div>
+            <div class="padding-10 option"  ng-bind-html="::option.widgetHtml"></div>
             <!-- </div> -->
           </label>
         </div>
