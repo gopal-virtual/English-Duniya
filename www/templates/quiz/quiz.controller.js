@@ -57,6 +57,8 @@
     quizCtrl.endQuiz = endQuiz;
     quizCtrl.playStarSound = playStarSound;
     quizCtrl.disableSwipe = disableSwipe;
+    quizCtrl.canRemoveFeedback = true;
+
 
     // quizCtrl.pauseQuiz = pauseQuiz;
     quizCtrl.restartQuiz = restartQuiz;
@@ -64,6 +66,7 @@
     //audio
     quizCtrl.playAudio = playAudio;
     quizCtrl.starCount = starCount;
+    quizCtrl.highlightSoundIcon = highlightSoundIcon;
 
     quizCtrl.calculateStars = calculateStars;
 
@@ -166,27 +169,27 @@
         })
         .then(function(response) {
           $log.debug("Score done,Saving report")
-          return data.saveReport({
-            node: quiz.node.id,
-            person: Auth.getProfileId(),
-            score: summary.score.marks
-          })
+          // return data.saveReport({
+          //   node: quiz.node.id,
+          //   person: Auth.getProfileId(),
+          //   score: summary.score.marks
+          // })
         })
         .then(function(success) {
-          $log.debug("Repport Saved")
-          var report_id = success.id;
-          var attempts = [];
-          angular.forEach(report.attempts, function(value, key) {
-            attempts.push({
-              answer: value.length > 0 ? value : null,
-              score: summary.analysis[key].score,
-              status: value.length > 0 ? CONSTANT.ATTEMPT.STATUS.ATTEMPTED : CONSTANT.ATTEMPT.STATUS.SKIPPED,
-              person: Auth.getProfileId(),
-              report: report_id,
-              node: key
-            });
-          });
-          return data.saveAttempts(attempts)
+          // $log.debug("Repport Saved")
+          // var report_id = success.id;
+          // var attempts = [];
+          // angular.forEach(report.attempts, function(value, key) {
+          //   attempts.push({
+          //     answer: value.length > 0 ? value : null,
+          //     score: summary.analysis[key].score,
+          //     status: value.length > 0 ? CONSTANT.ATTEMPT.STATUS.ATTEMPTED : CONSTANT.ATTEMPT.STATUS.SKIPPED,
+          //     person: Auth.getProfileId(),
+          //     report: report_id,
+          //     node: key
+          //   });
+          // });
+          // return data.saveAttempts(attempts)
         })
     }
 
@@ -197,13 +200,9 @@
     function init(quiz) {
       if ($state.current.name == "quiz.start") {
         // $ionicLoading.show();
-        // if (data.isQuizDownloaded(quizCtrl.quiz.node.id)) {
+        // quizCtrl.preloadResources(quiz).then(function(success) {
         //   $ionicLoading.hide();
-        // } else {
-        //   data.downloadNode(quizCtrl.quiz.node.id).then(function() {
-        //     $ionicLoading.hide();
-        //   })
-        // }
+        // });
       }
       if ($state.current.name == "quiz.summary") {
         quizCtrl.report = $stateParams.report;
@@ -228,22 +227,22 @@
           });
           $scope.openModal = function() {
             $scope.modal.show();
-            // $timeout(function() {
-            //   if ($scope.modal.isShown()) {
-            //     $scope.closeModal();
-            //   }
-            // }, 2000);
+            $timeout(function() {
+              if ($scope.modal.isShown()) {
+                $scope.closeModal();
+              }
+            }, 2000);
           };
           $scope.closeModal = function() {
-            if (quizCtrl.currentIndex >= quizCtrl.quiz.objects.length - 1) {
-              $scope.modal.hide().then(function() {
+            quizCtrl.canRemoveFeedback = false;
+            $scope.modal.hide().then(function() {
+              if (quizCtrl.currentIndex >= quizCtrl.quiz.objects.length - 1) {
                 quizCtrl.submitQuiz('practice');
-              });
-            } else {
-              $scope.modal.hide().then(function() {
+              } else {
                 $ionicSlideBoxDelegate.slide(quizCtrl.getCurrentIndex() + 1);
-              });
-            }
+              }
+              quizCtrl.canRemoveFeedback = true;
+            });
             // if (isCorrectAttempted(quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()]) || quizCtrl.report.attempts[quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.id].length >= 2) {
             //   if (quizCtrl.currentIndex >= quizCtrl.quiz.objects.length - 1) {
             //     quizCtrl.submitQuiz('practice');
@@ -510,7 +509,6 @@
     }
 
 
-
     function generateSummary(report, quiz) {
       var result = {
         analysis: {},
@@ -649,6 +647,16 @@
 
       }
     }
-
+    function highlightSoundIcon(questionIndex){
+          if(quizCtrl.quiz.objects[questionIndex].node.widgetHtml.indexOf(CONSTANT.WIDGETS.SPEAKER_IMAGE) >= 0){
+            quizCtrl.quiz.objects[questionIndex].node.widgetHtml = quizCtrl.quiz.objects[questionIndex].node.widgetHtml.replace(CONSTANT.WIDGETS.SPEAKER_IMAGE,CONSTANT.WIDGETS.SPEAKER_IMAGE_SELECTED)
+          }
+          var watchAudio = $interval(function(){
+            if(angular.element("#audioplayer")[0].paused){
+              $interval.cancel(watchAudio)
+              quizCtrl.quiz.objects[questionIndex].node.widgetHtml = quizCtrl.quiz.objects[questionIndex].node.widgetHtml.replace(CONSTANT.WIDGETS.SPEAKER_IMAGE_SELECTED,CONSTANT.WIDGETS.SPEAKER_IMAGE)
+            }
+          },100)
+        }
   }
 })();

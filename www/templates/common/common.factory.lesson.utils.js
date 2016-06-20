@@ -148,7 +148,7 @@
                     quiz: resource
                   });
                 $stateParams.type == 'practice' && $ionicLoading.hide();
-              }, 1000);
+              });
             })
 
           } else if (utils.resourceType(resource) == 'video') {
@@ -169,8 +169,6 @@
                   });
                 if ($state.is('content.video')) {
                   video.play();
-
-
                 }
               });
               utils.config.sources[0].src = utils.getSrc(resource.node.type.path);
@@ -195,7 +193,7 @@
     }
 
     function getSrc(src) {
-      //   return $sce.trustAsResourceUrl(mediaManager.getPath(src));
+        // return $sce.trustAsResourceUrl(mediaManager.getPath(src));
       return $sce.trustAsResourceUrl(CONSTANT.BACKEND_SERVICE_DOMAIN + src);
     }
   }

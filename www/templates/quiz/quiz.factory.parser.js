@@ -22,21 +22,25 @@
 
     function getSoundId(string) {
       if (soundIdRegex.exec(string))
+      {
         return soundIdRegex.exec(string)[1];
+      }
+      return false;
     }
 
     function getImageId(string) {
       if (imageTagRegex.exec(string))
+      {
         return imageTagRegex.exec(string)[1];
+      }
+      return false;
     }
 
     function getImageSrc(id, index, quiz) {
-      $log.debug(quiz.objects[index],index,id,quiz.objects[index].node.type.content.widgets.images[id])
       return mediaManager.getPath(quiz.objects[index].node.type.content.widgets.images[id]);
     }
 
     function parseToDisplay(string, index, quiz) {
-        $log.debug(string,index);
         var text = this.removeSoundTag(string, index);
         if(this.getImageId(text))
         {
@@ -53,16 +57,16 @@
       return string.replace(imageTagRegex, "");
     }
     function replaceImageTag(string, index, quiz) {
-      $log.debug(string,index);
       return string.replace(imageTagRegex, "<img class='content-image' src='" +
         this.getImageSrc(this.getImageId(string), index, quiz) + "'>");
     }
 
     function getLayout(question, index, quiz) {
-      var layout = CONSTANT.WIDGETS.LAYOUT.GRID;
+      var layout = CONSTANT.WIDGETS.LAYOUT.LIST;
+
       angular.forEach(question.node.type.content.options, function(option) {
         if(this.getImageId(option.option) || this.getSoundId(option.option)){
-          layout =  CONSTANT.WIDGETS.LAYOUT.LIST;
+          layout =  CONSTANT.WIDGETS.LAYOUT.GRID;
         }
         // var text = this.removeImageTag(this.removeSoundTag(option.option));
         // text = text.trim();

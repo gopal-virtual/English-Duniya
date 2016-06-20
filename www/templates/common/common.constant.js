@@ -4,7 +4,7 @@
   angular
     .module('common')
     .constant('CONSTANT', {
-      'LOCK': false,
+      'LOCK': true,
       'BACKEND_SERVICE_DOMAIN': 'http://cc-test.zaya.in/',
       'RESOURCE_SERVER': 'http://cc-test.zaya.in/',
       // 'BACKEND_SERVICE_DOMAIN' : 'http://192.168.1.6:9000/',
@@ -39,8 +39,7 @@
       'CLIENTID': {
         'FACEBOOK': '1159750564044149',
         'GOOGLE': '1011514043276-7q3kvn29jkegl2d1v7dtlbtipqqgo1rr.apps.googleusercontent.com',
-        // 'ELL': '1e7aa89f-3f50-433a-90ca-e485a92bbda6',
-        'ELL': '12e069db-f819-4592-93bf-50bad801243d'
+        'ELL': '1e7aa89f-3f50-433a-90ca-e485a92bbda6'
       },
       'ASSETS': {
         'IMG': {
@@ -54,6 +53,7 @@
       },
       'WIDGETS': {
         'SPEAKER_IMAGE': '<img class="content-image sound-image" src="img/icons/sound.png">',
+        'SPEAKER_IMAGE_SELECTED': '<img class="content-image sound-image" src="img/icons/sound_selected.png">',
         'OPTIONS': {
           'LAYOUT_THRESHOLD': 55,
           'FONT_SIZE_THRESHOLD': 6
