@@ -23,10 +23,62 @@
           scores: ['Rest', '$log', 'data', function(Rest, $log, data) {
             return [];
         }],
-        skills : ['Rest', '$log', function(Rest, $log){
-            return Rest.one('profiles', JSON.parse(localStorage.user_details).profile).all('scores').all('skills').getList().then(function(profile) {
-              return profile.plain();
-            });
+        skills : ['Rest', '$log','network', function(Rest, $log, network){
+            // if(network.isOnline()){
+            //     return Rest.one('profiles', JSON.parse(localStorage.user_details).profile).all('scores').all('skills').getList().then(function(profile) {
+            //         return profile.plain();
+            //     });
+            // }
+
+            //     if(!network.isOnline()) {
+            //         return [{
+            //     	"id": "6ef60d7e-64a2-4779-8aba-eae1d2de9246",
+            //     	"title": "Vocabulary",
+            //     	"lesson_scores": 0,
+            //     	"question_scores": 0
+            //     }, {
+            //     	"id": "d711986f-0451-46d3-b68b-2d2500a1bb1e",
+            //     	"title": "Reading",
+            //     	"lesson_scores": 0,
+            //     	"question_scores": 0
+            //     }, {
+            //     	"id": "152df66c-0f88-4932-86f2-592fa9d58b0e",
+            //     	"title": "Grammar",
+            //     	"lesson_scores": 0,
+            //     	"question_scores": 0
+            //     }, {
+            //     	"id": "44f8ded7-c6e6-41e2-9b6b-4bb2a8abe1dd",
+            //     	"title": "No tag",
+            //     	"lesson_scores": 0,
+            //     	"question_scores": 0
+            //     }, {
+            //     	"id": "a28050a4-adb8-4b0c-8505-3b79d0db8128",
+            //     	"title": "Listening",
+            //     	"lesson_scores": 0,
+            //     	"question_scores": 0
+            //     }]
+            // }
+                    return [{
+                	"id": "6ef60d7e-64a2-4779-8aba-eae1d2de9246",
+                	"title": "Vocabulary",
+                	"lesson_scores": 220,
+                	"question_scores": 0
+                }, {
+                	"id": "d711986f-0451-46d3-b68b-2d2500a1bb1e",
+                	"title": "Reading",
+                	"lesson_scores": 180,
+                	"question_scores": 0
+                }, {
+                	"id": "152df66c-0f88-4932-86f2-592fa9d58b0e",
+                	"title": "Grammar",
+                	"lesson_scores": 200,
+                	"question_scores": 0
+                }, {
+                	"id": "a28050a4-adb8-4b0c-8505-3b79d0db8128",
+                	"title": "Listening",
+                	"lesson_scores": 100,
+                	"question_scores": 0
+                }]
         }]
 
         },
