@@ -42,8 +42,9 @@
           ng-class="{'selected':option.key==question.attempted,'card-list':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'list','card-grid practice-card':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'grid'}"
           class="card center bg-white card-radius"
           ng-repeat="option in question.node.type.content.options" >
-          <label ng-click="quizCtrl.playAudio(quizCtrl.widgetParser.getSoundId(option.option),$parent.$parent.$index)">
-            <input class="hide">
+          <label
+          ng-click="quizCtrl.playAudio(option.widgetSound,$parent.$parent.$index);">
+            <input class="hide" >
             <!-- <div class="option-container"  ng-if="option"> -->
             <div class="padding-10 option" ng-class="optionsFontSize" ng-bind-html="::option.widgetHtml"></div>
             <!-- </div> -->

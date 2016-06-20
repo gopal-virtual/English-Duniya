@@ -210,8 +210,6 @@
         quizCtrl.quiz = $stateParams.quiz;
         quizCtrl.summary = $stateParams.summary;
         quizCtrl.playStarSound();
-        $log.debug("summaryaa")
-        $log.debug(quizCtrl.submitReport(quizCtrl.quiz, quizCtrl.report, quizCtrl.summary));
       } else if ($state.current.name == "quiz.questions") {
 
         quizCtrl.setCurrentIndex(0);
@@ -500,14 +498,8 @@
     function playAudio(key, index) {
       if (key !== undefined) {
         angular.element("#audioplayer")[0].pause();
-        var src;
-        try {
-          src = mediaManager.getPath(quizCtrl.quiz.objects[index].node.type.content.widgets.sounds[key]);
-          $log.debug(src)
-        } catch (e) {
-          $log.debug("here")
-          src = CONSTANT.RESOURCE_SERVER + quizCtrl.quiz.objects[index].node.type.content.widgets.sounds[key];
-        }
+        var src = (mediaManager.getPath(quizCtrl.quiz.objects[index].node.type.content.widgets.sounds[key]));
+        
         $log.debug("play Audio ",src)
         angular.element("#audioSource")[0].src = src;
         angular.element("#audioplayer")[0].load();

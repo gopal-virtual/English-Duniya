@@ -396,14 +396,14 @@
       lessonDB.allDocs({
           include_docs: true
         }).then(function(data) {
-          $log.debug("ALl lessons",data)
+          $log.debug("ALl lessons", data)
           var lessons = [];
           for (var i = 0; i < data.rows.length; i++) {
             data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key
             lessons.push(data.rows[i].doc.lesson.node);
           }
-            lessons = _.sortBy(lessons, 'key');
-            $log.debug(lessons)
+          lessons = _.sortBy(lessons, 'key');
+          $log.debug(lessons)
           d.resolve(lessons)
         })
         .catch(function(error) {
@@ -462,7 +462,7 @@
     }
 
     function downloadLesson(id, mediaTypes) {
-      $log.debug("insid downloadLesson", id,mediaTypes)
+      $log.debug("insid downloadLesson", id, mediaTypes)
       var d = $q.defer();
       var promises = [];
       data.getLesson(id).then(function(response) {
@@ -535,24 +535,26 @@
       //     $log.debug("err", response)
       //   })
     }
-    function isLessonDownloaded(id,mediaTypes) {
 
-          var d = $q.defer();
-          lessonDB.get(id).then(function(data) {
-              var downloaded = true;
-              for (var i = 0; i < data.lesson.media.length; i++) {
-                if ((!mediaTypes || mediaTypes.length > 0 || mediaTypes.indexOf(file.url.split('.').pop()) >= 0) && data.lesson.media[i].downloaded === false) {
-                  downloaded = false;
-                  break;
-                }
-              }
-              d.resolve(downloaded);
-            })
-            .catch(function(err) {
-              d.reject(err);
-            })
-          return d.promise;
-        }
+    function isLessonDownloaded(id, mediaTypes) {
+
+      var d = $q.defer();
+      lessonDB.get(id).then(function(data) {
+          var downloaded = true;
+          for (var i = 0; i < data.lesson.media.length; i++) {
+            if ((!mediaTypes || mediaTypes.length > 0 || mediaTypes.indexOf(file.url.split('.').pop()) >= 0) && data.lesson.media[i].downloaded === false) {
+              downloaded = false;
+              break;
+            }
+          }
+          d.resolve(downloaded);
+        })
+        .catch(function(err) {
+          d.reject(err);
+        })
+      return d.promise;
+    }
+
 
     // function isLessonDownloaded(id, mediaTypes) {
     //   $log.debug("isLessonDownloaded", id, mediaTypes)
