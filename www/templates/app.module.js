@@ -21,7 +21,6 @@
       'common',
       'zaya-map',
       'zaya-user',
-      'zaya-profile',
       'zaya-intro',
       'zaya-auth',
       'zaya-quiz',

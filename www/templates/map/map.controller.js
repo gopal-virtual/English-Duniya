@@ -136,21 +136,8 @@
     // });
     // $scope.test = {"phone_number":"+919393939193"};
     function updateProfile(params) {
-      $log.log(JSON.stringify(params));
-      var updateParams = {
-
-        "phone_number": params.phone_number,
-        "first_name": params.name,
-        "email": params.email
-      };
-      Rest.one('users', params.id).patch(updateParams).then(function() {
-
-        $scope.user.mapCtrl.user.phone_number = params.phone_number;
-        $scope.user.mapCtrl.user.name = params.name;
-        $scope.user.mapCtrl.user.email = params.email;
-      }).catch(
-
-      );
+      Rest.one('users', mapCtrl.user.id).patch(params).then(function(response) {
+      }).catch();
     }
     // updateProfile($scope.test);
 
