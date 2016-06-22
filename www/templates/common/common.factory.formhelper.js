@@ -8,8 +8,8 @@
   formHelper.$inject = ['$log', 'CONSTANT', '$q'];
 
   function formHelper($log, CONSTANT, $q) {
-    var passwordMinLength = 3;
-    var passwordMaxLength = 6;
+    var passwordMinLength = 6;
+    var passwordMaxLength = 15;
     var countryCode = '+91';
     var emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     var phoneRegex = /^[7-9][0-9]{9}$/;

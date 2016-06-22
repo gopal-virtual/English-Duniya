@@ -5,9 +5,9 @@
         .module('zaya-profile')
         .controller('profileController', profileController);
 
-    profileController.$inject = ['CONSTANT','$state','Auth','Rest','$log','$ionicPopup','$ionicLoading','formHelper'];
+    profileController.$inject = ['CONSTANT','$state','Auth','Rest','$log','$ionicPopup','$ionicLoading','formHelper','data'];
 
-    function profileController(CONSTANT, $state, Auth, Rest, $log, $ionicPopup, $ionicLoading,formHelper) {
+    function profileController(CONSTANT, $state, Auth, Rest, $log, $ionicPopup, $ionicLoading,formHelper,dataService) {
         var profileCtrl = this;
         profileCtrl.createProfile = createProfile;
         profileCtrl.updateProfile = updateProfile;
@@ -52,6 +52,14 @@
             })
             .then(function(){
               return Auth.getUser();
+            })
+            .then(function(){
+              return dataService.putUserifNotExist({
+                'userId': Auth.getProfileId()
+              })
+            })
+            .then(function(){
+              return dataService.createLessonDB();
             })
             .then(function(){
               $state.go('map.navigate',{});

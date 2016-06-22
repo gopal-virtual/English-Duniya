@@ -36,7 +36,7 @@
 
           <ion-list class="list-accordion">
             <div class="itemgroup-accordion" ng-repeat="item in quizCtrl.summary.analysis" ng-init="showAccordian=-1">
-              <div class="item-stable padding-20" ng-class="{'bg-balanced-light':item.status=='correct','bg-assertive-light' : item.status=='incorrect', 'bg-grey-light' : item.status=='unattempted'}" ng-click="$parent.showAccordian=$index" ng-class="{active: isGroupShown(item)}">
+              <div class="item-stable padding-20" ng-class="{'bg-balanced-light':item.status=='correct','bg-assertive-light' : item.status=='incorrect', 'bg-grey-light' : item.status=='unattempted',active: isGroupShown(item)}" ng-click="$parent.showAccordian=$index" >
                 <i class="icon" ng-class="isGroupShown(item) ? 'ion-minus' : 'ion-plus'"></i>
                 &nbsp;
                 Question {{$index + 1}}

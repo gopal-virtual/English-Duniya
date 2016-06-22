@@ -7,61 +7,50 @@
 
   function mediaManager($cordovaNativeAudio, $log, $cordovaFile, $cordovaFileTransfer, $q,CONSTANT) {
     return {
-      getSound: function(url) {
-        var filename = url.split("/").pop();
-        try {
-          var target = cordova.file.dataDirectory + 'media/' + filename;
 
-        } catch (e) {
-
-        } finally {
-
-        }
-        $log.debug(target)
-        return target;
-      },
       getPath: function(url) {
-        var filename = url.split("/").pop();
-        try {
-          var target = cordova.file.dataDirectory + 'media/' + filename;
+        var filename = url.split('/').pop();
+        try{
 
-        } catch (e) {
+        $cordovaFile.checkFile(cordova.file.dataDirectory, 'media/' + filename)
+          .then(function(success) {
+            target = cordova.file.dataDirectory + 'media/' + filename;
+          }, function(error) {
+            target = CONSTANT.RESOURCE_SERVER + url;
+          })
+          .catch(function(error){
+            target = CONSTANT.RESOURCE_SERVER + url;
 
-        } finally {
-
+          }).finally(function(){
+            return target;
+          })
+          ;
+        }catch(e){
+          return CONSTANT.RESOURCE_SERVER + url;
         }
-        return target;
+
       },
       play: function(sound) {
         try {
           $cordovaNativeAudio.play(sound);
-          console.log('sound played');
         } catch (error) {
-          console.log(error);
         }
       },
       download: function(url) {
         var filename = url.split("/").pop();
         try {
           var target = cordova.file.dataDirectory + 'media/' + filename;
-
+          var d = $q.defer();
+          $cordovaFileTransfer.download(url, target)
+            .then(function(result) {
+              d.resolve("Downloaded " + target);
+            }, function(err) {
+              d.reject("Error Downlaoding " + target);
+            }, function(progress) {});
+          return d.promise;
         } catch (e) {
-
-        } finally {
-
         }
-        // $log.debug("here")
-        // var sounds = JSON.parse(localStorage.getItem('sounds') || '{}');
-        // sounds[url] = target;
-        // localStorage.setItem('sounds',JSON.stringify(sounds));
-        var d = $q.defer();
-        $cordovaFileTransfer.download(url, target)
-          .then(function(result) {
-            d.resolve("Downloaded " + target);
-          }, function(err) {
-            d.reject("Error Downlaoding " + target);
-          }, function(progress) {});
-        return d.promise;
+
       },
     };
   }

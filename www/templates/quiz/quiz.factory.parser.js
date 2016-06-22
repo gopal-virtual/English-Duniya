@@ -25,7 +25,6 @@
       {
         return soundIdRegex.exec(string)[1];
       }
-      return false;
     }
 
     function getImageId(string) {
@@ -33,7 +32,6 @@
       {
         return imageTagRegex.exec(string)[1];
       }
-      return false;
     }
 
     function getImageSrc(id, index, quiz) {

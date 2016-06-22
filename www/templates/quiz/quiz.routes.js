@@ -67,7 +67,6 @@
 
 
             } else {
-              $log.debug("aaaaaaaaaaa",$stateParams)
               return $stateParams.quiz;
 
             }
@@ -75,9 +74,8 @@
         }
       })
       .state('quiz.start', {
-        url: '/start',
+        url: 'start',
         onEnter: function($stateParams,$log){
-          $log.debug("aa",$stateParams)
         },
         views: {
           'state-quiz': {
@@ -87,7 +85,7 @@
         }
       })
       .state('quiz.questions', {
-        url: '/questions',
+        url: 'questions',
         // nativeTransitions: null,
         views: {
           'state-quiz': {
@@ -101,11 +99,14 @@
       })
 
     .state('quiz.summary', {
-      url: '/summary',
+      url: 'summary',
       params: {
         report: null,
         quiz: null,
         summary: null
+      },
+      onEnter: function($log){
+        $log.debug("YY");
       },
       views: {
         'state-quiz': {

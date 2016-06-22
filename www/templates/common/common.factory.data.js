@@ -5,10 +5,10 @@
     .module('common')
     .factory('data', data);
 
-  data.$inject = ['pouchDB', '$http', '$log', 'Rest', 'CONSTANT', '$q', '$ImageCacheFactory', 'mediaManager'];
+  data.$inject = ['pouchDB', '$http', '$log', 'Rest', 'CONSTANT', '$q', '$ImageCacheFactory', 'mediaManager', '$interval', 'network', 'Auth'];
 
   /* @ngInject */
-  function data(pouchDB, $http, $log, Rest, CONSTANT, $q, $ImageCacheFactory, mediaManager) {
+  function data(pouchDB, $http, $log, Rest, CONSTANT, $q, $ImageCacheFactory, mediaManager, $interval, network, Auth) {
     // var diagnosisQuestionsDB = pouchDB('diagnosisQuestions');
     // var kmapsDB = pouchDB('kmaps');
 
@@ -19,86 +19,7 @@
     var appDB = pouchDB('appDB');
     var resourceDB = pouchDB('resourceDB');
 
-    var getDataSource = function() {
 
-    };
-
-    function preloadMedia(resource) {
-      var d = $q.defer();
-      if (resource.node.content_type_name === 'assignment') {
-        $q.all([preloadImages(resource),
-          preloadSounds(resource)
-        ]).then(function(success) {
-          d.resolve(success);
-        }, function(error) {
-          d.reject(error)
-        });
-      } else if (resource.node.content_type_name === 'resource') {
-        $log.debug("resource", resource)
-        $q.all(preloadVideo([resource.node.type.path])).then(function(success) {
-          d.resolve(success);
-        }, function(error) {
-          d.reject(error);
-        })
-      }
-      return d.promise;
-    }
-
-
-    function preloadImages(quiz) {
-      var d = $q.defer();
-      var images = [];
-      angular.forEach(quiz.objects, function(question) {
-        angular.forEach(question.node.type.content.widgets.images, function(image) {
-          images.push(CONSTANT.RESOURCE_SERVER + image);
-        })
-      })
-      $ImageCacheFactory.Cache(images).then(function() {
-        d.resolve('Images Loaded Successfully');
-      }, function(failed) {
-        d.reject('Error Loading Image' + failed);
-      });
-      return d.promise;
-    }
-
-    function preloadSounds(quiz) {
-      var d = $q.defer();
-      ionic.Platform.ready(function() {
-        var promises = [];
-        angular.forEach(quiz.objects, function(question) {
-          angular.forEach(question.node.type.content.widgets.sounds, function(sound) {
-            try {
-              promises.push(mediaManager.downloadSound(CONSTANT.RESOURCE_SERVER + sound));
-            } catch (e) {
-              $log.debug("Error Downloading sound")
-            }
-          })
-        });
-        $q.all(promises).then(function(success) {
-          d.resolve("Sounds Loaded Successfully");
-        });
-        return d.promise;
-      });
-    }
-
-    function preloadVideo(pathArray) {
-      var d = $q.defer();
-      ionic.Platform.ready(function() {
-        var promises = [];
-        angular.forEach(pathArray, function(path) {
-          try {
-            $log.debug(mediaManager)
-            promises.push(mediaManager.downloadVideo(CONSTANT.RESOURCE_SERVER + path));
-          } catch (e) {
-            $log.debug("Error Downloading video", e)
-          }
-        })
-        $q.all(promises).then(function(success) {
-          d.resolve("Videos Loaded Successfully");
-        });
-        return d.promise;
-      });
-    }
     var data = {
       // createDiagnosisQuestionDB: createDiagnosisQuestionDB(),
       // createKmapsDB: createKmapsDB(),
@@ -121,6 +42,7 @@
       getLessonsScore: getLessonsScore,
       getLessonsList: getLessonsList,
       getAssessment: getAssessment,
+      getSkills: getSkills,
       saveReport: saveReport,
       saveAttempts: saveAttempts,
       // getResults : getResults, // for results in hud screen
@@ -129,8 +51,10 @@
       updateLesson: updateLesson,
       isLessonDownloaded: isLessonDownloaded,
       updateScore: updateScore,
+      updateSkills: updateSkills,
       // addNewUser: addNewUser
-      putUserifNotExist: putUserifNotExist
+      putUserifNotExist: putUserifNotExist,
+      startReportSyncing: startReportSyncing
     };
 
 
@@ -298,45 +222,136 @@
     function createLessonDB() {
       var d = $q.defer();
       var promises = []
-      return $http.get('templates/common/lessons.json').success(function(data) {
-        $log.debug('in createLessonDB', data);
-        for (var i = 0; i < data.length; i++) {
-          data[i].key = i;
-          promises.push(lessonDB.put({
-            "_id": data[i].node.id,
-            "lesson": data[i],
+      var promisesDelete = []
+      $log.debug("createLessonDB 1")
+      lessonDB.allDocs().then(function(result) {
+        $log.debug("createLessonDB 2")
 
-
-          }));
-        }
-        $q.all(promises).then(function() {
-          d.resolve("Lesson Db created");
+        $log.debug("createLessonDB", result)
+        angular.forEach(result.rows, function(row) {
+          $log.debug("createLessonDB", row)
+          promisesDelete.push(lessonDB.remove(row.id, row.value.rev))
         })
-        return d.promise;
-      });
+      })
+      $log.debug("createLessonDB 1.5")
+
+      $q.all(promisesDelete).then(function() {
+        $log.debug("createLessonDB 4")
+
+        $http.get('templates/common/lessons.json').success(function(data) {
+          for (var i = 0; i < data.length; i++) {
+            data[i].key = i;
+            if (data[i].node.type.grade == Auth.getLocalProfile().grade) {
+              $log.debug("sasa", i, Auth.getLocalProfile(), data[i])
+              promises.push(lessonDB.put({
+                "_id": data[i].node.id,
+                "lesson": data[i]
+              }));
+            }
+            $q.all(promises).then(function() {
+                d.resolve("Lesson Db created");
+              })
+              .catch(function(E) {
+                $log.debug("o", E)
+              })
+
+          }
+
+        });
+
+      })
+
+      return d.promise;
+      //
+      // return lessonDB.destroy().then(function(){
+      //   return $http.get('templates/common/lessons.json').success(function(data) {
+      //     for (var i = 0; i < data.length; i++) {
+      //       data[i].key = i;
+      //       if(data[i].node.type.grade == Auth.getLocalProfile().grade)
+      //       {
+      //         $log.debug("sasa",Auth.getLocalProfile(),data[i])
+      //         promises.push(lessonDB.put({
+      //           "_id": data[i].node.id,
+      //           "lesson": data[i]
+      //         }));
+      //       }
+      //
+      //     }
+      //     $q.all(promises).then(function() {
+      //       d.resolve("Lesson Db created");
+      //     })
+      //     .catch(function(E){
+      //       $log.debug("o",E)
+      //     })
+      //     return d.promise;
+      //   });
+      // })
+
       // $log.debug('promise of createKmapsJSON', promise);
 
     }
 
     function putUserifNotExist(data) {
-      $log.debug("putUserifNotExist");
-      return appDB.get(data.userId).then(function() {
-        return true;
-      }).catch(function() {
-        return appDB.put({
-          '_id': data.userId,
-          'data': {
-            'scores': {}
-          }
-        }).then(function() {
-          return true;
-        });
-      })
+      return Rest.one('profiles', JSON.parse(localStorage.user_details).profile).all('scores').all('skills').getList().then(function(profile) {
+          $log.debug("putUserifNotExist Profile", profile.plain())
+          return profile.plain();
+        })
+        .then(function(skills) {
 
-      return appDB.put({
-        "_id": data.userId,
-        "scores": {}
-      });
+          return appDB.get(data.userId)
+            .then(function(doc) {
+              $log.debug("putUserifNotExist AppDBFound", doc, skills)
+              doc.data.skills = skills
+              return appDB.put({
+                '_id': data.userId,
+                '_rev': doc._rev,
+                'data': doc.data
+              })
+            })
+            .catch(function(error) {
+              if (error.status === 404) {
+                $log.debug("putUserifNotExist AppDBNotFound", skills)
+                return appDB.put({
+                  '_id': data.userId,
+                  'data': {
+                    'scores': {},
+                    'reports': {},
+                    'skills': skills
+                  }
+                })
+              }
+            })
+        })
+
+
+    }
+
+    function updateSkills(data) {
+      $log.debug("updateSkills");
+      return appDB.get(data.userId).then(function(response) {
+          $log.debug("ok")
+          var doc = response.data;
+          // $log.debug("updateSkills",doc,doc.skills, typeof doc.skills, doc.skills.length, doc.skills[0]);
+
+          $log.debug(data)
+          angular.forEach(doc.skills, function(skill, key) {
+
+            $log.debug(skill.title, data.skill)
+            if (skill.title == data.skill) {
+              $log.debug("here")
+              doc.skills[key].lesson_scores += data.score;
+            }
+          })
+
+          return appDB.put({
+            '_id': data.userId,
+            '_rev': response._rev,
+            'data': doc
+          })
+        })
+        .catch(function(error) {
+          $log.debug(error)
+        })
     }
 
     function updateScore(data) {
@@ -349,6 +364,7 @@
           'score': data.score,
           'totalScore': data.totalScore
         };
+
         return appDB.put({
           '_id': data.userId,
           '_rev': response._rev,
@@ -370,7 +386,7 @@
         var result = null;
         if (response.data.scores.hasOwnProperty(data.lessonId)) {
           if (response.data.scores[data.lessonId].hasOwnProperty(data.id)) {
-            result = (response.data.scores[data.lessonId][data.id])
+            result = response.data.scores[data.lessonId][data.id]
           }
         }
         d.resolve(result);
@@ -384,11 +400,8 @@
       return Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('profiles', JSON.parse(localStorage.user_details).profile).customGET('lessons-score', {
         limit: limit
       }).then(function(score) {
-        $log.debug('scores rest', score.plain());
         return score.plain().results;
-      }, function(error) {
-        $log.debug('some error occured', error);
-      })
+      }, function(error) {})
     }
 
     function getLessonsList(limit) {
@@ -396,45 +409,64 @@
       lessonDB.allDocs({
           include_docs: true
         }).then(function(data) {
-          $log.debug("ALl lessons",data)
           var lessons = [];
           for (var i = 0; i < data.rows.length; i++) {
             data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key
             lessons.push(data.rows[i].doc.lesson.node);
           }
-            lessons = _.sortBy(lessons, 'key');
-            $log.debug(lessons)
+          lessons = _.sortBy(lessons, 'key');
           d.resolve(lessons)
         })
         .catch(function(error) {
           d.reject(error)
         })
       return d.promise;
-      // return Rest.one('accounts', CONSTANT.CLIENTID.ELL).customGET('lessons', {
-      //   limit: limit
-      // }).then(function(lessons) {
-      //   return lessons.plain().results;
-      // }, function(error) {
-      //   $log.debug('some error occured', error);
-      // })
     }
 
     function getAssessment(assessmentId) {
-
 
       return Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('assessments', assessmentId).get().then(function(quiz) {
         return quiz.plain();
       });
     }
 
+    function getSkills(data) {
+      return appDB.get(data.userId)
+        .then(function(doc) {
+          return doc.data.skills;
+        })
+    }
+
     function saveAttempts(data) {
-      return;
       return Rest.all('attempts').post(data);
     }
 
     function saveReport(data) {
-      return;
-      return Rest.all('reports').post(data);
+      $log.debug("saveReport")
+      return appDB.get(data.userId).then(function(response) {
+          var doc = response.data;
+          $log.debug("doc", doc)
+
+          if (!doc.reports.hasOwnProperty(data.node)) {
+            doc.reports[data.node] = [];
+          }
+          doc.reports[data.node].push({
+            'score': data.score,
+            'attempts': data.attempts
+          });
+
+          return appDB.put({
+            '_id': data.userId,
+            '_rev': response._rev,
+            'data': doc
+          })
+        })
+        .then(function(data) {
+          localStorage.setItem('reportSyncComplete', false)
+        })
+
+
+      // return Rest.all('reports').post(data);
     }
 
     function downloadQuiz(id) {}
@@ -450,9 +482,7 @@
     }
 
     function updateLesson(lesson) {
-      $log.debug("Recieved", lesson)
       lessonDB.get(lesson.node.id).then(function(doc) {
-        $log.debug(doc)
         return lessonDB.put({
           _id: lesson.node.id,
           _rev: doc._rev,
@@ -462,7 +492,6 @@
     }
 
     function downloadLesson(id, mediaTypes) {
-      $log.debug("insid downloadLesson", id,mediaTypes)
       var d = $q.defer();
       var promises = [];
       data.getLesson(id).then(function(response) {
@@ -475,9 +504,7 @@
                 })
 
               );
-            } catch (e) {
-              $log.debug("Error Downloading")
-            }
+            } catch (e) {}
           }
         })
         $q.all(promises).then(function(success) {
@@ -485,9 +512,7 @@
           }).then(function(data) {
             d.resolve(data);
           })
-          .catch(function(err) {
-            $log.debug(err)
-          });
+          .catch(function(err) {});
       })
 
       return d.promise;
@@ -535,25 +560,74 @@
       //     $log.debug("err", response)
       //   })
     }
-    function isLessonDownloaded(id,mediaTypes) {
 
-          var d = $q.defer();
-          lessonDB.get(id).then(function(data) {
-              var downloaded = true;
-              for (var i = 0; i < data.lesson.media.length; i++) {
-                if ((!mediaTypes || mediaTypes.length > 0 || mediaTypes.indexOf(file.url.split('.').pop()) >= 0) && data.lesson.media[i].downloaded === false) {
-                  downloaded = false;
-                  break;
-                }
-              }
-              d.resolve(downloaded);
-            })
-            .catch(function(err) {
-              d.reject(err);
-            })
-          return d.promise;
-        }
+    function isLessonDownloaded(id, mediaTypes) {
 
+      var d = $q.defer();
+      lessonDB.get(id).then(function(data) {
+          var downloaded = true;
+          for (var i = 0; i < data.lesson.media.length; i++) {
+            if ((!mediaTypes || mediaTypes.length > 0 || mediaTypes.indexOf(file.url.split('.').pop()) >= 0) && data.lesson.media[i].downloaded === false) {
+              downloaded = false;
+              break;
+            }
+          }
+          d.resolve(downloaded);
+        })
+        .catch(function(err) {
+          d.reject(err);
+        })
+      return d.promise;
+    }
+
+    function startReportSyncing(data) {
+      $log.debug("here 1")
+      return appDB.get(data.userId).then(function(response) {
+          var doc = response.data;
+          $log.debug("documents", doc)
+          for (var key in doc.reports) {
+            $log.debug("keys", key)
+            if (doc.reports.hasOwnProperty(key)) {
+              Rest.all('reports').post({
+                  'score': doc.score,
+                  'person': data.userId,
+                  'node': key
+                })
+                .then(function(report) {
+                  doc.reports.id = report.id;
+                  $log.debug("Reports", report)
+                  var attempts = [];
+                  angular.forEach(doc.reports[key].attempts, function(attempt) {
+                    attempts.push({
+                      "answer": attempt.answer,
+                      "status": attempt.status,
+                      "person": data.userId,
+                      "report": report.id,
+                      "node": attemp.node
+                    })
+                  })
+                  Rest.all('attempts').post(attempts);
+                })
+            }
+          }
+          // if (!doc.reports.hasOwnProperty(data.node)) {
+          //   doc.reports[data.node] = [];
+          // }
+          // doc.reports[data.node].push({
+          //   'score': data.score,
+          //   'attempts': data.attempts
+          // });
+
+          // return appDB.put({
+          //   '_id': data.userId,
+          //   '_rev': response._rev,
+          //   'data': doc
+          // })
+        })
+        .then(function(data) {
+          // localStorage.setItem('reportSyncComplete', false)
+        })
+    }
     // function isLessonDownloaded(id, mediaTypes) {
     //   $log.debug("isLessonDownloaded", id, mediaTypes)
     //   var d = $q.defer();

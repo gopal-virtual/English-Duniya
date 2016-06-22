@@ -5,7 +5,7 @@
     .controller('authController', authController)
   authController.$inject = ['$q', '$ionicModal', '$state', 'Auth', 'audio', '$rootScope', '$ionicPopup', '$log', '$cordovaOauth', 'CONSTANT', '$interval', '$scope', '$ionicLoading', 'formHelper', '$ionicPlatform','data'];
 
-  function authController($q, $ionicModal, $state, Auth, audio, $rootScope, $ionicPopup, $log, $cordovaOauth, CONSTANT, $interval, $scope, $ionicLoading, formHelper, $ionicPlatform, data) {
+  function authController($q, $ionicModal, $state, Auth, audio, $rootScope, $ionicPopup, $log, $cordovaOauth, CONSTANT, $interval, $scope, $ionicLoading, formHelper, $ionicPlatform, dataService) {
     var authCtrl = this;
     authCtrl.formHelper = formHelper;
     authCtrl.Auth = Auth;
@@ -88,7 +88,9 @@
     });
 
     function signin(url, data) {
-      $ionicLoading.show();
+      $ionicLoading.show({
+         hideOnStateChange: true
+      });
       var getCredentials;
       if (url === 'login') {
         getCredentials = authCtrl.formHelper.validateForm(data, authCtrl.signInFormValidations);
@@ -127,14 +129,26 @@
         .then(function() {
           return Auth.getProfile();
         })
+        .then(function(){
+          return dataService.putUserifNotExist({
+            'userId': Auth.getProfileId()
+          })
+        })
+        .then(function(){
+          $log.debug("Creating lesson db asa")
+          return dataService.createLessonDB()
+        })
         .then(function() {
+          $log.debug("Created lesson db asa")
+
           $state.go('map.navigate', {});
         })
         .catch(function(error) {
+          $ionicLoading.hide()
           authCtrl.showError("Could not login", error || "Please try again");
           authCtrl.audio.play('wrong');
         }).finally(function() {
-          $ionicLoading.hide()
+
         })
     }
 
