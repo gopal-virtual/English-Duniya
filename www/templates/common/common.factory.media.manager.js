@@ -33,9 +33,7 @@
       play: function(sound) {
         try {
           $cordovaNativeAudio.play(sound);
-          console.log('sound played');
         } catch (error) {
-          console.log(error);
         }
       },
       download: function(url) {

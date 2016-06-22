@@ -144,18 +144,26 @@
     }
 
     function submitReport(quiz, report, summary) {
-      $log.debug("submit report called",summary,quiz)
       lesson = lessonutils.getLocalLesson();
-      $log.debug("Lesson rec", lesson)
       data.getQuizScore({
           'userId': Auth.getProfileId(),
           'lessonId': lesson.node.id,
           'id': quizCtrl.quiz.node.id
         })
+        .then(function() {
+          $log.debug("Updating skills",lesson)
+          return data.updateSkills({
+            userId: Auth.getProfileId(),
+            lessonId: lesson.node.id,
+            id: quiz.node.id,
+            score: summary.score.marks,
+            totalScore: quizCtrl.quiz.node.type.score,
+            skill: lesson.node.tag
+          })
+        })
         .then(function(previousScore) {
-          // $log.debug(previousScore,previousScore.score,parseInt(previousScore.score),parseInt(previousScore.score) < summary.score.marks,summary.score.marks)
           if ((!previousScore) || (!previousScore.hasOwnProperty('score')) || (previousScore && parseInt(previousScore.score) < summary.score.marks)) {
-            $log.debug("about to update score");
+
             return data.updateScore({
               userId: Auth.getProfileId(),
               lessonId: lesson.node.id,
@@ -163,33 +171,42 @@
               score: summary.score.marks,
               totalScore: quizCtrl.quiz.node.type.score,
             })
-          } else {
-            $log.debug("Do not update score")
+
           }
         })
-        .then(function(response) {
-          $log.debug("Score done,Saving report")
-          // return data.saveReport({
-          //   node: quiz.node.id,
-          //   person: Auth.getProfileId(),
-          //   score: summary.score.marks
-          // })
-        })
+        // .then(function(response) {
+        //   return data.saveReport({
+        //     node: quiz.node.id,
+        //     person: Auth.getProfileId(),
+        //     score: summary.score.marks
+        //   })
+        // })
         .then(function(success) {
-          // $log.debug("Repport Saved")
           // var report_id = success.id;
-          // var attempts = [];
-          // angular.forEach(report.attempts, function(value, key) {
-          //   attempts.push({
-          //     answer: value.length > 0 ? value : null,
-          //     score: summary.analysis[key].score,
-          //     status: value.length > 0 ? CONSTANT.ATTEMPT.STATUS.ATTEMPTED : CONSTANT.ATTEMPT.STATUS.SKIPPED,
-          //     person: Auth.getProfileId(),
-          //     report: report_id,
-          //     node: key
-          //   });
-          // });
-          // return data.saveAttempts(attempts)
+          var attempts = [];
+          angular.forEach(report.attempts, function(value, key) {
+            attempts.push({
+              answer: value.length > 0 ? value : null,
+              score: summary.analysis[key].score,
+              status: value.length > 0 ? CONSTANT.ATTEMPT.STATUS.ATTEMPTED : CONSTANT.ATTEMPT.STATUS.SKIPPED,
+              // person: Auth.getProfileId(),
+              // report: report_id,
+              node: key
+            });
+          });
+          return data.saveReport({
+            'score': summary.score.marks,
+            'attempts': attempts,
+            'userId': Auth.getProfileId(),
+            'node': quizCtrl.quiz.node.id
+          })
+
+        })
+        .then(function(data) {
+          $log.debug("s", data);
+        })
+        .catch(function(e) {
+          $log.debug("Err", e)
         })
     }
 
@@ -199,16 +216,23 @@
 
     function init(quiz) {
       if ($state.current.name == "quiz.start") {
-        // $ionicLoading.show();
-        // quizCtrl.preloadResources(quiz).then(function(success) {
-        //   $ionicLoading.hide();
-        // });
+        $log.debug("quiz start")
+          // $ionicLoading.show();
+          // quizCtrl.preloadResources(quiz).then(function(success) {
+          //   $ionicLoading.hide();
+          // });
       }
       if ($state.current.name == "quiz.summary") {
         quizCtrl.report = $stateParams.report;
         quizCtrl.quiz = $stateParams.quiz;
         quizCtrl.summary = $stateParams.summary;
         quizCtrl.playStarSound();
+        quizCtrl.submitReport(quizCtrl.quiz, quizCtrl.report, quizCtrl.summary)
+          // .then(function(s){
+          //   $log.debug("s",s)
+          // }).catch(function(e){
+          //   $log.debug("e",e)
+          // });
       } else if ($state.current.name == "quiz.questions") {
 
         quizCtrl.setCurrentIndex(0);
@@ -495,17 +519,13 @@
     }
 
     function playAudio(key, index) {
-      if (key !== undefined) {
+      if (key) {
         angular.element("#audioplayer")[0].pause();
         var src = (mediaManager.getPath(quizCtrl.quiz.objects[index].node.type.content.widgets.sounds[key]));
-        
-        $log.debug("play Audio ",src)
         angular.element("#audioSource")[0].src = src;
         angular.element("#audioplayer")[0].load();
         angular.element("#audioplayer")[0].play();
       }
-
-
     }
 
 
@@ -566,18 +586,16 @@
     }
 
     function submitQuiz(quizType) {
-
       if (quizType === 'practice') {
-        $log.debug("ok");
         $scope.modal.remove().then(function() {
+          $log.debug("submit qi")
           $state.go('quiz.summary', {
-            quiz: angular.copy(quizCtrl.quiz),
+            report: angular.copy(quizCtrl.report),
             summary: angular.copy(quizCtrl.summary),
-            report: angular.copy(quizCtrl.report)
+            type: 'practice'
           });
         });
       } else if (quizType === 'assessment') {
-        $log.debug("ok");
         $ionicPopup.confirm({
           title: 'Submit Quiz?',
           template: 'Are you sure you want to submit quiz?'
@@ -587,8 +605,9 @@
             quizCtrl.summary = quizCtrl.generateSummary(quizCtrl.report, quizCtrl.quiz);
             $state.go('quiz.summary', {
               report: angular.copy(quizCtrl.report),
-              quiz: angular.copy(quizCtrl.quiz),
-              summary: angular.copy(quizCtrl.summary)
+              summary: angular.copy(quizCtrl.summary),
+              type: 'assessment'
+
             });
           }
         });
@@ -647,16 +666,17 @@
 
       }
     }
-    function highlightSoundIcon(questionIndex){
-          if(quizCtrl.quiz.objects[questionIndex].node.widgetHtml.indexOf(CONSTANT.WIDGETS.SPEAKER_IMAGE) >= 0){
-            quizCtrl.quiz.objects[questionIndex].node.widgetHtml = quizCtrl.quiz.objects[questionIndex].node.widgetHtml.replace(CONSTANT.WIDGETS.SPEAKER_IMAGE,CONSTANT.WIDGETS.SPEAKER_IMAGE_SELECTED)
-          }
-          var watchAudio = $interval(function(){
-            if(angular.element("#audioplayer")[0].paused){
-              $interval.cancel(watchAudio)
-              quizCtrl.quiz.objects[questionIndex].node.widgetHtml = quizCtrl.quiz.objects[questionIndex].node.widgetHtml.replace(CONSTANT.WIDGETS.SPEAKER_IMAGE_SELECTED,CONSTANT.WIDGETS.SPEAKER_IMAGE)
-            }
-          },100)
+
+    function highlightSoundIcon(questionIndex) {
+      if (quizCtrl.quiz.objects[questionIndex].node.widgetHtml.indexOf(CONSTANT.WIDGETS.SPEAKER_IMAGE) >= 0) {
+        quizCtrl.quiz.objects[questionIndex].node.widgetHtml = quizCtrl.quiz.objects[questionIndex].node.widgetHtml.replace(CONSTANT.WIDGETS.SPEAKER_IMAGE, CONSTANT.WIDGETS.SPEAKER_IMAGE_SELECTED)
+      }
+      var watchAudio = $interval(function() {
+        if (angular.element("#audioplayer")[0].paused) {
+          $interval.cancel(watchAudio)
+          quizCtrl.quiz.objects[questionIndex].node.widgetHtml = quizCtrl.quiz.objects[questionIndex].node.widgetHtml.replace(CONSTANT.WIDGETS.SPEAKER_IMAGE_SELECTED, CONSTANT.WIDGETS.SPEAKER_IMAGE)
         }
+      }, 100)
+    }
   }
 })();

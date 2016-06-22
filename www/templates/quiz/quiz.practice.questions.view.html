@@ -1,4 +1,4 @@
-<ion-pane class="bg-green">
+<ion-view class="bg-green">
   <div class="bar bar-header bg-pale practice-header padding-0">
     <div class="col padding-0 vertical-center">
       <div ng-click="showNodeMenu()" class="header-icon icon-pause icon-fit-height padding-10"></div>
@@ -28,7 +28,7 @@
     </div>
   </div>
   <ion-slide-box on-slide-changed="quizCtrl.setCurrentIndex(index);quizCtrl.quiz.objects[index].isVisited = true;" ng-init="(quizCtrl.disableSwipe())" show-pager="false">
-    <ion-slide ng-repeat="question in quizCtrl.quiz.objects" ng-class="{'animation-question-slide':quizCtrl.isCurrentIndex($index)}">
+    <ion-slide ng-repeat="question in quizCtrl.quiz.objects " ng-class="{'animation-question-slide':quizCtrl.isCurrentIndex($index)}">
 
       <!-- <div ng-repeat="question in quizCtrl.quiz.objects" ng-if="$index == quizCtrl.getCurrentIndex()"> -->
       <div class="bar bar-subheader padding-0 question-subheader bg-pale no-shadow">
@@ -54,13 +54,13 @@
         <!-- MCQ options -->
         <div
           ng-if="question.node.type.type=='choicequestion' && question.node.type.content.is_multiple"
-          ng-class="{'selected':question.attempted[option.key],'card-list':quizCtrl.getLayout(question) == 'list','card-grid':quizCtrl.getLayout(question) == 'grid'}"
+          ng-class="{'selected':option.key==question.attempted,'card-list':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'list','card-grid practice-card':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'grid'}"
           class="card center bg-white card-radius"
           ng-repeat="option in question.node.type.content.options">
           <label ng-click="quizCtrl.playAudio(option.widgetSound,$parent.$parent.$index)">
             <input class="hide" type="checkbox" ng-model="question.attempted[option.key]" ng-value="option.key">
             <!-- <div class="option-container"  ng-if="option"> -->
-            <div class="padding-10 option"  ng-bind-html="::option.widgetHtml"></div>
+            <div class="padding-10 option"  ng-bind-html="option.widgetHtml"></div>
             <!-- </div> -->
           </label>
         </div>
@@ -89,4 +89,4 @@
 
   </div>
 
-</ion-pane>
+</ion-view>

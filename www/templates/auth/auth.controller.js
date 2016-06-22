@@ -127,6 +127,11 @@
         .then(function() {
           return Auth.getProfile();
         })
+        .then(function(){
+          return data.putUserifNotExist({
+            'userId': Auth.getProfileId()
+          })
+        })
         .then(function() {
           $state.go('map.navigate', {});
         })

@@ -54,6 +54,11 @@
               return Auth.getUser();
             })
             .then(function(){
+              return data.putUserifNotExist({
+                'userId': Auth.getProfileId()
+              })
+            })
+            .then(function(){
               $state.go('map.navigate',{});
             })
             .catch(function(error){

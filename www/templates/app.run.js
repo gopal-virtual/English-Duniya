@@ -3,6 +3,7 @@
   angular
     .module('zaya')
     .run(runConfig);
+
   function runConfig($ionicPlatform, $rootScope, $timeout, $log, $state, $http, $cookies, Auth, $window, $cordovaFile, data) {
 
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
@@ -59,8 +60,8 @@
       }
       if (toState.name == 'quiz.practice.summary' && !toParams.report) {
         $log.debug("Practice summary page cannot be accessed : No quiz data present");
-        event.preventDefault();
-        $state.go('map.navigate');
+        // event.preventDefault();
+        // $state.go('map.navigate');
       }
       // block content state
       if (toState.name == 'content.video' && !toParams.video) {
@@ -81,17 +82,30 @@
 
       }
 
-      if(Auth.isAuthorised() && Auth.isVerified() ){
-        data.putUserifNotExist({'userId':Auth.getProfileId()});
-      }
+      // if (Auth.isAuthorised() && Auth.isVerified() && Auth.hasProfile()) {
+      //   data.putUserifNotExist({
+      //     'userId': Auth.getProfileId()
+      //   })
+      //   .then(function(data){
+      //     $log.debug("putUserifNotExist complete",data)
+      //   })
+      //   .catch(function(error){
+      //     $log.debug("putUserifNotExist error",error)
+      //   })
+      //   if (localStorage.getItem('reportSyncComplete') !== 'true') {
+      //     $log.debug("here")
+      //     // data.startReportSyncing({'userId':Auth.getProfileId()});
+      //   }
+      // }
     });
     $ionicPlatform.ready(function() {
 
-    if(localStorage.getItem('lessonDBCreated') !== 'true')
-      {
+      if (localStorage.getItem('lessonDBCreated') !== 'true') {
         data.createLessonDB();
-        localStorage.setItem('lessonDBCreated',true)
+        localStorage.setItem('lessonDBCreated', true)
       }
+
+
       if (window.Connection) {
         if (navigator.connection.type == Connection.NONE) {
           $ionicPopup.confirm({
