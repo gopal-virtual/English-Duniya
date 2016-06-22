@@ -5,7 +5,7 @@
     .controller('authController', authController)
   authController.$inject = ['$q', '$ionicModal', '$state', 'Auth', 'audio', '$rootScope', '$ionicPopup', '$log', '$cordovaOauth', 'CONSTANT', '$interval', '$scope', '$ionicLoading', 'formHelper', '$ionicPlatform','data'];
 
-  function authController($q, $ionicModal, $state, Auth, audio, $rootScope, $ionicPopup, $log, $cordovaOauth, CONSTANT, $interval, $scope, $ionicLoading, formHelper, $ionicPlatform, data) {
+  function authController($q, $ionicModal, $state, Auth, audio, $rootScope, $ionicPopup, $log, $cordovaOauth, CONSTANT, $interval, $scope, $ionicLoading, formHelper, $ionicPlatform, dataService) {
     var authCtrl = this;
     authCtrl.formHelper = formHelper;
     authCtrl.Auth = Auth;
@@ -128,7 +128,7 @@
           return Auth.getProfile();
         })
         .then(function(){
-          return data.putUserifNotExist({
+          return dataService.putUserifNotExist({
             'userId': Auth.getProfileId()
           })
         })

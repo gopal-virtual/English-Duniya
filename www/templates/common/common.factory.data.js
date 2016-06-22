@@ -5,10 +5,10 @@
     .module('common')
     .factory('data', data);
 
-  data.$inject = ['pouchDB', '$http', '$log', 'Rest', 'CONSTANT', '$q', '$ImageCacheFactory', 'mediaManager', '$interval','network'];
+  data.$inject = ['pouchDB', '$http', '$log', 'Rest', 'CONSTANT', '$q', '$ImageCacheFactory', 'mediaManager', '$interval','network','Auth'];
 
   /* @ngInject */
-  function data(pouchDB, $http, $log, Rest, CONSTANT, $q, $ImageCacheFactory, mediaManager, $interval, network) {
+  function data(pouchDB, $http, $log, Rest, CONSTANT, $q, $ImageCacheFactory, mediaManager, $interval, network,Auth) {
     // var diagnosisQuestionsDB = pouchDB('diagnosisQuestions');
     // var kmapsDB = pouchDB('kmaps');
 
@@ -225,11 +225,11 @@
       return $http.get('templates/common/lessons.json').success(function(data) {
         for (var i = 0; i < data.length; i++) {
           data[i].key = i;
+          $log.debug("sasa",Auth.getLocalProfile(),data[i])
+          if(data[i].node.type.grade == Auth.getLocalProfile().grade)
           promises.push(lessonDB.put({
             "_id": data[i].node.id,
-            "lesson": data[i],
-
-
+            "lesson": data[i]
           }));
         }
         $q.all(promises).then(function() {
