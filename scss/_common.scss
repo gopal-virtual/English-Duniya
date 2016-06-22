@@ -47,3 +47,22 @@
 ion-content.overflow-visible {
   overflow: visible;
 }
+meter::-webkit-meter-bar {
+    background: lighten($brand-grey , 20%);
+    border-radius: $border-radius;
+}
+
+meter::-webkit-meter-optimum-value {
+    background: $brand-green; /* Green */
+    border-radius: $border-radius;
+}
+
+meter::-webkit-meter-suboptimum-value {
+    background: $brand-yellow; /* Yellow */
+    border-radius: $border-radius;
+}
+
+meter::-webkit-meter-even-less-good-value {
+    background: lighten($assertive, 10%); /* Red */
+    border-radius: $border-radius;
+}
