@@ -88,7 +88,9 @@
     });
 
     function signin(url, data) {
-      $ionicLoading.show();
+      $ionicLoading.show({
+         hideOnStateChange: true
+      });
       var getCredentials;
       if (url === 'login') {
         getCredentials = authCtrl.formHelper.validateForm(data, authCtrl.signInFormValidations);
@@ -132,14 +134,21 @@
             'userId': Auth.getProfileId()
           })
         })
+        .then(function(){
+          $log.debug("Creating lesson db asa")
+          return dataService.createLessonDB()
+        })
         .then(function() {
+          $log.debug("Created lesson db asa")
+
           $state.go('map.navigate', {});
         })
         .catch(function(error) {
+          $ionicLoading.hide()
           authCtrl.showError("Could not login", error || "Please try again");
           authCtrl.audio.play('wrong');
         }).finally(function() {
-          $ionicLoading.hide()
+
         })
     }
 

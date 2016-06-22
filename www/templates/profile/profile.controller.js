@@ -59,6 +59,9 @@
               })
             })
             .then(function(){
+              return dataService.createLessonDB();
+            })
+            .then(function(){
               $state.go('map.navigate',{});
             })
             .catch(function(error){

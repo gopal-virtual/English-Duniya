@@ -59,9 +59,10 @@
       data.getLesson(id).then(function(response) {
         $ionicLoading.hide();
         utils.setLocalLesson(JSON.stringify(response));
-        $log.debug(response)
+        $log.debug("found",response)
         callback && callback(response);
       }, function(error) {
+        $log.debug(error)
         $ionicLoading.hide();
         $ionicPopup.alert({
           title: 'Sorry',

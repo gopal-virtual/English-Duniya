@@ -101,8 +101,7 @@
     $ionicPlatform.ready(function() {
 
       if (localStorage.getItem('lessonDBCreated') !== 'true') {
-        data.createLessonDB();
-        localStorage.setItem('lessonDBCreated', true)
+      
       }
 
 

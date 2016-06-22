@@ -5,10 +5,10 @@
     .module('common')
     .factory('data', data);
 
-  data.$inject = ['pouchDB', '$http', '$log', 'Rest', 'CONSTANT', '$q', '$ImageCacheFactory', 'mediaManager', '$interval','network','Auth'];
+  data.$inject = ['pouchDB', '$http', '$log', 'Rest', 'CONSTANT', '$q', '$ImageCacheFactory', 'mediaManager', '$interval', 'network', 'Auth'];
 
   /* @ngInject */
-  function data(pouchDB, $http, $log, Rest, CONSTANT, $q, $ImageCacheFactory, mediaManager, $interval, network,Auth) {
+  function data(pouchDB, $http, $log, Rest, CONSTANT, $q, $ImageCacheFactory, mediaManager, $interval, network, Auth) {
     // var diagnosisQuestionsDB = pouchDB('diagnosisQuestions');
     // var kmapsDB = pouchDB('kmaps');
 
@@ -222,86 +222,136 @@
     function createLessonDB() {
       var d = $q.defer();
       var promises = []
-      return $http.get('templates/common/lessons.json').success(function(data) {
-        for (var i = 0; i < data.length; i++) {
-          data[i].key = i;
-          $log.debug("sasa",Auth.getLocalProfile(),data[i])
-          if(data[i].node.type.grade == Auth.getLocalProfile().grade)
-          promises.push(lessonDB.put({
-            "_id": data[i].node.id,
-            "lesson": data[i]
-          }));
-        }
-        $q.all(promises).then(function() {
-          d.resolve("Lesson Db created");
+      var promisesDelete = []
+      $log.debug("createLessonDB 1")
+      lessonDB.allDocs().then(function(result) {
+        $log.debug("createLessonDB 2")
+
+        $log.debug("createLessonDB", result)
+        angular.forEach(result.rows, function(row) {
+          $log.debug("createLessonDB", row)
+          promisesDelete.push(lessonDB.remove(row.id, row.value.rev))
         })
-        return d.promise;
-      });
+      })
+      $log.debug("createLessonDB 1.5")
+
+      $q.all(promisesDelete).then(function() {
+        $log.debug("createLessonDB 4")
+
+        $http.get('templates/common/lessons.json').success(function(data) {
+          for (var i = 0; i < data.length; i++) {
+            data[i].key = i;
+            if (data[i].node.type.grade == Auth.getLocalProfile().grade) {
+              $log.debug("sasa", i, Auth.getLocalProfile(), data[i])
+              promises.push(lessonDB.put({
+                "_id": data[i].node.id,
+                "lesson": data[i]
+              }));
+            }
+            $q.all(promises).then(function() {
+                d.resolve("Lesson Db created");
+              })
+              .catch(function(E) {
+                $log.debug("o", E)
+              })
+
+          }
+
+        });
+
+      })
+
+      return d.promise;
+      //
+      // return lessonDB.destroy().then(function(){
+      //   return $http.get('templates/common/lessons.json').success(function(data) {
+      //     for (var i = 0; i < data.length; i++) {
+      //       data[i].key = i;
+      //       if(data[i].node.type.grade == Auth.getLocalProfile().grade)
+      //       {
+      //         $log.debug("sasa",Auth.getLocalProfile(),data[i])
+      //         promises.push(lessonDB.put({
+      //           "_id": data[i].node.id,
+      //           "lesson": data[i]
+      //         }));
+      //       }
+      //
+      //     }
+      //     $q.all(promises).then(function() {
+      //       d.resolve("Lesson Db created");
+      //     })
+      //     .catch(function(E){
+      //       $log.debug("o",E)
+      //     })
+      //     return d.promise;
+      //   });
+      // })
+
       // $log.debug('promise of createKmapsJSON', promise);
 
     }
 
     function putUserifNotExist(data) {
       return Rest.one('profiles', JSON.parse(localStorage.user_details).profile).all('scores').all('skills').getList().then(function(profile) {
-          $log.debug("putUserifNotExist Profile",profile.plain())
+          $log.debug("putUserifNotExist Profile", profile.plain())
           return profile.plain();
-      })
-      .then(function(skills){
-
-        return appDB.get(data.userId)
-        .then(function(doc){
-          $log.debug("putUserifNotExist AppDBFound",doc,skills)
-          doc.data.skills = skills
-          return appDB.put({
-            '_id': data.userId,
-            '_rev': doc._rev,
-            'data': doc.data
-          })
         })
-        .catch(function(error){
-          if(error.status === 404){
-            $log.debug("putUserifNotExist AppDBNotFound",skills)
-            return appDB.put({
-              '_id': data.userId,
-              'data': {
-                'scores': {},
-                'reports': {},
-                'skills' : skills
+        .then(function(skills) {
+
+          return appDB.get(data.userId)
+            .then(function(doc) {
+              $log.debug("putUserifNotExist AppDBFound", doc, skills)
+              doc.data.skills = skills
+              return appDB.put({
+                '_id': data.userId,
+                '_rev': doc._rev,
+                'data': doc.data
+              })
+            })
+            .catch(function(error) {
+              if (error.status === 404) {
+                $log.debug("putUserifNotExist AppDBNotFound", skills)
+                return appDB.put({
+                  '_id': data.userId,
+                  'data': {
+                    'scores': {},
+                    'reports': {},
+                    'skills': skills
+                  }
+                })
               }
             })
-          }
         })
-      })
 
 
     }
 
-    function updateSkills(data){
+    function updateSkills(data) {
       $log.debug("updateSkills");
-      return appDB.get(data.userId).then(function(response){
-        $log.debug("ok")
-        var doc = response.data;
-        // $log.debug("updateSkills",doc,doc.skills, typeof doc.skills, doc.skills.length, doc.skills[0]);
+      return appDB.get(data.userId).then(function(response) {
+          $log.debug("ok")
+          var doc = response.data;
+          // $log.debug("updateSkills",doc,doc.skills, typeof doc.skills, doc.skills.length, doc.skills[0]);
 
-        $log.debug(data)
-        angular.forEach(doc.skills,function(skill,key){
+          $log.debug(data)
+          angular.forEach(doc.skills, function(skill, key) {
 
-          $log.debug(skill.title,data.skill)
-          if(skill.title == data.skill){
-            $log.debug("here")
-            doc.skills[key].lesson_scores += data.score;
-          }
+            $log.debug(skill.title, data.skill)
+            if (skill.title == data.skill) {
+              $log.debug("here")
+              doc.skills[key].lesson_scores += data.score;
+            }
+          })
+
+          return appDB.put({
+            '_id': data.userId,
+            '_rev': response._rev,
+            'data': doc
+          })
         })
-
-        return appDB.put({
-          '_id': data.userId,
-          '_rev': response._rev,
-          'data': doc
+        .catch(function(error) {
+          $log.debug(error)
         })
-      })
-      .catch(function(error){
-        $log.debug(error)
-      })
     }
 
     function updateScore(data) {
@@ -380,12 +430,13 @@
       });
     }
 
-    function getSkills(data){
+    function getSkills(data) {
       return appDB.get(data.userId)
-      .then(function(doc){
-        return doc.data.skills;
-      })
+        .then(function(doc) {
+          return doc.data.skills;
+        })
     }
+
     function saveAttempts(data) {
       return Rest.all('attempts').post(data);
     }
@@ -535,22 +586,28 @@
           var doc = response.data;
           $log.debug("documents", doc)
           for (var key in doc.reports) {
-            $log.debug("keys",key)
+            $log.debug("keys", key)
             if (doc.reports.hasOwnProperty(key)) {
-              Rest.all('reports').post({'score':doc.score,'person':data.userId,'node':key})
-              .then(function(report){
-                doc.reports.id = report.id;
-                $log.debug("Reports",report)
-                var attempts = [];
-                angular.forEach(doc.reports[key].attempts,function(attempt){
-                  attempts.push({	"answer": attempt.answer,
-	                 "status": attempt.status,
-	                  "person": data.userId,
-	                   "report": report.id,
-	                    "node": attemp.node})
+              Rest.all('reports').post({
+                  'score': doc.score,
+                  'person': data.userId,
+                  'node': key
                 })
-                Rest.all('attempts').post(attempts);
-              })
+                .then(function(report) {
+                  doc.reports.id = report.id;
+                  $log.debug("Reports", report)
+                  var attempts = [];
+                  angular.forEach(doc.reports[key].attempts, function(attempt) {
+                    attempts.push({
+                      "answer": attempt.answer,
+                      "status": attempt.status,
+                      "person": data.userId,
+                      "report": report.id,
+                      "node": attemp.node
+                    })
+                  })
+                  Rest.all('attempts').post(attempts);
+                })
             }
           }
           // if (!doc.reports.hasOwnProperty(data.node)) {
