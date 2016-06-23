@@ -23,7 +23,7 @@
         'COMMON': ROOT + '/common',
         'MAP': ROOT + '/map',
         'CONTENT': ROOT + '/content',
-        'DATA': '/data'
+        'DATA': 'data'
       },
       'VIEW': '.view.html',
       'CONFIG': {
