@@ -1,9 +1,7 @@
-<ion-modal-view class="modal-dark">
-  <ion-content ng-init="mapCtrl.selected=false" overflow-scroll="true">
-    <!-- <div class="row row-100" style="background:url('img/assets/rope_menu.png') no-repeat center top; background-size : auto 98%">
-          <div class="col"></div>
-      </div> -->
-    <div class="row modal-top padding-0">
+<ion-modal-view class="modal-transparent">
+  <ion-content ng-init="mapCtrl.selected=false" scroll="false">
+    
+    <!-- <div class="row modal-top padding-0">
       <div class="col modal-rope"></div>
       <div class="col"></div>
       <div class="col modal-rope"></div>
@@ -26,7 +24,6 @@
         <div class="col col-center col-60 height-100">
           <ul class="resource-list height-100">
             <li ng-repeat="resource in selectedNode.objects" class="text-center padding-10 capitalize position-relative" ng-hide="lessonutils.resourceType(resource)=='assessment'">
-            <!-- <span class="badge badge-assertive points font-sm padding-10 animation-zoom-in" style="-webkit-animation-delay : {{($index+3)*100}}ms;">20</span> -->
               <img
               ng-src="{{lessonutils.getIcon(resource)}}"
               alt="resource icon"
@@ -40,17 +37,25 @@
               ng-click="audio.play('press');quizCtrl.interval && quizCtrl.startTimer();contentCtrl.API && contentCtrl.API.play();lessonutils.playResource(resource,contentCtrl.API);closeNodeMenu();"
               class="button button-balanced button-round font-xl button-resume animation-zoom-in"
               style="line-height: 30px !important;-webkit-animation-delay : {{($index+3)*100}}ms;">resume</button>
-              <!-- <br> {{lessonutils.resourceType(resource)}} -->
             </li>
           </ul>
         </div>
       </div>
       <div class="row height-10 padding">
         <div class="col text-center padding">
-          <button class="button button-block button-balanced button-round font-xl animation-delay-more animation-fade-in-from-bottom" ng-click="audio.play('press');closeNodeMenu();lessonutils.leaveLesson();mapCtrl && mapCtrl.resetNode()">Leave Lesson</button>
+          <button class="button button-block button-balanced button-round font-xl animation-delay-more animation-fade-in-from-bottom" ng-click="audio.play('press');mapCtrl.animationExpand.shrink();lessonutils.leaveLesson();mapCtrl && mapCtrl.resetNode()">Leave Lesson</button>
         </div>
 
       </div>
+    </div> -->
+    <div class="bgcolor-calm square-60 round bevel"></div>
+    <div class="padding-x-20">
+      
+      <div class="rope-double-menu top-block">
+        <div class="box-extra bevel"></div>
+        <div class="box-extra bevel"></div>
+      </div>
     </div>
+
   </ion-content>
 </ion-modal-view>
