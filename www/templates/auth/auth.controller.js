@@ -3,11 +3,13 @@
   angular
     .module('zaya-auth')
     .controller('authController', authController)
-  authController.$inject = ['$q', '$ionicModal', '$state', 'Auth', 'audio', '$rootScope', '$ionicPopup', '$log', '$cordovaOauth', 'CONSTANT', '$interval', '$scope', '$ionicLoading', 'formHelper', '$ionicPlatform'];
+  authController.$inject = ['$q', '$ionicModal', '$state', 'Auth', 'audio', '$rootScope', '$ionicPopup', '$log', '$cordovaOauth', 'CONSTANT', '$interval', '$scope', '$ionicLoading', 'formHelper', '$ionicPlatform','network'];
 
-  function authController($q, $ionicModal, $state, Auth, audio, $rootScope, $ionicPopup, $log, $cordovaOauth, CONSTANT, $interval, $scope, $ionicLoading, formHelper, $ionicPlatform) {
+  function authController($q, $ionicModal, $state, Auth, audio, $rootScope, $ionicPopup, $log, $cordovaOauth, CONSTANT, $interval, $scope, $ionicLoading, formHelper, $ionicPlatform, network) {
     var authCtrl = this;
     authCtrl.formHelper = formHelper;
+    authCtrl.exitApp = exitApp;
+    authCtrl.network = network;
     authCtrl.Auth = Auth;
     authCtrl.audio = audio;
     authCtrl.logout = logout;
@@ -365,6 +367,9 @@
     function cleanLocalStorage() {
       Auth.cleanLocalStorage();
       $state.go('auth.signin', {});
+    }
+    function exitApp(){
+        navigator.app.exitApp();
     }
 
 
