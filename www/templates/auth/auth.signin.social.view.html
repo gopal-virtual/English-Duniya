@@ -1,59 +1,74 @@
 <ion-view class="bg-pink" ng-init="show_password = false">
   <ion-content class="animation-delay animation-fade-in-from-top">
-    <div class="row">
-      <div class="col text-center"><img src="img/assets/logo.png" alt="" height="121px" width="auto"></div>
+
+    <div ng-if="authCtrl.network.isOnline()">
+
+      <div class="row">
+        <div class="col text-center"><img src="img/assets/logo.png" alt="" height="121px" width="auto"></div>
+      </div>
+
+      <div class="row padding-x-20">
+        <div class="col extend-right-60">
+          <!-- <div class="button-bar button-group">
+                  <button type="button" ng-click="authCtrl.googleSignIn()" class="button button-no-shadow button-round button-block button-assertive icon-left ion-social-googleplus"></button>
+              </div> -->
+          <button tabindex="4" type="button" ng-click="authCtrl.signin('google')" class="button button-no-shadow button-round button-block font-lg button-assertive icon-middle ion-social-googleplus" style="padding: 0;line-height:10px !important"></button>
+        </div>
+        <div class="col center padding-20">
+          <h4 class="or-divider no-margin color-darkgrey">or</h4>
+        </div>
+        <div class="col extend-left-60">
+          <!-- <div class="button-bar button-group">
+              <button type="button" ng-click="authCtrl.facebookSignIn()" class="button button-no-shadow button-round button-block button-positive icon-left ion-social-facebook"></button>
+          </div> -->
+          <button tabindex="5" type="button" ng-click="authCtrl.signin('facebook')" class="button button-no-shadow button-round button-block font-lg button-positive icon-middle ion-social-facebook" style="padding: 0;line-height:10px !important"></button>
+        </div>
+
+      </div>
+
+      <div class="row padding-x-20 center">
+        <form name="loginForm" class="col" ng-submit="authCtrl.closeKeyboard(); authCtrl.signin('login',loginForm)">
+
+          <div class="input-group input-group-social">
+            <button type="button" class="icon icon-profile icon-fit-width input-group-item input-group-addon input-group-addon-light font-sm">
+            </button>
+            <input class="input-control input-group-item input-default font-sm input-sm padding-x-0" valid-input ng-trim="false" tabindex="1" name="userIdentity" type="text" placeholder="Phone/Email" ng-model="authCtrl.user.userIdentity" autocomplete="off">
+          </div>
+
+
+          <div class="input-group input-group-social">
+            <button type="button" class="icon icon-password icon-fit-width input-group-item input-group-addon input-group-addon-light font-sm">
+            </button>
+            <input class="input-control input-group-item input-default font-sm input-sm padding-x-0" tabindex="2" onPaste="return false" autocomplete="off" name="password" type="{{show_password==false?'password':'text'}}" placeholder="Password" ng-model="authCtrl.user.password">
+          </div>
+
+          <h4 class="text-right"><p class="color-dark-light font-xs" ng-click="authCtrl.recoveryModal.show()"><u>Forgot password?</u></p></h4>
+          <div class="padding-10"></div>
+          <button tabindex="3" type="submit" class="button button-no-shadow button-round button-balanced padding-x-60" style="padding: 0;line-height:20px !important">LOG IN</button>
+        </form>
+      </div>
+      <hr>
+      <div class="row no-padding">
+        <div class="col text-center no-padding">
+          <h4 class="no-margin"><span class="color-dark-light">No account yet? </span><span class="color-positive" ui-sref="auth.signup">Sign Up</span></h4>
+        </div>
+      </div>
+
     </div>
 
-    <div class="row padding-x-20">
-      <div class="col extend-right-60">
-        <!-- <div class="button-bar button-group">
-          <button type="button" ng-click="authCtrl.googleSignIn()" class="button button-no-shadow button-round button-block button-assertive icon-left ion-social-googleplus"></button>
-        </div> -->
-        <button tabindex="4" type="button" ng-click="authCtrl.signin('google')" class="button button-no-shadow button-round button-block font-lg button-assertive icon-middle ion-social-googleplus" style="padding: 0;line-height:10px !important"></button>
-      </div>
-      <div class="col center padding-20">
-        <h4 class="or-divider no-margin color-darkgrey">or</h4>
-      </div>
-      <div class="col extend-left-60">
-        <!-- <div class="button-bar button-group">
-          <button type="button" ng-click="authCtrl.facebookSignIn()" class="button button-no-shadow button-round button-block button-positive icon-left ion-social-facebook"></button>
-        </div> -->
-        <button tabindex="5" type="button" ng-click="authCtrl.signin('facebook')" class="button button-no-shadow button-round button-block font-lg button-positive icon-middle ion-social-facebook" style="padding: 0;line-height:10px !important"></button>
-      </div>
-      
-    </div>
-    <!-- <div class="row">
-        <div class="col center">
-            
-        </div>
-    </div> -->
-    <div class="row padding-x-20 center">
-      <form name="loginForm" class="col" ng-submit="authCtrl.closeKeyboard(); authCtrl.signin('login',loginForm)
-      ">
-        <div class="input-group input-group-social">
-          <button type="button" class="icon icon-profile icon-fit-width input-group-item input-group-addon input-group-addon-light font-sm" >
-          </button>
-          <input class="input-control input-group-item input-default font-sm input-sm padding-x-0" valid-input ng-trim="false" tabindex="1" name="userIdentity" type="text" placeholder="Phone/Email" ng-model="authCtrl.user.userIdentity" autocomplete="off">
-        </div>
-        <div class="input-group input-group-social">
-          <button type="button" class="icon icon-password icon-fit-width input-group-item input-group-addon input-group-addon-light font-sm" >
-          </button>
-          <input class="input-control input-group-item input-default font-sm input-sm padding-x-0" tabindex="2" onPaste="return false" autocomplete="off" name="password" type="{{show_password==false?'password':'text'}}" placeholder="Password" ng-model="authCtrl.user.password">
 
-          <!-- <button type="button" class="input-group-item input-group-addon input-group-addon-light font-md" ng-click="show_password=!show_password">
-            <i class="icon" ng-class="{'ion-ios-glasses-outline' : !show_password, 'ion-ios-glasses' : show_password}"></i>
-          </button> -->
+    <div ng-if="!authCtrl.network.isOnline()">
+      <div class="row">
+        <div class="col">
+          You are offline
         </div>
-        <h4 class="text-right"><p class="color-dark-light font-xs" ng-click="authCtrl.recoveryModal.show()"><u>Forgot password?</u></p></h4>
-        <div class="padding-10"></div>
-        <button tabindex="3" type="submit" class="button button-no-shadow button-round button-balanced padding-x-60" style="padding: 0;line-height:20px !important">LOG IN</button>
-      </form>
-    </div>
-    <hr>
-    <div class="row no-padding">
-      <div class="col text-center no-padding">
-        <h4 class="no-margin"><span class="color-dark-light">No account yet? </span><span class="color-positive" ui-sref="auth.signup">Sign Up</span></h4>
+      </div>
+      <div class="row">
+        <div class="col">
+          <button class="button button-balanced button-block" ng-click="authCtrl.exitApp()">Exit App</button>
+        </div>
       </div>
     </div>
+
   </ion-content>
 </ion-view>
