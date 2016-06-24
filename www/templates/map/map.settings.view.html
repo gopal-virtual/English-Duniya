@@ -19,43 +19,29 @@
                 <div class="input-group input-group-social">
                   <button type="button" class="icon icon-profile icon-fit-width input-group-item input-group-addon input-group-addon-light font-md">
                   </button>
-                  <input class="input-control input-group-item input-sm input-default input-block font-md" tabindex="1" type="text" placeholder="Username" ng-model="mapCtrl.user.name">
+                  <input class="input-control input-group-item input-sm input-default input-block font-sm padding-x-0" tabindex="1" type="text" placeholder="Username" ng-model="mapCtrl.user.name">
                 </div>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col">
-              <div>
+              
                 <div class="input-group input-group-social">
                   <button type="button" class="icon icon-phone icon-fit-width input-group-item input-group-addon input-group-addon-light font-md">
                   </button>
-                  <input type="text" class="input-control input-default input-group-item input-sm input-block font-md" tabindex="2" placeholder="Phonenumber" ng-model="mapCtrl.user.phone_number">
+                  <input type="text" class="input-control input-default input-group-item input-sm input-block font-sm padding-x-0" tabindex="2" placeholder="Phonenumber" ng-model="mapCtrl.user.phone_number" readonly="readonly">
                 </div>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col">
-              <div>
+              
                 <div class="input-group input-group-social">
                   <button type="button" class="icon icon-mail icon-fit-width input-group-item input-group-addon input-group-addon-light font-md">
                   </button>
-                  <input type="text" class="input-control input-default input-sm input-group-item input-block font-md" tabindex="2" placeholder="Email" ng-model="mapCtrl.user.email">
+                  <input type="text" class="input-control input-default input-sm input-group-item input-block font-sm padding-x-0" tabindex="2" placeholder="Email" ng-model="mapCtrl.user.email">
                 </div>
               </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col">
-              <button class="button button-block button-assertive button-sm font-lg no-shadow" ng-click="mapCtrl.logout()">
-                 <i class="ion-power"></i> Logout
+            
+              <button class="button button-block button-assertive button-sm font-sm no-shadow" ng-click="mapCtrl.logout()">
+                 <span style="line-height: 2.0em" class="font-sm"><i class="icon ion-power"></i> Logout</span>
               </button>
-            </div>
-          </div>
+            
           <div class="row padding-y-20">
             <div class="col text-center">
-              <button class="button button-balanced font-lg padding-x-40 button-round no-shadow" ng-click="mapCtrl.updateProfile(mapCtrl.user);mapCtrl.closeSettings()">DONE</button>
+              <button class="button button-balanced font-sm padding-x-40 button-round no-shadow" ng-click="mapCtrl.updateProfile(mapCtrl.user);mapCtrl.closeSettings()">DONE</button>
             </div>
           </div>
         </div>
