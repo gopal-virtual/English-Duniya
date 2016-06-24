@@ -5,9 +5,9 @@
     .module('zaya-user')
     .controller('userController', userController);
 
-  userController.$inject = ['CONSTANT','$scope', '$state', 'Auth', 'Rest', '$log', '$ionicPopup', '$ionicLoading','$ionicModal', 'formHelper','network'];
+  userController.$inject = ['CONSTANT','$scope', '$state', 'Auth', 'Rest', '$log', '$ionicPopup', '$ionicLoading','$ionicModal', 'formHelper','network','data'];
 
-  function userController(CONSTANT,$scope, $state, Auth, Rest, $log, $ionicPopup, $ionicLoading, $ionicModal, formHelper, network) {
+  function userController(CONSTANT,$scope, $state, Auth, Rest, $log, $ionicPopup, $ionicLoading, $ionicModal, formHelper, network, dataService) {
     var userCtrl = this;
     userCtrl.createProfile = createProfile;
     userCtrl.updateProfile = updateProfile;
@@ -53,13 +53,25 @@
 
     function createProfile(formData) {
       $log.debug(formData)
-      $ionicLoading.show();
+      $ionicLoading.show({
+        noBackdrop: false,
+        hideOnStateChange: true
+      });
       formHelper.validateForm(formData, userCtrl.personaliseFormValidations)
         .then(function(data) {
           return Rest.all('profiles').post(data);
         })
-        .then(function() {
+        .then(function(response) {
+            $log.debug("Got this",response)
           return Auth.getUser();
+        })
+        .then(function(){
+            return dataService.putUserifNotExist({
+                'userId': Auth.getProfileId()
+            })
+        })
+        .then(function(){
+            return dataService.createLessonDB()
         })
         .then(function() {
           $state.go('map.navigate', {});

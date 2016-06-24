@@ -13,20 +13,28 @@
         abstract: true,
         resolve: {
           lessons: ['Rest', '$log', '$http', 'data', function(Rest, $log, $http, data) {
-            return data.getLessonsList(25);
+
+            return data.getLessonsList(25).then(function(result){
+                $log.debug("Resolved 1")
+                return result;
+            });
           }],
           lessonLocked: ['Rest', '$log', '$http', 'data','extendLesson', function(Rest, $log, $http, data,extendLesson) {
             return data.getLessonsList(25).then(function(lessons){
 
-              return extendLesson.getLesson(lessons,[])
+              return extendLesson.getLesson(lessons,[]).then(function(result){
+                  $log.debug("Resolved 2")
+                  return result;
+              });
             })
           }],
           scores: ['Rest', '$log', 'data', function(Rest, $log, data) {
             return [];
         }],
         skills : ['Rest', '$log','network','data','Auth', function(Rest, $log, network,data,Auth){
-          $log.debug("Resolvingd skills")
           return data.getSkills({'userId':Auth.getProfileId()}).then(function(response){
+              $log.debug("Resolvingd 3")
+
             return response;
           })
             // if(network.isOnline()){

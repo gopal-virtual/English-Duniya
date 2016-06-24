@@ -53,7 +53,7 @@
       },
       'WIDGETS': {
         'SPEAKER_IMAGE': '<img class="content-image sound-image" src="img/icons/sound.png">',
-        'SPEAKER_IMAGE_SELECTED': '<img class="content-image sound-image" src="img/icons/sound_selected.png">',
+        'SPEAKER_IMAGE_SELECTED': '<img class="content-image sound-image animation-repeat-bounce" src="img/icons/sound.png">',
         'OPTIONS': {
           'LAYOUT_THRESHOLD': 55,
           'FONT_SIZE_THRESHOLD': 6

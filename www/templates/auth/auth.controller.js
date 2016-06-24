@@ -383,7 +383,12 @@
       $state.go('auth.signin', {});
     }
     function exitApp(){
-        navigator.app.exitApp();
+        try{
+            navigator.app.exitApp();
+        }
+        catch(error){
+            $log.debug(error);
+        }
     }
 
 

@@ -21,7 +21,15 @@
             templateUrl: CONSTANT.PATH.USER + '/user.personalise' + CONSTANT.VIEW,
             controller: 'userController as userCtrl'
           }
-        }
+      },
+      data : {
+          personaliseFormValidations: {
+            'gender': ['required'],
+            'firstName': ['required'],
+            'grade': ['required'],
+            'motherTongue': ['required']
+          }
+      }
       })
       .state('user.profile', {
         url: '/profile',
@@ -53,12 +61,6 @@
             "lesson_scores": 100,
             "question_scores": 0
           }]
-        },
-        personaliseFormValidations: {
-          'gender': ['required'],
-          'firstName': ['required'],
-          'grade': ['required'],
-          'motherTongue': ['required']
         }
       })
   }
