@@ -29,15 +29,15 @@
 
 
 
-      //if authenticated and verified but has no profile, redirect to user.personalise.social
-      if (Auth.isAuthorised() && Auth.isVerified() && !Auth.hasProfile() && (toState.name != 'user.personalise.social')) {
+      //if authenticated and verified but has no profile, redirect to user.personalise
+      if (Auth.isAuthorised() && Auth.isVerified() && !Auth.hasProfile() && (toState.name != 'user.personalise')) {
         $log.debug("Account authorised and verfified , profile not complete");
         event.preventDefault();
-        $state.go('user.personalise.social');
+        $state.go('user.personalise');
       }
       //if authenticated, verified and has profile, redirect to userpage
 
-      if (Auth.isAuthorised() && Auth.isVerified() && Auth.hasProfile() && (toState.name == 'auth.signin' || toState.name == 'auth.signup' || toState.name == 'intro' || toState.name == 'auth.verify.phone' || toState.name == 'auth.forgot' || toState.name == 'auth.change_password' || toState.name == 'auth.forgot_verify_otp' || toState.name == 'user.personalise.social')) {
+      if (Auth.isAuthorised() && Auth.isVerified() && Auth.hasProfile() && (toState.name == 'auth.signin' || toState.name == 'auth.signup' || toState.name == 'intro' || toState.name == 'auth.verify.phone' || toState.name == 'auth.forgot' || toState.name == 'auth.change_password' || toState.name == 'auth.forgot_verify_otp' || toState.name == 'user.personalise')) {
         $log.debug("Account authorised , verififed and profile completed");
         event.preventDefault();
         $state.go('map.navigate');

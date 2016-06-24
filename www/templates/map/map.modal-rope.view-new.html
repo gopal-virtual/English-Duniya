@@ -1,7 +1,7 @@
-<ion-modal-view class="modal-dark">
-  <ion-content ng-init="mapCtrl.selected=false" overflow-scroll="true">
-
-    <div class="row modal-top padding-0">
+<ion-modal-view class="modal-transparent">
+  <ion-content ng-init="mapCtrl.selected=false" scroll="false">
+    
+    <!-- <div class="row modal-top padding-0">
       <div class="col modal-rope"></div>
       <div class="col"></div>
       <div class="col modal-rope"></div>
@@ -43,9 +43,19 @@
       </div>
       <div class="row height-10 padding">
         <div class="col text-center padding">
-          <button class="button button-block button-balanced button-round font-xl animation-delay-more animation-fade-in-from-bottom" ng-click="audio.play('press');closeNodeMenu();mapCtrl.animationExpand.shrink();lessonutils.leaveLesson();mapCtrl && mapCtrl.resetNode()">Leave Lesson</button>
+          <button class="button button-block button-balanced button-round font-xl animation-delay-more animation-fade-in-from-bottom" ng-click="audio.play('press');mapCtrl.animationExpand.shrink();lessonutils.leaveLesson();mapCtrl && mapCtrl.resetNode()">Leave Lesson</button>
         </div>
 
+      </div>
+    </div> -->
+
+    
+    <div class="bgcolor-calm square-60 round bevel"></div>
+    <div class="padding-x-20">
+      
+      <div class="rope-double-menu top-block">
+        <div class="box-extra bevel"></div>
+        <div class="box-extra bevel"></div>
       </div>
     </div>
 

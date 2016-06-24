@@ -47,3 +47,127 @@
 ion-content.overflow-visible {
   overflow: visible;
 }
+
+.ghost{
+  position: absolute;
+  opacity: 0;
+}
+
+
+.square-60{
+  height: 60px;
+  width: 60px;
+}
+
+.bgcolor-node{
+  background: #FCF3D8;
+  border: solid 2px #219C7F;
+}
+
+.bgcolor-calm{
+  background: #219C7F;
+}
+
+.img-container{
+  box-sizing: border-box;
+  position: absolute;
+}
+.img-responsive{
+  width: inherit;
+  padding: 15px;
+  box-sizing: border-box;
+  position: absolute;
+
+}
+.inherit-height{
+  height: inherit;
+}
+
+.inherit-width{
+  width: inherit;
+}
+
+
+
+.bevel{
+  border-radius: 10px;
+  box-shadow: -5px -5px 1px #156b55 inset;
+}
+
+.box-extra{
+  box-sizing: border-box;
+  background-color: #219c7f;
+  height: 200px;
+  width: inherit;
+  z-index: 40;
+  position: relative;
+}
+
+.rope-double-menu{
+  width: inherit;
+  z-index: 50
+}
+
+.rope-double-menu :nth-child(1){
+  margin-top: 150px;
+}
+
+.rope-double-menu :nth-child(1)::before{
+  z-index: 50;
+  display: block;
+  /*z-index: 50;*/
+  /*position: relative;*/
+  background: url('http://192.168.10.156:8100/img/assets/rope_top.png') left top no-repeat,url('http://192.168.10.156:8100/img/assets/rope_top.png') right top no-repeat;
+  content: "";
+  height: 200px;
+  width: calc(100% - 40px);
+  background-size: contain,contain;
+  top: -150px;
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.rope-double-menu :nth-child(2){
+  margin-top: 40px;
+}
+
+.rope-double-menu :nth-child(2)::before{
+  z-index: 50;
+  display: block;
+  /*z-index: 50;*/
+  /*position: relative;*/
+  background: url('http://192.168.10.156:8100/img/assets/rope_bottom.png') left top no-repeat,url('http://192.168.10.156:8100/img/assets/rope_bottom.png') right top no-repeat;
+  content: "";
+  height: 70px;
+  width: calc(100% - 40px);
+  background-size: contain,contain;
+  position: relative;
+  top: -55px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+.round{
+  border-radius: 50%;
+}
+meter::-webkit-meter-bar {
+    background: lighten($brand-grey , 20%);
+    border-radius: $border-radius;
+}
+
+meter::-webkit-meter-optimum-value {
+    background: $brand-green; /* Green */
+    border-radius: $border-radius;
+}
+
+meter::-webkit-meter-suboptimum-value {
+    background: $brand-yellow; /* Yellow */
+    border-radius: $border-radius;
+}
+
+meter::-webkit-meter-even-less-good-value {
+    background: lighten($assertive, 10%); /* Red */
+    border-radius: $border-radius;
+}

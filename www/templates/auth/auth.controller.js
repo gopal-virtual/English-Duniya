@@ -234,7 +234,7 @@
           $ionicLoading.hide();
           return authCtrl.showAlert("Correct!", "Phone Number verified!");
         }).then(function() {
-          $state.go('user.personalise.social', {});
+          $state.go('user.personalise', {});
         })
         .catch(function(error) {
           authCtrl.showError("Could not verify", error);

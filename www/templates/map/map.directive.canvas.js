@@ -6,12 +6,14 @@
         .directive('mapCanvas', mapCanvas)
 
     /* @ngInject */
-    function mapCanvas($injector, $timeout, $log, audio) {
+    function mapCanvas($injector, $timeout, $log, audio, CONSTANT) {
         var mapCanvas = {
             restrict: 'A',
-            template: '<div id="map_canvas"></div>',
+            templateUrl: CONSTANT.PATH.MAP + '/map.canvas' + CONSTANT.VIEW,
             scope: {
               lessons : '=',
+              animation : '='
+
             },
             link: linkFunc,
         };
