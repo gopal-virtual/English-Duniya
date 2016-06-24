@@ -23,21 +23,15 @@
                 </div>
               </div>
             </div>
-          </div>
-          <div class="row">
-            <div class="col">
-              <div>
+                </div>
+              
                 <div class="input-group input-group-social">
                   <button type="button" class="icon icon-phone icon-fit-width input-group-item input-group-addon input-group-addon-light font-md">
                   </button>
                   <input ng-disabled="!userCtrl.network.isOnline()" type="text" class="input-control input-default input-group-item input-sm input-block font-md" tabindex="2" placeholder="Phonenumber" ng-model="userCtrl.user.phone_number">
                 </div>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col">
-              <div>
+                </div>
+              
                 <div class="input-group input-group-social">
                   <button type="button" class="icon icon-mail icon-fit-width input-group-item input-group-addon input-group-addon-light font-md">
                   </button>
@@ -51,8 +45,8 @@
               <button ng-disabled="!userCtrl.network.isOnline()" class="button button-block button-assertive button-sm font-lg no-shadow" ng-click="userCtrl.network.isOnline() && userCtrl.logout()">
                  <i class="ion-power"></i> Logout
               </button>
-            </div>
-          </div>
+              </button>
+            
           <div class="row padding-y-20">
             <div class="col text-center">
               <button ng-disabled="!userCtrl.network.isOnline()" class="button button-balanced font-lg padding-x-40 button-round no-shadow" ng-click="userCtrl.network.isOnline() && userCtrl.updateProfile(userCtrl.user.id,{'first_name' : userCtrl.user.first_name,'last_name' : userCtrl.user.last_name,'phone_number':userCtrl.user.phone_number,'email':userCtrl.user.email}) ; userCtrl.closeSettings()">{{userCtrl.network.isOnline() ? 'DONE' : 'Not Allowed'}}</button>
