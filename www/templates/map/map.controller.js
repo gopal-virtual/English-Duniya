@@ -5,9 +5,9 @@
     .module('zaya-map')
     .controller('mapController', mapController);
 
-  mapController.$inject = ['$scope', '$rootScope', '$log', '$ionicModal', '$state', 'lessons', 'scores', 'skills', 'extendLesson', 'Rest', 'CONSTANT', '$sce', '$ionicLoading', '$timeout', '$ionicBackdrop', 'orientation', 'Auth', 'lessonutils', 'audio', 'data', 'ml','lessonLocked'];
+  mapController.$inject = ['$scope', '$rootScope', '$log', '$ionicModal', '$state', 'lessons', 'scores', 'skills', 'extendLesson', 'Rest', 'CONSTANT', '$sce', '$ionicLoading', '$timeout', '$ionicBackdrop', 'orientation', 'Auth', 'lessonutils', 'audio', 'data', 'ml','lessonLocked','$ionicPlatform'];
 
-  function mapController($scope, $rootScope, $log, $ionicModal, $state, lessons, scores, skills, extendLesson, Rest, CONSTANT, $sce, $ionicLoading, $timeout, $ionicBackdrop, orientation, Auth, lessonutils, audio, data, ml, lessonLocked) {
+  function mapController($scope, $rootScope, $log, $ionicModal, $state, lessons, scores, skills, extendLesson, Rest, CONSTANT, $sce, $ionicLoading, $timeout, $ionicBackdrop, orientation, Auth, lessonutils, audio, data, ml, lessonLocked, $ionicPlatform) {
     $scope.audio = audio;
     $scope.orientation = orientation;
     var mapCtrl = this;
@@ -34,6 +34,15 @@
     mapCtrl.showResult = true;
     // mapCtrl.animationShrink.shrink = animationShrink;
 
+    $ionicPlatform.registerBackButtonAction(function(event) {
+      $log.debug("HOOOOOLLLLAAA");
+      if (mapCtrl.animationExpand.expandContainer == 1) {
+        $scope.closeNodeMenu();
+        $timeout(function() {
+          mapCtrl.animationExpand.shrink();
+        }, 200);
+      }
+    }, 210);
 
     $log.debug("LEssons in mapCtrl",mapCtrl.lessons)
     function logout(type) {
@@ -128,7 +137,7 @@
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal-rope' + CONSTANT.VIEW, {
       scope: $scope,
       animation: 'slide-in-down',
-        hardwareBackButtonClose: false
+        hardwareBackButtonClose: true
     }).then(function(modal) {
       $scope.modal = modal;
     });
@@ -145,7 +154,6 @@
         $scope.selectedNode = {};
       }, 500)
     }
-
 
     // $timeout(function functionName() {
     //   if (mapCtrl.lessons && localStorage.lesson) {
@@ -200,7 +208,7 @@
       }
 
       function shrink(){
-        $scope.closeNodeMenu();
+        
         mapCtrl.showResult = true;
         mapCtrl.animationExpand.iconTranslateOffset = {
           "transform" : "translate(0px,0px)",
