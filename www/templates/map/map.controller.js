@@ -16,48 +16,13 @@
     mapCtrl.lessons = lessonList;
     mapCtrl.resetNode = resetNode;
     $scope.lessonutils = lessonutils;
-    mapCtrl.logout = logout;
     mapCtrl.backdrop = false;
     mapCtrl.showScore = -1;
-    mapCtrl.user = JSON.parse(localStorage.user_details) || {};
-    mapCtrl.user['name'] = mapCtrl.user.first_name + ' ' + mapCtrl.user.last_name;
-
-    mapCtrl.openSettings = openSettings;
-    mapCtrl.closeSettings = closeSettings;
-    mapCtrl.updateProfile = updateProfile;
     mapCtrl.skillSet = skills;
     mapCtrl.isLessonDownloaded = null;
     $log.debug("LEssons in mapCtrl",mapCtrl.lessons)
-    function logout(type) {
-      mapCtrl.closeSettings();
-      $ionicLoading.show({
-        noBackdrop: false,
-        hideOnStateChange: true
-      });
-      if (type == 'clean') {
-        Auth.clean(function() {
-          $state.go('auth.signin', {})
-        })
-      } else {
-        Auth.logout(function() {
-          $state.go('auth.signin', {})
-        }, function() {
-          // body...
-        })
-      }
-    }
 
-    function openSettings() {
-      $scope.settings.show();
-    }
 
-    function closeSettings() {
-      $scope.settings.hide();
-    }
-
-    $scope.$on('logout', function() {
-      $state.go('user.main.settings', {});
-    })
     $scope.$on('openNode', function(event, node) {
       data.isLessonDownloaded(node.id).then(function(response) {
         mapCtrl.isLessonDownloaded = response;
@@ -113,13 +78,7 @@
     }).then(function(modal) {
       $scope.modal = modal;
     });
-    $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.settings' + CONSTANT.VIEW, {
-      scope: $scope,
-      animation: 'slide-in-up',
-      //   hardwareBackButtonClose: false
-    }).then(function(settings) {
-      $scope.settings = settings;
-    });
+
 
     function resetNode() {
       $timeout(function() {
@@ -135,10 +94,7 @@
     //   }
     // });
     // $scope.test = {"phone_number":"+919393939193"};
-    function updateProfile(params) {
-      Rest.one('users', mapCtrl.user.id).patch(params).then(function(response) {
-      }).catch();
-    }
+
     // updateProfile($scope.test);
 
   }

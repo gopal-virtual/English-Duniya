@@ -2,7 +2,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
   'use strict';
 
   var lessons = lessons;
-  var game = new Phaser.Game("100", "100", Phaser.CANVAS, 'map_canvas');
+  var game = new Phaser.Game("100", "100", Phaser.CANVAS, 'map_canvas',null,true,true,null);
 
 
   var playState = {
@@ -67,7 +67,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
       var forest = this.game.add.sprite(-1, 0, 'forest');
 
       var game_scale = game.world.width / desert.width;
-      
+
       desert.scale.setTo(game_scale, 1);
       tundra.scale.setTo(game_scale, 1);
       forest.scale.setTo(game_scale, 1);
@@ -205,7 +205,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
         mirror: true
       }]
 
-      
+
       for (var i = 0, two_stone_count = two_stone_points.length; i < two_stone_count; i++) {
         var tent = this.game.add.sprite(two_stone_points[i].x, two_stone_points[i].y , 'two_stone');
         tent.anchor.setTo(0.5, 0.5);
@@ -296,12 +296,12 @@ window.createGame = function(scope, lessons, audio, injector, log) {
       whale_animation.scale.setTo(0.8);
       var tailwave = whale_animation.animations.add('tailwave');
       whale_animation.animations.play('tailwave', 10, true);
-    
+
       // placing lesson node
       // 1. lesson node count
       // 2. Node should follow a particular path
       // path
-      
+
       // sand particles
       for (var i = 0; i < 100; i++) {
         var s = this.game.add.sprite(this.world.randomX, this.game.rnd.between(this.desert_offset, this.world.height), 'particle' + this.game.rnd.between(1, 3));
