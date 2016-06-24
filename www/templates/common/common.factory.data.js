@@ -482,6 +482,7 @@
     }
 
     function updateLesson(lesson) {
+        $log.debug("Updating lesson",lesson)
       lessonDB.get(lesson.node.id).then(function(doc) {
         return lessonDB.put({
           _id: lesson.node.id,
@@ -500,7 +501,6 @@
             try {
               promises.push(
                 mediaManager.download(CONSTANT.RESOURCE_SERVER + file.url).then(function() {
-                  file.downloaded = true;
                 })
 
               );
@@ -508,8 +508,14 @@
           }
         })
         $q.all(promises).then(function(success) {
+            angular.forEach(response.media, function(file) {
+                file.downloaded = true;
+            })
+            $log.debug("Downloaded",response)
+
             return data.updateLesson(response);
           }).then(function(data) {
+              $log.debug("Updated",data)
             d.resolve(data);
           })
           .catch(function(err) {});
@@ -563,11 +569,18 @@
 
     function isLessonDownloaded(id, mediaTypes) {
 
+
       var d = $q.defer();
       lessonDB.get(id).then(function(data) {
+          $log.debug("I am",data.lesson.media.length)
+
           var downloaded = true;
           for (var i = 0; i < data.lesson.media.length; i++) {
+              $log.debug("I am 1",i,mediaTypes,data.lesson.media[i].downloaded)
+
             if ((!mediaTypes || mediaTypes.length > 0 || mediaTypes.indexOf(file.url.split('.').pop()) >= 0) && data.lesson.media[i].downloaded === false) {
+                $log.debug("I am 2")
+
               downloaded = false;
               break;
             }
