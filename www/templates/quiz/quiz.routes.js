@@ -67,7 +67,11 @@
 
 
             } else {
-              return $stateParams.quiz;
+                return data.getAssessment($stateParams.quiz).then(function(response){
+                    return response;
+                })
+                ;
+              // return $stateParams.quiz;
 
             }
           }]

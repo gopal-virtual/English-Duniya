@@ -128,11 +128,8 @@
     function validateForm(formData, validationRules) {
       var d = $q.defer();
       var errors = []
-      $log.debug(formData);
       angular.forEach(validationRules, function(fieldRules, fieldName) {
-        $log.debug('P',formData[fieldName]);
         var fieldValue = formData[fieldName].$viewValue
-        // $log.debug(fieldName, fieldRules, fieldValue)
         if (isFieldEmpty(fieldValue)) {
           if (fieldRules.indexOf('required') >= 0) {
             errors.push(error[fieldName].required);

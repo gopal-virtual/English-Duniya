@@ -5,10 +5,10 @@
     .module('common')
     .factory('data', data);
 
-  data.$inject = ['pouchDB', '$http', '$log', 'Rest', 'CONSTANT', '$q', '$ImageCacheFactory', 'mediaManager', '$interval', 'network', 'Auth'];
+  data.$inject = ['pouchDB', '$http', '$log', 'Rest', 'CONSTANT', '$q', '$ImageCacheFactory', 'mediaManager', '$interval', 'network', 'Auth','widgetParser'];
 
   /* @ngInject */
-  function data(pouchDB, $http, $log, Rest, CONSTANT, $q, $ImageCacheFactory, mediaManager, $interval, network, Auth) {
+  function data(pouchDB, $http, $log, Rest, CONSTANT, $q, $ImageCacheFactory, mediaManager, $interval, network, Auth,widgetParser) {
     // var diagnosisQuestionsDB = pouchDB('diagnosisQuestions');
     // var kmapsDB = pouchDB('kmaps');
 
@@ -65,7 +65,6 @@
       function setPreviousAnswerCallback(tests, x) {
         tests["previousAnswer"] = x[0];
         tests["count"]++;
-        console.log('tests', JSON.stringify(tests));
         if (x[0] == 1) {
           x[1].test[0]["qSet"][x[1]["actualLevel"]] = {
             "sr": x[1].qSr,
@@ -126,72 +125,47 @@
       }];
     }
 
-    // function createDiagnosisQuestionDB() {
-    //     $http.get('templates/common/questions.json').success(function(data) {
-    //         $log.debug('in createDiagnosisQuestionDB');
-    //         diagnosisQuestionsDB.bulkDocs(data);
-    //     });
-    // };
-
-    // function createKmapsDB() {
-    //     $http.get('templates/common/kmaps.json').success(function(data) {
-    //         $log.debug('in createKmapsDB');
-    //         kmapsDB.bulkDocs(data);
-    //     });
-    // };
 
 
     function createDiagLitmusMappingDB() {
       var promise = $http.get(CONSTANT.PATH.DATA + '/diagnosticLitmusMapping.json').success(function(data) {
-        $log.debug('in createDiagLitmusMappingDB');
         return diagLitmusMappingDB.put({
             "_id": "diagnostic_litmus_mapping",
             "diagnostic_litmus_mapping": data[0]
           })
           .then(function() {
-            $log.debug('createDiagLitmusMappingDB success');
           })
           .catch(function(err) {
-            $log.debug('err createDiagLitmusMappingDB', err)
           });
       });
-      // $log.debug('promise of createDiagLitmusMappingDB', promise);
       return promise;
     };
 
     function createKmapsJSON() {
       var promise = $http.get(CONSTANT.PATH.DATA + '/kmapsJSON.json').success(function(data) {
-        $log.debug('in createKmapsJSON');
         return kmapsJSONDB.put({
             "_id": "kmapsJSON",
             "kmapsJSON": data[0]
           })
           .then(function() {
-            $log.debug('kmapsJSON success');
           })
           .catch(function(err) {
-            $log.debug('err kmapsJSON', err)
           });
       });
-      // $log.debug('promise of createKmapsJSON', promise);
       return promise;
     };
 
     function createDiagQJSON() {
       var promise = $http.get(CONSTANT.PATH.DATA + '/diagnosisQJSON.json').success(function(data) {
-        $log.debug('in createDiagQJSON');
         return dqJSONDB.put({
             "_id": "dqJSON",
             "dqJSON": data[0]
           })
           .then(function() {
-            $log.debug('dqJSONDBdqJSONDB success');
           })
           .catch(function(err) {
-            $log.debug('err dqJSONDB', err)
           });
       });
-      // $log.debug('promise of createDiagQJSON', promise);
       return promise;
     }
 
@@ -223,26 +197,16 @@
       var d = $q.defer();
       var promises = []
       var promisesDelete = []
-      $log.debug("createLessonDB 1")
       lessonDB.allDocs().then(function(result) {
-        $log.debug("createLessonDB 2")
-
-        $log.debug("createLessonDB", result)
         angular.forEach(result.rows, function(row) {
-          $log.debug("createLessonDB", row)
           promisesDelete.push(lessonDB.remove(row.id, row.value.rev))
         })
       })
-      $log.debug("createLessonDB 1.5")
-
       $q.all(promisesDelete).then(function() {
-        $log.debug("createLessonDB 4")
-
         $http.get('templates/common/lessons.json').success(function(data) {
           for (var i = 0; i < data.length; i++) {
             data[i].key = i;
             if (data[i].node.type.grade == Auth.getLocalProfile().grade) {
-              $log.debug("sasa", i, Auth.getLocalProfile(), data[i])
               promises.push(lessonDB.put({
                 "_id": data[i].node.id,
                 "lesson": data[i]
@@ -252,55 +216,20 @@
                 d.resolve("Lesson Db created");
               })
               .catch(function(E) {
-                $log.debug("o", E)
               })
-
           }
-
         });
-
       })
-
       return d.promise;
-      //
-      // return lessonDB.destroy().then(function(){
-      //   return $http.get('templates/common/lessons.json').success(function(data) {
-      //     for (var i = 0; i < data.length; i++) {
-      //       data[i].key = i;
-      //       if(data[i].node.type.grade == Auth.getLocalProfile().grade)
-      //       {
-      //         $log.debug("sasa",Auth.getLocalProfile(),data[i])
-      //         promises.push(lessonDB.put({
-      //           "_id": data[i].node.id,
-      //           "lesson": data[i]
-      //         }));
-      //       }
-      //
-      //     }
-      //     $q.all(promises).then(function() {
-      //       d.resolve("Lesson Db created");
-      //     })
-      //     .catch(function(E){
-      //       $log.debug("o",E)
-      //     })
-      //     return d.promise;
-      //   });
-      // })
-
-      // $log.debug('promise of createKmapsJSON', promise);
-
     }
 
     function putUserifNotExist(data) {
       return Rest.one('profiles', JSON.parse(localStorage.user_details).profile).all('scores').all('skills').getList().then(function(profile) {
-          $log.debug("putUserifNotExist Profile", profile.plain())
           return profile.plain();
         })
         .then(function(skills) {
-
           return appDB.get(data.userId)
             .then(function(doc) {
-              $log.debug("putUserifNotExist AppDBFound", doc, skills)
               doc.data.skills = skills
               return appDB.put({
                 '_id': data.userId,
@@ -310,7 +239,6 @@
             })
             .catch(function(error) {
               if (error.status === 404) {
-                $log.debug("putUserifNotExist AppDBNotFound", skills)
                 return appDB.put({
                   '_id': data.userId,
                   'data': {
@@ -327,18 +255,10 @@
     }
 
     function updateSkills(data) {
-      $log.debug("updateSkills");
       return appDB.get(data.userId).then(function(response) {
-          $log.debug("ok")
           var doc = response.data;
-          // $log.debug("updateSkills",doc,doc.skills, typeof doc.skills, doc.skills.length, doc.skills[0]);
-
-          $log.debug(data)
           angular.forEach(doc.skills, function(skill, key) {
-
-            $log.debug(skill.title, data.skill)
             if (skill.title == data.skill) {
-              $log.debug("here")
               doc.skills[key].lesson_scores += data.score;
             }
           })
@@ -350,7 +270,6 @@
           })
         })
         .catch(function(error) {
-          $log.debug(error)
         })
     }
 
@@ -423,11 +342,33 @@
       return d.promise;
     }
 
-    function getAssessment(assessmentId) {
+    function getAssessment(quiz) {
+      var d = $q.defer();
+      var promises = []
 
-      return Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('assessments', assessmentId).get().then(function(quiz) {
-        return quiz.plain();
-      });
+
+      for (var index = 0; index < quiz.objects.length; index++) {
+        $log.debug("loop",index)
+        promises.push(widgetParser.parseToDisplay(quiz.objects[index].node.title, index, quiz).then(
+          function(result){
+            $log.debug("here")
+            quiz.objects[index].node.widgetHtml = result;
+          }
+
+      ))
+        quiz.objects[index].node.widgetSound = widgetParser.getSoundId(quiz.objects[index].node.title);
+        for (var j = 0; j < quiz.objects[index].node.type.content.options.length; j++) {
+          promises.push(widgetParser.parseToDisplay(quiz.objects[index].node.type.content.options[j].option, index, quiz).then(function(result){
+            quiz.objects[index].node.type.content.options[j].widgetHtml = result;
+          }))
+          quiz.objects[index].node.type.content.options[j].widgetSound = widgetParser.getSoundId(quiz.objects[index].node.type.content.options[j].option);
+        }
+      }
+      $q.all(promises).then(function(){
+        $log.debug("here")
+        d.resolve(quiz)
+      })
+      return d.promise;
     }
 
     function getSkills(data) {
@@ -442,11 +383,8 @@
     }
 
     function saveReport(data) {
-      $log.debug("saveReport")
       return appDB.get(data.userId).then(function(response) {
           var doc = response.data;
-          $log.debug("doc", doc)
-
           if (!doc.reports.hasOwnProperty(data.node)) {
             doc.reports[data.node] = [];
           }
@@ -464,9 +402,6 @@
         .then(function(data) {
           localStorage.setItem('reportSyncComplete', false)
         })
-
-
-      // return Rest.all('reports').post(data);
     }
 
     function downloadQuiz(id) {}
@@ -475,6 +410,7 @@
       var d = $q.defer();
       lessonDB.get(id).then(function(data) {
         d.resolve(data.lesson)
+
       }).catch(function(error) {
         d.reject(error)
       })
@@ -516,49 +452,7 @@
       })
 
       return d.promise;
-      //
-      // return;
-      // return Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('lessons', id).get()
-      //   .then(function(response) {
-      //     lesson = response.plain();
-      //     $log.debug('lesson');
-      //     return lessonDB.put({
-      //       '_id': id,
-      //       'lesson': lesson
-      //     })
-      //   })
-      //   .then(function(response) {
-      //     var d = $q.defer();
-      //     var promises = [];
-      //     var index = null;
-      //     angular.forEach(lesson.objects, function(object, key) {
-      //       promises.push(preloadMedia(object));
-      //       if (object.node.content_type_name === 'assessment') {
-      //         $log.debug("assessment");
-      //         promises.push(quizDB.put({
-      //           '_id': object.node.id,
-      //           'quiz': object
-      //         }));
-      //       }
-      //       if (object.node.content_type_name === 'resource') {
-      //         $log.debug("resource");
-      //         promises.push(resourceDB.put({
-      //           '_id': object.node.id,
-      //           'resource': object
-      //         }));
-      //       }
-      //     })
-      //     $q.all(promises).then(function(success) {
-      //       d.resolve("Resources Loaded Successfully");
-      //     });
-      //     return d.promise;
-      //   })
-      //   .then(function(data) {
-      //     $log.debug(data);
-      //   })
-      //   .catch(function(response) {
-      //     $log.debug("err", response)
-      //   })
+
     }
 
     function isLessonDownloaded(id, mediaTypes) {
@@ -581,12 +475,9 @@
     }
 
     function startReportSyncing(data) {
-      $log.debug("here 1")
       return appDB.get(data.userId).then(function(response) {
           var doc = response.data;
-          $log.debug("documents", doc)
           for (var key in doc.reports) {
-            $log.debug("keys", key)
             if (doc.reports.hasOwnProperty(key)) {
               Rest.all('reports').post({
                   'score': doc.score,
@@ -595,7 +486,6 @@
                 })
                 .then(function(report) {
                   doc.reports.id = report.id;
-                  $log.debug("Reports", report)
                   var attempts = [];
                   angular.forEach(doc.reports[key].attempts, function(attempt) {
                     attempts.push({
@@ -610,123 +500,10 @@
                 })
             }
           }
-          // if (!doc.reports.hasOwnProperty(data.node)) {
-          //   doc.reports[data.node] = [];
-          // }
-          // doc.reports[data.node].push({
-          //   'score': data.score,
-          //   'attempts': data.attempts
-          // });
 
-          // return appDB.put({
-          //   '_id': data.userId,
-          //   '_rev': response._rev,
-          //   'data': doc
-          // })
         })
         .then(function(data) {
-          // localStorage.setItem('reportSyncComplete', false)
         })
     }
-    // function isLessonDownloaded(id, mediaTypes) {
-    //   $log.debug("isLessonDownloaded", id, mediaTypes)
-    //   var d = $q.defer();
-    //   var toCheckMedia = [];
-    //   var downloaded = true;
-    //   lessonDB.get(id).then(function(data) {
-    //       if (!mediaTypes) {
-    //         toCheckMedia = data.lesson.media;
-    //       } else if (mediaTypes.length > 0) {
-    //         angular.forEach(mediaTypes, function(mediaType) {
-    //           if (mediaType === 'video') {
-    //             for (var i = 0; i < data.lesson.media.length; i++) {
-    //               if (data.lesson.media[i].url.split('.').pop() === 'mp4') {
-    //                 toCheckMedia.push(data.lesson.media[i])
-    //               }
-    //             }
-    //           }
-    //           if (mediaType === 'audio') {
-    //             for (var i = 0; i < data.lesson.media.length; i++) {
-    //               if (data.lesson.media[i].url.split('.').pop() === 'mp3') {
-    //                 toCheckMedia.push(data.lesson.media[i])
-    //               }
-    //             }
-    //           }
-    //           if (mediaType === 'image') {
-    //             for (var i = 0; i < data.lesson.media.length; i++) {
-    //               if (data.lesson.media[i].url.split('.').pop() === 'png') {
-    //                 toCheckMedia.push(data.lesson.media[i])
-    //               }
-    //             }
-    //           }
-    //         })
-    //       }
-    //
-    //       for (var i = 0; i < toCheckMedia.length; i++) {
-    //         if (toCheckMedia[i].downloaded === false) {
-    //           downloaded = false;
-    //           break;
-    //         }
-    //       }
-    //       d.resolve(downloaded);
-    //     })
-    //     .catch(function(err) {
-    //       $log.debug("out", err)
-    //       d.reject(err);
-    //     })
-    //
-    //
-    //   return d.promise;
-    // }
-
-
-
-
-    // function getFromKmapsBySr(sr){
-    //     var result = kmapsDB.get(sr)
-    //                     .then(function(doc){
-    //                         return doc;
-    //                     })
-    //                     .catch(function(){
-    //                         return null;
-    //                     })
-    //     return result;
-    // }
-
-    // function getDiagnosisQuestionByLevelNSkill(level, skill){
-
-    //   var result = diagnosisQuestionsDB.query(function(doc, emit) {
-    //                   emit(doc.level, doc);
-    //                 }, { key: level })
-    //                 .then(function(res) {
-    //                   $log.debug('inside', res, skill);
-    //                   var docs = [];
-    //                     for(var i=0;i<res.rows.length;i++){
-    //                       if(res.rows[i]["value"]["skill_area"] == skill){
-    //                         docs.push(res.rows[i]["value"]);
-    //                       }
-    //                     }
-    //                   return docs;
-    //                   })
-    //                   .catch(function(err) { console.log(err); return null;})
-    //   return result;
-    // }
-
-    // function getDiagnosisQuestionById(id) {
-
-    //   var result = diagnosisQuestionsDB.get(String(id))
-    //                 .then(function(doc){
-    //                   return doc;
-    //                 })
-    //                 .catch(function(){
-    //                   return null
-    //                 });
-
-    //   return result;
-    // }
-
-    // function getDiagnosisQuestions(){
-    //   var result = diagnosisQuestionsDB.get(String(id))
-    // }
   }
 })();

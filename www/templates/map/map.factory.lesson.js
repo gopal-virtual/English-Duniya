@@ -16,7 +16,6 @@
     return extendLesson;
 
     function setLock(key, lesson, bool) {
-      $log.debug("setlock: ",key, lesson, bool);
       lesson.locked = bool;
     }
 
@@ -31,7 +30,6 @@
         setLock(key, value, true);
       })
       angular.forEach(lessons, function(value, key) {
-        $log.debug("danger")
         var total_score = 0;
         var obtained_score = 0;
 
@@ -73,18 +71,13 @@
             }
             // unlock first lessons
             if (key == 0) {
-              $log.debug("first lesson unlocked")
               setLock(key, value, false);
             }
-            $log.debug("danger 2")
             return lessons[key];
           }))
       })
-      $log.debug("promises array",promises)
 
       $q.all(promises).then(function(success) {
-        $log.debug("RESOLVED",success);
-
         d.resolve(success);
       });
       // include litmus test

@@ -10,23 +10,21 @@
 
       getPath: function(url) {
         var filename = url.split('/').pop();
+        var target = null;
         try{
 
-        $cordovaFile.checkFile(cordova.file.dataDirectory, 'media/' + filename)
+        return $cordovaFile.checkFile(cordova.file.dataDirectory, 'media/' + filename)
           .then(function(success) {
-            target = cordova.file.dataDirectory + 'media/' + filename;
-          }, function(error) {
-            target = CONSTANT.RESOURCE_SERVER + url;
+            $log.debug("getPath 1",success)
+            return target = cordova.file.dataDirectory + 'media/' + filename;
           })
           .catch(function(error){
-            target = CONSTANT.RESOURCE_SERVER + url;
-
-          }).finally(function(){
-            return target;
+            $log.debug("getPath 3",error)
+            return target = CONSTANT.RESOURCE_SERVER + url;
           })
           ;
         }catch(e){
-          return CONSTANT.RESOURCE_SERVER + url;
+          return Promise.resolve(CONSTANT.RESOURCE_SERVER + url);
         }
 
       },

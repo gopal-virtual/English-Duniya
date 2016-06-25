@@ -67,14 +67,11 @@ window.createGame = function(scope, lessons, audio, injector, log) {
       var forest = this.game.add.sprite(-1, 0, 'forest');
 
       var game_scale = game.world.width / desert.width;
-      
+
       desert.scale.setTo(game_scale, 1);
       tundra.scale.setTo(game_scale, 1);
       forest.scale.setTo(game_scale, 1);
       this.game.world.setBounds(0, 0, this.game.width, 2155+2378+1031);
-      log.debug(this.world.height - 30);
-
-      log.debug('desert', desert.width);
       this.points = {
         'x': [176,166,172,188,207,222,225,211,184,149,116,86,75,87,111,134,149,153,143,124,103,87,95,123,156,189,222,253,282,300,274,237,199,161,125,109,120,137,156,173,187,197,198,189,170,144,119,127,148,170,191,209,222,229,228,220,207,189,171,161,157,157,160,162,161,151,142,136,136,141,154,175,201,230,259,282,289,279,261,239,215,190,164,149,148,159,178,204,232,261,289,312,316,304,280,254,229,210,207,221,232,224,207,195,189,187,189,193,203,221,229,218,198,174,157,155,163,177,195,214,227,220,199,173,147,125,115,138,176,213,251,278,261,227,192,157,129,118,133,163,199,234,251,235,209,185,180,180,180,180,180,180,180,180,180,180,180,180,180,180,180,180,180,180],
         'y': [97,134,171,205,238,273,311,345,372,388,405,429,464,499,529,559,594,632,668,701,733,767,803,828,847,865,885,907,932,964,989,995,997,1001,1014,1046,1083,1116,1150,1183,1219,1255,1293,1330,1363,1391,1419,1455,1487,1517,1549,1583,1618,1656,1694,1731,1766,1800,1833,1870,1907,1945,1983,2021,2059,2096,2133,2170,2208,2246,2281,2313,2340,2365,2389,2419,2456,2493,2526,2557,2587,2615,2643,2676,2714,2751,2783,2811,2837,2861,2887,2917,2954,2989,3019,3047,3075,3108,3145,3177,3213,3250,3284,3320,3358,3396,3434,3471,3508,3541,3578,3614,3646,3675,3709,3747,3784,3819,3853,3885,3921,3958,3989,4017,4045,4075,4111,4139,4145,4139,4135,4157,4188,4205,4218,4234,4259,4295,4329,4352,4365,4379,4410,4444,4471,4500,4537,4575,4613,4651,4689,4727,4765,4803,4841,4879,4917,4955,4993,5031,5069,5107,5145,5183]
@@ -205,7 +202,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
         mirror: true
       }]
 
-      
+
       for (var i = 0, two_stone_count = two_stone_points.length; i < two_stone_count; i++) {
         var tent = this.game.add.sprite(two_stone_points[i].x, two_stone_points[i].y , 'two_stone');
         tent.anchor.setTo(0.5, 0.5);
@@ -296,12 +293,12 @@ window.createGame = function(scope, lessons, audio, injector, log) {
       whale_animation.scale.setTo(0.8);
       var tailwave = whale_animation.animations.add('tailwave');
       whale_animation.animations.play('tailwave', 10, true);
-    
+
       // placing lesson node
       // 1. lesson node count
       // 2. Node should follow a particular path
       // path
-      
+
       // sand particles
       for (var i = 0; i < 100; i++) {
         var s = this.game.add.sprite(this.world.randomX, this.game.rnd.between(this.desert_offset, this.world.height), 'particle' + this.game.rnd.between(1, 3));
@@ -337,28 +334,20 @@ window.createGame = function(scope, lessons, audio, injector, log) {
       var star_y = [-10, -15, -10];
 
       function lessonType(lesson, test) {
-        log.debug("Lesson Type("+test+")-----"+lesson.locked)
-        log.debug(lesson,lesson.locked,lesson.tag.toLowerCase()!='no tag'? '-' + lesson.tag.toLowerCase() : '')
         if(!lesson.locked){
-          log.debug("returning ",lesson.tag.toLowerCase()!='no tag'? '-' + lesson.tag.toLowerCase() : '')
           return lesson.tag.toLowerCase()!='no tag'? '-' + lesson.tag.toLowerCase() : '';
         }
         else{
-          log.debug("return here")
           return ''
         }
       };
       // Place nodes
       for (var j = 0, i = lessons.length - 1, nodeCount = 1 / (lessons.length); i >= 0; j += nodeCount, i--) {
         var currentLesson = lessons[i];
-        // log.debug(i, currentLesson);
         var locked = currentLesson.locked ? '-locked' : '';
-        log.debug('FOR: ',i)
         var type = lessonType(currentLesson, i);
-        log.debug(type,"type")
         var posx = this.math.catmullRomInterpolation(this.points.x, j);
         var posy = this.math.catmullRomInterpolation(this.points.y , j);
-        log.debug('lesson status', 'node' + type + locked);
         var node = this.game.add.button(posx, posy, 'node' + type + locked);
 
         !locked && lessons[i+1] && lessons[i+1].locked && this.add.tween(node.scale).to({ x: [1.2,1], y: [1.2,1]},700, Phaser.Easing.Back.Out, true, 1000).loop(true);
@@ -374,7 +363,6 @@ window.createGame = function(scope, lessons, audio, injector, log) {
               else if(currentLesson.locked && displacement){
                   audio.play('locked');
                   scope.$emit('downloadNode',currentLesson)
-                  log.debug("Current lesson ",currentLesson)
               }
               else{}
             }
@@ -388,7 +376,6 @@ window.createGame = function(scope, lessons, audio, injector, log) {
         // add stars
         if (!locked && currentLesson.stars >= 0) {
           var stars = this.game.add.group();
-        //   log.debug('stars in lesson', currentLesson.stars);
           if (currentLesson.stars == 0) {
             createStars(0, $.merge([posx], star_x), $.merge([posy], star_y));
           } else if (currentLesson.stars == 1) {
@@ -444,6 +431,5 @@ window.createGame = function(scope, lessons, audio, injector, log) {
     game.destroy(); // Clean up the game when we leave this scope
     var canvas = document.querySelector('#map_canvas');
     canvas.parentNode.removeChild(canvas);
-    log.debug('game destoryed');
   });
 };

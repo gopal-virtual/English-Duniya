@@ -58,11 +58,10 @@
       });
       data.getLesson(id).then(function(response) {
         $ionicLoading.hide();
+
         utils.setLocalLesson(JSON.stringify(response));
-        $log.debug("found",response)
         callback && callback(response);
       }, function(error) {
-        $log.debug(error)
         $ionicLoading.hide();
         $ionicPopup.alert({
           title: 'Sorry',
@@ -106,16 +105,13 @@
       $ionicLoading.show({
         // noBackdrop: false,
       });
-      $log.debug("here", resource.node.id)
       data.isLessonDownloaded(getLocalLesson().node.id).then(function(response) {
-          $log.debug("isLessonDownloaded", response)
           if (!response) {
             // return data.downloadLesson(getLocalLesson().node.id)
           }
         }).then(function() {
           if (utils.resourceType(resource) == 'assessment') {
             data.isLessonDownloaded(getLocalLesson().node.id, ['mp3', 'png']).then(function(response) {
-                $log.debug("isLessonDownloaded mp3 png", response)
                 if (!response) {
                   return data.downloadLesson(getLocalLesson().node.id, ['mp3', 'png'])
                 }
@@ -135,7 +131,6 @@
 
           } else if (utils.resourceType(resource) == 'practice') {
             data.isLessonDownloaded(getLocalLesson().node.id, ['mp3', 'png']).then(function(response) {
-              $log.debug("isLessonDownloaded mp3 png", response)
               if (!response) {
                 return data.downloadLesson(getLocalLesson().node.id, ['mp3', 'png'])
               }
@@ -154,7 +149,6 @@
 
           } else if (utils.resourceType(resource) == 'video') {
             data.isLessonDownloaded(getLocalLesson().node.id, ['mp4']).then(function(response) {
-              $log.debug("isLessonDownloaded mp4", response)
               if (!response) {
                 return data.downloadLesson(getLocalLesson().node.id, ['mp4'])
               }
@@ -177,24 +171,17 @@
 
           } else {}
         })
-        .catch(function(error) {
-          $log.debug(error)
-        })
-        .finally(function() {});
-
     }
 
     function downloadLesson(id) {
       $ionicLoading.show();
       data.downloadLesson(id).then(function(response) {}).catch(function(error) {
-        $log.debug("error", error)
       }).finally(function() {
         $ionicLoading.hide()
       })
     }
 
     function getSrc(src) {
-        // return $sce.trustAsResourceUrl(mediaManager.getPath(src));
       return $sce.trustAsResourceUrl(CONSTANT.BACKEND_SERVICE_DOMAIN + src);
     }
   }

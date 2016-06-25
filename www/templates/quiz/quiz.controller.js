@@ -213,7 +213,7 @@
     function disableSwipe() {
       $ionicSlideBoxDelegate.enableSlide(false);
     }
-
+$log.debug("Please",quiz)
     function init(quiz) {
       if ($state.current.name == "quiz.start") {
         $log.debug("quiz start")
@@ -267,17 +267,6 @@
               }
               quizCtrl.canRemoveFeedback = true;
             });
-            // if (isCorrectAttempted(quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()]) || quizCtrl.report.attempts[quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()].node.id].length >= 2) {
-            //   if (quizCtrl.currentIndex >= quizCtrl.quiz.objects.length - 1) {
-            //     quizCtrl.submitQuiz('practice');
-            //   } else {
-            //     $scope.modal.hide().then(function() {
-            //       $ionicSlideBoxDelegate.slide(quizCtrl.getCurrentIndex() + 1);
-            //     });
-            //   }
-            // } else {
-            //   $scope.modal.hide()
-            // }
           };
         }
         quizCtrl.summary.score = {
@@ -286,11 +275,6 @@
         };
         quizCtrl.summary.analysis = {};
         quizCtrl.report.attempts = {};
-        //parse all the options and questions to html
-        for (i = 0; i < quiz.objects.length; i++) {
-          quizCtrl.parseHtml(i);
-        }
-
 
         //init report
         for (i = 0; i < quiz.objects.length; i++) {
@@ -309,11 +293,13 @@
             quizCtrl.quiz.objects[i].attempted = [];
           }
         }
+        $log.debug(quizCtrl.quiz)
       }
 
     }
 
     function parseHtml(index) {
+      $log.debug("parse HTML",quizCtrl.quiz,index)
       quizCtrl.quiz.objects[index].node.widgetHtml = quizCtrl.widgetParser.parseToDisplay(quizCtrl.quiz.objects[index].node.title, index, quizCtrl.quiz);
 
       quizCtrl.quiz.objects[index].node.widgetSound = quizCtrl.widgetParser.getSoundId(quizCtrl.quiz.objects[index].node.title);

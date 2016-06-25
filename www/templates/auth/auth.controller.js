@@ -135,11 +135,9 @@
           })
         })
         .then(function(){
-          $log.debug("Creating lesson db asa")
           return dataService.createLessonDB()
         })
         .then(function() {
-          $log.debug("Created lesson db asa")
 
           $state.go('map.navigate', {});
         })
@@ -180,7 +178,6 @@
     }
 
     function showError(title, msg) {
-      $log.debug(title, msg);
       $ionicPopup.alert({
         title: title,
         template: msg
@@ -189,7 +186,6 @@
 
     function showAlert(title, msg) {
       var d = $q.defer();
-      $log.debug(title, msg);
       $ionicPopup.alert({
         title: title,
         template: msg
@@ -208,9 +204,7 @@
       $ionicLoading.show();
       try {
         if (SMS) SMS.stopWatch(function() {
-          $log.debug('watching', 'watching stopped');
         }, function() {
-          $log.debug('failed to stop watching');
         });
       } catch(e) {
 
@@ -219,7 +213,6 @@
 
       authCtrl.formHelper.validateForm(data, authCtrl.OtpFormValidations)
         .then(function(response) {
-          $log.debug(response);
           return Auth.verifyOtp(response)
         })
         .then(function(response) {
@@ -238,9 +231,7 @@
           authCtrl.showError("Could not verify", error);
           try {
             if (SMS) SMS.startWatch(function() {
-              $log.debug('watching', 'watching started');
             }, function() {
-              $log.debug('failed to start watching');
             });
           } catch(e) {
 
@@ -280,60 +271,14 @@
         $interval.cancel(authCtrl.start);
       }
     }
-    //
-    // $scope.$on('smsArrived', function (event, data) {
-    //   $ionicLoading.show({
-    //     template: 'Getting OTP From SMS'
-    //   });
-    //   authCtrl.autoVerifyPhoneStatus = 'Getting OTP From SMS';
-    //   Auth.getOTPFromSMS(data.message, function (otp) {
-    //     $ionicLoading.show({
-    //       template: 'OTP received. Verifying..'
-    //     });
-    //     authCtrl.autoVerifyPhoneStatus = 'OTP received. Verifying..';
-    //     Auth.verifyOtp({'code': otp}, function (success) {
-    //       authCtrl.autoVerifyPhoneStatus = 'Verified';
-    //       otpVerifiedSuccessHandler(success);
-    //     }, function () {
-    //       $ionicLoading.hide();
-    //       authCtrl.autoVerifyPhoneStatus = 'Error Verifying OTP. Try Again';
-    //     });
-    //   }, function () {
-    //     $ionicLoading.hide();
-    //     authCtrl.autoVerifyPhoneStatus = 'Error Getting OTP From SMS';
-    //     //authCtrl.showError("Could not get OTP","Error fetching OTP");
-    //   });
-    //   if (SMS) {
-    //     SMS.stopWatch(function () {
-    //       $log.debug('watching', 'watching stopped');
-    //     }, function () {
-    //       updateStatus('failed to stop watching');
-    //     });
-    //     SMS.startWatch(function () {
-    //       $log.debug('watching', 'watching started');
-    //     }, function () {
-    //       updateStatus('failed to start watching');
-    //     });
-    //   }
-    // });
-
-
-    //
-    // authCtrl.googleSignOut = function() {
-    //   window.plugins.googleplus.logout(
-    //     function(msg) {
-    //       alert(msg);
-    //     }
-    //   );
-    // };
 
     function closeKeyboard() {
       try {
         cordova.plugins.Keyboard.close();
-      } catch (e) {
-        $log.debug(e);
       }
-      $log.debug("Close keyboard returns nothing");
+      catch(e){
+        $log.debug(e)
+      }
     }
 
     function verifyOtpResetPassword(formData) {
@@ -383,16 +328,12 @@
 
 
   $scope.$on('smsArrived',function(e,sms){
-    $log.debug("smsArrived",sms);
     Auth.getOTPFromSMS(sms)
     .then(function(otp){
       authCtrl.verification = {'otp':otp};
       document.getElementById('verifyOtpFormSubmit').click()
-      $log.debug(otp);
     })
-    .catch(function(){
-      $log.debug("fail");
-    })
+
   })
   }
 })();

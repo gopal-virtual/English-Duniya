@@ -11,7 +11,7 @@
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
 
       $log.debug('state changed ', toState.name);
-
+      $log.debug(Auth.isAuthorised(),Auth.isVerified(),Auth.hasProfile())
       //if not authenticated, redirect to login page
       if (!Auth.isAuthorised() && toState.name != 'auth.signin' && toState.name != 'auth.signup' && toState.name != 'auth.forgot') {
         $log.debug("You are not authorized");
@@ -101,7 +101,7 @@
     $ionicPlatform.ready(function() {
 
       if (localStorage.getItem('lessonDBCreated') !== 'true') {
-      
+
       }
 
 

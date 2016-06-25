@@ -254,7 +254,11 @@
     }
 
     function hasProfile() {
-      return JSON.parse(localStorage.getItem('user_details')).profile === null ? false : true;
+      if(localStorage.getItem('user_details')){
+        return JSON.parse(localStorage.getItem('user_details')).profile === null ? false : true;
+      }else{
+        return false;
+      }
     }
 
     function getProfileId() {

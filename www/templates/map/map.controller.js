@@ -9,6 +9,7 @@
 
   function mapController($scope, $rootScope, $log, $ionicModal, $state, lessons, scores, skills, extendLesson, Rest, CONSTANT, $sce, $ionicLoading, $timeout, $ionicBackdrop, orientation, Auth, lessonutils, audio, data, ml, lessonLocked) {
     $scope.audio = audio;
+    $log.debug("Map Controller")
     $scope.orientation = orientation;
     var mapCtrl = this;
     var lessonList = CONSTANT.LOCK ? lessonLocked : lessons;
@@ -27,7 +28,6 @@
     mapCtrl.updateProfile = updateProfile;
     mapCtrl.skillSet = skills;
     mapCtrl.isLessonDownloaded = null;
-    $log.debug("LEssons in mapCtrl",mapCtrl.lessons)
     function logout(type) {
       mapCtrl.closeSettings();
       $ionicLoading.show({
@@ -64,7 +64,6 @@
       }).catch(function(error) {
         mapCtrl.isLessonDownloaded = false;
       });
-      $log.debug('open node emitted', node);
       if (node.content_type_name == 'litmus') {
         $state.go('quiz.questions', {
           id: node.id,
@@ -78,13 +77,11 @@
       }
     })
     $scope.$on('downloadNode', function(event, node) {
-      $log.debug("Download node triggered");
       data.isLessonDownloaded(node.id).then(function(response) {
         if (response === false) {
           lessonutils.downloadLesson(node.id,[]);
         }
       }).catch(function(error) {
-        $log.debug("error", error)
       });
 
     })
@@ -100,13 +97,6 @@
       return true;
     }
 
-
-    // $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal' + CONSTANT.VIEW, {
-    //   scope: $scope,
-    //   animation: 'slide-in-up',
-    // }).then(function(modal) {
-    //   $scope.modal = modal;
-    // });
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal-rope' + CONSTANT.VIEW, {
       scope: $scope,
       animation: 'slide-in-down',
@@ -116,7 +106,6 @@
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.settings' + CONSTANT.VIEW, {
       scope: $scope,
       animation: 'slide-in-up',
-      //   hardwareBackButtonClose: false
     }).then(function(settings) {
       $scope.settings = settings;
     });
@@ -128,15 +117,7 @@
     }
 
 
-    // $timeout(function functionName() {
-    //   if (mapCtrl.lessons && localStorage.lesson) {
-    //     $scope.openNodeMenu();
-    //     $scope.selectedNode = $scope.lessonutils.getLocalLesson();
-    //   }
-    // });
-    // $scope.test = {"phone_number":"+919393939193"};
     function updateProfile(params) {
-      $log.log(JSON.stringify(params));
       var updateParams = {
 
         "phone_number": params.phone_number,
@@ -152,7 +133,6 @@
 
       );
     }
-    // updateProfile($scope.test);
 
   }
 })();
