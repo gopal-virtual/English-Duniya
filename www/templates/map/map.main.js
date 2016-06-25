@@ -367,7 +367,6 @@ window.createGame = function(scope, lessons, audio, injector, log) {
               }
               else if(currentLesson.locked && displacement){
                   audio.play('locked');
-                  scope.$emit('downloadNode',currentLesson)
               }
               else{}
             }

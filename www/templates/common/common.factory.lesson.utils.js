@@ -20,7 +20,6 @@
       getSrc: getSrc,
       currentState: currentState,
       getGender: getGender,
-      downloadLesson: downloadLesson
     };
 
     return utils;
@@ -101,85 +100,59 @@
     }
 
     function playResource(resource, video) {
-
+      $log.debug(resource,"Resource",utils.resourceType(resource))
       $ionicLoading.show({
-        // noBackdrop: false,
+        // noBackdrop: false
+        hideOnStateChange: true
       });
-      data.isLessonDownloaded(getLocalLesson().node.id).then(function(response) {
-          if (!response) {
-            // return data.downloadLesson(getLocalLesson().node.id)
-          }
-        }).then(function() {
-          if (utils.resourceType(resource) == 'assessment') {
-            data.isLessonDownloaded(getLocalLesson().node.id, ['mp3', 'png']).then(function(response) {
-                if (!response) {
-                  return data.downloadLesson(getLocalLesson().node.id, ['mp3', 'png'])
-                }
-              })
-              .then(function() {
-                $timeout(function() {
-                  $ionicLoading.hide();
-                  $stateParams.type != 'assessment' &&
-                    $state.go('quiz.start', {
-                      id: resource.node.id,
-                      type: 'assessment',
-                      quiz: resource
-                    });
-                  $stateParams.type == 'assessment' && $ionicLoading.hide();
-                });
-              })
-
-          } else if (utils.resourceType(resource) == 'practice') {
-            data.isLessonDownloaded(getLocalLesson().node.id, ['mp3', 'png']).then(function(response) {
-              if (!response) {
-                return data.downloadLesson(getLocalLesson().node.id, ['mp3', 'png'])
-              }
-            }).then(function() {
-              $timeout(function() {
-                $ionicLoading.hide();
-                $stateParams.type != 'practice' &&
-                  $state.go('quiz.start', {
-                    id: resource.node.id,
-                    type: 'practice',
-                    quiz: resource
-                  });
-                $stateParams.type == 'practice' && $ionicLoading.hide();
+      if (utils.resourceType(resource) == 'assessment') {
+        data.downloadAssessment(resource)
+        .then(function() {
+          $timeout(function() {
+            $stateParams.type != 'assessment' &&
+              $state.go('quiz.start', {
+                id: resource.node.id,
+                type: 'assessment',
+                quiz: resource
               });
-            })
-
-          } else if (utils.resourceType(resource) == 'video') {
-            data.isLessonDownloaded(getLocalLesson().node.id, ['mp4']).then(function(response) {
-              if (!response) {
-                return data.downloadLesson(getLocalLesson().node.id, ['mp4'])
-              }
-            }).then(function() {
-                $ionicLoading.hide();
-              $timeout(function() {
-                !$state.is('content.video') &&
-                  $state.go('content.video', {
-                    video: {
-                      src: utils.getSrc(resource.node.type.path),
-                      type: 'video/mp4'
-                    }
-                  });
-                if ($state.is('content.video')) {
-                  video.play();
-                }
-              });
-              utils.config.sources[0].src = utils.getSrc(resource.node.type.path);
-            })
-
-          } else {}
+            $stateParams.type == 'assessment' && $ionicLoading.hide();
+          });
         })
+
+      } else if (utils.resourceType(resource) == 'practice') {
+      data.downloadAssessment(resource).then(function() {
+          $timeout(function() {
+            $stateParams.type != 'practice' &&
+              $state.go('quiz.start', {
+                id: resource.node.id,
+                type: 'practice',
+                quiz: resource
+              });
+            $stateParams.type == 'practice' && $ionicLoading.hide();
+          });
+        })
+
+      } else if (utils.resourceType(resource) == 'video') {
+        data.downloadVideo(resource).then(function() {
+          $timeout(function() {
+            !$state.is('content.video') &&
+              $state.go('content.video', {
+                video: {
+                  src: utils.getSrc(resource.node.type.path),
+                  type: 'video/mp4'
+                }
+              });
+            if ($state.is('content.video')) {
+              video.play();
+            }
+          });
+          utils.config.sources[0].src = utils.getSrc(resource.node.type.path);
+        })
+
+      } else {}
     }
 
-    function downloadLesson(id) {
-      $ionicLoading.show();
-      data.downloadLesson(id).then(function(response) {}).catch(function(error) {
-      }).finally(function() {
-        $ionicLoading.hide()
-      })
-    }
+
 
     function getSrc(src) {
       return $sce.trustAsResourceUrl(CONSTANT.BACKEND_SERVICE_DOMAIN + src);

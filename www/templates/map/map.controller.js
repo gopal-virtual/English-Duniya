@@ -19,7 +19,6 @@
     mapCtrl.backdrop = false;
     mapCtrl.showScore = -1;
     mapCtrl.skillSet = skills;
-    mapCtrl.isLessonDownloaded = null;
 
     mapCtrl.animationExpand = {};
     mapCtrl.animationExpand['expand'] = expand;
@@ -43,11 +42,7 @@
     $scope.$on('openNode', function(event, node, currentPos) {
       currentPos.lessonType = node.tag;
       $log.debug("GAME: ",currentPos);
-      data.isLessonDownloaded(node.id).then(function(response) {
-        mapCtrl.isLessonDownloaded = response;
-      }).catch(function(error) {
-        mapCtrl.isLessonDownloaded = false;
-      });
+
       if (node.content_type_name == 'litmus') {
         $state.go('quiz.questions', {
           id: node.id,
@@ -62,15 +57,7 @@
         });
       }
     })
-    $scope.$on('downloadNode', function(event, node) {
-      data.isLessonDownloaded(node.id).then(function(response) {
-        if (response === false) {
-          lessonutils.downloadLesson(node.id,[]);
-        }
-      }).catch(function(error) {
-      });
 
-    })
     $scope.$on('$destroy', function() {
       $scope.modal.remove();
     });

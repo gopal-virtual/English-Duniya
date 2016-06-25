@@ -23,7 +23,6 @@
     var appDB = pouchDB('appDB');
     var resourceDB = pouchDB('resourceDB');
 
-
     var data = {
       // createDiagnosisQuestionDB: createDiagnosisQuestionDB(),
       // createKmapsDB: createKmapsDB(),
@@ -50,10 +49,10 @@
       saveReport: saveReport,
       saveAttempts: saveAttempts,
       // getResults : getResults, // for results in hud screen
-      downloadLesson: downloadLesson,
+      downloadAssessment: downloadAssessment,
+      downloadVideo: downloadVideo,
       getLesson: getLesson,
       updateLesson: updateLesson,
-      isLessonDownloaded: isLessonDownloaded,
       updateScore: updateScore,
       updateSkills: updateSkills,
       // addNewUser: addNewUser
@@ -437,60 +436,40 @@
       });
     }
 
-    function downloadLesson(id, mediaTypes) {
+    function downloadVideo(video) {
+      return mediaManager.downloadIfNotExists(CONSTANT.RESOURCE_SERVER + video.node.type.path)
+    }
+
+    function downloadAssessment(assessment) {
       var d = $q.defer();
       var promises = [];
-      data.getLesson(id).then(function(response) {
-        angular.forEach(response.media, function(file) {
-          if (!mediaTypes || (mediaTypes.length > 0 && mediaTypes.indexOf(file.url.split('.').pop()) >= 0)) {
-            try {
+      var mediaTypes = ['videos', 'sounds', 'images']
+      var mediaArray = []
+      var count = 0;
+      angular.forEach(assessment.objects, function(object) {
+        angular.forEach(object.node.type.content.widgets, function(widget) {
+          angular.forEach(widget, function(file) {
+            if (mediaArray.indexOf(file) < 0) {
+              mediaArray.push(file);
               promises.push(
-                mediaManager.download(CONSTANT.RESOURCE_SERVER + file.url).then(function() {})
-
+                mediaManager.downloadIfNotExists(CONSTANT.RESOURCE_SERVER +file)
               );
-            } catch (e) {}
-          }
-        })
-        $q.all(promises).then(function(success) {
-            angular.forEach(response.media, function(file) {
-              file.downloaded = true;
-            })
-            $log.debug("Downloaded", response)
-
-            return data.updateLesson(response);
-          }).then(function(data) {
-            $log.debug("Updated", data)
-            d.resolve(data);
-          })
-          .catch(function(err) {});
-      })
-
-      return d.promise;
-
-    }
-
-    function isLessonDownloaded(id, mediaTypes) {
-
-
-      var d = $q.defer();
-      lessonDB.get(id).then(function(data) {
-
-          var downloaded = true;
-          for (var i = 0; i < data.lesson.media.length; i++) {
-
-            if ((!mediaTypes || mediaTypes.length > 0 || mediaTypes.indexOf(file.url.split('.').pop()) >= 0) && data.lesson.media[i].downloaded === false) {
-
-              downloaded = false;
-              break;
             }
-          }
-          d.resolve(downloaded);
+          })
         })
-        .catch(function(err) {
-          d.reject(err);
+      })
+      $q.all(promises).then(function(success) {
+          d.resolve(data);
         })
+        .catch(function(err) {});
       return d.promise;
+
+
     }
+
+
+
+    
 
     function startReportSyncing(data) {
       return appDB.get(data.userId).then(function(response) {

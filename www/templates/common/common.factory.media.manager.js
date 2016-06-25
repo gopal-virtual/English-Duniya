@@ -5,23 +5,22 @@
     .module('common')
     .factory('mediaManager', mediaManager)
 
-  function mediaManager($cordovaNativeAudio, $log, $cordovaFile, $cordovaFileTransfer, $q,CONSTANT) {
+  function mediaManager($cordovaNativeAudio, $log, $cordovaFile, $cordovaFileTransfer, $q, CONSTANT) {
     return {
 
       getPath: function(url) {
         var filename = url.split('/').pop();
         var target = null;
-        try{
+        try {
 
-        return $cordovaFile.checkFile(cordova.file.dataDirectory, 'media/' + filename)
-          .then(function(success) {
-            return target = cordova.file.dataDirectory + 'media/' + filename;
-          })
-          .catch(function(error){
-            return target = CONSTANT.RESOURCE_SERVER + url;
-          })
-          ;
-        }catch(e){
+          return $cordovaFile.checkFile(cordova.file.dataDirectory, 'media/' + filename)
+            .then(function(success) {
+              return target = cordova.file.dataDirectory + 'media/' + filename;
+            })
+            .catch(function(error) {
+              return target = CONSTANT.RESOURCE_SERVER + url;
+            });
+        } catch (e) {
           return Promise.resolve(CONSTANT.RESOURCE_SERVER + url);
         }
 
@@ -29,39 +28,36 @@
       play: function(sound) {
         try {
           $cordovaNativeAudio.play(sound);
-        } catch (error) {
-        }
+        } catch (error) {}
       },
-      download: function(url) {
+      downloadIfNotExists: function(url) {
+        var d = $q.defer();
         var filename = url.split("/").pop();
         try {
           var target = cordova.file.dataDirectory + 'media/' + filename;
-          var d = $q.defer();
-              $cordovaFile.checkFile(target).then(function(d){
-                d.resolve("Exists " + target);
-              })
-              .catch(function(e){
-                if(e.message === 'NOT_FOUND_ERR')
-                {
-                  $log.debug("Downloading " + target)
+          $cordovaFile.checkFile(cordova.file.dataDirectory,'media/' + filename).then(function(result) {
+              d.resolve(result);
+            })
+            .catch(function(e) {
+              if (e.message === 'NOT_FOUND_ERR') {
 
-                  $cordovaFileTransfer.download(url, target)
-                    .then(function(result) {
-                      d.resolve("Downloaded " + target);
-                        $log.debug("Downloaded " + target)
-                    }, function(err) {
-                      d.reject("Error Downlaoding " + target);
-                    }, function(progress) {});
-                }
-                else{
-                  $log.debug("error " , e)
-                  d.reject("Error Downlaoding " + target);
-                }
-              })
+                $cordovaFileTransfer.download(url, target)
+                  .then(function(result) {
+                    d.resolve("Downloaded " + target);
+                  }, function(err) {
+                    d.reject("Error Downlaoding " + target);
+                  }, function(progress) {});
+              } else {
 
-          return d.promise;
+                d.reject("Error Downlaoding " + target);
+              }
+            })
+
         } catch (e) {
+
+          d.resolve("Cordova not found");
         }
+        return d.promise;
 
       },
     };
