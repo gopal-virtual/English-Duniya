@@ -5,10 +5,10 @@
     .module('common')
     .factory('data', data);
 
-  data.$inject = ['pouchDB', '$http', '$log', 'Rest', 'CONSTANT', '$q', '$ImageCacheFactory', 'mediaManager', '$interval', 'network', 'Auth','widgetParser'];
+  data.$inject = ['pouchDB', '$http', '$log', 'Rest', 'CONSTANT', '$q', '$ImageCacheFactory', 'mediaManager', '$interval', 'network', 'Auth', 'widgetParser'];
 
   /* @ngInject */
-  function data(pouchDB, $http, $log, Rest, CONSTANT, $q, $ImageCacheFactory, mediaManager, $interval, network, Auth,widgetParser) {
+  function data(pouchDB, $http, $log, Rest, CONSTANT, $q, $ImageCacheFactory, mediaManager, $interval, network, Auth, widgetParser) {
     // var diagnosisQuestionsDB = pouchDB('diagnosisQuestions');
     // var kmapsDB = pouchDB('kmaps');
 
@@ -133,10 +133,8 @@
             "_id": "diagnostic_litmus_mapping",
             "diagnostic_litmus_mapping": data[0]
           })
-          .then(function() {
-          })
-          .catch(function(err) {
-          });
+          .then(function() {})
+          .catch(function(err) {});
       });
       return promise;
     };
@@ -147,10 +145,8 @@
             "_id": "kmapsJSON",
             "kmapsJSON": data[0]
           })
-          .then(function() {
-          })
-          .catch(function(err) {
-          });
+          .then(function() {})
+          .catch(function(err) {});
       });
       return promise;
     };
@@ -161,10 +157,8 @@
             "_id": "dqJSON",
             "dqJSON": data[0]
           })
-          .then(function() {
-          })
-          .catch(function(err) {
-          });
+          .then(function() {})
+          .catch(function(err) {});
       });
       return promise;
     }
@@ -197,6 +191,7 @@
       var d = $q.defer();
       var promises = []
       var promisesDelete = []
+      $log.debug("Creating lesson db")
       lessonDB.allDocs().then(function(result) {
         angular.forEach(result.rows, function(row) {
           promisesDelete.push(lessonDB.remove(row.id, row.value.rev))
@@ -206,17 +201,15 @@
         $http.get('templates/common/lessons.json').success(function(data) {
           for (var i = 0; i < data.length; i++) {
             data[i].key = i;
-            if (data[i].node.type.grade == Auth.getLocalProfile().grade) {
               promises.push(lessonDB.put({
                 "_id": data[i].node.id,
                 "lesson": data[i]
               }));
-            }
+
             $q.all(promises).then(function() {
                 d.resolve("Lesson Db created");
               })
-              .catch(function(E) {
-              })
+              .catch(function(E) {})
           }
         });
       })
@@ -269,8 +262,7 @@
             'data': doc
           })
         })
-        .catch(function(error) {
-        })
+        .catch(function(error) {})
     }
 
     function updateScore(data) {
@@ -330,8 +322,10 @@
         }).then(function(data) {
           var lessons = [];
           for (var i = 0; i < data.rows.length; i++) {
+            if (data.rows[i].doc.lesson.node.type.grade == Auth.getLocalProfile().grade) {
             data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key
             lessons.push(data.rows[i].doc.lesson.node);
+          }
           }
           lessons = _.sortBy(lessons, 'key');
           d.resolve(lessons)
@@ -346,26 +340,28 @@
       var d = $q.defer();
       var promises = []
 
-
       for (var index = 0; index < quiz.objects.length; index++) {
-        $log.debug("loop",index)
         promises.push(widgetParser.parseToDisplay(quiz.objects[index].node.title, index, quiz).then(
-          function(result){
-            $log.debug("here")
-            quiz.objects[index].node.widgetHtml = result;
-          }
+            function(index) {
+              return function(result) {
+                quiz.objects[index].node.widgetHtml = result;
+                quiz.objects[index].node.widgetSound = widgetParser.getSoundId(quiz.objects[index].node.title);
+              }
+            }(index)
 
-      ))
-        quiz.objects[index].node.widgetSound = widgetParser.getSoundId(quiz.objects[index].node.title);
-        for (var j = 0; j < quiz.objects[index].node.type.content.options.length; j++) {
-          promises.push(widgetParser.parseToDisplay(quiz.objects[index].node.type.content.options[j].option, index, quiz).then(function(result){
-            quiz.objects[index].node.type.content.options[j].widgetHtml = result;
-          }))
-          quiz.objects[index].node.type.content.options[j].widgetSound = widgetParser.getSoundId(quiz.objects[index].node.type.content.options[j].option);
-        }
+          ))
+          for (var j = 0; j < quiz.objects[index].node.type.content.options.length; j++) {
+            promises.push(widgetParser.parseToDisplay(quiz.objects[index].node.type.content.options[j].option, index, quiz).then(
+                function(index,j) {
+                  return function(result) {
+                    quiz.objects[index].node.type.content.options[j].widgetHtml = result;
+                    quiz.objects[index].node.type.content.options[j].widgetSound = widgetParser.getSoundId(quiz.objects[index].node.type.content.options[j].option);
+                  }
+                }(index,j)
+              ))
+          }
       }
-      $q.all(promises).then(function(){
-        $log.debug("here")
+      $q.all(promises).then(function() {
         d.resolve(quiz)
       })
       return d.promise;
@@ -502,8 +498,7 @@
           }
 
         })
-        .then(function(data) {
-        })
+        .then(function(data) {})
     }
   }
 })();

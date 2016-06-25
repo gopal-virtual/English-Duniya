@@ -59,7 +59,6 @@
               return $q.all(all_promises).then(function() {
                   var suggestion = ml.getNextQSr(data.getTestParams(JSON.parse(localStorage.profile).grade), ml.mapping);
                   var question = ml.dqJSON[suggestion.qSr];
-                  $log.debug('question node', suggestion);
                   question && litmus.objects.push(question);
                   litmus['suggestion'] = suggestion;
                   return litmus;
@@ -108,9 +107,6 @@
         report: null,
         quiz: null,
         summary: null
-      },
-      onEnter: function($log){
-        $log.debug("YY");
       },
       views: {
         'state-quiz': {

@@ -33,16 +33,14 @@
     }
 
     function getImageSrc(id, index, quiz) {
-      $log.debug("getImageSrc",id,index,quiz,mediaManager.getPath(quiz.objects[index].node.type.content.widgets.images[id]))
-
       return mediaManager.getPath(quiz.objects[index].node.type.content.widgets.images[id]);
     }
 
     function parseToDisplay(string, index, quiz) {
+
       var d = $q.defer();
       var text = this.removeSoundTag(string, index);
       if (this.getImageId(text)) {
-        $log.debug("here 1",text)
          this.replaceImageTag(text, index, quiz).then(function(text){
            d.resolve(text.trim().length > 0 ? text.trim() : CONSTANT.WIDGETS.SPEAKER_IMAGE)
          });
@@ -62,10 +60,7 @@
     }
 
     function replaceImageTag(string, index, quiz) {
-      $log.debug("replaceImageTag",string,index,quiz)
       return this.getImageSrc(this.getImageId(string), index, quiz).then(function(data) {
-        $log.debug("replaceImageTag",data)
-
         return string.replace(imageTagRegex, "<img class='content-image' src='" +
           data + "'>");
       })
