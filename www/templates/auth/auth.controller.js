@@ -3,11 +3,13 @@
   angular
     .module('zaya-auth')
     .controller('authController', authController)
-  authController.$inject = ['$q', '$ionicModal', '$state', 'Auth', 'audio', '$rootScope', '$ionicPopup', '$log', '$cordovaOauth', 'CONSTANT', '$interval', '$scope', '$ionicLoading', 'formHelper', '$ionicPlatform','data'];
+  authController.$inject = ['$q', '$ionicModal', '$state', 'Auth', 'audio', '$rootScope', '$ionicPopup', '$log', '$cordovaOauth', 'CONSTANT', '$interval', '$scope', '$ionicLoading', 'formHelper', '$ionicPlatform','data','network'];
 
-  function authController($q, $ionicModal, $state, Auth, audio, $rootScope, $ionicPopup, $log, $cordovaOauth, CONSTANT, $interval, $scope, $ionicLoading, formHelper, $ionicPlatform, dataService) {
+  function authController($q, $ionicModal, $state, Auth, audio, $rootScope, $ionicPopup, $log, $cordovaOauth, CONSTANT, $interval, $scope, $ionicLoading, formHelper, $ionicPlatform, dataService, network) {
     var authCtrl = this;
     authCtrl.formHelper = formHelper;
+    authCtrl.exitApp = exitApp;
+    authCtrl.network = network;
     authCtrl.Auth = Auth;
     authCtrl.audio = audio;
     authCtrl.logout = logout;
@@ -134,9 +136,6 @@
             'userId': Auth.getProfileId()
           })
         })
-        .then(function(){
-          return dataService.createLessonDB()
-        })
         .then(function() {
 
           $state.go('map.navigate', {});
@@ -219,13 +218,10 @@
           return Auth.getUser();
         })
         .then(function() {
-          return Auth.getProfile();
-        })
-        .then(function() {
           $ionicLoading.hide();
           return authCtrl.showAlert("Correct!", "Phone Number verified!");
         }).then(function() {
-          $state.go('user.personalise.social', {});
+          $state.go('user.personalise', {});
         })
         .catch(function(error) {
           authCtrl.showError("Could not verify", error);
@@ -324,6 +320,14 @@
     function cleanLocalStorage() {
       Auth.cleanLocalStorage();
       $state.go('auth.signin', {});
+    }
+    function exitApp(){
+        try{
+            navigator.app.exitApp();
+        }
+        catch(error){
+            $log.debug(error);
+        }
     }
 
 

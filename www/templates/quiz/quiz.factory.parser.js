@@ -12,6 +12,7 @@
       getSoundId: getSoundId,
       getImageId: getImageId,
       getImageSrc: getImageSrc,
+      getSoundSrc: getSoundSrc,
       parseToDisplay: parseToDisplay,
       replaceImageTag: replaceImageTag,
       removeSoundTag: removeSoundTag,
@@ -33,11 +34,13 @@
     }
 
     function getImageSrc(id, index, quiz) {
+
       return mediaManager.getPath(quiz.objects[index].node.type.content.widgets.images[id]);
     }
-
+    function getSoundSrc(id, index, quiz) {
+      return mediaManager.getPath(quiz.objects[index].node.type.content.widgets.sounds[id]);
+    }
     function parseToDisplay(string, index, quiz) {
-
       var d = $q.defer();
       var text = this.removeSoundTag(string, index);
       if (this.getImageId(text)) {

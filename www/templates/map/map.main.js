@@ -2,7 +2,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
   'use strict';
 
   var lessons = lessons;
-  var game = new Phaser.Game("100", "100", Phaser.CANVAS, 'map_canvas');
+  var game = new Phaser.Game("100", "100", Phaser.CANVAS, 'map_canvas',null,true,true,null);
 
 
   var playState = {
@@ -358,7 +358,12 @@ window.createGame = function(scope, lessons, audio, injector, log) {
               var displacement = game.kineticScrolling.velocityY > -30 && game.kineticScrolling.velocityY < 30;
               if (!currentLesson.locked && displacement) {
                   localStorage.setItem('currentPosition',(posy - game.height/2));
-                scope.$emit('openNode', currentLesson);
+                  var currentPosition = {
+                    "x" : game.input._x,
+                    "y" : game.input._y,
+                  }
+                scope.$emit('openNode', currentLesson, currentPosition);
+                // scope.$emit('game', game);
               }
               else if(currentLesson.locked && displacement){
                   audio.play('locked');

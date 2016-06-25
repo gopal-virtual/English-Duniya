@@ -199,3 +199,12 @@ $percent in $height-list {
     right : 20%;
     top : 0;
 }
+.flex{
+    @include display-flex();
+}
+.space-around{
+    @include justify-content(space-between);
+}
+.border-0{
+    border : 0;
+}

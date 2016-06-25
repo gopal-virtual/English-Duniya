@@ -15,11 +15,9 @@
 
         return $cordovaFile.checkFile(cordova.file.dataDirectory, 'media/' + filename)
           .then(function(success) {
-            $log.debug("getPath 1",success)
             return target = cordova.file.dataDirectory + 'media/' + filename;
           })
           .catch(function(error){
-            $log.debug("getPath 3",error)
             return target = CONSTANT.RESOURCE_SERVER + url;
           })
           ;
@@ -39,12 +37,28 @@
         try {
           var target = cordova.file.dataDirectory + 'media/' + filename;
           var d = $q.defer();
-          $cordovaFileTransfer.download(url, target)
-            .then(function(result) {
-              d.resolve("Downloaded " + target);
-            }, function(err) {
-              d.reject("Error Downlaoding " + target);
-            }, function(progress) {});
+              $cordovaFile.checkFile(target).then(function(d){
+                d.resolve("Exists " + target);
+              })
+              .catch(function(e){
+                if(e.message === 'NOT_FOUND_ERR')
+                {
+                  $log.debug("Downloading " + target)
+
+                  $cordovaFileTransfer.download(url, target)
+                    .then(function(result) {
+                      d.resolve("Downloaded " + target);
+                        $log.debug("Downloaded " + target)
+                    }, function(err) {
+                      d.reject("Error Downlaoding " + target);
+                    }, function(progress) {});
+                }
+                else{
+                  $log.debug("error " , e)
+                  d.reject("Error Downlaoding " + target);
+                }
+              })
+
           return d.promise;
         } catch (e) {
         }

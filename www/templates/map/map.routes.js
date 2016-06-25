@@ -18,7 +18,10 @@
           lessonLocked: ['Rest', '$log', '$http', 'data','extendLesson', function(Rest, $log, $http, data,extendLesson) {
             return data.getLessonsList(25).then(function(lessons){
 
-              return extendLesson.getLesson(lessons,[])
+              return extendLesson.getLesson(lessons,[]).then(function(result){
+                  $log.debug("Resolved 2",result.length)
+                  return result;
+              });
             })
           }],
           scores: ['Rest', '$log', 'data', function(Rest, $log, data) {

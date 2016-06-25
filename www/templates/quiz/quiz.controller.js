@@ -431,7 +431,6 @@ $log.debug("Please",quiz)
     function updateSlide() {
       $log.debug('slide updated');
       $ionicSlideBoxDelegate.update();
-      quizCtrl.parseHtml(quizCtrl.getCurrentIndex());
       $timeout(function() {
         $ionicSlideBoxDelegate.next();
       }, 300)
@@ -507,7 +506,7 @@ $log.debug("Please",quiz)
     function playAudio(key, index) {
       if (key) {
         angular.element("#audioplayer")[0].pause();
-        var src = (mediaManager.getPath(quizCtrl.quiz.objects[index].node.type.content.widgets.sounds[key]));
+        var src = key;
         angular.element("#audioSource")[0].src = src;
         angular.element("#audioplayer")[0].load();
         angular.element("#audioplayer")[0].play();

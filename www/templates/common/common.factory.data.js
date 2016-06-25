@@ -11,7 +11,11 @@
   function data(pouchDB, $http, $log, Rest, CONSTANT, $q, $ImageCacheFactory, mediaManager, $interval, network, Auth, widgetParser) {
     // var diagnosisQuestionsDB = pouchDB('diagnosisQuestions');
     // var kmapsDB = pouchDB('kmaps');
+    // var inputDB = pouchDB('http://127.0.0.1:5984/lessonDB');
+    // var outputDB = pouchDB('turtles.db', {adapter: 'websql'});
 
+    // replicate
+    // inputDB.replicate.to(outputDB);
     var diagLitmusMappingDB = pouchDB('diagLitmusMapping');
     var kmapsJSONDB = pouchDB('kmapsJSON');
     var dqJSONDB = pouchDB('dqJSON');
@@ -26,7 +30,7 @@
       createDiagLitmusMappingDB: createDiagLitmusMappingDB(),
       createKmapsJSON: createKmapsJSON(),
       createDiagQJSON: createDiagQJSON(),
-      createLessonDB: createLessonDB,
+      createIfNotExistsLessonDB: createIfNotExistsLessonDB,
       // getDiagnosisQuestionById: getDiagnosisQuestionById,
       // getDiagnosisQuestionByLevelNSkill: getDiagnosisQuestionByLevelNSkill,
       getDiagnosisLitmusMapping: getDiagnosisLitmusMapping,
@@ -187,33 +191,19 @@
       return result;
     }
 
-    function createLessonDB() {
-      var d = $q.defer();
-      var promises = []
-      var promisesDelete = []
-      $log.debug("Creating lesson db")
-      lessonDB.allDocs().then(function(result) {
-        angular.forEach(result.rows, function(row) {
-          promisesDelete.push(lessonDB.remove(row.id, row.value.rev))
-        })
-      })
-      $q.all(promisesDelete).then(function() {
-        $http.get('templates/common/lessons.json').success(function(data) {
-          for (var i = 0; i < data.length; i++) {
-            data[i].key = i;
-              promises.push(lessonDB.put({
-                "_id": data[i].node.id,
-                "lesson": data[i]
-              }));
-
-            $q.all(promises).then(function() {
-                d.resolve("Lesson Db created");
-              })
-              .catch(function(E) {})
-          }
+    function createIfNotExistsLessonDB() {
+      return lessonDB.get('_local/preloaded').then(function(doc) {}).catch(function(err) {
+        if (err.name !== 'not_found') {
+          throw err;
+        }
+        return lessonDB.load(CONSTANT.PATH.DATA + '/lessons.db').then(function() {
+          return lessonDB.put({
+            _id: '_local/preloaded'
+          });
         });
       })
-      return d.promise;
+
+
     }
 
     function putUserifNotExist(data) {
@@ -323,9 +313,9 @@
           var lessons = [];
           for (var i = 0; i < data.rows.length; i++) {
             if (data.rows[i].doc.lesson.node.type.grade == Auth.getLocalProfile().grade) {
-            data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key
-            lessons.push(data.rows[i].doc.lesson.node);
-          }
+              data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key
+              lessons.push(data.rows[i].doc.lesson.node);
+            }
           }
           lessons = _.sortBy(lessons, 'key');
           d.resolve(lessons)
@@ -339,27 +329,50 @@
     function getAssessment(quiz) {
       var d = $q.defer();
       var promises = []
-
       for (var index = 0; index < quiz.objects.length; index++) {
         promises.push(widgetParser.parseToDisplay(quiz.objects[index].node.title, index, quiz).then(
+          function(index) {
+            return function(result) {
+              quiz.objects[index].node.widgetHtml = result;
+            }
+          }(index)
+
+        ))
+        quiz.objects[index].node.widgetSound = null;
+        if (widgetParser.getSoundId(quiz.objects[index].node.title)) {
+          promises.push(widgetParser.getSoundSrc(widgetParser.getSoundId(quiz.objects[index].node.title), index, quiz).then(
+
             function(index) {
               return function(result) {
-                quiz.objects[index].node.widgetHtml = result;
-                quiz.objects[index].node.widgetSound = widgetParser.getSoundId(quiz.objects[index].node.title);
+                quiz.objects[index].node.widgetSound = result;
               }
             }(index)
 
           ))
-          for (var j = 0; j < quiz.objects[index].node.type.content.options.length; j++) {
-            promises.push(widgetParser.parseToDisplay(quiz.objects[index].node.type.content.options[j].option, index, quiz).then(
-                function(index,j) {
-                  return function(result) {
-                    quiz.objects[index].node.type.content.options[j].widgetHtml = result;
-                    quiz.objects[index].node.type.content.options[j].widgetSound = widgetParser.getSoundId(quiz.objects[index].node.type.content.options[j].option);
-                  }
-                }(index,j)
-              ))
+        }
+
+        for (var j = 0; j < quiz.objects[index].node.type.content.options.length; j++) {
+          promises.push(widgetParser.parseToDisplay(quiz.objects[index].node.type.content.options[j].option, index, quiz).then(
+            function(index, j) {
+              return function(result) {
+                quiz.objects[index].node.type.content.options[j].widgetHtml = result;
+              }
+            }(index, j)
+          ))
+          quiz.objects[index].node.type.content.options[j].widgetSound = null;
+
+          if (widgetParser.getSoundId(quiz.objects[index].node.type.content.options[j].option)) {
+            promises.push(widgetParser.getSoundSrc(widgetParser.getSoundId(quiz.objects[index].node.type.content.options[j].option), index, quiz).then(
+              function(index, j) {
+                return function(result) {
+                  quiz.objects[index].node.type.content.options[j].widgetSound = result;
+                }
+              }(index, j)
+
+            ))
           }
+
+        }
       }
       $q.all(promises).then(function() {
         d.resolve(quiz)
@@ -414,6 +427,7 @@
     }
 
     function updateLesson(lesson) {
+      $log.debug("Updating lesson", lesson)
       lessonDB.get(lesson.node.id).then(function(doc) {
         return lessonDB.put({
           _id: lesson.node.id,
@@ -431,17 +445,21 @@
           if (!mediaTypes || (mediaTypes.length > 0 && mediaTypes.indexOf(file.url.split('.').pop()) >= 0)) {
             try {
               promises.push(
-                mediaManager.download(CONSTANT.RESOURCE_SERVER + file.url).then(function() {
-                  file.downloaded = true;
-                })
+                mediaManager.download(CONSTANT.RESOURCE_SERVER + file.url).then(function() {})
 
               );
             } catch (e) {}
           }
         })
         $q.all(promises).then(function(success) {
+            angular.forEach(response.media, function(file) {
+              file.downloaded = true;
+            })
+            $log.debug("Downloaded", response)
+
             return data.updateLesson(response);
           }).then(function(data) {
+            $log.debug("Updated", data)
             d.resolve(data);
           })
           .catch(function(err) {});
@@ -453,11 +471,15 @@
 
     function isLessonDownloaded(id, mediaTypes) {
 
+
       var d = $q.defer();
       lessonDB.get(id).then(function(data) {
+
           var downloaded = true;
           for (var i = 0; i < data.lesson.media.length; i++) {
+
             if ((!mediaTypes || mediaTypes.length > 0 || mediaTypes.indexOf(file.url.split('.').pop()) >= 0) && data.lesson.media[i].downloaded === false) {
+
               downloaded = false;
               break;
             }

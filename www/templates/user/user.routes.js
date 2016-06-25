@@ -8,70 +8,59 @@
   function mainRoute($stateProvider, $urlRouterProvider, CONSTANT) {
 
     $stateProvider
-      // parent state after authentication
-      .state('user',{
-        url :'/user',
-        abstract : true,
+    // parent state after authentication
+      .state('user', {
+        url: '/user',
+        abstract: true,
         template: '<ion-nav-view name="state-user"></ion-nav-view>',
       })
-      // personalisation for all
-      .state('user.personalise',{
-        url : '/personalise',
-        abstract : true,
-        views : {
-          'state-user':{
-            template : '<ion-nav-view name="state-personalise"></ion-nav-view>',
+      .state('user.personalise', {
+        url: '/personalise',
+        views: {
+          'state-user': {
+            templateUrl: CONSTANT.PATH.USER + '/user.personalise' + CONSTANT.VIEW,
+            controller: 'userController as userCtrl'
           }
-        }
-      })
-      .state('user.personalise.social',{
-        url : '/social',
-        views : {
-          'state-personalise':{
-            templateUrl : CONSTANT.PATH.PROFILE+'/personalise.social'+CONSTANT.VIEW,
-            controller : 'profileController as profileCtrl'
+      },
+      data : {
+          personaliseFormValidations: {
+            'gender': ['required'],
+            'firstName': ['required'],
+            'grade': ['required'],
+            'motherTongue': ['required']
           }
-        }
+      }
       })
-      .state('user.main',{
-        url : '/main',
-        abstract : true,
-        views : {
-          'state-user':{
-            templateUrl : CONSTANT.PATH.USER+'/main'+CONSTANT.VIEW,
+      .state('user.profile', {
+        url: '/profile',
+        views: {
+          'state-user': {
+            templateUrl: CONSTANT.PATH.USER + '/user.profile' + CONSTANT.VIEW,
+            controller: 'userController as userCtrl'
           }
-        }
-      })
-      .state('user.main.profile',{
-        url : '/profile',
-        nativeTransitions: {
-          "type": "slide",
-          "direction" : "right",
-          // "duration" :  200
         },
-        views : {
-          'profile-tab' : {
-            templateUrl : CONSTANT.PATH.PROFILE+'/profile'+CONSTANT.VIEW,
-            controller : 'profileController as profileCtrl'
-          }
-        }
-      })
-      .state('user.main.settings',{
-        url : '/settings',
-        views : {
-          'profile-tab' : {
-            templateUrl : CONSTANT.PATH.PROFILE+'/profile.settings'+CONSTANT.VIEW,
-            controller : 'profileController as profileCtrl'
-          }
-        }
-      })
-      .state('user.main.result',{
-        url : '/result',
-        nativeTransitions : null,
-        views : {
-          'result-tab':{
-            templateUrl : CONSTANT.PATH.RESULT+'/result'+CONSTANT.VIEW
-          }
+        data: {
+          skills: [{
+            "id": "6ef60d7e-64a2-4779-8aba-eae1d2de9246",
+            "title": "Vocabulary",
+            "lesson_scores": 220,
+            "question_scores": 0
+          }, {
+            "id": "d711986f-0451-46d3-b68b-2d2500a1bb1e",
+            "title": "Reading",
+            "lesson_scores": 180,
+            "question_scores": 0
+          }, {
+            "id": "152df66c-0f88-4932-86f2-592fa9d58b0e",
+            "title": "Grammar",
+            "lesson_scores": 200,
+            "question_scores": 0
+          }, {
+            "id": "a28050a4-adb8-4b0c-8505-3b79d0db8128",
+            "title": "Listening",
+            "lesson_scores": 100,
+            "question_scores": 0
+          }]
         }
       })
   }
