@@ -36,7 +36,7 @@
         });
       $timeout(function() {
         $state.go('map.navigate');
-      }, 1000)
+      })
     }
 
     function currentState(resource) {
