@@ -134,19 +134,22 @@
 
       } else if (utils.resourceType(resource) == 'video') {
         data.downloadVideo(resource).then(function() {
-          $timeout(function() {
-            !$state.is('content.video') &&
-              $state.go('content.video', {
-                video: {
-                  src: utils.getSrc(resource.node.type.path),
-                  type: 'video/mp4'
-                }
-              });
-            if ($state.is('content.video')) {
-              video.play();
-            }
-          });
-          utils.config.sources[0].src = utils.getSrc(resource.node.type.path);
+          mediaManager.getPath(resource.node.type.path).then(function(path){
+            $timeout(function() {
+              !$state.is('content.video') &&
+                $state.go('content.video', {
+                  video: {
+                    src: utils.getSrc(path),
+                    type: 'video/mp4'
+                  }
+                });
+              if ($state.is('content.video')) {
+                video.play();
+              }
+            });
+          })
+
+          // utils.config.sources[0].src = utils.getSrc(resource.node.type.path);
         })
 
       } else {}
@@ -155,7 +158,7 @@
 
 
     function getSrc(src) {
-      return $sce.trustAsResourceUrl(CONSTANT.BACKEND_SERVICE_DOMAIN + src);
+      return $sce.trustAsResourceUrl(src);
     }
   }
 })();

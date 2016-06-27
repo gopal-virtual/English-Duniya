@@ -77,10 +77,9 @@
         })
         .catch(function(error) {
           userCtrl.showError('Could not make your profile', error || 'Please try again');
-        })
-        .finally(function() {
           $ionicLoading.hide();
         })
+      
 
     }
 

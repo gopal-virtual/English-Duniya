@@ -469,7 +469,7 @@
 
 
 
-    
+
 
     function startReportSyncing(data) {
       return appDB.get(data.userId).then(function(response) {
