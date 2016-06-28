@@ -12,7 +12,7 @@
 
     //bind quiz resolved to controller
     quizCtrl.quiz = quiz;
-
+    $log.debug("QUiz",quiz)
     //report
     quizCtrl.report = {};
     quizCtrl.submitReport = submitReport;

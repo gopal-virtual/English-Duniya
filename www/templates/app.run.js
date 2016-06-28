@@ -100,7 +100,11 @@
     });
     $ionicPlatform.ready(function() {
       data.createIfNotExistsLessonDB()
-
+      $rootScope.$on('$cordovaNetwork:online', function(event, networkState){
+        if (Auth.isAuthorised() && Auth.isVerified() && Auth.hasProfile()) {
+          data.startReportSyncing({'userId':Auth.getProfileId()})
+        }
+  })
 
       if (window.Connection) {
         if (navigator.connection.type == Connection.NONE) {
@@ -115,9 +119,12 @@
             });
         } else {
           $log.debug('App ready : online;');
+
         }
       }
-
+      if (Auth.isAuthorised() && Auth.isVerified() && Auth.hasProfile()) {
+        data.startReportSyncing({'userId':Auth.getProfileId()})
+      }
       //   if (window.StatusBar) {
       //     StatusBar.hide();
       //   }
