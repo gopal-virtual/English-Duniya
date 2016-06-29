@@ -5,9 +5,9 @@
     .module('zaya-user')
     .controller('userController', userController);
 
-  userController.$inject = ['CONSTANT','$scope', '$state', 'Auth', 'Rest', '$log', '$ionicPopup', '$ionicLoading','$ionicModal', 'formHelper','network','data'];
+  userController.$inject = ['CONSTANT','$scope', '$state', 'Auth', 'Rest', '$log', '$ionicPopup','$ionicPlatform', '$ionicLoading','$ionicModal', 'formHelper','network','data'];
 
-  function userController(CONSTANT,$scope, $state, Auth, Rest, $log, $ionicPopup, $ionicLoading, $ionicModal, formHelper, network, dataService) {
+  function userController(CONSTANT,$scope, $state, Auth, Rest, $log, $ionicPopup,$ionicPlatform, $ionicLoading, $ionicModal, formHelper, network, dataService) {
     var userCtrl = this;
     userCtrl.createProfile = createProfile;
     userCtrl.updateProfile = updateProfile;
@@ -27,6 +27,18 @@
     userCtrl.skills = $state.current.data.skills;
     userCtrl.splitName = splitName;
     userCtrl.network = network;
+    userCtrl.goToMap = goToMap;
+
+    function goToMap(){
+        $ionicLoading.show({
+            hideOnStateChange: true
+        })
+        $state.go('map.navigate',{})
+    }
+
+    $ionicPlatform.registerBackButtonAction(function(event) {
+        userCtrl.goToMap();
+    }, 101);
 
     function calcAge(dateString) {
       var birthday = +new Date(dateString);
@@ -79,7 +91,7 @@
           userCtrl.showError('Could not make your profile', error || 'Please try again');
           $ionicLoading.hide();
         })
-      
+
 
     }
 
@@ -161,7 +173,7 @@
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.settings' + CONSTANT.VIEW, {
       scope: $scope,
       animation: 'slide-in-up',
-      //   hardwareBackButtonClose: false
+        hardwareBackButtonClose: true
     }).then(function(settings) {
       $scope.settings = settings;
     });
@@ -172,7 +184,9 @@
     }
 
     function updateProfile(userid, params) {
+        $ionicLoading.show()
       Rest.one('users', userid).patch(params).then(function(response) {
+          $ionicLoading.hide();
       }).catch();
     }
 

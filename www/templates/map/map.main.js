@@ -392,6 +392,10 @@ window.createGame = function(scope, lessons, audio, injector, log) {
         }
       }
 
+      log.debug('node position ', node.x, node.y);
+      localStorage.setItem('demo_node', JSON.stringify({x : node.x, y : node.y}));
+
+
       this.init();
       this.game.kineticScrolling.start();
     },

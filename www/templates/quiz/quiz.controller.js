@@ -4,9 +4,9 @@
     .module('zaya-quiz')
     .controller('QuizController', QuizController)
 
-  QuizController.$inject = ['quiz', 'widgetParser', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Auth', '$ionicLoading', '$ionicPopup', 'lessonutils', 'orientation', '$location', '$anchorScroll', '$document', '$ionicScrollDelegate', '$ionicPosition', '$timeout', '$window', 'mediaManager', '$cordovaFileTransfer', '$cordovaFile', '$interval', '$q', '$ImageCacheFactory', 'ml', 'data', 'lessonutils'];
+  QuizController.$inject = ['quiz', 'widgetParser', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Auth', '$ionicLoading', '$ionicPopup', 'lessonutils', 'orientation', '$location', '$anchorScroll', '$document', '$ionicScrollDelegate', '$ionicPosition', '$timeout', '$window', 'mediaManager', '$cordovaFileTransfer', '$cordovaFile', '$interval', '$q', '$ImageCacheFactory', 'ml', 'data', 'lessonutils','$ionicPlatform'];
 
-  function QuizController(quiz, widgetParser, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition, $timeout, $window, mediaManager, $cordovaFileTransfer, $cordovaFile, $interval, $q, $ImageCacheFactory, ml, data, lessonutils) {
+  function QuizController(quiz, widgetParser, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition, $timeout, $window, mediaManager, $cordovaFileTransfer, $cordovaFile, $interval, $q, $ImageCacheFactory, ml, data, lessonutils,$ionicPlatform) {
 
     var quizCtrl = this;
 
@@ -58,6 +58,7 @@
     quizCtrl.playStarSound = playStarSound;
     quizCtrl.disableSwipe = disableSwipe;
     quizCtrl.canRemoveFeedback = true;
+    quizCtrl.next = next;
 
 
     // quizCtrl.pauseQuiz = pauseQuiz;
@@ -572,7 +573,7 @@ $log.debug("Please",quiz)
 
     function submitQuiz(quizType) {
       if (quizType === 'practice') {
-        $scope.modal.remove().then(function() {
+        $scope.modal.hide().then(function() {
           $log.debug("submit qi")
           $state.go('quiz.summary', {
             report: angular.copy(quizCtrl.report),
@@ -622,10 +623,30 @@ $log.debug("Please",quiz)
 
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal-rope' + CONSTANT.VIEW, {
       scope: $scope,
-      animation: 'slide-in-down'
+      animation: 'slide-in-down',
+      hardwareBackButtonClose: false
     }).then(function(modal) {
       quizCtrl.pauseModal = modal;
     });
+
+    $ionicPlatform.onHardwareBackButton(function(event) {
+        if($state.is('quiz.questions')){
+            try {
+                $scope.showNodeMenu();
+            } catch (error) {
+                $log.debug(error);
+            }
+        }
+    })
+    // $ionicPlatform.registerBackButtonAction(function(event) {
+    //     if($state.is('quiz.questions')){
+    //         try {
+    //             $scope.showNodeMenu();
+    //         } catch (error) {
+    //             $log.debug(error);
+    //         }
+    //     }
+    // }, 101);
 
     $scope.showNodeMenu = function() {
       quizCtrl.pauseModal.show();
@@ -662,6 +683,18 @@ $log.debug("Please",quiz)
           quizCtrl.quiz.objects[questionIndex].node.widgetHtml = quizCtrl.quiz.objects[questionIndex].node.widgetHtml.replace(CONSTANT.WIDGETS.SPEAKER_IMAGE_SELECTED, CONSTANT.WIDGETS.SPEAKER_IMAGE)
         }
       }, 100)
+    }
+
+    function next(){
+        if(quizCtrl.summary.stars >= 1){
+            $ionicLoading.show({
+                hideOnStateChange: true
+            })
+            $state.go('map.navigate',{});
+        }
+        else{
+            $scope.showNodeMenu();
+        }
     }
   }
 })();
