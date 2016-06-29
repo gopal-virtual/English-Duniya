@@ -22,7 +22,7 @@
     var lessonDB = pouchDB('lessonDB');
     var appDB = pouchDB('appDB');
     var resourceDB = pouchDB('resourceDB');
-
+    var reportsDB = pouchDB('reportsDB');
     var data = {
       // createDiagnosisQuestionDB: createDiagnosisQuestionDB(),
       // createKmapsDB: createKmapsDB(),
@@ -398,17 +398,25 @@
             'score': report.score,
             'attempts': report.attempts
           });
-
-          return appDB.put({
-            '_id': report.userId,
-            '_rev': response._rev,
-            'data': doc
+          return reportsDB.post({
+            // '_id': report.userId,
+            // '_rev': response._rev,
+            'data': {
+              'user': report.userId,
+              'node': report.node,
+              'score': report.score,
+              'attempts': report.attempts
+            }
           })
         })
         .then(function() {
-          if(network.isOnline())
-          {
-            data.startReportSyncing({'userId':report.userId})
+          var flag = JSON.parse(localStorage.getItem('reportSync'));
+          if (flag.progress === true) {
+            flag.updated = true;
+          } else if (network.isOnline()) {
+            data.startReportSyncing({
+              'userId': report.userId
+            })
           }
         })
     }
@@ -470,12 +478,12 @@
 
 
 
-    function syncReport(report,user){
+    function syncReport(report, user) {
       return Rest.all('reports').post({
         'score': report.score,
         'person': user.userId,
         'node': report.node
-      }).then(function(success){
+      }).then(function(success) {
         var attempts = [];
         angular.forEach(report.attempts, function(attempt) {
           attempts.push({
@@ -494,38 +502,53 @@
     function startReportSyncing(user) {
       $log.debug("Report syncing", user)
       var appData;
-      return appDB.get(user.userId).then(function(response) {
-        appData = response;
-          $log.debug("Here", response)
-          if (response.data.reports.length) {
-              syncReport(response.data.reports[0],user)
-          }else{
-            return $q.reject("No data to sync")
-          }
+
+      return reportsDB.allDocs({
+        include_docs: true
+      }).then(function(response) {
+        var promise;
+        // angular.forEach(response.rows, function(row) {
+          // var report = row.doc.data.reports[0];
+          $log.debug("report", response.rows[0].doc.data);
+          // promise = syncReport(report, user);
+        // })
+      })
+
+      .catch(function(e) {
+          $log.debug("Response error", e)
         })
-        .then(function(success) {
-          $log.debug("OO",appData)
-          appData.data.reports = appData.data.reports.splice(0,0);
-          $log.debug(appData)
-          return appDB.put({
-            '_id':appData._id,
-            '_rev': appData._rev,
-            'data': appData.data
-          })
-        })
-        .then(function() {
-          if(appData.data.reports.length){
-            return startReportSyncing({'userId':Auth.getProfileId()});
-          }else{
-            $log.debug("sync complete")
-            return true
-          }
-        })
-        .catch(function(e) {
-          if(e === 'No data to sync'){
-            $log.debug(e)
-          }
-        })
+        // return appDB.get(user.userId).then(function(response) {
+        //   appData = response;
+        //     $log.debug("Here", response)
+        //     if (response.data.reports.length) {
+        //         syncReport(response.data.reports[0],user)
+        //     }else{
+        //       return $q.reject("No data to sync")
+        //     }
+        //   })
+        //   .then(function(success) {
+        //     $log.debug("OO",appData)
+        //     appData.data.reports = appData.data.reports.splice(0,0);
+        //     $log.debug(appData)
+        //     return appDB.put({
+        //       '_id':appData._id,
+        //       '_rev': appData._rev,
+        //       'data': appData.data
+        //     })
+        //   })
+        //   .then(function() {
+        //     if(appData.data.reports.length){
+        //       return startReportSyncing({'userId':Auth.getProfileId()});
+        //     }else{
+        //       $log.debug("sync complete")
+        //       return true
+        //     }
+        //   })
+        //   .catch(function(e) {
+        //     if(e === 'No data to sync'){
+        //       $log.debug(e)
+        //     }
+        //   })
     }
   }
 })();

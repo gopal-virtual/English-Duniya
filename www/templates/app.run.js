@@ -11,8 +11,8 @@
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
 
       $log.debug('state changed ', toState.name);
-      $log.debug(Auth.isAuthorised(),Auth.isVerified(),Auth.hasProfile())
-      //if not authenticated, redirect to login page
+      $log.debug(Auth.isAuthorised(), Auth.isVerified(), Auth.hasProfile())
+        //if not authenticated, redirect to login page
       if (!Auth.isAuthorised() && toState.name != 'auth.signin' && toState.name != 'auth.signup' && toState.name != 'auth.forgot') {
         $log.debug("You are not authorized");
         event.preventDefault();
@@ -100,12 +100,14 @@
     });
     $ionicPlatform.ready(function() {
       data.createIfNotExistsLessonDB()
-      $rootScope.$on('$cordovaNetwork:online', function(event, networkState){
+      $rootScope.$on('$cordovaNetwork:online', function(event, networkState) {
         if (Auth.isAuthorised() && Auth.isVerified() && Auth.hasProfile()) {
-          data.startReportSyncing({'userId':Auth.getProfileId()})
+          data.startReportSyncing({
+            'userId': Auth.getProfileId()
+          })
         }
-  })
-
+      })
+      localStorage.setItem('reportSync',JSON.stringify({'progress':false,'updated':false}))
       if (window.Connection) {
         if (navigator.connection.type == Connection.NONE) {
           $ionicPopup.confirm({
@@ -123,7 +125,9 @@
         }
       }
       if (Auth.isAuthorised() && Auth.isVerified() && Auth.hasProfile()) {
-        data.startReportSyncing({'userId':Auth.getProfileId()})
+        data.startReportSyncing({
+          'userId': Auth.getProfileId()
+        })
       }
       //   if (window.StatusBar) {
       //     StatusBar.hide();
