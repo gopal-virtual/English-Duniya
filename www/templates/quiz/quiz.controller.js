@@ -696,5 +696,64 @@ $log.debug("Please",quiz)
             $scope.showNodeMenu();
         }
     }
+
+    // intro
+
+    $scope.CompletedEvent = function () {
+        console.log("Completed Event called");
+    };
+
+    $scope.ExitEvent = function () {
+        console.log("Exit Event called");
+    };
+
+    $scope.ChangeEvent = function (targetElement) {
+        console.log("Change Event called");
+        console.log(targetElement);
+    };
+
+    $scope.BeforeChangeEvent = function (targetElement) {
+        console.log("Before Change Event called");
+        console.log(targetElement);
+    };
+
+    $scope.AfterChangeEvent = function (targetElement) {
+        console.log("After Change Event called");
+        console.log(targetElement);
+    };
+
+    $scope.IntroOptions = {
+        steps:[
+        {
+            element: '#step1',
+            intro: "This is question",
+            position : 'bottom'
+        },
+        {
+            element: '#step2',
+            intro: "This is option",
+            position: 'top'
+        },
+        {
+            element: '#step3',
+            intro: 'This is submit',
+            position: 'top'
+        },
+        {
+            element: '#step4',
+            intro: "Thank you",
+            position: 'top'
+        }
+        ],
+        showStepNumbers: false,
+        showBullets: false,
+        exitOnOverlayClick: false,
+        exitOnEsc:false,
+        nextLabel: '<strong>NEXT!</strong>',
+        prevLabel: '<span style="color:green">Previous</span>',
+        skipLabel: 'Exit',
+        doneLabel: 'Thanks'
+    };
+
   }
 })();

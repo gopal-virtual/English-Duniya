@@ -25,6 +25,22 @@
     mapCtrl.animationExpand['expand'] = expand;
     mapCtrl.animationExpand['shrink'] = shrink;
     mapCtrl.showResult = true;
+    mapCtrl.getNodeProperty = getNodeProperty;
+
+    function getNodeProperty(prop){
+      if(prop == 'x')
+        return JSON.parse(localStorage.demo_node).x;
+      if(prop == 'y')
+        return JSON.parse(localStorage.demo_node).y;
+      if(prop == 'width')
+        return JSON.parse(localStorage.demo_node).width;
+      if(prop == 'height')
+        return JSON.parse(localStorage.demo_node).height;
+      if(prop == 'node')
+        return JSON.parse(localStorage.demo_node).node;
+      if(prop == 'type')
+        return JSON.parse(localStorage.demo_node).type;
+    }
     // mapCtrl.animationShrink.shrink = animationShrink;
 
 
@@ -54,8 +70,8 @@
 
 
     $scope.$on('openNode', function(event, node, currentPos) {
-      currentPos.lessonType = node.tag;
-      $log.debug("GAME: ", currentPos);
+      if(currentPos)
+        currentPos.lessonType = node.tag;
 
       if (node.content_type_name == 'litmus') {
         $state.go('quiz.questions', {
@@ -65,6 +81,7 @@
       } else {
         $scope.lessonutils.getLesson(node.id, $scope, function(response) {
           $scope.openNodeMenu();
+          // if(currentPos)
         //   mapCtrl.animationExpand.expand(currentPos);
           $scope.selectedNode = response;
           // $log.debug("NODENODE ",$scope.selectedNode.node.tag);
@@ -78,15 +95,16 @@
     }
     $scope.closeNodeMenu = function() {
       $scope.nodeMenu.hide().then(function() {
-        // mapCtrl.animationExpand.shrink();
+        mapCtrl.closeDemo();
       });
       return true;
     }
-    $scope.openDemo = function() {
+    mapCtrl.openDemo = function() {
       $scope.demo.show();
       return true;
     }
-    $scope.closeDemo = function() {
+    mapCtrl.closeDemo = function() {
+      $log.debug('close the demo');
       $scope.demo.hide();
       return true;
     }
@@ -99,16 +117,17 @@
       $scope.nodeMenu = nodeMenu;
     });
 
-    // $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.demo' + CONSTANT.VIEW, {
-    //   scope: $scope,
-    //     hardwareBackButtonClose: false
-    // }).then(function(demo) {
-    //   $scope.demo = demo;
-    // });
-    //
-    // $timeout(function(){
-    //     $scope.openDemo();
-    // })
+    $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.demo' + CONSTANT.VIEW, {
+      scope: $scope,
+      animation: 'slide-in-up',
+        hardwareBackButtonClose: false
+    }).then(function(demo) {
+      $scope.demo = demo;
+    });
+    
+    $timeout(function(){
+        mapCtrl.openDemo();
+    },2000)
 
 
     function resetNode() {

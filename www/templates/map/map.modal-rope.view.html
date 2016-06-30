@@ -34,7 +34,7 @@
               />
               <button
               ng-show="lessonutils.currentState(resource)"
-              ng-click="audio.play('press');quizCtrl.interval && quizCtrl.startTimer();contentCtrl.API && contentCtrl.API.play();lessonutils.playResource(resource,contentCtrl.API);closeNodeMenu();"
+              ng-click="audio.play('press');quizCtrl.interval && quizCtrl.startTimer();contentCtrl.API && contentCtrl.API.play();lessonutils.playResource(resource,contentCtrl.API);closeNodeMenu()"
               class="button button-balanced button-round font-xl button-resume animation-zoom-in"
               style="line-height: 30px !important;-webkit-animation-delay : {{($index+3)*100}}ms;">resume</button>
             </li>
