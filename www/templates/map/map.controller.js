@@ -109,7 +109,7 @@
         $log.debug(mapCtrl.animationExpand.containerStyle);
         $timeout(function() {
           mapCtrl.animationExpand.iconTranslateOffset = {
-            "transform" : "translate("+((screen.width/2)-currentPos.x)+"px,"+(90-currentPos.y)+"px)",
+            "transform" : "translate("+((screen.width/2)-currentPos.x)+"px,"+(40-currentPos.y)+"px) scale3d(2,2,2)",
             "transition" : "transform 0.5s ease-in-out"
           }
         mapCtrl.animationExpand.expandContainer = 1;
@@ -124,7 +124,7 @@
       function shrink(){
         mapCtrl.showResult = true;
         mapCtrl.animationExpand.iconTranslateOffset = {
-          "transform" : "translate(0px,0px)",
+          "transform" : "translate(0px,0px) scale3d(1,1,1)",
           "transition" : "transform 0.4s ease-in-out"
         }
         mapCtrl.animationExpand.expandContainer = 0;

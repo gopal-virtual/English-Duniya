@@ -14,8 +14,9 @@
   left: 0;
   right: 0;
   margin: auto;
-  width: 70%;
-  height: 30%;
+  width: 40%;
+  height: 20%;
+  min-height: 20%;
 }
 .button[disabled] {
   background-color: $brand-grey;
