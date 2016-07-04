@@ -78,6 +78,7 @@
       })
 
       $q.all(promises).then(function(success) {
+        $log.debug("this works")
         d.resolve(success);
       });
       // include litmus test

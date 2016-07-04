@@ -63,6 +63,8 @@
 
     return data;
 
+
+
     function getTestParams(realTimeGrade) {
 
       function setPreviousAnswerCallback(tests, x) {
@@ -191,7 +193,21 @@
     }
 
     function createIfNotExistsLessonDB() {
-      return lessonDB.get('_local/preloaded').then(function(doc) {}).catch(function(err) {
+      $log.debug("createIfNotExistsLessonDB");
+      var ddoc = {
+        _id: '_design/index',
+        views: {
+          by_grade: {
+            map: function(doc) {
+              emit(doc.lesson.node.type.grade);
+            }.toString()
+          }
+        }
+      };
+      return lessonDB.get('_local/preloaded').then(function(doc) {
+        $log.debug("createIfNotExistsLessonDB Exists",ddoc,pouchDB);
+
+      }).catch(function(err) {
         if (err.name !== 'not_found') {
           throw err;
         }
@@ -199,7 +215,17 @@
           return lessonDB.put({
             _id: '_local/preloaded'
           });
-        });
+        }).then(function(){
+          return lessonDB.put(ddoc).then(function() {
+            $log.debug("createIfNotExistsLessonDB ddcon made");
+            // success!
+          }).catch(function(err) {
+            $log.debug("createIfNotExistsLessonDB ddoc error",err);
+
+            // some error (maybe a 409, because it already exists?)
+          });
+        })
+        ;
       })
 
 
@@ -304,19 +330,23 @@
       }, function(error) {})
     }
 
-    function getLessonsList(limit) {
+    function getLessonsList(grade) {
+      var start = new Date();
+      $log.debug("Starts", start)
       var d = $q.defer();
-      lessonDB.allDocs({
-          include_docs: true
+
+      lessonDB.query('index/by_grade',{
+          include_docs: true,
+          key : grade
         }).then(function(data) {
+          $log.debug("Starts 1", new Date() - start,data)
           var lessons = [];
           for (var i = 0; i < data.rows.length; i++) {
-            if (data.rows[i].doc.lesson.node.type.grade == Auth.getLocalProfile().grade) {
               data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key
               lessons.push(data.rows[i].doc.lesson.node);
-            }
           }
           lessons = _.sortBy(lessons, 'key');
+          $log.debug("Ends", new Date() - start,lessons)
           d.resolve(lessons)
         })
         .catch(function(error) {
@@ -508,9 +538,9 @@
       }).then(function(response) {
         var promise;
         // angular.forEach(response.rows, function(row) {
-          // var report = row.doc.data.reports[0]for ;
-          $log.debug("report", response.rows[0].doc.data);
-          // promise = syncReport(report, user);
+        // var report = row.doc.data.reports[0]for ;
+        $log.debug("report", response.rows[0].doc.data);
+        // promise = syncReport(report, user);
         // })
       })
 

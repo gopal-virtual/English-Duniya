@@ -99,6 +99,7 @@
       // }
     });
     $ionicPlatform.ready(function() {
+
       data.createIfNotExistsLessonDB()
 
 

@@ -1,4 +1,4 @@
-<ion-view class="bg-green">
+<ion-view class="bg-pale">
   <div class="bar bar-header bg-pale practice-header padding-0">
     <div class="col padding-0 vertical-center">
       <div ng-click="showNodeMenu()" class="header-icon icon-pause icon-fit-height padding-10"></div>
@@ -9,15 +9,15 @@
       <div
         class="col-5 mark-star icon-fit-height"
         style="left: calc({{quizCtrl.CONSTANT.STAR.ONE+'%'}} - 12px);"
-        ng-class="{'icon-greenstar':quizCtrl.summary.score.percent >= quizCtrl.CONSTANT.STAR.ONE,'icon-nostar':quizCtrl.summary.score.percent < quizCtrl.CONSTANT.STAR.ONE}"></div>
+        ng-class="{'icon-star-2 animation-once-bounce':quizCtrl.summary.score.percent >= quizCtrl.CONSTANT.STAR.ONE,'icon-nostar-2':quizCtrl.summary.score.percent < quizCtrl.CONSTANT.STAR.ONE}"></div>
       <div
         class="col-5 mark-star icon-fit-height"
         style="left: calc({{quizCtrl.CONSTANT.STAR.TWO+'%'}} - 12px);"
-        ng-class="{'icon-greenstar':quizCtrl.summary.score.percent >= quizCtrl.CONSTANT.STAR.TWO,'icon-nostar':quizCtrl.summary.score.percent < quizCtrl.CONSTANT.STAR.TWO}"></div>
+        ng-class="{'icon-star-2 animation-once-bounce':quizCtrl.summary.score.percent >= quizCtrl.CONSTANT.STAR.TWO,'icon-nostar-2':quizCtrl.summary.score.percent < quizCtrl.CONSTANT.STAR.TWO}"></div>
       <div
         class="col-5 mark-star icon-fit-height"
         style="left: calc({{quizCtrl.CONSTANT.STAR.THREE+'%'}} - 12px);"
-        ng-class="{'icon-greenstar':quizCtrl.summary.score.percent >= quizCtrl.CONSTANT.STAR.THREE,'icon-nostar':quizCtrl.summary.score.percent < quizCtrl.CONSTANT.STAR.THREE}"></div>
+        ng-class="{'icon-star-2 animation-once-bounce':quizCtrl.summary.score.percent >= quizCtrl.CONSTANT.STAR.THREE,'icon-nostar-2':quizCtrl.summary.score.percent < quizCtrl.CONSTANT.STAR.THREE}"></div>
 
       <!-- <div class="col" style="z-index:1"> -->
       <progress max="100" class="progress-bar-practice" value="{{quizCtrl.summary.score.percent}}"></progress>
