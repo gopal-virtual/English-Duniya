@@ -15,7 +15,7 @@
     var lessonList = CONSTANT.LOCK ? lessonLocked : lessons;
     // $state.current.data && lessonList.unshift($state.current.data.litmus);
     mapCtrl.lessons = lessonList;
-    mapCtrl.resetNode = resetNode;
+    // mapCtrl.resetNode = resetNode;
     $scope.lessonutils = lessonutils;
     mapCtrl.backdrop = false;
     mapCtrl.showScore = -1;
@@ -81,8 +81,8 @@
       } else {
         $scope.lessonutils.getLesson(node.id, $scope, function(response) {
           $scope.openNodeMenu();
-          // if(currentPos)
-        //   mapCtrl.animationExpand.expand(currentPos);
+          if(currentPos)
+          mapCtrl.animationExpand.expand(currentPos);
           $scope.selectedNode = response;
           // $log.debug("NODENODE ",$scope.selectedNode.node.tag);
         });
@@ -119,22 +119,22 @@
 
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.demo' + CONSTANT.VIEW, {
       scope: $scope,
-      animation: 'slide-in-up',
+      animation: 'slide-in-down',
         hardwareBackButtonClose: false
     }).then(function(demo) {
       $scope.demo = demo;
     });
     
-    $timeout(function(){
-        mapCtrl.openDemo();
-    },2000)
+    // $timeout(function(){
+    //     mapCtrl.openDemo();
+    // },2000)
 
 
-    function resetNode() {
-      $timeout(function() {
-        $scope.selectedNode = {};
-      }, 500)
-    }
+    // function resetNode() {
+    //   $timeout(function() {
+    //     $scope.selectedNode = {};
+    //   }, 500)
+    // }
 
     // $timeout(function functionName() {
     //   if (mapCtrl.lessons && localStorage.lesson) {
