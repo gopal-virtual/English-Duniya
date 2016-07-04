@@ -1,0 +1,16 @@
+<ion-modal-view class="modal-dark">
+  <ion-content overflow-scroll="true">
+      <div class="row height-10">
+          <div class="col"></div>
+      </div>
+      <div class="row height-30">
+          <div class="col animation-delay-more animation-fade-in-from-top" style="background:url('img/assets/cloud.png') no-repeat right center; background-size : auto 100%">
+          </div>
+      </div>
+    <div class="row height-60">
+        <div class="col animation-delay-more animation-fade-in-from-left" style="background:url('img/assets/avatar-{{lessonutils.getGender()=='M'? 'boy' : 'girl'}}.png') no-repeat left center; background-size : auto 100%"></div>
+    </div>
+    <div ng-click="$emit('openNode', mapCtrl.getNodeProperty('node'))" style="width:{{mapCtrl.getNodeProperty('width')}}px;height:{{mapCtrl.getNodeProperty('height')}}px;position:absolute;left:{{mapCtrl.getNodeProperty('x')}}px;top:{{mapCtrl.getNodeProperty('y')}}px;border-radius:50%;border:3px solid #39B89A;background : url('img/icons/icon-{{mapCtrl.getNodeProperty('type')}}.png') #FCF3D8 no-repeat center center; background-size : auto 50%">
+    </div>
+  </ion-content>
+</ion-modal-view>

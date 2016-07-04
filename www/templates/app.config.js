@@ -52,7 +52,7 @@
     })
     $ionicConfigProvider.views.maxCache(0);
     $ionicConfigProvider.tabs.position('bottom');
-    $ionicNativeTransitionsProvider.enable(true, false);
+    $ionicNativeTransitionsProvider.enable(false, false);
     // Example for nolanlawson/pouchdb-authentication
     var loadMethods = {
       load: 'qify',

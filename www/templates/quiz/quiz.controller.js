@@ -4,9 +4,9 @@
     .module('zaya-quiz')
     .controller('QuizController', QuizController)
 
-  QuizController.$inject = ['quiz', 'widgetParser', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Auth', '$ionicLoading', '$ionicPopup', 'lessonutils', 'orientation', '$location', '$anchorScroll', '$document', '$ionicScrollDelegate', '$ionicPosition', '$timeout', '$window', 'mediaManager', '$cordovaFileTransfer', '$cordovaFile', '$interval', '$q', '$ImageCacheFactory', 'ml', 'data', 'lessonutils'];
+  QuizController.$inject = ['quiz', 'widgetParser', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Auth', '$ionicLoading', '$ionicPopup', 'lessonutils', 'orientation', '$location', '$anchorScroll', '$document', '$ionicScrollDelegate', '$ionicPosition', '$timeout', '$window', 'mediaManager', '$cordovaFileTransfer', '$cordovaFile', '$interval', '$q', '$ImageCacheFactory', 'ml', 'data', 'lessonutils','$ionicPlatform'];
 
-  function QuizController(quiz, widgetParser, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition, $timeout, $window, mediaManager, $cordovaFileTransfer, $cordovaFile, $interval, $q, $ImageCacheFactory, ml, data, lessonutils) {
+  function QuizController(quiz, widgetParser, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition, $timeout, $window, mediaManager, $cordovaFileTransfer, $cordovaFile, $interval, $q, $ImageCacheFactory, ml, data, lessonutils,$ionicPlatform) {
 
     var quizCtrl = this;
 
@@ -58,6 +58,7 @@
     quizCtrl.playStarSound = playStarSound;
     quizCtrl.disableSwipe = disableSwipe;
     quizCtrl.canRemoveFeedback = true;
+    quizCtrl.next = next;
 
 
     // quizCtrl.pauseQuiz = pauseQuiz;
@@ -572,7 +573,7 @@ $log.debug("Please",quiz)
 
     function submitQuiz(quizType) {
       if (quizType === 'practice') {
-        $scope.modal.remove().then(function() {
+        $scope.modal.hide().then(function() {
           $log.debug("submit qi")
           $state.go('quiz.summary', {
             report: angular.copy(quizCtrl.report),
@@ -622,10 +623,30 @@ $log.debug("Please",quiz)
 
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal-rope' + CONSTANT.VIEW, {
       scope: $scope,
-      animation: 'slide-in-down'
+      animation: 'slide-in-down',
+      hardwareBackButtonClose: false
     }).then(function(modal) {
       quizCtrl.pauseModal = modal;
     });
+
+    $ionicPlatform.onHardwareBackButton(function(event) {
+        if($state.is('quiz.questions')){
+            try {
+                $scope.showNodeMenu();
+            } catch (error) {
+                $log.debug(error);
+            }
+        }
+    })
+    // $ionicPlatform.registerBackButtonAction(function(event) {
+    //     if($state.is('quiz.questions')){
+    //         try {
+    //             $scope.showNodeMenu();
+    //         } catch (error) {
+    //             $log.debug(error);
+    //         }
+    //     }
+    // }, 101);
 
     $scope.showNodeMenu = function() {
       quizCtrl.pauseModal.show();
@@ -663,5 +684,76 @@ $log.debug("Please",quiz)
         }
       }, 100)
     }
+
+    function next(){
+        if(quizCtrl.summary.stars >= 1){
+            $ionicLoading.show({
+                hideOnStateChange: true
+            })
+            $state.go('map.navigate',{});
+        }
+        else{
+            $scope.showNodeMenu();
+        }
+    }
+
+    // intro
+
+    $scope.CompletedEvent = function () {
+        console.log("Completed Event called");
+    };
+
+    $scope.ExitEvent = function () {
+        console.log("Exit Event called");
+    };
+
+    $scope.ChangeEvent = function (targetElement) {
+        console.log("Change Event called");
+        console.log(targetElement);
+    };
+
+    $scope.BeforeChangeEvent = function (targetElement) {
+        console.log("Before Change Event called");
+        console.log(targetElement);
+    };
+
+    $scope.AfterChangeEvent = function (targetElement) {
+        console.log("After Change Event called");
+        console.log(targetElement);
+    };
+
+    $scope.IntroOptions = {
+        steps:[
+        {
+            element: '#step1',
+            intro: "This is question",
+            position : 'bottom'
+        },
+        {
+            element: '#step2',
+            intro: "This is option",
+            position: 'top'
+        },
+        {
+            element: '#step3',
+            intro: 'This is submit',
+            position: 'top'
+        },
+        {
+            element: '#step4',
+            intro: "Thank you",
+            position: 'top'
+        }
+        ],
+        showStepNumbers: false,
+        showBullets: false,
+        exitOnOverlayClick: false,
+        exitOnEsc:false,
+        nextLabel: '<strong>NEXT!</strong>',
+        prevLabel: '<span style="color:green">Previous</span>',
+        skipLabel: 'Exit',
+        doneLabel: 'Thanks'
+    };
+
   }
 })();
