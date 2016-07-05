@@ -117,14 +117,14 @@
       $scope.nodeMenu = nodeMenu;
     });
 
-    $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.demo' + CONSTANT.VIEW, {
-      scope: $scope,
-      animation: 'slide-in-down',
-        hardwareBackButtonClose: false
-    }).then(function(demo) {
-      $scope.demo = demo;
-    });
-    
+    // $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.demo' + CONSTANT.VIEW, {
+    //   scope: $scope,
+    //   animation: 'slide-in-down',
+    //     hardwareBackButtonClose: false
+    // }).then(function(demo) {
+    //   $scope.demo = demo;
+    // });
+
     // $timeout(function(){
     //     mapCtrl.openDemo();
     // },2000)

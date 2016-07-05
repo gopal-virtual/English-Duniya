@@ -115,7 +115,7 @@
   background-color: lighten($balanced, 20%);
 }
 .card.selected {
-  background-color: $brand-yellow;
+  background-color: $brand-yellow !important;
 }
 .card.practice-feedback {
   box-shadow: none;

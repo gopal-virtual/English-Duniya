@@ -118,6 +118,9 @@
             $stateParams.type == 'assessment' && $ionicLoading.hide();
           });
         })
+        .catch(function(e){
+          $log.debug("Error playing resource",e)
+        })
 
       } else if (utils.resourceType(resource) == 'practice') {
       data.downloadAssessment(resource).then(function() {
