@@ -112,7 +112,7 @@
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal-rope' + CONSTANT.VIEW, {
       scope: $scope,
       animation: 'slide-in-down',
-      hardwareBackButtonClose: true
+      hardwareBackButtonClose: false
   }).then(function(nodeMenu) {
       $scope.nodeMenu = nodeMenu;
     });
