@@ -1,4 +1,4 @@
-<ion-modal-view class="modal-transparent">
+<ion-modal-view ng-class="{'modal-transparent': mapCtrl, 'modal-dark': !mapCtrl}">
     <ion-content ng-init="mapCtrl.selected=false" scroll="false">
         <div class="padding-x-20">
             <div class="rope-modal-title">
