@@ -145,14 +145,16 @@
                 });
               if ($state.is('content.video')) {
                 video.play();
+                $ionicLoading.hide();
               }
             });
           })
-
           // utils.config.sources[0].src = utils.getSrc(resource.node.type.path);
         })
 
-      } else {}
+      } else {
+          $ionicLoading.hide();
+      }
     }
 
 

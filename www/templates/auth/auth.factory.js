@@ -46,13 +46,13 @@
         d.resolve(response);
       }, function(response) {
         $log.debug(response.data);
-        if (response.data.email) {
+        if (response.data && response.data.email) {
           d.reject(response.data.email[0]);
-        } else if (response.data.phone_number) {
+      } else if (response.data && response.data.phone_number) {
           d.reject(response.data.phone_number[0]);
-        } else if (response.data.non_field_errors) {
+      } else if (response.data && response.data.non_field_errors) {
           d.reject(response.data.non_field_errors[0]);
-        } {
+        } else {
           d.reject("Please try again.");
         }
       });
@@ -254,9 +254,9 @@
     }
 
     function hasProfile() {
-      if(localStorage.getItem('user_details')){
+      if (localStorage.getItem('user_details')) {
         return JSON.parse(localStorage.getItem('user_details')).profile === null ? false : true;
-      }else{
+      } else {
         return false;
       }
     }
@@ -264,6 +264,7 @@
     function getProfileId() {
       return JSON.parse(localStorage.getItem('user_details')).profile;
     }
+
     function getLocalProfile() {
       return JSON.parse(localStorage.getItem('profile'));
     }
