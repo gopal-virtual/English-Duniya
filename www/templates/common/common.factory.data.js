@@ -500,7 +500,9 @@
       $q.all(promises).then(function(success) {
           d.resolve(data);
         })
-        .catch(function(err) {});
+        .catch(function(err) {
+          d.reject(err);
+        });
       return d.promise;
 
 
