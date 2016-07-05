@@ -20,12 +20,17 @@
       getSrc: getSrc,
       currentState: currentState,
       getGender: getGender,
+      isState: isState
     };
 
     return utils;
 
     function getGender() {
       return localStorage.profile ? JSON.parse(localStorage.profile).gender : false;
+    }
+
+    function isState(state){
+      return $state.is(state);
     }
 
     function leaveLesson() {
