@@ -107,89 +107,89 @@
       $log.debug('close the demo');
       $scope.demo.hide();
       return true;
-    }
-
-    $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal-rope' + CONSTANT.VIEW, {
-      scope: $scope,
-      animation: 'slide-in-down',
-      hardwareBackButtonClose: false
-  }).then(function(nodeMenu) {
-      $scope.nodeMenu = nodeMenu;
-    });
-
-    // $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.demo' + CONSTANT.VIEW, {
-    //   scope: $scope,
-    //   animation: 'slide-in-down',
-    //     hardwareBackButtonClose: false
-    // }).then(function(demo) {
-    //   $scope.demo = demo;
-    // });
-
-    // $timeout(function(){
-    //     mapCtrl.openDemo();
-    // },2000)
-
-
-    // function resetNode() {
-    //   $timeout(function() {
-    //     $scope.selectedNode = {};
-    //   }, 500)
-    // }
-
-    // $timeout(function functionName() {
-    //   if (mapCtrl.lessons && localStorage.lesson) {
-    //     $scope.openNodeMenu();
-    //     $scope.selectedNode = $scope.lessonutils.getLocalLesson();
-    //   }
-    // });
-    // $scope.test = {"phone_number":"+919393939193"};
-
-    // updateProfile($scope.test);
-
-    function expand(currentPos) {
-      // alert(JSON.stringify(e));
-      mapCtrl.showResult = false;
-      $log.debug("X coords: " + currentPos.x + ", Y coords: " + currentPos.y);
-        // $mapCtrl.animationExpand.lessonType = currentPos.lessonType
-        mapCtrl.animationExpand.containerStyle = {
-          "margin-left" : currentPos.x-30+"px",
-          "margin-top" : currentPos.y-30+"px",
-          "opacity" : 1
         }
 
-        $log.debug(mapCtrl.animationExpand.containerStyle);
-        $timeout(function() {
-          mapCtrl.animationExpand.iconTranslateOffset = {
-            "transform" : "translate("+((screen.width/2)-currentPos.x)+"px,"+(40-currentPos.y)+"px) scale3d(2,2,2)",
-            "transition" : "transform 0.5s ease-in-out"
-          }
-        mapCtrl.animationExpand.expandContainer = 1;
-        }, 50).then( function(){
-          $timeout(function(){
-              $scope.openNodeMenu();
-          },1000);
+        $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal-rope' + CONSTANT.VIEW, {
+            scope: $scope,
+            animation: 'slide-in-down',
+            hardwareBackButtonClose: false
+        }).then(function(nodeMenu) {
+            $scope.nodeMenu = nodeMenu;
         });
 
-      }
+        $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.demo' + CONSTANT.VIEW, {
+            scope: $scope,
+            animation: 'slide-in-down',
+            hardwareBackButtonClose: false
+        }).then(function(demo) {
+            $scope.demo = demo;
+        });
+
+        // $timeout(function(){
+        //     mapCtrl.openDemo();
+        // },2000)
 
 
-    function shrink() {
-      mapCtrl.showResult = true;
-      mapCtrl.animationExpand.iconTranslateOffset = {
-        "transform": "translate(0px,0px) scale3d(1,1,1)",
-        "transition": "transform 0.4s ease-in-out"
-      }
-      mapCtrl.animationExpand.expandContainer = 0;
+        // function resetNode() {
+        //   $timeout(function() {
+        //     $scope.selectedNode = {};
+        //   }, 500)
+        // }
 
-      $timeout(function() {
-        mapCtrl.animationExpand.containerStyle = {
-          "margin-left": "0px",
-          "margin-top": "0px",
-          "opacity": 0
+        // $timeout(function functionName() {
+        //   if (mapCtrl.lessons && localStorage.lesson) {
+        //     $scope.openNodeMenu();
+        //     $scope.selectedNode = $scope.lessonutils.getLocalLesson();
+        //   }
+        // });
+        // $scope.test = {"phone_number":"+919393939193"};
+
+        // updateProfile($scope.test);
+
+        function expand(currentPos) {
+            // alert(JSON.stringify(e));
+            mapCtrl.showResult = false;
+            $log.debug("X coords: " + currentPos.x + ", Y coords: " + currentPos.y);
+            // $mapCtrl.animationExpand.lessonType = currentPos.lessonType
+            mapCtrl.animationExpand.containerStyle = {
+                "margin-left": currentPos.x - 30 + "px",
+                "margin-top": currentPos.y - 30 + "px",
+                "opacity": 1
+            }
+
+            $log.debug(mapCtrl.animationExpand.containerStyle);
+            $timeout(function() {
+                mapCtrl.animationExpand.iconTranslateOffset = {
+                    "transform": "translate(" + ((screen.width / 2) - currentPos.x) + "px," + (40 - currentPos.y) + "px) scale3d(2,2,2)",
+                    "transition": "transform 0.5s ease-in-out"
+                }
+                mapCtrl.animationExpand.expandContainer = 1;
+            }, 50).then(function() {
+                $timeout(function() {
+                    $scope.openNodeMenu();
+                }, 1000);
+            });
+
         }
-      }, 400);
+
+
+        function shrink() {
+            mapCtrl.showResult = true;
+            mapCtrl.animationExpand.iconTranslateOffset = {
+                "transform": "translate(0px,0px) scale3d(1,1,1)",
+                "transition": "transform 0.4s ease-in-out"
+            }
+            mapCtrl.animationExpand.expandContainer = 0;
+
+            $timeout(function() {
+                mapCtrl.animationExpand.containerStyle = {
+                    "margin-left": "0px",
+                    "margin-top": "0px",
+                    "opacity": 0
+                }
+            }, 400);
+        }
+
+
     }
-
-
-  }
 })();

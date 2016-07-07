@@ -20,12 +20,17 @@
       getSrc: getSrc,
       currentState: currentState,
       getGender: getGender,
+      isState: isState
     };
 
     return utils;
 
     function getGender() {
       return localStorage.profile ? JSON.parse(localStorage.profile).gender : false;
+    }
+
+    function isState(state){
+      return $state.is(state);
     }
 
     function leaveLesson() {
@@ -110,7 +115,7 @@
         .then(function() {
           $timeout(function() {
             $stateParams.type != 'assessment' &&
-              $state.go('quiz.start', {
+              $state.go('quiz.questions', {
                 id: resource.node.id,
                 type: 'assessment',
                 quiz: resource
@@ -126,7 +131,7 @@
       data.downloadAssessment(resource).then(function() {
           $timeout(function() {
             $stateParams.type != 'practice' &&
-              $state.go('quiz.start', {
+              $state.go('quiz.questions', {
                 id: resource.node.id,
                 type: 'practice',
                 quiz: resource
