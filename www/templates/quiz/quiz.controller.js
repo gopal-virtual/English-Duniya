@@ -4,9 +4,9 @@
     .module('zaya-quiz')
     .controller('QuizController', QuizController)
 
-  QuizController.$inject = ['quiz', 'widgetParser', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Auth', '$ionicLoading', '$ionicPopup', 'lessonutils', 'orientation', '$location', '$anchorScroll', '$document', '$ionicScrollDelegate', '$ionicPosition', '$timeout', '$window', 'mediaManager', '$cordovaFileTransfer', '$cordovaFile', '$interval', '$q', '$ImageCacheFactory', 'ml', 'data', 'lessonutils','$ionicPlatform'];
+  QuizController.$inject = ['quiz', 'widgetParser', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Auth', '$ionicLoading', '$ionicPopup', 'lessonutils', 'orientation', '$location', '$anchorScroll', '$document', '$ionicScrollDelegate', '$ionicPosition', '$timeout', '$window', 'mediaManager', '$cordovaFileTransfer', '$cordovaFile', '$interval', '$q', '$ImageCacheFactory', 'ml', 'data', 'lessonutils','$ionicPlatform','nzTour'];
 
-  function QuizController(quiz, widgetParser, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition, $timeout, $window, mediaManager, $cordovaFileTransfer, $cordovaFile, $interval, $q, $ImageCacheFactory, ml, data, lessonutils,$ionicPlatform) {
+  function QuizController(quiz, widgetParser, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition, $timeout, $window, mediaManager, $cordovaFileTransfer, $cordovaFile, $interval, $q, $ImageCacheFactory, ml, data, lessonutils, $ionicPlatform, nzTour) {
 
     var quizCtrl = this;
 
@@ -698,62 +698,47 @@ $log.debug("Please",quiz)
     }
 
     // intro
-
-    $scope.CompletedEvent = function () {
-        console.log("Completed Event called");
-    };
-
-    $scope.ExitEvent = function () {
-        console.log("Exit Event called");
-    };
-
-    $scope.ChangeEvent = function (targetElement) {
-        console.log("Change Event called");
-        console.log(targetElement);
-    };
-
-    $scope.BeforeChangeEvent = function (targetElement) {
-        console.log("Before Change Event called");
-        console.log(targetElement);
-    };
-
-    $scope.AfterChangeEvent = function (targetElement) {
-        console.log("After Change Event called");
-        console.log(targetElement);
-    };
-
-    $scope.IntroOptions = {
-        steps:[
-        {
-            element: '#step1',
-            intro: "This is question",
-            position : 'bottom'
+    try{
+    $scope.tour = {
+        config: {
+            config: {
+                mask: {
+                    visible: true, // Shows the element mask
+                    clickThrough: false, // Allows the user to interact with elements beneath the mask
+                    clickExit: false, // Exit the tour when the user clicks on the mask
+                    scrollThrough: true, // Allows the user to scroll while hovered over the mask
+                    color: 'rgba(0,0,0,.7)' // The mask color
+                },
+                container: 'body', // The container to mask
+                scrollBox: 'body', // The container to scroll when searching for elements
+                previousText: 'Previous',
+                nextText: 'Next',
+                finishText: 'Finish',
+                animationDuration: 400, // Animation Duration for the box and mask
+                dark: false // Dark mode (Works great with `mask.visible = false`)
+            }
         },
-        {
-            element: '#step2',
-            intro: "This is option",
-            position: 'top'
-        },
-        {
-            element: '#step3',
-            intro: 'This is submit',
-            position: 'top'
-        },
-        {
-            element: '#step4',
-            intro: "Thank you",
-            position: 'top'
-        }
-        ],
-        showStepNumbers: false,
-        showBullets: false,
-        exitOnOverlayClick: false,
-        exitOnEsc:false,
-        nextLabel: '<strong>NEXT!</strong>',
-        prevLabel: '<span style="color:green">Previous</span>',
-        skipLabel: 'Exit',
-        doneLabel: 'Thanks'
+        steps: [{
+            target: '#step1',
+            content: 'This is the first step!',
+        }, {
+            target: '#step2',
+            content: 'Blah blah blah.',
+        }, {
+            target: '#step3',
+            content: 'I guess this is a menu!',
+        }]
     };
 
+    nzTour.start($scope.tour).then(function(){
+      $log.debug("HOOOOLLLLLLLLLLLLLLLLLLLLLA");
+    }).catch(function(){
+      $log.debug('Something bad happened');
+    })
+  }
+  catch (error){
+    $log.debug("error:",error);
+  }
+        
   }
 })();

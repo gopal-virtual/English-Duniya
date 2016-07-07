@@ -17,7 +17,7 @@
       'angular-inview',
       'pouchdb',
       'ionic.ion.imageCacheFactory',
-      'angular-intro',
+      'nzTour',
       // core
       'templates',
       'common',

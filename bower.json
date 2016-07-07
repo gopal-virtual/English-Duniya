@@ -18,7 +18,7 @@
     "angular-ui-sortable": "~0.13.4",
     "angular-pouchdb": "~4.1.0",
     "pouchdb": "~5.3.2",
-    "angular-intro.js": "~2.0.3"
+    "nz-tour": "^1.1.0"
   },
   "resolutions": {
     "angular": ">= 1.0.8"

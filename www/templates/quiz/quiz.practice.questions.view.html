@@ -1,7 +1,4 @@
-<ion-view class="bg-green" ng-intro-options="IntroOptions" ng-intro-method="CallMe"
-     ng-intro-oncomplete="CompletedEvent" ng-intro-onexit="ExitEvent"
-     ng-intro-onchange="ChangeEvent" ng-intro-onbeforechange="BeforeChangeEvent"
-     ng-intro-autostart="false">
+<ion-view class="bg-green">
   <div class="bar bar-header bg-pale practice-header padding-0">
     <div class="col padding-0 vertical-center">
       <div ng-click="showNodeMenu()" class="header-icon icon-pause icon-fit-height padding-10"></div>
@@ -34,10 +31,10 @@
     <ion-slide ng-repeat="question in quizCtrl.quiz.objects " ng-class="{'animation-question-slide':quizCtrl.isCurrentIndex($index)}">
 
       <!-- <div ng-repeat="question in quizCtrl.quiz.objects" ng-if="$index == quizCtrl.getCurrentIndex()"> -->
-      <div class="bar bar-subheader padding-0 question-subheader bg-pale no-shadow">
-        <div ng-if="question.node.title" ng-bind-html="question.node.widgetHtml" class="question practice-question card card-transparent center margin-x-0 margin-y-0 padding-0" ng-click="quizCtrl.playAudio(question.node.widgetSound,$index);quizCtrl.highlightSoundIcon($parent.$index)"></div>
+      <div id="step1" class="bar bar-subheader padding-0 question-subheader bg-pale no-shadow">
+        <div ng-if="question.node.title" ng-bind-html="question.node.widgetHtml" class="question practice-question card card-transparent center margin-x-0 margin-y-0 padding-0" ng-click="quizCtrl.playAudio(question.node.widgetSound,$index);quizCtrl.highlightSoundIcon($parent.$index);"></div>
       </div>
-      <ion-content in-view-container overflow-scroll="false" has-bouncing="true" class="has-practice-header has-question-subheader has-footer-large center bg-pale" ng-init="optionsFontSize=quizCtrl.widgetParser.getOptionsFontSize(question.node.type.content.options)">
+      <ion-content id="step2" in-view-container overflow-scroll="false" has-bouncing="true" class="has-practice-header has-question-subheader has-footer-large center bg-pale" ng-init="optionsFontSize=quizCtrl.widgetParser.getOptionsFontSize(question.node.type.content.options)">
         <!-- SCQ -->
         <div
           ng-click="question.attempted=(question.attempted==option.key)?'':option.key"
