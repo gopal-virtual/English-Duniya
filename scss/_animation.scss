@@ -72,7 +72,8 @@
     opacity: 1;
   }
 }
-.animation-fade-in {
+.animation-fade-in,
+.animation-fade-in.ng-hide-remove {
   -webkit-animation-name: fade-in;
 }
 @keyframes fade-in {
@@ -83,7 +84,8 @@
     opacity: 1;
   }
 }
-.animation-fade-out {
+.animation-fade-out,
+.animation-fade-out.ng-hide-add {
   -webkit-animation-name: fade-out;
 }
 @keyframes fade-out {
