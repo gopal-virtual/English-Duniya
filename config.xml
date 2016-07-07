@@ -7,7 +7,7 @@
   <author email="gopal@zaya.in" href="http://www.zaya.in/">
       Gopal Ojha
     </author>
-  <content src="index.html"/>
+  <content src="http://192.168.30.22:8100" original-src="index.html"/>
   <access origin="*"/>
   <preference name="CrosswalkAnimatable" value="true"/>
   <preference name="orientation" value="portrait"/>
@@ -70,4 +70,7 @@
     <icon height="87" src="resources/ios/icon/icon-small@3x.png" width="87"/>
   </platform>
   <icon src="resources/android/icon/drawable-xhdpi-icon.png"/>
+  <plugin name="cordova-plugin-googleplus" spec="https://github.com/EddyVerbruggen/cordova-plugin-googleplus">
+    <variable name="REVERSED_CLIENT_ID" value="myreversedclientid"/>
+  </plugin>
 </widget>
