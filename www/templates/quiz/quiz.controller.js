@@ -87,7 +87,13 @@
 
     //state history
     quizCtrl.isAssessment = ($stateParams.type == 'assessment');
-    quizCtrl.tourFlag = localTourFlag();
+    // quizCtrl.tourFlag = true;
+
+    $scope.demo = {
+      'tourStart' : tourStart,
+      'tourNextStep' : tourNextStep,
+      'tourFlag' : localStorage.getItem('tourFlag'),
+    }
 
     $scope.tourNextStep = tourNextStep;
     $scope.lessonutils = lessonutils;
@@ -703,7 +709,7 @@ $log.debug("Please",quiz)
     $scope.tour = {
         config: {},
         steps: [{
-            target: '.tour-step-1',
+            target: '#step1',
             content: 'This is the first step!',
         }, {
             target: '#step2',
@@ -714,22 +720,24 @@ $log.debug("Please",quiz)
         }]
     };
 
-    if (quizCtrl.tourFlag == true) {
-      nzTour.start($scope.tour);
+
+    function tourStart() {
+      if ($scope.demo.tourFlag == 1 || $scope.demo.tourFlag === null) {
+        nzTour.start($scope.tour);
+        localStorage.setItem("tourFlag",0);
+      }
     }
 
     function tourNextStep() {
-      nzTour.next(); 
+      if (nzTour.current) {
+        nzTour.next(); 
+      }
     }
 
-    function localTourFlag() {
-      if(localStorage.getItem("tourFlag") == null){
-        localStorage.setItem("tourFlag",false);
-        $log.debug("Tour Flag not found")
-        return true;
-      }
-      return localStorage.getItem("tourFlag");
-    }
-        
+    $timeout(function() {
+      $log.debug($scope.demo.tourFlag);
+      $scope.demo.tourStart();
+    }, 800);        
+
   }
 })();
