@@ -95,7 +95,7 @@
     }
     $scope.closeNodeMenu = function() {
       $scope.nodeMenu.hide().then(function() {
-        mapCtrl.closeDemo();
+        // mapCtrl.closeDemo();
       });
       return true;
     }
