@@ -351,6 +351,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
 
 
                 !locked && lessons[i + 1] && lessons[i + 1].locked && this.add.tween(node.scale).to({ x: [1.2, 1], y: [1.2, 1] }, 700, Phaser.Easing.Back.Out, true, 1000).loop(true);
+                !locked && lessons[i + 1] && lessons[i + 1].locked && localStorage.setItem('region',posy);
                 node.inputEnabled = true;
                 node.currentLesson = currentLesson;
                 node.type = lessonType(currentLesson, i);
