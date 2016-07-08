@@ -56,7 +56,7 @@ angular.module("com.2fdevs.videogular.plugins.overlayplay", [])
                     };
 
                     scope.onClickOverlayPlay = function onClickOverlayPlay(event) {
-                        API.playPause();
+                        // API.playPause();
                     };
 
                     scope.overlayPlayIcon = {play: true};
@@ -73,4 +73,3 @@ angular.module("com.2fdevs.videogular.plugins.overlayplay", [])
             }
         }
     ]);
-

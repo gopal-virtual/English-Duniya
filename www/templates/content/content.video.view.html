@@ -1,10 +1,10 @@
 <ion-view>
     <ion-content scroll="false">
-        <videogular vg-theme="contentCtrl.config.theme" vg-player-ready="contentCtrl.onPlayerReady($API)" vg-auto-play="contentCtrl.config.autoplay" vg-update-state="contentCtrl.onStateChange($state)">
-            <vg-media vg-src="contentCtrl.config.sources">
+        <videogular vg-theme="contentCtrl.config.theme" vg-player-ready="contentCtrl.onPlayerReady($API)" vg-auto-play="contentCtrl.config.autoplay" vg-update-state="contentCtrl.onStateChange($state)" vg-complete="contentCtrl.onVideoComplete()">
+            <vg-media vg-src="contentCtrl.config.sources" ng-click="contentCtrl.toggleControls()">
             </vg-media>
             <vg-buffering></vg-buffering>
-            <vg-controls vg-autohide="contentCtrl.config.plugins.controls.autoHide" vg-autohide-time="contentCtrl.config.plugins.controls.autoHideTime">
+            <vg-controls vg-show-control="contentCtrl.config.plugins.controls.showControl" ng-class="{true:'animation-fade-in', false:'animation-fade-out'}[contentCtrl.config.plugins.controls.showControl]" ng-show="contentCtrl.config.plugins.controls.showControl">
                 <vg-play-pause-button ng-click="openNodeMenu()"></vg-play-pause-button>
                 <vg-time-display>{{ currentTime | date:"mm:ss" : 'UTC' }}</vg-time-display>
                 <vg-scrub-bar>
@@ -16,9 +16,7 @@
                     <vg-volume-bar></vg-volume-bar>
                 </vg-volume>
             </vg-controls>
-
-            <!-- <vg-overlay-play ng-click="openNodeMenu()"></vg-overlay-play> -->
-
+            <!-- <vg-overlay-play ></vg-overlay-play> -->
         </videogular>
     </ion-content>
 </ion-view>
