@@ -15,8 +15,7 @@
           angular.forEach(skills,function(skill){
             score = score + skill.lesson_scores;
           })
-          return true;
-          // return score?false:true;
+          return score?false:true;
         }).catch(function(e){
           $Log.debug("demo skills error",e)
         })
