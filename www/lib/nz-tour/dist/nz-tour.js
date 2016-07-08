@@ -75,9 +75,9 @@
                 .then(function() {
                     var func = service.current.tour.config.onClose;
                     service.current = false;
-                    if(func) {     
+                    if(func) {
                         return func();
-                    } 
+                    }
                     return true;
                 });
         }
@@ -217,9 +217,9 @@
                 .then(function() {
                     var func = service.current.tour.config.onComplete;
                     service.current = false;
-                    if(func) {     
+                    if(func) {
                         return func();
-                    } 
+                    }
                     return true;
                 });
         }
@@ -940,7 +940,7 @@
                     }
 
                     var margin = config.highlightMargin ? config.highlightMargin : 0;
-                    
+
                     els.masks_top.css({
                         height: dims.target.offset.top - margin + 'px',
                         top: dims.target.offset.top < 0 ? dims.target.offset.top + 'px' : 0
@@ -967,9 +967,9 @@
                             left: dims.target.offset.left - margin + 'px',
                             right: dims.target.offset.fromRight - margin + 'px',
                             backgroundColor: 'transparent'
-                        });    
+                        });
                     }
-                    
+
 
                     return $q.when(null);
                 }

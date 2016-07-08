@@ -5,9 +5,9 @@
     .module('zaya-map')
     .controller('mapController', mapController);
 
-  mapController.$inject = ['$scope', '$rootScope', '$log', '$ionicPopup','$ionicModal', '$state', 'lessons', 'scores', 'skills', 'extendLesson', 'Rest', 'CONSTANT', '$sce', '$ionicLoading', '$timeout', '$ionicBackdrop', 'orientation', 'Auth', 'lessonutils', 'audio', 'data', 'ml', 'lessonLocked', '$ionicPlatform'];
+  mapController.$inject = ['$scope', '$rootScope', '$log', '$ionicPopup','$ionicModal', '$state', 'lessons', 'scores', 'skills', 'extendLesson', 'Rest', 'CONSTANT', '$sce', '$ionicLoading', '$timeout', '$ionicBackdrop', 'orientation', 'Auth', 'lessonutils', 'audio', 'data', 'ml', 'lessonLocked', '$ionicPlatform','demo'];
 
-  function mapController($scope, $rootScope, $log, $ionicPopup, $ionicModal, $state, lessons, scores, skills, extendLesson, Rest, CONSTANT, $sce, $ionicLoading, $timeout, $ionicBackdrop, orientation, Auth, lessonutils, audio, data, ml, lessonLocked, $ionicPlatform) {
+  function mapController($scope, $rootScope, $log, $ionicPopup, $ionicModal, $state, lessons, scores, skills, extendLesson, Rest, CONSTANT, $sce, $ionicLoading, $timeout, $ionicBackdrop, orientation, Auth, lessonutils, audio, data, ml, lessonLocked, $ionicPlatform, demoFactory) {
 
     $scope.audio = audio;
     $scope.orientation = orientation;
@@ -26,6 +26,7 @@
     mapCtrl.animationExpand['shrink'] = shrink;
     mapCtrl.showResult = true;
     mapCtrl.getNodeProperty = getNodeProperty;
+
 
     function getNodeProperty(prop){
       if(prop == 'x')
@@ -101,6 +102,8 @@
     }
     mapCtrl.openDemo = function() {
       $scope.demo.show();
+      $log.debug("Playing audio")
+      audio.play('demo-1');
       return true;
     }
     mapCtrl.closeDemo = function() {
@@ -117,17 +120,23 @@
       $scope.nodeMenu = nodeMenu;
     });
 
-    // $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.demo' + CONSTANT.VIEW, {
-    //   scope: $scope,
-    //   animation: 'slide-in-down',
-    //     hardwareBackButtonClose: false
-    // }).then(function(demo) {
-    //   $scope.demo = demo;
-    // });
+    $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.demo' + CONSTANT.VIEW, {
+      scope: $scope,
+      animation: 'slide-in-down',
+        hardwareBackButtonClose: false
+    }).then(function(demo) {
+      $scope.demo = demo;
+    });
 
-    // $timeout(function(){
-    //     mapCtrl.openDemo();
-    // },2000)
+    demoFactory.show().then(function(result){
+      mapCtrl.demoShown = result;
+      if(result && demoFactory.getStep() == '1'){
+        $timeout(function(){
+            mapCtrl.openDemo();
+            demoFactory.setStep(2)
+        })
+      }
+    })
 
 
     // function resetNode() {

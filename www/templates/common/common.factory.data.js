@@ -227,9 +227,8 @@
         })
         ;
       })
-
-
     }
+
 
     function putUserifNotExist(data) {
       return Rest.one('profiles', JSON.parse(localStorage.user_details).profile).all('scores').all('skills').getList().then(function(profile) {
@@ -412,7 +411,7 @@
     function getSkills(data) {
       return appDB.get(data.userId)
         .then(function(doc) {
-          return doc.data.skills;
+          return doc.data.skills;          
         })
     }
 
@@ -501,7 +500,7 @@
           d.resolve(data);
         })
         .catch(function(err) {
-          d.reject(err);
+          d.reject
         });
       return d.promise;
 

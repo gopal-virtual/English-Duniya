@@ -17,6 +17,7 @@
         $cordovaNativeAudio.preloadSimple('three_star', 'sound/three_star.mp3');
         $cordovaNativeAudio.preloadSimple('locked', 'sound/locked.mp3');
         $cordovaNativeAudio.preloadSimple('press', 'sound/press.mp3');
+        $cordovaNativeAudio.preloadSimple('demo-1', 'sound/demo-1.mp3');
       }
       catch(error){
         console.log('native audio not supported');
