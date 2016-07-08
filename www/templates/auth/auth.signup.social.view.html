@@ -3,26 +3,34 @@
 
     <div ng-if="authCtrl.network.isOnline()">
 
-      <div class="row no-padding">
-        <div class="col text-center no-padding"><img src="img/assets/logo.png" alt="" height="121px" width="auto"></div>
+      <div style="padding-bottom:0px;" class="row">
+        <div style="padding-bottom:0px;" class="col text-center"><img src="img/assets/logo.png" alt="" height="121px" width="auto"></div>
       </div>
 
-      <div class="row padding-x-20">
-        <div class="col extend-right-60">
+      <div class="row padding-x-20 padding-y-0">
+        <div class="col padding-y-0"> 
           <!-- <div class="button-bar button-group">
                   <button type="button" ng-click="authCtrl.googleSignIn()" class="button button-no-shadow button-round button-block button-assertive icon-left ion-social-googleplus"></button>
               </div> -->
           <button tabindex="4" type="button" ng-click="authCtrl.signin('google')" class="button button-no-shadow button-round button-block font-lg button-assertive icon-middle ion-social-googleplus" style="padding: 0;line-height:10px !important"></button>
         </div>
-        <div class="col center padding-20">
-          <h4 class="or-divider no-margin color-darkgrey">or</h4>
-        </div>
-        <div class="col extend-left-60">
+        <div class="col padding-y-0">
           <!-- <div class="button-bar button-group">
               <button type="button" ng-click="authCtrl.facebookSignIn()" class="button button-no-shadow button-round button-block button-positive icon-left ion-social-facebook"></button>
           </div> -->
           <button tabindex="5" type="button" ng-click="authCtrl.signin('facebook')" class="button button-no-shadow button-round button-block font-lg button-positive icon-middle ion-social-facebook" style="padding: 0;line-height:10px !important"></button>
         </div>
+      </div>
+      
+      <div class="row no-margin no-padding">
+        <div class="col no-margin no-padding">
+            <div class="margin-x-30 divider">
+            </div>
+            <h4 class="text-center no-margin no-padding">
+              <span class="bg-pink">&nbsp;&nbsp;or&nbsp;&nbsp;</span>
+            </h4>
+        </div>  
+        
       </div>
 
       <div class="row center">
