@@ -13,9 +13,10 @@
           var score = 0;
           $log.debug("demo skills",skills)
           angular.forEach(skills,function(skill){
+              $log.debug("demo skills",score)
             score = score + skill.lesson_scores;
           })
-          return score?false:true;
+          return score ? false : true;
         }).catch(function(e){
           $Log.debug("demo skills error",e)
         })

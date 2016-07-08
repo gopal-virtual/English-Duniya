@@ -639,7 +639,8 @@
     $ionicPlatform.onHardwareBackButton(function(event) {
         if ($state.is('quiz.questions')) {
           try {
-            $scope.showNodeMenu();
+              if(!nzTour.current)
+                $scope.showNodeMenu();
           } catch (error) {
             $log.debug(error);
           }
@@ -721,7 +722,7 @@
 
       }]
     };
-    demoFactory.show().then(function(result) {
+    $state.is('quiz.questions') && demoFactory.show().then(function(result) {
       if(result){
         $timeout(function(){
           $log.debug($scope.demo.tourFlag);

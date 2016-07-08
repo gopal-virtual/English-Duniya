@@ -63,15 +63,17 @@
           // if (!lessons) {
           //   $state.go('map.unauthorised');
           // }
-          if(localStorage.getItem('region')>'3409'){
-              audio.play('background');
-          }
-          else{
-              audio.play('three_star');
-          }
+          audio.play('background');
+        //   if(localStorage.getItem('region')>'3409'){
+        //   }
+        //   else{
+        //       audio.play('three_star');
+        //   }
         }],
         onExit: ['audio', function(audio) {
           audio.stop('background');
+          audio.stop('demo-2');
+          audio.stop('demo-4');
         }],
         views: {
           'state-map': {
