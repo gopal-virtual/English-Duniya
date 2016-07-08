@@ -87,10 +87,17 @@
 
     //state history
     quizCtrl.isAssessment = ($stateParams.type == 'assessment');
+    // quizCtrl.tourFlag = true;
 
+    $scope.demo = {
+      'tourStart' : tourStart,
+      'tourNextStep' : tourNextStep,
+      'tourFlag' : localStorage.getItem('tourFlag'),
+    }
+
+    $scope.tourNextStep = tourNextStep;
     $scope.lessonutils = lessonutils;
     $scope.selectedNode = lessonutils.getLocalLesson();
-
     $scope.modal = {};
 
 
@@ -698,26 +705,9 @@ $log.debug("Please",quiz)
     }
 
     // intro
-    try{
+
     $scope.tour = {
-        config: {
-            config: {
-                mask: {
-                    visible: true, // Shows the element mask
-                    clickThrough: false, // Allows the user to interact with elements beneath the mask
-                    clickExit: false, // Exit the tour when the user clicks on the mask
-                    scrollThrough: true, // Allows the user to scroll while hovered over the mask
-                    color: 'rgba(0,0,0,.7)' // The mask color
-                },
-                container: 'body', // The container to mask
-                scrollBox: 'body', // The container to scroll when searching for elements
-                previousText: 'Previous',
-                nextText: 'Next',
-                finishText: 'Finish',
-                animationDuration: 400, // Animation Duration for the box and mask
-                dark: false // Dark mode (Works great with `mask.visible = false`)
-            }
-        },
+        config: {},
         steps: [{
             target: '#step1',
             content: 'This is the first step!',
@@ -729,17 +719,25 @@ $log.debug("Please",quiz)
             content: 'I guess this is a menu!',
         }]
     };
+  demoFactory.setStep(5);
 
-    demoFactory.setStep(5);
-    nzTour.start($scope.tour).then(function(){
-      $log.debug("HOOOOLLLLLLLLLLLLLLLLLLLLLA");
-    }).catch(function(){
-      $log.debug('Something bad happened');
-    })
-  }
-  catch (error){
-    $log.debug("error:",error);
-  }
+    function tourStart() {
+      if ($scope.demo.tourFlag == 1 || $scope.demo.tourFlag === null) {
+        nzTour.start($scope.tour);
+        localStorage.setItem("tourFlag",0);
+      }
+    }
+
+    function tourNextStep() {
+      if (nzTour.current) {
+        nzTour.next(); 
+      }
+    }
+
+    $timeout(function() {
+      $log.debug($scope.demo.tourFlag);
+      $scope.demo.tourStart();
+    }, 800);        
 
   }
 })();

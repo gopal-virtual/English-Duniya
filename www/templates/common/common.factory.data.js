@@ -440,7 +440,7 @@
         })
         .then(function() {
           var flag = JSON.parse(localStorage.getItem('reportSync'));
-          if (flag.progress === true) {
+          if (flag && flag.progress === true) {
             flag.updated = true;
           } else if (network.isOnline()) {
             data.startReportSyncing({

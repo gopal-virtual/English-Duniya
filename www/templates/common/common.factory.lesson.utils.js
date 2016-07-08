@@ -21,6 +21,7 @@
       currentState: currentState,
       getGender: getGender,
       demoFactory: demoFactory,
+       isState: isState
     };
     demoFactory.show().then(function(result) {
       utils.demoShown = result;
@@ -31,6 +32,10 @@
 
     function getGender() {
       return localStorage.profile ? JSON.parse(localStorage.profile).gender : false;
+    }
+
+    function isState(state){
+      return $state.is(state);
     }
 
     function leaveLesson() {
@@ -124,26 +129,26 @@
       });
       if (utils.resourceType(resource) == 'assessment') {
         data.downloadAssessment(resource)
-          .then(function() {
-            $timeout(function() {
-              $stateParams.type != 'assessment' &&
-                $state.go('quiz.start', {
-                  id: resource.node.id,
-                  type: 'assessment',
-                  quiz: resource
-                });
-              $stateParams.type == 'assessment' && $ionicLoading.hide();
-            });
-          })
-          .catch(function(e) {
-            $log.debug("Error playing resource", e)
-          })
+        .then(function() {
+          $timeout(function() {
+            $stateParams.type != 'assessment' &&
+              $state.go('quiz.questions', {
+                id: resource.node.id,
+                type: 'assessment',
+                quiz: resource
+              });
+            $stateParams.type == 'assessment' && $ionicLoading.hide();
+          });
+        })
+        .catch(function(e){
+          $log.debug("Error playing resource",e)
+        })
 
       } else if (utils.resourceType(resource) == 'practice') {
         data.downloadAssessment(resource).then(function() {
           $timeout(function() {
             $stateParams.type != 'practice' &&
-              $state.go('quiz.start', {
+              $state.go('quiz.questions', {
                 id: resource.node.id,
                 type: 'practice',
                 quiz: resource
