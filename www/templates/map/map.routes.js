@@ -17,8 +17,10 @@
           }],
           lessonLocked: ['Rest', '$log', '$http', 'data','extendLesson','Auth', function(Rest, $log, $http, data,extendLesson,Auth) {
 
-            $log.debug("Grade",Auth.getLocalProfile())
+            $log.debug("Grade",Auth.getLocalProfile().grade)
             return data.getLessonsList(Auth.getLocalProfile().grade).then(function(lessons){
+            $log.debug("Lessons",lessons)
+
               return extendLesson.getLesson(lessons,[]).then(function(result){
                   return result;
               });

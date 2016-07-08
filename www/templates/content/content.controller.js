@@ -16,17 +16,21 @@
     contentCtrl.onStateChange = onStateChange;
     $scope.lessonutils = lessonutils;
     $scope.selectedNode = lessonutils.getLocalLesson();
+    contentCtrl.toggleControls = toggleControls;
+    contentCtrl.onVideoComplete = onVideoComplete;
     contentCtrl.config = {
       sources: [$stateParams.video],
       autoplay: true,
       plugins: {
         controls: {
-          autoHide: true,
-          autoHideTime: 1000,
+          showControl : true
         },
       },
       theme: "lib/videogular-themes-default/videogular.css"
     };
+    $timeout(function(){
+        contentCtrl.config.plugins.controls.showControl = false;
+    },2000);
   //   $ionicPlatform.registerBackButtonAction(function(event) {
   //     try {
   //       contentCtrl.API.pause();
@@ -36,14 +40,26 @@
   //     }
   // }, 101);
 
+  function toggleControls(){
+      contentCtrl.config.plugins.controls.showControl=!contentCtrl.config.plugins.controls.showControl;
+      $log.debug(contentCtrl.config.plugins.controls.showControl);
+  }
+
   $ionicPlatform.onHardwareBackButton(function(event) {
       try {
         contentCtrl.API.pause();
-        $scope.modal.show();
+        $scope.openNodeMenu();
       } catch (error) {
         $log.debug(error);
       }
   })
+
+    function onVideoComplete() {
+        $timeout(function() {
+          orientation.setPortrait();
+          $scope.modal.show();
+        })
+    }
 
     function onPlayerReady(API) {
       contentCtrl.API = API;
@@ -55,18 +71,14 @@
           orientation.setLandscape();
         })
       }
-      if (state == 'pause') {
-        $timeout(function() {
-          orientation.setPortrait();
-        })
-      }
-      if (state == 'stop') {
-        $timeout(function() {
-          orientation.setPortrait();
-          $scope.modal.show();
-        })
-      }
+    //   if (state == 'pause') {
+    //     $timeout(function() {
+    //       orientation.setPortrait();
+    //     })
+    //   }
     }
+
+
 
     $scope.openNodeMenu = function() {
       if (contentCtrl.API.currentState == 'pause') {
