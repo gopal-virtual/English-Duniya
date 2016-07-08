@@ -63,7 +63,12 @@
           // if (!lessons) {
           //   $state.go('map.unauthorised');
           // }
-          audio.play('background');
+          if(localStorage.getItem('region')>'3409'){
+              audio.play('background');
+          }
+          else{
+              audio.play('three_star');
+          }
         }],
         onExit: ['audio', function(audio) {
           audio.stop('background');
