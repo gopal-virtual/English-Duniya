@@ -99,6 +99,7 @@
       // }
     });
     $ionicPlatform.ready(function() {
+
       data.createIfNotExistsLessonDB()
       $rootScope.$on('$cordovaNetwork:online', function(event, networkState) {
         if (Auth.isAuthorised() && Auth.isVerified() && Auth.hasProfile()) {

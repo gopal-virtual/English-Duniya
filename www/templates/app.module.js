@@ -16,6 +16,7 @@
       'angular-inview',
       'pouchdb',
       'ionic.ion.imageCacheFactory',
+      'angular-intro',
       // core
       'templates',
       'common',

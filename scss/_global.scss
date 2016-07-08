@@ -2,6 +2,7 @@
 $color in $color-list {
   .bg-#{$name} {
     background-color: $color !important;
+    background-image: none;
   }
 }
 @each $name,

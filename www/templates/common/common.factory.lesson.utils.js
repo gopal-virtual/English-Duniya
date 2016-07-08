@@ -36,7 +36,7 @@
         });
       $timeout(function() {
         $state.go('map.navigate');
-      }, 1000)
+      })
     }
 
     function currentState(resource) {
@@ -118,6 +118,9 @@
             $stateParams.type == 'assessment' && $ionicLoading.hide();
           });
         })
+        .catch(function(e){
+          $log.debug("Error playing resource",e)
+        })
 
       } else if (utils.resourceType(resource) == 'practice') {
       data.downloadAssessment(resource).then(function() {
@@ -145,14 +148,16 @@
                 });
               if ($state.is('content.video')) {
                 video.play();
+                $ionicLoading.hide();
               }
             });
           })
-
           // utils.config.sources[0].src = utils.getSrc(resource.node.type.path);
         })
 
-      } else {}
+      } else {
+          $ionicLoading.hide();
+      }
     }
 
 

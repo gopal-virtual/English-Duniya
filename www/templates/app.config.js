@@ -7,7 +7,7 @@
     // global debug log
     $logProvider.debugEnabled(true);
     // request/response interceptors
-    $httpProvider.interceptors.push(function($rootScope, $q) {
+    $httpProvider.interceptors.push(function($rootScope, $q, $log) {
       return {
         request: function(config) {
           if (localStorage.Authorization)
@@ -29,6 +29,7 @@
           return response;
         },
         responseError: function(rejection) {
+          $log.debug("error",rejection)
           if ([400, 500].indexOf(rejection.status) != -1) {
             $rootScope.error = $rootScope.error || [];
             $rootScope.error.push(rejection.data);
@@ -52,7 +53,7 @@
     })
     $ionicConfigProvider.views.maxCache(0);
     $ionicConfigProvider.tabs.position('bottom');
-    $ionicNativeTransitionsProvider.enable(true, false);
+    $ionicNativeTransitionsProvider.enable(false, false);
     // Example for nolanlawson/pouchdb-authentication
     var loadMethods = {
       load: 'qify',

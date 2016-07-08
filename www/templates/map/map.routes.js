@@ -12,14 +12,14 @@
         url: '/map',
         abstract: true,
         resolve: {
-          lessons: ['Rest', '$log', '$http', 'data', function(Rest, $log, $http, data) {
-            return data.getLessonsList(25)
+          lessons: ['Rest', '$log', '$http', 'data','Auth', function(Rest, $log, $http, data, Auth) {
+            return data.getLessonsList(Auth.getLocalProfile().grade)
           }],
-          lessonLocked: ['Rest', '$log', '$http', 'data','extendLesson', function(Rest, $log, $http, data,extendLesson) {
-            return data.getLessonsList(25).then(function(lessons){
+          lessonLocked: ['Rest', '$log', '$http', 'data','extendLesson','Auth', function(Rest, $log, $http, data,extendLesson,Auth) {
 
+            $log.debug("Grade",Auth.getLocalProfile())
+            return data.getLessonsList(Auth.getLocalProfile().grade).then(function(lessons){
               return extendLesson.getLesson(lessons,[]).then(function(result){
-                  $log.debug("Resolved 2",result.length)
                   return result;
               });
             })
