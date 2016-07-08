@@ -1,4 +1,4 @@
-<ion-modal-view ng-class="{'modal-transparent': lessonutils.isState('map.navigate'), 'modal-dark': !lessonutils.isState('map.navigate')}">
+<ion-modal-view ng-class="{'modal-transparent': lessonutils.isState('map.navigate'), 'modal-dark': !lessonutils.isState('map.navigate')}" >
     <ion-content ng-init="mapCtrl.selected=false" scroll="false">
         <div class="padding-x-20">
             <div class="rope-modal-title">
@@ -15,7 +15,7 @@
         </div>
         <div class="row" >
             <div class="col text-center padding" id="step1">
-                <button style="min-height:40px;height: 40px;" ng-disabled="lessonutils.demoShown && lessonutils.demoFactory.getStep() != 3 && lessonutils.demoFactory.getStep() != 5" ng-class="{'brightness-50':lessonutils.demoShown && lessonutils.demoFactory.getStep() != 3 && lessonutils.demoFactory.getStep() != 5}" class="button button-balanced button-round font-md animation-delay-more animation-fade-in-from-bottom padding-x-40" ng-click="audio.play('press');mapCtrl.animationExpand.shrink();closeNodeMenu();lessonutils.leaveLesson();mapCtrl && mapCtrl.resetNode()">Leave Lesson</button>
+                <button style="min-height:40px;height: 40px;" ng-disabled="lessonutils.demoShown && lessonutils.demoFactory.getStep() != 3 && lessonutils.demoFactory.getStep() != 5" ng-class="{'brightness-50':lessonutils.demoShown && lessonutils.demoFactory.getStep() != 3 && lessonutils.demoFactory.getStep() != 5}" class="button button-balanced button-round font-md animation-delay-more animation-fade-in-from-bottom padding-x-40" ng-click="audio.play('press');mapCtrl.animationExpand.shrink();closeNodeMenu();lessonutils.leaveLesson();mapCtrl && mapCtrl.resetNode();lessonutils.demoFactory.getStep() == 3 && lessonutils.demoFactory.setStep(4)">Leave Lesson</button>
             </div>
         </div>
     </ion-content>

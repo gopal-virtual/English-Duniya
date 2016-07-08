@@ -101,7 +101,9 @@
     $ionicPlatform.ready(function() {
 
       data.createIfNotExistsLessonDB()
-
+      if(localStorage.getItem('demo_flag') === null){
+      localStorage.setItem('demo_flag',1)
+      }
       if (window.Connection) {
         if (navigator.connection.type == Connection.NONE) {
           $ionicPopup.confirm({

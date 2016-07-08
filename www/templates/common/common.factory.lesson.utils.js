@@ -21,7 +21,8 @@
       currentState: currentState,
       getGender: getGender,
       demoFactory: demoFactory,
-       isState: isState
+       isState: isState,
+       playDemoAudio : playDemoAudio
     };
     demoFactory.show().then(function(result) {
       utils.demoShown = result;
@@ -114,13 +115,16 @@
       $log.debug("Play audio")
       audio.play('press');
 
-      if (utils.resourceType(resource) == 'practice' && (utils.demoShown && [2].indexOf(utils.demoFactory.getStep()) > 0)) {
+      if (utils.resourceType(resource) == 'practice' && (utils.demoShown && [2].indexOf(utils.demoFactory.getStep()) >= 0)) {
         return;
       }
 
-      if (utils.resourceType(resource) == 'video' && (utils.demoShown && [4].indexOf(utils.demoFactory.getStep()) > 0)) {
+      if (utils.resourceType(resource) == 'video' && (utils.demoShown && [4].indexOf(utils.demoFactory.getStep()) >= 0)) {
+        $log.debug("Stopped")
+
         return;
       }
+
       // to do
       $log.debug(resource, "Resource", utils.resourceType(resource))
       $ionicLoading.show({
@@ -145,6 +149,7 @@
         })
 
       } else if (utils.resourceType(resource) == 'practice') {
+        $log.debug("PLayed")
         data.downloadAssessment(resource).then(function() {
           $timeout(function() {
             $stateParams.type != 'practice' &&
@@ -189,6 +194,23 @@
       return $sce.trustAsResourceUrl(src);
     }
 
+    function playDemoAudio(){
+      $log.debug("Playing audio init")
+      if(utils.demoShown){
+        $log.debug("Playing audio init 1")
+
+        if(utils.demoFactory.getStep() == 2){
+          $log.debug("Playing audio init 2")
+
+          audio.play('demo-2');
+        }
+        if(utils.demoFactory.getStep() == 4){
+          audio.play('demo-4')
+          $log.debug("Playing audio init 4")
+
+        }
+      }
+    }
 
 
   }

@@ -18,6 +18,11 @@
         $cordovaNativeAudio.preloadSimple('locked', 'sound/locked.mp3');
         $cordovaNativeAudio.preloadSimple('press', 'sound/press.mp3');
         $cordovaNativeAudio.preloadSimple('demo-1', 'sound/demo-1.mp3');
+        $cordovaNativeAudio.preloadSimple('demo-2', 'sound/demo-2.mp3');
+        $cordovaNativeAudio.preloadSimple('demo-3', 'sound/demo-3.mp3');
+        $cordovaNativeAudio.preloadSimple('demo-quiz-1', 'sound/demo-quiz-1.mp3');
+        $cordovaNativeAudio.preloadSimple('demo-quiz-2', 'sound/demo-quiz-2.mp3');
+        $cordovaNativeAudio.preloadSimple('demo-quiz-3', 'sound/demo-quiz-3.mp3');
       }
       catch(error){
         console.log('native audio not supported');

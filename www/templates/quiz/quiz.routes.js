@@ -18,7 +18,7 @@
           audio.stop('background');
         }],
         params : {
-          quiz : null
+          quiz : null,
         },
         resolve: {
           quiz: ['$stateParams', 'Rest', '$log', 'data', 'ml', '$q', '$http', function($stateParams, Rest, $log, data, ml, $q, $http) {
@@ -74,7 +74,8 @@
 
             }
           }]
-        }
+        },
+
       })
       .state('quiz.start', {
         url: 'start',

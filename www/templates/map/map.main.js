@@ -404,7 +404,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
 
             );
 
-
+            scope.$emit('show_demo');
             this.init();
             this.game.kineticScrolling.start();
         },

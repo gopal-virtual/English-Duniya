@@ -26,7 +26,7 @@
     mapCtrl.animationExpand['shrink'] = shrink;
     mapCtrl.showResult = true;
     mapCtrl.getNodeProperty = getNodeProperty;
-
+    mapCtrl.demoFactory = demoFactory;
 
     function getNodeProperty(prop){
       if(prop == 'x')
@@ -71,6 +71,7 @@
 
 
     $scope.$on('openNode', function(event, node, currentPos) {
+      lessonutils.playDemoAudio()
       if(currentPos)
         currentPos.lessonType = node.tag;
 
@@ -96,14 +97,13 @@
     }
     $scope.closeNodeMenu = function() {
       $scope.nodeMenu.hide().then(function() {
-        // mapCtrl.closeDemo();
+        mapCtrl.closeDemo();
       });
       return true;
     }
     mapCtrl.openDemo = function() {
       $scope.demo.show();
       $log.debug("Playing audio")
-      audio.play('demo-1');
       return true;
     }
     mapCtrl.closeDemo = function() {
@@ -192,15 +192,19 @@
                 }
             }, 400);
         }
-        demoFactory.show().then(function(result){
-          mapCtrl.demoShown = result;
-          if(result && demoFactory.getStep() == '1'){
-            $timeout(function(){
-                mapCtrl.openDemo();
-                demoFactory.setStep(2)
-            })
-          }
+        $scope.$on('show_demo',function(){
+          demoFactory.show().then(function(result){
+            mapCtrl.demoShown = result;
+            if(result && demoFactory.getStep() == '1'){
+              $timeout(function(){
+                  mapCtrl.openDemo();
+                  audio.play('demo-1');
+                  demoFactory.setStep(2)
+              })
+            }
+          })
         })
+
 
     }
 })();

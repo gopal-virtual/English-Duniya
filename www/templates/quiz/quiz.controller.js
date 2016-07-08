@@ -4,9 +4,9 @@
     .module('zaya-quiz')
     .controller('QuizController', QuizController)
 
-  QuizController.$inject = ['quiz', 'widgetParser', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Auth', '$ionicLoading', '$ionicPopup', 'lessonutils', 'orientation', '$location', '$anchorScroll', '$document', '$ionicScrollDelegate', '$ionicPosition', '$timeout', '$window', 'mediaManager', '$cordovaFileTransfer', '$cordovaFile', '$interval', '$q', '$ImageCacheFactory', 'ml', 'data', 'lessonutils','$ionicPlatform','nzTour','demo'];
+  QuizController.$inject = ['quiz', 'widgetParser', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Auth', '$ionicLoading', '$ionicPopup', 'lessonutils', 'orientation', '$location', '$anchorScroll', '$document', '$ionicScrollDelegate', '$ionicPosition', '$timeout', '$window', 'mediaManager', '$cordovaFileTransfer', '$cordovaFile', '$interval', '$q', '$ImageCacheFactory', 'ml', 'data', 'lessonutils', '$ionicPlatform', 'nzTour', 'demo' ];
 
-  function QuizController(quiz, widgetParser, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition, $timeout, $window, mediaManager, $cordovaFileTransfer, $cordovaFile, $interval, $q, $ImageCacheFactory, ml, data, lessonutils, $ionicPlatform, nzTour,demoFactory) {
+  function QuizController(quiz, widgetParser, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition, $timeout, $window, mediaManager, $cordovaFileTransfer, $cordovaFile, $interval, $q, $ImageCacheFactory, ml, data, lessonutils, $ionicPlatform, nzTour, demoFactory) {
 
     var quizCtrl = this;
 
@@ -90,9 +90,8 @@
     // quizCtrl.tourFlag = true;
 
     $scope.demo = {
-      'tourStart' : tourStart,
-      'tourNextStep' : tourNextStep,
-      'tourFlag' : localStorage.getItem('tourFlag'),
+      'tourNextStep': tourNextStep,
+      'tourFlag': localStorage.getItem('tourFlag'),
     }
 
     $scope.tourNextStep = tourNextStep;
@@ -159,7 +158,7 @@
           'id': quizCtrl.quiz.node.id
         })
         .then(function() {
-          $log.debug("Updating skills",lesson)
+          $log.debug("Updating skills", lesson)
           return data.updateSkills({
             userId: Auth.getProfileId(),
             lessonId: lesson.node.id,
@@ -221,7 +220,8 @@
     function disableSwipe() {
       $ionicSlideBoxDelegate.enableSlide(false);
     }
-$log.debug("Please",quiz)
+    $log.debug("Please", quiz)
+
     function init(quiz) {
       if ($state.current.name == "quiz.start") {
         $log.debug("quiz start")
@@ -307,7 +307,7 @@ $log.debug("Please",quiz)
     }
 
     function parseHtml(index) {
-      $log.debug("parse HTML",quizCtrl.quiz,index)
+      $log.debug("parse HTML", quizCtrl.quiz, index)
       quizCtrl.quiz.objects[index].node.widgetHtml = quizCtrl.widgetParser.parseToDisplay(quizCtrl.quiz.objects[index].node.title, index, quizCtrl.quiz);
 
       quizCtrl.quiz.objects[index].node.widgetSound = quizCtrl.widgetParser.getSoundId(quizCtrl.quiz.objects[index].node.title);
@@ -637,23 +637,23 @@ $log.debug("Please",quiz)
     });
 
     $ionicPlatform.onHardwareBackButton(function(event) {
-        if($state.is('quiz.questions')){
-            try {
-                $scope.showNodeMenu();
-            } catch (error) {
-                $log.debug(error);
-            }
+        if ($state.is('quiz.questions')) {
+          try {
+            $scope.showNodeMenu();
+          } catch (error) {
+            $log.debug(error);
+          }
         }
-    })
-    // $ionicPlatform.registerBackButtonAction(function(event) {
-    //     if($state.is('quiz.questions')){
-    //         try {
-    //             $scope.showNodeMenu();
-    //         } catch (error) {
-    //             $log.debug(error);
-    //         }
-    //     }
-    // }, 101);
+      })
+      // $ionicPlatform.registerBackButtonAction(function(event) {
+      //     if($state.is('quiz.questions')){
+      //         try {
+      //             $scope.showNodeMenu();
+      //         } catch (error) {
+      //             $log.debug(error);
+      //         }
+      //     }
+      // }, 101);
 
     $scope.showNodeMenu = function() {
       quizCtrl.pauseModal.show();
@@ -692,52 +692,58 @@ $log.debug("Please",quiz)
       }, 100)
     }
 
-    function next(){
-        if(quizCtrl.summary.stars >= 1){
-            $ionicLoading.show({
-                hideOnStateChange: true
-            })
-            $state.go('map.navigate',{});
-        }
-        else{
-            $scope.showNodeMenu();
-        }
+    function next() {
+      if (quizCtrl.summary.stars >= 1) {
+        $ionicLoading.show({
+          hideOnStateChange: true
+        })
+        $state.go('map.navigate', {});
+      } else {
+        $scope.showNodeMenu();
+      }
     }
 
     // intro
 
     $scope.tour = {
-        config: {},
-        steps: [{
-            target: '#step1',
-            content: 'This is the first step!',
-        }, {
-            target: '#step2',
-            content: 'Blah blah blah.',
-        }, {
-            target: '#step3',
-            content: 'I guess this is a menu!',
-        }]
-    };
-  demoFactory.setStep(5);
+      config: {},
+      steps: [{
+        target: '#step1',
+        content: 'This is the first step!',
 
-    function tourStart() {
-      if ($scope.demo.tourFlag == 1 || $scope.demo.tourFlag === null) {
-        nzTour.start($scope.tour);
-        localStorage.setItem("tourFlag",0);
+      }, {
+        target: '#step2',
+        content: 'Blah blah blah.',
+
+      }, {
+        target: '#step3',
+        content: 'I guess this is a menu!',
+
+      }]
+    };
+    demoFactory.show().then(function(result) {
+      if(result){
+        $timeout(function(){
+          $log.debug($scope.demo.tourFlag);
+          audio.play('demo-quiz-1')
+          nzTour.start($scope.tour);
+          demoFactory.setStep(5);
+        });
       }
-    }
+    })
 
     function tourNextStep() {
       if (nzTour.current) {
-        nzTour.next(); 
+        if(nzTour.current.step === 0){
+          audio.play('demo-quiz-2')
+        }else if(nzTour.current.step === 1){
+          audio.play('demo-quiz-3')
+        }
+        nzTour.next();
       }
     }
 
-    $timeout(function() {
-      $log.debug($scope.demo.tourFlag);
-      $scope.demo.tourStart();
-    }, 800);        
+
 
   }
 })();

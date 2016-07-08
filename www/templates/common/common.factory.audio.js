@@ -9,10 +9,12 @@
     return {
       play: function(sound) {
         try {
+          $log.debug("audio play",sound)
+
           $cordovaNativeAudio.play(sound);
-          console.log('sound played');
+          $log.debug('sound played');
         } catch (error) {
-          console.log(error);
+          $log.debug(error);
         }
       },
       loop: function(sound) {
