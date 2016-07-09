@@ -12,6 +12,7 @@
 
     //bind quiz resolved to controller
     quizCtrl.quiz = quiz;
+    $log.debug('unshifted quiz', quiz);
 
     //report
     quizCtrl.report = {};
@@ -365,7 +366,7 @@
           status: 'correct',
           score: question.node.type.score
         }
-        quizCtrl.summary.score.marks += question.node.type.score;
+        quizCtrl.summary.score.marks += question.node.id!='demo' ? question.node.type.score : 0;
         quizCtrl.summary.score.percent = parseInt((quizCtrl.summary.score.marks / quizCtrl.quiz.node.type.score) * 100);
         quizCtrl.summary.stars = quizCtrl.calculateStars(quizCtrl.summary.score.percent);
       } else {
@@ -579,6 +580,10 @@
     }
 
     function submitQuiz(quizType) {
+        if(quizCtrl.summary.analysis['demo'])
+            delete quizCtrl.summary.analysis['demo'];
+        if(quizCtrl.report.attempts['demo'])
+            delete quizCtrl.report.attempts['demo'];
       if (quizType === 'practice') {
         $scope.modal.hide().then(function() {
           $log.debug("submit qi")
@@ -610,10 +615,10 @@
 
     function generateReport(quiz) {
       angular.forEach(quiz.objects, function(value, key) {
-        if (quizCtrl.getQuestionType(value) == CONSTANT.WIDGETS.QUESTION_TYPES.SCQ && value.attempted !== '') {
+        if (quizCtrl.getQuestionType(value) == CONSTANT.WIDGETS.QUESTION_TYPES.SCQ && value.attempted !== '' && value.id !='demo') {
           quizCtrl.submitAttempt(value.node.id,
             value.attempted);
-        } else if (quizCtrl.getQuestionType(value) == CONSTANT.WIDGETS.QUESTION_TYPES.MCQ && value.attempted.length > 0) {
+        } else if (quizCtrl.getQuestionType(value) == CONSTANT.WIDGETS.QUESTION_TYPES.MCQ && value.attempted.length > 0 && value.id !='demo') {
           quizCtrl.submitAttempt(value.node.id,
             value.attempted);
         }
