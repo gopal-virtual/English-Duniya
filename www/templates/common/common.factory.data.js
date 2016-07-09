@@ -411,7 +411,7 @@
     function getSkills(data) {
       return appDB.get(data.userId)
         .then(function(doc) {
-          return doc.data.skills;          
+          return doc.data.skills;
         })
     }
 
