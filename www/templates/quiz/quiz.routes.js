@@ -21,7 +21,7 @@
           quiz : null,
         },
         resolve: {
-          quiz: ['$stateParams', 'Rest', '$log', 'data', 'ml', '$q', '$http', function($stateParams, Rest, $log, data, ml, $q, $http) {
+          quiz: ['$stateParams', 'Rest', '$log', 'data', 'ml', '$q', '$http','demo', function($stateParams, Rest, $log, data, ml, $q, $http,demo) {
             if ($stateParams.type == 'litmus') {
 
 
@@ -66,10 +66,15 @@
 
 
             } else {
-                return data.getAssessment($stateParams.quiz).then(function(response){
-                    return response;
+                $log.debug("show demo",demo.show());
+                return demo.show().then(function(response){
+                    response && $stateParams.quiz.objects.unshift(data.demo_question);
+                    return data.getAssessment($stateParams.quiz).then(function(response){
+                        return response;
+                    });
+
                 })
-                ;
+
               // return $stateParams.quiz;
 
             }
@@ -99,7 +104,7 @@
             },
             controller: 'QuizController as quizCtrl'
           }
-        }
+      }
       })
 
     .state('quiz.summary', {
