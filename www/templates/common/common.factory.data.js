@@ -205,7 +205,7 @@
         }
       };
       return lessonDB.get('_local/preloaded').then(function(doc) {
-        $log.debug("createIfNotExistsLessonDB Exists",ddoc,pouchDB);
+        $log.debug("createIfNotExistsLessonDB Exists", ddoc, pouchDB);
 
       }).catch(function(err) {
         if (err.name !== 'not_found') {
@@ -215,17 +215,16 @@
           return lessonDB.put({
             _id: '_local/preloaded'
           });
-        }).then(function(){
+        }).then(function() {
           return lessonDB.put(ddoc).then(function() {
             $log.debug("createIfNotExistsLessonDB ddcon made");
             // success!
           }).catch(function(err) {
-            $log.debug("createIfNotExistsLessonDB ddoc error",err);
+            $log.debug("createIfNotExistsLessonDB ddoc error", err);
 
             // some error (maybe a 409, because it already exists?)
           });
-        })
-        ;
+        });
       })
 
 
@@ -335,18 +334,18 @@
       $log.debug("Starts", start)
       var d = $q.defer();
 
-      lessonDB.query('index/by_grade',{
+      lessonDB.query('index/by_grade', {
           include_docs: true,
-          key : grade
+          key: grade
         }).then(function(data) {
-          $log.debug("Starts 1", new Date() - start,data)
+          $log.debug("Starts 1", new Date() - start, data)
           var lessons = [];
           for (var i = 0; i < data.rows.length; i++) {
-              data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key
-              lessons.push(data.rows[i].doc.lesson.node);
+            data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key
+            lessons.push(data.rows[i].doc.lesson.node);
           }
           lessons = _.sortBy(lessons, 'key');
-          $log.debug("Ends", new Date() - start,lessons)
+          $log.debug("Ends", new Date() - start, lessons)
           d.resolve(lessons)
         })
         .catch(function(error) {
@@ -511,43 +510,61 @@
 
 
     function syncReport(report, user) {
-      return Rest.all('reports').post({
-        'score': report.score,
-        'person': user.userId,
-        'node': report.node
-      }).then(function(success) {
-        var attempts = [];
-        angular.forEach(report.attempts, function(attempt) {
-          attempts.push({
-            "answer": attempt.answer,
-            "status": attempt.status,
-            "person": user.userId,
-            "report": success.id,
-            "node": attempt.node
-          })
-        })
-        return Promise.resolve();
-        // Rest.all('attempts').post(attempts);
-      })
+      $log.debug("Report syncing 1")
+      report.attempt = report.attempts;
+      report.person = report.user;
+      // return Rest.all('reports').post({
+      //   'score': report.score,
+      //   'person': user.userId,
+      //   'node': report.node
+      // }).then(function(success) {
+      //   var attempts = [];
+      //   angular.forEach(report.attempts, function(attempt) {
+      //     attempts.push({
+      //       "answer": attempt.answer,
+      //       "status": attempt.status,
+      //       "person": user.userId,
+      //       "report": success.id,
+      //       "node": attempt.node
+      //     })
+      //   })
+      // return Promise.resolve();
+      var d = $q.defer();
+      d.resolve();
+      return d.promise;
+      return Rest.all('reports').post(report);
+      // })
     }
 
     function startReportSyncing(user) {
       $log.debug("Report syncing", user)
-      var appData;
-
       return reportsDB.allDocs({
-        include_docs: true
-      }).then(function(response) {
-        var promise;
-        // angular.forEach(response.rows, function(row) {
-          // var report = row.doc.data.reports[0];
-          $log.debug("report", response.rows[0].doc.data);
-          // promise = syncReport(report, user);
-        // })
-      })
+          include_docs: true
+        }).then(function(response) {
+          var d = $q.defer();
+          // angular.forEach(response.rows, function(row) {
+          var report = response.rows[0].doc.data;
 
-      .catch(function(e) {
-          $log.debug("Response error", e)
+          syncReport(report, user).then(function(){
+            var callback = false;
+            $log.debug()
+            if(response.rows.length > 2){
+              callback = true;
+            }
+            d.resolve({'report_doc':response.rows[0],'callback':callback})
+          });
+          return d.promise;
+          // })
+        })
+        .then(function(response) {
+          $log.debug("Report synced",response)
+          return reportsDB.remove(response.report_doc)
+        })
+        .then(function(response){
+          $log.debug("report deleted")
+        })
+        .catch(function(e) {
+          $log.debug("report Response error", e)
         })
         // return appDB.get(user.userId).then(function(response) {
         //   appData = response;
