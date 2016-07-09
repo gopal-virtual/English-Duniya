@@ -115,7 +115,7 @@
       $log.debug("Play audio")
       audio.play('press');
 
-      if (utils.resourceType(resource) == 'practice' && (utils.demoShown && [2].indexOf(utils.demoFactory.getStep()) >= 0)) {
+      if (utils.resourceType(resource) == 'practice' && (utils.demoShown && [2,3].indexOf(utils.demoFactory.getStep()) >= 0)) {
         return;
       }
 

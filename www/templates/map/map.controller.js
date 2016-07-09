@@ -72,6 +72,7 @@
 
     $scope.$on('openNode', function(event, node, currentPos) {
       lessonutils.playDemoAudio();
+      // audio.stop('demo-1')
     //   $scope.demo.isShown() && $scope.demo.hide();
       if(currentPos)
         currentPos.lessonType = node.tag;
@@ -202,6 +203,8 @@
             if(result && demoFactory.getStep() == '1'){
               $timeout(function(){
                   $scope.demo.show().then(function(){
+                    $log.debug('aaaaaa');
+
                       audio.play('demo-1');
                       demoFactory.setStep(2)
                   });

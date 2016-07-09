@@ -26,11 +26,19 @@
         }
       },
       stop: function(sound) {
+        $log.debug("Stop triggered",sound)
         try {
-          $cordovaNativeAudio.stop(sound);
-          console.log('sound stopped');
+
+          $cordovaNativeAudio.stop(sound).then(function(s){
+            $log.debug("Success sound stop",s)
+          })
+          .catch(function(e){
+            $log.debug("error sound tope",e)
+          })
+          ;
+          $log.debug('sound stopped');
         } catch (error) {
-          console.log(error);
+          $log.debug(error);
         }
       },
       unload: function(sound) {

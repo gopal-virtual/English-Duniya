@@ -72,8 +72,8 @@
         }],
         onExit: ['audio', function(audio) {
           audio.stop('background');
-          audio.stop('demo-2');
-          audio.stop('demo-4');
+          // audio.stop('demo-2');
+          // audio.stop('demo-4');
         }],
         views: {
           'state-map': {
