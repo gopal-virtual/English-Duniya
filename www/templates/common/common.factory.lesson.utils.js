@@ -22,7 +22,8 @@
       getGender: getGender,
       demoFactory: demoFactory,
        isState: isState,
-       playDemoAudio : playDemoAudio
+       playDemoAudio : playDemoAudio,
+       canClickDemo : canClickDemo
     };
     demoFactory.show().then(function(result) {
       utils.demoShown = result;
@@ -38,7 +39,23 @@
     function isState(state){
       return $state.is(state);
     }
-
+    function canClickDemo(resource){
+        if(
+            (utils.resourceType(resource) == 'video')
+            &&
+            (demoFactory.getStep() == 2 || demoFactory.getStep() == 3)
+        ){
+            return true;
+        }
+        if(
+            (utils.resourceType(resource) == 'practice')
+            &&
+            (demoFactory.getStep() == 4)
+        ){
+            return true;
+        }
+        return false;
+    }
     function leaveLesson() {
       !$state.is('map.navigate') &&
         $ionicLoading.show({
@@ -177,7 +194,7 @@
                   video.play();
                   $ionicLoading.hide();
                 }
-                utils.demoShown && utils.demoFactory.setStep(3)
+                utils.demoFactory.getStep() !=5 && utils.demoFactory.setStep(3);
               });
             })
             // utils.config.sources[0].src = utils.getSrc(resource.node.type.path);

@@ -68,6 +68,8 @@
             } else {
                 $log.debug("show demo",demo.show());
                 return demo.show().then(function(response){
+                    // $log.debug('resolving quiz');
+                    // $stateParams.quiz.objects[0].node.id == 'demo' ? $stateParams.quiz.objects.shift(data.demo_question) :false;
                     response && $stateParams.quiz.objects.unshift(data.demo_question);
                     return data.getAssessment($stateParams.quiz).then(function(response){
                         return response;
