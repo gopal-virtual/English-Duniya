@@ -5,9 +5,9 @@
     .module('zaya-map')
     .controller('mapController', mapController);
 
-  mapController.$inject = ['$scope', '$rootScope', '$log', '$ionicPopup','$ionicModal', '$state', 'lessons', 'scores', 'skills', 'extendLesson', 'Rest', 'CONSTANT', '$sce', '$ionicLoading', '$timeout', '$ionicBackdrop', 'orientation', 'Auth', 'lessonutils', 'audio', 'data', 'ml', 'lessonLocked', '$ionicPlatform'];
+  mapController.$inject = ['$scope', '$rootScope', '$log', '$ionicPopup','$ionicModal', '$state', 'lessons', 'scores', 'skills', 'extendLesson', 'Rest', 'CONSTANT', '$sce', '$ionicLoading', '$timeout', '$ionicBackdrop', 'orientation', 'Auth', 'lessonutils', 'audio', 'data', 'ml', 'lessonLocked', '$ionicPlatform','demo'];
 
-  function mapController($scope, $rootScope, $log, $ionicPopup, $ionicModal, $state, lessons, scores, skills, extendLesson, Rest, CONSTANT, $sce, $ionicLoading, $timeout, $ionicBackdrop, orientation, Auth, lessonutils, audio, data, ml, lessonLocked, $ionicPlatform) {
+  function mapController($scope, $rootScope, $log, $ionicPopup, $ionicModal, $state, lessons, scores, skills, extendLesson, Rest, CONSTANT, $sce, $ionicLoading, $timeout, $ionicBackdrop, orientation, Auth, lessonutils, audio, data, ml, lessonLocked, $ionicPlatform, demoFactory) {
 
     $scope.audio = audio;
     $scope.orientation = orientation;
@@ -26,20 +26,21 @@
     mapCtrl.animationExpand['shrink'] = shrink;
     mapCtrl.showResult = true;
     mapCtrl.getNodeProperty = getNodeProperty;
+    mapCtrl.demoFactory = demoFactory;
 
     function getNodeProperty(prop){
       if(prop == 'x')
-        return JSON.parse(localStorage.demo_node).x;
+        return localStorage.demo_node ? JSON.parse(localStorage.demo_node).x : 0;
       if(prop == 'y')
-        return JSON.parse(localStorage.demo_node).y;
+        return localStorage.demo_node ? JSON.parse(localStorage.demo_node).y : 0;
       if(prop == 'width')
-        return JSON.parse(localStorage.demo_node).width;
+        return localStorage.demo_node ? JSON.parse(localStorage.demo_node).width : 0;
       if(prop == 'height')
-        return JSON.parse(localStorage.demo_node).height;
+        return localStorage.demo_node ? JSON.parse(localStorage.demo_node).height : 0;
       if(prop == 'node')
-        return JSON.parse(localStorage.demo_node).node;
+        return localStorage.demo_node ? JSON.parse(localStorage.demo_node).node : 0;
       if(prop == 'type')
-        return JSON.parse(localStorage.demo_node).type;
+        return localStorage.demo_node ? JSON.parse(localStorage.demo_node).type : 0;
     }
     // mapCtrl.animationShrink.shrink = animationShrink;
 
@@ -70,6 +71,9 @@
 
 
     $scope.$on('openNode', function(event, node, currentPos) {
+      lessonutils.playDemoAudio();
+      // audio.stop('demo-1')
+    //   $scope.demo.isShown() && $scope.demo.hide();
       if(currentPos)
         currentPos.lessonType = node.tag;
 
@@ -100,7 +104,10 @@
       return true;
     }
     mapCtrl.openDemo = function() {
-      $scope.demo.show();
+      $scope.demo.show().then(function(){
+          $ionicLoading.hide();
+      });
+      $log.debug("Playing audio")
       return true;
     }
     mapCtrl.closeDemo = function() {
@@ -189,6 +196,26 @@
                 }
             }, 400);
         }
+        $scope.$on('show_demo',function(){
+        // $ionicLoading.show();
+          demoFactory.show().then(function(result){
+            mapCtrl.demoShown = result;
+            if(result && demoFactory.getStep() == '1'){
+              $timeout(function(){
+                  $scope.demo.show().then(function(){
+                    $log.debug('aaaaaa');
+
+                      audio.play('demo-1');
+                      demoFactory.setStep(2)
+                  });
+              })
+            }
+          }
+      )
+      .finally(function(){
+        //   $ionicLoading.hide();
+      })
+        })
 
 
     }

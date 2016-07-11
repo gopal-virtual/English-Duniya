@@ -4,14 +4,16 @@
     .module('zaya-quiz')
     .controller('QuizController', QuizController)
 
-  QuizController.$inject = ['quiz', 'widgetParser', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Auth', '$ionicLoading', '$ionicPopup', 'lessonutils', 'orientation', '$location', '$anchorScroll', '$document', '$ionicScrollDelegate', '$ionicPosition', '$timeout', '$window', 'mediaManager', '$cordovaFileTransfer', '$cordovaFile', '$interval', '$q', '$ImageCacheFactory', 'ml', 'data', 'lessonutils','$ionicPlatform'];
+  QuizController.$inject = ['quiz', 'widgetParser', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Auth', '$ionicLoading', '$ionicPopup', 'lessonutils', 'orientation', '$location', '$anchorScroll', '$document', '$ionicScrollDelegate', '$ionicPosition', '$timeout', '$window', 'mediaManager', '$cordovaFileTransfer', '$cordovaFile', '$interval', '$q', '$ImageCacheFactory', 'ml', 'data', 'lessonutils', '$ionicPlatform', 'nzTour', 'demo' ];
 
-  function QuizController(quiz, widgetParser, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition, $timeout, $window, mediaManager, $cordovaFileTransfer, $cordovaFile, $interval, $q, $ImageCacheFactory, ml, data, lessonutils,$ionicPlatform) {
+  function QuizController(quiz, widgetParser, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition, $timeout, $window, mediaManager, $cordovaFileTransfer, $cordovaFile, $interval, $q, $ImageCacheFactory, ml, data, lessonutils, $ionicPlatform, nzTour, demoFactory) {
     $log.debug("Inside quiz controller")
     var quizCtrl = this;
 
     //bind quiz resolved to controller
     quizCtrl.quiz = quiz;
+    $log.debug('unshifted quiz', quiz);
+
     //report
     quizCtrl.report = {};
     quizCtrl.submitReport = submitReport;
@@ -86,10 +88,16 @@
 
     //state history
     quizCtrl.isAssessment = ($stateParams.type == 'assessment');
+    // quizCtrl.tourFlag = true;
 
+    $scope.demo = {
+      'tourNextStep': tourNextStep,
+      'tourFlag': localStorage.getItem('tourFlag'),
+    }
+
+    $scope.tourNextStep = tourNextStep;
     $scope.lessonutils = lessonutils;
     $scope.selectedNode = lessonutils.getLocalLesson();
-
     $scope.modal = {};
 
 
@@ -350,7 +358,7 @@
           status: 'correct',
           score: question.node.type.score
         }
-        quizCtrl.summary.score.marks += question.node.type.score;
+        quizCtrl.summary.score.marks += question.node.id!='demo' ? question.node.type.score : 0;
         quizCtrl.summary.score.percent = parseInt((quizCtrl.summary.score.marks / quizCtrl.quiz.node.type.score) * 100);
         quizCtrl.summary.stars = quizCtrl.calculateStars(quizCtrl.summary.score.percent);
       } else {
@@ -559,7 +567,10 @@
     }
 
     function submitQuiz(quizType) {
-      $log.debug("Submitting quiz")
+        if(quizCtrl.summary.analysis['demo'])
+            delete quizCtrl.summary.analysis['demo'];
+        if(quizCtrl.report.attempts['demo'])
+            delete quizCtrl.report.attempts['demo'];
       if (quizType === 'practice') {
         $scope.modal.hide().then(function() {
           $state.go('quiz.summary', {
@@ -590,10 +601,10 @@
 
     function generateReport(quiz) {
       angular.forEach(quiz.objects, function(value, key) {
-        if (quizCtrl.getQuestionType(value) == CONSTANT.WIDGETS.QUESTION_TYPES.SCQ && value.attempted !== '') {
+        if (quizCtrl.getQuestionType(value) == CONSTANT.WIDGETS.QUESTION_TYPES.SCQ && value.attempted !== '' && value.id !='demo') {
           quizCtrl.submitAttempt(value.node.id,
             value.attempted);
-        } else if (quizCtrl.getQuestionType(value) == CONSTANT.WIDGETS.QUESTION_TYPES.MCQ && value.attempted.length > 0) {
+        } else if (quizCtrl.getQuestionType(value) == CONSTANT.WIDGETS.QUESTION_TYPES.MCQ && value.attempted.length > 0 && value.id !='demo') {
           quizCtrl.submitAttempt(value.node.id,
             value.attempted);
         }
@@ -617,23 +628,24 @@
     });
 
     $ionicPlatform.onHardwareBackButton(function(event) {
-        if($state.is('quiz.questions')){
-            try {
+        if ($state.is('quiz.questions')) {
+          try {
+              if(!nzTour.current)
                 $scope.showNodeMenu();
-            } catch (error) {
-                $log.debug(error);
-            }
+          } catch (error) {
+            $log.debug(error);
+          }
         }
-    })
-    // $ionicPlatform.registerBackButtonAction(function(event) {
-    //     if($state.is('quiz.questions')){
-    //         try {
-    //             $scope.showNodeMenu();
-    //         } catch (error) {
-    //             $log.debug(error);
-    //         }
-    //     }
-    // }, 101);
+      })
+      // $ionicPlatform.registerBackButtonAction(function(event) {
+      //     if($state.is('quiz.questions')){
+      //         try {
+      //             $scope.showNodeMenu();
+      //         } catch (error) {
+      //             $log.debug(error);
+      //         }
+      //     }
+      // }, 101);
 
     $scope.showNodeMenu = function() {
       quizCtrl.pauseModal.show();
@@ -672,75 +684,58 @@
       }, 100)
     }
 
-    function next(){
-        if(quizCtrl.summary.stars >= 1){
-            $ionicLoading.show({
-                hideOnStateChange: true
-            })
-            $state.go('map.navigate',{});
-        }
-        else{
-            $scope.showNodeMenu();
-        }
+    function next() {
+      if (quizCtrl.summary.stars >= 1) {
+        $ionicLoading.show({
+          hideOnStateChange: true
+        })
+        $state.go('map.navigate', {});
+      } else {
+        $scope.showNodeMenu();
+      }
     }
 
     // intro
 
-    $scope.CompletedEvent = function () {
-        console.log("Completed Event called");
-    };
+    $scope.tour = {
+      config: {},
+      steps: [{
+        target: '#step1',
+        content: 'This is the first step!',
 
-    $scope.ExitEvent = function () {
-        console.log("Exit Event called");
-    };
+      }, {
+        target: '#step2',
+        content: 'Blah blah blah.',
 
-    $scope.ChangeEvent = function (targetElement) {
-        console.log("Change Event called");
-        console.log(targetElement);
-    };
+      }, {
+        target: '#step3',
+        content: 'I guess this is a menu!',
 
-    $scope.BeforeChangeEvent = function (targetElement) {
-        console.log("Before Change Event called");
-        console.log(targetElement);
+      }]
     };
+    $state.is('quiz.questions') && demoFactory.show().then(function(result) {
+      if(result){
+        $timeout(function(){
+          $log.debug($scope.demo.tourFlag);
+          audio.play('demo-quiz-1')
+          nzTour.start($scope.tour);
+          demoFactory.setStep(5);
+        });
+      }
+    })
 
-    $scope.AfterChangeEvent = function (targetElement) {
-        console.log("After Change Event called");
-        console.log(targetElement);
-    };
-
-    $scope.IntroOptions = {
-        steps:[
-        {
-            element: '#step1',
-            intro: "This is question",
-            position : 'bottom'
-        },
-        {
-            element: '#step2',
-            intro: "This is option",
-            position: 'top'
-        },
-        {
-            element: '#step3',
-            intro: 'This is submit',
-            position: 'top'
-        },
-        {
-            element: '#step4',
-            intro: "Thank you",
-            position: 'top'
+    function tourNextStep() {
+      if (nzTour.current) {
+        if(nzTour.current.step === 0){
+          audio.play('demo-quiz-2')
+        }else if(nzTour.current.step === 1){
+          audio.play('demo-quiz-3')
         }
-        ],
-        showStepNumbers: false,
-        showBullets: false,
-        exitOnOverlayClick: false,
-        exitOnEsc:false,
-        nextLabel: '<strong>NEXT!</strong>',
-        prevLabel: '<span style="color:green">Previous</span>',
-        skipLabel: 'Exit',
-        doneLabel: 'Thanks'
-    };
+        nzTour.next();
+      }
+    }
+
+
 
   }
 })();

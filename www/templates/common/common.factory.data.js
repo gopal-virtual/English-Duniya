@@ -57,7 +57,69 @@
       updateSkills: updateSkills,
       // addNewUser: addNewUser
       putUserifNotExist: putUserifNotExist,
-      startReportSyncing: startReportSyncing
+      startReportSyncing: startReportSyncing,
+      demo_question : {
+      "node": {
+        "id": "demo",
+        "content_type_name": "json question",
+        "type": {
+          "id": "demo",
+          "created": "2016-07-08T14:44:19.871339Z",
+          "updated": "2016-07-08T14:44:19.871370Z",
+          "microstandard": "ELL.1.RE.V.9.MOB",
+          "is_critical_thinking": false,
+          "level": 1,
+          "answer": [2],
+          "score": 10,
+          "content": {
+            "is_multiple": false,
+            "widgets": {
+              "videos": {},
+              "sounds": {},
+              "images": {
+                "1": "/media/ell/images/dog_O5P4I8.png",
+                "2": "/media/ell/images/person_GLUMUY.png",
+                "3": "/media/ell/images/place_KJMRCN.png",
+                "4": "/media/ell/images/animal_2W0HQG.png",
+                "5": "/media/ell/images/thing_DV4JY6.png"
+              }
+            },
+            "instruction": null,
+            "options": [{
+              "option": "person [[img id=2]]",
+              "key": 1
+            }, {
+              "option": "place [[img id=3]]",
+              "key": 3
+            }, {
+              "option": "animal [[img id=4]]",
+              "key": 2
+            }, {
+              "option": "thing [[img id=5]]",
+              "key": 4
+            }],
+            "tags": [],
+            "hints": "[]"
+          },
+          "type": "choicequestion"
+        },
+        "tag": null,
+        "created": "2016-07-08T14:44:19.881208Z",
+        "updated": "2016-07-08T14:44:19.881242Z",
+        "title": "dog [[img id=1]]",
+        "description": "",
+        "object_id": "e3ea1ecb-997a-4d2f-9a45-378fa3201e57",
+        "status": "PUBLISHED",
+        "lft": 936,
+        "rght": 937,
+        "tree_id": 1,
+        "level": 3,
+        "parent": "29f41d84-fda3-4964-94be-25a6800d93a3",
+        "content_type": 21,
+        "account": "150c906a-c3ef-4e2b-a19d-c77fdabf2015"
+      },
+      "objects": []
+    }
     };
 
 
@@ -226,9 +288,8 @@
           });
         });
       })
-
-
     }
+
 
     function putUserifNotExist(data) {
       return Rest.one('profiles', JSON.parse(localStorage.user_details).profile).all('scores').all('skills').getList().then(function(profile) {
@@ -514,7 +575,7 @@
           d.resolve(data);
         })
         .catch(function(err) {
-          d.reject(err);
+          d.reject
         });
       return d.promise;
 

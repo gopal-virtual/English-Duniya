@@ -1,6 +1,6 @@
 <ion-view>
     <ion-content scroll="false">
-        <videogular vg-theme="contentCtrl.config.theme" vg-player-ready="contentCtrl.onPlayerReady($API)" vg-auto-play="contentCtrl.config.autoplay" vg-update-state="contentCtrl.onStateChange($state)" vg-complete="contentCtrl.onVideoComplete()">
+        <videogular vg-theme="contentCtrl.config.theme" vg-player-ready="contentCtrl.onPlayerReady($API)" vg-auto-play="contentCtrl.config.autoplay" vg-update-state="contentCtrl.onStateChange($state)" vg-complete="lessonutils.demoFactory.getStep() == 3 && lessonutils.demoFactory.setStep(4);lessonutils.demoFactory.getStep() == 4 && lessonutils.playDemoAudio();contentCtrl.onVideoComplete()">
             <vg-media vg-src="contentCtrl.config.sources" ng-click="contentCtrl.toggleControls()">
             </vg-media>
             <vg-buffering></vg-buffering>
