@@ -101,15 +101,17 @@
     $ionicPlatform.ready(function() {
 
       data.createIfNotExistsLessonDB()
-    
-      $rootScope.$on('$cordovaNetwork:online', function(event, networkState) {
-        if (Auth.isAuthorised() && Auth.isVerified() && Auth.hasProfile()) {
-          data.startReportSyncing({
-            'userId': Auth.getProfileId()
-          })
-        }
-      })
-      localStorage.setItem('reportSync',JSON.stringify({'progress':false,'updated':false}))
+
+      // $rootScope.$on('$cordovaNetwork:online', function(event, networkState) {
+      //   if (Auth.isAuthorised() && Auth.isVerified() && Auth.hasProfile()) {
+      //     data.startReportSyncing({
+    //       'userId': Auth.getProfileId()
+      //     })
+      //   }
+      // })
+      if(localStorage.getItem('report_id') === null){
+        localStorage.setItem('report_id',1);
+      }
       if (window.Connection) {
         if (navigator.connection.type == Connection.NONE) {
           $ionicPopup.confirm({

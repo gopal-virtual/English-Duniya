@@ -26,7 +26,9 @@
       'zaya-intro',
       'zaya-auth',
       'zaya-quiz',
-      'zaya-content'
+      'zaya-content',
+      'ngResource',
+      'ngCachedResource'
     ]);
 
 })();

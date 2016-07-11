@@ -5,10 +5,10 @@
     .module('common')
     .factory('data', data);
 
-  data.$inject = ['pouchDB', '$http', '$log', 'Rest', 'CONSTANT', '$q', '$ImageCacheFactory', 'mediaManager', '$interval', 'network', 'Auth', 'widgetParser'];
+  data.$inject = ['pouchDB', '$http', '$log', 'Rest', 'CONSTANT', '$q', '$ImageCacheFactory', 'mediaManager', '$interval', 'network', 'Auth', 'widgetParser', '$cachedResource'];
 
   /* @ngInject */
-  function data(pouchDB, $http, $log, Rest, CONSTANT, $q, $ImageCacheFactory, mediaManager, $interval, network, Auth, widgetParser) {
+  function data(pouchDB, $http, $log, Rest, CONSTANT, $q, $ImageCacheFactory, mediaManager, $interval, network, Auth, widgetParser, $cachedResource) {
     // var diagnosisQuestionsDB = pouchDB('diagnosisQuestions');
     // var kmapsDB = pouchDB('kmaps');
     // var inputDB = pouchDB('http://127.0.0.1:5984/lessonDB');
@@ -420,34 +420,48 @@
     }
 
     function saveReport(report) {
-      return appDB.get(report.userId).then(function(response) {
-          var doc = response.data;
-          doc.reports.push({
-            'node': report.node,
-            'score': report.score,
-            'attempts': report.attempts
-          });
-          return reportsDB.post({
-            // '_id': report.userId,
-            // '_rev': response._rev,
-            'data': {
-              'user': report.userId,
-              'node': report.node,
-              'score': report.score,
-              'attempts': report.attempts
-            }
-          })
-        })
-        .then(function() {
-          var flag = JSON.parse(localStorage.getItem('reportSync'));
-          if (flag && flag.progress === true) {
-            flag.updated = true;
-          } else if (network.isOnline()) {
-            data.startReportSyncing({
-              'userId': report.userId
-            })
-          }
-        })
+      var ReportResource = $cachedResource('reportResource'+localStorage.getItem('report_id'), CONSTANT.BACKEND_SERVICE_DOMAIN+'api/v1/reports/');
+      localStorage.setItem('report_id',parseInt(localStorage.getItem('report_id')) + 1)
+      // $log.debug("Saving report",JSON.parse(localStorage.getItem('cachedResource://reportResource')),{id:1});
+      var r = new ReportResource();
+      r.node = report.node;
+      r.score = report.score;
+      r.attempt = report.attempts;
+      r.person = report.userId;
+      r.$save();
+      r.$promise.then(function() {
+        $log.debug('Article was successfully saved.');
+      });
+
+      // return appDB.get(report.userId).then(function(response) {
+      //     var doc = response.data;
+      //     doc.reports.push({
+      //       'node': report.node,
+      //       'score': report.score,
+      //       'attempts': report.attempts
+      //     });
+
+          // return reportsDB.post({
+          //   // '_id': report.userId,
+          //   // '_rev': response._rev,
+          //   'data': {
+          //     'user': report.userId,
+          //     'node': report.node,
+          //     'score': report.score,
+          //     'attempts': report.attempts
+          //   }
+          // })
+        // })
+        // .then(function() {
+          // var flag = JSON.parse(localStorage.getItem('reportSync'));
+          // if (flag && flag.progress === true) {
+          //   flag.updated = true;
+          // } else if (network.isOnline()) {
+          //   data.startReportSyncing({
+          //     'userId': report.userId
+          //   })
+          // }
+        // })
     }
 
     function downloadQuiz(id) {}
@@ -545,22 +559,25 @@
           // angular.forEach(response.rows, function(row) {
           var report = response.rows[0].doc.data;
 
-          syncReport(report, user).then(function(){
+          syncReport(report, user).then(function() {
             var callback = false;
             $log.debug()
-            if(response.rows.length > 2){
+            if (response.rows.length > 2) {
               callback = true;
             }
-            d.resolve({'report_doc':response.rows[0],'callback':callback})
+            d.resolve({
+              'report_doc': response.rows[0],
+              'callback': callback
+            })
           });
           return d.promise;
           // })
         })
         .then(function(response) {
-          $log.debug("Report synced",response)
+          $log.debug("Report synced", response)
           return reportsDB.remove(response.report_doc)
         })
-        .then(function(response){
+        .then(function(response) {
           $log.debug("report deleted")
         })
         .catch(function(e) {

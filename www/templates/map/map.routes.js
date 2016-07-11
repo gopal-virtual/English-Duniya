@@ -17,9 +17,7 @@
           }],
           lessonLocked: ['Rest', '$log', '$http', 'data','extendLesson','Auth', function(Rest, $log, $http, data,extendLesson,Auth) {
 
-            $log.debug("Grade",Auth.getLocalProfile().grade)
             return data.getLessonsList(Auth.getLocalProfile().grade).then(function(lessons){
-            $log.debug("Lessons",lessons)
 
               return extendLesson.getLesson(lessons,[]).then(function(result){
                   return result;
@@ -31,7 +29,6 @@
         }],
         skills : ['Rest', '$log','network','data','Auth', function(Rest, $log, network,data,Auth){
           return data.getSkills({'userId':Auth.getProfileId()}).then(function(response){
-            $log.debug("Promise Resolved 3")
 
             return response;
           })
