@@ -4,7 +4,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
     var lessons = lessons;
     var game = new Phaser.Game("100", "100", Phaser.CANVAS, 'map_canvas', null, true, true, null);
 
-
+    var desertRegion;
     var playState = {
         preload: function() {
             // crisp image rendering
@@ -13,8 +13,8 @@ window.createGame = function(scope, lessons, audio, injector, log) {
             Phaser.Canvas.setSmoothingEnabled(this.game.context, true); //also for Canvas, legacy approach
             //   PIXI.scaleModes.DEFAULT = PIXI.scaleModes.NEAREST; //for WebGL
 
-            this.load.image('desert', 'img/assets/desert_region.png');
-            this.load.image('tundra', 'img/assets/tundra_region.png');
+            this.load.image('desert', 'img/assets/desert_bg.png');
+            this.load.image('tundra', 'img/assets/snow_bg.png');
             this.load.image('forest', 'img/assets/forest_region.png');
 
             // this.load.image('tent', 'img/assets/tent.png');
@@ -52,107 +52,135 @@ window.createGame = function(scope, lessons, audio, injector, log) {
             this.game.time.advancedTiming = true;
         },
         create: function() {
-            var desert_height = 2155;
-            var tundra_height = 2378; //2378
+            var desert_height = 2420;
+            var tundra_height = 2796; //2378
             var forest_height = 1031;
+
+            desertRegion = this.add.group();
+            var tundraRegion = this.add.group();
+            var forestRegion = this.add.group();
+
             this.desert_offset = tundra_height + forest_height;
             this.tundra_offest = forest_height;
 
+            desertRegion.position.set(0,0 + this.desert_offset);
+            tundraRegion.position.set(0,0 + this.tundra_offest);
             // this.iceregion_height = 4533 - desert_height - tundra_height;
             // this.forestregion_height = 300;
+            
+
+            // var lilyPads; // group
+            // function create() {   
+            //     lilyPads = game.add.group();   // create in a for loop, whatever   
+            //     var lily = lilyPads.create(Math.random() * game.width, Math.random() * game.height, 'lilypad', 0);   
+            //     lily.events.onOutOfBounds.add(lilyPadOOB, this);   
+            //     lily.checkWorldBounds = true;
+            // }// sprite out of boundsfunction 
+            
+            // lilyPadOOB(lily) {   
+            //     lily.kill();
+            // }// called when you need to spawn a recycled / new sprite
+            // function spawnLilyPad() {   
+            //     var lily = lilyPads.getFirstDead();   
+            //     if (!lily) {      
+            //         lily = lilyPads.create(0, 0, 'lilypad');      
+            //         lily.events.onOutOfBounds.add(lilyPadOOB, this);      
+            //         lily.checkWorldBounds = true;   
+            //     }   lily.reset(x, y);   
+            //     lily.animations.frame = 0;
+            // }
 
 
-            var desert = this.game.add.sprite(0, 0 + this.desert_offset, 'desert');
-            var tundra = this.game.add.sprite(0, 0 + this.tundra_offest, 'tundra');
-            var forest = this.game.add.sprite(-1, 0, 'forest');
+            
+            var desert = desertRegion.create(0, 0, 'desert');
+            var tundra = tundraRegion.create(-1, 0, 'tundra');
+            // desertRegion.events.onOutOfBounds.add(logy);
+            function logy(){
+                log.debug("Out");
+            }
+            desertRegion.setAll('checkWorldBounds', true);
+            tundraRegion.setAll('checkWorldBounds', true);
+            desertRegion.setAll('outOfBoundsKill', true);
+            tundraRegion.setAll('outOfBoundsKill', true);
+            // var forest = this.game.add.sprite(-1, 0, 'forest');
 
             var game_scale = game.world.width / desert.width;
 
-            desert.scale.setTo(game_scale, 1);
-            tundra.scale.setTo(game_scale, 1);
-            forest.scale.setTo(game_scale, 1);
-            this.game.world.setBounds(0, 0, this.game.width, desert_height + tundra_height + forest_height);
-            this.points = {
-                'x': [181, 167, 170, 185, 205, 222, 225, 210, 180, 144, 109, 81, 77, 95, 121, 142, 153, 148, 132, 110, 90, 91, 118, 153, 188, 222, 255, 284, 299, 266, 227, 187, 147, 114, 113, 129, 148, 167, 183, 195, 200, 203, 206, 211, 217, 223, 226, 228, 228, 228, 229, 223, 209, 191, 172, 161, 157, 157, 160, 163, 159, 147, 139, 135, 137, 147, 165, 191, 221, 252, 278, 289, 281, 262, 239, 214, 187, 160, 148, 150, 164, 187, 215, 245, 276, 304, 317, 309, 287, 260, 233, 211, 207, 221, 232, 222, 205, 194, 188, 187, 190, 196, 211, 228, 225, 206, 182, 160, 154, 161, 175, 194, 214, 227, 218, 195, 168, 141, 119, 120, 154, 193, 233, 271, 272, 238, 201, 164, 133, 119, 129, 151, 177, 207, 240, 273, 292, 298, 288, 260, 232, 211, 195, 184, 179, 179, 180, 180, 180, 180, 180, 180, 180, 180, 180],
-                'y': [86, 124, 163, 200, 235, 271, 311, 347, 373, 390, 409, 437, 476, 511, 541, 575, 614, 653, 689, 723, 757, 796, 825, 845, 864, 885, 908, 935, 970, 991, 996, 998, 1004, 1025, 1064, 1101, 1136, 1171, 1207, 1246, 1285, 1325, 1365, 1405, 1444, 1484, 1524, 1564, 1604, 1644, 1684, 1723, 1761, 1796, 1831, 1870, 1909, 1949, 1989, 2029, 2069, 2107, 2146, 2186, 2226, 2265, 2300, 2331, 2357, 2383, 2412, 2450, 2489, 2524, 2557, 2588, 2618, 2647, 2684, 2724, 2761, 2794, 2822, 2849, 2874, 2903, 2940, 2978, 3012, 3041, 3070, 3104, 3143, 3177, 3215, 3254, 3290, 3328, 3368, 3408, 3447, 3487, 3524, 3560, 3599, 3634, 3666, 3700, 3739, 3778, 3815, 3851, 3885, 3923, 3961, 3994, 4023, 4052, 4086, 4124, 4143, 4143, 4136, 4143, 4179, 4200, 4215, 4230, 4255, 4292, 4330, 4364, 4394, 4420, 4442, 4465, 4500, 4539, 4577, 4606, 4635, 4668, 4705, 4743, 4783, 4823, 4863, 4903, 4943, 4983, 5023, 5063, 5103, 5143, 5183]
+            var points = {
+                'x': [181,170,205,225,180,109,77,121,153,132,90,118,188,255,299,227,147,113,148,183,200,206,217,226,228,229,209,172,157,160,159,139,137,165,221,278,281,239,187,148,164,215,276,317,287,233,207,232,205,188,190,211,225,182,154,175,214,218,168,119,154,233,272,201,133,129,177,240,292,288,232,195,179,180,180,180,180,180],
+                'y': [86,163,235,311,373,409,476,541,614,689,757,825,864,908,970,996,1004,1064,1136,1207,1285,1365,1444,1524,1604,1684,1761,1831,1909,1989,2069,2146,2226,2300,2357,2412,2489,2557,2618,2684,2761,2822,2874,2940,3012,3070,3143,3215,3290,3368,3447,3524,3599,3666,3739,3815,3885,3961,4023,4086,4143,4136,4179,4215,4255,4330,4394,4442,4500,4577,4635,4705,4783,4863,4943,5023,5103,5183]
             };
-
-            for (var i = 0, points_count = this.points.x.length; i < points_count; i++) {
-                this.points.x[i] *= game_scale;
-                this.points.y[i] += 381;
-            }
-
-            this.increment = 1 / this.world.height;
-
-            // Somewhere to draw to
-            this.bmd = this.add.bitmapData(this.game.width, this.world.height);
-            this.bmd.addToWorld();
-            // Draw the path
-            for (var j = 0; j < 1; j += this.increment) {
-                var posx = this.math.catmullRomInterpolation(this.points.x, j);
-                var posy = this.math.catmullRomInterpolation(this.points.y, j);
-                this.bmd.rect(posx, posy, 4, 4, '#219C7F');
-            }
 
             var cactus_points = [{
                 x: 292 * game_scale,
-                y: 2000,
+                y: 2265,
                 scale: 0.7
             }, {
                 x: 62 * game_scale,
-                y: 1900,
+                y: 2165,
                 scale: 0.6
             }, {
                 x: 330 * game_scale,
-                y: 1320,
+                y: 1585,
                 scale: 0.6
             }, {
                 x: 334 * game_scale,
-                y: 980,
+                y: 1245,
                 scale: 0.6
             }, {
                 x: 36 * game_scale,
-                y: 1000,
+                y: 1265,
                 scale: 0.6
             }, {
                 x: 92 * game_scale,
-                y: 557,
+                y: 822,
                 scale: 0.6
             }, {
                 x: 310 * game_scale,
-                y: 286,
+                y: 551,
                 scale: 0.6
             }, {
                 x: 70 * game_scale,
-                y: 140,
+                y: 405,
                 scale: 0.6
             }];
 
             var plant_points = [{
                 x: 54 * game_scale,
-                y: 1275 + this.desert_offset,
+                y: 1540,
                 scale: 0.5
             }, {
                 x: 330 * game_scale,
-                y: 2123 + this.tundra_offest,
-                scale: 0.4
+                y: 20,
+                scale: 0.3
             }, {
                 x: 230 * game_scale,
-                y: 2227 + this.tundra_offest,
+                y: 110,
                 scale: 0.3
             }, {
                 x: 60 * game_scale,
-                y: 2145 + this.tundra_offest,
+                y: 50,
                 scale: 0.3,
                 mirror: true
             }];
 
-            var tent_points = [{
-                x: 85 * game_scale,
-                y: 2252,
+            var tent_point = {
+                x: 85,
+                y: 168,
                 scale: 0.5,
                 mirror: true
-            }];
+            };
+
+            var camel_point = {
+                x: 80,
+                y: 1945,
+                scale: 0.6,
+            };
+
+            var scorpion_point = {
+                x: 300,
+                y: 805,
+            };
 
             var one_stone_points = [{
                 x: 42 * game_scale,
@@ -174,38 +202,73 @@ window.createGame = function(scope, lessons, audio, injector, log) {
 
             var two_stone_points = [{
                 x: 350,
-                y: 2180 + this.tundra_offest,
-                scale: 0.7
+                y: 62,
+                scale: 0.6
             }, {
                 x: 317,
-                y: 2222 + this.tundra_offest,
+                y: 99,
                 scale: 0.5
             }, {
                 x: 280,
-                y: 2250 + this.tundra_offest,
+                y: 127,
                 scale: 0.5
             }, {
-                x: 19,
-                y: 2145 + this.tundra_offest,
+                x: 25,
+                y: 37,
                 scale: 0.5
             }];
 
             var penguin_points = [{
                 x: 80,
-                y: 869 + this.tundra_offest,
+                y: 1553,
                 scale: 1
             }, {
                 x: 200,
-                y: 92 + this.tundra_offest,
+                y: 776,
                 scale: 0.5,
                 mirror: true
             }]
 
+            var seal_point = {
+                x: 306,
+                y: 2049,
+            }
+
+            var whale_point = {
+                x: 172,
+                y: 533,
+            }
+
+
+            desert.scale.setTo(game_scale, 1);
+            // tundra.scale.setTo(game_scale, 1);
+            // forest.scale.setTo(game_scale, 1);
+            this.game.world.setBounds(0, 0, this.game.width, desert_height + tundra_height + forest_height);
+            
+
+            for (var i = 0, points_count = points.x.length; i < points_count; i++) {
+                points.x[i] *= game_scale;
+                points.y[i] += forest_height + 30;
+            }
+
+            this.increment = 1 / this.world.height;
+
+            // Somewhere to draw to
+            this.bmd = this.add.bitmapData(this.game.width, this.world.height);
+            this.bmd.addToWorld();
+            // Draw the path
+            for (var j = 0; j < 1; j += this.increment) {
+                var posx = this.math.catmullRomInterpolation(points.x, j);
+                var posy = this.math.catmullRomInterpolation(points.y, j);
+                this.bmd.rect(posx, posy, 4, 4, '#219C7F');
+            }
+
+
 
             for (var i = 0, two_stone_count = two_stone_points.length; i < two_stone_count; i++) {
-                var tent = this.game.add.sprite(two_stone_points[i].x, two_stone_points[i].y, 'two_stone');
-                tent.anchor.setTo(0.5, 0.5);
-                tent.scale.setTo(two_stone_points[i].scale);
+                var two_stone = desertRegion.create(two_stone_points[i].x*game_scale, two_stone_points[i].y, 'two_stone');
+                two_stone.anchor.setTo(0.5, 0.5);
+                two_stone.scale.setTo(two_stone_points[i].scale);
             }
 
             // place snow_cactus
@@ -215,17 +278,17 @@ window.createGame = function(scope, lessons, audio, injector, log) {
 
             // place cactus
             for (var i = 0, cactus_count = cactus_points.length; i < cactus_count; i++) {
-                var cactus_animation = this.game.add.sprite(cactus_points[i].x, cactus_points[i].y + this.desert_offset, 'cactus_animation');
-                var wind = cactus_animation.animations.add('wind');
+                var cactus_animation = desertRegion.create(cactus_points[i].x, cactus_points[i].y, 'cactus_animation');
+                cactus_animation.animations.add('wind');
                 cactus_animation.animations.play('wind', 20, true);
                 cactus_animation.anchor.setTo(0.5, 0.5);
                 cactus_animation.scale.setTo(cactus_points[i].scale);
             }
 
             for (var i = 0, plant_count = plant_points.length; i < plant_count; i++) {
-                var plant_animation = this.game.add.sprite(plant_points[i].x, plant_points[i].y, 'plant_animation');
-                var wind = plant_animation.animations.add('wind');
-                plant_animation.animations.play('wind', 20, true);
+                var plant_animation = desertRegion.create(plant_points[i].x, plant_points[i].y, 'plant_animation');
+                plant_animation.animations.add('wind2');
+                plant_animation.animations.play('wind2', 20, true);
                 plant_animation.anchor.setTo(0.5, 0.5);
                 if (plant_points[i].mirror == true) {
                     plant_animation.scale.setTo(-plant_points[i].scale, plant_points[i].scale);
@@ -235,48 +298,44 @@ window.createGame = function(scope, lessons, audio, injector, log) {
             }
 
             // place tent
-            for (var i = 0, tent_count = tent_points.length; i < tent_count; i++) {
-                var tent_animation = this.game.add.sprite(tent_points[i].x, tent_points[i].y + this.tundra_offest, 'tent_animation');
-                var tentshake = tent_animation.animations.add('tentshake');
+            // for (var i = 0, tent_count = tent_point.length; i < tent_count; i++) {
+                var tent_animation = desertRegion.create(tent_point.x*game_scale, tent_point.y, 'tent_animation');
+                tent_animation.animations.add('tentshake');
                 tent_animation.animations.play('tentshake', 20, true);
                 tent_animation.anchor.setTo(0.5, 0.5);
-                if (tent_points[i].mirror == true) {
-                    tent_animation.scale.setTo(-tent_points[i].scale, tent_points[i].scale);
-                } else {
-                    tent_animation.scale.setTo(tent_points[i].scale);
-                }
-            }
+                tent_animation.scale.setTo(-tent_point.scale, tent_point.scale);
+            // }
 
             // fire animation
-            var fire_animation = this.game.add.sprite(tent_points[0].x + 100, tent_points[0].y + 50 + this.tundra_offest, 'fire_animation');
+            var fire_animation = desertRegion.create((tent_point.x + 100)*game_scale, tent_point.y + 30, 'fire_animation');
             fire_animation.anchor.setTo(0.5, 0.5);
-            var light = fire_animation.animations.add('light');
+            fire_animation.animations.add('light');
             fire_animation.animations.play('light', 20, true);
 
             // camel animation
-            var camel_animation = this.game.add.sprite(80, 1680 + this.desert_offset, 'camel_animation');
+            var camel_animation = desertRegion.create(camel_point.x*game_scale, camel_point.y, 'camel_animation');
             camel_animation.anchor.setTo(0.5, 0.5);
-            camel_animation.scale.setTo(0.6);
+            camel_animation.scale.setTo(camel_point.scale);
             camel_animation.angle = -14;
-            var neck_move = camel_animation.animations.add('neck_move');
-            camel_animation.animations.play('neck_move', 60, true);
+            camel_animation.animations.add('disco');
+            camel_animation.animations.play('disco', 60, true);
             //
             // scorpion animation
-            var scorpion_animation = this.game.add.sprite(300, 540 + this.desert_offset, 'scorpion_animation');
+            var scorpion_animation = desertRegion.create(scorpion_point.x*game_scale, scorpion_point.y, 'scorpion_animation');
             scorpion_animation.anchor.setTo(0.5, 0.5);
             scorpion_animation.angle = -10;
-            var walk = scorpion_animation.animations.add('walk');
+            scorpion_animation.animations.add('walk');
             scorpion_animation.animations.play('walk', 20, true);
             //
             // seal animation
-            var seal_animation = this.game.add.sprite(306, 1365 + this.tundra_offest, 'seal_animation');
+            var seal_animation = tundraRegion.create(seal_point.x*game_scale, seal_point.y, 'seal_animation');
             seal_animation.anchor.setTo(0.5, 0.5);
-            var oink = seal_animation.animations.add('oink');
+            seal_animation.animations.add('oink');
             seal_animation.animations.play('oink', 20, true);
             //
             // penguin animation
             for (var i = 0, penguin_count = penguin_points.length; i < penguin_count; i++) {
-                var penguin_animation = this.game.add.sprite(penguin_points[i].x, penguin_points[i].y, 'penguin_animation');
+                var penguin_animation = tundraRegion.create(penguin_points[i].x*game_scale, penguin_points[i].y, 'penguin_animation');
                 penguin_animation.anchor.setTo(0.5, 0.5);
                 var flap = penguin_animation.animations.add('flap');
                 penguin_animation.animations.play('flap', 30, true);
@@ -288,7 +347,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
             }
             //
             // whale animation
-            var whale_animation = this.game.add.sprite(172, 880, 'whale_animation');
+            var whale_animation = tundraRegion.create(whale_point.x*game_scale,whale_point.y, 'whale_animation');
             whale_animation.anchor.setTo(0.5, 0.5);
             whale_animation.scale.setTo(0.8);
             var tailwave = whale_animation.animations.add('tailwave');
@@ -345,8 +404,8 @@ window.createGame = function(scope, lessons, audio, injector, log) {
                 var currentLesson = lessons[i];
                 var locked = currentLesson.locked ? '-locked' : '';
                 var type = lessonType(currentLesson, i) == '' ? '' : '-' + lessonType(currentLesson, i);
-                var posx = this.math.catmullRomInterpolation(this.points.x, j);
-                var posy = this.math.catmullRomInterpolation(this.points.y, j);
+                var posx = this.math.catmullRomInterpolation(points.x, j);
+                var posy = this.math.catmullRomInterpolation(points.y, j);
                 var node = this.game.add.button(posx, posy, 'node' + type + locked);
 
 
@@ -433,6 +492,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
                 sprite.y = this.game.world.bounds.top;
         },
         update: function() {
+            log.debug("desertRegion",desertRegion);
             // this.dragMap();
         },
 
