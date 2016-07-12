@@ -7,7 +7,7 @@
   QuizController.$inject = ['quiz', 'widgetParser', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Auth', '$ionicLoading', '$ionicPopup', 'lessonutils', 'orientation', '$location', '$anchorScroll', '$document', '$ionicScrollDelegate', '$ionicPosition', '$timeout', '$window', 'mediaManager', '$cordovaFileTransfer', '$cordovaFile', '$interval', '$q', '$ImageCacheFactory', 'ml', 'data', 'lessonutils', '$ionicPlatform', 'nzTour', 'demo' ];
 
   function QuizController(quiz, widgetParser, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition, $timeout, $window, mediaManager, $cordovaFileTransfer, $cordovaFile, $interval, $q, $ImageCacheFactory, ml, data, lessonutils, $ionicPlatform, nzTour, demoFactory) {
-    $log.debug("Inside quiz controller")
+    $log.debug("Inside quiz controller",$stateParams)
     var quizCtrl = this;
 
     //bind quiz resolved to controller

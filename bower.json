@@ -21,7 +21,8 @@
     "nz-tour": "^1.1.0"
   },
   "resolutions": {
-    "angular": ">= 1.0.8"
+    "angular": "~1.2.8",
+    "pouchdb": "5.1.0"
   },
   "preen": {
     "jquery": [

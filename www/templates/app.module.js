@@ -17,6 +17,8 @@
       'pouchdb',
       'ionic.ion.imageCacheFactory',
       'nzTour',
+      'ngResource',
+      'ngCachedResource',
       // core
       'templates',
       'common',
@@ -26,8 +28,6 @@
       'zaya-auth',
       'zaya-quiz',
       'zaya-content',
-      'ngResource',
-      'ngCachedResource'
     ]);
 
 })();

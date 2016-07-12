@@ -17,11 +17,14 @@
           orientation.setPortrait();
           audio.stop('background');
         }],
-        params : {
-          quiz : null,
+        params: {
+          quiz: null,
+          report: null,
+          summary: null
         },
         resolve: {
-          quiz: ['$stateParams', 'Rest', '$log', 'data', 'ml', '$q', '$http','demo', function($stateParams, Rest, $log, data, ml, $q, $http,demo) {
+          quiz: ['$stateParams', 'Rest', '$log', 'data', 'ml', '$q', '$http', function($stateParams, Rest, $log, data, ml, $q, $http) {
+            $log.debug("Resolving quiz")
             if ($stateParams.type == 'litmus') {
 
 
@@ -42,52 +45,43 @@
               $log.debug('all_promises', all_promises);
 
               var litmus = {
-                  "node": {
-                      "id": "001",
-                      "content_type_name": "litmus",
-                      "type": {
-                          "id": "001",
-                          "type": "litmus",
-                      },
-                      "tag": "litmus",
-                      "title": "Litmus test",
+                "node": {
+                  "id": "001",
+                  "content_type_name": "litmus",
+                  "type": {
+                    "id": "001",
+                    "type": "litmus",
                   },
-                  "objects": []
+                  "tag": "litmus",
+                  "title": "Litmus test",
+                },
+                "objects": []
               };
 
 
               return $q.all(all_promises).then(function() {
-                  var suggestion = ml.getNextQSr(data.getTestParams(JSON.parse(localStorage.profile).grade), ml.mapping);
-                  var question = ml.dqJSON[suggestion.qSr];
-                  question && litmus.objects.push(question);
-                  litmus['suggestion'] = suggestion;
-                  return litmus;
+                var suggestion = ml.getNextQSr(data.getTestParams(JSON.parse(localStorage.profile).grade), ml.mapping);
+                var question = ml.dqJSON[suggestion.qSr];
+                question && litmus.objects.push(question);
+                litmus['suggestion'] = suggestion;
+                return litmus;
               })
 
 
             } else {
-                $log.debug("show demo",demo.show());
-                return demo.show().then(function(response){
-                    // $log.debug('resolving quiz');
-                    // $stateParams.quiz.objects[0].node.id == 'demo' ? $stateParams.quiz.objects.shift(data.demo_question) :false;
-                    response && $stateParams.quiz.objects.unshift(data.demo_question);
-                    return data.getAssessment($stateParams.quiz).then(function(response){
-                        return response;
-                    });
-
-                })
-
+              return data.getAssessment($stateParams.quiz).then(function(response) {
+                $log.debug("Resolved quiz")
+                return response;
+              });
               // return $stateParams.quiz;
 
             }
           }]
-        },
-
+        }
       })
       .state('quiz.start', {
         url: 'start',
-        onEnter: function($stateParams,$log){
-        },
+        onEnter: function($stateParams, $log) {},
         views: {
           'state-quiz': {
             templateUrl: CONSTANT.PATH.QUIZ + '/quiz.start' + CONSTANT.VIEW,
@@ -106,16 +100,17 @@
             },
             controller: 'QuizController as quizCtrl'
           }
-      }
+        }
       })
 
     .state('quiz.summary', {
       url: 'summary',
-      params: {
-        report: null,
-        quiz: null,
-        summary: null
-      },
+      onEnter: ['$log', 'audio', function($log, audio) {
+        $log.debug("Enter summary")
+      }],
+      onExit: ['$log', 'audio', function($log, audio) {
+        $log.debug("Exit summary")
+      }],
       views: {
         'state-quiz': {
           templateUrl: CONSTANT.PATH.QUIZ + '/quiz.summary' + CONSTANT.VIEW,

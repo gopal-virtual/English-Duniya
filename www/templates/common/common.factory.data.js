@@ -5,10 +5,10 @@
     .module('common')
     .factory('data', data);
 
-  data.$inject = ['pouchDB', '$http', '$log', 'Rest', 'CONSTANT', '$q', '$ImageCacheFactory', 'mediaManager', '$interval', 'network', 'Auth', 'widgetParser', '$cachedResource'];
+  data.$inject = ['pouchDB', '$http', '$log', 'Rest', 'CONSTANT', '$q', '$ImageCacheFactory', 'mediaManager', '$interval', 'network', 'Auth', 'widgetParser'];
 
   /* @ngInject */
-  function data(pouchDB, $http, $log, Rest, CONSTANT, $q, $ImageCacheFactory, mediaManager, $interval, network, Auth, widgetParser, $cachedResource) {
+  function data(pouchDB, $http, $log, Rest, CONSTANT, $q, $ImageCacheFactory, mediaManager, $interval, network, Auth, widgetParser) {
     // var diagnosisQuestionsDB = pouchDB('diagnosisQuestions');
     // var kmapsDB = pouchDB('kmaps');
     // var inputDB = pouchDB('http://127.0.0.1:5984/lessonDB');
@@ -16,6 +16,7 @@
 
     // replicate
     // inputDB.replicate.to(outputDB);
+
     var diagLitmusMappingDB = pouchDB('diagLitmusMapping');
     var kmapsJSONDB = pouchDB('kmapsJSON');
     var dqJSONDB = pouchDB('dqJSON');
@@ -26,6 +27,7 @@
     var data = {
       // createDiagnosisQuestionDB: createDiagnosisQuestionDB(),
       // createKmapsDB: createKmapsDB(),
+
       createDiagLitmusMappingDB: createDiagLitmusMappingDB(),
       createKmapsJSON: createKmapsJSON(),
       createDiagQJSON: createDiagQJSON(),
@@ -58,68 +60,68 @@
       // addNewUser: addNewUser
       putUserifNotExist: putUserifNotExist,
       startReportSyncing: startReportSyncing,
-      demo_question : {
-      "node": {
-        "id": "demo",
-        "content_type_name": "json question",
-        "type": {
+      demo_question: {
+        "node": {
           "id": "demo",
-          "created": "2016-07-08T14:44:19.871339Z",
-          "updated": "2016-07-08T14:44:19.871370Z",
-          "microstandard": "ELL.1.RE.V.9.MOB",
-          "is_critical_thinking": false,
-          "level": 1,
-          "answer": [2],
-          "score": 10,
-          "content": {
-            "is_multiple": false,
-            "widgets": {
-              "videos": {},
-              "sounds": {},
-              "images": {
-                "1": "/media/ell/images/dog_O5P4I8.png",
-                "2": "/media/ell/images/person_GLUMUY.png",
-                "3": "/media/ell/images/place_KJMRCN.png",
-                "4": "/media/ell/images/animal_2W0HQG.png",
-                "5": "/media/ell/images/thing_DV4JY6.png"
-              }
+          "content_type_name": "json question",
+          "type": {
+            "id": "demo",
+            "created": "2016-07-08T14:44:19.871339Z",
+            "updated": "2016-07-08T14:44:19.871370Z",
+            "microstandard": "ELL.1.RE.V.9.MOB",
+            "is_critical_thinking": false,
+            "level": 1,
+            "answer": [2],
+            "score": 10,
+            "content": {
+              "is_multiple": false,
+              "widgets": {
+                "videos": {},
+                "sounds": {},
+                "images": {
+                  "1": "/media/ell/images/dog_O5P4I8.png",
+                  "2": "/media/ell/images/person_GLUMUY.png",
+                  "3": "/media/ell/images/place_KJMRCN.png",
+                  "4": "/media/ell/images/animal_2W0HQG.png",
+                  "5": "/media/ell/images/thing_DV4JY6.png"
+                }
+              },
+              "instruction": null,
+              "options": [{
+                "option": "person [[img id=2]]",
+                "key": 1
+              }, {
+                "option": "place [[img id=3]]",
+                "key": 3
+              }, {
+                "option": "animal [[img id=4]]",
+                "key": 2
+              }, {
+                "option": "thing [[img id=5]]",
+                "key": 4
+              }],
+              "tags": [],
+              "hints": "[]"
             },
-            "instruction": null,
-            "options": [{
-              "option": "person [[img id=2]]",
-              "key": 1
-            }, {
-              "option": "place [[img id=3]]",
-              "key": 3
-            }, {
-              "option": "animal [[img id=4]]",
-              "key": 2
-            }, {
-              "option": "thing [[img id=5]]",
-              "key": 4
-            }],
-            "tags": [],
-            "hints": "[]"
+            "type": "choicequestion"
           },
-          "type": "choicequestion"
+          "tag": null,
+          "created": "2016-07-08T14:44:19.881208Z",
+          "updated": "2016-07-08T14:44:19.881242Z",
+          "title": "dog [[img id=1]]",
+          "description": "",
+          "object_id": "e3ea1ecb-997a-4d2f-9a45-378fa3201e57",
+          "status": "PUBLISHED",
+          "lft": 936,
+          "rght": 937,
+          "tree_id": 1,
+          "level": 3,
+          "parent": "29f41d84-fda3-4964-94be-25a6800d93a3",
+          "content_type": 21,
+          "account": "150c906a-c3ef-4e2b-a19d-c77fdabf2015"
         },
-        "tag": null,
-        "created": "2016-07-08T14:44:19.881208Z",
-        "updated": "2016-07-08T14:44:19.881242Z",
-        "title": "dog [[img id=1]]",
-        "description": "",
-        "object_id": "e3ea1ecb-997a-4d2f-9a45-378fa3201e57",
-        "status": "PUBLISHED",
-        "lft": 936,
-        "rght": 937,
-        "tree_id": 1,
-        "level": 3,
-        "parent": "29f41d84-fda3-4964-94be-25a6800d93a3",
-        "content_type": 21,
-        "account": "150c906a-c3ef-4e2b-a19d-c77fdabf2015"
-      },
-      "objects": []
-    }
+        "objects": []
+      }
     };
 
 
@@ -255,7 +257,6 @@
     }
 
     function createIfNotExistsLessonDB() {
-      $log.debug("createIfNotExistsLessonDB");
       var ddoc = {
         _id: '_design/index',
         views: {
@@ -267,7 +268,6 @@
         }
       };
       return lessonDB.get('_local/preloaded').then(function(doc) {
-        $log.debug("createIfNotExistsLessonDB Exists", ddoc, pouchDB);
 
       }).catch(function(err) {
         if (err.name !== 'not_found') {
@@ -279,10 +279,8 @@
           });
         }).then(function() {
           return lessonDB.put(ddoc).then(function() {
-            $log.debug("createIfNotExistsLessonDB ddcon made");
             // success!
           }).catch(function(err) {
-            $log.debug("createIfNotExistsLessonDB ddoc error", err);
 
             // some error (maybe a 409, because it already exists?)
           });
@@ -392,21 +390,18 @@
 
     function getLessonsList(grade) {
       var start = new Date();
-      $log.debug("Starts", start)
       var d = $q.defer();
 
       lessonDB.query('index/by_grade', {
           include_docs: true,
           key: grade
         }).then(function(data) {
-          $log.debug("Starts 1", new Date() - start, data)
           var lessons = [];
           for (var i = 0; i < data.rows.length; i++) {
             data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key
             lessons.push(data.rows[i].doc.lesson.node);
           }
           lessons = _.sortBy(lessons, 'key');
-          $log.debug("Ends", new Date() - start, lessons)
           d.resolve(lessons)
         })
         .catch(function(error) {
@@ -481,18 +476,29 @@
     }
 
     function saveReport(report) {
-      var ReportResource = $cachedResource('reportResource'+localStorage.getItem('report_id'), CONSTANT.BACKEND_SERVICE_DOMAIN+'api/v1/reports/');
-      localStorage.setItem('report_id',parseInt(localStorage.getItem('report_id')) + 1)
-      // $log.debug("Saving report",JSON.parse(localStorage.getItem('cachedResource://reportResource')),{id:1});
-      var r = new ReportResource();
-      r.node = report.node;
-      r.score = report.score;
-      r.attempt = report.attempts;
-      r.person = report.userId;
-      r.$save();
-      r.$promise.then(function() {
-        $log.debug('Article was successfully saved.');
-      });
+      // var id = localStorage.getItem('report_id')
+      // var r = new ReportResource({
+      // id: localStorage.getItem('report_id')
+      // });
+      // localStorage.setItem('report_id', parseInt(localStorage.getItem('report_id') )+ 1);
+      // var r = {};
+      // r.node = report.node;
+      // r.score = report.score;
+      // r.attempt = report.attempts;
+      // r.person = report.userId;
+      // r.local_id = id;
+      // return $http.post(CONSTANT.BACKEND_SERVICE_DOMAIN+'api/v1/reports/',r,{offline: true})
+      // localStorage.setItem('report_id',parseInt(localStorage.getItem('report_id')) + 1)
+
+
+      // r.$save();
+      // (function(local_id){
+      //   r.$promise.then(
+      //     function(s) {
+      //       localStorage.removeItem('cachedResource://reportResource?id=' + s.id);
+      //     }
+      //   );
+      // })(id)
 
       // return appDB.get(report.userId).then(function(response) {
       //     var doc = response.data;
@@ -502,27 +508,24 @@
       //       'attempts': report.attempts
       //     });
 
-          // return reportsDB.post({
-          //   // '_id': report.userId,
-          //   // '_rev': response._rev,
-          //   'data': {
-          //     'user': report.userId,
-          //     'node': report.node,
-          //     'score': report.score,
-          //     'attempts': report.attempts
-          //   }
-          // })
+      return reportsDB.post({
+          // '_id': report.userId,
+          // '_rev': response._rev,
+          'data': {
+            'user': report.userId,
+            'node': report.node,
+            'score': report.score,
+            'attempts': report.attempts
+          }
+        })
         // })
-        // .then(function() {
-          // var flag = JSON.parse(localStorage.getItem('reportSync'));
-          // if (flag && flag.progress === true) {
-          //   flag.updated = true;
-          // } else if (network.isOnline()) {
-          //   data.startReportSyncing({
-          //     'userId': report.userId
-          //   })
-          // }
-        // })
+        .then(function() {
+          if (network.isOnline()) {
+            data.startReportSyncing({
+              'userId': report.userId
+            })
+          }
+        })
     }
 
     function downloadQuiz(id) {}
@@ -539,7 +542,6 @@
     }
 
     function updateLesson(lesson) {
-      $log.debug("Updating lesson", lesson)
       lessonDB.get(lesson.node.id).then(function(doc) {
         return lessonDB.put({
           _id: lesson.node.id,
@@ -584,8 +586,7 @@
 
 
 
-    function syncReport(report, user) {
-      $log.debug("Report syncing 1")
+    function syncReport(report) {
       report.attempt = report.attempts;
       report.person = report.user;
       // return Rest.all('reports').post({
@@ -604,45 +605,47 @@
       //     })
       //   })
       // return Promise.resolve();
-      var d = $q.defer();
-      d.resolve();
-      return d.promise;
+
       return Rest.all('reports').post(report);
       // })
     }
 
-    function startReportSyncing(user) {
-      $log.debug("Report syncing", user)
+    function startReportSyncing() {
       return reportsDB.allDocs({
           include_docs: true
         }).then(function(response) {
           var d = $q.defer();
           // angular.forEach(response.rows, function(row) {
-          var report = response.rows[0].doc.data;
-
-          syncReport(report, user).then(function() {
-            var callback = false;
-            $log.debug()
-            if (response.rows.length > 2) {
-              callback = true;
-            }
-            d.resolve({
-              'report_doc': response.rows[0],
-              'callback': callback
+          if(response.rows.length == 0){
+            d.reject("No reports");
+          }
+          else{
+            var report = response.rows[0].doc.data;
+            syncReport(report).then(function() {
+              var callback = false;
+              if (response.rows.length > 2) {
+                callback = true;
+              }
+              d.resolve({
+                'report_doc': response.rows[0].doc,
+                'callback': callback
+              })
             })
-          });
+            .catch(function(error){
+              d.reject(error)
+            })
+
+          }
           return d.promise;
           // })
         })
         .then(function(response) {
-          $log.debug("Report synced", response)
           return reportsDB.remove(response.report_doc)
         })
         .then(function(response) {
-          $log.debug("report deleted")
+          data.startReportSyncing()
         })
         .catch(function(e) {
-          $log.debug("report Response error", e)
         })
         // return appDB.get(user.userId).then(function(response) {
         //   appData = response;
@@ -654,9 +657,7 @@
         //     }
         //   })
         //   .then(function(success) {
-        //     $log.debug("OO",appData)
         //     appData.data.reports = appData.data.reports.splice(0,0);
-        //     $log.debug(appData)
         //     return appDB.put({
         //       '_id':appData._id,
         //       '_rev': appData._rev,
@@ -667,13 +668,11 @@
         //     if(appData.data.reports.length){
         //       return startReportSyncing({'userId':Auth.getProfileId()});
         //     }else{
-        //       $log.debug("sync complete")
         //       return true
         //     }
         //   })
         //   .catch(function(e) {
         //     if(e === 'No data to sync'){
-        //       $log.debug(e)
         //     }
         //   })
     }
