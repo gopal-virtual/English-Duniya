@@ -168,6 +168,7 @@
           return Auth.signup(credentials);
         })
         .then(function() {
+          localStorage.setItem('demo_flag',1);
           $state.go('auth.verify.phone', {});
         })
         .catch(function(error) {

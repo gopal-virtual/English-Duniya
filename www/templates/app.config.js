@@ -16,7 +16,6 @@
           config.headers.xsrfHeaderName = 'X-CSRFToken';
           return config;
         },
-
         response: function (response) {
           if (response.status == 200 && response.data.hasOwnProperty('success')) {
             $rootScope.success = $rootScope.success || [];
@@ -30,6 +29,9 @@
         },
         responseError: function (rejection) {
           $log.debug("error", rejection)
+          if([401].indexOf(rejection.status) != -1){
+            localStorage.clear();
+          }
           if ([400, 500].indexOf(rejection.status) != -1) {
             $rootScope.error = $rootScope.error || [];
             $rootScope.error.push(rejection.data);
