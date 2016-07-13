@@ -23,9 +23,10 @@
           summary: null
         },
         resolve: {
-          quiz: ['$stateParams', 'Rest', '$log', 'data', 'ml', '$q', '$http', function($stateParams, Rest, $log, data, ml, $q, $http) {
-            $log.debug("Resolving quiz")
+          quiz: ['$stateParams', 'Rest', '$log', 'data', 'ml', '$q', '$http','demo', function($stateParams, Rest, $log, data, ml, $q, $http,demoFactory) {
+            $log.debug("Resolving quiz",$stateParams.type)
             if ($stateParams.type == 'litmus') {
+              $log.debug("Resolving quiz 1")
 
 
               var all_promises = [];
@@ -69,11 +70,11 @@
 
 
             } else {
-              $log.debug("show demo", demo.show());
-              return demo.show().then(function(response) {
+              $log.debug("Resolving quiz 2", demoFactory.show());
+              return demoFactory.show().then(function(response) {
                 // $log.debug('resolving quiz');
                 // $stateParams.quiz.objects[0].node.id == 'demo' ? $stateParams.quiz.objects.shift(data.demo_question) :false;
-
+                $log.debug("!!!")
                 var currentIndex = $stateParams.quiz.objects.length;
                 var temporaryValue, randomIndex;
 

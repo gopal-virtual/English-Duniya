@@ -7,13 +7,14 @@
     // global debug log
     $logProvider.debugEnabled(true);
     // request/response interceptors
-    $httpProvider.interceptors.push(function ($rootScope, $q, $log) {
+    $httpProvider.interceptors.push(function ($rootScope, $q, $log, $injector) {
       return {
         request: function (config) {
           if (localStorage.Authorization)
             config.headers.Authorization = 'Token ' + localStorage.Authorization;
           config.headers.xsrfCookieName = 'csrftoken';
           config.headers.xsrfHeaderName = 'X-CSRFToken';
+          config.timeout = 3000
           return config;
         },
         response: function (response) {
@@ -31,6 +32,7 @@
           $log.debug("error", rejection)
           if([401].indexOf(rejection.status) != -1){
             localStorage.clear();
+            $injector.get('$state').go('auth.signin');
           }
           if ([400, 500].indexOf(rejection.status) != -1) {
             $rootScope.error = $rootScope.error || [];

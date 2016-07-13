@@ -5,10 +5,10 @@
     .module('common')
     .constant('CONSTANT', {
       'LOCK': true,
-      'BACKEND_SERVICE_DOMAIN': 'http://cc-test.zaya.in/',
-      // 'BACKEND_SERVICE_DOMAIN': 'http://cc-pre-prod.zaya.in/',
-      'RESOURCE_SERVER': 'http://cc-test.zaya.in/',
-      // 'RESOURCE_SERVER': 'http://cc-pre-prod.zaya.in/',
+      // 'BACKEND_SERVICE_DOMAIN': 'http://cc-test.zaya.in/',
+      'BACKEND_SERVICE_DOMAIN': 'http://cc-pre-prod.zaya.in/',
+      // 'RESOURCE_SERVER': 'http://cc-test.zaya.in/',
+      'RESOURCE_SERVER': 'http://cc-pre-prod.zaya.in/',
       // 'BACKEND_SERVICE_DOMAIN' : 'http://192.168.1.6:9000/',
 
       'PATH': {
