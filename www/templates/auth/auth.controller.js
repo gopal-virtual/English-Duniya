@@ -7,6 +7,7 @@
 
   function authController($q, $ionicModal, $state, Auth, audio, $rootScope, $ionicPopup, $log, $cordovaOauth, CONSTANT, $interval, $scope, $ionicLoading, formHelper, $ionicPlatform, dataService, network, demoFactory) {
     var authCtrl = this;
+    $log.debug("Inside auth controller")
     authCtrl.formHelper = formHelper;
     authCtrl.exitApp = exitApp;
     authCtrl.network = network;

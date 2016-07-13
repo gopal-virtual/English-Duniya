@@ -19,9 +19,12 @@
         }],
         params: {
           quiz: null,
+          report: null,
+          summary: null
         },
         resolve: {
-          quiz: ['$stateParams', 'Rest', '$log', 'data', 'ml', '$q', '$http', 'demo', function($stateParams, Rest, $log, data, ml, $q, $http, demo) {
+          quiz: ['$stateParams', 'Rest', '$log', 'data', 'ml', '$q', '$http', function($stateParams, Rest, $log, data, ml, $q, $http) {
+            $log.debug("Resolving quiz")
             if ($stateParams.type == 'litmus') {
 
 
@@ -94,8 +97,7 @@
 
             }
           }]
-        },
-
+        }
       })
       .state('quiz.start', {
         url: 'start',
@@ -123,11 +125,12 @@
 
     .state('quiz.summary', {
       url: 'summary',
-      params: {
-        report: null,
-        quiz: null,
-        summary: null
-      },
+      onEnter: ['$log', 'audio', function($log, audio) {
+        $log.debug("Enter summary")
+      }],
+      onExit: ['$log', 'audio', function($log, audio) {
+        $log.debug("Exit summary")
+      }],
       views: {
         'state-quiz': {
           templateUrl: CONSTANT.PATH.QUIZ + '/quiz.summary' + CONSTANT.VIEW,

@@ -3,7 +3,7 @@
     .module('zaya')
     .config(AppConfig)
 
-  function AppConfig($httpProvider, $ionicConfigProvider, $ionicNativeTransitionsProvider, $logProvider, $windowProvider, pouchDBProvider, POUCHDB_METHODS) {
+  function AppConfig($httpProvider, $ionicConfigProvider, $ionicNativeTransitionsProvider, $logProvider, $windowProvider, pouchDBProvider, POUCHDB_METHODS,$resourceProvider) {
     // global debug log
     $logProvider.debugEnabled(true);
     // request/response interceptors

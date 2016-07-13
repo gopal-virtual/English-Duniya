@@ -106,3 +106,18 @@ meter::-webkit-meter-even-less-good-value {
     background: lighten($assertive, 10%); /* Red */
     border-radius: $border-radius;
 }
+
+.divider::before{
+  display: block;
+  content: "";
+  border-bottom: 1px solid rgba(0,0,0,0.2);
+  position: absolute;
+  width: calc(100% - 60px);
+  padding-top: 9px;
+  z-index: 10;
+}
+
+.divider + h4{
+  position: relative;
+  z-index: 14;
+}
