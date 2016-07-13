@@ -5,17 +5,19 @@ window.createGame = function(scope, lessons, audio, injector, log) {
     var game = new Phaser.Game("100", "100", Phaser.CANVAS, 'map_canvas', null, true, true, null);
 
     // var desertRegion, regionGroups.tundra, regionGroups.forest;
-    var region = ["desert","tundra","forest"];
+    var region = ["desert","tundra","forest","peru"];
     var regionGroups = {};
     var regionHeight = {
         "desert" : 2420,
         "tundra" : 2796,
         "forest" : 2942,
+        "peru" : 1872,
     }
     var regionOffset = {
-        "desert" : regionHeight.tundra + regionHeight.forest,
-        "tundra" : regionHeight.forest,
-        "forest" : 0,
+        "desert" : regionHeight.tundra + regionHeight.forest + regionHeight.peru,
+        "tundra" : regionHeight.forest + regionHeight.peru,
+        "forest" : regionHeight.peru,
+        "peru" : 0,
     }
     var tresholdOffset = -200;
     var regionRange = {
@@ -28,8 +30,12 @@ window.createGame = function(scope, lessons, audio, injector, log) {
             lowerLimit : regionOffset.desert,
         },
         "forest" : {
-            upperLimit : 0,
+            upperLimit : regionOffset.forest,
             lowerLimit : regionOffset.tundra,
+        },
+        "peru" : {
+            upperLimit : 0,
+            lowerLimit : regionOffset.forest,
         },
     };
     
@@ -44,6 +50,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
             this.load.image('desert', 'img/assets/desert_bg.png');
             this.load.image('tundra', 'img/assets/snow_bg.png');
             this.load.image('forest', 'img/assets/forest_bg.png');
+            this.load.image('peru', 'img/assets/peru_bg.png');
 
             // this.load.image('tent', 'img/assets/tent.png');
             this.load.image('tent_green', 'img/assets/tent_green.png');
@@ -86,6 +93,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
             regionGroups["desert"] = game.add.group();
             regionGroups["tundra"] = game.add.group();
             regionGroups["forest"] = game.add.group();
+            regionGroups["peru"] = game.add.group();
         },
         create: function() {
             
@@ -98,7 +106,8 @@ window.createGame = function(scope, lessons, audio, injector, log) {
 
             regionGroups.desert.position.set(0,0 + regionOffset.desert);
             regionGroups.tundra.position.set(0,0 + regionOffset.tundra);
-            regionGroups.forest.position.set(0,0 + regionOffset.forest)
+            regionGroups.forest.position.set(0,0 + regionOffset.forest);
+            regionGroups.peru.position.set(0,0 + regionOffset.peru);
             // this.iceregion_height = 4533 - desert_height - tundra_height;
             // this.regionGroups.forest_height = 300;
             
@@ -129,6 +138,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
             var desert = regionGroups.desert.create(0, 0, 'desert');
             var tundra = regionGroups.tundra.create(-1, 0, 'tundra');
             var forest = regionGroups.forest.create(0, 0, 'forest');
+            var peru = regionGroups.peru.create(0,0, 'peru');
             // regionGroups.desert.events.onOutOfBounds.add(logy);
             function logy(){
                 log.debug("Out");
@@ -145,7 +155,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
                 'x': [181,170,205,225,180,109,77,121,153,132,90,118,188,255,299,227,147,113,148,183,200,206,217,226,228,229,209,172,157,160,159,139,137,165,221,278,281,239,187,148,164,215,276,317,287,233,207,232,205,188,190,211,225,182,154,175,214,218,168,119,154,233,272,201,133,129,177,240,292,288,232,195,179,180,180,180,180,180],
                 'y': [86,163,235,311,373,409,476,541,614,689,757,825,864,908,970,996,1004,1064,1136,1207,1285,1365,1444,1524,1604,1684,1761,1831,1909,1989,2069,2146,2226,2300,2357,2412,2489,2557,2618,2684,2761,2822,2874,2940,3012,3070,3143,3215,3290,3368,3447,3524,3599,3666,3739,3815,3885,3961,4023,4086,4143,4136,4179,4215,4255,4330,4394,4442,4500,4577,4635,4705,4783,4863,4943,5023,5103,5183]
             };
-
+            
             var cactus_points = [{
                 x: 292 * game_scale,
                 y: 2265,
@@ -278,12 +288,12 @@ window.createGame = function(scope, lessons, audio, injector, log) {
             desert.scale.setTo(game_scale, 1);
             // tundra.scale.setTo(game_scale, 1);
             // forest.scale.setTo(game_scale, 1);
-            this.game.world.setBounds(0, 0, this.game.width, regionHeight['desert'] + regionHeight['tundra'] + regionHeight['forest']);
+            this.game.world.setBounds(0, 0, this.game.width, regionHeight.desert + regionHeight.tundra + regionHeight.forest + regionHeight.peru);
             
 
             for (var i = 0, points_count = points.x.length; i < points_count; i++) {
                 points.x[i] *= game_scale;
-                points.y[i] += regionHeight['forest'] + 30;
+                points.y[i] += regionHeight.peru + regionHeight.forest + 30;
             }
 
             this.increment = 1 / this.world.height;
