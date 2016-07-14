@@ -153,20 +153,21 @@
 
     function submitReport(quiz, report, summary) {
       lesson = lessonutils.getLocalLesson();
-      data.getQuizScore({
-          'userId': Auth.getProfileId(),
-          'lessonId': lesson.node.id,
-          'id': quizCtrl.quiz.node.id
+
+        data.updateSkills({
+          userId: Auth.getProfileId(),
+          lessonId: lesson.node.id,
+          id: quiz.node.id,
+          score: summary.score.marks,
+          totalScore: quizCtrl.quiz.node.type.score,
+          skill: lesson.node.tag
         })
         .then(function() {
-          return data.updateSkills({
-            userId: Auth.getProfileId(),
-            lessonId: lesson.node.id,
-            id: quiz.node.id,
-            score: summary.score.marks,
-            totalScore: quizCtrl.quiz.node.type.score,
-            skill: lesson.node.tag
-          })
+          return data.getQuizScore({
+              'userId': Auth.getProfileId(),
+              'lessonId': lesson.node.id,
+              'id': quizCtrl.quiz.node.id
+            })
         })
         .then(function(previousScore) {
           if ((!previousScore) || (!previousScore.hasOwnProperty('score')) || (previousScore && parseInt(previousScore.score) < summary.score.marks)) {
