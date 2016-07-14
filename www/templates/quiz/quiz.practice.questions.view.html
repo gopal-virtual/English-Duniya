@@ -32,8 +32,12 @@
     <ion-slide ng-repeat="question in quizCtrl.quiz.objects " ng-class="{'animation-question-slide':quizCtrl.isCurrentIndex($index)}">
 
       <!-- <div ng-repeat="question in quizCtrl.quiz.objects" ng-if="$index == quizCtrl.getCurrentIndex()"> -->
-      <div id="step1" class="bar bar-subheader padding-0 question-subheader bg-pale no-shadow">
-        <div ng-if="question.node.title" ng-bind-html="question.node.widgetHtml" class="question practice-question card card-transparent center margin-x-0 margin-y-0 padding-0" ng-click="quizCtrl.playAudio(question.node.widgetSound,$index);quizCtrl.highlightSoundIcon($parent.$index);demo.tourNextStep();"></div>
+      <div id="step1" style="overflow:hidden" class="bar bar-subheader padding-0 question-subheader bg-pale no-shadow">
+        <div style="height:100%;width:100%;overflow:hidden">
+        <div  ng-if="question.node.title" ng-bind-html="question.node.widgetHtml" class="question practice-question card card-transparent center padding-x-20" ng-click="quizCtrl.playAudio(question.node.widgetSound,$index);quizCtrl.highlightSoundIcon($parent.$index);demo.tourNextStep();">
+
+        </div>
+      </div>
       </div>
       <ion-content
         id="step2"
