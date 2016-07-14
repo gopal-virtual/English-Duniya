@@ -10,7 +10,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
     var regionHeight = {
         "desert" : 2420,
         "tundra" : 2796,
-        "forest" : 2942,
+        "forest" : 2873,
         "peru" : 1872,
     }
     var regionOffset = {
@@ -83,6 +83,8 @@ window.createGame = function(scope, lessons, audio, injector, log) {
             this.load.image('node-locked', 'img/icons/icon-node-locked.png');
             this.load.image('star', 'img/icons/icon-star-small.png');
             this.load.image('nostar', 'img/icons/icon-nostar.png');
+
+            this.load.json('gamesprites', 'data/sprites.json');
             // debug value
             this.game.time.advancedTiming = true;
             for(var key in regionRange){
@@ -140,9 +142,9 @@ window.createGame = function(scope, lessons, audio, injector, log) {
             var forest = regionGroups.forest.create(0, 0, 'forest');
             var peru = regionGroups.peru.create(0,0, 'peru');
             // regionGroups.desert.events.onOutOfBounds.add(logy);
-            function logy(){
-                log.debug("Out");
-            }
+            // function logy(){
+            //     log.debug("Out");
+            // }
             // regionGroups.desert.setAll('checkWorldBounds', true);
             // regionGroups.tundra.setAll('checkWorldBounds', true);
             // regionGroups.desert.setAll('outOfBoundsKill', true);
@@ -155,139 +157,216 @@ window.createGame = function(scope, lessons, audio, injector, log) {
                 'x': [181,170,205,225,180,109,77,121,153,132,90,118,188,255,299,227,147,113,148,183,200,206,217,226,228,229,209,172,157,160,159,139,137,165,221,278,281,239,187,148,164,215,276,317,287,233,207,232,205,188,190,211,225,182,154,175,214,218,168,119,154,233,272,201,133,129,177,240,292,288,232,195,179,180,180,180,180,180],
                 'y': [86,163,235,311,373,409,476,541,614,689,757,825,864,908,970,996,1004,1064,1136,1207,1285,1365,1444,1524,1604,1684,1761,1831,1909,1989,2069,2146,2226,2300,2357,2412,2489,2557,2618,2684,2761,2822,2874,2940,3012,3070,3143,3215,3290,3368,3447,3524,3599,3666,3739,3815,3885,3961,4023,4086,4143,4136,4179,4215,4255,4330,4394,4442,4500,4577,4635,4705,4783,4863,4943,5023,5103,5183]
             };
-            
-            var cactus_points = [{
-                x: 292 * game_scale,
-                y: 2265,
-                scale: 0.7
-            }, {
-                x: 62 * game_scale,
-                y: 2165,
-                scale: 0.6
-            }, {
-                x: 330 * game_scale,
-                y: 1585,
-                scale: 0.6
-            }, {
-                x: 334 * game_scale,
-                y: 1245,
-                scale: 0.6
-            }, {
-                x: 36 * game_scale,
-                y: 1265,
-                scale: 0.6
-            }, {
-                x: 92 * game_scale,
-                y: 822,
-                scale: 0.6
-            }, {
-                x: 310 * game_scale,
-                y: 551,
-                scale: 0.6
-            }, {
-                x: 70 * game_scale,
-                y: 405,
-                scale: 0.6
-            }];
 
-            var plant_points = [{
-                x: 54 * game_scale,
-                y: 1540,
-                scale: 0.5
-            }, {
-                x: 330 * game_scale,
-                y: 20,
-                scale: 0.3
-            }, {
-                x: 230 * game_scale,
-                y: 110,
-                scale: 0.3
-            }, {
-                x: 60 * game_scale,
-                y: 50,
-                scale: 0.3,
-                mirror: true
-            }];
-
-            var tent_point = {
-                x: 85,
-                y: 168,
-                scale: 0.5,
-                mirror: true
-            };
-
-            var camel_point = {
-                x: 80,
-                y: 1945,
-                scale: 0.6,
-            };
-
-            var scorpion_point = {
-                x: 300,
-                y: 805,
-            };
-
-            var one_stone_points = [{
-                x: 42 * game_scale,
-                y: 1873,
-                scale: 1
-            }, {
-                x: 214 * game_scale,
-                y: 1797,
-                scale: 1
-            }, {
-                x: 45 * game_scale,
-                y: 1235,
-                scale: 1
-            }, {
-                x: 345 * game_scale,
-                y: 1202,
-                scale: 1
-            }];
-
-            var two_stone_points = [{
-                x: 350,
-                y: 62,
-                scale: 0.6
-            }, {
-                x: 317,
-                y: 99,
-                scale: 0.5
-            }, {
-                x: 280,
-                y: 127,
-                scale: 0.5
-            }, {
-                x: 25,
-                y: 37,
-                scale: 0.5
-            }];
-
-            var penguin_points = [{
-                x: 80,
-                y: 1553,
-                scale: 1
-            }, {
-                x: 200,
-                y: 776,
-                scale: 0.5,
-                mirror: true
+            // var gameSprites =  game.cache.getJSON('gamesprites');
+            var gameSprites = [{
+                "name" : "cactus_animation",
+                "region" : "desert",
+                "x" : 292,
+                "y" : 2265,
+                "scale" : 0.7,
+                "animation" : {
+                    "key" : "wind",
+                }
+            },{
+                "name" : "cactus_animation",
+                "region" : "desert",
+                "x" : 62,
+                "y" : 2165,
+                "scale" : 0.6,
+                "animation" : {
+                    "key" : "wind",
+                }
+            },{
+                "name" : "cactus_animation",
+                "region" : "desert",
+                "x" : 330,
+                "y" : 1585,
+                "scale" : 0.6,
+                "animation" : {
+                    "key" : "wind",
+                }
+            },{
+                "name" : "cactus_animation",
+                "region" : "desert",
+                "x" : 334,
+                "y" : 1245,
+                "scale" : 0.6,
+                "animation" : {
+                    "key" : "wind",
+                }
+            },{
+                "name" : "cactus_animation",
+                "region" : "desert",
+                "x" : 36,
+                "y" : 1265,
+                "scale" : 0.6,
+                "animation" : {
+                    "key" : "wind",
+                }
+            },{
+                "name" : "cactus_animation",
+                "region" : "desert",
+                "x" : 92,
+                "y" : 822,
+                "scale" : 0.6,
+                "animation" : {
+                    "key" : "wind",
+                }
+            },{
+                "name" : "cactus_animation",
+                "region" : "desert",
+                "x" : 310,
+                "y" : 551,
+                "scale" : 0.6,
+                "animation" : {
+                    "key" : "wind",
+                }
+            },{
+                "name" : "cactus_animation",
+                "region" : "desert",
+                "x" : 70,
+                "y" : 405,
+                "scale" : 0.6,
+                "animation" : {
+                    "key" : "wind",
+                }
+            },{
+                "name" : "camel_animation",
+                "region" : "desert",
+                "x" : 80,
+                "y" : 1945,
+                "scale" : 0.6,
+                "angle" : -14,
+                "animation" : {
+                    "key" : "wind",
+                }
+            },{
+                "name" : "plant_animation",
+                "region" : "desert",
+                "x" : 54,
+                "y" : 1540,
+                "scale" : 0.5,
+                "animation" : {
+                    "key" : "wave",
+                }
+            },{
+                "name" : "plant_animation",
+                "region" : "desert",
+                "x" : 330,
+                "y" : 20,
+                "scale" : 0.3,
+                "animation" : {
+                    "key" : "wave",
+                }
+            },{
+                "name" : "plant_animation",
+                "region" : "desert",
+                "x" : 230,
+                "y" : 110,
+                "scale" : 0.3,
+                "animation" : {
+                    "key" : "wave",
+                }
+            },{
+                "name" : "snow_cactus",
+                "region" : "tundra",
+                "x" : 75,
+                "y" : 2456,
+                "scale" : 0.7,
+            },{
+                "name" : "tent_animation",
+                "region" : "desert",
+                "x" : 85,
+                "y" : 168,
+                "scale" : 0.5,
+                "mirror" : true,
+                "animation" : {
+                    "key" : "shake"
+                }
+            },{
+                "name" : "scorpion_animation",
+                "region" : "desert",
+                "x" : 300,
+                "y" : 805,
+                "animation" : {
+                    "key" : "clap"
+                }
+            },{
+                "name" : "fire_animation",
+                "region" : "desert",
+                "x" : 185,
+                "y" : 198,
+                "animation" : {
+                    "key" : "burn"
+                }
+            },{
+                "name" : "two_stone",
+                "region" : "desert",
+                "x" : 350,
+                "y" : 62,
+                "scale" : 0.6,
+            },{
+                "name" : "two_stone",
+                "region" : "desert",
+                "x" : 317,
+                "y" : 99,
+                "scale" : 0.5,
+            },{
+                "name" : "two_stone",
+                "region" : "desert",
+                "x" : 280,
+                "y" : 127,
+                "scale" : 0.5,
+            },{
+                "name" : "two_stone",
+                "region" : "desert",
+                "x" : 25,
+                "y" : 37,
+                "scale" : 0.5,
+            },{
+                "name" : "penguin_animation",
+                "region" : "tundra",
+                "x" : 80,
+                "y" : 1553,
+                "scale" : 1,
+                "animation" : {
+                    "key" : "flap"
+                }
+            },{
+                "name" : "penguin_animation",
+                "region" : "tundra",
+                "x" : 200,
+                "y" : 776,
+                "scale" : 0.5,
+                "mirror" : true,
+                "animation" : {
+                    "key" : "flap"
+                }
+            },{
+                "name" : "seal_animation",
+                "region" : "tundra",
+                "x" : 306,
+                "y" : 2049,
+                "animation" : {
+                    "key" : "oink"
+                }
+            },{
+                "name" : "whale_animation",
+                "region" : "tundra",
+                "x" : 172,
+                "y" : 533,
+                "scale" : 0.7,
+                "animation" : {
+                    "key" : "splash"
+                }
             }]
-
-            var seal_point = {
-                x: 306,
-                y: 2049,
-            }
-
-            var whale_point = {
-                x: 172,
-                y: 533,
-            }
 
 
             desert.scale.setTo(game_scale, 1);
-            // tundra.scale.setTo(game_scale, 1);
-            // forest.scale.setTo(game_scale, 1);
+            tundra.scale.setTo(game_scale, 1);
+            forest.scale.setTo(game_scale, 1);
+            forest.scale.setTo(game_scale, 1);
             this.game.world.setBounds(0, 0, this.game.width, regionHeight.desert + regionHeight.tundra + regionHeight.forest + regionHeight.peru);
             
 
@@ -309,94 +388,114 @@ window.createGame = function(scope, lessons, audio, injector, log) {
             }
 
 
+            for (var i = 0; i < gameSprites.length; i++) {
 
-            for (var i = 0, two_stone_count = two_stone_points.length; i < two_stone_count; i++) {
-                var two_stone = regionGroups.desert.create(two_stone_points[i].x*game_scale, two_stone_points[i].y, 'two_stone');
-                two_stone.anchor.setTo(0.5, 0.5);
-                two_stone.scale.setTo(two_stone_points[i].scale);
-            }
-
-            // place snow_cactus
-            var snow_cactus = regionGroups.tundra.create(75, 1956, 'snow_cactus');
-            snow_cactus.anchor.setTo(0.5, 0.5);
-            snow_cactus.scale.setTo(0.7);
-
-            // place cactus
-            for (var i = 0, cactus_count = cactus_points.length; i < cactus_count; i++) {
-                var cactus_animation = regionGroups.desert.create(cactus_points[i].x, cactus_points[i].y, 'cactus_animation');
-                cactus_animation.animations.add('wind');
-                cactus_animation.animations.play('wind', 20, true);
-                cactus_animation.anchor.setTo(0.5, 0.5);
-                cactus_animation.scale.setTo(cactus_points[i].scale);
-            }
-
-            for (var i = 0, plant_count = plant_points.length; i < plant_count; i++) {
-                var plant_animation = regionGroups.desert.create(plant_points[i].x, plant_points[i].y, 'plant_animation');
-                plant_animation.animations.add('wind2');
-                plant_animation.animations.play('wind2', 20, true);
-                plant_animation.anchor.setTo(0.5, 0.5);
-                if (plant_points[i].mirror == true) {
-                    plant_animation.scale.setTo(-plant_points[i].scale, plant_points[i].scale);
-                } else {
-                    plant_animation.scale.setTo(plant_points[i].scale);
+                var gameSprite = regionGroups[gameSprites[i].region].create(gameSprites[i].x, gameSprites[i].y, gameSprites[i].name);
+                // gameSprites[i].scale != undefined ? gameSprite.scale.setTo(gameSprites[i].scale) : false;
+                gameSprite.anchor.setTo(0.5);
+                if (gameSprites[i].scale) {
+                    gameSprite.scale.setTo(gameSprites[i].mirror?-gameSprites[i].scale:gameSprites[i].scale, gameSprites[i].scale);
+                }else {
+                    gameSprite.scale.setTo(gameSprites[i].mirror?-1:1,1);
+                }
+                if (gameSprites[i].angle) {
+                    gameSprite.angle = gameSprites[i].angle;
+                }
+                if (gameSprites[i].animation) {
+                    gameSprite.animations.add(gameSprites[i].animation.key);
+                    gameSprite.animations.play(gameSprites[i].animation.key,gameSprites[i].animation.fps?gameSprites[i].animation.fps:20,gameSprites[i].animation.loop != false);
                 }
             }
+
+
+
+            // for (var i = 0, two_stone_count = two_stone_points.length; i < two_stone_count; i++) {
+            //     var two_stone = regionGroups.desert.create(two_stone_points[i].x*game_scale, two_stone_points[i].y, 'two_stone');
+            //     two_stone.anchor.setTo(0.5, 0.5);
+            //     two_stone.scale.setTo(two_stone_points[i].scale);
+            // }
+
+            // // place snow_cactus
+            // var snow_cactus = regionGroups.tundra.create(75, 1956, 'snow_cactus');
+            // snow_cactus.anchor.setTo(0.5, 0.5);
+            // snow_cactus.scale.setTo(0.7);
+
+            // place cactus
+            // for (var i = 0, cactus_count = cactus_points.length; i < cactus_count; i++) {
+            //     var cactus_animation = regionGroups.desert.create(cactus_points[i].x, cactus_points[i].y, 'cactus_animation');
+            //     cactus_animation.animations.add('wind');
+            //     cactus_animation.animations.play('wind', 20, true);
+            //     cactus_animation.anchor.setTo(0.5, 0.5);
+            //     cactus_animation.scale.setTo(cactus_points[i].scale);
+            // }
+
+            // for (var i = 0, plant_count = plant_points.length; i < plant_count; i++) {
+            //     var plant_animation = regionGroups.desert.create(plant_points[i].x, plant_points[i].y, 'plant_animation');
+            //     plant_animation.animations.add('wind2');
+            //     plant_animation.animations.play('wind2', 20, true);
+            //     plant_animation.anchor.setTo(0.5, 0.5);
+            //     if (plant_points[i].mirror == true) {
+            //         plant_animation.scale.setTo(-plant_points[i].scale, plant_points[i].scale);
+            //     } else {
+            //         plant_animation.scale.setTo(plant_points[i].scale);
+            //     }
+            // }
 
             // place tent
             // for (var i = 0, tent_count = tent_point.length; i < tent_count; i++) {
-                var tent_animation = regionGroups.desert.create(tent_point.x*game_scale, tent_point.y, 'tent_animation');
-                tent_animation.animations.add('tentshake');
-                tent_animation.animations.play('tentshake', 20, true);
-                tent_animation.anchor.setTo(0.5, 0.5);
-                tent_animation.scale.setTo(-tent_point.scale, tent_point.scale);
+                // var tent_animation = regionGroups.desert.create(tent_point.x*game_scale, tent_point.y, 'tent_animation');
+                // tent_animation.animations.add('tentshake');
+                // tent_animation.animations.play('tentshake', 20, true);
+                // tent_animation.anchor.setTo(0.5, 0.5);
+                // tent_animation.scale.setTo(-tent_point.scale, tent_point.scale);
             // }
 
             // fire animation
-            var fire_animation = regionGroups.desert.create((tent_point.x + 100)*game_scale, tent_point.y + 30, 'fire_animation');
-            fire_animation.anchor.setTo(0.5, 0.5);
-            fire_animation.animations.add('light');
-            fire_animation.animations.play('light', 20, true);
+            // var fire_animation = regionGroups.desert.create((tent_point.x + 100)*game_scale, tent_point.y + 30, 'fire_animation');
+            // fire_animation.anchor.setTo(0.5, 0.5);
+            // fire_animation.animations.add('light');
+            // fire_animation.animations.play('light', 20, true);
 
             // camel animation
-            var camel_animation = regionGroups.desert.create(camel_point.x*game_scale, camel_point.y, 'camel_animation');
-            camel_animation.anchor.setTo(0.5, 0.5);
-            camel_animation.scale.setTo(camel_point.scale);
-            camel_animation.angle = -14;
-            camel_animation.animations.add('disco');
-            camel_animation.animations.play('disco', 60, true);
+            // var camel_animation = regionGroups.desert.create(camel_point.x*game_scale, camel_point.y, 'camel_animation');
+            // camel_animation.anchor.setTo(0.5, 0.5);
+            // camel_animation.scale.setTo(camel_point.scale);
+            // camel_animation.angle = -14;
+            // camel_animation.animations.add('disco');
+            // camel_animation.animations.play('disco', 60, true);
             //
             // scorpion animation
-            var scorpion_animation = regionGroups.desert.create(scorpion_point.x*game_scale, scorpion_point.y, 'scorpion_animation');
-            scorpion_animation.anchor.setTo(0.5, 0.5);
-            scorpion_animation.angle = -10;
-            scorpion_animation.animations.add('walk');
-            scorpion_animation.animations.play('walk', 20, true);
+            // var scorpion_animation = regionGroups.desert.create(scorpion_point.x*game_scale, scorpion_point.y, 'scorpion_animation');
+            // scorpion_animation.anchor.setTo(0.5, 0.5);
+            // scorpion_animation.angle = -10;
+            // scorpion_animation.animations.add('walk');
+            // scorpion_animation.animations.play('walk', 20, true);
             //
             // seal animation
-            var seal_animation = regionGroups.tundra.create(seal_point.x*game_scale, seal_point.y, 'seal_animation');
-            seal_animation.anchor.setTo(0.5, 0.5);
-            seal_animation.animations.add('oink');
-            seal_animation.animations.play('oink', 20, true);
-            //
-            // penguin animation
-            for (var i = 0, penguin_count = penguin_points.length; i < penguin_count; i++) {
-                var penguin_animation = regionGroups.tundra.create(penguin_points[i].x*game_scale, penguin_points[i].y, 'penguin_animation');
-                penguin_animation.anchor.setTo(0.5, 0.5);
-                var flap = penguin_animation.animations.add('flap');
-                penguin_animation.animations.play('flap', 30, true);
-                if (penguin_points[i].mirror == true) {
-                    penguin_animation.scale.setTo(-penguin_points[i].scale, penguin_points[i].scale);
-                } else {
-                    penguin_animation.scale.setTo(penguin_points[i].scale);
-                }
-            }
+            // var seal_animation = regionGroups.tundra.create(seal_point.x*game_scale, seal_point.y, 'seal_animation');
+            // seal_animation.anchor.setTo(0.5, 0.5);
+            // seal_animation.animations.add('oink');
+            // seal_animation.animations.play('oink', 20, true);
+            // //
+            // // penguin animation
+            // for (var i = 0, penguin_count = penguin_points.length; i < penguin_count; i++) {
+            //     var penguin_animation = regionGroups.tundra.create(penguin_points[i].x*game_scale, penguin_points[i].y, 'penguin_animation');
+            //     penguin_animation.anchor.setTo(0.5, 0.5);
+            //     var flap = penguin_animation.animations.add('flap');
+            //     penguin_animation.animations.play('flap', 30, true);
+            //     if (penguin_points[i].mirror == true) {
+            //         penguin_animation.scale.setTo(-penguin_points[i].scale, penguin_points[i].scale);
+            //     } else {
+            //         penguin_animation.scale.setTo(penguin_points[i].scale);
+            //     }
+            // }
             //
             // whale animation
-            var whale_animation = regionGroups.tundra.create(whale_point.x*game_scale,whale_point.y, 'whale_animation');
-            whale_animation.anchor.setTo(0.5, 0.5);
-            whale_animation.scale.setTo(0.8);
-            var tailwave = whale_animation.animations.add('tailwave');
-            whale_animation.animations.play('tailwave', 10, true);
+            // var whale_animation = regionGroups.tundra.create(whale_point.x*game_scale,whale_point.y, 'whale_animation');
+            // whale_animation.anchor.setTo(0.5, 0.5);
+            // whale_animation.scale.setTo(0.8);
+            // var tailwave = whale_animation.animations.add('tailwave');
+            // whale_animation.animations.play('tailwave', 10, true);
 
             // placing lesson node
             // 1. lesson node count
@@ -517,18 +616,16 @@ window.createGame = function(scope, lessons, audio, injector, log) {
 
             for (var key in regionRange){
                 if(regionRange[key].lowerLimit > game.camera.y && regionRange[key].upperLimit < game.camera.y ){
-                   var delGroup = region;
-                   delGroup.splice(delGroup.indexOf(key),1);
-                   log.debug(delGroup);
-                   for (var i = 0; i < delGroup.length; i++) {
+                    var delGroup = region.slice();
+                    delGroup.splice(region.indexOf(key),1);
+                    for (var i = 0; i < delGroup.length; i++) {
                        regionGroups[delGroup[i]].callAll('kill');
-                   }
-                   break;
-                    // regionGroups[key].callAll('kill');                    
+                    }
+                    break;
                 }
             }
-            log.debug("DEBUG",game.kineticScrolling);
-            // log.debug(this.game);
+            // log.debug("DEBUG",game.kineticScrolling);
+            // log.debug(region);
 
         },
         init: function() {
@@ -578,12 +675,9 @@ window.createGame = function(scope, lessons, audio, injector, log) {
 
     function optimize(camera,regionRange){
         var lowerCameraBoundary, upperCameraBoundary;
-        var i = 0;
-        // var offset = 0;
-        // var treshold = offset + camera.height;
-        // var currentLimit, upperLimit, lowerLimit;
+        // var i = 0;
         for(var key in regionRange){
-            i++;
+            // i++;
             if (regionRange.hasOwnProperty(key)) {
                 if(regionRange[key].lowerLimit > camera.y && regionRange[key].upperLimit < camera.y ){
                     if (camera.y < regionRange[key].upperTreshold && region.indexOf(key) < region.length - 1) {
