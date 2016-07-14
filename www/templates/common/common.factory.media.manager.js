@@ -31,25 +31,40 @@
         } catch (error) {}
       },
       downloadIfNotExists: function(url) {
+        $log.debug("downloadIfNotExists")
         var d = $q.defer();
         var filename = url.split("/").pop();
         try {
+          $log.debug("downloadIfNotExists 1")
+
           var target = cordova.file.dataDirectory + 'media/' + filename;
-          $cordovaFile.checkFile(cordova.file.dataDirectory,'media/' + filename).then(function(result) {
+          $cordovaFile.checkFile(cordova.file.dataDirectory, 'media/' + filename).then(function(result) {
+              $log.debug("downloadIfNotExists 2")
+
               d.resolve(result);
             })
             .catch(function(e) {
+              $log.debug("downloadIfNotExists 3", e, network.isOnline())
+
               if (e.message === 'NOT_FOUND_ERR') {
-                if(!network.isOnline())
-                {
-                  d.reject({"error":true,"message":"offline"});
+                if (!network.isOnline()) {
+                  $log.debug("downloadIfNotExists 4")
+
+                  d.reject({
+                    "error": true,
+                    "message": "offline"
+                  });
+                } else {
+                  $log.debug("downloadIfNotExists 5")
+
+                  $cordovaFileTransfer.download(url, target)
+                    .then(function(result) {
+                      d.resolve("Downloaded " + target);
+                    }, function(err) {
+                      d.reject("Error Downlaoding " + target);
+                    }, function(progress) {});
                 }
-                $cordovaFileTransfer.download(url, target)
-                  .then(function(result) {
-                    d.resolve("Downloaded " + target);
-                  }, function(err) {
-                    d.reject("Error Downlaoding " + target);
-                  }, function(progress) {});
+
               } else {
 
                 d.reject("Error Downlaoding " + target);

@@ -556,6 +556,7 @@
     }
 
     function downloadAssessment(assessment) {
+      $log.debug("downloadAssessment")
       var d = $q.defer();
       var promises = [];
       var mediaTypes = ['videos', 'sounds', 'images']
@@ -565,6 +566,7 @@
         angular.forEach(object.node.type.content.widgets, function(widget) {
           angular.forEach(widget, function(file) {
             if (mediaArray.indexOf(file) < 0) {
+              $log.debug(file);
               mediaArray.push(file);
               promises.push(
                 mediaManager.downloadIfNotExists(CONSTANT.RESOURCE_SERVER + file)
@@ -577,7 +579,7 @@
           d.resolve(data);
         })
         .catch(function(err) {
-          d.reject
+          d.reject(err)
         });
       return d.promise;
 
