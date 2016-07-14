@@ -67,7 +67,7 @@
 .question {
   height: 100%;
   font-size: 1.5em;
-  overflow-y: scroll;
+  display: flex;
   flex-direction: column;
   justify-content: center;
   height: 50vw;
