@@ -24,7 +24,7 @@
       if (Auth.isAuthorised() && !Auth.isVerified() && toState.name != 'auth.verify.phone' && toState.name != 'auth.forgot_verify_otp' && toState.name != 'auth.change_password') {
         $log.debug("User account not verified");
         event.preventDefault();
-        localStorage.clear();
+        Auth.cleanLocalStorage();
         $state.go('auth.signin');
       }
 
@@ -102,7 +102,7 @@
     $ionicPlatform.ready(function() {
 
       data.createIfNotExistsLessonDB()
-        
+
 
       // $rootScope.$on('$cordovaNetwork:online', function(event, networkState) {
       //   if (Auth.isAuthorised() && Auth.isVerified() && Auth.hasProfile()) {

@@ -143,9 +143,9 @@
         .then(function(show){
           $log.debug("demoFactory",show)
           if(!show){
-            localStorage.setItem('demo_flag',5);
+            !localStorage.demo_flag && localStorage.setItem('demo_flag',5);
           }else{
-            localStorage.setItem('demo_flag',1);
+            !localStorage.demo_flag && localStorage.setItem('demo_flag',1);
           }
           $state.go('map.navigate', {});
         })

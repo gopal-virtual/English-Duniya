@@ -78,14 +78,15 @@
     }
 
     function clean(success) {
-      localStorage.clear();
+        Auth.cleanLocalStorage();
       if (success)
         success();
     }
 
     function cleanLocalStorage() {
-      $log.debug("ok");
-      localStorage.clear();
+        var demo_flag = localStorage.getItem('demo_flag');
+        localStorage.clear();
+        localStorage.setItem('demo_flag',demo_flag);
     }
 
     function signup(user_credentials, success, failure) {
