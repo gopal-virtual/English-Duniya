@@ -31,7 +31,9 @@
         responseError: function (rejection) {
           $log.debug("error", rejection)
           if([401].indexOf(rejection.status) != -1){
-            localStorage.clear();
+              var demo_flag = localStorage.getItem('demo_flag');
+              localStorage.clear();
+              localStorage.setItem('demo_flag',demo_flag);
             $injector.get('$state').go('auth.signin');
           }
           if ([400, 500].indexOf(rejection.status) != -1) {

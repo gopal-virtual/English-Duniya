@@ -99,6 +99,7 @@
     $scope.lessonutils = lessonutils;
     $scope.selectedNode = lessonutils.getLocalLesson();
     $scope.modal = {};
+    quizCtrl.closeModalCallback = closeModalCallback;
 
 
     $scope.groups = [];
@@ -249,7 +250,8 @@
 
           $ionicModal.fromTemplateUrl(CONSTANT.PATH.QUIZ + '/practice.feedback' + CONSTANT.VIEW, {
             scope: $scope,
-            animation: 'slide-in-down'
+            animation: 'slide-in-down',
+            hardwareBackButtonClose: false
           }).then(function(modal) {
             $scope.modal = modal;
           });
@@ -257,19 +259,17 @@
             $scope.modal.show();
             $timeout(function() {
               if ($scope.modal.isShown()) {
-                $scope.closeModal();
+                $scope.closeModal(quizCtrl.closeModalCallback);
               }
             }, 2000);
           };
-          $scope.closeModal = function() {
+          $scope.closeModal = function(callback) {
             quizCtrl.canRemoveFeedback = false;
             $scope.modal.hide().then(function() {
-              if (quizCtrl.currentIndex >= quizCtrl.quiz.objects.length - 1) {
-                quizCtrl.submitQuiz('practice');
-              } else {
-                $ionicSlideBoxDelegate.slide(quizCtrl.getCurrentIndex() + 1);
-              }
-              quizCtrl.canRemoveFeedback = true;
+                if(callback){
+                    callback();
+                }
+                quizCtrl.canRemoveFeedback = true;
             });
           };
         }
@@ -300,7 +300,13 @@
       }
 
     }
-
+    function closeModalCallback () {
+        if (quizCtrl.currentIndex >= quizCtrl.quiz.objects.length - 1) {
+          quizCtrl.submitQuiz('practice');
+        } else {
+          $ionicSlideBoxDelegate.slide(quizCtrl.getCurrentIndex() + 1);
+        }
+    }
     function parseHtml(index) {
       quizCtrl.quiz.objects[index].node.widgetHtml = quizCtrl.widgetParser.parseToDisplay(quizCtrl.quiz.objects[index].node.title, index, quizCtrl.quiz);
 
@@ -631,8 +637,9 @@
     $ionicPlatform.onHardwareBackButton(function(event) {
         if ($state.is('quiz.questions')) {
           try {
-              if(!nzTour.current)
-                $scope.showNodeMenu();
+              if(!nzTour.current && !$scope.modal.isShown()){
+                  $scope.showNodeMenu();
+              }
           } catch (error) {
             $log.debug(error);
           }
