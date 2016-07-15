@@ -14,7 +14,6 @@
             config.headers.Authorization = 'Token ' + localStorage.Authorization;
           config.headers.xsrfCookieName = 'csrftoken';
           config.headers.xsrfHeaderName = 'X-CSRFToken';
-          config.timeout = 3000
           return config;
         },
         response: function (response) {

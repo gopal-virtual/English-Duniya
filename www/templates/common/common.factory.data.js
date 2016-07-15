@@ -289,34 +289,71 @@
     }
 
 
-    function putUserifNotExist(data) {
-      return Rest.one('profiles', JSON.parse(localStorage.user_details).profile).all('scores').all('skills').getList().then(function(profile) {
-          return profile.plain();
-        })
+    function putUserifNotExist(details) {
+      var records = {
+        scores: {}
+      };
+      var d = $q.defer();
+      Rest.one('profiles', JSON.parse(localStorage.user_details).profile).all('scores').all('skills').getList()
         .then(function(skills) {
-          return appDB.get(data.userId)
-            .then(function(doc) {
-              doc.data.skills = skills
-              return appDB.put({
-                '_id': data.userId,
-                '_rev': doc._rev,
-                'data': doc.data
-              })
-            })
-            .catch(function(error) {
-              if (error.status === 404) {
-                return appDB.put({
-                  '_id': data.userId,
-                  'data': {
-                    'scores': {},
-                    'reports': [],
-                    'skills': skills
-                  }
-                })
-              }
-            })
+          $log.debug("skills", skills.plain())
+          records.skills = skills.plain();
+          return data.getLessonsScore();
         })
+        .then(function(scores) {
+          records.scores = {};
+          $log.debug("scores", scores)
+          angular.forEach(scores, function(row) {
+            // $log.debug("row", row.contents.assessment)
+            for (var property in row.contents.assessment) {
+              if (row.contents.assessment.hasOwnProperty(property)) {
+                $log.debug(row.contents.assessment[property])
+                records.scores[row.id] = {};
+                records.scores[row.id][property] = {
+                  score: row.contents.assessment[property].obtained_score,
+                  totalScore: row.contents.assessment[property].total_score
+                }
+              }
+            }
+          })
 
+          return appDB.get(details.userId)
+        })
+        .then(function(doc) {
+          $log.debug("Found userdb")
+          doc.data.skills = records.skills;
+          doc.data.scores = records.scores;
+          return appDB.put({
+            '_id': details.userId,
+            '_rev': doc._rev,
+            'data': doc.data
+          })
+        })
+        .then(function() {
+          d.resolve();
+        })
+        .catch(function(error) {
+          $log.debug("Not Found userdb", error)
+          if (error.status === 404) {
+            $log.debug("MAking user db")
+            return appDB.put({
+                '_id': details.userId,
+                'data': {
+                  'scores': records.scores,
+                  'reports': [],
+                  'skills': records.skills
+                }
+              }).then(function() {
+                d.resolve()
+                $log.debug("MAde user db")
+              })
+              .catch(function(e) {
+                d.reject();
+                $log.debug("Error making user db", e)
+              })
+          }
+        })
+      return d.promise;
 
     }
 
@@ -380,11 +417,9 @@
       return d.promise;
     }
 
-    function getLessonsScore(limit) {
-      return Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('profiles', JSON.parse(localStorage.user_details).profile).customGET('lessons-score', {
-        limit: limit
-      }).then(function(score) {
-        return score.plain().results;
+    function getLessonsScore() {
+      return Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('profiles', JSON.parse(localStorage.user_details).profile).customGET('lessons-score').then(function(score) {
+        return score.plain();
       }, function(error) {})
     }
 
@@ -618,24 +653,23 @@
         }).then(function(response) {
           var d = $q.defer();
           // angular.forEach(response.rows, function(row) {
-          if(response.rows.length == 0){
+          if (response.rows.length == 0) {
             d.reject("No reports");
-          }
-          else{
+          } else {
             var report = response.rows[0].doc.data;
             syncReport(report).then(function() {
-              var callback = false;
-              if (response.rows.length > 2) {
-                callback = true;
-              }
-              d.resolve({
-                'report_doc': response.rows[0].doc,
-                'callback': callback
+                var callback = false;
+                if (response.rows.length > 2) {
+                  callback = true;
+                }
+                d.resolve({
+                  'report_doc': response.rows[0].doc,
+                  'callback': callback
+                })
               })
-            })
-            .catch(function(error){
-              d.reject(error)
-            })
+              .catch(function(error) {
+                d.reject(error)
+              })
 
           }
           return d.promise;
@@ -647,8 +681,7 @@
         .then(function(response) {
           data.startReportSyncing()
         })
-        .catch(function(e) {
-        })
+        .catch(function(e) {})
         // return appDB.get(user.userId).then(function(response) {
         //   appData = response;
         //     $log.debug("Here", response)

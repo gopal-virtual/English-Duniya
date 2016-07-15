@@ -75,6 +75,7 @@
 
           d.resolve("Cordova not found");
         }
+
         return d.promise;
 
       },
