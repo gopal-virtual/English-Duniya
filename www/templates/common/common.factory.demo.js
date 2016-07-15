@@ -21,7 +21,7 @@
             $log.debug("demoFactory  score", score,score ? false : true)
             return score ? false : true;
           }).catch(function(e) {
-            $Log.debug("demo skills error", e)
+            $log.debug("demo skills error", e)
           })
       },
       getStep: function() {
