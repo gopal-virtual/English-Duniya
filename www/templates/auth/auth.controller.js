@@ -115,7 +115,7 @@
         var d = $q.defer();
         facebookConnectPlugin.login(CONSTANT.CONFIG.AUTH.FB, function(response) {
           d.resolve({
-            "access_token": success.authResponse.accessToken
+            "access_token": response.authResponse.accessToken
           });
         }, function(error) {
           d.reject(error);

@@ -17,33 +17,78 @@
     "ngCordova": "~0.1.24-alpha",
     "angular-ui-sortable": "~0.13.4",
     "angular-pouchdb": "~4.1.0",
-    "pouchdb": "~5.3.2"
+    "pouchdb": "~5.3.2",
+    "nz-tour": "^1.1.0"
   },
   "resolutions": {
     "angular": ">= 1.0.8"
   },
   "preen": {
-    "jquery": ["dist/*.js"],
-    "jquery-ui": ["*.js"],
-    "angular": ["*.js"],
-    "angular-animate": ["*.js"],
-    "angular-inview": ["*.js"],
-    "pouchdb": ["dist/*.js"],
-    "angular-pouchdb": ["*.js"],
-    "angular-sanitize": ["*.js"],
-    "angular-scroll": ["*.js"],
-    "angular-ui-router": ["release/*.js"],
-    "angular-ui-sortable": ["*.js"],
-    "ionic-native-transitions": ["dist/*.js"],
-    "ngCordova": ["dist/*.js"],
-    "ng-cordova-oauth": ["dist/*.js"],
-    "phaser-kinetic-scrolling-plugin": ["dist/*.js"],
-    "restangular": ["dist/*.js"],
-    "videogular-buffering": ["*.js"],
-    "videogular-controls": ["*.js"],
-    "videogular": ["*.js"],
-    "underscore": ["*.js"],
-    "ionic-ion-imageCacheFactory": ["*.js"],
-    "lodash": ["dist/*.js"]
+    "jquery": [
+      "dist/*.js"
+    ],
+    "jquery-ui": [
+      "*.js"
+    ],
+    "angular": [
+      "*.js"
+    ],
+    "angular-animate": [
+      "*.js"
+    ],
+    "angular-inview": [
+      "*.js"
+    ],
+    "pouchdb": [
+      "dist/*.js"
+    ],
+    "angular-pouchdb": [
+      "*.js"
+    ],
+    "angular-sanitize": [
+      "*.js"
+    ],
+    "angular-scroll": [
+      "*.js"
+    ],
+    "angular-ui-router": [
+      "release/*.js"
+    ],
+    "angular-ui-sortable": [
+      "*.js"
+    ],
+    "ionic-native-transitions": [
+      "dist/*.js"
+    ],
+    "ngCordova": [
+      "dist/*.js"
+    ],
+    "ng-cordova-oauth": [
+      "dist/*.js"
+    ],
+    "phaser-kinetic-scrolling-plugin": [
+      "dist/*.js"
+    ],
+    "restangular": [
+      "dist/*.js"
+    ],
+    "videogular-buffering": [
+      "*.js"
+    ],
+    "videogular-controls": [
+      "*.js"
+    ],
+    "videogular": [
+      "*.js"
+    ],
+    "underscore": [
+      "*.js"
+    ],
+    "ionic-ion-imageCacheFactory": [
+      "*.js"
+    ],
+    "lodash": [
+      "dist/*.js"
+    ]
   }
 }
