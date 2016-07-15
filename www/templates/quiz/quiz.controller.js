@@ -725,7 +725,8 @@
       if(result){
         $timeout(function(){
           $log.debug($scope.demo.tourFlag);
-          audio.play('demo-quiz-1')
+          audio['demo-4'].stop();
+          audio['demo-quiz-1'].play();
           nzTour.start($scope.tour);
           demoFactory.setStep(5);
         });
@@ -735,9 +736,11 @@
     function tourNextStep() {
       if (nzTour.current) {
         if(nzTour.current.step === 0){
-          audio.play('demo-quiz-2')
+            audio['demo-quiz-1'].stop();
+            audio['demo-quiz-2'].play();
         }else if(nzTour.current.step === 1){
-          audio.play('demo-quiz-3')
+            audio['demo-quiz-2'].stop();
+            audio['demo-quiz-3'].play();
         }
         nzTour.next();
       }

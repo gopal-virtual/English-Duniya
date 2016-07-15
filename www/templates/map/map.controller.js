@@ -224,7 +224,7 @@
                   $scope.demo.show().then(function(){
                     $log.debug('aaaaaa');
 
-                      audio.play('demo-1');
+                      audio['demo-1'].play();
                       demoFactory.setStep(2)
                   });
               })

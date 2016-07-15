@@ -218,11 +218,12 @@
 
         if(utils.demoFactory.getStep() == 2){
           $log.debug("Playing audio init 2")
-
-          audio.play('demo-2');
+          audio['demo-1'].stop();
+          audio['demo-2'].play();
         }
         if(utils.demoFactory.getStep() == 4){
-          audio.play('demo-4')
+            audio['demo-3'].stop();
+          audio['demo-4'].play();
           $log.debug("Playing audio init 4")
 
         }

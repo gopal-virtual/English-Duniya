@@ -4,7 +4,7 @@
     .module('zaya')
     .run(runConfig);
 
-  function runConfig($ionicPlatform, $rootScope, $timeout, $log, $state, $http, $cookies, Auth, $window, $cordovaFile, data, demo) {
+  function runConfig($ionicPlatform, $rootScope, $timeout, $log, $state, $http, $cookies, Auth, $window, $cordovaFile, data, demo, audio) {
 
 
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
@@ -145,18 +145,10 @@
         $log.debug(e);
       });
 
-      //   document.addEventListener("pause", function(){
-      //     $log.debug("paused");
-      //     try{
-      //       var video = document.querySelector('video');
-      //       if(!video.paused){
-      //         video.pause();
-      //       }
-      //     }
-      //     catch(e){
-      //       $log.debug(e);
-      //     }
-      //   }, false);
+        document.addEventListener("pause", function(){
+        //   $log.debug("paused");
+          audio.stop('background');
+        }, false);
       // sms watch
       //   try{
       //     SMS && SMS.startWatch(function () {

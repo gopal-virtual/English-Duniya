@@ -11,7 +11,8 @@
     "videogular-themes-default": "~1.4.3",
     "videogular-controls": "~1.4.3",
     "videogular-buffering": "~1.4.3",
-    "pouchdb": "~5.3.2"
+    "pouchdb": "~5.3.2",
+    "angular-audio": "~1.7.2"
   },
   "dependencies": {
     "ngCordova": "~0.1.24-alpha",

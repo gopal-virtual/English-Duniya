@@ -19,6 +19,7 @@
       'nzTour',
       'ngResource',
       'ngCachedResource',
+      'ngAudio',
       // core
       'templates',
       'common',
