@@ -3,10 +3,11 @@
   angular
     .module('zaya-auth')
     .controller('authController', authController)
-  authController.$inject = ['$q', '$ionicModal', '$state', 'Auth', 'audio', '$rootScope', '$ionicPopup', '$log', '$cordovaOauth', 'CONSTANT', '$interval', '$scope', '$ionicLoading', 'formHelper', '$ionicPlatform','data','network'];
+  authController.$inject = ['$q', '$ionicModal', '$state', 'Auth', 'audio', '$rootScope', '$ionicPopup', '$log', '$cordovaOauth', 'CONSTANT', '$interval', '$scope', '$ionicLoading', 'formHelper', '$ionicPlatform','data','network','demo'];
 
-  function authController($q, $ionicModal, $state, Auth, audio, $rootScope, $ionicPopup, $log, $cordovaOauth, CONSTANT, $interval, $scope, $ionicLoading, formHelper, $ionicPlatform, dataService, network) {
+  function authController($q, $ionicModal, $state, Auth, audio, $rootScope, $ionicPopup, $log, $cordovaOauth, CONSTANT, $interval, $scope, $ionicLoading, formHelper, $ionicPlatform, dataService, network, demoFactory) {
     var authCtrl = this;
+    $log.debug("Inside auth controller")
     authCtrl.formHelper = formHelper;
     authCtrl.exitApp = exitApp;
     authCtrl.network = network;
@@ -136,9 +137,20 @@
             'userId': Auth.getProfileId()
           })
         })
+        .then(function(){
+          return demoFactory.show()
+        })
+        .then(function(show){
+          $log.debug("demoFactory",show)
+          if(!show){
+            localStorage.setItem('demo_flag',5);
+          }else{
+            localStorage.setItem('demo_flag',1);
+          }
+          $state.go('map.navigate', {});
+        })
         .then(function() {
 
-          $state.go('map.navigate', {});
         })
         .catch(function(error) {
           $ionicLoading.hide()
@@ -157,6 +169,7 @@
           return Auth.signup(credentials);
         })
         .then(function() {
+          localStorage.setItem('demo_flag',1);
           $state.go('auth.verify.phone', {});
         })
         .catch(function(error) {

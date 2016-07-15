@@ -7,7 +7,7 @@
   QuizController.$inject = ['quiz', 'widgetParser', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Auth', '$ionicLoading', '$ionicPopup', 'lessonutils', 'orientation', '$location', '$anchorScroll', '$document', '$ionicScrollDelegate', '$ionicPosition', '$timeout', '$window', 'mediaManager', '$cordovaFileTransfer', '$cordovaFile', '$interval', '$q', '$ImageCacheFactory', 'ml', 'data', 'lessonutils', '$ionicPlatform', 'nzTour', 'demo' ];
 
   function QuizController(quiz, widgetParser, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition, $timeout, $window, mediaManager, $cordovaFileTransfer, $cordovaFile, $interval, $q, $ImageCacheFactory, ml, data, lessonutils, $ionicPlatform, nzTour, demoFactory) {
-
+    $log.debug("Inside quiz controller",$stateParams)
     var quizCtrl = this;
 
     //bind quiz resolved to controller
@@ -153,21 +153,21 @@
 
     function submitReport(quiz, report, summary) {
       lesson = lessonutils.getLocalLesson();
-      data.getQuizScore({
-          'userId': Auth.getProfileId(),
-          'lessonId': lesson.node.id,
-          'id': quizCtrl.quiz.node.id
+
+        data.updateSkills({
+          userId: Auth.getProfileId(),
+          lessonId: lesson.node.id,
+          id: quiz.node.id,
+          score: summary.score.marks,
+          totalScore: quizCtrl.quiz.node.type.score,
+          skill: lesson.node.tag
         })
         .then(function() {
-          $log.debug("Updating skills", lesson)
-          return data.updateSkills({
-            userId: Auth.getProfileId(),
-            lessonId: lesson.node.id,
-            id: quiz.node.id,
-            score: summary.score.marks,
-            totalScore: quizCtrl.quiz.node.type.score,
-            skill: lesson.node.tag
-          })
+          return data.getQuizScore({
+              'userId': Auth.getProfileId(),
+              'lessonId': lesson.node.id,
+              'id': quizCtrl.quiz.node.id
+            })
         })
         .then(function(previousScore) {
           if ((!previousScore) || (!previousScore.hasOwnProperty('score')) || (previousScore && parseInt(previousScore.score) < summary.score.marks)) {
@@ -211,21 +211,16 @@
 
         })
         .then(function(data) {
-          $log.debug("s", data);
         })
         .catch(function(e) {
-          $log.debug("Err", e)
         })
     }
 
     function disableSwipe() {
       $ionicSlideBoxDelegate.enableSlide(false);
     }
-    $log.debug("Please", quiz)
-
     function init(quiz) {
       if ($state.current.name == "quiz.start") {
-        $log.debug("quiz start")
           // $ionicLoading.show();
           // quizCtrl.preloadResources(quiz).then(function(success) {
           //   $ionicLoading.hide();
@@ -302,13 +297,11 @@
             quizCtrl.quiz.objects[i].attempted = [];
           }
         }
-        $log.debug(quizCtrl.quiz)
       }
 
     }
 
     function parseHtml(index) {
-      $log.debug("parse HTML", quizCtrl.quiz, index)
       quizCtrl.quiz.objects[index].node.widgetHtml = quizCtrl.widgetParser.parseToDisplay(quizCtrl.quiz.objects[index].node.title, index, quizCtrl.quiz);
 
       quizCtrl.quiz.objects[index].node.widgetSound = quizCtrl.widgetParser.getSoundId(quizCtrl.quiz.objects[index].node.title);
@@ -427,18 +420,13 @@
       quizCtrl.quiz.suggestion = ml.getNextQSr(quizCtrl.quiz.suggestion.test, ml.mapping);
       if (quizCtrl.quiz.suggestion) {
         quizCtrl.quiz.objects.push(ml.dqJSON[quizCtrl.quiz.suggestion.qSr]);
-        $log.debug("suggestion new", quizCtrl.quiz.suggestion);
-        $log.debug("suggestion questions", quizCtrl.quiz);
       } else {
-        $log.debug('bam!', ml.dqQuiz);
-        $log.debug('bam!', ml.runDiagnostic(ml.dqQuiz));
         quizCtrl.endQuiz();
       }
       return true;
     }
 
     function updateSlide() {
-      $log.debug('slide updated');
       $ionicSlideBoxDelegate.update();
       $timeout(function() {
         $ionicSlideBoxDelegate.next();
@@ -586,10 +574,9 @@
             delete quizCtrl.report.attempts['demo'];
       if (quizType === 'practice') {
         $scope.modal.hide().then(function() {
-          $log.debug("submit qi")
           $state.go('quiz.summary', {
-            report: angular.copy(quizCtrl.report),
-            summary: angular.copy(quizCtrl.summary),
+            report: (quizCtrl.report),
+            summary: (quizCtrl.summary),
             type: 'practice'
           });
         });

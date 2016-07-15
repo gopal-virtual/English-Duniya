@@ -6,13 +6,14 @@
 
   function runConfig($ionicPlatform, $rootScope, $timeout, $log, $state, $http, $cookies, Auth, $window, $cordovaFile, data, demo) {
 
+
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
     //$http.defaults.headers.common['Access-Control-Request-Headers'] = 'accept, auth-token, content-type, xsrfcookiename';
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
 
       $log.debug('state changed ', toState.name);
-      $log.debug(Auth.isAuthorised(),Auth.isVerified(),Auth.hasProfile())
-      //if not authenticated, redirect to login page
+      $log.debug(Auth.isAuthorised(), Auth.isVerified(), Auth.hasProfile())
+        //if not authenticated, redirect to login page
       if (!Auth.isAuthorised() && toState.name != 'auth.signin' && toState.name != 'auth.signup' && toState.name != 'auth.forgot') {
         $log.debug("You are not authorized");
         event.preventDefault();
@@ -101,8 +102,14 @@
     $ionicPlatform.ready(function() {
 
       data.createIfNotExistsLessonDB()
-      if(localStorage.getItem('demo_flag') === null){
-      localStorage.setItem('demo_flag',1)
+        
+
+      // $rootScope.$on('$cordovaNetwork:online', function(event, networkState) {
+      //   if (Auth.isAuthorised() && Auth.isVerified() && Auth.hasProfile()) {
+      //   }
+      // })
+      if (localStorage.getItem('report_id') === null) {
+        localStorage.setItem('report_id', 1);
       }
       if (window.Connection) {
         if (navigator.connection.type == Connection.NONE) {
@@ -117,9 +124,14 @@
             });
         } else {
           $log.debug('App ready : online;');
+
         }
       }
-
+      if (Auth.isAuthorised() && Auth.isVerified() && Auth.hasProfile()) {
+        data.startReportSyncing({
+          'userId': Auth.getProfileId()
+        })
+      }
       //   if (window.StatusBar) {
       //     StatusBar.hide();
       //   }
