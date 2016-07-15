@@ -12,14 +12,16 @@
         url: '/map',
         abstract: true,
         resolve: {
-          lessons: ['Rest', '$log', '$http', 'data', function(Rest, $log, $http, data) {
-            return data.getLessonsList(25)
+          lessons: ['Rest', '$log', '$http', 'data','Auth', function(Rest, $log, $http, data, Auth) {
+            return data.getLessonsList(Auth.getLocalProfile().grade)
           }],
-          lessonLocked: ['Rest', '$log', '$http', 'data','extendLesson', function(Rest, $log, $http, data,extendLesson) {
-            return data.getLessonsList(25).then(function(lessons){
+          lessonLocked: ['Rest', '$log', '$http', 'data','extendLesson','Auth', function(Rest, $log, $http, data,extendLesson,Auth) {
+
+            $log.debug("Grade",Auth.getLocalProfile().grade)
+            return data.getLessonsList(Auth.getLocalProfile().grade).then(function(lessons){
+            $log.debug("Lessons",lessons)
 
               return extendLesson.getLesson(lessons,[]).then(function(result){
-                  $log.debug("Resolved 2",result.length)
                   return result;
               });
             })
@@ -62,9 +64,16 @@
           //   $state.go('map.unauthorised');
           // }
           audio.play('background');
+        //   if(localStorage.getItem('region')>'3409'){
+        //   }
+        //   else{
+        //       audio.play('three_star');
+        //   }
         }],
         onExit: ['audio', function(audio) {
           audio.stop('background');
+          // audio.stop('demo-2');
+          // audio.stop('demo-4');
         }],
         views: {
           'state-map': {

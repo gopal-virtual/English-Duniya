@@ -84,3 +84,100 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#000000', end
         height : 100%;
     }
 }
+
+
+
+
+.bevel{
+  border-radius: 10px;
+  box-shadow: -5px -5px 1px #156b55 inset;
+}
+
+.rope-menu-item{
+  box-sizing: border-box;
+  background-color: #219c7f;
+  height: 140px;
+  width: inherit;
+  z-index: 40;
+  position: relative;
+}
+
+.rope-double-menu{
+  width: inherit;
+  z-index: 50
+}
+
+.rope-double-menu .rope-menu-item:first-child{
+  margin-top: 120px;
+}
+
+.rope-double-menu .rope-menu-item:first-child::before{
+  z-index: 50;
+  display: block;
+  /*z-index: 50;*/
+  /*position: relative;*/
+  background: url('../img/assets/rope_top.png') left top no-repeat,url('../img/assets/rope_top.png') right top no-repeat;
+  content: "";
+  height: 150px;
+  width: calc(100% - 40px);
+  background-size: contain,contain;
+  top: -120px;
+  position: absolute;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.rope-double-menu .rope-menu-item:not(:first-child){
+  margin-top: 40px;
+}
+
+.rope-double-menu .rope-menu-item:not(:first-child)::before{
+  z-index: 50;
+  display: block;
+  /*z-index: 50;*/
+  /*position: relative;*/
+  background: url('../img/assets/rope_bottom.png') left top no-repeat,url('../img/assets/rope_bottom.png') right top no-repeat;
+  content: "";
+  height: 70px;
+  width: calc(100% - 40px);
+  background-size: contain,contain;
+  position: absolute;
+  top: -55px;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+
+.round{
+  border-radius: 50%;
+}
+
+.rope-menu-back{
+    position: absolute;
+    z-index: 60;
+}
+
+.rope-menu-item img{
+    height: 80px;
+}
+
+.rope-modal-title{
+    background: url('../img/assets/ribbon.png') top no-repeat;
+    background-size: 100% 100%;
+    height: 40px;
+    position: absolute;
+    width: 100%;
+    left: 0px;
+    top: 70px;
+    z-index: 60;
+}
+
+.rope-menu-avatar{
+    left: 0px;
+    position: absolute;
+    height: 320px;
+    width: 100%;
+    z-index: 70;
+    background-size: contain !important;
+    background-position: bottom left !important;
+}

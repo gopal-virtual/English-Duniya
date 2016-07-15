@@ -4,7 +4,7 @@
     .module('zaya')
     .run(runConfig);
 
-  function runConfig($ionicPlatform, $rootScope, $timeout, $log, $state, $http, $cookies, Auth, $window, $cordovaFile, data) {
+  function runConfig($ionicPlatform, $rootScope, $timeout, $log, $state, $http, $cookies, Auth, $window, $cordovaFile, data, demo) {
 
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
     //$http.defaults.headers.common['Access-Control-Request-Headers'] = 'accept, auth-token, content-type, xsrfcookiename';
@@ -99,9 +99,11 @@
       // }
     });
     $ionicPlatform.ready(function() {
+
       data.createIfNotExistsLessonDB()
-
-
+      if(localStorage.getItem('demo_flag') === null){
+      localStorage.setItem('demo_flag',1)
+      }
       if (window.Connection) {
         if (navigator.connection.type == Connection.NONE) {
           $ionicPopup.confirm({

@@ -5,7 +5,7 @@
     .module('common')
     .factory('mediaManager', mediaManager)
 
-  function mediaManager($cordovaNativeAudio, $log, $cordovaFile, $cordovaFileTransfer, $q, CONSTANT) {
+  function mediaManager($cordovaNativeAudio, $log, $cordovaFile, $cordovaFileTransfer, $q, CONSTANT, network) {
     return {
 
       getPath: function(url) {
@@ -40,7 +40,10 @@
             })
             .catch(function(e) {
               if (e.message === 'NOT_FOUND_ERR') {
-
+                if(!network.isOnline())
+                {
+                  d.reject({"error":true,"message":"offline"});
+                }
                 $cordovaFileTransfer.download(url, target)
                   .then(function(result) {
                     d.resolve("Downloaded " + target);

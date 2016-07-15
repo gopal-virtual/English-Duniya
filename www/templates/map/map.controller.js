@@ -5,9 +5,9 @@
     .module('zaya-map')
     .controller('mapController', mapController);
 
-  mapController.$inject = ['$scope', '$rootScope', '$log', '$ionicPopup','$ionicModal', '$state', 'lessons', 'scores', 'skills', 'extendLesson', 'Rest', 'CONSTANT', '$sce', '$ionicLoading', '$timeout', '$ionicBackdrop', 'orientation', 'Auth', 'lessonutils', 'audio', 'data', 'ml', 'lessonLocked', '$ionicPlatform'];
+  mapController.$inject = ['$scope', '$rootScope', '$log', '$ionicPopup','$ionicModal', '$state', 'lessons', 'scores', 'skills', 'extendLesson', 'Rest', 'CONSTANT', '$sce', '$ionicLoading', '$timeout', '$ionicBackdrop', 'orientation', 'Auth', 'lessonutils', 'audio', 'data', 'ml', 'lessonLocked', '$ionicPlatform','demo'];
 
-  function mapController($scope, $rootScope, $log, $ionicPopup, $ionicModal, $state, lessons, scores, skills, extendLesson, Rest, CONSTANT, $sce, $ionicLoading, $timeout, $ionicBackdrop, orientation, Auth, lessonutils, audio, data, ml, lessonLocked, $ionicPlatform) {
+  function mapController($scope, $rootScope, $log, $ionicPopup, $ionicModal, $state, lessons, scores, skills, extendLesson, Rest, CONSTANT, $sce, $ionicLoading, $timeout, $ionicBackdrop, orientation, Auth, lessonutils, audio, data, ml, lessonLocked, $ionicPlatform, demoFactory) {
 
     $scope.audio = audio;
     $scope.orientation = orientation;
@@ -15,7 +15,7 @@
     var lessonList = CONSTANT.LOCK ? lessonLocked : lessons;
     // $state.current.data && lessonList.unshift($state.current.data.litmus);
     mapCtrl.lessons = lessonList;
-    mapCtrl.resetNode = resetNode;
+    // mapCtrl.resetNode = resetNode;
     $scope.lessonutils = lessonutils;
     mapCtrl.backdrop = false;
     mapCtrl.showScore = -1;
@@ -25,6 +25,23 @@
     mapCtrl.animationExpand['expand'] = expand;
     mapCtrl.animationExpand['shrink'] = shrink;
     mapCtrl.showResult = true;
+    mapCtrl.getNodeProperty = getNodeProperty;
+    mapCtrl.demoFactory = demoFactory;
+
+    function getNodeProperty(prop){
+      if(prop == 'x')
+        return localStorage.demo_node ? JSON.parse(localStorage.demo_node).x : 0;
+      if(prop == 'y')
+        return localStorage.demo_node ? JSON.parse(localStorage.demo_node).y : 0;
+      if(prop == 'width')
+        return localStorage.demo_node ? JSON.parse(localStorage.demo_node).width : 0;
+      if(prop == 'height')
+        return localStorage.demo_node ? JSON.parse(localStorage.demo_node).height : 0;
+      if(prop == 'node')
+        return localStorage.demo_node ? JSON.parse(localStorage.demo_node).node : 0;
+      if(prop == 'type')
+        return localStorage.demo_node ? JSON.parse(localStorage.demo_node).type : 0;
+    }
     // mapCtrl.animationShrink.shrink = animationShrink;
 
 
@@ -54,8 +71,11 @@
 
 
     $scope.$on('openNode', function(event, node, currentPos) {
-      currentPos.lessonType = node.tag;
-      $log.debug("GAME: ", currentPos);
+      lessonutils.playDemoAudio();
+      // audio.stop('demo-1')
+    //   $scope.demo.isShown() && $scope.demo.hide();
+      if(currentPos)
+        currentPos.lessonType = node.tag;
 
       if (node.content_type_name == 'litmus') {
         $state.go('quiz.questions', {
@@ -65,7 +85,8 @@
       } else {
         $scope.lessonutils.getLesson(node.id, $scope, function(response) {
           $scope.openNodeMenu();
-        //   mapCtrl.animationExpand.expand(currentPos);
+          if(currentPos)
+          mapCtrl.animationExpand.expand(currentPos);
           $scope.selectedNode = response;
           // $log.debug("NODENODE ",$scope.selectedNode.node.tag);
         });
@@ -78,98 +99,124 @@
     }
     $scope.closeNodeMenu = function() {
       $scope.nodeMenu.hide().then(function() {
-        // mapCtrl.animationExpand.shrink();
+        mapCtrl.closeDemo();
       });
       return true;
     }
-    $scope.openDemo = function() {
-      $scope.demo.show();
+    mapCtrl.openDemo = function() {
+      $scope.demo.show().then(function(){
+          $ionicLoading.hide();
+      });
+      $log.debug("Playing audio")
       return true;
     }
-    $scope.closeDemo = function() {
+    mapCtrl.closeDemo = function() {
+      $log.debug('close the demo');
       $scope.demo.hide();
       return true;
-    }
-
-    $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal-rope' + CONSTANT.VIEW, {
-      scope: $scope,
-      animation: 'slide-in-down',
-      hardwareBackButtonClose: true
-  }).then(function(nodeMenu) {
-      $scope.nodeMenu = nodeMenu;
-    });
-
-    // $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.demo' + CONSTANT.VIEW, {
-    //   scope: $scope,
-    //     hardwareBackButtonClose: false
-    // }).then(function(demo) {
-    //   $scope.demo = demo;
-    // });
-    //
-    // $timeout(function(){
-    //     $scope.openDemo();
-    // })
-
-
-    function resetNode() {
-      $timeout(function() {
-        $scope.selectedNode = {};
-      }, 500)
-    }
-
-    // $timeout(function functionName() {
-    //   if (mapCtrl.lessons && localStorage.lesson) {
-    //     $scope.openNodeMenu();
-    //     $scope.selectedNode = $scope.lessonutils.getLocalLesson();
-    //   }
-    // });
-    // $scope.test = {"phone_number":"+919393939193"};
-
-    // updateProfile($scope.test);
-
-    function expand(currentPos) {
-      // alert(JSON.stringify(e));
-      mapCtrl.showResult = false;
-      $log.debug("X coords: " + currentPos.x + ", Y coords: " + currentPos.y);
-      // $mapCtrl.animationExpand.lessonType = currentPos.lessonType
-      mapCtrl.animationExpand.containerStyle = {
-        "margin-left": currentPos.x - 30 + "px",
-        "margin-top": currentPos.y - 30 + "px",
-        "opacity": 1
-      }
-
-      $log.debug(mapCtrl.animationExpand.containerStyle);
-      $timeout(function() {
-        mapCtrl.animationExpand.iconTranslateOffset = {
-          "transform": "translate(" + ((screen.width / 2) - currentPos.x) + "px," + (90 - currentPos.y) + "px)",
-          "transition": "transform 0.5s ease-in-out"
         }
-        mapCtrl.animationExpand.expandContainer = 1;
-      }, 50).then(function() {
-        $timeout(function() {
-          $scope.openNodeMenu();
-        }, 1000);
-      });
 
-    }
+        $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal-rope' + CONSTANT.VIEW, {
+            scope: $scope,
+            animation: 'slide-in-down',
+            hardwareBackButtonClose: false
+        }).then(function(nodeMenu) {
+            $scope.nodeMenu = nodeMenu;
+        });
 
-    function shrink() {
-      mapCtrl.showResult = true;
-      mapCtrl.animationExpand.iconTranslateOffset = {
-        "transform": "translate(0px,0px)",
-        "transition": "transform 0.4s ease-in-out"
-      }
-      mapCtrl.animationExpand.expandContainer = 0;
+        $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.demo' + CONSTANT.VIEW, {
+            scope: $scope,
+            animation: 'slide-in-down',
+            hardwareBackButtonClose: false
+        }).then(function(demo) {
+            $scope.demo = demo;
+        });
 
-      $timeout(function() {
-        mapCtrl.animationExpand.containerStyle = {
-          "margin-left": "0px",
-          "margin-top": "0px",
-          "opacity": 0
+        // $timeout(function(){
+        //     mapCtrl.openDemo();
+        // },2000)
+
+
+        // function resetNode() {
+        //   $timeout(function() {
+        //     $scope.selectedNode = {};
+        //   }, 500)
+        // }
+
+        // $timeout(function functionName() {
+        //   if (mapCtrl.lessons && localStorage.lesson) {
+        //     $scope.openNodeMenu();
+        //     $scope.selectedNode = $scope.lessonutils.getLocalLesson();
+        //   }
+        // });
+        // $scope.test = {"phone_number":"+919393939193"};
+
+        // updateProfile($scope.test);
+
+        function expand(currentPos) {
+            // alert(JSON.stringify(e));
+            mapCtrl.showResult = false;
+            $log.debug("X coords: " + currentPos.x + ", Y coords: " + currentPos.y);
+            // $mapCtrl.animationExpand.lessonType = currentPos.lessonType
+            mapCtrl.animationExpand.containerStyle = {
+                "margin-left": currentPos.x - 30 + "px",
+                "margin-top": currentPos.y - 30 + "px",
+                "opacity": 1
+            }
+
+            $log.debug(mapCtrl.animationExpand.containerStyle);
+            $timeout(function() {
+                mapCtrl.animationExpand.iconTranslateOffset = {
+                    "transform": "translate(" + ((screen.width / 2) - currentPos.x) + "px," + (40 - currentPos.y) + "px) scale3d(2,2,2)",
+                    "transition": "transform 0.5s ease-in-out"
+                }
+                mapCtrl.animationExpand.expandContainer = 1;
+            }, 50).then(function() {
+                $timeout(function() {
+                    $scope.openNodeMenu();
+                }, 1000);
+            });
+
         }
-      }, 400);
+
+
+        function shrink() {
+            mapCtrl.showResult = true;
+            mapCtrl.animationExpand.iconTranslateOffset = {
+                "transform": "translate(0px,0px) scale3d(1,1,1)",
+                "transition": "transform 0.4s ease-in-out"
+            }
+            mapCtrl.animationExpand.expandContainer = 0;
+
+            $timeout(function() {
+                mapCtrl.animationExpand.containerStyle = {
+                    "margin-left": "0px",
+                    "margin-top": "0px",
+                    "opacity": 0
+                }
+            }, 400);
+        }
+        $scope.$on('show_demo',function(){
+        // $ionicLoading.show();
+          demoFactory.show().then(function(result){
+            mapCtrl.demoShown = result;
+            if(result && demoFactory.getStep() == '1'){
+              $timeout(function(){
+                  $scope.demo.show().then(function(){
+                    $log.debug('aaaaaa');
+
+                      audio.play('demo-1');
+                      demoFactory.setStep(2)
+                  });
+              })
+            }
+          }
+      )
+      .finally(function(){
+        //   $ionicLoading.hide();
+      })
+        })
+
+
     }
-
-
-  }
 })();
