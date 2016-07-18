@@ -3,7 +3,9 @@ window.createGame = function(scope, lessons, audio, injector, log) {
 
     var lessons = lessons;
     var game = new Phaser.Game("100", "100", Phaser.CANVAS, 'map_canvas', null, true, true, null);
-
+    var gameSprites;
+    var sprites = {};
+    var temp = {};
     // var desertRegion, regionGroups.tundra, regionGroups.forest;
     var region = ["desert","tundra","forest","peru","region5"];
     var groups = {
@@ -164,7 +166,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
             };
 
             // var gameSprites =  game.cache.getJSON('gamesprites');
-            var gameSprites = [{
+            gameSprites = [{
                 "name" : "cactus_animation",
                 "region" : "desert",
                 "x" : 292,
@@ -366,6 +368,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
                     "key" : "splash"
                 }
             },{
+                "id" : "yellowButterfly",
                 "name" : "yellow_butterfly",
                 "region" : "forest",
                 "x" : 58,
@@ -453,6 +456,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
                 "y" : 780,
                 "scale" : [game_scale,1],
             },{
+                "id" : "plantLeft",
                 "name" : "forest_plant_left",
                 "region" : "tundra",
                 "anchor" : [0,1],
@@ -460,6 +464,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
                 "y" : 50,
                 "scale" : [game_scale,1],
             },{
+                "id" : "plantRight",
                 "name" : "forest_plant_right",
                 "region" : "tundra",
                 "anchor" : [1,1],
@@ -530,6 +535,9 @@ window.createGame = function(scope, lessons, audio, injector, log) {
                 if (gameSprites[i].animation) {
                     gameSprite.animations.add(gameSprites[i].animation.key);
                     gameSprite.animations.play(gameSprites[i].animation.key,gameSprites[i].animation.fps?gameSprites[i].animation.fps:20,gameSprites[i].animation.loop != false);
+                }
+                if (gameSprites[i].id) {
+                    sprites[gameSprites[i].id] = gameSprite;
                 }
             }
 
@@ -751,7 +759,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
                 }
             }
             // log.debug("DEBUG",game.kineticScrolling);
-            // log.debug(region);
+            log.debug(sprites);
 
         },
         init: function() {
@@ -782,9 +790,35 @@ window.createGame = function(scope, lessons, audio, injector, log) {
             // this.dragMap();
             // log.log("CAMERA",game.camera.y);
             optimize(game.camera,regionRange);
+
+            
         },
 
         render: function() {
+            if (game.camera.y + 200 < regionOffset.tundra && game.camera.y + 200 > regionOffset.tundra - 360) {
+                // log.debug("Hello ",gameSprites[gameSprites.length - 2].name,gameSprites[gameSprites.length - 2].x );
+                game.debug.spriteInfo(sprites.plantLeft, 20, 32);
+                if (temp.plantLeftX == undefined && temp.plantRightX ==undefined) {
+                    // originalX = {
+                        temp["plantLeftX"] = sprites.plantLeft.x;
+                        temp["plantRightX"] = sprites.plantRight.x;
+                    // }
+                }
+                // log.debug(temp);
+                // log.debug(originalX.plant_left - (180 * (regionOffset.tundra - game.camera.y - 200)/360));
+               sprites.plantLeft.x = temp.plantLeftX - (180 * (regionOffset.tundra - game.camera.y - 200)/360);
+               sprites.plantRight.x = temp.plantRightX + (180 * (regionOffset.tundra - game.camera.y - 200)/360);
+            }
+
+            if (game.camera.y + 500 < regionOffset.tundra && game.camera.y + 500 > regionOffset.forest + 300) {
+                if (temp.yellowButterflyY == undefined) {
+                    // temp = {
+                        temp["yellowButterflyY"] = sprites.yellowButterfly.y;
+                    // }
+                }
+                sprites.yellowButterfly.y = temp.yellowButterflyY - (regionOffset.tundra - game.camera.y - 500);
+                game.debug.spriteInfo(sprites.yellowButterfly,20,132);
+            }
               // this.game.debug.text("fps : "+game.time.fps || '--', 2, 100, "#00ff00");
         }
     }
