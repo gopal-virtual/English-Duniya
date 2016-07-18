@@ -34,10 +34,10 @@
       <!-- <div ng-repeat="question in quizCtrl.quiz.objects" ng-if="$index == quizCtrl.getCurrentIndex()"> -->
       <div id="step1" style="position:relative;top:8%">
         <ion-scroll scrollbar-x="false" scrollbar-y="false" ng-init="quizCtrl.isScroll($index)" style="
-    height: 40vh;
+    height: 29vh;
 " direction="y" class="padding-0 bg-pale no-shadow">
           <div
-            style="min-height:40vh"
+            style="min-height:24vh"
             ng-if="question.node.title"
             ng-bind-html="question.node.widgetHtml"
           class="question card card-transparent center margin-x-0 margin-y-0 padding-10"
@@ -48,10 +48,10 @@
       <ion-scroll
       scrollbar-x="false" scrollbar-y="false"
       direction="y"
-      style="height:50vh"
+      style="height:53vh;top:8vh"
       >
       <div
-        style="top:8%;min-height:50vh"
+        style="top:8vh;min-height:53vh"
         id="step2"
         in-view-container
         class=" has-footer-large center bg-pale"
