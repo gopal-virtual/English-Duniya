@@ -354,8 +354,10 @@
 
 
   $scope.$on('smsArrived',function(e,sms){
+    $log.debug(e,sms)
     Auth.getOTPFromSMS(sms)
     .then(function(otp){
+      $log.debug("gere",sms)
       authCtrl.verification = {'otp':otp};
       document.getElementById('verifyOtpFormSubmit').click()
     })
