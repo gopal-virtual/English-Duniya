@@ -17,7 +17,7 @@
         $cordovaNativeAudio.preloadSimple('locked', 'sound/locked.mp3');
         $cordovaNativeAudio.preloadSimple('press', 'sound/press.mp3');
         //
-        $cordovaNativeAudio.preloadComplex('background', 'sound/background.wav',0.4,1,0,false, false);
+        $cordovaNativeAudio.preloadComplex('background', 'sound/background_optimized.mp3',0.4,1,0,false, false);
         // $cordovaNativeAudio.preloadComplex('demo-1', 'sound/demo-1.mp3',1.0,0,0,false, false);
         // $cordovaNativeAudio.preloadComplex('demo-2', 'sound/demo-2.mp3',1.0,0,0,false, false);
         // $cordovaNativeAudio.preloadComplex('demo-3', 'sound/demo-3.mp3',1.0,0,0,false, false);

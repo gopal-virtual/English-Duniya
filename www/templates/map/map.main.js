@@ -51,7 +51,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
             lowerLimit : regionOffset.peru,
         }
     };
-    
+
     var playState = {
         preload: function() {
             // crisp image rendering
@@ -134,7 +134,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
         create: function() {
 
             var game_scale = game.world.width / 360;
-            
+
             for (var key in regionOffset) {
                 groups.regionBg[key].position.set(0, 0 + regionOffset[key]);
                 groups.region[key].position.set(0, 0 + regionOffset[key]);
@@ -148,7 +148,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
             // regionBgGroups.forest.position.set(0,0 + regionOffset.forest);
             // regionBgGroups.peru.position.set(0,0 + regionOffset.peru);
             // regionBgGroups.region5.position.set(0,0 + regionOffset.region5);
-                       
+
             // var desert = groups.region.desert.create(0, 0, 'desert');
             // var tundra = groups.region.tundra.create(-1, 0, 'tundra');
             // var forest = groups.region.forest.create(0, 0, 'forest');
@@ -474,7 +474,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
             // forest.scale.setTo(game_scale, 1);
             // peru.scale.setTo(game_scale, 1);
 
-            
+
 
 
 
@@ -534,7 +534,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
             }
 
 
-            
+
             // for (var i = 0, two_stone_count = two_stone_points.length; i < two_stone_count; i++) {
             //     var two_stone = groups.region.desert.create(two_stone_points[i].x*game_scale, two_stone_points[i].y, 'two_stone');
             //     two_stone.anchor.setTo(0.5, 0.5);
@@ -642,7 +642,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
             }
             // snow particles
             for (var i = 0; i < 100; i++) {
-                var s = this.game.add.sprite(this.world.randomX, this.game.rnd.between(0, regionOffset.desert - 200), 'snow' + this.game.rnd.between(1, 2));
+                var s = this.game.add.sprite(this.world.randomX, this.game.rnd.between(regionOffset.tundra, regionOffset.desert - 200), 'snow' + this.game.rnd.between(1, 2));
 
                 s.scale.setTo(this.game.rnd.between(1, 2) / 10);
                 this.game.physics.arcade.enable(s);
@@ -775,7 +775,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
         resetSnowSprite: function(sprite) {
             sprite.x = this.game.world.bounds.right;
             if (sprite.y > regionOffset.desert)
-                sprite.y = this.game.world.bounds.top;
+                sprite.y = regionOffset.tundra;
         },
         update: function() {
             // log.debug("groups.region.desert",groups.region.desert);
@@ -836,4 +836,3 @@ window.createGame = function(scope, lessons, audio, injector, log) {
         }
     }
 };
-

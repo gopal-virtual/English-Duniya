@@ -29,6 +29,9 @@
     "jquery": [
       "dist/*.js"
     ],
+    "angular-audio": [
+      "app/*.js"
+    ],
     "jquery-ui": [
       "*.js"
     ],

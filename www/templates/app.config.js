@@ -5,7 +5,7 @@
 
   function AppConfig($httpProvider, $ionicConfigProvider, $ionicNativeTransitionsProvider, $logProvider, $windowProvider, pouchDBProvider, POUCHDB_METHODS,$resourceProvider) {
     // global debug log
-    $logProvider.debugEnabled(true);
+    $logProvider.debugEnabled(false);
     // request/response interceptors
     $httpProvider.interceptors.push(function ($rootScope, $q, $log, $injector) {
       return {

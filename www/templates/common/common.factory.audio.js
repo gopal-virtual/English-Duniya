@@ -8,7 +8,7 @@
   function audio($cordovaNativeAudio, $log, ngAudio) {
 
     return {
-        'background' : ngAudio.load("sound/background.wav"),
+        // 'background' : ngAudio.load("sound/background.wav"),
         'demo-1' : ngAudio.load('sound/demo-1.mp3'),
         'demo-2' : ngAudio.load('sound/demo-2.mp3'),
         'demo-3' : ngAudio.load('sound/demo-3.mp3'),
