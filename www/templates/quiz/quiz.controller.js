@@ -9,11 +9,9 @@
   function QuizController(quiz, widgetParser, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition, $timeout, $window, mediaManager, $cordovaFileTransfer, $cordovaFile, $interval, $q, $ImageCacheFactory, ml, data, lessonutils, $ionicPlatform, nzTour, demoFactory) {
     $log.debug("Inside quiz controller",$stateParams)
     var quizCtrl = this;
-
     //bind quiz resolved to controller
     quizCtrl.quiz = quiz;
     $log.debug('unshifted quiz', quiz);
-
     //report
     quizCtrl.report = {};
     quizCtrl.submitReport = submitReport;
@@ -78,7 +76,7 @@
     quizCtrl.stopTimer = stopTimer;
     quizCtrl.startTimer = startTimer;
 
-
+    quizCtrl.isScroll = isScroll;
     //helper functions
     quizCtrl.getQuestionType = getQuestionType;
 
@@ -113,7 +111,9 @@
       }
     }
 
+    function isScroll(id){
 
+    }
     function stopTimer() {
       $interval.cancel(quizCtrl.interval);
     }

@@ -32,15 +32,29 @@
     <ion-slide ng-repeat="question in quizCtrl.quiz.objects " ng-class="{'animation-question-slide':quizCtrl.isCurrentIndex($index)}">
 
       <!-- <div ng-repeat="question in quizCtrl.quiz.objects" ng-if="$index == quizCtrl.getCurrentIndex()"> -->
-      <div id="step1" class="bar bar-subheader padding-0 question-subheader bg-pale no-shadow">
-        <div ng-if="question.node.title" ng-bind-html="question.node.widgetHtml" class="question practice-question card card-transparent center margin-x-0 margin-y-0 padding-0" ng-click="quizCtrl.playAudio(question.node.widgetSound,$index);quizCtrl.highlightSoundIcon($parent.$index);demo.tourNextStep();"></div>
+      <div id="step1" style="position:relative;top:8%">
+        <ion-scroll scrollbar-x="false" scrollbar-y="false" ng-init="quizCtrl.isScroll($index)" style="
+    height: 40vh;
+" direction="y" class="padding-0 bg-pale no-shadow">
+          <div
+            style="min-height:40vh"
+            ng-if="question.node.title"
+            ng-bind-html="question.node.widgetHtml"
+          class="question card card-transparent center margin-x-0 margin-y-0 padding-10"
+            ng-click="quizCtrl.playAudio(question.node.widgetSound,$index);quizCtrl.highlightSoundIcon($parent.$index);demo.tourNextStep();"></div>
+        </ion-scroll>
       </div>
-      <ion-content
+
+      <ion-scroll
+      scrollbar-x="false" scrollbar-y="false"
+      direction="y"
+      style="height:50vh"
+      >
+      <div
+        style="top:8%;min-height:50vh"
         id="step2"
         in-view-container
-        overflow-scroll="false"
-        has-bouncing="true"
-        class="has-practice-header has-question-subheader has-footer-large center bg-pale"
+        class=" has-footer-large center bg-pale"
         ng-init="optionsFontSize=quizCtrl.widgetParser.getOptionsFontSize(question.node.type.content.options)">
         <!-- SCQ -->
         <div
@@ -76,19 +90,25 @@
         <!--<div ng-if="option.image.key"><img ng-src="{{'img/quiz/1.jpg'}}"></div>-->
         <!--<div ng-if="!option.option && !option.image.key"><img height="100" width="100" ng-src="img/speaker.png"> </div>-->
         <!--</label>-->
-      </ion-content>
+      </div>
+    </ion-scroll>
     </ion-slide>
   </ion-slide-box>
-    <audio id="audioplayer">
-        <source id="audioSource" type="audio/mpeg">
-    </audio>
-    <div id="step3" class="bar bar-footer bar-footer-large bg-pale">
-        <div class="row padding-0">
-            <div class="col">
-                <button class="button button-block button-balanced margin-0 button-round font-md" style="height:40px;line-height:45px" ng-click="quizCtrl.getFeedback(quizCtrl.quiz.objects[quizCtrl.currentIndex]);demo.tourNextStep();" ng-disabled="!quizCtrl.canSubmit()" ng-class="{'animation-repeat-fade':quizCtrl.canSubmit()}">
-                    {{quizCtrl.isAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex]) ? 'CONTINUE' : 'SUBMIT'}}
-                </button>
-            </div>
+  <audio id="audioplayer">
+    <source id="audioSource" type="audio/mpeg">
+  </audio>
+  <div id="step3" class="bar bar-footer bar-footer-large bg-pale">
+    <div class="row padding-0">
+      <div class="col">
+        <button
+          class="button button-block button-balanced margin-0 button-round font-md"
+          style="height:40px;line-height:45px"
+          ng-click="quizCtrl.getFeedback(quizCtrl.quiz.objects[quizCtrl.currentIndex]);demo.tourNextStep();"
+          ng-disabled="!quizCtrl.canSubmit()"
+          ng-class="{'animation-repeat-fade':quizCtrl.canSubmit()}">
+          {{quizCtrl.isAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex]) ? 'CONTINUE' : 'SUBMIT'}}
+        </button>
+      </div>
     </div>
   </div>
 </ion-view>
