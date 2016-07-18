@@ -5,7 +5,7 @@
 
   function AppConfig($httpProvider, $ionicConfigProvider, $ionicNativeTransitionsProvider, $logProvider, $windowProvider, pouchDBProvider, POUCHDB_METHODS,$resourceProvider) {
     // global debug log
-    $logProvider.debugEnabled(true);
+    $logProvider.debugEnabled(false);
     // request/response interceptors
     $httpProvider.interceptors.push(function ($rootScope, $q, $log, $injector) {
       return {
@@ -14,7 +14,6 @@
             config.headers.Authorization = 'Token ' + localStorage.Authorization;
           config.headers.xsrfCookieName = 'csrftoken';
           config.headers.xsrfHeaderName = 'X-CSRFToken';
-          config.timeout = 3000
           return config;
         },
         response: function (response) {

@@ -102,6 +102,7 @@
         var d = $q.defer();
         window.plugins.googleplus.login(CONSTANT.CONFIG.AUTH.GOOGLEPLUS,
           function(response) {
+            $log.debug("here",response)
             d.resolve({
               "access_token": response.oauthToken
             });
@@ -115,10 +116,12 @@
       if (url === 'facebook') {
         var d = $q.defer();
         facebookConnectPlugin.login(CONSTANT.CONFIG.AUTH.FB, function(response) {
+          $log.debug("facebook",response)
           d.resolve({
             "access_token": response.authResponse.accessToken
           });
         }, function(error) {
+          $log.debug("FAB ERROR",error)
           d.reject(error);
         });
         getCredentials = d.promise;
@@ -154,8 +157,14 @@
         })
         .catch(function(error) {
           $ionicLoading.hide()
-          authCtrl.showError("Could not login", error || "Please try again");
-          authCtrl.audio.play('wrong');
+          $log.debug("Found error",error)
+          if(error.message === 'no_profile'){
+            $state.go('user.personalise')
+          }
+          else{
+            authCtrl.showError("Could not login", error || "Please try again");
+            authCtrl.audio.play('wrong');
+          }
         }).finally(function() {
 
         })

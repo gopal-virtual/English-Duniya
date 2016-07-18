@@ -191,12 +191,18 @@
 
     function getProfile() {
       var d = $q.defer();
-      Rest.one('profiles', JSON.parse(localStorage.user_details).profile).get().then(function(profile) {
-        localStorage.setItem('profile', JSON.stringify(profile));
-        d.resolve(profile);
-      }, function(response) {
-        d.reject(response);
-      });
+      if(JSON.parse(localStorage.user_details).profile)
+      {
+        Rest.one('profiles', JSON.parse(localStorage.user_details).profile).get().then(function(profile) {
+          localStorage.setItem('profile', JSON.stringify(profile));
+          d.resolve(profile);
+        }, function(response) {
+          d.reject(response);
+        });
+      }
+      else{
+        d.reject({message:'no_profile'})
+      }
       return d.promise;
     }
 

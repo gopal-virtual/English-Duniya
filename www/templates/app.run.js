@@ -4,7 +4,7 @@
     .module('zaya')
     .run(runConfig);
 
-  function runConfig($ionicPlatform, $rootScope, $timeout, $log, $state, $http, $cookies, Auth, $window, $cordovaFile, data, demo, audio) {
+  function runConfig($ionicPlatform, $rootScope, $timeout, $log, $state, $http, $cookies, Auth, $window, $cordovaFile, data, demo, audio, $ionicPopup) {
 
 
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
@@ -113,15 +113,11 @@
       }
       if (window.Connection) {
         if (navigator.connection.type == Connection.NONE) {
-          $ionicPopup.confirm({
-              title: "Internet Disconnected",
-              content: "The internet is disconnected on your device."
-            })
-            .then(function(result) {
-              if (!result) {
-                ionic.Platform.exitApp();
-              }
-            });
+          // $ionicPopup.alert({
+          //     title: "Internet Disconnected",
+          //     content: "The internet is disconnected on your device."
+          //   })
+
         } else {
           $log.debug('App ready : online;');
 
