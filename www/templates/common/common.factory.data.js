@@ -20,7 +20,9 @@
     var diagLitmusMappingDB = pouchDB('diagLitmusMapping');
     var kmapsJSONDB = pouchDB('kmapsJSON');
     var dqJSONDB = pouchDB('dqJSON');
-    var lessonDB = pouchDB('lessonDB');
+    var lessonDB = pouchDB('lessonDB', {
+    adapter : 'websql'
+  });
     var appDB = pouchDB('appDB');
     var resourceDB = pouchDB('resourceDB');
     var reportsDB = pouchDB('reportsDB');
@@ -431,12 +433,14 @@
           include_docs: true,
           key: grade
         }).then(function(data) {
+            $log.debug("Time taken 1",new Date() - start, data)
           var lessons = [];
           for (var i = 0; i < data.rows.length; i++) {
             data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key
             lessons.push(data.rows[i].doc.lesson.node);
           }
           lessons = _.sortBy(lessons, 'key');
+          $log.debug("Time taken",new Date() - start)
           d.resolve(lessons)
         })
         .catch(function(error) {

@@ -57,7 +57,7 @@
 }
 .card-grid.practice-card {
   width: 45% !important;
-  height: 45% !important;
+  height: 23vh !important;
 }
 .content-image {
   display: block;
@@ -65,19 +65,18 @@
   margin-right: auto;
 }
 .question {
-  height: 100%;
   font-size: 1.5em;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  height: 50vw;
+  // height: 50vw;
 }
 .question.practice-question{
-    height: 42vw !important;
 }
+
 .question > .content-image {
-  max-height: 75%;
-  max-width: 95%;
+  max-height: 31vw;
+  max-width: 41vw;
 }
 .option-container {
   display: table;
@@ -100,8 +99,8 @@
   max-width: 45%;
 }
 .option > .content-image.sound-image {
-  max-height: 60%;
-  max-width: 60%;
+  max-height: 18vh;
+  max-width: 30vw;
 }
 
 .card-brand.wrong-attempt,

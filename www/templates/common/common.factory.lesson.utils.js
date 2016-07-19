@@ -127,8 +127,8 @@
       }
     }
 
-    function playResource(resource, video) {
-
+    function playResource(resource, video, callback) {
+      $log.debug(callback)
       $log.debug("Play audio")
       audio.play('press');
 
@@ -168,9 +168,9 @@
       } else if (utils.resourceType(resource) == 'practice') {
         $log.debug("PLayed")
         data.downloadAssessment(resource).then(function() {
-            $log.debug("No error")
+            $log.debug("No errored",$state.current)
             $timeout(function() {
-              $stateParams.type != 'practice' &&
+              !($stateParams.type == 'practice' && $state.current.name == 'quiz.questions') &&
                 $state.go('quiz.questions', {
                   id: resource.node.id,
                   type: 'practice',
@@ -182,8 +182,13 @@
             $ionicPopup.alert({
               title: 'Please try again',
               template: "No internet conection found"
+            }).then(function(){
+              if(callback){
+                $log.debug(callback)
+                callback();
+              }
             })
-            $state.go('map.navigate');
+            // $state.go('map.navigate');
             $log.debug("Error playing resource", e)
           })
           .finally(function() {
@@ -211,8 +216,16 @@
 
           })
           .catch(function(e) {
-            $ionicPopup.alert("Please try again", "No internet conection found")
-            $state.go('map.navigate');
+            $ionicPopup.alert({
+              title: 'Please try again',
+              template: "No internet conection found"
+            }).then(function(){
+              if(callback){
+                $log.debug(callback)
+                callback();
+              }
+            })
+            // $state.go('map.navigate');
             $log.debug("Error playing resource", e)
           })
           .finally(function() {
