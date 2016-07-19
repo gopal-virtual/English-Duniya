@@ -168,9 +168,9 @@
       } else if (utils.resourceType(resource) == 'practice') {
         $log.debug("PLayed")
         data.downloadAssessment(resource).then(function() {
-            $log.debug("No error")
+            $log.debug("No errored",$state.current)
             $timeout(function() {
-              $stateParams.type != 'practice' &&
+              !($stateParams.type == 'practice' && $state.current.name == 'quiz.questions') &&
                 $state.go('quiz.questions', {
                   id: resource.node.id,
                   type: 'practice',

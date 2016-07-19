@@ -259,6 +259,7 @@
             $scope.modal.show();
             $timeout(function() {
               if ($scope.modal.isShown()) {
+                
                 $scope.closeModal(quizCtrl.closeModalCallback);
               }
             }, 2000);
