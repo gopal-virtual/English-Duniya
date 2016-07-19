@@ -670,12 +670,12 @@ window.createGame = function(scope, lessons, audio, injector, log) {
                 }
             };
             // Place nodes
-            for (var j = 0, i = lessons.length - 1, nodeCount = 1 / (lessons.length); i >= 0; j += nodeCount, i--) {
+            for (var j = 0.95, i = lessons.length - 1, nodeCount = 1 / (lessons.length); i >= 0; j -= nodeCount, i--) {
                 var currentLesson = lessons[i];
                 var locked = currentLesson.locked ? '-locked' : '';
                 var type = lessonType(currentLesson, i) == '' ? '' : '-' + lessonType(currentLesson, i);
-                var posx = this.math.catmullRomInterpolation(points.x, j);
-                var posy = this.math.catmullRomInterpolation(points.y, j);
+                var posx = this.math.catmullRomInterpolation(points.x, 1-j);
+                var posy = this.math.catmullRomInterpolation(points.y, 1-j);
                 var node = this.game.add.button(posx, posy, 'node' + type + locked);
 
 
