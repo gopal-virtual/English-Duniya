@@ -113,7 +113,6 @@ window.createGame = function(scope, lessons, audio, injector, log) {
             this.load.image('star', 'img/icons/icon-star-small.png');
             this.load.image('nostar', 'img/icons/icon-nostar.png');
 
-            this.load.json('gamesprites', 'data/sprites.json');
             // debug value
             this.game.time.advancedTiming = true;
             for(var key in regionRange){
@@ -132,6 +131,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
             groups.region["forest"] = game.add.group();
             groups.region["tundra"] = game.add.group();
             groups.region["region5"] = game.add.group();
+            groups.nonRegion["starClone"] = game.add.group();
         },
         create: function() {
 
@@ -145,18 +145,6 @@ window.createGame = function(scope, lessons, audio, injector, log) {
                 background.scale.setTo(game_scale, 1);
             }
 
-            // regionBgGroups.desert.position.set(0,0 + regionOffset.desert);
-            // regionBgGroups.tundra.position.set(0,0 + regionOffset.tundra);
-            // regionBgGroups.forest.position.set(0,0 + regionOffset.forest);
-            // regionBgGroups.peru.position.set(0,0 + regionOffset.peru);
-            // regionBgGroups.region5.position.set(0,0 + regionOffset.region5);
-                       
-            // var desert = groups.region.desert.create(0, 0, 'desert');
-            // var tundra = groups.region.tundra.create(-1, 0, 'tundra');
-            // var forest = groups.region.forest.create(0, 0, 'forest');
-            // var peru = groups.region.peru.create(0,0, 'peru');
-
-
             this.game.world.setBounds(0, 0, this.game.width, regionHeight.desert + regionHeight.tundra + regionHeight.forest + regionHeight.peru + regionHeight.region5);
 
 
@@ -167,6 +155,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
 
             // var gameSprites =  game.cache.getJSON('gamesprites');
             gameSprites = [{
+                "id" : "testCactus",
                 "name" : "cactus_animation",
                 "region" : "desert",
                 "x" : 292,
@@ -474,16 +463,6 @@ window.createGame = function(scope, lessons, audio, injector, log) {
             }];
 
 
-            // desert.scale.setTo(game_scale, 1);
-            // tundra.scale.setTo(game_scale, 1);
-            // forest.scale.setTo(game_scale, 1);
-            // peru.scale.setTo(game_scale, 1);
-
-            
-
-
-
-
 
             for (var i = 0, points_count = points.x.length; i < points_count; i++) {
                 points.x[i] *= game_scale;
@@ -541,96 +520,6 @@ window.createGame = function(scope, lessons, audio, injector, log) {
                 }
             }
 
-
-            
-            // for (var i = 0, two_stone_count = two_stone_points.length; i < two_stone_count; i++) {
-            //     var two_stone = groups.region.desert.create(two_stone_points[i].x*game_scale, two_stone_points[i].y, 'two_stone');
-            //     two_stone.anchor.setTo(0.5, 0.5);
-            //     two_stone.scale.setTo(two_stone_points[i].scale);
-            // }
-
-            // // place snow_cactus
-            // var snow_cactus = groups.region.tundra.create(75, 1956, 'snow_cactus');
-            // snow_cactus.anchor.setTo(0.5, 0.5);
-            // snow_cactus.scale.setTo(0.7);
-
-            // place cactus
-            // for (var i = 0, cactus_count = cactus_points.length; i < cactus_count; i++) {
-            //     var cactus_animation = groups.region.desert.create(cactus_points[i].x, cactus_points[i].y, 'cactus_animation');
-            //     cactus_animation.animations.add('wind');
-            //     cactus_animation.animations.play('wind', 20, true);
-            //     cactus_animation.anchor.setTo(0.5, 0.5);
-            //     cactus_animation.scale.setTo(cactus_points[i].scale);
-            // }
-
-            // for (var i = 0, plant_count = plant_points.length; i < plant_count; i++) {
-            //     var plant_animation = groups.region.desert.create(plant_points[i].x, plant_points[i].y, 'plant_animation');
-            //     plant_animation.animations.add('wind2');
-            //     plant_animation.animations.play('wind2', 20, true);
-            //     plant_animation.anchor.setTo(0.5, 0.5);
-            //     if (plant_points[i].mirror == true) {
-            //         plant_animation.scale.setTo(-plant_points[i].scale, plant_points[i].scale);
-            //     } else {
-            //         plant_animation.scale.setTo(plant_points[i].scale);
-            //     }
-            // }
-
-            // place tent
-            // for (var i = 0, tent_count = tent_point.length; i < tent_count; i++) {
-                // var tent_animation = groups.region.desert.create(tent_point.x*game_scale, tent_point.y, 'tent_animation');
-                // tent_animation.animations.add('tentshake');
-                // tent_animation.animations.play('tentshake', 20, true);
-                // tent_animation.anchor.setTo(0.5, 0.5);
-                // tent_animation.scale.setTo(-tent_point.scale, tent_point.scale);
-            // }
-
-            // fire animation
-            // var fire_animation = groups.region.desert.create((tent_point.x + 100)*game_scale, tent_point.y + 30, 'fire_animation');
-            // fire_animation.anchor.setTo(0.5, 0.5);
-            // fire_animation.animations.add('light');
-            // fire_animation.animations.play('light', 20, true);
-
-            // camel animation
-            // var camel_animation = groups.region.desert.create(camel_point.x*game_scale, camel_point.y, 'camel_animation');
-            // camel_animation.anchor.setTo(0.5, 0.5);
-            // camel_animation.scale.setTo(camel_point.scale);
-            // camel_animation.angle = -14;
-            // camel_animation.animations.add('disco');
-            // camel_animation.animations.play('disco', 60, true);
-            //
-            // scorpion animation
-            // var scorpion_animation = groups.region.desert.create(scorpion_point.x*game_scale, scorpion_point.y, 'scorpion_animation');
-            // scorpion_animation.anchor.setTo(0.5, 0.5);
-            // scorpion_animation.angle = -10;
-            // scorpion_animation.animations.add('walk');
-            // scorpion_animation.animations.play('walk', 20, true);
-            //
-            // seal animation
-            // var seal_animation = groups.region.tundra.create(seal_point.x*game_scale, seal_point.y, 'seal_animation');
-            // seal_animation.anchor.setTo(0.5, 0.5);
-            // seal_animation.animations.add('oink');
-            // seal_animation.animations.play('oink', 20, true);
-            // //
-            // // penguin animation
-            // for (var i = 0, penguin_count = penguin_points.length; i < penguin_count; i++) {
-            //     var penguin_animation = groups.region.tundra.create(penguin_points[i].x*game_scale, penguin_points[i].y, 'penguin_animation');
-            //     penguin_animation.anchor.setTo(0.5, 0.5);
-            //     var flap = penguin_animation.animations.add('flap');
-            //     penguin_animation.animations.play('flap', 30, true);
-            //     if (penguin_points[i].mirror == true) {
-            //         penguin_animation.scale.setTo(-penguin_points[i].scale, penguin_points[i].scale);
-            //     } else {
-            //         penguin_animation.scale.setTo(penguin_points[i].scale);
-            //     }
-            // }
-            //
-            // whale animation
-            // var whale_animation = groups.region.tundra.create(whale_point.x*game_scale,whale_point.y, 'whale_animation');
-            // whale_animation.anchor.setTo(0.5, 0.5);
-            // whale_animation.scale.setTo(0.8);
-            // var tailwave = whale_animation.animations.add('tailwave');
-            // whale_animation.animations.play('tailwave', 10, true);
-
             // placing lesson node
             // 1. lesson node count
             // 2. Node should follow a particular path
@@ -660,12 +549,15 @@ window.createGame = function(scope, lessons, audio, injector, log) {
                 s.checkWorldBounds = true;
                 s.events.onOutOfBounds.add(this.resetSnowSprite, this);
             }
-            //   var stars = this.game.add.group();
+
+            var star = [];
+            // var stars = this.game.add.group();
             function createStars(count, x, y) {
                 for (var i = 0; i < count; i++) {
-                    var star = stars.create(x[0] + x[i + 1], y[0] + y[i + 1], 'star');
-                    star.anchor.setTo(0.5, 0.5);
+                    star[i] = stars.create(x[0] + x[i + 1], y[0] + y[i + 1], 'star');
+                    star[i].anchor.setTo(0.5, 0.5);
                 }
+                return star;
             }
             var star_x = [-12, 0, 12];
             var star_y = [-10, -15, -10];
@@ -725,6 +617,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
                     } else if (currentLesson.stars == 2) {
                         createStars(2, $.merge([posx], star_x), $.merge([posy], star_y));
                     } else if (currentLesson.stars == 3) {
+                        log.debug($.merge([posx], star_x), $.merge([posy], star_y));
                         createStars(3, $.merge([posx], star_x), $.merge([posy], star_y));
                     } else {}
                 }
@@ -746,18 +639,46 @@ window.createGame = function(scope, lessons, audio, injector, log) {
             this.init();
             this.game.kineticScrolling.start();
 
+            var _this = this;
+            var starClone = [];
+            function animateStar(){
+                setTimeout(function(){
+                    var j = lessons.length - 1;
+                    var posx = _this.math.catmullRomInterpolation(points.x, j/lessons.length);
+                    var posy = _this.math.catmullRomInterpolation(points.y, j/lessons.length);
+                    // starClone.push(createStars(currentLesson.stars, $.merge([posx], star_x), $.merge([posy], star_y)));
+                    // log.debug(currentLesson.stars);
+                    var starCloneTween = [];    
 
+                    for (var i = 0; i < star.length; i++) {
+                        log.debug("adding tween",star[i],"to",parseInt(game.camera.y));
+                        log.debug($.merge([posx], star_x), $.merge([posy], star_y));
 
-            for (var key in regionRange){
-                if(regionRange[key].lowerLimit > game.camera.y && regionRange[key].upperLimit < game.camera.y ){
-                    var delGroup = region.slice();
-                    delGroup.splice(region.indexOf(key),1);
-                    for (var i = 0; i < delGroup.length; i++) {
-                       groups.region[delGroup[i]].callAll('kill');
+                        starClone[i] = stars.create(posx + star_x[i], posy + star_y[i], 'star');
+                        starClone[i].anchor.setTo(0.5, 0.5);
+                        log.debug(starClone[i]);
+                        starCloneTween[i] = {};
+                        // var starClone = createStars(currentLesson.stars, $.merge([posx], star_x), $.merge([posy], star_y));
+                        starCloneTween[i]["pos"] = game.add.tween(starClone[i]).to( { y: parseInt(game.camera.y)}, 500, Phaser.Easing.Linear.None);
+                        starCloneTween[i]["scale"] = game.add.tween(starClone[i].scale).to( { x: 6, y: 6 }, 500, Phaser.Easing.Linear.None);
+                        starCloneTween[i]["scale"].chain(starCloneTween[i]["pos"]);
+                        // starCloneTween[i].pos.repeat(10, 1000);
+                        // starCloneTween[i].scale.repeat(10, 1000);
                     }
-                    break;
-                }
+                },1000);
             }
+
+            animateStar();
+            // for (var key in regionRange){
+            //     if(regionRange[key].lowerLimit > game.camera.y && regionRange[key].upperLimit < game.camera.y ){
+            //         var delGroup = region.slice();
+            //         delGroup.splice(region.indexOf(key),1);
+            //         for (var i = 0; i < delGroup.length; i++) {
+            //            groups.region[delGroup[i]].callAll('kill');
+            //         }
+            //         break;
+            //     }
+            // }
             // log.debug("DEBUG",game.kineticScrolling);
             log.debug(sprites);
 
@@ -789,7 +710,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
             // log.debug("groups.region.desert",groups.region.desert);
             // this.dragMap();
             // log.log("CAMERA",game.camera.y);
-            optimize(game.camera,regionRange);
+            // optimize(game.camera,regionRange);
 
             
         },
