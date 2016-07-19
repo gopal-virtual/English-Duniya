@@ -50,6 +50,13 @@
     };
 
     function recoverAccount(formData) {
+      if(!network.isOnline()){
+        $ionicPopup.alert({
+          title: 'Please try again',
+          template: "No internet conection found"
+        })
+        return;
+      }
       var credentials;
       $ionicLoading.show();
       authCtrl.formHelper.validateForm(formData, authCtrl.recoverAccountFormValidations)
@@ -91,6 +98,14 @@
     });
 
     function signin(url, data) {
+      $log.debug("network",network.isOnline())
+      if(!network.isOnline()){
+        $ionicPopup.alert({
+          title: 'Please try again',
+          template: "No internet conection found"
+        })
+        return;
+      }
       $ionicLoading.show({
          hideOnStateChange: true
       });
@@ -152,9 +167,7 @@
           }
           $state.go('map.navigate', {});
         })
-        .then(function() {
 
-        })
         .catch(function(error) {
           $ionicLoading.hide()
           $log.debug("Found error",error)
@@ -171,6 +184,13 @@
     }
 
     function signup(formData) {
+      if(!network.isOnline()){
+        $ionicPopup.alert({
+          title: 'Please try again',
+          template: "No internet conection found"
+        })
+        return;
+      }
       $ionicLoading.show();
       authCtrl.formHelper.validateForm(formData, authCtrl.signUpFormValidations)
         .then(function(credentials) {
