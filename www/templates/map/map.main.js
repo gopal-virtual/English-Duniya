@@ -649,8 +649,8 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             scope.$emit('show_demo');
             this.init();
             this.game.kineticScrolling.start();
-                    // log.debug("GUchaMI",temp.activeLessonKey);
-                    // log.debug("GUchaMI2",temp.activatedLessonKey);
+            // log.debug("GUchaMI",temp.activeLessonKey);
+            // log.debug("GUchaMI2",temp.activatedLessonKey);
 
             var _this = this;
             var starClone = [];
@@ -676,11 +676,11 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                     var posy = _this.math.catmullRomInterpolation(points.y, j/lessons.length);
                     // starClone.push(createStars(currentLesson.stars, $.merge([posx], star_x), $.merge([posy], star_y)));
                     // log.debug(currentLesson.stars);
-                    log.debug(stateParams.activatedLesson);
-                    log.debug(temp.activeLesson);
+                    // log.debug(lessons[temp.activatedLessonKey].stars);
+                    // log.debug(temp.activeLesson);
                     var starCloneTween = [];    
-                    log.debug(lessonTag[lessons[j].tag.toLowerCase()]*game.world.width);
-                    for (var i = 0; i < star.length; i++) {
+                    // log.debug(lessonTag[lessons[j].tag.toLowerCase()]*game.world.width);
+                    for (var i = 0; i < lessons[temp.activatedLessonKey].stars; i++) {
                         // setTimeout(function(){
                             log.debug($.merge([posx], star_x), $.merge([posy], star_y));
 
@@ -702,7 +702,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                             // starCloneTween[i].scale.repeat(10, 1000);    
                         // },1000)
                     }
-                },5000);
+                },800);
             }
 
             animateStar();
