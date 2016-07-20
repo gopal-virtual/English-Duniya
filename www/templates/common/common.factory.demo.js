@@ -8,20 +8,20 @@
   function demo($log, data, Auth) {
     return {
       show: function() {
-        $log.debug("demo skills OP", Auth.getProfileId())
+        $log.debug("demoFactory OP", Auth.getProfileId())
         return data.getSkills({
             'userId': Auth.getProfileId()
           })
           .then(function(skills) {
             var score = 0;
-            $log.debug("demo skills", skills)
+            $log.debug("demoFactory skills", skills)
             angular.forEach(skills, function(skill) {
-              $log.debug("demo skills", score)
               score = score + skill.lesson_scores;
             })
+            $log.debug("demoFactory  score", score,score ? false : true)
             return score ? false : true;
           }).catch(function(e) {
-            $Log.debug("demo skills error", e)
+            $log.debug("demo skills error", e)
           })
       },
       getStep: function() {

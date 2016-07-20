@@ -11,7 +11,8 @@
     "videogular-themes-default": "~1.4.3",
     "videogular-controls": "~1.4.3",
     "videogular-buffering": "~1.4.3",
-    "pouchdb": "~5.3.2"
+    "pouchdb": "~5.3.2",
+    "angular-audio": "~1.7.2"
   },
   "dependencies": {
     "ngCordova": "~0.1.24-alpha",
@@ -21,11 +22,15 @@
     "nz-tour": "^1.1.0"
   },
   "resolutions": {
-    "angular": ">= 1.0.8"
+    "angular": "~1.2.8",
+    "pouchdb": "5.1.0"
   },
   "preen": {
     "jquery": [
       "dist/*.js"
+    ],
+    "angular-audio": [
+      "app/*.js"
     ],
     "jquery-ui": [
       "*.js"

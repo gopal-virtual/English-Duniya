@@ -7,7 +7,7 @@
           <div class="row">
             <div class="col">
               <div class="text-center">
-                <button class="button button-balanced button-sm button-round font-xs float-left" ng-click="userCtrl.closeSettings()">
+                <button class="button button-balanced button-sm button-round font-xs float-left" ng-click="settingsModal.hide()">
                   <i class="color-dark font-xs icon ion-arrow-left-c"></i>
                 </button>
                 <strong class="color-light font-xl">SETTINGS</strong>
@@ -20,22 +20,22 @@
               <div class="input-group input-group-social">
                 <button type="button" class="icon icon-profile icon-fit-width input-group-item input-group-addon input-group-addon-light font-md">
                 </button>
-                <input ng-disabled="!userCtrl.network.isOnline()" class="input-control input-group-item input-sm input-default input-block font-sm" tabindex="1" type="text" placeholder="Username" ng-model="userCtrl.user.name" ng-change="userCtrl.splitName()">
+                <input ng-disabled="!settings.network.isOnline()" class="input-control input-group-item input-sm input-default input-block font-sm" tabindex="1" type="text" placeholder="Username" ng-model="settings.user.name" ng-change="settings.splitName()">
               </div>
 
               <div class="input-group input-group-social">
                 <button type="button" class="icon icon-phone icon-fit-width input-group-item input-group-addon input-group-addon-light font-md">
                 </button>
-                <input ng-disabled="!userCtrl.network.isOnline()" type="text" class="input-control input-default input-group-item input-sm input-block font-sm" tabindex="2" placeholder="Phonenumber" ng-model="userCtrl.user.phone_number">
+                <input ng-disabled="!settings.network.isOnline()" type="text" class="input-control input-default input-group-item input-sm input-block font-sm" tabindex="2" placeholder="Phonenumber" ng-model="settings.user.phone_number">
               </div>
 
               <div class="input-group input-group-social">
                 <button type="button" class="icon icon-mail icon-fit-width input-group-item input-group-addon input-group-addon-light font-md">
                 </button>
-                <input ng-disabled="!userCtrl.network.isOnline()" type="text" class="input-control input-default input-sm input-group-item input-block font-sm" tabindex="2" placeholder="Email" ng-model="userCtrl.user.email">
+                <input ng-disabled="!settings.network.isOnline()" type="text" class="input-control input-default input-sm input-group-item input-block font-sm" tabindex="2" placeholder="Email" ng-model="settings.user.email">
               </div>
 
-              <button ng-disabled="!userCtrl.network.isOnline()" class="button button-block button-assertive button-sm font-lg no-shadow" ng-click="userCtrl.network.isOnline() && userCtrl.logout()">
+              <button ng-disabled="!settings.network.isOnline()" class="button button-block button-assertive button-sm font-lg no-shadow" ng-click="settings.network.isOnline() && settingsModal.hide() && settings.logout()">
                 <i class="ion-power"></i> Logout
               </button>
             </div>
@@ -43,7 +43,7 @@
 
           <div class="row padding-y-20">
             <div class="col text-center">
-              <button ng-disabled="!userCtrl.network.isOnline()" class="button button-balanced font-lg padding-x-40 button-round no-shadow" ng-click="userCtrl.network.isOnline() && userCtrl.updateProfile(userCtrl.user.id,{'first_name' : userCtrl.user.first_name,'last_name' : userCtrl.user.last_name,'phone_number':userCtrl.user.phone_number,'email':userCtrl.user.email}) ; userCtrl.closeSettings()">{{userCtrl.network.isOnline() ? 'DONE' : 'Not Allowed'}}</button>
+              <button ng-disabled="!settings.network.isOnline()" class="button button-balanced font-lg padding-x-40 button-round no-shadow" ng-click="settings.network.isOnline() && settingsModal.hide() && settings.updateProfile(settings.user.id,{'first_name' : settings.user.first_name,'last_name' : settings.user.last_name,'phone_number':settings.user.phone_number,'email':settings.user.email}) ; settings.closeSettings()">{{settings.network.isOnline() ? 'DONE' : 'Not Allowed'}}</button>
             </div>
           </div>
 

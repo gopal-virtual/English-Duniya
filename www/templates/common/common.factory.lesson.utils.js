@@ -21,9 +21,9 @@
       currentState: currentState,
       getGender: getGender,
       demoFactory: demoFactory,
-       isState: isState,
-       playDemoAudio : playDemoAudio,
-       canClickDemo : canClickDemo
+      isState: isState,
+      playDemoAudio: playDemoAudio,
+      canClickDemo: canClickDemo
     };
     demoFactory.show().then(function(result) {
       utils.demoShown = result;
@@ -36,26 +36,26 @@
       return localStorage.profile ? JSON.parse(localStorage.profile).gender : false;
     }
 
-    function isState(state){
+    function isState(state) {
       return $state.is(state);
     }
-    function canClickDemo(resource){
-        if(
-            (utils.resourceType(resource) == 'video')
-            &&
-            (demoFactory.getStep() == 2 || demoFactory.getStep() == 3)
-        ){
-            return true;
-        }
-        if(
-            (utils.resourceType(resource) == 'practice')
-            &&
-            (demoFactory.getStep() == 4)
-        ){
-            return true;
-        }
-        return false;
+
+    function canClickDemo(resource) {
+      if (
+        (utils.resourceType(resource) == 'video') &&
+        (demoFactory.getStep() == 2 || demoFactory.getStep() == 3)
+      ) {
+        return true;
+      }
+      if (
+        (utils.resourceType(resource) == 'practice') &&
+        (demoFactory.getStep() == 4)
+      ) {
+        return true;
+      }
+      return false;
     }
+
     function leaveLesson() {
       !$state.is('map.navigate') &&
         $ionicLoading.show({
@@ -127,12 +127,12 @@
       }
     }
 
-    function playResource(resource, video) {
-
+    function playResource(resource, video, callback) {
+      $log.debug(callback)
       $log.debug("Play audio")
       audio.play('press');
 
-      if (utils.resourceType(resource) == 'practice' && (utils.demoShown && [2,3].indexOf(utils.demoFactory.getStep()) >= 0)) {
+      if (utils.resourceType(resource) == 'practice' && (utils.demoShown && [2, 3].indexOf(utils.demoFactory.getStep()) >= 0)) {
         return;
       }
 
@@ -150,56 +150,87 @@
       });
       if (utils.resourceType(resource) == 'assessment') {
         data.downloadAssessment(resource)
-        .then(function() {
-          $timeout(function() {
-            $stateParams.type != 'assessment' &&
-              $state.go('quiz.questions', {
-                id: resource.node.id,
-                type: 'assessment',
-                quiz: resource
-              });
-            $stateParams.type == 'assessment' && $ionicLoading.hide();
-          });
-        })
-        .catch(function(e){
-          $log.debug("Error playing resource",e)
-        })
+          .then(function() {
+            $timeout(function() {
+              $stateParams.type != 'assessment' &&
+                $state.go('quiz.questions', {
+                  id: resource.node.id,
+                  type: 'assessment',
+                  quiz: resource
+                });
+              $stateParams.type == 'assessment' && $ionicLoading.hide();
+            });
+          })
+          .catch(function(e) {
+            $log.debug("Error playing resource", e)
+          })
 
       } else if (utils.resourceType(resource) == 'practice') {
         $log.debug("PLayed")
         data.downloadAssessment(resource).then(function() {
-          $timeout(function() {
-            $stateParams.type != 'practice' &&
-              $state.go('quiz.questions', {
-                id: resource.node.id,
-                type: 'practice',
-                quiz: resource
-              });
-            $stateParams.type == 'practice' && $ionicLoading.hide();
-          });
-        })
-
+            $log.debug("No errored",$state.current)
+            $timeout(function() {
+              !($stateParams.type == 'practice' && $state.current.name == 'quiz.questions') &&
+                $state.go('quiz.questions', {
+                  id: resource.node.id,
+                  type: 'practice',
+                  quiz: resource
+                });
+              $stateParams.type == 'practice' && $ionicLoading.hide();
+            });
+          }).catch(function(e) {
+            $ionicPopup.alert({
+              title: 'Please try again',
+              template: "No internet conection found"
+            }).then(function(){
+              if(callback){
+                $log.debug(callback)
+                callback();
+              }
+            })
+            // $state.go('map.navigate');
+            $log.debug("Error playing resource", e)
+          })
+          .finally(function() {
+            $ionicLoading.hide();
+          })
       } else if (utils.resourceType(resource) == 'video') {
         data.downloadVideo(resource).then(function() {
-          mediaManager.getPath(resource.node.type.path).then(function(path) {
-              $timeout(function() {
-                !$state.is('content.video') &&
-                  $state.go('content.video', {
-                    video: {
-                      src: utils.getSrc(path),
-                      type: 'video/mp4'
-                    }
-                  });
-                if ($state.is('content.video')) {
-                  video.play();
-                  $ionicLoading.hide();
-                }
-                utils.demoFactory.getStep() !=5 && utils.demoFactory.setStep(3);
-              });
-            })
-            // utils.config.sources[0].src = utils.getSrc(resource.node.type.path);
+            mediaManager.getPath(resource.node.type.path).then(function(path) {
+                $timeout(function() {
+                  !$state.is('content.video') &&
+                    $state.go('content.video', {
+                      video: {
+                        src: utils.getSrc(path),
+                        type: 'video/mp4'
+                      }
+                    });
+                  if ($state.is('content.video')) {
+                    video.play();
+                    $ionicLoading.hide();
+                  }
+                  utils.demoFactory.getStep() != 5 && utils.demoFactory.setStep(3);
+                });
+              })
+              // utils.config.sources[0].src = utils.getSrc(resource.node.type.path);
 
-        })
+          })
+          .catch(function(e) {
+            $ionicPopup.alert({
+              title: 'Please try again',
+              template: "No internet conection found"
+            }).then(function(){
+              if(callback){
+                $log.debug(callback)
+                callback();
+              }
+            })
+            // $state.go('map.navigate');
+            $log.debug("Error playing resource", e)
+          })
+          .finally(function() {
+            $ionicLoading.hide();
+          })
       } else {
         $ionicLoading.hide();
       }
@@ -211,18 +242,19 @@
       return $sce.trustAsResourceUrl(src);
     }
 
-    function playDemoAudio(){
+    function playDemoAudio() {
       $log.debug("Playing audio init")
-      if(utils.demoShown){
+      if (utils.demoShown) {
         $log.debug("Playing audio init 1")
 
-        if(utils.demoFactory.getStep() == 2){
+        if (utils.demoFactory.getStep() == 2) {
           $log.debug("Playing audio init 2")
-
-          audio.play('demo-2');
+          audio['demo-1'].stop();
+          audio['demo-2'].play();
         }
         if(utils.demoFactory.getStep() == 4){
-          audio.play('demo-4')
+            audio['demo-3'].stop();
+          audio['demo-4'].play();
           $log.debug("Playing audio init 4")
 
         }

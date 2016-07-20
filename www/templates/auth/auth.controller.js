@@ -3,10 +3,11 @@
   angular
     .module('zaya-auth')
     .controller('authController', authController)
-  authController.$inject = ['$q', '$ionicModal', '$state', 'Auth', 'audio', '$rootScope', '$ionicPopup', '$log', '$cordovaOauth', 'CONSTANT', '$interval', '$scope', '$ionicLoading', 'formHelper', '$ionicPlatform','data','network'];
+  authController.$inject = ['$q', '$ionicModal', '$state', 'Auth', 'audio', '$rootScope', '$ionicPopup', '$log', '$cordovaOauth', 'CONSTANT', '$interval', '$scope', '$ionicLoading', 'formHelper', '$ionicPlatform','data','network','demo'];
 
-  function authController($q, $ionicModal, $state, Auth, audio, $rootScope, $ionicPopup, $log, $cordovaOauth, CONSTANT, $interval, $scope, $ionicLoading, formHelper, $ionicPlatform, dataService, network) {
+  function authController($q, $ionicModal, $state, Auth, audio, $rootScope, $ionicPopup, $log, $cordovaOauth, CONSTANT, $interval, $scope, $ionicLoading, formHelper, $ionicPlatform, dataService, network, demoFactory) {
     var authCtrl = this;
+    $log.debug("Inside auth controller")
     authCtrl.formHelper = formHelper;
     authCtrl.exitApp = exitApp;
     authCtrl.network = network;
@@ -49,6 +50,13 @@
     };
 
     function recoverAccount(formData) {
+      if(!network.isOnline()){
+        $ionicPopup.alert({
+          title: 'Please try again',
+          template: "No internet conection found"
+        })
+        return;
+      }
       var credentials;
       $ionicLoading.show();
       authCtrl.formHelper.validateForm(formData, authCtrl.recoverAccountFormValidations)
@@ -90,6 +98,14 @@
     });
 
     function signin(url, data) {
+      $log.debug("network",network.isOnline())
+      if(!network.isOnline()){
+        $ionicPopup.alert({
+          title: 'Please try again',
+          template: "No internet conection found"
+        })
+        return;
+      }
       $ionicLoading.show({
          hideOnStateChange: true
       });
@@ -101,6 +117,7 @@
         var d = $q.defer();
         window.plugins.googleplus.login(CONSTANT.CONFIG.AUTH.GOOGLEPLUS,
           function(response) {
+            $log.debug("here",response)
             d.resolve({
               "access_token": response.oauthToken
             });
@@ -114,10 +131,12 @@
       if (url === 'facebook') {
         var d = $q.defer();
         facebookConnectPlugin.login(CONSTANT.CONFIG.AUTH.FB, function(response) {
+          $log.debug("facebook",response)
           d.resolve({
             "access_token": response.authResponse.accessToken
           });
         }, function(error) {
+          $log.debug("FAB ERROR",error)
           d.reject(error);
         });
         getCredentials = d.promise;
@@ -136,20 +155,42 @@
             'userId': Auth.getProfileId()
           })
         })
-        .then(function() {
-
+        .then(function(){
+          return demoFactory.show()
+        })
+        .then(function(show){
+          $log.debug("demoFactory",show)
+          if(!show){
+            !localStorage.demo_flag && localStorage.setItem('demo_flag',5);
+          }else{
+            !localStorage.demo_flag && localStorage.setItem('demo_flag',1);
+          }
           $state.go('map.navigate', {});
         })
+
         .catch(function(error) {
           $ionicLoading.hide()
-          authCtrl.showError("Could not login", error || "Please try again");
-          authCtrl.audio.play('wrong');
+          $log.debug("Found error",error)
+          if(error.message === 'no_profile'){
+            $state.go('user.personalise')
+          }
+          else{
+            authCtrl.showError("Could not login", error || "Please try again");
+            authCtrl.audio.play('wrong');
+          }
         }).finally(function() {
 
         })
     }
 
     function signup(formData) {
+      if(!network.isOnline()){
+        $ionicPopup.alert({
+          title: 'Please try again',
+          template: "No internet conection found"
+        })
+        return;
+      }
       $ionicLoading.show();
       authCtrl.formHelper.validateForm(formData, authCtrl.signUpFormValidations)
         .then(function(credentials) {
@@ -157,6 +198,7 @@
           return Auth.signup(credentials);
         })
         .then(function() {
+          localStorage.setItem('demo_flag',1);
           $state.go('auth.verify.phone', {});
         })
         .catch(function(error) {
@@ -332,8 +374,10 @@
 
 
   $scope.$on('smsArrived',function(e,sms){
+    $log.debug(e,sms)
     Auth.getOTPFromSMS(sms)
     .then(function(otp){
+      $log.debug("gere",sms)
       authCtrl.verification = {'otp':otp};
       document.getElementById('verifyOtpFormSubmit').click()
     })

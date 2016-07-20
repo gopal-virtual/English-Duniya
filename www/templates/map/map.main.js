@@ -53,7 +53,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             lowerLimit : regionOffset.peru,
         }
     };
-    
+
     var playState = {
         preload: function() {
             // crisp image rendering
@@ -138,7 +138,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
         create: function() {
 
             var game_scale = game.world.width / 360;
-            
+
             for (var key in regionOffset) {
                 groups.regionBg[key].position.set(0, 0 + regionOffset[key]);
                 groups.region[key].position.set(0, 0 + regionOffset[key]);
@@ -541,7 +541,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             }
             // snow particles
             for (var i = 0; i < 100; i++) {
-                var s = this.game.add.sprite(this.world.randomX, this.game.rnd.between(0, regionOffset.desert - 200), 'snow' + this.game.rnd.between(1, 2));
+                var s = this.game.add.sprite(this.world.randomX, this.game.rnd.between(regionOffset.tundra, regionOffset.desert - 200), 'snow' + this.game.rnd.between(1, 2));
 
                 s.scale.setTo(this.game.rnd.between(1, 2) / 10);
                 this.game.physics.arcade.enable(s);
@@ -573,12 +573,12 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                 }
             };
             // Place nodes
-            for (var j = 0, i = lessons.length - 1, nodeCount = 1 / (lessons.length); i >= 0; j += nodeCount, i--) {
+            for (var j = 0.95, i = lessons.length - 1, nodeCount = 1 / (lessons.length); i >= 0; j -= nodeCount, i--) {
                 var currentLesson = lessons[i];
                 var locked = currentLesson.locked ? '-locked' : '';
                 var type = lessonType(currentLesson, i) == '' ? '' : '-' + lessonType(currentLesson, i);
-                var posx = this.math.catmullRomInterpolation(points.x, j);
-                var posy = this.math.catmullRomInterpolation(points.y, j);
+                var posx = this.math.catmullRomInterpolation(points.x, 1-j);
+                var posy = this.math.catmullRomInterpolation(points.y, 1-j);
                 var node = this.game.add.button(posx, posy, 'node' + type + locked);
 
 
@@ -741,7 +741,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
         resetSnowSprite: function(sprite) {
             sprite.x = this.game.world.bounds.right;
             if (sprite.y > regionOffset.desert)
-                sprite.y = this.game.world.bounds.top;
+                sprite.y = regionOffset.tundra;
         },
         update: function() {
             // log.debug("groups.region.desert",groups.region.desert);
@@ -828,4 +828,3 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
         }
     }
 };
-

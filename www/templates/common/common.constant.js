@@ -5,10 +5,12 @@
     .module('common')
     .constant('CONSTANT', {
       'LOCK': true,
-    //   'BACKEND_SERVICE_DOMAIN': 'http://cc-test.zaya.in/',
-      'BACKEND_SERVICE_DOMAIN': 'http://cc-pre-prod.zaya.in/',
-    //   'RESOURCE_SERVER': 'http://cc-test.zaya.in/',
-      'RESOURCE_SERVER': 'http://cc-pre-prod.zaya.in/',
+      // 'BACKEND_SERVICE_DOMAIN': 'http://cc-test.zaya.in/',
+    //   'BACKEND_SERVICE_DOMAIN': 'http://cc-pre-prod.zaya.in/',
+      'BACKEND_SERVICE_DOMAIN': 'https://eg-api.zaya.in/',
+      // 'RESOURCE_SERVER': 'http://cc-test.zaya.in/',
+    //   'RESOURCE_SERVER': 'http://cc-pre-prod.zaya.in/',
+      'RESOURCE_SERVER': 'https://eg-api.zaya.in/',
       // 'BACKEND_SERVICE_DOMAIN' : 'http://192.168.1.6:9000/',
 
       'PATH': {
@@ -32,15 +34,16 @@
         'AUTH': {
           'GOOGLEPLUS': {
             'scopes': 'email profile',
-            'webApiKey': '306430510808-i5onn06gvm82lhuiopm6l6188133j5r4.apps.googleusercontent.com',
+            'webClientId': '484139127663-85i2cme4uqr97fepn7n0a4la9i8rvbcm.apps.googleusercontent.com',
             'offline': true
           },
           'FB': ['email', 'public_profile']
         }
       },
+
       'CLIENTID': {
         'FACEBOOK': '1159750564044149',
-        'GOOGLE': '1011514043276-7q3kvn29jkegl2d1v7dtlbtipqqgo1rr.apps.googleusercontent.com',
+        'GOOGLE': '484139127663-85i2cme4uqr97fepn7n0a4la9i8rvbcm.apps.googleusercontent.com',
         'ELL': '1e7aa89f-3f50-433a-90ca-e485a92bbda6'
       },
       'ASSETS': {

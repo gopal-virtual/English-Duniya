@@ -4,15 +4,16 @@
     .module('zaya')
     .run(runConfig);
 
-  function runConfig($ionicPlatform, $rootScope, $timeout, $log, $state, $http, $cookies, Auth, $window, $cordovaFile, data, demo) {
+  function runConfig($ionicPlatform, $rootScope, $timeout, $log, $state, $http, $cookies, Auth, $window, $cordovaFile, data, demo, audio, $ionicPopup) {
+
 
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
     //$http.defaults.headers.common['Access-Control-Request-Headers'] = 'accept, auth-token, content-type, xsrfcookiename';
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
 
       $log.debug('state changed ', toState.name);
-      $log.debug(Auth.isAuthorised(),Auth.isVerified(),Auth.hasProfile())
-      //if not authenticated, redirect to login page
+      $log.debug(Auth.isAuthorised(), Auth.isVerified(), Auth.hasProfile())
+        //if not authenticated, redirect to login page
       if (!Auth.isAuthorised() && toState.name != 'auth.signin' && toState.name != 'auth.signup' && toState.name != 'auth.forgot') {
         $log.debug("You are not authorized");
         event.preventDefault();
@@ -23,7 +24,7 @@
       if (Auth.isAuthorised() && !Auth.isVerified() && toState.name != 'auth.verify.phone' && toState.name != 'auth.forgot_verify_otp' && toState.name != 'auth.change_password') {
         $log.debug("User account not verified");
         event.preventDefault();
-        localStorage.clear();
+        Auth.cleanLocalStorage();
         $state.go('auth.signin');
       }
 
@@ -101,25 +102,32 @@
     $ionicPlatform.ready(function() {
 
       data.createIfNotExistsLessonDB()
-      if(localStorage.getItem('demo_flag') === null){
-      localStorage.setItem('demo_flag',1)
+
+
+      // $rootScope.$on('$cordovaNetwork:online', function(event, networkState) {
+      //   if (Auth.isAuthorised() && Auth.isVerified() && Auth.hasProfile()) {
+      //   }
+      // })
+      if (localStorage.getItem('report_id') === null) {
+        localStorage.setItem('report_id', 1);
       }
       if (window.Connection) {
         if (navigator.connection.type == Connection.NONE) {
-          $ionicPopup.confirm({
-              title: "Internet Disconnected",
-              content: "The internet is disconnected on your device."
-            })
-            .then(function(result) {
-              if (!result) {
-                ionic.Platform.exitApp();
-              }
-            });
+          // $ionicPopup.alert({
+          //     title: "Internet Disconnected",
+          //     content: "The internet is disconnected on your device."
+          //   })
+
         } else {
           $log.debug('App ready : online;');
+
         }
       }
-
+      if (Auth.isAuthorised() && Auth.isVerified() && Auth.hasProfile()) {
+        data.startReportSyncing({
+          'userId': Auth.getProfileId()
+        })
+      }
       //   if (window.StatusBar) {
       //     StatusBar.hide();
       //   }
@@ -133,18 +141,10 @@
         $log.debug(e);
       });
 
-      //   document.addEventListener("pause", function(){
-      //     $log.debug("paused");
-      //     try{
-      //       var video = document.querySelector('video');
-      //       if(!video.paused){
-      //         video.pause();
-      //       }
-      //     }
-      //     catch(e){
-      //       $log.debug(e);
-      //     }
-      //   }, false);
+        document.addEventListener("pause", function(){
+        //   $log.debug("paused");
+          audio.stop('background');
+        }, false);
       // sms watch
       //   try{
       //     SMS && SMS.startWatch(function () {

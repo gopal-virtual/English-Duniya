@@ -7,13 +7,11 @@
   QuizController.$inject = ['quiz', 'widgetParser', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Auth', '$ionicLoading', '$ionicPopup', 'lessonutils', 'orientation', '$location', '$anchorScroll', '$document', '$ionicScrollDelegate', '$ionicPosition', '$timeout', '$window', 'mediaManager', '$cordovaFileTransfer', '$cordovaFile', '$interval', '$q', '$ImageCacheFactory', 'ml', 'data', 'lessonutils', '$ionicPlatform', 'nzTour', 'demo' ];
 
   function QuizController(quiz, widgetParser, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition, $timeout, $window, mediaManager, $cordovaFileTransfer, $cordovaFile, $interval, $q, $ImageCacheFactory, ml, data, lessonutils, $ionicPlatform, nzTour, demoFactory) {
-
+    $log.debug("Inside quiz controller",$stateParams)
     var quizCtrl = this;
-
     //bind quiz resolved to controller
     quizCtrl.quiz = quiz;
     $log.debug('unshifted quiz', quiz);
-
     //report
     quizCtrl.report = {};
     quizCtrl.submitReport = submitReport;
@@ -78,7 +76,7 @@
     quizCtrl.stopTimer = stopTimer;
     quizCtrl.startTimer = startTimer;
 
-
+    quizCtrl.isScroll = isScroll;
     //helper functions
     quizCtrl.getQuestionType = getQuestionType;
 
@@ -99,6 +97,7 @@
     $scope.lessonutils = lessonutils;
     $scope.selectedNode = lessonutils.getLocalLesson();
     $scope.modal = {};
+    quizCtrl.closeModalCallback = closeModalCallback;
 
 
     $scope.groups = [];
@@ -112,7 +111,9 @@
       }
     }
 
+    function isScroll(id){
 
+    }
     function stopTimer() {
       $interval.cancel(quizCtrl.interval);
     }
@@ -153,21 +154,21 @@
 
     function submitReport(quiz, report, summary) {
       lesson = lessonutils.getLocalLesson();
-      data.getQuizScore({
-          'userId': Auth.getProfileId(),
-          'lessonId': lesson.node.id,
-          'id': quizCtrl.quiz.node.id
+
+        data.updateSkills({
+          userId: Auth.getProfileId(),
+          lessonId: lesson.node.id,
+          id: quiz.node.id,
+          score: summary.score.marks,
+          totalScore: quizCtrl.quiz.node.type.score,
+          skill: lesson.node.tag
         })
         .then(function() {
-          $log.debug("Updating skills", lesson)
-          return data.updateSkills({
-            userId: Auth.getProfileId(),
-            lessonId: lesson.node.id,
-            id: quiz.node.id,
-            score: summary.score.marks,
-            totalScore: quizCtrl.quiz.node.type.score,
-            skill: lesson.node.tag
-          })
+          return data.getQuizScore({
+              'userId': Auth.getProfileId(),
+              'lessonId': lesson.node.id,
+              'id': quizCtrl.quiz.node.id
+            })
         })
         .then(function(previousScore) {
           if ((!previousScore) || (!previousScore.hasOwnProperty('score')) || (previousScore && parseInt(previousScore.score) < summary.score.marks)) {
@@ -211,21 +212,16 @@
 
         })
         .then(function(data) {
-          $log.debug("s", data);
         })
         .catch(function(e) {
-          $log.debug("Err", e)
         })
     }
 
     function disableSwipe() {
       $ionicSlideBoxDelegate.enableSlide(false);
     }
-    $log.debug("Please", quiz)
-
     function init(quiz) {
       if ($state.current.name == "quiz.start") {
-        $log.debug("quiz start")
           // $ionicLoading.show();
           // quizCtrl.preloadResources(quiz).then(function(success) {
           //   $ionicLoading.hide();
@@ -254,7 +250,8 @@
 
           $ionicModal.fromTemplateUrl(CONSTANT.PATH.QUIZ + '/practice.feedback' + CONSTANT.VIEW, {
             scope: $scope,
-            animation: 'slide-in-down'
+            animation: 'slide-in-down',
+            hardwareBackButtonClose: false
           }).then(function(modal) {
             $scope.modal = modal;
           });
@@ -262,19 +259,18 @@
             $scope.modal.show();
             $timeout(function() {
               if ($scope.modal.isShown()) {
-                $scope.closeModal();
+                
+                $scope.closeModal(quizCtrl.closeModalCallback);
               }
             }, 2000);
           };
-          $scope.closeModal = function() {
+          $scope.closeModal = function(callback) {
             quizCtrl.canRemoveFeedback = false;
             $scope.modal.hide().then(function() {
-              if (quizCtrl.currentIndex >= quizCtrl.quiz.objects.length - 1) {
-                quizCtrl.submitQuiz('practice');
-              } else {
-                $ionicSlideBoxDelegate.slide(quizCtrl.getCurrentIndex() + 1);
-              }
-              quizCtrl.canRemoveFeedback = true;
+                if(callback){
+                    callback();
+                }
+                quizCtrl.canRemoveFeedback = true;
             });
           };
         }
@@ -302,13 +298,17 @@
             quizCtrl.quiz.objects[i].attempted = [];
           }
         }
-        $log.debug(quizCtrl.quiz)
       }
 
     }
-
+    function closeModalCallback () {
+        if (quizCtrl.currentIndex >= quizCtrl.quiz.objects.length - 1) {
+          quizCtrl.submitQuiz('practice');
+        } else {
+          $ionicSlideBoxDelegate.slide(quizCtrl.getCurrentIndex() + 1);
+        }
+    }
     function parseHtml(index) {
-      $log.debug("parse HTML", quizCtrl.quiz, index)
       quizCtrl.quiz.objects[index].node.widgetHtml = quizCtrl.widgetParser.parseToDisplay(quizCtrl.quiz.objects[index].node.title, index, quizCtrl.quiz);
 
       quizCtrl.quiz.objects[index].node.widgetSound = quizCtrl.widgetParser.getSoundId(quizCtrl.quiz.objects[index].node.title);
@@ -427,18 +427,13 @@
       quizCtrl.quiz.suggestion = ml.getNextQSr(quizCtrl.quiz.suggestion.test, ml.mapping);
       if (quizCtrl.quiz.suggestion) {
         quizCtrl.quiz.objects.push(ml.dqJSON[quizCtrl.quiz.suggestion.qSr]);
-        $log.debug("suggestion new", quizCtrl.quiz.suggestion);
-        $log.debug("suggestion questions", quizCtrl.quiz);
       } else {
-        $log.debug('bam!', ml.dqQuiz);
-        $log.debug('bam!', ml.runDiagnostic(ml.dqQuiz));
         quizCtrl.endQuiz();
       }
       return true;
     }
 
     function updateSlide() {
-      $log.debug('slide updated');
       $ionicSlideBoxDelegate.update();
       $timeout(function() {
         $ionicSlideBoxDelegate.next();
@@ -586,10 +581,9 @@
             delete quizCtrl.report.attempts['demo'];
       if (quizType === 'practice') {
         $scope.modal.hide().then(function() {
-          $log.debug("submit qi")
           $state.go('quiz.summary', {
-            report: angular.copy(quizCtrl.report),
-            summary: angular.copy(quizCtrl.summary),
+            report: (quizCtrl.report),
+            summary: (quizCtrl.summary),
             type: 'practice'
           });
         });
@@ -644,8 +638,9 @@
     $ionicPlatform.onHardwareBackButton(function(event) {
         if ($state.is('quiz.questions')) {
           try {
-              if(!nzTour.current)
-                $scope.showNodeMenu();
+              if(!nzTour.current && !$scope.modal.isShown()){
+                  $scope.showNodeMenu();
+              }
           } catch (error) {
             $log.debug(error);
           }
@@ -732,7 +727,8 @@
       if(result){
         $timeout(function(){
           $log.debug($scope.demo.tourFlag);
-          audio.play('demo-quiz-1')
+          audio['demo-4'].stop();
+          audio['demo-quiz-1'].play();
           nzTour.start($scope.tour);
           demoFactory.setStep(5);
         });
@@ -742,9 +738,11 @@
     function tourNextStep() {
       if (nzTour.current) {
         if(nzTour.current.step === 0){
-          audio.play('demo-quiz-2')
+            audio['demo-quiz-1'].stop();
+            audio['demo-quiz-2'].play();
         }else if(nzTour.current.step === 1){
-          audio.play('demo-quiz-3')
+            audio['demo-quiz-2'].stop();
+            audio['demo-quiz-3'].play();
         }
         nzTour.next();
       }

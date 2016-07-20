@@ -3,11 +3,11 @@
     .module('zaya')
     .config(AppConfig)
 
-  function AppConfig($httpProvider, $ionicConfigProvider, $ionicNativeTransitionsProvider, $logProvider, $windowProvider, pouchDBProvider, POUCHDB_METHODS) {
+  function AppConfig($httpProvider, $ionicConfigProvider, $ionicNativeTransitionsProvider, $logProvider, $windowProvider, pouchDBProvider, POUCHDB_METHODS,$resourceProvider) {
     // global debug log
     $logProvider.debugEnabled(true);
     // request/response interceptors
-    $httpProvider.interceptors.push(function ($rootScope, $q, $log) {
+    $httpProvider.interceptors.push(function ($rootScope, $q, $log, $injector) {
       return {
         request: function (config) {
           if (localStorage.Authorization)
@@ -16,7 +16,6 @@
           config.headers.xsrfHeaderName = 'X-CSRFToken';
           return config;
         },
-
         response: function (response) {
           if (response.status == 200 && response.data.hasOwnProperty('success')) {
             $rootScope.success = $rootScope.success || [];
@@ -30,6 +29,12 @@
         },
         responseError: function (rejection) {
           $log.debug("error", rejection)
+          if([401].indexOf(rejection.status) != -1){
+              var demo_flag = localStorage.getItem('demo_flag');
+              localStorage.clear();
+              localStorage.setItem('demo_flag',demo_flag);
+            $injector.get('$state').go('auth.signin');
+          }
           if ([400, 500].indexOf(rejection.status) != -1) {
             $rootScope.error = $rootScope.error || [];
             $rootScope.error.push(rejection.data);

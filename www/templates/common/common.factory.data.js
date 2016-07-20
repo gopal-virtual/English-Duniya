@@ -16,16 +16,20 @@
 
     // replicate
     // inputDB.replicate.to(outputDB);
+
     var diagLitmusMappingDB = pouchDB('diagLitmusMapping');
     var kmapsJSONDB = pouchDB('kmapsJSON');
     var dqJSONDB = pouchDB('dqJSON');
-    var lessonDB = pouchDB('lessonDB');
+    var lessonDB = pouchDB('lessonDB', {
+    adapter : 'websql'
+  });
     var appDB = pouchDB('appDB');
     var resourceDB = pouchDB('resourceDB');
     var reportsDB = pouchDB('reportsDB');
     var data = {
       // createDiagnosisQuestionDB: createDiagnosisQuestionDB(),
       // createKmapsDB: createKmapsDB(),
+
       createDiagLitmusMappingDB: createDiagLitmusMappingDB(),
       createKmapsJSON: createKmapsJSON(),
       createDiagQJSON: createDiagQJSON(),
@@ -58,68 +62,68 @@
       // addNewUser: addNewUser
       putUserifNotExist: putUserifNotExist,
       startReportSyncing: startReportSyncing,
-      demo_question : {
-      "node": {
-        "id": "demo",
-        "content_type_name": "json question",
-        "type": {
+      demo_question: {
+        "node": {
           "id": "demo",
-          "created": "2016-07-08T14:44:19.871339Z",
-          "updated": "2016-07-08T14:44:19.871370Z",
-          "microstandard": "ELL.1.RE.V.9.MOB",
-          "is_critical_thinking": false,
-          "level": 1,
-          "answer": [2],
-          "score": 10,
-          "content": {
-            "is_multiple": false,
-            "widgets": {
-              "videos": {},
-              "sounds": {},
-              "images": {
-                "1": "/media/ell/images/dog_O5P4I8.png",
-                "2": "/media/ell/images/person_GLUMUY.png",
-                "3": "/media/ell/images/place_KJMRCN.png",
-                "4": "/media/ell/images/animal_2W0HQG.png",
-                "5": "/media/ell/images/thing_DV4JY6.png"
-              }
+          "content_type_name": "json question",
+          "type": {
+            "id": "demo",
+            "created": "2016-07-08T14:44:19.871339Z",
+            "updated": "2016-07-08T14:44:19.871370Z",
+            "microstandard": "ELL.1.RE.V.9.MOB",
+            "is_critical_thinking": false,
+            "level": 1,
+            "answer": [2],
+            "score": 10,
+            "content": {
+              "is_multiple": false,
+              "widgets": {
+                "videos": {},
+                "sounds": {},
+                "images": {
+                  "1": "/media/ell/images/dog_O5P4I8.png",
+                  "2": "/media/ell/images/person_GLUMUY.png",
+                  "3": "/media/ell/images/place_KJMRCN.png",
+                  "4": "/media/ell/images/animal_2W0HQG.png",
+                  "5": "/media/ell/images/thing_DV4JY6.png"
+                }
+              },
+              "instruction": null,
+              "options": [{
+                "option": "person [[img id=2]]",
+                "key": 1
+              }, {
+                "option": "place [[img id=3]]",
+                "key": 3
+              }, {
+                "option": "animal [[img id=4]]",
+                "key": 2
+              }, {
+                "option": "thing [[img id=5]]",
+                "key": 4
+              }],
+              "tags": [],
+              "hints": "[]"
             },
-            "instruction": null,
-            "options": [{
-              "option": "person [[img id=2]]",
-              "key": 1
-            }, {
-              "option": "place [[img id=3]]",
-              "key": 3
-            }, {
-              "option": "animal [[img id=4]]",
-              "key": 2
-            }, {
-              "option": "thing [[img id=5]]",
-              "key": 4
-            }],
-            "tags": [],
-            "hints": "[]"
+            "type": "choicequestion"
           },
-          "type": "choicequestion"
+          "tag": null,
+          "created": "2016-07-08T14:44:19.881208Z",
+          "updated": "2016-07-08T14:44:19.881242Z",
+          "title": "dog [[img id=1]]",
+          "description": "",
+          "object_id": "e3ea1ecb-997a-4d2f-9a45-378fa3201e57",
+          "status": "PUBLISHED",
+          "lft": 936,
+          "rght": 937,
+          "tree_id": 1,
+          "level": 3,
+          "parent": "29f41d84-fda3-4964-94be-25a6800d93a3",
+          "content_type": 21,
+          "account": "150c906a-c3ef-4e2b-a19d-c77fdabf2015"
         },
-        "tag": null,
-        "created": "2016-07-08T14:44:19.881208Z",
-        "updated": "2016-07-08T14:44:19.881242Z",
-        "title": "dog [[img id=1]]",
-        "description": "",
-        "object_id": "e3ea1ecb-997a-4d2f-9a45-378fa3201e57",
-        "status": "PUBLISHED",
-        "lft": 936,
-        "rght": 937,
-        "tree_id": 1,
-        "level": 3,
-        "parent": "29f41d84-fda3-4964-94be-25a6800d93a3",
-        "content_type": 21,
-        "account": "150c906a-c3ef-4e2b-a19d-c77fdabf2015"
-      },
-      "objects": []
-    }
+        "objects": []
+      }
     };
 
 
@@ -255,7 +259,6 @@
     }
 
     function createIfNotExistsLessonDB() {
-      $log.debug("createIfNotExistsLessonDB");
       var ddoc = {
         _id: '_design/index',
         views: {
@@ -267,7 +270,6 @@
         }
       };
       return lessonDB.get('_local/preloaded').then(function(doc) {
-        $log.debug("createIfNotExistsLessonDB Exists",ddoc,pouchDB);
 
       }).catch(function(err) {
         if (err.name !== 'not_found') {
@@ -277,49 +279,83 @@
           return lessonDB.put({
             _id: '_local/preloaded'
           });
-        }).then(function(){
+        }).then(function() {
           return lessonDB.put(ddoc).then(function() {
-            $log.debug("createIfNotExistsLessonDB ddcon made");
             // success!
           }).catch(function(err) {
-            $log.debug("createIfNotExistsLessonDB ddoc error",err);
 
             // some error (maybe a 409, because it already exists?)
           });
-        })
-        ;
+        });
       })
     }
 
 
-    function putUserifNotExist(data) {
-      return Rest.one('profiles', JSON.parse(localStorage.user_details).profile).all('scores').all('skills').getList().then(function(profile) {
-          return profile.plain();
-        })
+    function putUserifNotExist(details) {
+      var records = {
+        scores: {}
+      };
+      var d = $q.defer();
+      Rest.one('profiles', JSON.parse(localStorage.user_details).profile).all('scores').all('skills').getList()
         .then(function(skills) {
-          return appDB.get(data.userId)
-            .then(function(doc) {
-              doc.data.skills = skills
-              return appDB.put({
-                '_id': data.userId,
-                '_rev': doc._rev,
-                'data': doc.data
-              })
-            })
-            .catch(function(error) {
-              if (error.status === 404) {
-                return appDB.put({
-                  '_id': data.userId,
-                  'data': {
-                    'scores': {},
-                    'reports': [],
-                    'skills': skills
-                  }
-                })
-              }
-            })
+          $log.debug("skills", skills.plain())
+          records.skills = skills.plain();
+          return data.getLessonsScore();
         })
+        .then(function(scores) {
+          records.scores = {};
+          $log.debug("scores", scores)
+          angular.forEach(scores, function(row) {
+            // $log.debug("row", row.contents.assessment)
+            for (var property in row.contents.assessment) {
+              if (row.contents.assessment.hasOwnProperty(property)) {
+                $log.debug(row.contents.assessment[property])
+                records.scores[row.id] = {};
+                records.scores[row.id][property] = {
+                  score: row.contents.assessment[property].obtained_score,
+                  totalScore: row.contents.assessment[property].total_score
+                }
+              }
+            }
+          })
 
+          return appDB.get(details.userId)
+        })
+        .then(function(doc) {
+          $log.debug("Found userdb")
+          doc.data.skills = records.skills;
+          doc.data.scores = records.scores;
+          return appDB.put({
+            '_id': details.userId,
+            '_rev': doc._rev,
+            'data': doc.data
+          })
+        })
+        .then(function() {
+          d.resolve();
+        })
+        .catch(function(error) {
+          $log.debug("Not Found userdb", error)
+          if (error.status === 404) {
+            $log.debug("MAking user db")
+            return appDB.put({
+                '_id': details.userId,
+                'data': {
+                  'scores': records.scores,
+                  'reports': [],
+                  'skills': records.skills
+                }
+              }).then(function() {
+                d.resolve()
+                $log.debug("MAde user db")
+              })
+              .catch(function(e) {
+                d.reject();
+                $log.debug("Error making user db", e)
+              })
+          }
+        })
+      return d.promise;
 
     }
 
@@ -383,31 +419,28 @@
       return d.promise;
     }
 
-    function getLessonsScore(limit) {
-      return Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('profiles', JSON.parse(localStorage.user_details).profile).customGET('lessons-score', {
-        limit: limit
-      }).then(function(score) {
-        return score.plain().results;
+    function getLessonsScore() {
+      return Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('profiles', JSON.parse(localStorage.user_details).profile).customGET('lessons-score').then(function(score) {
+        return score.plain();
       }, function(error) {})
     }
 
     function getLessonsList(grade) {
       var start = new Date();
-      $log.debug("Starts", start)
       var d = $q.defer();
 
-      lessonDB.query('index/by_grade',{
+      lessonDB.query('index/by_grade', {
           include_docs: true,
-          key : grade
+          key: grade
         }).then(function(data) {
-          $log.debug("Starts 1", new Date() - start,data)
+            $log.debug("Time taken 1",new Date() - start, data)
           var lessons = [];
           for (var i = 0; i < data.rows.length; i++) {
-              data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key
-              lessons.push(data.rows[i].doc.lesson.node);
+            data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key
+            lessons.push(data.rows[i].doc.lesson.node);
           }
           lessons = _.sortBy(lessons, 'key');
-          $log.debug("Ends", new Date() - start,lessons)
+          $log.debug("Time taken",new Date() - start)
           d.resolve(lessons)
         })
         .catch(function(error) {
@@ -482,29 +515,51 @@
     }
 
     function saveReport(report) {
-      return appDB.get(report.userId).then(function(response) {
-          var doc = response.data;
-          doc.reports.push({
+      // var id = localStorage.getItem('report_id')
+      // var r = new ReportResource({
+      // id: localStorage.getItem('report_id')
+      // });
+      // localStorage.setItem('report_id', parseInt(localStorage.getItem('report_id') )+ 1);
+      // var r = {};
+      // r.node = report.node;
+      // r.score = report.score;
+      // r.attempt = report.attempts;
+      // r.person = report.userId;
+      // r.local_id = id;
+      // return $http.post(CONSTANT.BACKEND_SERVICE_DOMAIN+'api/v1/reports/',r,{offline: true})
+      // localStorage.setItem('report_id',parseInt(localStorage.getItem('report_id')) + 1)
+
+
+      // r.$save();
+      // (function(local_id){
+      //   r.$promise.then(
+      //     function(s) {
+      //       localStorage.removeItem('cachedResource://reportResource?id=' + s.id);
+      //     }
+      //   );
+      // })(id)
+
+      // return appDB.get(report.userId).then(function(response) {
+      //     var doc = response.data;
+      //     doc.reports.push({
+      //       'node': report.node,
+      //       'score': report.score,
+      //       'attempts': report.attempts
+      //     });
+
+      return reportsDB.post({
+          // '_id': report.userId,
+          // '_rev': response._rev,
+          'data': {
+            'user': report.userId,
             'node': report.node,
             'score': report.score,
             'attempts': report.attempts
-          });
-          return reportsDB.post({
-            // '_id': report.userId,
-            // '_rev': response._rev,
-            'data': {
-              'user': report.userId,
-              'node': report.node,
-              'score': report.score,
-              'attempts': report.attempts
-            }
-          })
+          }
         })
+        // })
         .then(function() {
-          var flag = JSON.parse(localStorage.getItem('reportSync'));
-          if (flag && flag.progress === true) {
-            flag.updated = true;
-          } else if (network.isOnline()) {
+          if (network.isOnline()) {
             data.startReportSyncing({
               'userId': report.userId
             })
@@ -526,7 +581,6 @@
     }
 
     function updateLesson(lesson) {
-      $log.debug("Updating lesson", lesson)
       lessonDB.get(lesson.node.id).then(function(doc) {
         return lessonDB.put({
           _id: lesson.node.id,
@@ -541,6 +595,7 @@
     }
 
     function downloadAssessment(assessment) {
+      $log.debug("downloadAssessment")
       var d = $q.defer();
       var promises = [];
       var mediaTypes = ['videos', 'sounds', 'images']
@@ -550,6 +605,7 @@
         angular.forEach(object.node.type.content.widgets, function(widget) {
           angular.forEach(widget, function(file) {
             if (mediaArray.indexOf(file) < 0) {
+              $log.debug(file);
               mediaArray.push(file);
               promises.push(
                 mediaManager.downloadIfNotExists(CONSTANT.RESOURCE_SERVER + file)
@@ -562,7 +618,7 @@
           d.resolve(data);
         })
         .catch(function(err) {
-          d.reject
+          d.reject(err)
         });
       return d.promise;
 
@@ -571,45 +627,65 @@
 
 
 
-    function syncReport(report, user) {
-      return Rest.all('reports').post({
-        'score': report.score,
-        'person': user.userId,
-        'node': report.node
-      }).then(function(success) {
-        var attempts = [];
-        angular.forEach(report.attempts, function(attempt) {
-          attempts.push({
-            "answer": attempt.answer,
-            "status": attempt.status,
-            "person": user.userId,
-            "report": success.id,
-            "node": attempt.node
-          })
-        })
-        return Promise.resolve();
-        // Rest.all('attempts').post(attempts);
-      })
+    function syncReport(report) {
+      report.attempt = report.attempts;
+      report.person = report.user;
+      // return Rest.all('reports').post({
+      //   'score': report.score,
+      //   'person': user.userId,
+      //   'node': report.node
+      // }).then(function(success) {
+      //   var attempts = [];
+      //   angular.forEach(report.attempts, function(attempt) {
+      //     attempts.push({
+      //       "answer": attempt.answer,
+      //       "status": attempt.status,
+      //       "person": user.userId,
+      //       "report": success.id,
+      //       "node": attempt.node
+      //     })
+      //   })
+      // return Promise.resolve();
+
+      return Rest.all('reports').post(report);
+      // })
     }
 
-    function startReportSyncing(user) {
-      $log.debug("Report syncing", user)
-      var appData;
-
+    function startReportSyncing() {
       return reportsDB.allDocs({
-        include_docs: true
-      }).then(function(response) {
-        var promise;
-        // angular.forEach(response.rows, function(row) {
-        // var report = row.doc.data.reports[0]for ;
-        $log.debug("report", response.rows[0].doc.data);
-        // promise = syncReport(report, user);
-        // })
-      })
+          include_docs: true
+        }).then(function(response) {
+          var d = $q.defer();
+          // angular.forEach(response.rows, function(row) {
+          if (response.rows.length == 0) {
+            d.reject("No reports");
+          } else {
+            var report = response.rows[0].doc.data;
+            syncReport(report).then(function() {
+                var callback = false;
+                if (response.rows.length > 2) {
+                  callback = true;
+                }
+                d.resolve({
+                  'report_doc': response.rows[0].doc,
+                  'callback': callback
+                })
+              })
+              .catch(function(error) {
+                d.reject(error)
+              })
 
-      .catch(function(e) {
-          $log.debug("Response error", e)
+          }
+          return d.promise;
+          // })
         })
+        .then(function(response) {
+          return reportsDB.remove(response.report_doc)
+        })
+        .then(function(response) {
+          data.startReportSyncing()
+        })
+        .catch(function(e) {})
         // return appDB.get(user.userId).then(function(response) {
         //   appData = response;
         //     $log.debug("Here", response)
@@ -620,9 +696,7 @@
         //     }
         //   })
         //   .then(function(success) {
-        //     $log.debug("OO",appData)
         //     appData.data.reports = appData.data.reports.splice(0,0);
-        //     $log.debug(appData)
         //     return appDB.put({
         //       '_id':appData._id,
         //       '_rev': appData._rev,
@@ -633,13 +707,11 @@
         //     if(appData.data.reports.length){
         //       return startReportSyncing({'userId':Auth.getProfileId()});
         //     }else{
-        //       $log.debug("sync complete")
         //       return true
         //     }
         //   })
         //   .catch(function(e) {
         //     if(e === 'No data to sync'){
-        //       $log.debug(e)
         //     }
         //   })
     }
