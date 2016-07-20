@@ -649,20 +649,20 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             scope.$emit('show_demo');
             this.init();
             this.game.kineticScrolling.start();
-                    log.debug("GUchaMI",temp.activeLessonKey);
-                    log.debug("GUchaMI2",temp.activatedLessonKey);
+                    // log.debug("GUchaMI",temp.activeLessonKey);
+                    // log.debug("GUchaMI2",temp.activatedLessonKey);
 
             var _this = this;
             var starClone = [];
             function animateStar(){
                 setTimeout(function(){
                     if (!stateParams.activatedLesson && temp.activeLessonKey != temp.activatedLessonKey - 1) {
-                        log.debug("GUchaMI",temp.activeLessonKey);
-                        log.debug("GUchaMI2",temp.activatedLessonKey);
+                        // log.debug("GUchaMI",temp.activeLessonKey);
+                        // log.debug("GUchaMI2",temp.activatedLessonKey);
                         return ;
                     }
-                    log.debug("GUchaMI",temp.activeLessonKey);
-                    log.debug("GUchaMI2",temp.activatedLessonKey);
+                    // log.debug("GUchaMI",temp.activeLessonKey);
+                    // log.debug("GUchaMI2",temp.activatedLessonKey);
 
                     log.debug(currentLesson.tag);
                     var lessonTag =  {
