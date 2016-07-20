@@ -11,6 +11,10 @@
 
     $scope.audio = audio;
     $scope.orientation = orientation;
+    $scope.activatedLesson = $stateParams.activatedLesson;
+    $log.debug("GEESE",$scope.activatedLesson)
+    $log.debug("KUKUNA",$stateParams.activatedLesson)
+
     var mapCtrl = this;
     var lessonList = CONSTANT.LOCK ? lessonLocked : lessons;
     // $state.current.data && lessonList.unshift($state.current.data.litmus);
@@ -45,7 +49,6 @@
         return localStorage.demo_node ? JSON.parse(localStorage.demo_node).type : 0;
     }
     // mapCtrl.animationShrink.shrink = animationShrink;
-    $log.debug("HELLLLLLLLLLLLLLLLLLLO",$stateParams.activatedLesson);
 
     // $ionicPlatform.registerBackButtonAction(function(event) {
     //   if (mapCtrl.animationExpand.expandContainer == 1) {

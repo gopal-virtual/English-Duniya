@@ -1,4 +1,4 @@
-window.createGame = function(scope, lessons, audio, injector, log) {
+window.createGame = function(scope, stateParams, lessons, audio, injector, log) {
     'use strict';
 
     var lessons = lessons;
@@ -584,6 +584,15 @@ window.createGame = function(scope, lessons, audio, injector, log) {
 
                 !locked && lessons[i + 1] && lessons[i + 1].locked && this.add.tween(node.scale).to({ x: [1.2, 1], y: [1.2, 1] }, 700, Phaser.Easing.Back.Out, true, 1000).loop(true);
                 !locked && lessons[i + 1] && lessons[i + 1].locked && localStorage.setItem('region',posy);
+
+                if(!locked && lessons[i + 1] && lessons[i + 1].locked){
+                    temp["activeLessonKey"] = i;
+                }
+
+                if (stateParams.activatedLesson && stateParams.activatedLesson.node.id == currentLesson.id) {
+                    temp["activatedLessonKey"] = i;
+                }
+
                 node.inputEnabled = true;
                 node.currentLesson = currentLesson;
                 node.type = lessonType(currentLesson, i);
@@ -609,8 +618,8 @@ window.createGame = function(scope, lessons, audio, injector, log) {
                 // icon.scale.setTo(0.3,0.3);
                 node.anchor.setTo(0.5, 0.5);
                 // node.scale.setTo(1.8, 1.8);
-
                 // add stars
+                log.debug("AIIII",i,currentLesson.stars);
                 if (!locked && currentLesson.stars >= 0) {
                     var stars = this.game.add.group();
                     if (currentLesson.stars == 0) {
@@ -620,7 +629,6 @@ window.createGame = function(scope, lessons, audio, injector, log) {
                     } else if (currentLesson.stars == 2) {
                         createStars(2, $.merge([posx], star_x), $.merge([posy], star_y));
                     } else if (currentLesson.stars == 3) {
-                        log.debug($.merge([posx], star_x), $.merge([posy], star_y));
                         createStars(3, $.merge([posx], star_x), $.merge([posy], star_y));
                     } else {}
                 }
@@ -641,11 +649,21 @@ window.createGame = function(scope, lessons, audio, injector, log) {
             scope.$emit('show_demo');
             this.init();
             this.game.kineticScrolling.start();
+                    log.debug("GUchaMI",temp.activeLessonKey);
+                    log.debug("GUchaMI2",temp.activatedLessonKey);
 
             var _this = this;
             var starClone = [];
             function animateStar(){
                 setTimeout(function(){
+                    if (!stateParams.activatedLesson && temp.activeLessonKey != temp.activatedLessonKey - 1) {
+                        return ;
+                        log.debug("GUchaMI",temp.activeLessonKey);
+                        log.debug("GUchaMI2",temp.activatedLessonKey);
+                    }
+                    log.debug("GUchaMI",temp.activeLessonKey);
+                    log.debug("GUchaMI2",temp.activatedLessonKey);
+
                     log.debug(currentLesson.tag);
                     var lessonTag =  {
                         "vocabulary" : 1,
@@ -653,13 +671,15 @@ window.createGame = function(scope, lessons, audio, injector, log) {
                         "grammar" : 3,
                         "lisetening" : 4
                     }
-                    var j = lessons.length - 1;
+                    var j =  temp.activatedLessonKey - 1;
                     var posx = _this.math.catmullRomInterpolation(points.x, j/lessons.length);
                     var posy = _this.math.catmullRomInterpolation(points.y, j/lessons.length);
                     // starClone.push(createStars(currentLesson.stars, $.merge([posx], star_x), $.merge([posy], star_y)));
                     // log.debug(currentLesson.stars);
+                    log.debug(stateParams.activatedLesson);
+                    log.debug(temp.activeLesson);
                     var starCloneTween = [];    
-                    log.debug(lessonTag[currentLesson.tag.toLowerCase()]*game.world.width);
+                    log.debug(lessonTag[lessons[j].tag.toLowerCase()]*game.world.width);
                     for (var i = 0; i < star.length; i++) {
                         // setTimeout(function(){
                             log.debug($.merge([posx], star_x), $.merge([posy], star_y));
@@ -670,7 +690,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
                             log.debug(starClone[i]);
                             starCloneTween[i] = {};
                             // var starClone = createStars(currentLesson.stars, $.merge([posx], star_x), $.merge([posy], star_y));
-                            starCloneTween[i]["pos"] = game.add.tween(starClone[i]).to( { x: (lessonTag[currentLesson.tag.toLowerCase()]*game.width)/5, y: parseInt(game.camera.y)}, 1000, Phaser.Easing.Exponential.InOut);
+                            starCloneTween[i]["pos"] = game.add.tween(starClone[i]).to( { x: (lessonTag[stateParams.activatedLesson.node.tag.toLowerCase()]*game.width)/5, y: parseInt(game.camera.y)}, 1000, Phaser.Easing.Exponential.InOut);
                             starCloneTween[i]["scale"] = game.add.tween(starClone[i].scale).from( { x: 0.1, y: 0.1 }, 800, Phaser.Easing.Bounce.Out,false,i*800);
                             starCloneTween[i]["scalePos"] = game.add.tween(starClone[i]).to( { x: "+100", y: "-100" }, 800, Phaser.Easing.Cubic.Out,false,i*800);
                             starCloneTween[i]["rotate"] = game.add.tween(starClone[i]).to( { angle: 450 }, 2600, Phaser.Easing.Quadratic.Out);
@@ -682,7 +702,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
                             // starCloneTween[i].scale.repeat(10, 1000);    
                         // },1000)
                     }
-                },800);
+                },5000);
             }
 
             animateStar();
