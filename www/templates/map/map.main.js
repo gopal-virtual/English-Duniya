@@ -110,6 +110,8 @@ window.createGame = function(scope, lessons, audio, injector, log) {
             this.load.image('node-grammar', 'img/icons/icon-grammar-node.png');
             this.load.image('node-reading', 'img/icons/icon-reading-node.png');
             this.load.image('node-locked', 'img/icons/icon-node-locked.png');
+            this.load.image('star_big', 'img/icons/icon-star-2.png');
+            this.load.image('star_medium', 'img/icons/icon-star-medium.png');
             this.load.image('star', 'img/icons/icon-star-small.png');
             this.load.image('nostar', 'img/icons/icon-nostar.png');
 
@@ -556,6 +558,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
                 for (var i = 0; i < count; i++) {
                     star[i] = stars.create(x[0] + x[i + 1], y[0] + y[i + 1], 'star');
                     star[i].anchor.setTo(0.5, 0.5);
+                    // star[i].scale.setTo(0.2,0.2);
                 }
                 return star;
             }
@@ -643,29 +646,43 @@ window.createGame = function(scope, lessons, audio, injector, log) {
             var starClone = [];
             function animateStar(){
                 setTimeout(function(){
+                    log.debug(currentLesson.tag);
+                    var lessonTag =  {
+                        "vocabulary" : 1,
+                        "reading" : 2,
+                        "grammar" : 3,
+                        "lisetening" : 4
+                    }
                     var j = lessons.length - 1;
                     var posx = _this.math.catmullRomInterpolation(points.x, j/lessons.length);
                     var posy = _this.math.catmullRomInterpolation(points.y, j/lessons.length);
                     // starClone.push(createStars(currentLesson.stars, $.merge([posx], star_x), $.merge([posy], star_y)));
                     // log.debug(currentLesson.stars);
                     var starCloneTween = [];    
-
+                    log.debug(lessonTag[currentLesson.tag.toLowerCase()]*game.world.width);
                     for (var i = 0; i < star.length; i++) {
-                        log.debug("adding tween",star[i],"to",parseInt(game.camera.y));
-                        log.debug($.merge([posx], star_x), $.merge([posy], star_y));
+                        // setTimeout(function(){
+                            log.debug($.merge([posx], star_x), $.merge([posy], star_y));
 
-                        starClone[i] = stars.create(posx + star_x[i], posy + star_y[i], 'star');
-                        starClone[i].anchor.setTo(0.5, 0.5);
-                        log.debug(starClone[i]);
-                        starCloneTween[i] = {};
-                        // var starClone = createStars(currentLesson.stars, $.merge([posx], star_x), $.merge([posy], star_y));
-                        starCloneTween[i]["pos"] = game.add.tween(starClone[i]).to( { y: parseInt(game.camera.y)}, 500, Phaser.Easing.Linear.None);
-                        starCloneTween[i]["scale"] = game.add.tween(starClone[i].scale).to( { x: 6, y: 6 }, 500, Phaser.Easing.Linear.None);
-                        starCloneTween[i]["scale"].chain(starCloneTween[i]["pos"]);
-                        // starCloneTween[i].pos.repeat(10, 1000);
-                        // starCloneTween[i].scale.repeat(10, 1000);
+                            starClone[i] = stars.create(posx + star_x[i], posy + star_y[i], 'star_medium');
+                            starClone[i].anchor.setTo(0.5, 0.5);
+                            log.debug("adding tween",starClone[i],"to",parseInt(game.camera.y));
+                            log.debug(starClone[i]);
+                            starCloneTween[i] = {};
+                            // var starClone = createStars(currentLesson.stars, $.merge([posx], star_x), $.merge([posy], star_y));
+                            starCloneTween[i]["pos"] = game.add.tween(starClone[i]).to( { x: (lessonTag[currentLesson.tag.toLowerCase()]*game.width)/5, y: parseInt(game.camera.y)}, 1000, Phaser.Easing.Exponential.InOut);
+                            starCloneTween[i]["scale"] = game.add.tween(starClone[i].scale).from( { x: 0.1, y: 0.1 }, 800, Phaser.Easing.Bounce.Out,false,i*800);
+                            starCloneTween[i]["scalePos"] = game.add.tween(starClone[i]).to( { x: "+100", y: "-100" }, 800, Phaser.Easing.Cubic.Out,false,i*800);
+                            starCloneTween[i]["rotate"] = game.add.tween(starClone[i]).to( { angle: 450 }, 2600, Phaser.Easing.Quadratic.Out);
+                            starCloneTween[i].scale.chain(starCloneTween[i].pos);
+                            starCloneTween[i].scale.start();
+                            starCloneTween[i].scalePos.start();
+                            starCloneTween[i].rotate.start();
+                            // starCloneTween[i].pos.repeat(10, 1000);
+                            // starCloneTween[i].scale.repeat(10, 1000);    
+                        // },1000)
                     }
-                },1000);
+                },800);
             }
 
             animateStar();
