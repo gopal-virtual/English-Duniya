@@ -657,9 +657,9 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             function animateStar(){
                 setTimeout(function(){
                     if (!stateParams.activatedLesson && temp.activeLessonKey != temp.activatedLessonKey - 1) {
-                        return ;
                         log.debug("GUchaMI",temp.activeLessonKey);
                         log.debug("GUchaMI2",temp.activatedLessonKey);
+                        return ;
                     }
                     log.debug("GUchaMI",temp.activeLessonKey);
                     log.debug("GUchaMI2",temp.activatedLessonKey);
@@ -671,7 +671,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                         "grammar" : 3,
                         "lisetening" : 4
                     }
-                    var j =  temp.activatedLessonKey - 1;
+                    var j =  lessons.length - temp.activatedLessonKey - 1;
                     var posx = _this.math.catmullRomInterpolation(points.x, j/lessons.length);
                     var posy = _this.math.catmullRomInterpolation(points.y, j/lessons.length);
                     // starClone.push(createStars(currentLesson.stars, $.merge([posx], star_x), $.merge([posy], star_y)));
