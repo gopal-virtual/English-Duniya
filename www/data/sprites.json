@@ -1,0 +1,204 @@
+{
+	"sprites" : [{
+                "name" : "cactus_animation",
+                "region" : "desert",
+                "x" : 292,
+                "y" : 2265,
+                "scale" : 0.7,
+                "animation" : {
+                    "key" : "wind",
+                }
+            },{
+                "name" : "cactus_animation",
+                "region" : "desert",
+                "x" : 62,
+                "y" : 2165,
+                "scale" : 0.6,
+                "animation" : {
+                    "key" : "wind",
+                }
+            },{
+                "name" : "cactus_animation",
+                "region" : "desert",
+                "x" : 330,
+                "y" : 1585,
+                "scale" : 0.6,
+                "animation" : {
+                    "key" : "wind",
+                }
+            },{
+                "name" : "cactus_animation",
+                "region" : "desert",
+                "x" : 334,
+                "y" : 1245,
+                "scale" : 0.6,
+                "animation" : {
+                    "key" : "wind",
+                }
+            },{
+                "name" : "cactus_animation",
+                "region" : "desert",
+                "x" : 36,
+                "y" : 1265,
+                "scale" : 0.6,
+                "animation" : {
+                    "key" : "wind",
+                }
+            },{
+                "name" : "cactus_animation",
+                "region" : "desert",
+                "x" : 92,
+                "y" : 822,
+                "scale" : 0.6,
+                "animation" : {
+                    "key" : "wind",
+                }
+            },{
+                "name" : "cactus_animation",
+                "region" : "desert",
+                "x" : 310,
+                "y" : 551,
+                "scale" : 0.6,
+                "animation" : {
+                    "key" : "wind",
+                }
+            },{
+                "name" : "cactus_animation",
+                "region" : "desert",
+                "x" : 70,
+                "y" : 405,
+                "scale" : 0.6,
+                "animation" : {
+                    "key" : "wind",
+                }
+            },{
+                "name" : "camel_animation",
+                "region" : "desert",
+                "x" : 80,
+                "y" : 1945,
+                "scale" : 0.6,
+                "angle" : -14,
+                "animation" : {
+                    "key" : "wind",
+                }
+            },{
+                "name" : "plant_animation",
+                "region" : "desert",
+                "x" : 54,
+                "y" : 1540,
+                "scale" : 0.5,
+                "animation" : {
+                    "key" : "wave",
+                }
+            },{
+                "name" : "plant_animation",
+                "region" : "desert",
+                "x" : 330,
+                "y" : 20,
+                "scale" : 0.3,
+                "animation" : {
+                    "key" : "wave",
+                }
+            },{
+                "name" : "plant_animation",
+                "region" : "desert",
+                "x" : 230,
+                "y" : 110,
+                "scale" : 0.3,
+                "animation" : {
+                    "key" : "wave",
+                }
+            },{
+                "name" : "snow_cactus",
+                "region" : "tundra",
+                "x" : 75,
+                "y" : 2456,
+                "scale" : 0.7,
+            },{
+                "name" : "tent_animation",
+                "region" : "desert",
+                "x" : 85,
+                "y" : 168,
+                "scale" : 0.5,
+                "mirror" : true,
+                "animation" : {
+                    "key" : "shake"
+                }
+            },{
+                "name" : "scorpion_animation",
+                "region" : "desert",
+                "x" : 300,
+                "y" : 805,
+                "animation" : {
+                    "key" : "clap"
+                }
+            },{
+                "name" : "fire_animation",
+                "region" : "desert",
+                "x" : 185,
+                "y" : 198,
+                "animation" : {
+                    "key" : "burn"
+                }
+            },{
+                "name" : "two_stone",
+                "region" : "desert",
+                "x" : 350,
+                "y" : 62,
+                "scale" : 0.6,
+            },{
+                "name" : "two_stone",
+                "region" : "desert",
+                "x" : 317,
+                "y" : 99,
+                "scale" : 0.5,
+            },{
+                "name" : "two_stone",
+                "region" : "desert",
+                "x" : 280,
+                "y" : 127,
+                "scale" : 0.5,
+            },{
+                "name" : "two_stone",
+                "region" : "desert",
+                "x" : 25,
+                "y" : 37,
+                "scale" : 0.5,
+            },{
+                "name" : "penguin_animation",
+                "region" : "tundra",
+                "x" : 80,
+                "y" : 1553,
+                "scale" : 1,
+                "animation" : {
+                    "key" : "flap"
+                }
+            },{
+                "name" : "penguin_animation",
+                "region" : "tundra",
+                "x" : 200,
+                "y" : 776,
+                "scale" : 0.5,
+                "mirror" : true,
+                "animation" : {
+                    "key" : "flap"
+                }
+            },{
+                "name" : "seal_animation",
+                "region" : "tundra",
+                "x" : 306,
+                "y" : 2049,
+                "animation" : {
+                    "key" : "oink"
+                }
+            },{
+                "name" : "whale_animation",
+                "region" : "tundra",
+                "x" : 172,
+                "y" : 533,
+                "scale" : 0.7,
+                "animation" : {
+                    "key" : "splash"
+                }
+            }]
+}

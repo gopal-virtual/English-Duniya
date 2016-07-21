@@ -1,7 +1,7 @@
 <ion-view class="bg-pink" ng-init="show_password = false">
   <ion-content class="animation-delay animation-fade-in-from-top">
 
-    <div ng-if="authCtrl.network.isOnline()">
+    <div >
 
       <div style="padding-bottom:0px;" class="row">
         <div class="col text-center" style="padding-bottom:0px;"><img src="img/assets/logo.png" alt="" height="121px" width="auto"></div>
@@ -22,7 +22,7 @@
         </div>
 
       </div>
-      
+
       <div class="row no-margin no-padding">
         <div class="col no-margin no-padding">
             <div class="margin-x-30 divider">
@@ -30,10 +30,10 @@
             <h4 class="text-center no-margin no-padding">
               <span class="bg-pink">&nbsp;&nbsp;or&nbsp;&nbsp;</span>
             </h4>
-        </div>  
-        
+        </div>
+
       </div>
-      
+
       <div class="row padding-x-20 center">
         <form name="loginForm" class="col" ng-submit="authCtrl.closeKeyboard(); authCtrl.signin('login',loginForm)">
 
@@ -65,18 +65,7 @@
     </div>
 
 
-    <div ng-if="!authCtrl.network.isOnline()">
-      <div class="row">
-        <div class="col">
-          You are offline
-        </div>
-      </div>
-      <div class="row">
-        <div class="col">
-          <button class="button button-balanced button-block" ng-click="authCtrl.exitApp()">Exit App</button>
-        </div>
-      </div>
-    </div>
+
 
   </ion-content>
 </ion-view>

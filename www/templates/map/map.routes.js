@@ -26,8 +26,10 @@
             var d = new Date();
             $log.debug("HERE")
             return data.getLessonsList(Auth.getLocalProfile().grade).then(function(lessons){
+              $log.debug(new Date()- d,"secornds lessonlocked 1")
 
               return extendLesson.getLesson(lessons,[]).then(function(result){
+                $log.debug(new Date()- d,"secornds lessonlocked")
                   return result;
               });
             })
@@ -36,7 +38,9 @@
             return [];
         }],
         skills : ['Rest', '$log','network','data','Auth', function(Rest, $log, network,data,Auth){
+                var d = new Date();
           return data.getSkills({'userId':Auth.getProfileId()}).then(function(response){
+            $log.debug(new Date()- d,"secornds skills")
 
             return response;
           })

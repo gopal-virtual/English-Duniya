@@ -5,16 +5,19 @@
     .module('zaya-map')
     .controller('mapController', mapController);
 
-  mapController.$inject = ['$scope', '$rootScope', '$log', '$ionicPopup','$ionicModal', '$state', 'lessons', 'scores', 'skills', 'extendLesson', 'Rest', 'CONSTANT', '$sce', '$ionicLoading', '$timeout', '$ionicBackdrop', 'orientation', 'Auth', 'lessonutils', 'audio', 'data', 'ml', 'lessonLocked', '$ionicPlatform','demo'];
+  mapController.$inject = ['$scope', '$rootScope', '$log', '$ionicPopup','$ionicModal', '$state', 'lessons', 'scores', 'skills', 'extendLesson', 'Rest', 'CONSTANT', '$sce', '$ionicLoading', '$timeout', '$ionicBackdrop', 'orientation', 'Auth', 'lessonutils', 'audio', 'data', 'ml', 'lessonLocked', '$ionicPlatform','demo', '$controller','settings'];
 
-  function mapController($scope, $rootScope, $log, $ionicPopup, $ionicModal, $state, lessons, scores, skills, extendLesson, Rest, CONSTANT, $sce, $ionicLoading, $timeout, $ionicBackdrop, orientation, Auth, lessonutils, audio, data, ml, lessonLocked, $ionicPlatform, demoFactory) {
+  function mapController($scope, $rootScope, $log, $ionicPopup, $ionicModal, $state, lessons, scores, skills, extendLesson, Rest, CONSTANT, $sce, $ionicLoading, $timeout, $ionicBackdrop, orientation, Auth, lessonutils, audio, data, ml, lessonLocked, $ionicPlatform, demoFactory, $controller, settings) {
 
     $scope.audio = audio;
+    $log.debug('settings', settings);
+    $scope.settings = settings;
     $scope.orientation = orientation;
     var mapCtrl = this;
     var lessonList = CONSTANT.LOCK ? lessonLocked : lessons;
     // $state.current.data && lessonList.unshift($state.current.data.litmus);
     mapCtrl.lessons = lessonList;
+    // mapCtrl.userCtrl = $controller('userCtrl');
     // mapCtrl.resetNode = resetNode;
     $scope.lessonutils = lessonutils;
     mapCtrl.backdrop = false;
@@ -132,6 +135,22 @@
             $scope.demo = demo;
         });
 
+        $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.settings' + CONSTANT.VIEW, {
+          scope: $scope,
+          animation: 'slide-in-up',
+            hardwareBackButtonClose: true
+        }).then(function(settings) {
+          $scope.settingsModal = settings;
+        });
+
+        // function openSettings() {
+        //   $scope.settings.show();
+        // }
+        //
+        // function closeSettings() {
+        //   $scope.settings.hide();
+        // }
+
         // $timeout(function(){
         //     mapCtrl.openDemo();
         // },2000)
@@ -205,7 +224,7 @@
                   $scope.demo.show().then(function(){
                     $log.debug('aaaaaa');
 
-                      audio.play('demo-1');
+                      audio['demo-1'].play();
                       demoFactory.setStep(2)
                   });
               })

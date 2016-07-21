@@ -9,11 +9,9 @@
   function QuizController(quiz, widgetParser, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition, $timeout, $window, mediaManager, $cordovaFileTransfer, $cordovaFile, $interval, $q, $ImageCacheFactory, ml, data, lessonutils, $ionicPlatform, nzTour, demoFactory) {
     $log.debug("Inside quiz controller",$stateParams)
     var quizCtrl = this;
-
     //bind quiz resolved to controller
     quizCtrl.quiz = quiz;
     $log.debug('unshifted quiz', quiz);
-
     //report
     quizCtrl.report = {};
     quizCtrl.submitReport = submitReport;
@@ -78,7 +76,7 @@
     quizCtrl.stopTimer = stopTimer;
     quizCtrl.startTimer = startTimer;
 
-
+    quizCtrl.isScroll = isScroll;
     //helper functions
     quizCtrl.getQuestionType = getQuestionType;
 
@@ -99,6 +97,7 @@
     $scope.lessonutils = lessonutils;
     $scope.selectedNode = lessonutils.getLocalLesson();
     $scope.modal = {};
+    quizCtrl.closeModalCallback = closeModalCallback;
 
 
     $scope.groups = [];
@@ -112,7 +111,9 @@
       }
     }
 
+    function isScroll(id){
 
+    }
     function stopTimer() {
       $interval.cancel(quizCtrl.interval);
     }
@@ -249,7 +250,8 @@
 
           $ionicModal.fromTemplateUrl(CONSTANT.PATH.QUIZ + '/practice.feedback' + CONSTANT.VIEW, {
             scope: $scope,
-            animation: 'slide-in-down'
+            animation: 'slide-in-down',
+            hardwareBackButtonClose: false
           }).then(function(modal) {
             $scope.modal = modal;
           });
@@ -257,19 +259,18 @@
             $scope.modal.show();
             $timeout(function() {
               if ($scope.modal.isShown()) {
-                $scope.closeModal();
+                
+                $scope.closeModal(quizCtrl.closeModalCallback);
               }
             }, 2000);
           };
-          $scope.closeModal = function() {
+          $scope.closeModal = function(callback) {
             quizCtrl.canRemoveFeedback = false;
             $scope.modal.hide().then(function() {
-              if (quizCtrl.currentIndex >= quizCtrl.quiz.objects.length - 1) {
-                quizCtrl.submitQuiz('practice');
-              } else {
-                $ionicSlideBoxDelegate.slide(quizCtrl.getCurrentIndex() + 1);
-              }
-              quizCtrl.canRemoveFeedback = true;
+                if(callback){
+                    callback();
+                }
+                quizCtrl.canRemoveFeedback = true;
             });
           };
         }
@@ -300,7 +301,13 @@
       }
 
     }
-
+    function closeModalCallback () {
+        if (quizCtrl.currentIndex >= quizCtrl.quiz.objects.length - 1) {
+          quizCtrl.submitQuiz('practice');
+        } else {
+          $ionicSlideBoxDelegate.slide(quizCtrl.getCurrentIndex() + 1);
+        }
+    }
     function parseHtml(index) {
       quizCtrl.quiz.objects[index].node.widgetHtml = quizCtrl.widgetParser.parseToDisplay(quizCtrl.quiz.objects[index].node.title, index, quizCtrl.quiz);
 
@@ -631,8 +638,9 @@
     $ionicPlatform.onHardwareBackButton(function(event) {
         if ($state.is('quiz.questions')) {
           try {
-              if(!nzTour.current)
-                $scope.showNodeMenu();
+              if(!nzTour.current && !$scope.modal.isShown()){
+                  $scope.showNodeMenu();
+              }
           } catch (error) {
             $log.debug(error);
           }
@@ -718,7 +726,8 @@
       if(result){
         $timeout(function(){
           $log.debug($scope.demo.tourFlag);
-          audio.play('demo-quiz-1')
+          audio['demo-4'].stop();
+          audio['demo-quiz-1'].play();
           nzTour.start($scope.tour);
           demoFactory.setStep(5);
         });
@@ -728,9 +737,11 @@
     function tourNextStep() {
       if (nzTour.current) {
         if(nzTour.current.step === 0){
-          audio.play('demo-quiz-2')
+            audio['demo-quiz-1'].stop();
+            audio['demo-quiz-2'].play();
         }else if(nzTour.current.step === 1){
-          audio.play('demo-quiz-3')
+            audio['demo-quiz-2'].stop();
+            audio['demo-quiz-3'].play();
         }
         nzTour.next();
       }

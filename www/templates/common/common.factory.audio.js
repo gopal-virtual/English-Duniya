@@ -5,8 +5,25 @@
     .module('common')
     .factory('audio', audio)
 
-  function audio($cordovaNativeAudio, $log) {
+  function audio($cordovaNativeAudio, $log, ngAudio) {
+
     return {
+        // 'background' : ngAudio.load("sound/background.wav"),
+        'demo-1' : ngAudio.load('sound/demo-1.mp3'),
+        'demo-2' : ngAudio.load('sound/demo-2.mp3'),
+        'demo-3' : ngAudio.load('sound/demo-3.mp3'),
+        'demo-4' : ngAudio.load('sound/demo-4.mp3'),
+        'demo-quiz-1' : ngAudio.load('sound/demo-quiz-1.mp3'),
+        'demo-quiz-2' : ngAudio.load('sound/demo-quiz-2.mp3'),
+        'demo-quiz-3' : ngAudio.load('sound/demo-quiz-3.mp3'),
+        // 'water-drop': ngAudio.load( 'sound/water-drop.mp3'),
+        // 'correct': ngAudio.load( 'sound/correct.mp3'),
+        // 'wrong': ngAudio.load( 'sound/wrong.wav'),
+        // 'one_star': ngAudio.load( 'sound/one_star.mp3'),
+        // 'two_star': ngAudio.load( 'sound/two_star.mp3'),
+        // 'three_star': ngAudio.load( 'sound/three_star.mp3'),
+        // 'locked': ngAudio.load( 'sound/locked.mp3'),
+        // 'press': ngAudio.load( 'sound/press.mp3'),
       play: function(sound) {
         try {
           $log.debug("audio play",sound)
@@ -28,15 +45,7 @@
       stop: function(sound) {
         $log.debug("Stop triggered",sound)
         try {
-
-          $cordovaNativeAudio.stop(sound).then(function(s){
-            $log.debug("Success sound stop",s)
-          })
-          .catch(function(e){
-            $log.debug("error sound tope",e)
-          })
-          ;
-          $log.debug('sound stopped');
+          $cordovaNativeAudio.stop(sound);
         } catch (error) {
           $log.debug(error);
         }

@@ -5,39 +5,31 @@
     .module('zaya-user')
     .controller('userController', userController);
 
-  userController.$inject = ['CONSTANT','$scope', '$state', 'Auth', 'Rest', '$log', '$ionicPopup','$ionicPlatform', '$ionicLoading','$ionicModal', 'formHelper','network','data'];
+  userController.$inject = ['CONSTANT', '$scope', '$state', 'Auth', 'Rest', '$log', '$ionicPopup', '$ionicPlatform', '$ionicLoading', '$ionicModal', 'formHelper', 'network', 'data'];
 
-  function userController(CONSTANT,$scope, $state, Auth, Rest, $log, $ionicPopup,$ionicPlatform, $ionicLoading, $ionicModal, formHelper, network, dataService) {
+  function userController(CONSTANT, $scope, $state, Auth, Rest, $log, $ionicPopup, $ionicPlatform, $ionicLoading, $ionicModal, formHelper, network, dataService) {
     var userCtrl = this;
-    userCtrl.createProfile = createProfile;
-    userCtrl.updateProfile = updateProfile;
-    userCtrl.logout = logout;
     userCtrl.calcAge = calcAge;
     userCtrl.closeKeyboard = closeKeyboard;
+    userCtrl.createProfile = createProfile;
     userCtrl.validatePersonaliseForm = validatePersonaliseForm;
     userCtrl.showError = showError;
     userCtrl.convertDate = convertDate;
     userCtrl.tabIndex = 0;
-    userCtrl.openSettings = openSettings;
-    userCtrl.closeSettings = closeSettings;
-    userCtrl.updateProfile = updateProfile;
-    userCtrl.user = JSON.parse(localStorage.user_details) || {};
-    userCtrl.user['name'] = userCtrl.user.first_name + ' ' + userCtrl.user.last_name;
     userCtrl.personaliseFormValidations = $state.current.data.personaliseFormValidations;
     userCtrl.skills = $state.current.data.skills;
-    userCtrl.splitName = splitName;
     userCtrl.network = network;
     userCtrl.goToMap = goToMap;
 
-    function goToMap(){
-        $ionicLoading.show({
-            hideOnStateChange: true
-        })
-        $state.go('map.navigate',{})
+    function goToMap() {
+      $ionicLoading.show({
+        hideOnStateChange: true
+      })
+      $state.go('map.navigate', {})
     }
 
     $ionicPlatform.registerBackButtonAction(function(event) {
-        userCtrl.goToMap();
+      userCtrl.goToMap();
     }, 101);
 
     function calcAge(dateString) {
@@ -174,25 +166,38 @@
       }
     }
 
-    $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.settings' + CONSTANT.VIEW, {
-      scope: $scope,
-      animation: 'slide-in-up',
-        hardwareBackButtonClose: true
-    }).then(function(settings) {
-      $scope.settings = settings;
-    });
 
-    function splitName(){
-        userCtrl.user.first_name = userCtrl.user.name.substr(0, userCtrl.user.name.indexOf(" "));
-        userCtrl.user.last_name = userCtrl.user.name.substr(userCtrl.user.name.indexOf(" ")+1);
-    }
-
-    function updateProfile(userid, params) {
-        $ionicLoading.show()
-      Rest.one('users', userid).patch(params).then(function(response) {
-          $ionicLoading.hide();
-      }).catch();
-    }
-
+    // function createProfile(formData) {
+    //   $log.debug(formData)
+    //   $ionicLoading.show({
+    //     noBackdrop: false,
+    //     hideOnStateChange: true
+    //   });
+    //   formHelper.validateForm(formData, userCtrl.personaliseFormValidations)
+    //     .then(function(data) {
+    //       return Rest.all('profiles').post(data);
+    //     })
+    //     .then(function(response) {
+    //       return Auth.getUser();
+    //     })
+    //     .then(function(response) {
+    //       return Auth.getProfile();
+    //     })
+    //     .then(function() {
+    //       return dataService.putUserifNotExist({
+    //         'userId': Auth.getProfileId()
+    //       })
+    //     })
+    //     .then(function() {
+    //       $state.go('map.navigate', {});
+    //     })
+    //     .catch(function(error) {
+    //       $ionicPopup.alert({
+    //         title: 'Could not make your profile',
+    //         template: error || 'Please try again'
+    //       });
+    //       $ionicLoading.hide();
+    //     })
+    // }
   }
 })();

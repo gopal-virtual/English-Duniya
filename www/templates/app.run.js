@@ -4,7 +4,7 @@
     .module('zaya')
     .run(runConfig);
 
-  function runConfig($ionicPlatform, $rootScope, $timeout, $log, $state, $http, $cookies, Auth, $window, $cordovaFile, data, demo, $ionicPopup) {
+  function runConfig($ionicPlatform, $rootScope, $timeout, $log, $state, $http, $cookies, Auth, $window, $cordovaFile, data, demo, audio, $ionicPopup) {
 
 
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
@@ -24,7 +24,7 @@
       if (Auth.isAuthorised() && !Auth.isVerified() && toState.name != 'auth.verify.phone' && toState.name != 'auth.forgot_verify_otp' && toState.name != 'auth.change_password') {
         $log.debug("User account not verified");
         event.preventDefault();
-        localStorage.clear();
+        Auth.cleanLocalStorage();
         $state.go('auth.signin');
       }
 
@@ -140,18 +140,10 @@
         $log.debug(e);
       });
 
-      //   document.addEventListener("pause", function(){
-      //     $log.debug("paused");
-      //     try{
-      //       var video = document.querySelector('video');
-      //       if(!video.paused){
-      //         video.pause();
-      //       }
-      //     }
-      //     catch(e){
-      //       $log.debug(e);
-      //     }
-      //   }, false);
+        document.addEventListener("pause", function(){
+        //   $log.debug("paused");
+          audio.stop('background');
+        }, false);
       // sms watch
       //   try{
       //     SMS && SMS.startWatch(function () {

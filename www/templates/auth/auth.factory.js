@@ -78,14 +78,15 @@
     }
 
     function clean(success) {
-      localStorage.clear();
+        Auth.cleanLocalStorage();
       if (success)
         success();
     }
 
     function cleanLocalStorage() {
-      $log.debug("ok");
-      localStorage.clear();
+        var demo_flag = localStorage.getItem('demo_flag');
+        localStorage.clear();
+        localStorage.setItem('demo_flag',demo_flag);
     }
 
     function signup(user_credentials, success, failure) {
@@ -190,12 +191,18 @@
 
     function getProfile() {
       var d = $q.defer();
-      Rest.one('profiles', JSON.parse(localStorage.user_details).profile).get().then(function(profile) {
-        localStorage.setItem('profile', JSON.stringify(profile));
-        d.resolve(profile);
-      }, function(response) {
-        d.reject(response);
-      });
+      if(JSON.parse(localStorage.user_details).profile)
+      {
+        Rest.one('profiles', JSON.parse(localStorage.user_details).profile).get().then(function(profile) {
+          localStorage.setItem('profile', JSON.stringify(profile));
+          d.resolve(profile);
+        }, function(response) {
+          d.reject(response);
+        });
+      }
+      else{
+        d.reject({message:'no_profile'})
+      }
       return d.promise;
     }
 
@@ -211,10 +218,11 @@
     function getOTPFromSMS(message) {
       var d = $q.defer()
       var string = message.data.body;
-      if (message.data.address == '+12023353814' || message.data.address.indexOf('044')) {
-        var e_position = string.indexOf("Enter");
-        var o_position = string.indexOf("on");
-        var otp = (string.substring(e_position + 6, o_position - 1));
+      // if (message.data.address == '+12023353814' || message.data.address.indexOf('044')) {
+        if(string.indexOf("ED") >= 0){
+        var start_position = string.indexOf("ED-") + 3;
+        var end_position = string.indexOf("is") - 1;
+        var otp = string.substring(start_position, end_position);
         if (!isNaN(otp)) {
           d.resolve(otp)
         } else {

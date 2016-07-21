@@ -19,8 +19,9 @@
           params: {
             video: null,
           },
-          onEnter: ['orientation', function(orientation) {
+          onEnter: ['orientation','audio', function(orientation, audio) {
             orientation.setLandscape();
+            audio['demo-2'].stop();
           }],
           views : {
               'state-content' : {
