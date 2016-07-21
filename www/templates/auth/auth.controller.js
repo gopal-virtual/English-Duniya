@@ -165,9 +165,9 @@
         .then(function(show){
           $log.debug("demoFactory",show)
           if(!show){
-            !localStorage.demo_flag && localStorage.setItem('demo_flag',5);
+            !localStorage.getItem('demo_flag') && localStorage.setItem('demo_flag',5);
           }else{
-            !localStorage.demo_flag && localStorage.setItem('demo_flag',1);
+            !localStorage.getItem('demo_flag') && localStorage.setItem('demo_flag',1);
           }
           $state.go('map.navigate', {});
         })

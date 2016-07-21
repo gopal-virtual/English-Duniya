@@ -84,9 +84,7 @@
     }
 
     function cleanLocalStorage() {
-        var demo_flag = localStorage.getItem('demo_flag');
         localStorage.clear();
-        localStorage.setItem('demo_flag',demo_flag);
     }
 
     function signup(user_credentials, success, failure) {

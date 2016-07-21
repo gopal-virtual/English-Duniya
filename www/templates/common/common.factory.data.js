@@ -20,8 +20,9 @@
     var diagLitmusMappingDB = pouchDB('diagLitmusMapping');
     var kmapsJSONDB = pouchDB('kmapsJSON');
     var dqJSONDB = pouchDB('dqJSON');
+    var lessonDB = null;
     if(Auth.hasProfile()){
-      var lessonDB = pouchDB('lessonsGrade'+Auth.getLocalProfile().grade,{
+      lessonDB = pouchDB('lessonsGrade'+Auth.getLocalProfile().grade,{
       adapter : 'websql'
     });
     }
@@ -272,6 +273,10 @@
       //     }
       //   }
       // };
+      lessonDB = pouchDB('lessonsGrade'+Auth.getLocalProfile().grade,{
+      adapter : 'websql'
+      });
+
       return lessonDB.get('_local/preloaded').then(function(doc) {
 
       }).catch(function(err) {
