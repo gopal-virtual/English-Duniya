@@ -163,6 +163,7 @@ window.createGame = function(scope, lessons, audio, injector, log) {
                 'y': [116,187,252,278,341,415,487,531,563,620,684,712,739,804,846,855,867,919,988,1036,1075,1116,1169,1240,1277,1295,1316,1372,1445,1507,1546,1569,1611,1665,1686,1702,1742,1807,1818,1815,1839,1913,1986,2041,2082,2143,2217,2292,2364,2433,2500,2567,2638,2712,2787,2850,2853,2848,2910,2975,3037,3103,3173,3248,3318,3390,3460,3527,3576,3620,3678,3730,3747,3768,3829,3887,3949,4018,4033,4033,4076,4099,4107,4121,4179,4217,4220,4231,4293,4334,4370,4410,4469,4505,4529,4557,4621,4642,4631,4651,4716,4756,4764,4768,4792,4843,4889,4950,5023,5089,5161,5216,5249,5312,5374,5440,5513,5576,5645,5686,5725,5771,5826,5833,5851,5920,5986,6054,6127,6196,6251,6318,6380,6448,6522,6594,6660,6733,6808,6882,6955,7029,7102,7162,7211,7279,7350,7413,7474,7541,7607,7657,7702,7764,7831,7886,7953,8022,8093,8165,8239,8314,8382,8452,8512,8586,8655,8720,8791,8848,8908,8961,8955,8989,9028,9059,9124,9174,9201,9267,9325,9399,9474,9549,9624,9699,9774,9849,9924,9999]
             };
 
+
             // var gameSprites =  game.cache.getJSON('gamesprites');
             var gameSprites = [{
                 "name" : "cactus_animation",
@@ -669,13 +670,14 @@ window.createGame = function(scope, lessons, audio, injector, log) {
                     return ''
                 }
             };
+
             // Place nodes
-            for (var j = 0.95, i = lessons.length - 1, nodeCount = 1 / (lessons.length); i >= 0; j -= nodeCount, i--) {
+            for (var j = 0, i = lessons.length - 1, distance = 1 / (lessons.length); i >= 0; j += distance, i--) {
                 var currentLesson = lessons[i];
                 var locked = currentLesson.locked ? '-locked' : '';
                 var type = lessonType(currentLesson, i) == '' ? '' : '-' + lessonType(currentLesson, i);
-                var posx = this.math.catmullRomInterpolation(points.x, 1-j);
-                var posy = this.math.catmullRomInterpolation(points.y, 1-j);
+                var posx = this.math.catmullRomInterpolation(points.x, j);
+                var posy = this.math.catmullRomInterpolation(points.y, j);
                 var node = this.game.add.button(posx, posy, 'node' + type + locked);
 
 
