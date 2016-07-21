@@ -656,13 +656,23 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
 
             var _this = this;
             var starClone = [];
+
+            // function destroySprite(sprite){
+            //     sprite.destroy();
+            // }
+
+            log.debug("oldactivatedLesson",temp.activatedLessonKey);
+            // log.debug("oldactiveLesson",temp.activeLessonKey);
+            
+            temp.activatedLessonKey = 9;
+            temp.activeLessonKey = 10;
+
+            log.debug("activatedLesson",temp.activatedLessonKey);
+            log.debug("activeLesson",temp.activeLessonKey);
+
+
             function animateStar(){
                 setTimeout(function(){
-                    if (!stateParams.activatedLesson && temp.activeLessonKey != temp.activatedLessonKey - 1) {
-                        // log.debug("GUchaMI",temp.activeLessonKey);
-                        // log.debug("GUchaMI2",temp.activatedLessonKey);
-                        return ;
-                    }
                     // log.debug("GUchaMI",temp.activeLessonKey);
                     // log.debug("GUchaMI2",temp.activatedLessonKey);
 
@@ -680,34 +690,45 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                     // log.debug(currentLesson.stars);
                     // log.debug(lessons[temp.activatedLessonKey].stars);
                     // log.debug(temp.activeLesson);
+
+
                     var starCloneTween = [];    
                     // log.debug(lessonTag[lessons[j].tag.toLowerCase()]*game.world.width);
                     for (var i = 0; i < lessons[temp.activatedLessonKey].stars; i++) {
                         // setTimeout(function(){
                             log.debug($.merge([posx], star_x), $.merge([posy], star_y));
 
-                            starClone[i] = stars.create(posx + star_x[i], posy + star_y[i], 'star_medium');
+                            starClone[i] = groups.nonRegion.starClone.create(posx + star_x[i], posy + star_y[i], 'star_medium');
                             starClone[i].anchor.setTo(0.5, 0.5);
                             log.debug("adding tween",starClone[i],"to",parseInt(game.camera.y));
                             log.debug(starClone[i]);
                             starCloneTween[i] = {};
                             // var starClone = createStars(currentLesson.stars, $.merge([posx], star_x), $.merge([posy], star_y));
-                            starCloneTween[i]["pos"] = game.add.tween(starClone[i]).to( { x: (lessonTag[stateParams.activatedLesson.node.tag.toLowerCase()]*game.width)/5, y: parseInt(game.camera.y)}, 1000, Phaser.Easing.Exponential.InOut);
+                            starCloneTween[i]["pos"] = game.add.tween(starClone[i]).to( { x: (lessonTag[lessons[temp.activatedLessonKey].tag.toLowerCase()]*game.width)/5, y: parseInt(game.camera.y)}, 1000, Phaser.Easing.Exponential.InOut);
                             starCloneTween[i]["scale"] = game.add.tween(starClone[i].scale).from( { x: 0.1, y: 0.1 }, 800, Phaser.Easing.Bounce.Out,false,i*800);
-                            starCloneTween[i]["scalePos"] = game.add.tween(starClone[i]).to( { x: "+100", y: "-100" }, 800, Phaser.Easing.Cubic.Out,false,i*800);
-                            starCloneTween[i]["rotate"] = game.add.tween(starClone[i]).to( { angle: 450 }, 2600, Phaser.Easing.Quadratic.Out);
+                            starCloneTween[i]["scalePos"] = game.add.tween(starClone[i]).to( { x: lessonTag[lessons[temp.activatedLessonKey].tag.toLowerCase()] > 2?"-100":"+100", y: "-100" }, 800, Phaser.Easing.Cubic.Out,false,i*800);
+                            starCloneTween[i]["rotate"] = game.add.tween(starClone[i]).to( { angle: 450 }, 3000, Phaser.Easing.Quadratic.Out);
                             starCloneTween[i].scale.chain(starCloneTween[i].pos);
                             starCloneTween[i].scale.start();
+                            audio.play('star_hud');
                             starCloneTween[i].scalePos.start();
                             starCloneTween[i].rotate.start();
-                            // starCloneTween[i].pos.repeat(10, 1000);
-                            // starCloneTween[i].scale.repeat(10, 1000);    
-                        // },1000)
+                            log.debug(starCloneTween[i]);
+                            // function destroyStar() {
+                            //     groups.nonRegion.starClone.callAll('kill');
+                            // }
+                            // starCloneTween[i].rotate.onComplete.add(destroyStar,this);
+
                     }
                 },800);
             }
 
-            animateStar();
+            // if (stateParams.activatedLesson && temp.activeLessonKey == temp.activatedLessonKey - 1) {
+            if (true){
+                log.debug("Activating star animation");
+                animateStar();
+            }
+
             // for (var key in regionRange){
             //     if(regionRange[key].lowerLimit > game.camera.y && regionRange[key].upperLimit < game.camera.y ){
             //         var delGroup = region.slice();
