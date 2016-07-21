@@ -20,7 +20,12 @@
     var diagLitmusMappingDB = pouchDB('diagLitmusMapping');
     var kmapsJSONDB = pouchDB('kmapsJSON');
     var dqJSONDB = pouchDB('dqJSON');
-    var lessonDB = pouchDB('lessonDB');
+    if(Auth.hasProfile()){
+      var lessonDB = pouchDB('lessonsGrade'+Auth.getLocalProfile().grade,{
+      adapter : 'websql'
+    });
+    }
+
     var appDB = pouchDB('appDB');
     var resourceDB = pouchDB('resourceDB');
     var reportsDB = pouchDB('reportsDB');
@@ -257,33 +262,34 @@
     }
 
     function createIfNotExistsLessonDB() {
-      var ddoc = {
-        _id: '_design/index',
-        views: {
-          by_grade: {
-            map: function(doc) {
-              emit(doc.lesson.node.type.grade);
-            }.toString()
-          }
-        }
-      };
+      // var ddoc = {
+      //   _id: '_design/index',
+      //   views: {
+      //     by_grade: {
+      //       map: function(doc) {
+      //         emit(doc.lesson.node.type.grade);
+      //       }.toString()
+      //     }
+      //   }
+      // };
       return lessonDB.get('_local/preloaded').then(function(doc) {
 
       }).catch(function(err) {
         if (err.name !== 'not_found') {
           throw err;
         }
-        return lessonDB.load(CONSTANT.PATH.DATA + '/lessons.db').then(function() {
+        var filename = CONSTANT.PATH.DATA + '/lessonsGrade' + Auth.getLocalProfile().grade + '.db';
+        return lessonDB.load(filename).then(function() {
           return lessonDB.put({
             _id: '_local/preloaded'
           });
-        }).then(function() {
-          return lessonDB.put(ddoc).then(function() {
-            // success!
-          }).catch(function(err) {
-
-            // some error (maybe a 409, because it already exists?)
-          });
+        })
+        .then(function() {
+          $log.debug("lessons db created")
+          // return lessonDB.put(ddoc).then(function() {
+          // }).catch(function(err) {
+          //
+          // });
         });
       })
     }
@@ -424,23 +430,23 @@
     }
 
     function getLessonsList(grade) {
+      $log.debug("getting lessons")
       var start = new Date();
       var d = $q.defer();
-
-      lessonDB.query('index/by_grade', {
-          include_docs: true,
-          key: grade
-        }).then(function(data) {
-          var lessons = [];
-          for (var i = 0; i < data.rows.length; i++) {
-            data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key
-            lessons.push(data.rows[i].doc.lesson.node);
-          }
-          lessons = _.sortBy(lessons, 'key');
-          d.resolve(lessons)
+      lessonDB.allDocs({include_docs: true}).then(function(data) {
+            $log.debug("Time taken 1",new Date() - start, data)
+            var lessons = [];
+           for (var i = 0; i < data.rows.length; i++) {
+             data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key
+             lessons.push(data.rows[i].doc.lesson.node);
+           }
+           lessons = _.sortBy(lessons, 'key');
+           $log.debug("Time taken",new Date() - start)
+           d.resolve(lessons)
         })
         .catch(function(error) {
           d.reject(error)
+          $log.debug(error)
         })
       return d.promise;
     }

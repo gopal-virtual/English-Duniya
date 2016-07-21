@@ -138,6 +138,10 @@
           })
         })
         .then(function(){
+          return dataService.createIfNotExistsLessonDB()
+
+        })
+        .then(function(){
           return demoFactory.show()
         })
         .then(function(show){

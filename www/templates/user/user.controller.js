@@ -84,6 +84,10 @@
                 'userId': Auth.getProfileId()
             })
         })
+        .then(function(){
+          return dataService.createIfNotExistsLessonDB()
+
+        })
         .then(function() {
           $state.go('map.navigate', {});
         })
