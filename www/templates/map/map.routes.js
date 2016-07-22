@@ -63,6 +63,7 @@
               "locked": false
           },
       },
+      params: {"activatedLesson" : null},
         onEnter: ['$state', 'lessons', 'audio', '$ionicLoading', 'orientation','CONSTANT', function($state, lessons, audio, $ionicLoading, orientation, CONSTANT) {
           orientation.setPortrait();
           // $ionicLoading.show({

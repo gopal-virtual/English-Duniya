@@ -18,11 +18,13 @@
   -webkit-animation-duration: 300ms;
 }
 .animation-repeat-bounce {
-  -webkit-animation-name: repeat-bounce;
-  -webkit-animation-duration: 500ms;
-  animation-iteration-count: infinite;
-  animation-timing-function: ease-in-out;
-  -webkit-transform-origin: 50% 50%;
+  
+  -webkit-animation: repeat-bounce 500ms ease-in-out 0s infinite;
+  // -webkit-animation-name: repeat-bounce 500ms ease-in-out 0s infinite;
+  // -webkit-animation-duration: 500ms;
+  // animation-iteration-count: infinite;
+  // animation-timing-function: ease-in-out;
+  // -webkit-transform-origin: 50% 50%;
 }
 .animation-once-bounce {
   -webkit-animation-name: repeat-bounce;
@@ -242,9 +244,10 @@
   }
 }
 .animation-fade-bounce-from-top {
-  -webkit-animation-fill-mode: backwards;
-  -webkit-animation-name: fade-bounce-from-top;
-  -webkit-animation-duration: 1s;
+
+  // -webkit-animation-fill-mode: backwards;
+  -webkit-animation: fade-bounce-from-top 1s;
+  // -webkit-animation-duration: 1s;
 }
 @keyframes fade-bounce-from-top {
     0%{

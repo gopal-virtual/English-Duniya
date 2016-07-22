@@ -698,13 +698,14 @@
         $ionicLoading.show({
           hideOnStateChange: true
         })
-        $state.go('map.navigate', {});
+        $log.debug("SCOPE",$scope.selectedNode);
+        $state.go('map.navigate', {"activatedLesson" : $scope.selectedNode});
       } else {
         $scope.showNodeMenu();
       }
     }
 
-    // intro
+    // intronext
 
     $scope.tour = {
       config: {},

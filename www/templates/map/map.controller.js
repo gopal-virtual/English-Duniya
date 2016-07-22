@@ -5,14 +5,16 @@
     .module('zaya-map')
     .controller('mapController', mapController);
 
-  mapController.$inject = ['$scope', '$rootScope', '$log', '$ionicPopup','$ionicModal', '$state', 'lessons', 'scores', 'skills', 'extendLesson', 'Rest', 'CONSTANT', '$sce', '$ionicLoading', '$timeout', '$ionicBackdrop', 'orientation', 'Auth', 'lessonutils', 'audio', 'data', 'ml', 'lessonLocked', '$ionicPlatform','demo', '$controller','settings','mediaManager'];
+  mapController.$inject = ['$scope', '$rootScope', '$log', '$ionicPopup','$ionicModal', '$state', 'lessons', 'scores', 'skills', 'extendLesson', 'Rest', 'CONSTANT', '$sce', '$ionicLoading', '$timeout', '$ionicBackdrop', 'orientation', 'Auth', 'lessonutils', 'audio', 'data', 'ml', 'lessonLocked', '$ionicPlatform','demo', '$controller','settings','mediaManager','$stateParams'];
 
-  function mapController($scope, $rootScope, $log, $ionicPopup, $ionicModal, $state, lessons, scores, skills, extendLesson, Rest, CONSTANT, $sce, $ionicLoading, $timeout, $ionicBackdrop, orientation, Auth, lessonutils, audio, data, ml, lessonLocked, $ionicPlatform, demoFactory, $controller, settings, mediaManager) {
+  function mapController($scope, $rootScope, $log, $ionicPopup, $ionicModal, $state, lessons, scores, skills, extendLesson, Rest, CONSTANT, $sce, $ionicLoading, $timeout, $ionicBackdrop, orientation, Auth, lessonutils, audio, data, ml, lessonLocked, $ionicPlatform, demoFactory, $controller, settings, mediaManager, $stateParams) {
 
     $scope.audio = audio;
     $log.debug('settings', settings);
     $scope.settings = settings;
     $scope.orientation = orientation;
+    $scope.activatedLesson = $stateParams.activatedLesson;
+
     var mapCtrl = this;
     var lessonList = CONSTANT.LOCK ? lessonLocked : lessons;
     // $state.current.data && lessonList.unshift($state.current.data.litmus);
@@ -30,7 +32,12 @@
     mapCtrl.showResult = true;
     mapCtrl.getNodeProperty = getNodeProperty;
     mapCtrl.demoFactory = demoFactory;
-
+    mapCtrl.animateStar = {
+      "activeFlag" : -1,
+      // "resetFlag" : -1
+    }
+    mapCtrl.animateStar["resetColor"] = resetColor;
+    // $log.debug("selectedNode",selectedNode);
     function getNodeProperty(prop){
       if(prop == 'x')
         return localStorage.demo_node ? JSON.parse(localStorage.demo_node).x : 0;
@@ -46,7 +53,6 @@
         return localStorage.demo_node ? JSON.parse(localStorage.demo_node).type : 0;
     }
     // mapCtrl.animationShrink.shrink = animationShrink;
-
 
     // $ionicPlatform.registerBackButtonAction(function(event) {
     //   if (mapCtrl.animationExpand.expandContainer == 1) {
@@ -128,6 +134,28 @@
         });
       }
     })
+    
+    $log.info("MapControl Skill Set",mapCtrl.skillSet.length);
+    $scope.$on('animateStar', function(){
+      $log.info("Animate Star Event detected,");
+      for (var i = 0; i < mapCtrl.skillSet.length; i++) {
+        $log.info("Loop",i,"\nskillSetTag : ",mapCtrl.skillSet[i].title.toLowerCase(),"\nactivatedLessonTag : ",$stateParams.activatedLesson.node.tag.toLowerCase())
+        if (mapCtrl.skillSet[i].title.toLowerCase() == $stateParams.activatedLesson.node.tag.toLowerCase()) {
+          mapCtrl.animateStar.activeFlag = i;
+          // mapCtrl.animateStar.animateFlag = i;
+          break;
+        }
+      }
+    })
+
+    function resetColor(index) {
+      $log.debug("Resetting Color Flag ...",index);
+      if ($stateParams.activatedLesson && mapCtrl.skillSet[index].title.toLowerCase() == $stateParams.activatedLesson.node.tag.toLowerCase()) {
+        mapCtrl.animateStar.activeFlag = -2;
+        // mapCtrl.animateStar.animateFlag = -1;
+      }
+    }
+
 
     $scope.openNodeMenu = function() {
       $log.debug("Opening node menu")

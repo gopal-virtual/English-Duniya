@@ -1,14 +1,14 @@
 <div ng-class="{'animation-fade-out-from-top':!mapCtrl.showResult}" class="result animation-fade-in-from-top" style="-webkit-animation-delay : 800ms;">
-  <div ng-click="mapCtrl.backdrop=true;mapCtrl.showScore=$index" class="result-item bg-pale" ng-class="{'result-hack active' : mapCtrl.showScore==$index}" ng-repeat="skill in mapCtrl.skillSet" ng-hide="skill.title=='No tag'">
-      <div class="width-100 height-100 icon-fit-height icon-{{skill.title.toLowerCase()}} animation-fade-bounce-from-top" ng-class="{'active' : mapCtrl.showScore==$index}" style="-webkit-animation-delay : {{($index+5)*100}}ms;"></div>
-    <div  class="result-item-dropdown text-center" ng-class="{'animation-bounce-in-from-top':mapCtrl.showScore==$index}" ng-show="mapCtrl.showScore==$index">
-      <span class="color-green font-lg capitalize">{{skill.title == 'vocabulary' ? 'words' : skill.title}}</span>
-      <br>
-      <span class="font-md">Points {{skill.lesson_scores}}</span>
+    <div ng-click="mapCtrl.backdrop=true;mapCtrl.showScore=$index;mapCtrl.animateStar.resetColor($index)" class="result-item bg-pale" ng-class="{'result-hack active' : mapCtrl.showScore==$index}" ng-repeat="skill in mapCtrl.skillSet" ng-hide="skill.title=='No tag'">
+        <div class="width-100 height-100 icon-fit-height icon-{{skill.title.toLowerCase()}}" ng-class="{'active' : mapCtrl.showScore==$index || mapCtrl.animateStar.activeFlag == $index, 'animation-repeat-bounce' : mapCtrl.animateStar.activeFlag == $index, 'animation-fade-bounce-from-top' : mapCtrl.animateStar.activeFlag == -1}" style="-webkit-animation-delay : {{($index+5)*100}}ms;"></div>
+        <div class="result-item-dropdown text-center" ng-class="{'animation-bounce-in-from-top':mapCtrl.showScore==$index}" ng-show="mapCtrl.showScore==$index">
+            <span class="color-green font-lg capitalize">{{skill.title == 'vocabulary' ? 'words' : skill.title}}</span>
+            <br>
+            <span class="font-md">Points {{skill.lesson_scores}}</span>
+        </div>
     </div>
-  </div>
-  <!-- <a class="result-item bg-grey-light icon-profile icon-fit-height" ui-sref="user.profile"></a> -->
-  <a class="result-item bg-grey-light icon-settings icon-fit-height" ng-click="settingsModal.show()"></a>
+    <!-- <a class="result-item bg-grey-light icon-profile icon-fit-height" ui-sref="user.profile"></a> -->
+    <a class="result-item bg-grey-light icon-settings icon-fit-height" ng-click="settingsModal.show()"></a>
 </div>
 <div class="result-backdrop modal-dark" ng-show="mapCtrl.backdrop" ng-click="mapCtrl.backdrop=false;mapCtrl.showScore=-1"></div>
 <ion-view>
