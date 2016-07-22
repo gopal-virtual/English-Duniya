@@ -5,10 +5,10 @@
     .module('common')
     .factory('lessonutils', lessonutils);
 
-  lessonutils.$inject = ['$ionicLoading', '$state', '$stateParams', 'Rest', '$log', 'CONSTANT', '$timeout', '$sce', '$ionicPopup', 'data', 'mediaManager', 'demo', 'audio'];
+  lessonutils.$inject = ['$ionicLoading', '$state', '$stateParams', 'Rest', '$log', 'CONSTANT', '$timeout', '$sce', '$ionicPopup', 'data', 'mediaManager', 'demo', 'audio','ngAudio'];
 
   /* @ngInject */
-  function lessonutils($ionicLoading, $state, $stateParams, Rest, $log, CONSTANT, $timeout, $sce, $ionicPopup, data, mediaManager, demoFactory, audio) {
+  function lessonutils($ionicLoading, $state, $stateParams, Rest, $log, CONSTANT, $timeout, $sce, $ionicPopup, data, mediaManager, demoFactory, audio, ngAudio) {
     var utils = {
       leaveLesson: leaveLesson,
       getLesson: getLesson,
@@ -57,6 +57,7 @@
     }
 
     function leaveLesson() {
+      angular.element("#audioplayer")[0].pause();
       !$state.is('map.navigate') &&
         $ionicLoading.show({
           noBackdrop: false,
@@ -128,9 +129,7 @@
     }
 
     function playResource(resource, video, callback) {
-      $log.debug(callback)
-      $log.debug("Play audio")
-      audio.play('press');
+      angular.element("#audioplayer")[0].pause();
 
       if (utils.resourceType(resource) == 'practice' && (utils.demoShown && [2, 3].indexOf(utils.demoFactory.getStep()) >= 0)) {
         return;
@@ -242,7 +241,7 @@
       return $sce.trustAsResourceUrl(src);
     }
 
-    function playDemoAudio() {
+    function playDemoAudio(node) {
       $log.debug("Playing audio init")
       if (utils.demoShown) {
         $log.debug("Playing audio init 1")
@@ -251,12 +250,25 @@
           $log.debug("Playing audio init 2")
           audio['demo-1'].stop();
           audio['demo-2'].play();
-        }
-        if(utils.demoFactory.getStep() == 4){
+        }else if(utils.demoFactory.getStep() == 4){
             audio['demo-3'].stop();
           audio['demo-4'].play();
           $log.debug("Playing audio init 4")
 
+        }
+        else if(node.meta && node.meta.parsed_sound){
+          angular.element("#audioSource")[0].src = node.meta.parsed_sound;
+          angular.element("#audioplayer")[0].load();
+          angular.element("#audioplayer")[0].play();
+        }
+
+      }
+      else{
+        if(node.meta && node.meta.parsed_sound){
+          $log.debug(node.meta.intros.parsed_sound);
+          angular.element("#audioSource")[0].src = node.meta.parsed_sound;
+          angular.element("#audioplayer")[0].load();
+          angular.element("#audioplayer")[0].play();
         }
       }
     }

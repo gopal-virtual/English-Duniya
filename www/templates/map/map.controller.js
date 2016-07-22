@@ -5,9 +5,9 @@
     .module('zaya-map')
     .controller('mapController', mapController);
 
-  mapController.$inject = ['$scope', '$rootScope', '$log', '$ionicPopup','$ionicModal', '$state', 'lessons', 'scores', 'skills', 'extendLesson', 'Rest', 'CONSTANT', '$sce', '$ionicLoading', '$timeout', '$ionicBackdrop', 'orientation', 'Auth', 'lessonutils', 'audio', 'data', 'ml', 'lessonLocked', '$ionicPlatform','demo', '$controller','settings'];
+  mapController.$inject = ['$scope', '$rootScope', '$log', '$ionicPopup','$ionicModal', '$state', 'lessons', 'scores', 'skills', 'extendLesson', 'Rest', 'CONSTANT', '$sce', '$ionicLoading', '$timeout', '$ionicBackdrop', 'orientation', 'Auth', 'lessonutils', 'audio', 'data', 'ml', 'lessonLocked', '$ionicPlatform','demo', '$controller','settings','mediaManager'];
 
-  function mapController($scope, $rootScope, $log, $ionicPopup, $ionicModal, $state, lessons, scores, skills, extendLesson, Rest, CONSTANT, $sce, $ionicLoading, $timeout, $ionicBackdrop, orientation, Auth, lessonutils, audio, data, ml, lessonLocked, $ionicPlatform, demoFactory, $controller, settings) {
+  function mapController($scope, $rootScope, $log, $ionicPopup, $ionicModal, $state, lessons, scores, skills, extendLesson, Rest, CONSTANT, $sce, $ionicLoading, $timeout, $ionicBackdrop, orientation, Auth, lessonutils, audio, data, ml, lessonLocked, $ionicPlatform, demoFactory, $controller, settings, mediaManager) {
 
     $scope.audio = audio;
     $log.debug('settings', settings);
@@ -74,7 +74,6 @@
 
 
     $scope.$on('openNode', function(event, node, currentPos) {
-      lessonutils.playDemoAudio();
       // audio.stop('demo-1')
     //   $scope.demo.isShown() && $scope.demo.hide();
       if(currentPos)
@@ -87,16 +86,51 @@
         });
       } else {
         $scope.lessonutils.getLesson(node.id, $scope, function(response) {
-          $scope.openNodeMenu();
+          $ionicLoading.show();
+          $log.debug("Starts",node)
+          var d = new Date();
+          var promise;
+          if(node.meta.intros  && node.meta.intros.sound[0]){
+            $log.debug("has sound")
+            promise = mediaManager.downloadIfNotExists(CONSTANT.RESOURCE_SERVER+node.meta.intros.sound[0])
+          }else{
+            $log.debug("not has sound")
+
+            promise = $q.resolve();
+          }
+
+          promise.then(function(s){
+            $log.debug("Resolves", new Date() - d, s)
+          node.meta.parsed_sound = s;
+          $log.debug("Download intro here",node)
           if(currentPos)
-          mapCtrl.animationExpand.expand(currentPos);
-          $scope.selectedNode = response;
+          {
+            $log.debug("CurrentPos")
+            mapCtrl.animationExpand.expand(currentPos);
+            lessonutils.playDemoAudio(node);
+            $scope.selectedNode = response;
+          }else{
+            lessonutils.playDemoAudio(node);
+            $scope.openNodeMenu();
+            $scope.selectedNode = response;
+          }
+          $ionicLoading.hide()
+        }).catch(function(error){
+          $ionicPopup.alert({
+            title: 'Please try again',
+            template: "No internet conection found"
+          })
+            $log.debug("Error opening node",error)
+            $ionicLoading.hide()
+        })
+
           // $log.debug("NODENODE ",$scope.selectedNode.node.tag);
         });
       }
     })
 
     $scope.openNodeMenu = function() {
+      $log.debug("Opening node menu")
       $scope.nodeMenu.show();
       return true;
     }
@@ -182,8 +216,8 @@
                 "margin-top": currentPos.y - 30 + "px",
                 "opacity": 1
             }
-
             $log.debug(mapCtrl.animationExpand.containerStyle);
+
             $timeout(function() {
                 mapCtrl.animationExpand.iconTranslateOffset = {
                     "transform": "translate(" + ((screen.width / 2) - currentPos.x) + "px," + (40 - currentPos.y) + "px) scale3d(2,2,2)",

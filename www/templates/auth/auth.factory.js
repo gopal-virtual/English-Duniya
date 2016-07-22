@@ -84,6 +84,7 @@
     }
 
     function cleanLocalStorage() {
+      $log.debug("Cleaing")
         localStorage.clear();
     }
 

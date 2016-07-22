@@ -101,6 +101,7 @@
         noBackdrop: false,
         hideOnStateChange: true
       });
+      $log.debug("USer logout",type)
       if (type == 'clean') {
         Auth.clean(function() {
           $state.go('auth.signin', {})
