@@ -119,7 +119,7 @@
           function(response) {
             $log.debug("here",response)
             d.resolve({
-              "access_token": response.oauthToken
+              "access_token": response.serverAuthCode
             });
           },
           function(error) {
