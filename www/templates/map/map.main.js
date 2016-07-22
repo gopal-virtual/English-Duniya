@@ -664,8 +664,8 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             log.debug("oldactivatedLesson",temp.activatedLessonKey);
             // log.debug("oldactiveLesson",temp.activeLessonKey);
             
-            temp.activatedLessonKey = 9;
-            temp.activeLessonKey = 10;
+            // temp.activatedLessonKey = 3;
+            // temp.activeLessonKey = 10;
 
             log.debug("activatedLesson",temp.activatedLessonKey);
             log.debug("activeLesson",temp.activeLessonKey);
@@ -690,41 +690,46 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                     // log.debug(currentLesson.stars);
                     // log.debug(lessons[temp.activatedLessonKey].stars);
                     // log.debug(temp.activeLesson);
-
-
-                    var starCloneTween = [];    
+                    log.info("In star animation function, \nactivatedLessonKey: ",temp.activatedLessonKey," activeLessonKey: ",temp.activeLessonKey,"\nactivatedLesson: ",lessons[temp.activatedLessonKey],"\nactiveLesson: ",lessons[temp.activeLessonKey]);
+                    log.warn("lessonTag: ",lessonTag[lessons[temp.activatedLessonKey].tag.toLowerCase()]>2?"+100":"-100")
+                    var starCloneTween = [];  
                     // log.debug(lessonTag[lessons[j].tag.toLowerCase()]*game.world.width);
                     for (var i = 0; i < lessons[temp.activatedLessonKey].stars; i++) {
                         // setTimeout(function(){
-                            log.debug($.merge([posx], star_x), $.merge([posy], star_y));
+                            // log.debug($.merge([posx], star_x), $.merge([posy], star_y));
 
                             starClone[i] = groups.nonRegion.starClone.create(posx + star_x[i], posy + star_y[i], 'star_medium');
                             starClone[i].anchor.setTo(0.5, 0.5);
-                            log.debug("adding tween",starClone[i],"to",parseInt(game.camera.y));
-                            log.debug(starClone[i]);
+                            // log.debug("adding tween",starClone[i],"to",parseInt(game.camera.y));
+                            // log.debug(starClone[i]);
                             starCloneTween[i] = {};
+
                             // var starClone = createStars(currentLesson.stars, $.merge([posx], star_x), $.merge([posy], star_y));
-                            starCloneTween[i]["pos"] = game.add.tween(starClone[i]).to( { x: (lessonTag[lessons[temp.activatedLessonKey].tag.toLowerCase()]*game.width)/5, y: parseInt(game.camera.y)}, 1000, Phaser.Easing.Exponential.InOut);
+                            starCloneTween[i]["pos"] = game.add.tween(starClone[i]).to( { x: ((lessonTag[lessons[temp.activatedLessonKey].tag.toLowerCase()]-1)*game.width)/5, y: parseInt(game.camera.y)}, 1000, Phaser.Easing.Exponential.InOut);
                             starCloneTween[i]["scale"] = game.add.tween(starClone[i].scale).from( { x: 0.1, y: 0.1 }, 800, Phaser.Easing.Bounce.Out,false,i*800);
-                            starCloneTween[i]["scalePos"] = game.add.tween(starClone[i]).to( { x: lessonTag[lessons[temp.activatedLessonKey].tag.toLowerCase()] > 2?"-100":"+100", y: "-100" }, 800, Phaser.Easing.Cubic.Out,false,i*800);
+                            starCloneTween[i]["scalePos"] = game.add.tween(starClone[i]).to( { x: (lessonTag[lessons[temp.activatedLessonKey].tag.toLowerCase()]>2?"+100":"-100"), y: "-100" }, 800, Phaser.Easing.Cubic.Out,false,i*800);
                             starCloneTween[i]["rotate"] = game.add.tween(starClone[i]).to( { angle: 450 }, 3000, Phaser.Easing.Quadratic.Out);
                             starCloneTween[i].scale.chain(starCloneTween[i].pos);
                             starCloneTween[i].scale.start();
-                            audio.play('star_hud');
                             starCloneTween[i].scalePos.start();
                             starCloneTween[i].rotate.start();
-                            log.debug(starCloneTween[i]);
-                            // function destroyStar() {
-                            //     groups.nonRegion.starClone.callAll('kill');
-                            // }
-                            // starCloneTween[i].rotate.onComplete.add(destroyStar,this);
+                            // log.debug(starCloneTween[i]);
+                            log.info("Star Clone "+i+":",starClone[i],"\nstarCloneTween "+i+":",starCloneTween[i]);
+                            function playStarAudio() {
+                                audio.play('star_hud');
+                            }
+                            function destroyStar() {
+                                groups.nonRegion.starClone.callAll('kill');
+                            }
+                            starCloneTween[i].scale.onStart.add(playStarAudio,this);
+                            starCloneTween[i].rotate.onComplete.add(destroyStar,this);
 
                     }
                 },800);
             }
 
-            // if (stateParams.activatedLesson && temp.activeLessonKey == temp.activatedLessonKey - 1) {
-            if (true){
+            if (stateParams.activatedLesson && temp.activeLessonKey == temp.activatedLessonKey + 1) {
+            // if (true){
                 log.debug("Activating star animation");
                 animateStar();
             }
@@ -754,7 +759,10 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                 verticalWheel: true,
                 deltaWheel: 400
             });
-            this.game.camera.y = localStorage.getItem('currentPosition') ? localStorage.getItem('currentPosition') : ((~~this.world.height / this.game.height) - 1) * this.game.height;
+            log.info("game camera after",game.camera.y);
+            this.game.camera.y = localStorage.getItem('currentPosition') ? parseInt(localStorage.getItem('currentPosition')) : parseInt(((~~this.world.height / this.game.height) - 1) * this.game.height);
+            log.info("game camera before",game.camera.y);
+            
         },
         resetSprite: function(sprite) {
             sprite.x = this.game.world.bounds.right;
@@ -777,30 +785,23 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
 
         render: function() {
             if (game.camera.y + 200 < regionOffset.tundra && game.camera.y + 200 > regionOffset.tundra - 360) {
-                // log.debug("Hello ",gameSprites[gameSprites.length - 2].name,gameSprites[gameSprites.length - 2].x );
-                game.debug.spriteInfo(sprites.plantLeft, 20, 32);
+                // game.debug.spriteInfo(sprites.plantLeft, 20, 32);
                 if (temp.plantLeftX == undefined && temp.plantRightX ==undefined) {
-                    // originalX = {
                         temp["plantLeftX"] = sprites.plantLeft.x;
                         temp["plantRightX"] = sprites.plantRight.x;
-                    // }
                 }
-                // log.debug(temp);
-                // log.debug(originalX.plant_left - (180 * (regionOffset.tundra - game.camera.y - 200)/360));
                sprites.plantLeft.x = temp.plantLeftX - (180 * (regionOffset.tundra - game.camera.y - 200)/360);
                sprites.plantRight.x = temp.plantRightX + (180 * (regionOffset.tundra - game.camera.y - 200)/360);
             }
 
             if (game.camera.y + 500 < regionOffset.tundra && game.camera.y + 500 > regionOffset.forest + 300) {
+                // game.debug.spriteInfo(sprites.yellowButterfly,20,132);
                 if (temp.yellowButterflyY == undefined) {
-                    // temp = {
                         temp["yellowButterflyY"] = sprites.yellowButterfly.y;
-                    // }
                 }
                 sprites.yellowButterfly.y = temp.yellowButterflyY - (regionOffset.tundra - game.camera.y - 500);
-                game.debug.spriteInfo(sprites.yellowButterfly,20,132);
             }
-              // this.game.debug.text("fps : "+game.time.fps || '--', 2, 100, "#00ff00");
+            // this.game.debug.text("fps : "+game.time.fps || '--', 2, 100, "#00ff00");
         }
     }
 
