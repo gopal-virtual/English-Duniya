@@ -14,8 +14,6 @@
     $scope.settings = settings;
     $scope.orientation = orientation;
     $scope.activatedLesson = $stateParams.activatedLesson;
-    $log.debug("GEESE",$scope.activatedLesson)
-    $log.debug("KUKUNA",$stateParams.activatedLesson)
 
     var mapCtrl = this;
     var lessonList = CONSTANT.LOCK ? lessonLocked : lessons;
@@ -34,8 +32,12 @@
     mapCtrl.showResult = true;
     mapCtrl.getNodeProperty = getNodeProperty;
     mapCtrl.demoFactory = demoFactory;
-
-
+    mapCtrl.animateStar = {
+      "colorFlag" : -1,
+      "animateFlag" : -1
+      // "resetFlag" : -1
+    }
+    mapCtrl.animateStar["resetColor"] = resetColor;
     // $log.debug("selectedNode",selectedNode);
     function getNodeProperty(prop){
       if(prop == 'x')
@@ -100,6 +102,28 @@
         });
       }
     })
+    
+    $log.info("MapControl Skill Set",mapCtrl.skillSet.length);
+    $scope.$on('animateStar', function(){
+      $log.info("Animate Star Event detected,");
+      for (var i = 0; i < mapCtrl.skillSet.length; i++) {
+        $log.info("Loop",i,"\nskillSetTag : ",mapCtrl.skillSet[i].title.toLowerCase(),"\nactivatedLessonTag : ",$stateParams.activatedLesson.node.tag.toLowerCase())
+        if (mapCtrl.skillSet[i].title.toLowerCase() == $stateParams.activatedLesson.node.tag.toLowerCase()) {
+          mapCtrl.animateStar.colorFlag = i;
+          mapCtrl.animateStar.animateFlag = i;
+          break;
+        }
+      }
+    })
+
+    function resetColor(index) {
+      $log.debug("Resetting Color Flag ...",index);
+      if ($stateParams.activatedLesson && mapCtrl.skillSet[index].title.toLowerCase() == $stateParams.activatedLesson.node.tag.toLowerCase()) {
+        mapCtrl.animateStar.colorFlag = -1;
+        mapCtrl.animateStar.animateFlag = -1;
+      }
+    }
+
 
     $scope.openNodeMenu = function() {
       $scope.nodeMenu.show();

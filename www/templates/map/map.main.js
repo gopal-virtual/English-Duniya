@@ -732,6 +732,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             // if (true){
                 log.debug("Activating star animation");
                 animateStar();
+                scope.$emit('animateStar');
             }
 
             // for (var key in regionRange){
@@ -759,9 +760,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                 verticalWheel: true,
                 deltaWheel: 400
             });
-            log.info("game camera after",game.camera.y);
             this.game.camera.y = localStorage.getItem('currentPosition') ? parseInt(localStorage.getItem('currentPosition')) : parseInt(((~~this.world.height / this.game.height) - 1) * this.game.height);
-            log.info("game camera before",game.camera.y);
             
         },
         resetSprite: function(sprite) {
