@@ -33,8 +33,7 @@
     mapCtrl.getNodeProperty = getNodeProperty;
     mapCtrl.demoFactory = demoFactory;
     mapCtrl.animateStar = {
-      "colorFlag" : -1,
-      "animateFlag" : -1
+      "activeFlag" : -1,
       // "resetFlag" : -1
     }
     mapCtrl.animateStar["resetColor"] = resetColor;
@@ -109,8 +108,8 @@
       for (var i = 0; i < mapCtrl.skillSet.length; i++) {
         $log.info("Loop",i,"\nskillSetTag : ",mapCtrl.skillSet[i].title.toLowerCase(),"\nactivatedLessonTag : ",$stateParams.activatedLesson.node.tag.toLowerCase())
         if (mapCtrl.skillSet[i].title.toLowerCase() == $stateParams.activatedLesson.node.tag.toLowerCase()) {
-          mapCtrl.animateStar.colorFlag = i;
-          mapCtrl.animateStar.animateFlag = i;
+          mapCtrl.animateStar.activeFlag = i;
+          // mapCtrl.animateStar.animateFlag = i;
           break;
         }
       }
@@ -119,8 +118,8 @@
     function resetColor(index) {
       $log.debug("Resetting Color Flag ...",index);
       if ($stateParams.activatedLesson && mapCtrl.skillSet[index].title.toLowerCase() == $stateParams.activatedLesson.node.tag.toLowerCase()) {
-        mapCtrl.animateStar.colorFlag = -1;
-        mapCtrl.animateStar.animateFlag = -1;
+        mapCtrl.animateStar.activeFlag = -2;
+        // mapCtrl.animateStar.animateFlag = -1;
       }
     }
 
