@@ -27,7 +27,7 @@
             $log.debug("HERE")
             return data.getLessonsList(Auth.getLocalProfile().grade).then(function(lessons){
               $log.debug(new Date()- d,"secornds lessonlocked 1")
-              
+
               return extendLesson.getLesson(lessons,[]).then(function(result){
                 $log.debug(new Date()- d,"secornds lessonlocked")
                   return result;

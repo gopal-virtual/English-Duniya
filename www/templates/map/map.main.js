@@ -663,7 +663,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
 
             log.debug("oldactivatedLesson",temp.activatedLessonKey);
             // log.debug("oldactiveLesson",temp.activeLessonKey);
-            
+
             // temp.activatedLessonKey = 3;
             // temp.activeLessonKey = 10;
 
@@ -692,7 +692,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                     // log.debug(temp.activeLesson);
                     log.info("In star animation function, \nactivatedLessonKey: ",temp.activatedLessonKey," activeLessonKey: ",temp.activeLessonKey,"\nactivatedLesson: ",lessons[temp.activatedLessonKey],"\nactiveLesson: ",lessons[temp.activeLessonKey]);
                     log.warn("lessonTag: ",lessonTag[lessons[temp.activatedLessonKey].tag.toLowerCase()]>2?"+100":"-100")
-                    var starCloneTween = [];  
+                    var starCloneTween = [];
                     // log.debug(lessonTag[lessons[j].tag.toLowerCase()]*game.world.width);
                     for (var i = 0; i < lessons[temp.activatedLessonKey].stars; i++) {
                         // setTimeout(function(){
@@ -761,7 +761,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                 deltaWheel: 400
             });
             this.game.camera.y = localStorage.getItem('currentPosition') ? parseInt(localStorage.getItem('currentPosition')) : parseInt(((~~this.world.height / this.game.height) - 1) * this.game.height);
-            
+
         },
         resetSprite: function(sprite) {
             sprite.x = this.game.world.bounds.right;
@@ -777,9 +777,9 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             // log.debug("groups.region.desert",groups.region.desert);
             // this.dragMap();
             // log.log("CAMERA",game.camera.y);
-            // optimize(game.camera,regionRange);
+            optimize(game.camera,regionRange);
 
-            
+
         },
 
         render: function() {

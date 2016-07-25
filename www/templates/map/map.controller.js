@@ -134,7 +134,7 @@
         });
       }
     })
-    
+
     $log.info("MapControl Skill Set",mapCtrl.skillSet.length);
     $scope.$on('animateStar', function(){
       $log.info("Animate Star Event detected,");
