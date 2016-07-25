@@ -103,7 +103,7 @@
         <button
           class="button button-block button-balanced margin-0 button-round font-md"
           style="height:40px;line-height:45px"
-          ng-click="quizCtrl.getFeedback(quizCtrl.quiz.objects[quizCtrl.currentIndex]);demo.tourNextStep();audio['demo-quiz-3'].stop()"
+          ng-click="quizCtrl.getFeedback(quizCtrl.quiz.objects[quizCtrl.currentIndex]);demo.tourNextStep();audio['demo-quiz-3'].stop();quizCtrl.stopAudio()"
           ng-disabled="!quizCtrl.canSubmit()"
           ng-class="{'animation-repeat-fade':quizCtrl.canSubmit()}">
           {{quizCtrl.isAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex]) ? 'CONTINUE' : 'SUBMIT'}}
