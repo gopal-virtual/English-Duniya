@@ -20,19 +20,19 @@
               <div class="input-group input-group-social">
                 <button type="button" class="icon icon-profile icon-fit-width input-group-item input-group-addon input-group-addon-light font-md">
                 </button>
-                <input ng-disabled="!settings.network.isOnline()" class="input-control input-group-item input-sm input-default input-block font-sm" tabindex="1" type="text" placeholder="Username" ng-model="settings.user.name" ng-change="settings.splitName()">
+                <input ng-disabled="true" class="input-control input-group-item input-sm input-default input-block font-sm" tabindex="1" type="text" placeholder="Username" ng-model="settings.user.name" ng-change="settings.splitName()">
               </div>
 
               <div class="input-group input-group-social">
                 <button type="button" class="icon icon-phone icon-fit-width input-group-item input-group-addon input-group-addon-light font-md">
                 </button>
-                <input ng-disabled="!settings.network.isOnline()" type="text" class="input-control input-default input-group-item input-sm input-block font-sm" tabindex="2" placeholder="Phonenumber" ng-model="settings.user.phone_number">
+                <input ng-disabled="true" type="text" class="input-control input-default input-group-item input-sm input-block font-sm" tabindex="2" placeholder="Phonenumber" ng-model="settings.user.phone_number">
               </div>
 
               <div class="input-group input-group-social">
                 <button type="button" class="icon icon-mail icon-fit-width input-group-item input-group-addon input-group-addon-light font-md">
                 </button>
-                <input ng-disabled="!settings.network.isOnline()" type="text" class="input-control input-default input-sm input-group-item input-block font-sm" tabindex="2" placeholder="Email" ng-model="settings.user.email">
+                <input ng-disabled="true" type="text" class="input-control input-default input-sm input-group-item input-block font-sm" tabindex="2" placeholder="Email" ng-model="settings.user.email">
               </div>
 
               <button ng-disabled="!settings.network.isOnline()" class="button button-block button-assertive button-sm font-lg no-shadow" ng-click="settings.network.isOnline() && settingsModal.hide() && settings.logout()">
@@ -41,11 +41,11 @@
             </div>
           </div>
 
-          <div class="row padding-y-20">
+          <!-- <div class="row padding-y-20">
             <div class="col text-center">
               <button ng-disabled="!settings.network.isOnline()" class="button button-balanced font-lg padding-x-40 button-round no-shadow" ng-click="settings.network.isOnline() && settingsModal.hide() && settings.updateProfile(settings.user.id,{'first_name' : settings.user.first_name,'last_name' : settings.user.last_name,'phone_number':settings.user.phone_number,'email':settings.user.email}) ; settings.closeSettings()">{{settings.network.isOnline() ? 'DONE' : 'Not Allowed'}}</button>
             </div>
-          </div>
+          </div> -->
 
         </div>
       </div>
