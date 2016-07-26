@@ -488,7 +488,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             function renderNodePath(){
                 for (var i = 0, points_count = points.x.length; i < points_count; i++) {
                     points.x[i] *= game_scale;
-                    points.y[i] -= (60 - regionOffset.peru);
+                    points.y[i] -= (60 - regionOffset[region[region.length - 2]]);
                 }
                 var increment = 1 / game.world.height;
                 // Somewhere to draw to
@@ -596,7 +596,6 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
 
             // Place nodes
             function renderNodes(){
-                log.debug("THIS SI THE NICEST PAIR")
                 for (var j = 0, i = lessons.length - 1, distance = 1 / (lessons.length); i >= 0; j += distance, i--) {
                     var currentLesson = lessons[i];
                     var locked = currentLesson.locked ? '-locked' : '';
@@ -724,7 +723,6 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                             }
                             starCloneTween[i].scale.onStart.add(playStarAudio,this);
                             starCloneTween[i].rotate.onComplete.add(destroyStar,this);
-
                     }
                 },800);
             }
@@ -751,46 +749,10 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             }
 
             gameStart();
-            
-            // log.debug("GUchaMI",temp.activeLessonKey);
-            // log.debug("GUchaMI2",temp.activatedLessonKey);
-
-
-            // function destroySprite(sprite){
-            //     sprite.destroy();
-            // }
-
-            // log.debug("oldactivatedLesson",temp.activatedLessonKey);
-            // log.debug("oldactiveLesson",temp.activeLessonKey);
-            
-            // temp.activatedLessonKey = 3;
-            // temp.activeLessonKey = 10;
-
-            // log.debug("activatedLesson",temp.activatedLessonKey);
-            // log.debug("activeLesson",temp.activeLessonKey);
-
-
-            
 
             
 
             log.info("Profile Grade",JSON.parse(localStorage.getItem("profile")).grade);
-
-            // for (var i = 0; i < gradeRegion.length; i++) {
-            //     gradeRegion[i]
-            // }
-            // for (var key in regionRange){
-            //     if(regionRange[key].lowerLimit > game.camera.y && regionRange[key].upperLimit < game.camera.y ){
-            //         var delGroup = region.slice();
-            //         delGroup.splice(region.indexOf(key),1);
-            //         for (var i = 0; i < delGroup.length; i++) {
-            //            groups.region[delGroup[i]].callAll('kill');
-            //         }
-            //         break;
-            //     }
-            // }
-            // log.debug("DEBUG",game.kineticScrolling);
-            log.debug(sprites);
 
         },
         init: function() {
