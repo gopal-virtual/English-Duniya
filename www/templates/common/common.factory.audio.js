@@ -77,11 +77,16 @@
       },
       setVolume: function(sound, volume) {
         $log.debug("Here",sound,volume)
-        window.plugins.NativeAudio.setVolumeForComplexAsset(sound, volume, function(s){
-          $log.debug("success",s)
-        }, function(e){
-          $log.debug("error",e)
-        });
+        try{
+          window.plugins.NativeAudio.setVolumeForComplexAsset(sound, volume, function(s){
+            $log.debug("success",s)
+          }, function(e){
+            $log.debug("error",e)
+          });
+        }
+        catch(e){
+
+        }
       }
     };
   }

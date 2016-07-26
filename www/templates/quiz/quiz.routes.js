@@ -24,11 +24,7 @@
         },
         resolve: {
           quiz: ['$stateParams', 'Rest', '$log', 'data', 'ml', '$q', '$http','demo', function($stateParams, Rest, $log, data, ml, $q, $http,demoFactory) {
-            $log.debug("Resolving quiz",$stateParams.type)
             if ($stateParams.type == 'litmus') {
-              $log.debug("Resolving quiz 1")
-
-
               var all_promises = [];
               if (ml.kmapsJSON == undefined) {
                 var promise = ml.setMLKmapsJSON;
@@ -42,9 +38,6 @@
                 var promise = ml.setMapping;
                 all_promises.push(promise);
               }
-
-              $log.debug('all_promises', all_promises);
-
               var litmus = {
                 "node": {
                   "id": "001",
@@ -58,8 +51,6 @@
                 },
                 "objects": []
               };
-
-
               return $q.all(all_promises).then(function() {
                 var suggestion = ml.getNextQSr(data.getTestParams(JSON.parse(localStorage.profile).grade), ml.mapping);
                 var question = ml.dqJSON[suggestion.qSr];
@@ -67,22 +58,16 @@
                 litmus['suggestion'] = suggestion;
                 return litmus;
               })
-
-
             } else {
-              $log.debug("Resolving quiz 2", demoFactory.show());
               return demoFactory.show().then(function(response) {
                 // $log.debug('resolving quiz');
                 // $stateParams.quiz.objects[0].node.id == 'demo' ? $stateParams.quiz.objects.shift(data.demo_question) :false;
-                $log.debug("!!!")
                 var currentIndex = $stateParams.quiz.objects.length;
                 var temporaryValue, randomIndex;
 
                 while (0 !== currentIndex) {
-
                   randomIndex = Math.floor(Math.random() * currentIndex);
                   currentIndex -= 1;
-
                   temporaryValue = $stateParams.quiz.objects[currentIndex];
                   $stateParams.quiz.objects[currentIndex] = $stateParams.quiz.objects[randomIndex];
                   $stateParams.quiz.objects[randomIndex] = temporaryValue;
