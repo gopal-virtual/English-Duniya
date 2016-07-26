@@ -622,7 +622,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                     s.body.velocity.y = game.rnd.between(50, 70);
                     s.autoCull = true;
                     s.checkWorldBounds = true;
-                    s.events.onOutOfBounds.add(this.resetSprite, this);
+                    s.events.onOutOfBounds.add(_this.resetSprite, _this);
                 }
                 // snow particles
                 for (var i = 0; i < 100; i++) {
@@ -633,7 +633,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                     s.body.velocity.y = game.rnd.between(50, 70);
                     s.autoCull = true;
                     s.checkWorldBounds = true;
-                    s.events.onOutOfBounds.add(this.resetSnowSprite, this);
+                    s.events.onOutOfBounds.add(_this.resetSnowSprite, _this);
                 }
             }
 
