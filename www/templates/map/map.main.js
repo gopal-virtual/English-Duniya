@@ -7,7 +7,13 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
     var sprites = {};
     var temp = {};
     // var desertRegion, regionGroups.tundra, regionGroups.forest;
-    var region = ["desert","tundra","forest","peru","region5"];
+    var region = ["desert","tundra","forest","peru"];
+    var gradeRegion = {
+        "0" : 1,
+        "1" : 2,
+        "2" : 3,
+        "3" : 4
+    };
     var groups = {
         "region" : {},
         "nonRegion" : {},
@@ -21,39 +27,37 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
         "tundra" : 2796,
         "forest" : 2856,
         "peru" : 1872,
-        "region5" : 392,
+        // "region5" : 392,
     }
-    var regionOffset = {
-        "desert" : regionHeight.tundra + regionHeight.forest + regionHeight.peru + regionHeight.region5,
-        "tundra" : regionHeight.forest + regionHeight.peru + regionHeight.region5,
-        "forest" : regionHeight.peru + regionHeight.region5,
-        "peru" : regionHeight.region5,
-        "region5" : 0,
+    var totalRegionHeight = 0;
+    for (var key in regionHeight) {
+        totalRegionHeight += regionHeight[key];
     }
+    var svgPathHeight = 10000;
+    var regionOffset = {};
     var tresholdOffset = -200;
-    var regionRange = {
-        "desert" : {
-            upperLimit : regionOffset.desert,
-            lowerLimit : regionOffset.desert + regionHeight.desert,
-        },
-        "tundra" : {
-            upperLimit : regionOffset.tundra,
-            lowerLimit : regionOffset.desert,
-        },
-        "forest" : {
-            upperLimit : regionOffset.forest,
-            lowerLimit : regionOffset.tundra,
-        },
-        "peru" : {
-            upperLimit : regionOffset.peru,
-            lowerLimit : regionOffset.forest,
-        },
-        "region5" : {
-            upperLimit : regionOffset.region5,
-            lowerLimit : regionOffset.peru,
-        }
+    var regionRange = {};
+    var points = {
+        "x" : [],
+        "y" : []
     };
-
+    var regionNodes = {
+        "desert" : 27,
+        "tundra" : 26,
+        "forest" : 33,
+        "peru" : 23
+    }
+    var totalLesson = lessons.length;
+    var renderedRegion = [];
+    for (var key in regionNodes) {
+        if (totalLesson > regionNodes[key]) {
+            totalLesson -= regionNodes[key];
+            renderedRegion.push(key);
+        }else{
+            renderedRegion.push(key);
+            break;
+        }
+    }
     var playState = {
         preload: function() {
             // crisp image rendering
@@ -117,46 +121,55 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
 
             // debug value
             this.game.time.advancedTiming = true;
-            for(var key in regionRange){
-                regionRange[key].upperTreshold = regionRange[key].upperLimit + game.camera.height + tresholdOffset;
-                regionRange[key].lowerTreshold = regionRange[key].lowerLimit - game.camera.height + tresholdOffset;
-            }
 
-            groups.regionBg["desert"] = game.add.group();
-            groups.regionBg["peru"] = game.add.group();
-            groups.regionBg["forest"] = game.add.group();
-            groups.regionBg["tundra"] = game.add.group();
-            groups.regionBg["region5"] = game.add.group();
-            groups.nonRegion["nodePath"] = game.add.group();
-            groups.region["desert"] = game.add.group();
-            groups.region["peru"] = game.add.group();
-            groups.region["forest"] = game.add.group();
-            groups.region["tundra"] = game.add.group();
-            groups.region["region5"] = game.add.group();
-            groups.nonRegion["starClone"] = game.add.group();
+
+            $.get("img/assets/map_path.svg", function(data) {
+                var x = [];
+                var y = [];
+                var ydiff = [];
+                var renderRegionHeight = 0;
+                for (var i = 0; i < renderedRegion.length; i++) {
+                    renderRegionHeight += regionHeight[region[i]];
+                }
+                // log.warn("Region height", renderRegionHeight);
+                // log.warn("SVG height", data.getElementById("mappathid").getTotalLength());
+                var path = data.getElementById("mappathid");
+                for (var i = path.getTotalLength() - 1; i >= 0 ; i-=75) {
+                    var pathPoint = path.getPointAtLength(i);
+                    // log.debug(parseInt(pathPoint.y) - (totalRegionHeight - renderRegionHeight),parseInt(pathPoint.x),svgPathHeight - parseInt(pathPoint.y));
+                    if (svgPathHeight - pathPoint.y + 100 > renderRegionHeight) {
+                        // log.warn("Should be cut here",pathPoint.y,svgPathHeight- pathPoint.y);
+                        break;
+                    }
+                    x.push(parseInt(pathPoint.x));
+                    y.push(parseInt(pathPoint.y) - (totalRegionHeight - renderRegionHeight));
+                }
+
+                points.x = x.reverse();
+                points.y = y.reverse();
+            });
+
+            // for(var key in regionRange){
+            //     regionRange[key].upperTreshold = regionRange[key].upperLimit + game.camera.height + tresholdOffset;
+            //     regionRange[key].lowerTreshold = regionRange[key].lowerLimit - game.camera.height + tresholdOffset;
+            // }
+
+            // groups.regionBg["desert"] = game.add.group();
+            // groups.regionBg["peru"] = game.add.group();
+            // groups.regionBg["forest"] = game.add.group();
+            // groups.regionBg["tundra"] = game.add.group();
+            // groups.regionBg["region5"] = game.add.group();
+            // groups.nonRegion["nodePath"] = game.add.group();
+            // groups.region["desert"] = game.add.group();
+            // groups.region["peru"] = game.add.group();
+            // groups.region["forest"] = game.add.group();
+            // groups.region["tundra"] = game.add.group();
+            // groups.region["region5"] = game.add.group();
+            
         },
         create: function() {
-
+            var _this = this;
             var game_scale = game.world.width / 360;
-
-            for (var key in regionOffset) {
-                groups.regionBg[key].position.set(0, 0 + regionOffset[key]);
-                groups.region[key].position.set(0, 0 + regionOffset[key]);
-                var background = groups.regionBg[key].create(0, 0, key);
-                // groups.region[key].add(regionBgGroups[key]);
-                background.scale.setTo(game_scale, 1);
-            }
-
-            this.game.world.setBounds(0, 0, this.game.width, regionHeight.desert + regionHeight.tundra + regionHeight.forest + regionHeight.peru + regionHeight.region5);
-
-
-            var points = {
-                'x': [182,160,186,256,289,280,257,198,130,86,116,186,255,279,221,146,72,27,54,111,175,238,290,300,236,163,91,53,69,110,173,245,298,252,180,107,46,72,145,220,286,290,272,222,160,118,110,114,134,164,198,231,256,268,265,233,159,85,78,116,158,194,219,219,192,179,207,221,165,104,58,98,172,243,219,171,129,125,197,272,315,246,171,98,73,134,209,282,262,199,134,70,63,128,199,269,292,227,153,82,52,110,185,260,326,272,214,171,178,213,223,175,108,77,117,152,140,100,99,161,226,284,271,196,124,121,156,188,199,171,121,147,190,221,229,210,174,158,160,163,143,134,147,192,248,270,245,206,161,133,165,221,281,317,287,236,206,231,211,189,186,196,227,207,163,158,185,222,211,162,118,153,228,278,216,148,120,173,242,230,183,181,181,181,181,181,181,181,181,181],
-                'y': [116,187,252,278,341,415,487,531,563,620,684,712,739,804,846,855,867,919,988,1036,1075,1116,1169,1240,1277,1295,1316,1372,1445,1507,1546,1569,1611,1665,1686,1702,1742,1807,1818,1815,1839,1913,1986,2041,2082,2143,2217,2292,2364,2433,2500,2567,2638,2712,2787,2850,2853,2848,2910,2975,3037,3103,3173,3248,3318,3390,3460,3527,3576,3620,3678,3730,3747,3768,3829,3887,3949,4018,4033,4033,4076,4099,4107,4121,4179,4217,4220,4231,4293,4334,4370,4410,4469,4505,4529,4557,4621,4642,4631,4651,4716,4756,4764,4768,4792,4843,4889,4950,5023,5089,5161,5216,5249,5312,5374,5440,5513,5576,5645,5686,5725,5771,5826,5833,5851,5920,5986,6054,6127,6196,6251,6318,6380,6448,6522,6594,6660,6733,6808,6882,6955,7029,7102,7162,7211,7279,7350,7413,7474,7541,7607,7657,7702,7764,7831,7886,7953,8022,8093,8165,8239,8314,8382,8452,8512,8586,8655,8720,8791,8848,8908,8961,8955,8989,9028,9059,9124,9174,9201,9267,9325,9399,9474,9549,9624,9699,9774,9849,9924,9999]
-            };
-
-
-            // var gameSprites =  game.cache.getJSON('gamesprites');
             gameSprites = [{
                 "id" : "testCactus",
                 "name" : "cactus_animation",
@@ -464,64 +477,135 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                 "y" : 50,
                 "scale" : [game_scale,1],
             }];
+            var star = [];
+            var starClone = [];
+            var star_x = [-12, 0, 12];
+            var star_y = [-10, -15, -10];
 
 
+            function addGroups(region){
+                for (var i = 0; i < region.length; i++) {
+                    groups.regionBg[region[i]] = game.add.group();
+                }
+                groups.nonRegion["nodePath"] = game.add.group();
+                for (var i = 0; i < region.length; i++) {
+                    groups.region[region[i]] = game.add.group();
+                }
+                groups.nonRegion["starClone"] = game.add.group();
+                groups.nonRegion["nodes"] = game.add.group();
+                groups.nonRegion["stars"] = game.add.group();
 
-            for (var i = 0, points_count = points.x.length; i < points_count; i++) {
-                points.x[i] *= game_scale;
-                points.y[i] -= (60 - regionOffset.peru);
             }
 
-            this.increment = 1 / this.world.height;
-
-            // Somewhere to draw to
-            this.bmd = this.add.bitmapData(this.game.width, this.world.height);
-            // this.bmd.addToWorld();
-            // nodeGroup.add(this.bmd);
-            // Draw the path
-            for (var j = 0; j < 1; j += this.increment) {
-                var posx = this.math.catmullRomInterpolation(points.x, j);
-                var posy = this.math.catmullRomInterpolation(points.y, j);
-                this.bmd.rect(posx, posy, 4, 4, '#219C7F');
+            function renderWorld(region){
+                var totalRegionHeight = 0;
+                // var revRegion = region.reverse();
+                var tempRegionHeight = 0;
+                for (var i = region.length - 1; i >= 0; i--) {
+                    log.debug(region[i]);
+                    totalRegionHeight += regionHeight[region[i]];
+                    regionRange[region[i]] = {};
+                    regionRange[region[i]]["upperLimit"] = tempRegionHeight;
+                    regionOffset[region[i]] = tempRegionHeight;
+                    tempRegionHeight += regionHeight[region[i]];
+                    regionRange[region[i]]["lowerLimit"] = tempRegionHeight;
+                    regionRange[region[i]]["upperTreshold"] = regionRange[region[i]].upperLimit + game.camera.height + tresholdOffset;
+                    regionRange[region[i]]["lowerTreshold"] = regionRange[region[i]].lowerLimit - game.camera.height - tresholdOffset;
+                }
+                game.world.setBounds(0, 0, game.width, totalRegionHeight);
             }
-            groups.nonRegion.nodePath.create(0,0,this.bmd);
+
+            function renderRegion(region){
+                // for (var i = 0; i < region.length; i++) {
+                //     region[i]
+                // }
+                for (var i = region.length - 1; i >= 0; i--) {
+
+                    groups.regionBg[region[i]].position.set(0, 0 + regionOffset[region[i]]);
+                    groups.region[region[i]].position.set(0, 0 + regionOffset[region[i]]);
+                    var background = groups.regionBg[region[i]].create(0, 0, region[i]);
+                    // groups.region[key].add(regionBgGroups[key]);
+                    background.scale.setTo(game_scale, 1);
+                }
+                
+            }
+
+
+            // var tempPoints = {
+            //     "x" : [],
+            //     "y" : []
+            // };
+            // var gameSprites =  game.cache.getJSON('gamesprites');
+            
+            function renderNodePath(region,points){
+
+                points.tempX = [];
+                points.tempY = [];
+                for (var i = 0, points_count = points.x.length; i < points_count; i++) {
+                    // if (points.y[i]  - (60 - regionOffset[region[region.length - 1]]) < ) {}
+                    points.tempX.push(points.x[i] * game_scale);
+                    points.tempY.push(points.y[i] );
+                }
+                var increment = 1 / game.world.height;
+                // Somewhere to draw to
+                var bmd = game.add.bitmapData(game.width, game.world.height);
+                for (var j = 0; j < 1; j += increment) {
+                    
+                // log.warn("Points",points);
+                // log.warn("TempPoints",tempPoints);
+                    var posx = game.math.catmullRomInterpolation(points.tempX, j);
+                    var posy = game.math.catmullRomInterpolation(points.tempY, j);
+                    bmd.rect(posx, posy, 4, 4, '#219C7F');
+                }
+                groups.nonRegion.nodePath.create(0,0,bmd);
+            }
+
+
             // nongroups.region.nodePath.callAll('kill');
+            function renderSprites(region,gameSprites){
+                for (var i = 0; i < gameSprites.length; i++) {
+                    if (region.indexOf(gameSprites[i].region) == -1) {
+                        // log.debug("breaking at",gameSprites[i].region)
+                        continue;
+                    }
+                    log.debug("Sprite",gameSprites[i].name)
 
-            for (var i = 0; i < gameSprites.length; i++) {
-                if (gameSprites[i].background == true) {
-                    var gameSprite = groups.regionBg[gameSprites[i].region].create(gameSprites[i].x * game_scale, gameSprites[i].y, gameSprites[i].name);
-                }else{
-                    var gameSprite = groups.region[gameSprites[i].region].create(gameSprites[i].x * game_scale, gameSprites[i].y, gameSprites[i].name);
-                }
-                // gameSprites[i].scale != undefined ? gameSprite.scale.setTo(gameSprites[i].scale) : false;
-                gameSprite.anchor.setTo(0.5);
-                if (gameSprites[i].scale) {
-                    if (!Array.isArray(gameSprites[i].scale)){
-                        gameSprite.scale.setTo(gameSprites[i].mirror?-gameSprites[i].scale:gameSprites[i].scale, gameSprites[i].scale);
+                    if (gameSprites[i].background == true) {
+                        var gameSprite = groups.regionBg[gameSprites[i].region].create(gameSprites[i].x * game_scale, gameSprites[i].y, gameSprites[i].name);
                     }else{
-                        gameSprite.scale.setTo(gameSprites[i].mirror?-gameSprites[i].scale[0]:gameSprites[i].scale[0], gameSprites[i].scale[1]);
+                        var gameSprite = groups.region[gameSprites[i].region].create(gameSprites[i].x * game_scale, gameSprites[i].y, gameSprites[i].name);
                     }
-                }else {
-                    gameSprite.scale.setTo(gameSprites[i].mirror?-1:1,1);
-                }
-                if (gameSprites[i].anchor) {
-                    if (!Array.isArray(gameSprites[i].anchor)){
-                        gameSprite.anchor.setTo(gameSprites[i].anchor);
-                    }else{
-                        gameSprite.anchor.setTo(gameSprites[i].anchor[0],gameSprites[i].anchor[1]);
+                    // gameSprites[i].scale != undefined ? gameSprite.scale.setTo(gameSprites[i].scale) : false;
+                    gameSprite.anchor.setTo(0.5);
+                    if (gameSprites[i].scale) {
+                        if (!Array.isArray(gameSprites[i].scale)){
+                            gameSprite.scale.setTo(gameSprites[i].mirror?-gameSprites[i].scale:gameSprites[i].scale, gameSprites[i].scale);
+                        }else{
+                            gameSprite.scale.setTo(gameSprites[i].mirror?-gameSprites[i].scale[0]:gameSprites[i].scale[0], gameSprites[i].scale[1]);
+                        }
+                    }else {
+                        gameSprite.scale.setTo(gameSprites[i].mirror?-1:1,1);
                     }
-                }
-                if (gameSprites[i].angle) {
-                    gameSprite.angle = gameSprites[i].angle;
-                }
-                if (gameSprites[i].animation) {
-                    gameSprite.animations.add(gameSprites[i].animation.key);
-                    gameSprite.animations.play(gameSprites[i].animation.key,gameSprites[i].animation.fps?gameSprites[i].animation.fps:20,gameSprites[i].animation.loop != false);
-                }
-                if (gameSprites[i].id) {
-                    sprites[gameSprites[i].id] = gameSprite;
-                }
+                    if (gameSprites[i].anchor) {
+                        if (!Array.isArray(gameSprites[i].anchor)){
+                            gameSprite.anchor.setTo(gameSprites[i].anchor);
+                        }else{
+                            gameSprite.anchor.setTo(gameSprites[i].anchor[0],gameSprites[i].anchor[1]);
+                        }
+                    }
+                    if (gameSprites[i].angle) {
+                        gameSprite.angle = gameSprites[i].angle;
+                    }
+                    if (gameSprites[i].animation) {
+                        gameSprite.animations.add(gameSprites[i].animation.key);
+                        gameSprite.animations.play(gameSprites[i].animation.key,gameSprites[i].animation.fps?gameSprites[i].animation.fps:20,gameSprites[i].animation.loop != false);
+                    }
+                    if (gameSprites[i].id) {
+                        sprites[gameSprites[i].id] = gameSprite;
+                    }
+                }    
             }
+            
 
             // placing lesson node
             // 1. lesson node count
@@ -529,42 +613,39 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             // path
 
             // sand particles
-            for (var i = 0; i < 100; i++) {
-                var s = this.game.add.sprite(this.world.randomX, this.game.rnd.between(regionOffset.desert, this.world.height), 'particle' + this.game.rnd.between(1, 3));
-
-                s.scale.setTo(this.game.rnd.between(1, 2) / 20);
-                this.game.physics.arcade.enable(s);
-                s.body.velocity.x = this.game.rnd.between(-200, -550);
-                s.body.velocity.y = this.game.rnd.between(50, 70);
-                s.autoCull = true;
-                s.checkWorldBounds = true;
-                s.events.onOutOfBounds.add(this.resetSprite, this);
+            function renderParticles(){
+                for (var i = 0; i < 100; i++) {
+                    var s = game.add.sprite(game.world.randomX, game.rnd.between(regionOffset.desert, game.world.height), 'particle' + game.rnd.between(1, 3));
+                    s.scale.setTo(game.rnd.between(1, 2) / 20);
+                    game.physics.arcade.enable(s);
+                    s.body.velocity.x = game.rnd.between(-200, -550);
+                    s.body.velocity.y = game.rnd.between(50, 70);
+                    s.autoCull = true;
+                    s.checkWorldBounds = true;
+                    s.events.onOutOfBounds.add(this.resetSprite, this);
+                }
+                // snow particles
+                for (var i = 0; i < 100; i++) {
+                    var s = game.add.sprite(game.world.randomX, game.rnd.between(regionOffset.tundra, regionOffset.desert - 200), 'snow' + game.rnd.between(1, 2));
+                    s.scale.setTo(game.rnd.between(1, 2) / 10);
+                    game.physics.arcade.enable(s);
+                    s.body.velocity.x = game.rnd.between(-50, -200);
+                    s.body.velocity.y = game.rnd.between(50, 70);
+                    s.autoCull = true;
+                    s.checkWorldBounds = true;
+                    s.events.onOutOfBounds.add(this.resetSnowSprite, this);
+                }
             }
-            // snow particles
-            for (var i = 0; i < 100; i++) {
-                var s = this.game.add.sprite(this.world.randomX, this.game.rnd.between(regionOffset.tundra, regionOffset.desert - 200), 'snow' + this.game.rnd.between(1, 2));
 
-                s.scale.setTo(this.game.rnd.between(1, 2) / 10);
-                this.game.physics.arcade.enable(s);
-                s.body.velocity.x = this.game.rnd.between(-50, -200);
-                s.body.velocity.y = this.game.rnd.between(50, 70);
-                s.autoCull = true;
-                s.checkWorldBounds = true;
-                s.events.onOutOfBounds.add(this.resetSnowSprite, this);
-            }
-
-            var star = [];
             // var stars = this.game.add.group();
             function createStars(count, x, y) {
                 for (var i = 0; i < count; i++) {
-                    star[i] = stars.create(x[0] + x[i + 1], y[0] + y[i + 1], 'star');
+                    star[i] = groups.nonRegion.stars.create(x[0] + x[i + 1], y[0] + y[i + 1], 'star');
                     star[i].anchor.setTo(0.5, 0.5);
                     // star[i].scale.setTo(0.2,0.2);
                 }
                 return star;
             }
-            var star_x = [-12, 0, 12];
-            var star_y = [-10, -15, -10];
 
             function lessonType(lesson, test) {
                 if (!lesson.locked) {
@@ -575,101 +656,81 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             };
 
             // Place nodes
-            for (var j = 0, i = lessons.length - 1, distance = 1 / (lessons.length); i >= 0; j += distance, i--) {
-                var currentLesson = lessons[i];
-                var locked = currentLesson.locked ? '-locked' : '';
-                var type = lessonType(currentLesson, i) == '' ? '' : '-' + lessonType(currentLesson, i);
-                var posx = this.math.catmullRomInterpolation(points.x, j);
-                var posy = this.math.catmullRomInterpolation(points.y, j);
-                var node = this.game.add.button(posx, posy, 'node' + type + locked);
+            function renderNodes(){
+                for (var j = 0, i = lessons.length - 1, distance = 1 / (lessons.length); i >= 0; j += distance, i--) {
+                    var currentLesson = lessons[i];
+                    var locked = currentLesson.locked ? '-locked' : '';
+                    var type = lessonType(currentLesson, i) == '' ? '' : '-' + lessonType(currentLesson, i);
+                    var posx = game.math.catmullRomInterpolation(points.tempX, j);
+                    var posy = game.math.catmullRomInterpolation(points.tempY, j);
+                    var node = game.make.button(posx, posy, 'node' + type + locked);
 
 
-                !locked && lessons[i + 1] && lessons[i + 1].locked && this.add.tween(node.scale).to({ x: [1.2, 1], y: [1.2, 1] }, 700, Phaser.Easing.Back.Out, true, 1000).loop(true);
-                !locked && lessons[i + 1] && lessons[i + 1].locked && localStorage.setItem('region',posy);
+                    !locked && lessons[i + 1] && lessons[i + 1].locked && game.add.tween(node.scale).to({ x: [1.2, 1], y: [1.2, 1] }, 700, Phaser.Easing.Back.Out, true, 1000).loop(true);
+                    !locked && lessons[i + 1] && lessons[i + 1].locked && localStorage.setItem('region',posy);
 
-                if(!locked && lessons[i + 1] && lessons[i + 1].locked){
-                    temp["activeLessonKey"] = i;
-                }
+                    if(!locked && lessons[i + 1] && lessons[i + 1].locked){
+                        temp["activeLessonKey"] = i;
+                    }
 
-                if (stateParams.activatedLesson && stateParams.activatedLesson.node.id == currentLesson.id) {
-                    temp["activatedLessonKey"] = i;
-                }
+                    if (stateParams.activatedLesson && stateParams.activatedLesson.node.id == currentLesson.id) {
+                        temp["activatedLessonKey"] = i;
+                    }
 
-                node.inputEnabled = true;
-                node.currentLesson = currentLesson;
-                node.type = lessonType(currentLesson, i);
-                node.events.onInputUp.add(
-                    function(currentLesson, game, posy) {
-                        return function() {
-                            var displacement = game.kineticScrolling.velocityY > -30 && game.kineticScrolling.velocityY < 30;
-                            if (!currentLesson.locked && displacement) {
-                                localStorage.setItem('currentPosition', (posy - game.height / 2));
-                                var currentPosition = {
-                                    "x": game.input._x,
-                                    "y": game.input._y,
-                                }
-                                scope.$emit('openNode', currentLesson, currentPosition);
-                                // scope.$emit('game', game);
-                            } else if (currentLesson.locked && displacement) {
-                                audio.play('locked');
-                            } else {}
-                        }
-                    }(currentLesson, this.game, posy)
+                    node.inputEnabled = true;
+                    node.currentLesson = currentLesson;
+                    node.type = lessonType(currentLesson, i);
+                    node.events.onInputUp.add(
+                        function(currentLesson, game, posy) {
+                            return function() {
+                                var displacement = game.kineticScrolling.velocityY > -30 && game.kineticScrolling.velocityY < 30;
+                                if (!currentLesson.locked && displacement) {
+                                    localStorage.setItem('currentPosition', (posy - game.height / 2));
+                                    var currentPosition = {
+                                        "x": game.input._x,
+                                        "y": game.input._y,
+                                    }
+                                    scope.$emit('openNode', currentLesson, currentPosition);
+                                    // scope.$emit('game', game);
+                                } else if (currentLesson.locked && displacement) {
+                                    audio.play('locked');
+                                } else {}
+                            }
+                        }(currentLesson, game, posy)
+                    );
+                    // icon.anchor.setTo(0.5,0.5);
+                    // icon.scale.setTo(0.3,0.3);
+                    node.anchor.setTo(0.5, 0.5);
+                    // node.scale.setTo(1.8, 1.8);
+                    // add stars
+                    groups.nonRegion.nodes.add(node);
+
+                    // log.debug("AIIII",i,currentLesson.stars);
+                    if (!locked && currentLesson.stars >= 0) {
+                        // var stars = game.add.group();
+                        if (currentLesson.stars == 0) {
+                            createStars(0, $.merge([posx], star_x), $.merge([posy], star_y));
+                        } else if (currentLesson.stars == 1) {
+                            createStars(1, $.merge([posx], star_x), $.merge([posy], star_y));
+                        } else if (currentLesson.stars == 2) {
+                            createStars(2, $.merge([posx], star_x), $.merge([posy], star_y));
+                        } else if (currentLesson.stars == 3) {
+                            createStars(3, $.merge([posx], star_x), $.merge([posy], star_y));
+                        } else {}
+                    }
+                }    
+                
+                log.debug('node position ', node.currentLesson);
+                localStorage.setItem('demo_node', JSON.stringify({
+                        x: node.x - node.width / 2,
+                        y: game.height - (game.world.height - node.y) - node.height / 2,
+                        width: node.width,
+                        height: node.height,
+                        node: node.currentLesson,
+                        type: node.type
+                    })
                 );
-                // icon.anchor.setTo(0.5,0.5);
-                // icon.scale.setTo(0.3,0.3);
-                node.anchor.setTo(0.5, 0.5);
-                // node.scale.setTo(1.8, 1.8);
-                // add stars
-                log.debug("AIIII",i,currentLesson.stars);
-                if (!locked && currentLesson.stars >= 0) {
-                    var stars = this.game.add.group();
-                    if (currentLesson.stars == 0) {
-                        createStars(0, $.merge([posx], star_x), $.merge([posy], star_y));
-                    } else if (currentLesson.stars == 1) {
-                        createStars(1, $.merge([posx], star_x), $.merge([posy], star_y));
-                    } else if (currentLesson.stars == 2) {
-                        createStars(2, $.merge([posx], star_x), $.merge([posy], star_y));
-                    } else if (currentLesson.stars == 3) {
-                        createStars(3, $.merge([posx], star_x), $.merge([posy], star_y));
-                    } else {}
-                }
             }
-
-            log.debug('node position ', node.currentLesson);
-            localStorage.setItem('demo_node', JSON.stringify({
-                    x: node.x - node.width / 2,
-                    y: this.game.height - (this.world.height - node.y) - node.height / 2,
-                    width: node.width,
-                    height: node.height,
-                    node: node.currentLesson,
-                    type: node.type
-                })
-
-            );
-
-            scope.$emit('show_demo');
-            this.init();
-            this.game.kineticScrolling.start();
-            // log.debug("GUchaMI",temp.activeLessonKey);
-            // log.debug("GUchaMI2",temp.activatedLessonKey);
-
-            var _this = this;
-            var starClone = [];
-
-            // function destroySprite(sprite){
-            //     sprite.destroy();
-            // }
-
-            log.debug("oldactivatedLesson",temp.activatedLessonKey);
-            // log.debug("oldactiveLesson",temp.activeLessonKey);
-
-            // temp.activatedLessonKey = 3;
-            // temp.activeLessonKey = 10;
-
-            log.debug("activatedLesson",temp.activatedLessonKey);
-            log.debug("activeLesson",temp.activeLessonKey);
-
 
             function animateStar(){
                 setTimeout(function(){
@@ -723,30 +784,37 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                             }
                             starCloneTween[i].scale.onStart.add(playStarAudio,this);
                             starCloneTween[i].rotate.onComplete.add(destroyStar,this);
-
                     }
                 },800);
             }
+            
+            function gameStart(){
+                
+                log.debug("new region array",renderedRegion);
+                addGroups(renderedRegion);
+                renderWorld(renderedRegion);
+                renderRegion(renderedRegion);
+                renderSprites(renderedRegion,gameSprites);
+                renderNodePath(renderedRegion,points);
+                renderParticles();
+                renderNodes();
+                if (stateParams.activatedLesson && temp.activeLessonKey == temp.activatedLessonKey + 1) {
+                    log.debug("Activating star animation");
+                    animateStar();
+                    scope.$emit('animateStar');
+                }
 
-            if (stateParams.activatedLesson && temp.activeLessonKey == temp.activatedLessonKey + 1) {
-            // if (true){
-                log.debug("Activating star animation");
-                animateStar();
-                scope.$emit('animateStar');
+                scope.$emit('show_demo');
+                _this.init();
+                game.kineticScrolling.start();
+
             }
 
-            // for (var key in regionRange){
-            //     if(regionRange[key].lowerLimit > game.camera.y && regionRange[key].upperLimit < game.camera.y ){
-            //         var delGroup = region.slice();
-            //         delGroup.splice(region.indexOf(key),1);
-            //         for (var i = 0; i < delGroup.length; i++) {
-            //            groups.region[delGroup[i]].callAll('kill');
-            //         }
-            //         break;
-            //     }
-            // }
-            // log.debug("DEBUG",game.kineticScrolling);
-            log.debug(sprites);
+            gameStart();
+
+            
+
+            log.info("Profile Grade",JSON.parse(localStorage.getItem("profile")).grade);
 
         },
         init: function() {
@@ -773,34 +841,73 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             if (sprite.y > regionOffset.desert)
                 sprite.y = regionOffset.tundra;
         },
+
+        optimize: function(camera,regionRange){
+            var lowerCameraBoundary, upperCameraBoundary;
+            // var i = 0;
+            for(var key in regionRange){
+                // i++;
+                if (regionRange.hasOwnProperty(key)) {
+                    if(regionRange[key].lowerLimit > camera.y && regionRange[key].upperLimit < camera.y ){
+                        if (camera.y < regionRange[key].upperTreshold && renderedRegion.indexOf(key) < renderedRegion.length - 1) {
+                            if (groups.renderedRegion[renderedRegion[renderedRegion.indexOf(key) + 1]].countLiving() == 0){
+                                log.debug('revive '+renderedRegion[renderedRegion.indexOf(key) + 1]);
+                                groups.renderedRegion[renderedRegion[renderedRegion.indexOf(key) + 1]].callAll('revive');
+                            }
+
+                        } else if (camera.y > regionRange[key].upperTreshold && renderedRegion.indexOf(key) < renderedRegion.length - 1){
+                            if (groups.renderedRegion[renderedRegion[renderedRegion.indexOf(key) + 1]].countLiving() != 0){
+                                log.debug('kill '+renderedRegion[renderedRegion.indexOf(key) + 1]);
+                                groups.renderedRegion[renderedRegion[renderedRegion.indexOf(key) + 1]].callAll('kill');
+                            }
+                        }
+
+                        if ((camera.y + camera.height) > regionRange[key].lowerTreshold  && renderedRegion.indexOf(key) > 0) {
+                            if (groups.renderedRegion[renderedRegion[renderedRegion.indexOf(key) - 1]].countLiving() == 0){
+                                log.debug('revive '+renderedRegion[renderedRegion.indexOf(key) - 1]);
+                                groups.renderedRegion[renderedRegion[renderedRegion.indexOf(key) - 1]].callAll('revive');
+                            }
+                        } else if ((camera.y + camera.height) < regionRange[key].lowerTreshold  && renderedRegion.indexOf(key) > 0){
+                            if (groups.renderedRegion[renderedRegion[renderedRegion.indexOf(key) - 1]].countLiving() != 0){
+                                log.debug('kill '+renderedRegion[renderedRegion.indexOf(key) - 1]);
+                                groups.renderedRegion[renderedRegion[renderedRegion.indexOf(key) - 1]].callAll('kill');
+                            }
+                        }
+                    }
+
+                }
+            }
+        },
+
         update: function() {
             // log.debug("groups.region.desert",groups.region.desert);
             // this.dragMap();
             // log.log("CAMERA",game.camera.y);
-            optimize(game.camera,regionRange);
+            this.optimize(game.camera,regionRange);
 
 
         },
-
         render: function() {
-            if (game.camera.y + 200 < regionOffset.tundra && game.camera.y + 200 > regionOffset.tundra - 360) {
-                // game.debug.spriteInfo(sprites.plantLeft, 20, 32);
-                if (temp.plantLeftX == undefined && temp.plantRightX ==undefined) {
-                        temp["plantLeftX"] = sprites.plantLeft.x;
-                        temp["plantRightX"] = sprites.plantRight.x;
+            function interactiveAnimate(){
+                if (game.camera.y + 200 < regionOffset.tundra && game.camera.y + 200 > regionOffset.tundra - 360) {
+                    // game.debug.spriteInfo(sprites.plantLeft, 20, 32);
+                    if (temp.plantLeftX == undefined && temp.plantRightX ==undefined) {
+                            temp["plantLeftX"] = sprites.plantLeft.x;
+                            temp["plantRightX"] = sprites.plantRight.x;
+                    }
+                   sprites.plantLeft.x = temp.plantLeftX - (180 * (regionOffset.tundra - game.camera.y - 200)/360);
+                   sprites.plantRight.x = temp.plantRightX + (180 * (regionOffset.tundra - game.camera.y - 200)/360);
                 }
-               sprites.plantLeft.x = temp.plantLeftX - (180 * (regionOffset.tundra - game.camera.y - 200)/360);
-               sprites.plantRight.x = temp.plantRightX + (180 * (regionOffset.tundra - game.camera.y - 200)/360);
-            }
 
-            if (game.camera.y + 500 < regionOffset.tundra && game.camera.y + 500 > regionOffset.forest + 300) {
-                // game.debug.spriteInfo(sprites.yellowButterfly,20,132);
-                if (temp.yellowButterflyY == undefined) {
-                        temp["yellowButterflyY"] = sprites.yellowButterfly.y;
-                }
-                sprites.yellowButterfly.y = temp.yellowButterflyY - (regionOffset.tundra - game.camera.y - 500);
+                if (game.camera.y + 500 < regionOffset.tundra && game.camera.y + 500 > regionOffset.forest + 300) {
+                    // game.debug.spriteInfo(sprites.yellowButterfly,20,132);
+                    if (temp.yellowButterflyY == undefined) {
+                            temp["yellowButterflyY"] = sprites.yellowButterfly.y;
+                    }
+                    sprites.yellowButterfly.y = temp.yellowButterflyY - (regionOffset.tundra - game.camera.y - 500);
+                }    
             }
-            // this.game.debug.text("fps : "+game.time.fps || '--', 2, 100, "#00ff00");
+            interactiveAnimate();           
         }
     }
 
@@ -814,40 +921,5 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
         canvas.parentNode.removeChild(canvas);
     });
 
-    function optimize(camera,regionRange){
-        var lowerCameraBoundary, upperCameraBoundary;
-        // var i = 0;
-        for(var key in regionRange){
-            // i++;
-            if (regionRange.hasOwnProperty(key)) {
-                if(regionRange[key].lowerLimit > camera.y && regionRange[key].upperLimit < camera.y ){
-                    if (camera.y < regionRange[key].upperTreshold && region.indexOf(key) < region.length - 1) {
-                        if (groups.region[region[region.indexOf(key) + 1]].countLiving() == 0){
-                            // log.debug('revive '+region[region.indexOf(key) + 1]);
-                            groups.region[region[region.indexOf(key) + 1]].callAll('revive');
-                        }
-
-                    } else if (camera.y > regionRange[key].upperTreshold && region.indexOf(key) < region.length - 1){
-                        if (groups.region[region[region.indexOf(key) + 1]].countLiving() != 0){
-                            // log.debug('kill '+region[region.indexOf(key) + 1]);
-                            groups.region[region[region.indexOf(key) + 1]].callAll('kill');
-                        }
-                    }
-
-                    if ((camera.y + camera.height) > regionRange[key].lowerTreshold  && region.indexOf(key) > 0) {
-                        if (groups.region[region[region.indexOf(key) - 1]].countLiving() == 0){
-                            // log.debug('revive '+region[region.indexOf(key) - 1]);
-                            groups.region[region[region.indexOf(key) - 1]].callAll('revive');
-                        }
-                    } else if ((camera.y + camera.height) < regionRange[key].lowerTreshold  && region.indexOf(key) > 0){
-                        if (groups.region[region[region.indexOf(key) - 1]].countLiving() != 0){
-                            // log.debug('kill '+region[region.indexOf(key) - 1]);
-                            groups.region[region[region.indexOf(key) - 1]].callAll('kill');
-                        }
-                    }
-                }
-
-            }
-        }
-    }
+    
 };
