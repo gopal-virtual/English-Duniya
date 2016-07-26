@@ -4,7 +4,7 @@
   angular
     .module('common')
     .constant('CONSTANT', {
-      'LOCK': true,
+      'LOCK': false,
       'BACKEND_SERVICE_DOMAIN': 'https://cc-test.zaya.in/',
       // 'BACKEND_SERVICE_DOMAIN': 'http://cc-pre-prod.zaya.in/',
       // 'BACKEND_SERVICE_DOMAIN': 'https://eg-api.zaya.in/',

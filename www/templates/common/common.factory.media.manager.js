@@ -61,6 +61,7 @@
                     .then(function(result) {
                       d.resolve(target);
                     }, function(err) {
+                      $log.debug(err)
                       d.reject("Error Downlaoding " + target);
                     }, function(progress) {});
                 }

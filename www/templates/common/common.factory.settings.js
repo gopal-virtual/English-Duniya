@@ -9,16 +9,15 @@
 
     /* @ngInject */
     function settings(network, $ionicLoading, $ionicPopup, Auth, Rest, $state) {
-        var user = JSON.parse(localStorage.user_details) || {};
-        user['name'] = user.first_name + ' ' + user.last_name;
 
         var settings = {
             updateProfile : updateProfile,
             logout : logout,
             network : network,
-            user : user,
+            user : JSON.parse(localStorage.user_details) || {},
             splitName : splitName
         };
+        settings.user.name = settings.user.first_name + ' ' + settings.user.last_name;
 
         return settings;
 
@@ -48,6 +47,7 @@
         function updateProfile(userid, params) {
             $ionicLoading.show()
           Rest.one('users', userid).patch(params).then(function(response) {
+            localStorage.setItem('user_details', JSON.stringify(response));
               $ionicLoading.hide();
           }).catch();
         }
