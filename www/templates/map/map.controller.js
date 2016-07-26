@@ -109,6 +109,7 @@
             $log.debug("Resolves", new Date() - d, s)
           node.meta.parsed_sound = s;
           $log.debug("Download intro here",node)
+          audio.setVolume('background', 0.1);
           if(currentPos)
           {
             $log.debug("CurrentPos")
