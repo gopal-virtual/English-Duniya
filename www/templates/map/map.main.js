@@ -484,11 +484,11 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
 
 
             function addGroups(region){
-                for (var i = 0; i < region.length; i++) {
+                for (var i = 0; i < renderedRegion.length; i++) {
                     groups.regionBg[region[i]] = game.add.group();
                 }
                 groups.nonRegion["nodePath"] = game.add.group();
-                for (var i = 0; i < region.length; i++) {
+                for (var i = 0; i < renderedRegion.length; i++) {
                     groups.region[region[i]] = game.add.group();
                 }
                 groups.nonRegion["starClone"] = game.add.group();
@@ -538,11 +538,12 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             // var gameSprites =  game.cache.getJSON('gamesprites');
             
             function renderNodePath(region,points){
-
+                log.info("info rendering path ...")
                 points.tempX = [];
                 points.tempY = [];
                 for (var i = 0, points_count = points.x.length; i < points_count; i++) {
                     // if (points.y[i]  - (60 - regionOffset[region[region.length - 1]]) < ) {}
+                    // log.info(points);
                     points.tempX.push(points.x[i] * game_scale);
                     points.tempY.push(points.y[i] );
                 }
@@ -555,6 +556,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                 // log.warn("TempPoints",tempPoints);
                     var posx = game.math.catmullRomInterpolation(points.tempX, j);
                     var posy = game.math.catmullRomInterpolation(points.tempY, j);
+                    // log.info("Posx",posx,"Posy",posy);
                     bmd.rect(posx, posy, 4, 4, '#219C7F');
                 }
                 groups.nonRegion.nodePath.create(0,0,bmd);
@@ -568,7 +570,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                         // log.debug("breaking at",gameSprites[i].region)
                         continue;
                     }
-                    log.debug("Sprite",gameSprites[i].name)
+                    // log.debug("Sprite",gameSprites[i].name)
 
                     if (gameSprites[i].background == true) {
                         var gameSprite = groups.regionBg[gameSprites[i].region].create(gameSprites[i].x * game_scale, gameSprites[i].y, gameSprites[i].name);
@@ -810,7 +812,10 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
 
             }
 
-            gameStart();
+            setTimeout(function(){
+                gameStart();
+
+            },2000);
 
             
 
@@ -883,7 +888,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             // log.debug("groups.region.desert",groups.region.desert);
             // this.dragMap();
             // log.log("CAMERA",game.camera.y);
-            this.optimize(game.camera,regionRange);
+            // this.optimize(game.camera,regionRange);
 
             
         },
