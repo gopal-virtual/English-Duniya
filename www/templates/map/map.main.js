@@ -685,6 +685,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             // Place nodes
             function renderNodes(){
                 for (var j = 0, i = lessons.length - 1, distance = 1 / (lessons.length); i >= 0; j += distance, i--) {
+
                     var currentLesson = lessons[i];
                     var locked = currentLesson.locked ? '-locked' : '';
                     var type = lessonType(currentLesson, i) == '' ? '' : '-' + lessonType(currentLesson, i);
@@ -701,14 +702,14 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                     }
 
                     if (stateParams.activatedLesson && stateParams.activatedLesson.node.id == currentLesson.id) {
-                        temp["activatedLessonKey"] = i;
+                        temp["lessonFromQuizKey"] = i;
                     }
 
                     node.inputEnabled = true;
                     node.currentLesson = currentLesson;
                     node.type = lessonType(currentLesson, i);
                     node.events.onInputUp.add(
-                        function(currentLesson, game, posy) {
+                        function(currentLesson, game, posy, i, temp) {
                             return function() {
                                 var displacement = game.kineticScrolling.velocityY > -30 && game.kineticScrolling.velocityY < 30;
                                 if (!currentLesson.locked && displacement) {
@@ -717,13 +718,20 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                                         "x": game.input._x,
                                         "y": game.input._y,
                                     }
+                                    log.info("Clicked on lesson key",i);
+                                    log.warn(temp.activeLessonKey);
+                                    var animateStarFlag = {
+                                        isCurrentNode : temp.activeLessonKey==i,
+                                        clickedNodeStar : lessons[i].stars
+                                    }
+                                    localStorage.setItem("animateStarFlag",JSON.stringify(animateStarFlag));
                                     scope.$emit('openNode', currentLesson, currentPosition);
                                     // scope.$emit('game', game);
                                 } else if (currentLesson.locked && displacement) {
                                     audio.play('locked');
                                 } else {}
                             }
-                        }(currentLesson, game, posy)
+                        }(currentLesson, game, posy, i, temp)
                     );
                     // icon.anchor.setTo(0.5,0.5);
                     // icon.scale.setTo(0.3,0.3);
@@ -759,30 +767,30 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                 );
             }
 
-            function animateStar(){
+            function animateStar(lessonKey){
                 setTimeout(function(){
-                    // log.debug("GUchaMI",temp.activeLessonKey);
-                    // log.debug("GUchaMI2",temp.activatedLessonKey);
 
-                    log.debug(currentLesson.tag);
+                    // log.debug("GUchaMI",temp.activeLessonKey);
+                    // log.debug("GUchaMI2",lessonKey);
+
+                    // log.debug(currentLesson.tag);
                     var lessonTag =  {
                         "vocabulary" : 1,
                         "reading" : 2,
                         "grammar" : 3,
-                        "lisetening" : 4
+                        "listening" : 4
                     }
-                    var j =  lessons.length - temp.activatedLessonKey - 1;
+                    var j =  lessons.length - lessonKey - 1;
                     var posx = _this.math.catmullRomInterpolation(points.x, j/lessons.length);
                     var posy = _this.math.catmullRomInterpolation(points.y, j/lessons.length);
                     // starClone.push(createStars(currentLesson.stars, $.merge([posx], star_x), $.merge([posy], star_y)));
                     // log.debug(currentLesson.stars);
-                    // log.debug(lessons[temp.activatedLessonKey].stars);
+                    // log.debug(lessons[lessonKey].stars);
                     // log.debug(temp.activeLesson);
-                    log.info("In star animation function, \nactivatedLessonKey: ",temp.activatedLessonKey," activeLessonKey: ",temp.activeLessonKey,"\nactivatedLesson: ",lessons[temp.activatedLessonKey],"\nactiveLesson: ",lessons[temp.activeLessonKey]);
-                    log.warn("lessonTag: ",lessonTag[lessons[temp.activatedLessonKey].tag.toLowerCase()]>2?"+100":"-100")
+                    log.info("In star animation function, \nlessonFromQuizKey: ",lessonKey," activeLessonKey: ",temp.activeLessonKey,"\nactivatedLesson: ",lessons[lessonKey],"\nactiveLesson: ",lessons[temp.activeLessonKey]);
                     var starCloneTween = [];  
                     // log.debug(lessonTag[lessons[j].tag.toLowerCase()]*game.world.width);
-                    for (var i = 0; i < lessons[temp.activatedLessonKey].stars; i++) {
+                    for (var i = 0; i < lessons[lessonKey].stars; i++) {
                         // setTimeout(function(){
                             // log.debug($.merge([posx], star_x), $.merge([posy], star_y));
 
@@ -792,10 +800,11 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                             // log.debug(starClone[i]);
                             starCloneTween[i] = {};
 
+                            log.warn("lessonTag: ",lessonTag[lessons[lessonKey].tag.toLowerCase()])
                             // var starClone = createStars(currentLesson.stars, $.merge([posx], star_x), $.merge([posy], star_y));
-                            starCloneTween[i]["pos"] = game.add.tween(starClone[i]).to( { x: ((lessonTag[lessons[temp.activatedLessonKey].tag.toLowerCase()]-1)*game.width)/5, y: parseInt(game.camera.y)}, 1000, Phaser.Easing.Exponential.InOut);
+                            starCloneTween[i]["pos"] = game.add.tween(starClone[i]).to( { x: ((lessonTag[lessons[lessonKey].tag.toLowerCase()]-1)*game.width)/5, y: parseInt(game.camera.y)}, 1000, Phaser.Easing.Exponential.InOut);
                             starCloneTween[i]["scale"] = game.add.tween(starClone[i].scale).from( { x: 0.1, y: 0.1 }, 800, Phaser.Easing.Bounce.Out,false,i*800);
-                            starCloneTween[i]["scalePos"] = game.add.tween(starClone[i]).to( { x: (lessonTag[lessons[temp.activatedLessonKey].tag.toLowerCase()]>2?"+100":"-100"), y: "-100" }, 800, Phaser.Easing.Cubic.Out,false,i*800);
+                            starCloneTween[i]["scalePos"] = game.add.tween(starClone[i]).to( { x: (lessonTag[lessons[lessonKey].tag.toLowerCase()]>2?"+100":"-100"), y: "-100" }, 800, Phaser.Easing.Cubic.Out,false,i*800);
                             starCloneTween[i]["rotate"] = game.add.tween(starClone[i]).to( { angle: 450 }, 3000, Phaser.Easing.Quadratic.Out);
                             starCloneTween[i].scale.chain(starCloneTween[i].pos);
                             starCloneTween[i].scale.start();
@@ -827,15 +836,31 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                 fetchMapRequest.then(function(){
                     renderNodePath(renderedRegion,points);
                     renderNodes();
+                    log.warn("stateParams",stateParams.activatedLesson);
+                    log.warn("QuizLessonKey",temp.lessonFromQuizKey);
+                    log.warn("ActiveLessonKey",temp.activeLessonKey);
+                    log.warn("QuizLesson",lessons[temp.lessonFromQuizKey]);
+                    log.warn("ActiveLesson",lessons[temp.activeLessonKey]);
+                    var lessonFromQuizStars = temp.lessonFromQuizKey?lessons[temp.lessonFromQuizKey].stars:false;
+                    var animateStarFlag = JSON.parse(localStorage.getItem("animateStarFlag"));
+                    if (animateStarFlag) {
+                        log.warn("Current Node",animateStarFlag.isCurrentNode);
+                        log.warn("Active Lesson",lessonFromQuizStars);
+                        log.warn("if condition",animateStarFlag.isCurrentNode && lessonFromQuizStars);
+                        if ((animateStarFlag.isCurrentNode && lessonFromQuizStars) || (lessonFromQuizStars > animateStarFlag.clickedNodeStar && lessonFromQuizStars)) {
+                            log.debug("Activating star animation");
+                            animateStar(temp.lessonFromQuizKey);
+                            scope.$emit('animateStar');
+                        }
+                    }else{
+                        log.warn("localStorage Animate Star is not set. Not checking for animateStar")
+                    }
                     // $ionicLoading.hide();
                 },function(error){
                     log.error("Failed to fetchMapPath",error);
                 })
-                if (stateParams.activatedLesson && temp.activeLessonKey == temp.activatedLessonKey + 1) {
-                    log.debug("Activating star animation");
-                    animateStar();
-                    scope.$emit('animateStar');
-                }
+
+
 
                 scope.$emit('show_demo');
                 _this.init();
