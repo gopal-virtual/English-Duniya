@@ -1,19 +1,13 @@
 window.createGame = function(scope, stateParams, lessons, audio, injector, log) {
     'use strict';
 
-    var lessons = lessons;
     var game = new Phaser.Game("100", "100", Phaser.CANVAS, 'map_canvas', null, true, true, null);
     var gameSprites;
     var sprites = {};
     var temp = {};
     // var desertRegion, regionGroups.tundra, regionGroups.forest;
     var region = ["desert","tundra","forest","peru"];
-    var gradeRegion = {
-        "0" : 1,
-        "1" : 2,
-        "2" : 3,
-        "3" : 4
-    };
+    
     var groups = {
         "region" : {},
         "nonRegion" : {},
@@ -530,6 +524,37 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                 
             }
 
+            function fetchMapPath (points){
+                var fetchMapRequest = $.get("img/assets/map_path.svg", function(data) {
+                    var x = [];
+                    var y = [];
+                    var ydiff = [];
+                    var renderRegionHeight = 0;
+                    for (var i = 0; i < renderedRegion.length; i++) {
+                        renderRegionHeight += regionHeight[region[i]];
+                    }
+                    // log.warn("Region height", renderRegionHeight);
+                    // log.warn("SVG height", data.getElementById("mappathid").getTotalLength());
+                    var path = data.getElementById("mappathid");
+                    for (var i = path.getTotalLength() - 1; i >= 0 ; i-=75) {
+                        var pathPoint = path.getPointAtLength(i);
+                        // log.debug(parseInt(pathPoint.y) - (totalRegionHeight - renderRegionHeight),parseInt(pathPoint.x),svgPathHeight - parseInt(pathPoint.y));
+                        if (svgPathHeight - pathPoint.y + 100 > renderRegionHeight) {
+                            // log.warn("Should be cut here",pathPoint.y,svgPathHeight- pathPoint.y);
+                            break;
+                        }
+                        x.push(parseInt(pathPoint.x));
+                        y.push(parseInt(pathPoint.y) - (totalRegionHeight - renderRegionHeight));
+                    }
+
+                    points.x = x.reverse();
+                    points.y = y.reverse();
+                });
+
+                return fetchMapRequest;
+
+            }
+
 
             // var tempPoints = {
             //     "x" : [],
@@ -791,15 +816,21 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             }
             
             function gameStart(){
-                
+                // $ionicLoading.show();
                 log.debug("new region array",renderedRegion);
                 addGroups(renderedRegion);
                 renderWorld(renderedRegion);
                 renderRegion(renderedRegion);
                 renderSprites(renderedRegion,gameSprites);
-                renderNodePath(renderedRegion,points);
                 renderParticles();
-                renderNodes();
+                var fetchMapRequest = fetchMapPath(points);
+                fetchMapRequest.then(function(){
+                    renderNodePath(renderedRegion,points);
+                    renderNodes();
+                    // $ionicLoading.hide();
+                },function(error){
+                    log.error("Failed to fetchMapPath",error);
+                })
                 if (stateParams.activatedLesson && temp.activeLessonKey == temp.activatedLessonKey + 1) {
                     log.debug("Activating star animation");
                     animateStar();
@@ -812,10 +843,10 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
 
             }
 
-            setTimeout(function(){
+            // setTimeout(function(){
                 gameStart();
 
-            },2000);
+            // },2000);
 
             
 
