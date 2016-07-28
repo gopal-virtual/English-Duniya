@@ -5,10 +5,10 @@
     .module('common')
     .factory('lessonutils', lessonutils);
 
-  lessonutils.$inject = ['$ionicLoading', '$state', '$stateParams', 'Rest', '$log', 'CONSTANT', '$timeout', '$sce', '$ionicPopup', 'data', 'mediaManager', 'demo', 'audio','ngAudio'];
+  lessonutils.$inject = ['$ionicLoading', '$state', '$stateParams', 'Rest', '$log', 'CONSTANT', '$timeout', '$sce', '$ionicPopup', 'data', 'mediaManager', 'demo', 'audio', 'ngAudio','Auth'];
 
   /* @ngInject */
-  function lessonutils($ionicLoading, $state, $stateParams, Rest, $log, CONSTANT, $timeout, $sce, $ionicPopup, data, mediaManager, demoFactory, audio, ngAudio) {
+  function lessonutils($ionicLoading, $state, $stateParams, Rest, $log, CONSTANT, $timeout, $sce, $ionicPopup, data, mediaManager, demoFactory, audio, ngAudio, Auth) {
     var utils = {
       leaveLesson: leaveLesson,
       getLesson: getLesson,
@@ -81,21 +81,29 @@
     }
 
     function getLesson(id, scope, callback) {
-      $ionicLoading.show({
-        noBackdrop: false,
-      });
+      $ionicLoading.show();
+      var lesson = null;
+      $log.debug(id);
       data.getLesson(id).then(function(response) {
-        $ionicLoading.hide();
-
-        utils.setLocalLesson(JSON.stringify(response));
-        callback && callback(response);
-      }, function(error) {
-        $ionicLoading.hide();
-        $ionicPopup.alert({
-          title: 'Sorry',
-          template: 'You need to be online!'
-        });
-      })
+          lesson = response;
+          $log.debug(response);
+          return data.getLessonScore({'lessonId':id,'userId':Auth.getProfileId()});
+        })
+        .then(function(score){
+          lesson.score = score
+          $log.debug("CHeck this", lesson.score)
+          utils.setLocalLesson(JSON.stringify(lesson));
+          $ionicLoading.hide();
+          callback && callback(lesson);
+        })
+        .catch(function(error) {
+          $ionicLoading.hide();
+          $log.debug(error)
+          $ionicPopup.alert({
+            title: 'Sorry',
+            template: 'You need to be online!'
+          });
+        })
     }
 
     function getLocalLesson() {
@@ -167,27 +175,27 @@
       } else if (utils.resourceType(resource) == 'practice') {
         $log.debug("PLayed")
         data.downloadAssessment(resource).then(function() {
-            $log.debug("No errored",$state.current)
+            $log.debug("No errored", $state.current)
             $timeout(function() {
               !($stateParams.type == 'practice' && $state.current.name == 'quiz.questions') &&
-                $state.go('quiz.questions', {
-                  id: resource.node.id,
-                  type: 'practice',
-                  quiz: resource
-                });
+              $state.go('quiz.questions', {
+                id: resource.node.id,
+                type: 'practice',
+                quiz: resource
+              });
               $stateParams.type == 'practice' && $ionicLoading.hide();
             });
           }).catch(function(e) {
             $ionicPopup.alert({
-              title: 'Please try again',
-              template: "No internet conection found"
-            }).then(function(){
-              if(callback){
-                $log.debug(callback)
-                callback();
-              }
-            })
-            // $state.go('map.navigate');
+                title: 'Please try again',
+                template: "No internet conection found"
+              }).then(function() {
+                if (callback) {
+                  $log.debug(callback)
+                  callback();
+                }
+              })
+              // $state.go('map.navigate');
             $log.debug("Error playing resource", e)
           })
           .finally(function() {
@@ -201,7 +209,8 @@
                     $state.go('content.video', {
                       video: {
                         src: utils.getSrc(path),
-                        type: 'video/mp4'
+                        type: 'video/mp4',
+                        resource: resource
                       }
                     });
                   if ($state.is('content.video')) {
@@ -216,15 +225,15 @@
           })
           .catch(function(e) {
             $ionicPopup.alert({
-              title: 'Please try again',
-              template: "No internet conection found"
-            }).then(function(){
-              if(callback){
-                $log.debug(callback)
-                callback();
-              }
-            })
-            // $state.go('map.navigate');
+                title: 'Please try again',
+                template: "No internet conection found"
+              }).then(function() {
+                if (callback) {
+                  $log.debug(callback)
+                  callback();
+                }
+              })
+              // $state.go('map.navigate');
             $log.debug("Error playing resource", e)
           })
           .finally(function() {
@@ -242,7 +251,7 @@
     }
 
     function playDemoAudio(node) {
-      $log.debug("Playing audio init")
+      $log.debug("Playing audio init",utils.demoShown)
       if (utils.demoShown) {
         $log.debug("Playing audio init 1")
 
@@ -250,21 +259,19 @@
           $log.debug("Playing audio init 2")
           audio['demo-1'].stop();
           audio['demo-2'].play();
-        }else if(utils.demoFactory.getStep() == 4){
-            audio['demo-3'].stop();
+        } else if (utils.demoFactory.getStep() == 4) {
+          audio['demo-3'].stop();
           audio['demo-4'].play();
           $log.debug("Playing audio init 4")
 
-        }
-        else if(node.meta && node.meta.parsed_sound){
+        } else if (node.meta && node.meta.parsed_sound) {
           angular.element("#audioSource")[0].src = node.meta.parsed_sound;
           angular.element("#audioplayer")[0].load();
           angular.element("#audioplayer")[0].play();
         }
 
-      }
-      else{
-        if(node.meta && node.meta.parsed_sound){
+      } else {
+        if (node.meta && node.meta.parsed_sound) {
           $log.debug(node.meta.intros.parsed_sound);
           angular.element("#audioSource")[0].src = node.meta.parsed_sound;
           angular.element("#audioplayer")[0].load();

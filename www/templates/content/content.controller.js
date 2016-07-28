@@ -5,10 +5,10 @@
     .module('zaya-content')
     .controller('contentController', contentController);
 
-  contentController.$inject = ['$stateParams', 'orientation', '$log', '$scope', 'CONSTANT', '$ionicModal', 'lessonutils', '$timeout', 'audio', '$ionicPlatform'];
+  contentController.$inject = ['$stateParams', 'orientation', '$log', '$scope', 'CONSTANT', '$ionicModal', 'lessonutils', '$timeout', 'audio', '$ionicPlatform','Auth','data'];
 
   /* @ngInject */
-  function contentController($stateParams, orientation, $log, $scope, CONSTANT, $ionicModal, lessonutils, $timeout, audio, $ionicPlatform) {
+  function contentController($stateParams, orientation, $log, $scope, CONSTANT, $ionicModal, lessonutils, $timeout, audio, $ionicPlatform, Auth, dataFactory) {
     var contentCtrl = this;
     $scope.audio = audio;
     $scope.orientation = orientation;
@@ -44,7 +44,7 @@
       contentCtrl.config.plugins.controls.showControl=!contentCtrl.config.plugins.controls.showControl;
       $log.debug(contentCtrl.config.plugins.controls.showControl);
   }
-
+  $log.debug($stateParams)
   $ionicPlatform.onHardwareBackButton(function(event) {
       try {
         contentCtrl.API.pause();
@@ -55,9 +55,36 @@
   })
 
     function onVideoComplete() {
+      submitReport()
         $timeout(function() {
           orientation.setPortrait();
           $scope.modal.show();
+
+        })
+    }
+
+    function submitReport(){
+      var  lesson = lessonutils.getLocalLesson();
+        dataFactory.updateSkills({
+          userId: Auth.getProfileId(),
+          lessonId: lesson.node.id,
+          score: $stateParams.video.resource.node.type.score,
+          totalScore: $stateParams.video.resource.node.type.score,
+          skill: lesson.node.tag
+        }).then(function(){
+          return dataFactory.updateScore({
+            userId: Auth.getProfileId(),
+            lessonId: lesson.node.id,
+            id: $stateParams.video.resource.node.id,
+            score: $stateParams.video.resource.node.type.score,
+            totalScore: $stateParams.video.resource.node.type.score,
+          })
+        }).then(function(){
+          return dataFactory.saveReport({
+            'score': $stateParams.video.resource.node.type.score,
+            'userId': Auth.getProfileId(),
+            'node': $stateParams.video.resource.node.id
+          })
         })
     }
 

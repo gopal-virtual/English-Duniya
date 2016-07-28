@@ -398,13 +398,17 @@
           'score': data.score,
           'totalScore': data.totalScore
         };
-
+        var temp = JSON.parse(localStorage.getItem('lesson'));
+        temp.score = doc.scores[data.lessonId];
+        localStorage.setItem('lesson',JSON.stringify(temp));
+        $log.debug("local storage updated")
         return appDB.put({
           '_id': data.userId,
           '_rev': response._rev,
           'data': doc
-        }).catch(function(e) {});
-      }).catch(function(e) {})
+        });
+      })
+      .catch(function(e) {})
 
     }
 
@@ -464,7 +468,7 @@
       var d = $q.defer();
       var promises = []
       for (var index = 0; index < quiz.objects.length; index++) {
-        if (quiz.objects[index].node.meta.instructions && quiz.objects[index].node.meta.instructions.sounds[0] && localStorage.getItem(quiz.objects[index].node.meta.instructions.sounds[0]) != 'played') {
+        if (quiz.objects[index].node.meta && quiz.objects[index].node.meta.instructions && quiz.objects[index].node.meta.instructions.sounds[0] && localStorage.getItem(quiz.objects[index].node.meta.instructions.sounds[0]) != 'played') {
           localStorage.setItem(quiz.objects[index].node.meta.instructions.sounds[0],'played');
 
           promises.push(mediaManager.getPath(quiz.objects[index].node.meta.instructions.sounds[0]).then(

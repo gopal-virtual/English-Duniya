@@ -36,6 +36,7 @@
               $state.go('auth.signin', {})
             })
           } else {
+            
             Auth.logout(function() {
               $state.go('auth.signin', {})
             }, function() {

@@ -14,11 +14,11 @@
     $scope.settings = settings;
     $scope.orientation = orientation;
     $scope.activatedLesson = $stateParams.activatedLesson;
-
+    $scope.progress = localStorage.getItem('progress');
     var mapCtrl = this;
     var lessonList = CONSTANT.LOCK ? lessonLocked : lessons;
     // $state.current.data && lessonList.unshift($state.current.data.litmus);
-    
+
     mapCtrl.lessons = lessonList;
     // mapCtrl.userCtrl = $controller('userCtrl');
     // mapCtrl.resetNode = resetNode;
@@ -83,6 +83,7 @@
     $scope.$on('openNode', function(event, node, currentPos) {
       // audio.stop('demo-1')
     //   $scope.demo.isShown() && $scope.demo.hide();
+    $log.debug("node is this", node);
       if(currentPos)
         currentPos.lessonType = node.tag;
 

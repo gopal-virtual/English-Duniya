@@ -123,6 +123,8 @@
         }
       }
       if (Auth.isAuthorised() && Auth.isVerified() && Auth.hasProfile()) {
+        data.createIfNotExistsLessonDB()
+        
         data.startReportSyncing({
           'userId': Auth.getProfileId()
         })
