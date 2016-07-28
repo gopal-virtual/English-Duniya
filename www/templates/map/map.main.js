@@ -478,11 +478,11 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
 
 
             function addGroups(region){
-                for (var i = 0; i < renderedRegion.length; i++) {
+                for (var i = renderedRegion.length - 1; i >= 0; i--) {
                     groups.regionBg[region[i]] = game.add.group();
                 }
                 groups.nonRegion["nodePath"] = game.add.group();
-                for (var i = 0; i < renderedRegion.length; i++) {
+                for (var i = renderedRegion.length - 1; i >= 0; i--) {
                     groups.region[region[i]] = game.add.group();
                 }
                 groups.nonRegion["starClone"] = game.add.group();
@@ -783,25 +783,15 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                     var j =  lessons.length - lessonKey - 1;
                     var posx = _this.math.catmullRomInterpolation(points.x, j/lessons.length);
                     var posy = _this.math.catmullRomInterpolation(points.y, j/lessons.length);
-                    // starClone.push(createStars(currentLesson.stars, $.merge([posx], star_x), $.merge([posy], star_y)));
-                    // log.debug(currentLesson.stars);
-                    // log.debug(lessons[lessonKey].stars);
-                    // log.debug(temp.activeLesson);
                     log.info("In star animation function, \nlessonFromQuizKey: ",lessonKey," activeLessonKey: ",temp.activeLessonKey,"\nactivatedLesson: ",lessons[lessonKey],"\nactiveLesson: ",lessons[temp.activeLessonKey]);
                     var starCloneTween = [];  
-                    // log.debug(lessonTag[lessons[j].tag.toLowerCase()]*game.world.width);
                     for (var i = 0; i < lessons[lessonKey].stars; i++) {
-                        // setTimeout(function(){
-                            // log.debug($.merge([posx], star_x), $.merge([posy], star_y));
 
                             starClone[i] = groups.nonRegion.starClone.create(posx + star_x[i], posy + star_y[i], 'star_medium');
                             starClone[i].anchor.setTo(0.5, 0.5);
-                            // log.debug("adding tween",starClone[i],"to",parseInt(game.camera.y));
-                            // log.debug(starClone[i]);
                             starCloneTween[i] = {};
 
                             log.warn("lessonTag: ",lessonTag[lessons[lessonKey].tag.toLowerCase()])
-                            // var starClone = createStars(currentLesson.stars, $.merge([posx], star_x), $.merge([posy], star_y));
                             starCloneTween[i]["pos"] = game.add.tween(starClone[i]).to( { x: ((lessonTag[lessons[lessonKey].tag.toLowerCase()]-1)*game.width)/5, y: parseInt(game.camera.y)}, 1000, Phaser.Easing.Exponential.InOut);
                             starCloneTween[i]["scale"] = game.add.tween(starClone[i].scale).from( { x: 0.1, y: 0.1 }, 800, Phaser.Easing.Bounce.Out,false,i*800);
                             starCloneTween[i]["scalePos"] = game.add.tween(starClone[i]).to( { x: (lessonTag[lessons[lessonKey].tag.toLowerCase()]>2?"+100":"-100"), y: "-100" }, 800, Phaser.Easing.Cubic.Out,false,i*800);
@@ -810,7 +800,6 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                             starCloneTween[i].scale.start();
                             starCloneTween[i].scalePos.start();
                             starCloneTween[i].rotate.start();
-                            // log.debug(starCloneTween[i]);
                             log.info("Star Clone "+i+":",starClone[i],"\nstarCloneTween "+i+":",starCloneTween[i]);
                             function playStarAudio() {
                                 audio.play('star_hud');
@@ -836,17 +825,17 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                 fetchMapRequest.then(function(){
                     renderNodePath(renderedRegion,points);
                     renderNodes();
-                    log.warn("stateParams",stateParams.activatedLesson);
-                    log.warn("QuizLessonKey",temp.lessonFromQuizKey);
-                    log.warn("ActiveLessonKey",temp.activeLessonKey);
-                    log.warn("QuizLesson",lessons[temp.lessonFromQuizKey]);
-                    log.warn("ActiveLesson",lessons[temp.activeLessonKey]);
+                    log.debug("stateParams",stateParams.activatedLesson);
+                    log.debug("QuizLessonKey",temp.lessonFromQuizKey);
+                    log.debug("ActiveLessonKey",temp.activeLessonKey);
+                    log.debug("QuizLesson",lessons[temp.lessonFromQuizKey]);
+                    log.debug("ActiveLesson",lessons[temp.activeLessonKey]);
                     var lessonFromQuizStars = typeof(temp.lessonFromQuizKey)!="undefined"?lessons[temp.lessonFromQuizKey].stars:false;
                     var animateStarFlag = JSON.parse(localStorage.getItem("animateStarFlag"));
                     if (animateStarFlag) {
-                        log.warn("Is it Current Node?",animateStarFlag.isCurrentNode);
-                        log.warn("Lesson From QuizStars",lessonFromQuizStars);
-                        log.warn("if condition",animateStarFlag.isCurrentNode && lessonFromQuizStars);
+                        log.debug("Is it Current Node?",animateStarFlag.isCurrentNode);
+                        log.debug("Lesson From QuizStars",lessonFromQuizStars);
+                        log.debug("if condition",animateStarFlag.isCurrentNode && lessonFromQuizStars);
                         if ((animateStarFlag.isCurrentNode && lessonFromQuizStars) || (lessonFromQuizStars > animateStarFlag.clickedNodeStar && lessonFromQuizStars)) {
                             log.debug("Activating star animation");
                             animateStar(temp.lessonFromQuizKey);
@@ -906,38 +895,40 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
         optimize: function(camera,regionRange){
             var lowerCameraBoundary, upperCameraBoundary;
             // var i = 0;
-            for(var key in regionRange){
-                // i++;
-                if (regionRange.hasOwnProperty(key)) {
-                    if(regionRange[key].lowerLimit > camera.y && regionRange[key].upperLimit < camera.y ){
-                        if (camera.y < regionRange[key].upperTreshold && renderedRegion.indexOf(key) < renderedRegion.length - 1) {
-                            if (groups.renderedRegion[renderedRegion[renderedRegion.indexOf(key) + 1]].countLiving() == 0){
-                                log.debug('revive '+renderedRegion[renderedRegion.indexOf(key) + 1]);
-                                groups.renderedRegion[renderedRegion[renderedRegion.indexOf(key) + 1]].callAll('revive');
-                            }
-
-                        } else if (camera.y > regionRange[key].upperTreshold && renderedRegion.indexOf(key) < renderedRegion.length - 1){
-                            if (groups.renderedRegion[renderedRegion[renderedRegion.indexOf(key) + 1]].countLiving() != 0){
-                                log.debug('kill '+renderedRegion[renderedRegion.indexOf(key) + 1]);
-                                groups.renderedRegion[renderedRegion[renderedRegion.indexOf(key) + 1]].callAll('kill');
-                            }
+            for (var i = 0; i < renderedRegion.length; i++) {
+                if(regionRange[renderedRegion[i]].lowerLimit > camera.y && regionRange[renderedRegion[i]].upperLimit < camera.y ){
+                    if (camera.y < regionRange[renderedRegion[i]].upperTreshold && i < renderedRegion.length - 1) {
+                        if (groups.region[renderedRegion[i+1]].countLiving() == 0){
+                            log.debug('revive '+renderedRegion[i + 1]);
+                            groups.regionBg[renderedRegion[i + 1]].callAll('revive');
+                            groups.region[renderedRegion[i + 1]].callAll('revive');
                         }
 
-                        if ((camera.y + camera.height) > regionRange[key].lowerTreshold  && renderedRegion.indexOf(key) > 0) {
-                            if (groups.renderedRegion[renderedRegion[renderedRegion.indexOf(key) - 1]].countLiving() == 0){
-                                log.debug('revive '+renderedRegion[renderedRegion.indexOf(key) - 1]);
-                                groups.renderedRegion[renderedRegion[renderedRegion.indexOf(key) - 1]].callAll('revive');
-                            }
-                        } else if ((camera.y + camera.height) < regionRange[key].lowerTreshold  && renderedRegion.indexOf(key) > 0){
-                            if (groups.renderedRegion[renderedRegion[renderedRegion.indexOf(key) - 1]].countLiving() != 0){
-                                log.debug('kill '+renderedRegion[renderedRegion.indexOf(key) - 1]);
-                                groups.renderedRegion[renderedRegion[renderedRegion.indexOf(key) - 1]].callAll('kill');
-                            }
+                    } else if (camera.y > regionRange[renderedRegion[i]].upperTreshold && i < renderedRegion.length - 1){
+                        if (groups.region[renderedRegion[i + 1]].countLiving() != 0){
+                            log.debug('kill '+renderedRegion[i + 1]);
+                            groups.regionBg[renderedRegion[i + 1]].callAll('kill');
+                            groups.region[renderedRegion[i + 1]].callAll('kill');
                         }
                     }
 
+                    if ((camera.y + camera.height) > regionRange[renderedRegion[i]].lowerTreshold  && i > 0) {
+                        if (groups.region[renderedRegion[i - 1]].countLiving() == 0){
+                            log.debug('revive '+renderedRegion[i - 1]);
+                            groups.regionBg[renderedRegion[i - 1]].callAll('revive');
+                            groups.region[renderedRegion[i - 1]].callAll('revive');
+                        }
+                    } else if ((camera.y + camera.height) < regionRange[renderedRegion[i]].lowerTreshold  && i > 0){
+                        if (groups.region[renderedRegion[i - 1]].countLiving() != 0){
+                            log.debug('kill '+renderedRegion[i - 1]);
+                            groups.regionBg[renderedRegion[i - 1]].callAll('kill');
+                            groups.region[renderedRegion[i - 1]].callAll('kill');
+                        }
+                    }
                 }
+
             }
+
         },
 
         update: function() {
