@@ -162,7 +162,7 @@
           id: quiz.node.id,
           score: summary.score.marks,
           totalScore: quizCtrl.quiz.node.type.score,
-          skill: lesson.node.tag
+          skill: lesson.node.tag,
         })
         .then(function() {
           return data.getQuizScore({
@@ -180,6 +180,7 @@
               id: quiz.node.id,
               score: summary.score.marks,
               totalScore: quizCtrl.quiz.node.type.score,
+              type: 'assessment'
             })
 
           }
@@ -727,7 +728,7 @@
 
       }]
     };
-    $state.is('quiz.questions') && demoFactory.show().then(function(result) {
+    $state.is('quiz.questions') && demoFactory.show(5).then(function(result) {
       if(result){
         $timeout(function(){
           $log.debug($scope.demo.tourFlag);

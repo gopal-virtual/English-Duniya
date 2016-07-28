@@ -40,11 +40,15 @@
           }).then(function(score) {
             if (score) {
               for (var property in score) {
-                if (score.hasOwnProperty(property)) {
+                $log.debug("score found",score[property].type)
+                if (score.hasOwnProperty(property) && score[property].type === 'assessment') {
+                  $log.debug("Score found",property)
                   total_score = total_score + score[property].totalScore;
                   obtained_score = obtained_score + score[property].score;
                 }
               }
+
+              $log.debug("score found",total_score,obtained_score)
               if (total_score > 0) {
                 var percent = (obtained_score / total_score) * 100;
 

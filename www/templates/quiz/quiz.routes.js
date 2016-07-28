@@ -59,7 +59,7 @@
                 return litmus;
               })
             } else {
-              return demoFactory.show().then(function(response) {
+              return demoFactory.show(5).then(function(response) {
                 // $log.debug('resolving quiz');
                 // $stateParams.quiz.objects[0].node.id == 'demo' ? $stateParams.quiz.objects.shift(data.demo_question) :false;
                 var currentIndex = $stateParams.quiz.objects.length;

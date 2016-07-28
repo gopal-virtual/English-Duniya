@@ -5,10 +5,10 @@
     .module('zaya-content')
     .controller('contentController', contentController);
 
-  contentController.$inject = ['$stateParams', 'orientation', '$log', '$scope', 'CONSTANT', '$ionicModal', 'lessonutils', '$timeout', 'audio', '$ionicPlatform','Auth','data'];
+  contentController.$inject = ['$stateParams', 'orientation', '$log', '$scope', 'CONSTANT', '$ionicModal', 'lessonutils', '$timeout', 'audio', '$ionicPlatform','Auth','data','$q'];
 
   /* @ngInject */
-  function contentController($stateParams, orientation, $log, $scope, CONSTANT, $ionicModal, lessonutils, $timeout, audio, $ionicPlatform, Auth, dataFactory) {
+  function contentController($stateParams, orientation, $log, $scope, CONSTANT, $ionicModal, lessonutils, $timeout, audio, $ionicPlatform, Auth, dataFactory, $q) {
     var contentCtrl = this;
     $scope.audio = audio;
     $scope.orientation = orientation;
@@ -65,19 +65,32 @@
 
     function submitReport(){
       var  lesson = lessonutils.getLocalLesson();
-        dataFactory.updateSkills({
+      var promise = null;
+      if(!lesson.score || !lesson.score[$stateParams.video.resource.node.id]){
+        $log.debug("updating scores")
+        promise = dataFactory.updateSkills({
           userId: Auth.getProfileId(),
           lessonId: lesson.node.id,
           score: $stateParams.video.resource.node.type.score,
           totalScore: $stateParams.video.resource.node.type.score,
           skill: lesson.node.tag
-        }).then(function(){
+        })
+      }
+      else{
+        $log.debug("not updating scores")
+
+        promise = $q.resolve();
+      }
+      promise
+        .then(function(){
+          $log.debug("updating video score")
           return dataFactory.updateScore({
             userId: Auth.getProfileId(),
             lessonId: lesson.node.id,
             id: $stateParams.video.resource.node.id,
             score: $stateParams.video.resource.node.type.score,
             totalScore: $stateParams.video.resource.node.type.score,
+            type: 'resource'
           })
         }).then(function(){
           return dataFactory.saveReport({

@@ -7,7 +7,7 @@
 
   function demo($log, data, Auth) {
     return {
-      show: function() {
+      show: function(step) {
         $log.debug("demoFactory OP", Auth.getProfileId())
         return data.getSkills({
             'userId': Auth.getProfileId()
@@ -18,8 +18,12 @@
             angular.forEach(skills, function(skill) {
               score = score + skill.lesson_scores;
             })
-            $log.debug("demoFactory  score", score,score ? false : true)
-            return score > 50 ? false : true;
+            if(step && step === 5 && score === 50){
+              return true;
+            }
+            return score  ? false : true;
+
+            // $log.debug("demoFactory  score", score,score > 50 ? false : true)
           }).catch(function(e) {
             $log.debug("demo skills error", e)
           })

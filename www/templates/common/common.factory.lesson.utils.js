@@ -86,12 +86,12 @@
       $log.debug(id);
       data.getLesson(id).then(function(response) {
           lesson = response;
-          $log.debug(response);
+          $log.debug("Lessonid",id,Auth.getProfileId());
           return data.getLessonScore({'lessonId':id,'userId':Auth.getProfileId()});
         })
         .then(function(score){
           lesson.score = score
-          $log.debug("CHeck this", lesson.score)
+          $log.debug("CHeck this", lesson.score,lesson)
           utils.setLocalLesson(JSON.stringify(lesson));
           $ionicLoading.hide();
           callback && callback(lesson);
