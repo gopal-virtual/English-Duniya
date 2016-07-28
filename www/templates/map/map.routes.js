@@ -64,14 +64,14 @@
       params: {"activatedLesson" : null},
         onEnter: ['$state', 'lessons', 'audio', '$ionicLoading', 'orientation','CONSTANT', function($state, lessons, audio, $ionicLoading, orientation, CONSTANT) {
           orientation.setPortrait();
-          // $ionicLoading.show({
-          //   templateUrl: 'templates/common/common.loader.view.html',
-          //   duration: 8000
-          // });
-          // if (!lessons) {
-          //   $state.go('map.unauthorised');
-          // }
-          audio.play('background');
+          $ionicLoading.show({
+            templateUrl: 'templates/common/common.loader.view.html',
+            duration: 3000
+          });
+          if (!lessons) {
+            $state.go('map.unauthorised');
+          }
+          // audio.play('background');
         //   if(localStorage.getItem('region')>'3409'){
         //   }
         //   else{

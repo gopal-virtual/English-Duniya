@@ -112,6 +112,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             this.load.image('star_medium', 'img/icons/icon-star-medium.png');
             this.load.image('star', 'img/icons/icon-star-small.png');
             this.load.image('nostar', 'img/icons/icon-nostar.png');
+            audio.play('background');
 
             // debug value
             this.game.time.advancedTiming = true;
