@@ -464,7 +464,7 @@
       var d = $q.defer();
       var promises = []
       for (var index = 0; index < quiz.objects.length; index++) {
-        if (quiz.objects[index].node.meta.instructions && quiz.objects[index].node.meta.instructions.sounds[0] && localStorage.getItem(quiz.objects[index].node.meta.instructions.sounds[0]) != 'played') {
+        if (quiz.objects[index].node.meta && quiz.objects[index].node.meta.instructions && quiz.objects[index].node.meta.instructions.sounds[0] && localStorage.getItem(quiz.objects[index].node.meta.instructions.sounds[0]) != 'played') {
           localStorage.setItem(quiz.objects[index].node.meta.instructions.sounds[0],'played');
 
           promises.push(mediaManager.getPath(quiz.objects[index].node.meta.instructions.sounds[0]).then(

@@ -736,6 +736,11 @@
           nzTour.start($scope.tour);
           demoFactory.setStep(5);
         });
+        $timeout(function(){
+          if(nzTour.current.step === 0){
+              tourNextStep();
+          }
+        },3000)
       }
     })
 
