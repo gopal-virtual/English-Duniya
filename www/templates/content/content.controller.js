@@ -16,7 +16,7 @@
                 '$timeout',
                 'audio',
                 '$ionicPlatform',
-                'analytics'
+                'analytics',
                 'Auth',
                 'data',
                 '$q'
