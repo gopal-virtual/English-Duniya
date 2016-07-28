@@ -23,12 +23,16 @@
         } else {
           return true;
         }
+      } else {
+        return true;
       }
-      return false;
     }
 
     function getConnectionType() {
-      return navigator.connection.type;
+      if (window.Connection)
+        return navigator.connection.type;
+      else
+        return 'unknown';
     }
   }
 })();

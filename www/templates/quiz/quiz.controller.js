@@ -4,9 +4,83 @@
     .module('zaya-quiz')
     .controller('QuizController', QuizController)
 
-  QuizController.$inject = ['quiz', 'widgetParser', '$stateParams', '$state', '$scope', 'audio', '$log', '$ionicModal', 'CONSTANT', '$ionicSlideBoxDelegate', 'Utilities', 'Auth', '$ionicLoading', '$ionicPopup', 'lessonutils', 'orientation', '$location', '$anchorScroll', '$document', '$ionicScrollDelegate', '$ionicPosition', '$timeout', '$window', 'mediaManager', '$cordovaFileTransfer', '$cordovaFile', '$interval', '$q', '$ImageCacheFactory', 'ml', 'data', 'lessonutils', '$ionicPlatform', 'nzTour', 'demo' ];
+  QuizController.$inject = [
+                            'quiz',
+                            'widgetParser',
+                            '$stateParams',
+                            '$state',
+                            '$scope',
+                            'audio',
+                            '$log',
+                            '$ionicModal',
+                            'CONSTANT',
+                            '$ionicSlideBoxDelegate',
+                            'Utilities',
+                            'Auth',
+                            '$ionicLoading',
+                            '$ionicPopup',
+                            'lessonutils',
+                            'orientation',
+                            '$location',
+                            '$anchorScroll',
+                            '$document',
+                            '$ionicScrollDelegate',
+                            '$ionicPosition',
+                            '$timeout',
+                            '$window',
+                            'mediaManager',
+                            '$cordovaFileTransfer',
+                            '$cordovaFile',
+                            '$interval',
+                            '$q',
+                            '$ImageCacheFactory',
+                            'ml',
+                            'data',
+                            'lessonutils',
+                            '$ionicPlatform',
+                            'nzTour',
+                            'demo',
+                            'analytics'
+                                ];
 
-  function QuizController(quiz, widgetParser, $stateParams, $state, $scope, audio, $log, $ionicModal, CONSTANT, $ionicSlideBoxDelegate, Utilities, Auth, $ionicLoading, $ionicPopup, lessonutils, orientation, $location, $anchorScroll, $document, $ionicScrollDelegate, $ionicPosition, $timeout, $window, mediaManager, $cordovaFileTransfer, $cordovaFile, $interval, $q, $ImageCacheFactory, ml, data, lessonutils, $ionicPlatform, nzTour, demoFactory) {
+  function QuizController(
+                            quiz,
+                            widgetParser,
+                            $stateParams,
+                            $state,
+                            $scope,
+                            audio,
+                            $log,
+                            $ionicModal,
+                            CONSTANT,
+                            $ionicSlideBoxDelegate,
+                            Utilities,
+                            Auth,
+                            $ionicLoading,
+                            $ionicPopup,
+                            lessonutils,
+                            orientation,
+                            $location,
+                            $anchorScroll,
+                            $document,
+                            $ionicScrollDelegate,
+                            $ionicPosition,
+                            $timeout,
+                            $window,
+                            mediaManager,
+                            $cordovaFileTransfer,
+                            $cordovaFile,
+                            $interval,
+                            $q,
+                            $ImageCacheFactory,
+                            ml,
+                            data,
+                            lessonutils,
+                            $ionicPlatform,
+                            nzTour,
+                            demoFactory,
+                            analytics
+                                    ) {
     $log.debug("Inside quiz controller",$stateParams)
     var quizCtrl = this;
     //bind quiz resolved to controller
@@ -259,7 +333,7 @@
             $scope.modal.show();
             $timeout(function() {
               if ($scope.modal.isShown()) {
-                
+
                 $scope.closeModal(quizCtrl.closeModalCallback);
               }
             }, 2000);
@@ -581,6 +655,16 @@
             delete quizCtrl.report.attempts['demo'];
       if (quizType === 'practice') {
         $scope.modal.hide().then(function() {
+            analytics.log(
+                {
+                    name : 'PRACTICE',
+                    type : 'END',
+                    id : quizCtrl.quiz.id
+                },
+                {
+                    time : new Date()
+                }
+            ) &&
           $state.go('quiz.summary', {
             report: (quizCtrl.report),
             summary: (quizCtrl.summary),
@@ -595,6 +679,16 @@
           if (res) {
             quizCtrl.generateReport(quizCtrl.quiz);
             quizCtrl.summary = quizCtrl.generateSummary(quizCtrl.report, quizCtrl.quiz);
+            analytics.log(
+                {
+                    name : 'QUIZ',
+                    type : 'END',
+                    id : quizCtrl.quiz.id
+                },
+                {
+                    time : new Date()
+                }
+            ) &&
             $state.go('quiz.summary', {
               report: angular.copy(quizCtrl.report),
               summary: angular.copy(quizCtrl.summary),

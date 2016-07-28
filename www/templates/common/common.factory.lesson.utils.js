@@ -5,10 +5,42 @@
     .module('common')
     .factory('lessonutils', lessonutils);
 
-  lessonutils.$inject = ['$ionicLoading', '$state', '$stateParams', 'Rest', '$log', 'CONSTANT', '$timeout', '$sce', '$ionicPopup', 'data', 'mediaManager', 'demo', 'audio','ngAudio'];
+  lessonutils.$inject = [
+                '$ionicLoading',
+                '$state',
+                '$stateParams',
+                'Rest',
+                '$log',
+                'CONSTANT',
+                '$timeout',
+                '$sce',
+                '$ionicPopup',
+                'data',
+                'mediaManager',
+                'demo',
+                'audio',
+                'ngAudio',
+                'analytics'
+          ];
 
   /* @ngInject */
-  function lessonutils($ionicLoading, $state, $stateParams, Rest, $log, CONSTANT, $timeout, $sce, $ionicPopup, data, mediaManager, demoFactory, audio, ngAudio) {
+  function lessonutils(
+                $ionicLoading,
+                $state,
+                $stateParams,
+                Rest,
+                $log,
+                CONSTANT,
+                $timeout,
+                $sce,
+                $ionicPopup,
+                data,
+                mediaManager,
+                demoFactory,
+                audio,
+                ngAudio,
+                analytics
+               ) {
     var utils = {
       leaveLesson: leaveLesson,
       getLesson: getLesson,
@@ -152,6 +184,16 @@
           .then(function() {
             $timeout(function() {
               $stateParams.type != 'assessment' &&
+              analytics.log(
+                  {
+                      name : 'QUIZ',
+                      type : 'START',
+                      id : resource.node.id
+                  },
+                  {
+                      time : new Date()
+                  }
+              ) &&
                 $state.go('quiz.questions', {
                   id: resource.node.id,
                   type: 'assessment',
@@ -170,6 +212,16 @@
             $log.debug("No errored",$state.current)
             $timeout(function() {
               !($stateParams.type == 'practice' && $state.current.name == 'quiz.questions') &&
+              analytics.log(
+                  {
+                      name : 'PRACTICE',
+                      type : 'START',
+                      id : resource.node.id
+                  },
+                  {
+                      time : new Date()
+                  }
+              ) &&
                 $state.go('quiz.questions', {
                   id: resource.node.id,
                   type: 'practice',
@@ -198,10 +250,21 @@
             mediaManager.getPath(resource.node.type.path).then(function(path) {
                 $timeout(function() {
                   !$state.is('content.video') &&
+                  analytics.log(
+                      {
+                          name : 'VIDEO',
+                          type : 'START',
+                          id : resource.node.id
+                      },
+                      {
+                          time : new Date()
+                      }
+                  ) &&
                     $state.go('content.video', {
                       video: {
                         src: utils.getSrc(path),
-                        type: 'video/mp4'
+                        type: 'video/mp4',
+                        id : resource.node.id
                       }
                     });
                   if ($state.is('content.video')) {

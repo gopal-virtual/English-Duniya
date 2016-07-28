@@ -5,10 +5,34 @@
     .module('zaya-content')
     .controller('contentController', contentController);
 
-  contentController.$inject = ['$stateParams', 'orientation', '$log', '$scope', 'CONSTANT', '$ionicModal', 'lessonutils', '$timeout', 'audio', '$ionicPlatform'];
+  contentController.$inject = [
+                '$stateParams',
+                'orientation',
+                '$log',
+                '$scope',
+                'CONSTANT',
+                '$ionicModal',
+                'lessonutils',
+                '$timeout',
+                'audio',
+                '$ionicPlatform',
+                'analytics'
+       ];
 
   /* @ngInject */
-  function contentController($stateParams, orientation, $log, $scope, CONSTANT, $ionicModal, lessonutils, $timeout, audio, $ionicPlatform) {
+  function contentController(
+                $stateParams,
+                orientation,
+                $log,
+                $scope,
+                CONSTANT,
+                $ionicModal,
+                lessonutils,
+                $timeout,
+                audio,
+                $ionicPlatform,
+                analytics
+           ) {
     var contentCtrl = this;
     $scope.audio = audio;
     $scope.orientation = orientation;
@@ -58,6 +82,16 @@
         $timeout(function() {
           orientation.setPortrait();
           $scope.modal.show();
+          analytics.log(
+              {
+                  name : 'VIDEO',
+                  type : 'END',
+                  id : $stateParams.video.id
+              },
+              {
+                  time : new Date()
+              }
+          )
         })
     }
 
