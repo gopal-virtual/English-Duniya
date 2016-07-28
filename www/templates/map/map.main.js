@@ -824,13 +824,17 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                 renderParticles();
                 var fetchMapRequest = fetchMapPath(points);
                 fetchMapRequest.then(function(){
+                    scope.$emit('removeLoader');
                     renderNodePath(renderedRegion,points);
                     renderNodes();
-                    log.debug("stateParams",stateParams.activatedLesson);
-                    log.debug("QuizLessonKey",temp.lessonFromQuizKey);
-                    log.debug("ActiveLessonKey",temp.activeLessonKey);
-                    log.debug("QuizLesson",lessons[temp.lessonFromQuizKey]);
-                    log.debug("ActiveLesson",lessons[temp.activeLessonKey]);
+                    // log.debug("stateParams",stateParams.activatedLesson);
+                    // log.debug("QuizLessonKey",temp.lessonFromQuizKey);
+                    // log.debug("ActiveLessonKey",temp.activeLessonKey);
+                    // log.debug("QuizLesson",lessons[temp.lessonFromQuizKey]);
+                    // log.debug("ActiveLesson",lessons[temp.activeLessonKey]);
+                    scope.$emit('show_demo');
+                    _this.init();
+                    game.kineticScrolling.start();
                     var lessonFromQuizStars = typeof(temp.lessonFromQuizKey)!="undefined"?lessons[temp.lessonFromQuizKey].stars:false;
                     var animateStarFlag = JSON.parse(localStorage.getItem("animateStarFlag"));
                     if (animateStarFlag) {
@@ -852,9 +856,6 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
 
 
 
-                scope.$emit('show_demo');
-                _this.init();
-                game.kineticScrolling.start();
 
             }
 
