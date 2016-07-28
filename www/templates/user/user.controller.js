@@ -46,6 +46,75 @@
       return [d.getFullYear(), pad(d.getMonth() + 1), pad(d.getDate())].join('-');
     }
 
+
+    function openSettings() {
+      $scope.settings.show();
+    }
+
+    function closeSettings() {
+      $scope.settings.hide();
+    }
+
+    function createProfile(formData) {
+      $log.debug(formData)
+      $ionicLoading.show({
+        noBackdrop: false,
+        hideOnStateChange: true
+      });
+      formHelper.validateForm(formData, userCtrl.personaliseFormValidations)
+        .then(function(data) {
+          return Rest.all('profiles').post(data);
+        })
+        .then(function(response) {
+          return Auth.getUser();
+        })
+        .then(function(response) {
+          return Auth.getProfile();
+        })
+        .then(function(){
+            return dataService.putUserifNotExist({
+                'userId': Auth.getProfileId()
+            })
+        })
+        .then(function(){
+          return dataService.createIfNotExistsLessonDB()
+
+        })
+        .then(function() {
+          $state.go('map.navigate', {});
+        })
+        .catch(function(error) {
+          userCtrl.showError('Could not make your profile', error || 'Please try again');
+          $ionicLoading.hide();
+        })
+
+
+    }
+
+    function updateProfile(userdata) {
+      // body...
+    }
+
+    function logout(type) {
+      userCtrl.closeSettings();
+      $ionicLoading.show({
+        noBackdrop: false,
+        hideOnStateChange: true
+      });
+      $log.debug("USer logout",type)
+      if (type == 'clean') {
+        Auth.clean(function() {
+          $state.go('auth.signin', {})
+        })
+      } else {
+        Auth.logout(function() {
+          $state.go('auth.signin', {})
+        }, function() {
+          // body...
+        })
+      }
+    }
+
     function showError(title, msg) {
       $log.debug(title, msg);
       $ionicPopup.alert({
@@ -99,37 +168,37 @@
     }
 
 
-    function createProfile(formData) {
-      $log.debug(formData)
-      $ionicLoading.show({
-        noBackdrop: false,
-        hideOnStateChange: true
-      });
-      formHelper.validateForm(formData, userCtrl.personaliseFormValidations)
-        .then(function(data) {
-          return Rest.all('profiles').post(data);
-        })
-        .then(function(response) {
-          return Auth.getUser();
-        })
-        .then(function(response) {
-          return Auth.getProfile();
-        })
-        .then(function() {
-          return dataService.putUserifNotExist({
-            'userId': Auth.getProfileId()
-          })
-        })
-        .then(function() {
-          $state.go('map.navigate', {});
-        })
-        .catch(function(error) {
-          $ionicPopup.alert({
-            title: 'Could not make your profile',
-            template: error || 'Please try again'
-          });
-          $ionicLoading.hide();
-        })
-    }
+    // function createProfile(formData) {
+    //   $log.debug(formData)
+    //   $ionicLoading.show({
+    //     noBackdrop: false,
+    //     hideOnStateChange: true
+    //   });
+    //   formHelper.validateForm(formData, userCtrl.personaliseFormValidations)
+    //     .then(function(data) {
+    //       return Rest.all('profiles').post(data);
+    //     })
+    //     .then(function(response) {
+    //       return Auth.getUser();
+    //     })
+    //     .then(function(response) {
+    //       return Auth.getProfile();
+    //     })
+    //     .then(function() {
+    //       return dataService.putUserifNotExist({
+    //         'userId': Auth.getProfileId()
+    //       })
+    //     })
+    //     .then(function() {
+    //       $state.go('map.navigate', {});
+    //     })
+    //     .catch(function(error) {
+    //       $ionicPopup.alert({
+    //         title: 'Could not make your profile',
+    //         template: error || 'Please try again'
+    //       });
+    //       $ionicLoading.hide();
+    //     })
+    // }
   }
 })();

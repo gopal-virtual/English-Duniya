@@ -20,9 +20,13 @@
     var diagLitmusMappingDB = pouchDB('diagLitmusMapping');
     var kmapsJSONDB = pouchDB('kmapsJSON');
     var dqJSONDB = pouchDB('dqJSON');
-    var lessonDB = pouchDB('lessonDB', {
-    adapter : 'websql'
-  });
+    var lessonDB = null;
+    if (Auth.hasProfile()) {
+      lessonDB = pouchDB('lessonsGrade' + Auth.getLocalProfile().grade, {
+        adapter: 'websql'
+      });
+    }
+
     var appDB = pouchDB('appDB');
     var resourceDB = pouchDB('resourceDB');
     var reportsDB = pouchDB('reportsDB');
@@ -259,35 +263,42 @@
     }
 
     function createIfNotExistsLessonDB() {
-      var ddoc = {
-        _id: '_design/index',
-        views: {
-          by_grade: {
-            map: function(doc) {
-              emit(doc.lesson.node.type.grade);
-            }.toString()
-          }
-        }
-      };
+      // var ddoc = {
+      //   _id: '_design/index',
+      //   views: {
+      //     by_grade: {
+      //       map: function(doc) {
+      //         emit(doc.lesson.node.type.grade);
+      //       }.toString()
+      //     }
+      //   }
+      // };
+      lessonDB = pouchDB('lessonsGrade' + Auth.getLocalProfile().grade, {
+        adapter: 'websql'
+      });
+      $log.debug("in lessons make db ")
       return lessonDB.get('_local/preloaded').then(function(doc) {
+        $log.debug("lessons db found ")
 
       }).catch(function(err) {
         if (err.name !== 'not_found') {
           throw err;
         }
-        return lessonDB.load(CONSTANT.PATH.DATA + '/lessons.db').then(function() {
-          return lessonDB.put({
-            _id: '_local/preloaded'
+        var filename = CONSTANT.PATH.DATA + '/lessonsGrade' + Auth.getLocalProfile().grade + '.db';
+        return lessonDB.load(filename).then(function() {
+            return lessonDB.put({
+              _id: '_local/preloaded'
+            });
+          })
+          .then(function() {
+            $log.debug("lessons db created")
+              // return lessonDB.put(ddoc).then(function() {
+              // }).catch(function(err) {
+              //
+              // });
           });
-        }).then(function() {
-          return lessonDB.put(ddoc).then(function() {
-            // success!
-          }).catch(function(err) {
-
-            // some error (maybe a 409, because it already exists?)
-          });
-        });
       })
+
     }
 
 
@@ -426,25 +437,25 @@
     }
 
     function getLessonsList(grade) {
+      $log.debug("getting lessons")
       var start = new Date();
       var d = $q.defer();
-
-      lessonDB.query('index/by_grade', {
-          include_docs: true,
-          key: grade
+      lessonDB.allDocs({
+          include_docs: true
         }).then(function(data) {
-            $log.debug("Time taken 1",new Date() - start, data)
+          $log.debug("Time taken 1", new Date() - start, data)
           var lessons = [];
           for (var i = 0; i < data.rows.length; i++) {
             data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key
             lessons.push(data.rows[i].doc.lesson.node);
           }
           lessons = _.sortBy(lessons, 'key');
-          $log.debug("Time taken",new Date() - start)
+          $log.debug("Time taken", new Date() - start)
           d.resolve(lessons)
         })
         .catch(function(error) {
           d.reject(error)
+          $log.debug(error)
         })
       return d.promise;
     }
@@ -453,6 +464,23 @@
       var d = $q.defer();
       var promises = []
       for (var index = 0; index < quiz.objects.length; index++) {
+        if (quiz.objects[index].node.meta && quiz.objects[index].node.meta.instructions && quiz.objects[index].node.meta.instructions.sounds[0] && localStorage.getItem(quiz.objects[index].node.meta.instructions.sounds[0]) != 'played') {
+          localStorage.setItem(quiz.objects[index].node.meta.instructions.sounds[0],'played');
+
+          promises.push(mediaManager.getPath(quiz.objects[index].node.meta.instructions.sounds[0]).then(
+
+            function(index) {
+
+              return function(path) {
+                quiz.objects[index].node.instructionSound = path
+              }
+            }(index)
+
+          ))
+        }
+        // quiz.objects[index].node.instructionSound = CONSTANT.RESOURCE_SERVER + quiz.objects[index].node.meta.instructions.sounds[0];
+
+        $log.debug(quiz.objects[index].node.meta, "Instruction")
         promises.push(widgetParser.parseToDisplay(quiz.objects[index].node.title, index, quiz).then(
           function(index) {
             return function(result) {
@@ -601,7 +629,14 @@
       var mediaTypes = ['videos', 'sounds', 'images']
       var mediaArray = []
       var count = 0;
+
       angular.forEach(assessment.objects, function(object) {
+        $log.debug("Check this", object);
+        if (object.node.meta.instructions) {
+          promises.push(
+            mediaManager.downloadIfNotExists(CONSTANT.RESOURCE_SERVER + object.node.meta.instructions.sounds[0])
+          );
+        }
         angular.forEach(object.node.type.content.widgets, function(widget) {
           angular.forEach(widget, function(file) {
             if (mediaArray.indexOf(file) < 0) {
@@ -621,7 +656,6 @@
           d.reject(err)
         });
       return d.promise;
-
 
     }
 

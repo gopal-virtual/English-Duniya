@@ -41,7 +41,7 @@
           $cordovaFile.checkFile(cordova.file.dataDirectory, 'media/' + filename).then(function(result) {
               $log.debug("downloadIfNotExists 2")
 
-              d.resolve(result);
+              d.resolve(target);
             })
             .catch(function(e) {
               $log.debug("downloadIfNotExists 3", e, network.isOnline())
@@ -59,8 +59,9 @@
 
                   $cordovaFileTransfer.download(url, target)
                     .then(function(result) {
-                      d.resolve("Downloaded " + target);
+                      d.resolve(target);
                     }, function(err) {
+                      $log.debug(err)
                       d.reject("Error Downlaoding " + target);
                     }, function(progress) {});
                 }

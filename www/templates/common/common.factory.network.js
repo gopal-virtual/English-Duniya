@@ -17,6 +17,7 @@
     return network;
 
     function isOnline() {
+      return true;
       if (window.Connection) {
         if (navigator.connection.type == Connection.NONE) {
           return false;
@@ -24,7 +25,7 @@
           return true;
         }
       }
-      return true;
+      return false;
     }
 
     function getConnectionType() {

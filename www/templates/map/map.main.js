@@ -880,7 +880,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                 deltaWheel: 400
             });
             this.game.camera.y = localStorage.getItem('currentPosition') ? parseInt(localStorage.getItem('currentPosition')) : parseInt(((~~this.world.height / this.game.height) - 1) * this.game.height);
-            
+
         },
         resetSprite: function(sprite) {
             sprite.x = this.game.world.bounds.right;
@@ -938,7 +938,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             // log.log("CAMERA",game.camera.y);
             this.optimize(game.camera,regionRange);
 
-            
+
         },
         render: function() {
             function interactiveAnimate(){

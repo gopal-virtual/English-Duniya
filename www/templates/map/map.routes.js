@@ -13,16 +13,14 @@
         abstract: true,
         resolve: {
           lessons: ['Rest', '$log', '$http', 'data','Auth', function(Rest, $log, $http, data, Auth) {
-            var d = new Date();
-            $log.debug("here")
             return data.getLessonsList(Auth.getLocalProfile().grade).then(function(result){
-              $log.debug(new Date()- d,"secornds lessons",result)
 
               return result
             })
           }],
           lessonLocked: ['Rest', '$log', '$http', 'data','extendLesson','Auth', function(Rest, $log, $http, data,extendLesson,Auth) {
             var d = new Date();
+            $log.debug("HERE")
             return data.getLessonsList(Auth.getLocalProfile().grade).then(function(lessons){
               $log.debug(new Date()- d,"secornds lessonlocked 1")
 
