@@ -35,7 +35,8 @@
     'settings',
     'mediaManager',
     '$stateParams',
-    'analytics'
+    'analytics',
+    '$q'
 ];
 
   function mapController(
@@ -68,7 +69,8 @@
         settings,
         mediaManager,
         $stateParams,
-        analytics
+        analytics,
+        $q
     ) {
 
     $scope.audio = audio;
@@ -80,6 +82,7 @@
     var mapCtrl = this;
     var lessonList = CONSTANT.LOCK ? lessonLocked : lessons;
     // $state.current.data && lessonList.unshift($state.current.data.litmus);
+    
     mapCtrl.lessons = lessonList;
     // mapCtrl.userCtrl = $controller('userCtrl');
     // mapCtrl.resetNode = resetNode;
@@ -179,18 +182,20 @@
 
           promise.then(function(s) {
             $log.debug("Resolves", new Date() - d, s)
-            node.meta.parsed_sound = s;
-            $log.debug("Download intro here", node)
-            if (currentPos) {
-              $log.debug("CurrentPos")
-              mapCtrl.animationExpand.expand(currentPos);
-              lessonutils.playDemoAudio(node);
-              $scope.selectedNode = response;
-            } else {
-              lessonutils.playDemoAudio(node);
-              $scope.openNodeMenu();
-              $scope.selectedNode = response;
-            }
+          node.meta.parsed_sound = s;
+          $log.debug("Download intro here",node)
+          audio.setVolume('background', 0.1);
+          if(currentPos)
+          {
+            $log.debug("CurrentPos")
+            mapCtrl.animationExpand.expand(currentPos);
+            lessonutils.playDemoAudio(node);
+            $scope.selectedNode = response;
+          }else{
+            lessonutils.playDemoAudio(node);
+            $scope.openNodeMenu();
+            $scope.selectedNode = response;
+          }
             $ionicLoading.hide()
           }).catch(function(error) {
             $ionicPopup.alert({

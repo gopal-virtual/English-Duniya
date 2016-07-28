@@ -139,9 +139,10 @@
     quizCtrl.CONSTANT = CONSTANT;
     //audio
     quizCtrl.playAudio = playAudio;
+    quizCtrl.stopAudio = stopAudio;
     quizCtrl.starCount = starCount;
     quizCtrl.highlightSoundIcon = highlightSoundIcon;
-
+    quizCtrl.playInstruction = playInstruction;
     quizCtrl.calculateStars = calculateStars;
 
     //timer
@@ -590,7 +591,10 @@
         angular.element("#audioplayer")[0].play();
       }
     }
-
+    function stopAudio() {
+      angular.element("#audioSource")[0].src = '';
+      angular.element("#audioplayer")[0].pause();
+    }
 
     function generateSummary(report, quiz) {
       var result = {
@@ -826,6 +830,11 @@
           nzTour.start($scope.tour);
           demoFactory.setStep(5);
         });
+        $timeout(function(){
+          if(nzTour.current.step === 0){
+              tourNextStep();
+          }
+        },3000)
       }
     })
 
@@ -841,7 +850,17 @@
         nzTour.next();
       }
     }
+    function playInstruction(index){
+      $log.debug("playInstruction",index)
+      if(quizCtrl.quiz.objects[index].node.instructionSound){
+        $log.debug("playInstruction",quizCtrl.quiz.objects[index].node.instructionSound)
 
+        angular.element("#audioplayer")[0].pause();
+        angular.element("#audioSource")[0].src = quizCtrl.quiz.objects[index].node.instructionSound;
+        angular.element("#audioplayer")[0].load();
+        angular.element("#audioplayer")[0].play();
+      }
+    }
 
 
   }

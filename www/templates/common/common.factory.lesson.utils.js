@@ -162,7 +162,7 @@
 
     function playResource(resource, video, callback) {
       angular.element("#audioplayer")[0].pause();
-
+      $log.debug("PPPPPPPP")
       if (utils.resourceType(resource) == 'practice' && (utils.demoShown && [2, 3].indexOf(utils.demoFactory.getStep()) >= 0)) {
         return;
       }
