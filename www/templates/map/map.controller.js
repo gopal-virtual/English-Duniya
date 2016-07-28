@@ -12,6 +12,9 @@
     $scope.audio = audio;
     $log.debug('settings', settings);
     $scope.settings = settings;
+    var temp = JSON.parse(localStorage.getItem('user_details'));
+    temp.name = temp.first_name + ' ' + temp.last_name;
+    $scope.settings.user = temp
     $scope.orientation = orientation;
     $scope.activatedLesson = $stateParams.activatedLesson;
     $scope.progress = localStorage.getItem('progress');
@@ -98,7 +101,7 @@
           $log.debug("Starts",node)
           var d = new Date();
           var promise;
-          if(node.meta.intros  && node.meta.intros.sound[0]){
+          if(node.meta.intros && node.meta.intros.sound  && node.meta.intros.sound[0]){
             $log.debug("has sound")
             promise = mediaManager.downloadIfNotExists(CONSTANT.RESOURCE_SERVER+node.meta.intros.sound[0])
           }else{

@@ -77,7 +77,7 @@
 
         } catch (e) {
 
-          d.resolve("Cordova not found");
+          d.resolve(url);
         }
 
         return d.promise;
