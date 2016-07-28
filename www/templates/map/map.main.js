@@ -118,31 +118,31 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             this.game.time.advancedTiming = true;
 
 
-            $.get("img/assets/map_path.svg", function(data) {
-                var x = [];
-                var y = [];
-                var ydiff = [];
-                var renderRegionHeight = 0;
-                for (var i = 0; i < renderedRegion.length; i++) {
-                    renderRegionHeight += regionHeight[region[i]];
-                }
-                // log.warn("Region height", renderRegionHeight);
-                // log.warn("SVG height", data.getElementById("mappathid").getTotalLength());
-                var path = data.getElementById("mappathid");
-                for (var i = path.getTotalLength() - 1; i >= 0 ; i-=75) {
-                    var pathPoint = path.getPointAtLength(i);
-                    // log.debug(parseInt(pathPoint.y) - (totalRegionHeight - renderRegionHeight),parseInt(pathPoint.x),svgPathHeight - parseInt(pathPoint.y));
-                    if (svgPathHeight - pathPoint.y + 100 > renderRegionHeight) {
-                        // log.warn("Should be cut here",pathPoint.y,svgPathHeight- pathPoint.y);
-                        break;
-                    }
-                    x.push(parseInt(pathPoint.x));
-                    y.push(parseInt(pathPoint.y) - (totalRegionHeight - renderRegionHeight));
-                }
+            // $.get("img/assets/map_path.svg", function(data) {
+            //     var x = [];
+            //     var y = [];
+            //     var ydiff = [];
+            //     var renderRegionHeight = 0;
+            //     for (var i = 0; i < renderedRegion.length; i++) {
+            //         renderRegionHeight += regionHeight[region[i]];
+            //     }
+            //     // log.warn("Region height", renderRegionHeight);
+            //     // log.warn("SVG height", data.getElementById("mappathid").getTotalLength());
+            //     var path = data.getElementById("mappathid");
+            //     for (var i = path.getTotalLength() - 1; i >= 0 ; i-=75) {
+            //         var pathPoint = path.getPointAtLength(i);
+            //         // log.debug(parseInt(pathPoint.y) - (totalRegionHeight - renderRegionHeight),parseInt(pathPoint.x),svgPathHeight - parseInt(pathPoint.y));
+            //         if (svgPathHeight - pathPoint.y + 100 > renderRegionHeight) {
+            //             // log.warn("Should be cut here",pathPoint.y,svgPathHeight- pathPoint.y);
+            //             break;
+            //         }
+            //         x.push(parseInt(pathPoint.x));
+            //         y.push(parseInt(pathPoint.y) - (totalRegionHeight - renderRegionHeight));
+            //     }
 
-                points.x = x.reverse();
-                points.y = y.reverse();
-            });
+            //     points.x = x.reverse();
+            //     points.y = y.reverse();
+            // });
 
             // for(var key in regionRange){
             //     regionRange[key].upperTreshold = regionRange[key].upperLimit + game.camera.height + tresholdOffset;
