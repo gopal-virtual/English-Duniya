@@ -841,11 +841,11 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                     log.warn("ActiveLessonKey",temp.activeLessonKey);
                     log.warn("QuizLesson",lessons[temp.lessonFromQuizKey]);
                     log.warn("ActiveLesson",lessons[temp.activeLessonKey]);
-                    var lessonFromQuizStars = temp.lessonFromQuizKey?lessons[temp.lessonFromQuizKey].stars:false;
+                    var lessonFromQuizStars = typeof(temp.lessonFromQuizKey)!="undefined"?lessons[temp.lessonFromQuizKey].stars:false;
                     var animateStarFlag = JSON.parse(localStorage.getItem("animateStarFlag"));
                     if (animateStarFlag) {
-                        log.warn("Current Node",animateStarFlag.isCurrentNode);
-                        log.warn("Active Lesson",lessonFromQuizStars);
+                        log.warn("Is it Current Node?",animateStarFlag.isCurrentNode);
+                        log.warn("Lesson From QuizStars",lessonFromQuizStars);
                         log.warn("if condition",animateStarFlag.isCurrentNode && lessonFromQuizStars);
                         if ((animateStarFlag.isCurrentNode && lessonFromQuizStars) || (lessonFromQuizStars > animateStarFlag.clickedNodeStar && lessonFromQuizStars)) {
                             log.debug("Activating star animation");
@@ -944,7 +944,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             // log.debug("groups.region.desert",groups.region.desert);
             // this.dragMap();
             // log.log("CAMERA",game.camera.y);
-            // this.optimize(game.camera,regionRange);
+            this.optimize(game.camera,regionRange);
 
             
         },
