@@ -1,19 +1,13 @@
 window.createGame = function(scope, stateParams, lessons, audio, injector, log) {
     'use strict';
 
-    var lessons = lessons;
     var game = new Phaser.Game("100", "100", Phaser.CANVAS, 'map_canvas', null, true, true, null);
     var gameSprites;
     var sprites = {};
     var temp = {};
     // var desertRegion, regionGroups.tundra, regionGroups.forest;
     var region = ["desert","tundra","forest","peru"];
-    var gradeRegion = {
-        "0" : 1,
-        "1" : 2,
-        "2" : 3,
-        "3" : 4
-    };
+    
     var groups = {
         "region" : {},
         "nonRegion" : {},
@@ -118,36 +112,37 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             this.load.image('star_medium', 'img/icons/icon-star-medium.png');
             this.load.image('star', 'img/icons/icon-star-small.png');
             this.load.image('nostar', 'img/icons/icon-nostar.png');
+            audio.play('background');
 
             // debug value
             this.game.time.advancedTiming = true;
 
 
-            $.get("img/assets/map_path.svg", function(data) {
-                var x = [];
-                var y = [];
-                var ydiff = [];
-                var renderRegionHeight = 0;
-                for (var i = 0; i < renderedRegion.length; i++) {
-                    renderRegionHeight += regionHeight[region[i]];
-                }
-                // log.warn("Region height", renderRegionHeight);
-                // log.warn("SVG height", data.getElementById("mappathid").getTotalLength());
-                var path = data.getElementById("mappathid");
-                for (var i = path.getTotalLength() - 1; i >= 0 ; i-=75) {
-                    var pathPoint = path.getPointAtLength(i);
-                    // log.debug(parseInt(pathPoint.y) - (totalRegionHeight - renderRegionHeight),parseInt(pathPoint.x),svgPathHeight - parseInt(pathPoint.y));
-                    if (svgPathHeight - pathPoint.y + 100 > renderRegionHeight) {
-                        // log.warn("Should be cut here",pathPoint.y,svgPathHeight- pathPoint.y);
-                        break;
-                    }
-                    x.push(parseInt(pathPoint.x));
-                    y.push(parseInt(pathPoint.y) - (totalRegionHeight - renderRegionHeight));
-                }
+            // $.get("img/assets/map_path.svg", function(data) {
+            //     var x = [];
+            //     var y = [];
+            //     var ydiff = [];
+            //     var renderRegionHeight = 0;
+            //     for (var i = 0; i < renderedRegion.length; i++) {
+            //         renderRegionHeight += regionHeight[region[i]];
+            //     }
+            //     // log.warn("Region height", renderRegionHeight);
+            //     // log.warn("SVG height", data.getElementById("mappathid").getTotalLength());
+            //     var path = data.getElementById("mappathid");
+            //     for (var i = path.getTotalLength() - 1; i >= 0 ; i-=75) {
+            //         var pathPoint = path.getPointAtLength(i);
+            //         // log.debug(parseInt(pathPoint.y) - (totalRegionHeight - renderRegionHeight),parseInt(pathPoint.x),svgPathHeight - parseInt(pathPoint.y));
+            //         if (svgPathHeight - pathPoint.y + 100 > renderRegionHeight) {
+            //             // log.warn("Should be cut here",pathPoint.y,svgPathHeight- pathPoint.y);
+            //             break;
+            //         }
+            //         x.push(parseInt(pathPoint.x));
+            //         y.push(parseInt(pathPoint.y) - (totalRegionHeight - renderRegionHeight));
+            //     }
 
-                points.x = x.reverse();
-                points.y = y.reverse();
-            });
+            //     points.x = x.reverse();
+            //     points.y = y.reverse();
+            // });
 
             // for(var key in regionRange){
             //     regionRange[key].upperTreshold = regionRange[key].upperLimit + game.camera.height + tresholdOffset;
@@ -484,11 +479,11 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
 
 
             function addGroups(region){
-                for (var i = 0; i < renderedRegion.length; i++) {
+                for (var i = renderedRegion.length - 1; i >= 0; i--) {
                     groups.regionBg[region[i]] = game.add.group();
                 }
                 groups.nonRegion["nodePath"] = game.add.group();
-                for (var i = 0; i < renderedRegion.length; i++) {
+                for (var i = renderedRegion.length - 1; i >= 0; i--) {
                     groups.region[region[i]] = game.add.group();
                 }
                 groups.nonRegion["starClone"] = game.add.group();
@@ -528,6 +523,37 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                     background.scale.setTo(game_scale, 1);
                 }
                 
+            }
+
+            function fetchMapPath (points){
+                var fetchMapRequest = $.get("img/assets/map_path.svg", function(data) {
+                    var x = [];
+                    var y = [];
+                    var ydiff = [];
+                    var renderRegionHeight = 0;
+                    for (var i = 0; i < renderedRegion.length; i++) {
+                        renderRegionHeight += regionHeight[region[i]];
+                    }
+                    // log.warn("Region height", renderRegionHeight);
+                    // log.warn("SVG height", data.getElementById("mappathid").getTotalLength());
+                    var path = data.getElementById("mappathid");
+                    for (var i = path.getTotalLength() - 1; i >= 0 ; i-=75) {
+                        var pathPoint = path.getPointAtLength(i);
+                        // log.debug(parseInt(pathPoint.y) - (totalRegionHeight - renderRegionHeight),parseInt(pathPoint.x),svgPathHeight - parseInt(pathPoint.y));
+                        if (svgPathHeight - pathPoint.y + 100 > renderRegionHeight) {
+                            // log.warn("Should be cut here",pathPoint.y,svgPathHeight- pathPoint.y);
+                            break;
+                        }
+                        x.push(parseInt(pathPoint.x));
+                        y.push(parseInt(pathPoint.y) - (totalRegionHeight - renderRegionHeight));
+                    }
+
+                    points.x = x.reverse();
+                    points.y = y.reverse();
+                });
+
+                return fetchMapRequest;
+
             }
 
 
@@ -660,6 +686,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             // Place nodes
             function renderNodes(){
                 for (var j = 0, i = lessons.length - 1, distance = 1 / (lessons.length); i >= 0; j += distance, i--) {
+
                     var currentLesson = lessons[i];
                     var locked = currentLesson.locked ? '-locked' : '';
                     var type = lessonType(currentLesson, i) == '' ? '' : '-' + lessonType(currentLesson, i);
@@ -676,14 +703,14 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                     }
 
                     if (stateParams.activatedLesson && stateParams.activatedLesson.node.id == currentLesson.id) {
-                        temp["activatedLessonKey"] = i;
+                        temp["lessonFromQuizKey"] = i;
                     }
 
                     node.inputEnabled = true;
                     node.currentLesson = currentLesson;
                     node.type = lessonType(currentLesson, i);
                     node.events.onInputUp.add(
-                        function(currentLesson, game, posy) {
+                        function(currentLesson, game, posy, i, temp) {
                             return function() {
                                 var displacement = game.kineticScrolling.velocityY > -30 && game.kineticScrolling.velocityY < 30;
                                 if (!currentLesson.locked && displacement) {
@@ -692,13 +719,20 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                                         "x": game.input._x,
                                         "y": game.input._y,
                                     }
+                                    log.info("Clicked on lesson key",i);
+                                    log.warn(temp.activeLessonKey);
+                                    var animateStarFlag = {
+                                        isCurrentNode : temp.activeLessonKey==i,
+                                        clickedNodeStar : lessons[i].stars
+                                    }
+                                    localStorage.setItem("animateStarFlag",JSON.stringify(animateStarFlag));
                                     scope.$emit('openNode', currentLesson, currentPosition);
                                     // scope.$emit('game', game);
                                 } else if (currentLesson.locked && displacement) {
                                     audio.play('locked');
                                 } else {}
                             }
-                        }(currentLesson, game, posy)
+                        }(currentLesson, game, posy, i, temp)
                     );
                     // icon.anchor.setTo(0.5,0.5);
                     // icon.scale.setTo(0.3,0.3);
@@ -734,49 +768,39 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                 );
             }
 
-            function animateStar(){
+            function animateStar(lessonKey){
                 setTimeout(function(){
-                    // log.debug("GUchaMI",temp.activeLessonKey);
-                    // log.debug("GUchaMI2",temp.activatedLessonKey);
 
-                    log.debug(currentLesson.tag);
+                    // log.debug("GUchaMI",temp.activeLessonKey);
+                    // log.debug("GUchaMI2",lessonKey);
+
+                    // log.debug(currentLesson.tag);
                     var lessonTag =  {
                         "vocabulary" : 1,
                         "reading" : 2,
                         "grammar" : 3,
-                        "lisetening" : 4
+                        "listening" : 4
                     }
-                    var j =  lessons.length - temp.activatedLessonKey - 1;
+                    var j =  lessons.length - lessonKey - 1;
                     var posx = _this.math.catmullRomInterpolation(points.x, j/lessons.length);
                     var posy = _this.math.catmullRomInterpolation(points.y, j/lessons.length);
-                    // starClone.push(createStars(currentLesson.stars, $.merge([posx], star_x), $.merge([posy], star_y)));
-                    // log.debug(currentLesson.stars);
-                    // log.debug(lessons[temp.activatedLessonKey].stars);
-                    // log.debug(temp.activeLesson);
-                    log.info("In star animation function, \nactivatedLessonKey: ",temp.activatedLessonKey," activeLessonKey: ",temp.activeLessonKey,"\nactivatedLesson: ",lessons[temp.activatedLessonKey],"\nactiveLesson: ",lessons[temp.activeLessonKey]);
-                    log.warn("lessonTag: ",lessonTag[lessons[temp.activatedLessonKey].tag.toLowerCase()]>2?"+100":"-100")
-                    var starCloneTween = [];
-                    // log.debug(lessonTag[lessons[j].tag.toLowerCase()]*game.world.width);
-                    for (var i = 0; i < lessons[temp.activatedLessonKey].stars; i++) {
-                        // setTimeout(function(){
-                            // log.debug($.merge([posx], star_x), $.merge([posy], star_y));
+                    log.info("In star animation function, \nlessonFromQuizKey: ",lessonKey," activeLessonKey: ",temp.activeLessonKey,"\nactivatedLesson: ",lessons[lessonKey],"\nactiveLesson: ",lessons[temp.activeLessonKey]);
+                    var starCloneTween = [];  
+                    for (var i = 0; i < lessons[lessonKey].stars; i++) {
 
                             starClone[i] = groups.nonRegion.starClone.create(posx + star_x[i], posy + star_y[i], 'star_medium');
                             starClone[i].anchor.setTo(0.5, 0.5);
-                            // log.debug("adding tween",starClone[i],"to",parseInt(game.camera.y));
-                            // log.debug(starClone[i]);
                             starCloneTween[i] = {};
 
-                            // var starClone = createStars(currentLesson.stars, $.merge([posx], star_x), $.merge([posy], star_y));
-                            starCloneTween[i]["pos"] = game.add.tween(starClone[i]).to( { x: ((lessonTag[lessons[temp.activatedLessonKey].tag.toLowerCase()]-1)*game.width)/5, y: parseInt(game.camera.y)}, 1000, Phaser.Easing.Exponential.InOut);
+                            log.warn("lessonTag: ",lessonTag[lessons[lessonKey].tag.toLowerCase()])
+                            starCloneTween[i]["pos"] = game.add.tween(starClone[i]).to( { x: ((lessonTag[lessons[lessonKey].tag.toLowerCase()]-1)*game.width)/5, y: parseInt(game.camera.y)}, 1000, Phaser.Easing.Exponential.InOut);
                             starCloneTween[i]["scale"] = game.add.tween(starClone[i].scale).from( { x: 0.1, y: 0.1 }, 800, Phaser.Easing.Bounce.Out,false,i*800);
-                            starCloneTween[i]["scalePos"] = game.add.tween(starClone[i]).to( { x: (lessonTag[lessons[temp.activatedLessonKey].tag.toLowerCase()]>2?"+100":"-100"), y: "-100" }, 800, Phaser.Easing.Cubic.Out,false,i*800);
+                            starCloneTween[i]["scalePos"] = game.add.tween(starClone[i]).to( { x: (lessonTag[lessons[lessonKey].tag.toLowerCase()]>2?"+100":"-100"), y: "-100" }, 800, Phaser.Easing.Cubic.Out,false,i*800);
                             starCloneTween[i]["rotate"] = game.add.tween(starClone[i]).to( { angle: 450 }, 3000, Phaser.Easing.Quadratic.Out);
                             starCloneTween[i].scale.chain(starCloneTween[i].pos);
                             starCloneTween[i].scale.start();
                             starCloneTween[i].scalePos.start();
                             starCloneTween[i].rotate.start();
-                            // log.debug(starCloneTween[i]);
                             log.info("Star Clone "+i+":",starClone[i],"\nstarCloneTween "+i+":",starCloneTween[i]);
                             function playStarAudio() {
                                 audio.play('star_hud');
@@ -791,20 +815,42 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             }
             
             function gameStart(){
-                
+                // $ionicLoading.show();
                 log.debug("new region array",renderedRegion);
                 addGroups(renderedRegion);
                 renderWorld(renderedRegion);
                 renderRegion(renderedRegion);
                 renderSprites(renderedRegion,gameSprites);
-                renderNodePath(renderedRegion,points);
                 renderParticles();
-                renderNodes();
-                if (stateParams.activatedLesson && temp.activeLessonKey == temp.activatedLessonKey + 1) {
-                    log.debug("Activating star animation");
-                    animateStar();
-                    scope.$emit('animateStar');
-                }
+                var fetchMapRequest = fetchMapPath(points);
+                fetchMapRequest.then(function(){
+                    renderNodePath(renderedRegion,points);
+                    renderNodes();
+                    log.debug("stateParams",stateParams.activatedLesson);
+                    log.debug("QuizLessonKey",temp.lessonFromQuizKey);
+                    log.debug("ActiveLessonKey",temp.activeLessonKey);
+                    log.debug("QuizLesson",lessons[temp.lessonFromQuizKey]);
+                    log.debug("ActiveLesson",lessons[temp.activeLessonKey]);
+                    var lessonFromQuizStars = typeof(temp.lessonFromQuizKey)!="undefined"?lessons[temp.lessonFromQuizKey].stars:false;
+                    var animateStarFlag = JSON.parse(localStorage.getItem("animateStarFlag"));
+                    if (animateStarFlag) {
+                        log.debug("Is it Current Node?",animateStarFlag.isCurrentNode);
+                        log.debug("Lesson From QuizStars",lessonFromQuizStars);
+                        log.debug("if condition",animateStarFlag.isCurrentNode && lessonFromQuizStars);
+                        if ((animateStarFlag.isCurrentNode && lessonFromQuizStars) || (lessonFromQuizStars > animateStarFlag.clickedNodeStar && lessonFromQuizStars)) {
+                            log.debug("Activating star animation");
+                            animateStar(temp.lessonFromQuizKey);
+                            scope.$emit('animateStar');
+                        }
+                    }else{
+                        log.warn("localStorage Animate Star is not set. Not checking for animateStar")
+                    }
+                    // $ionicLoading.hide();
+                },function(error){
+                    log.error("Failed to fetchMapPath",error);
+                })
+
+
 
                 scope.$emit('show_demo');
                 _this.init();
@@ -812,10 +858,10 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
 
             }
 
-            setTimeout(function(){
+            // setTimeout(function(){
                 gameStart();
 
-            },2000);
+            // },2000);
 
             
 
@@ -850,45 +896,47 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
         optimize: function(camera,regionRange){
             var lowerCameraBoundary, upperCameraBoundary;
             // var i = 0;
-            for(var key in regionRange){
-                // i++;
-                if (regionRange.hasOwnProperty(key)) {
-                    if(regionRange[key].lowerLimit > camera.y && regionRange[key].upperLimit < camera.y ){
-                        if (camera.y < regionRange[key].upperTreshold && renderedRegion.indexOf(key) < renderedRegion.length - 1) {
-                            if (groups.renderedRegion[renderedRegion[renderedRegion.indexOf(key) + 1]].countLiving() == 0){
-                                log.debug('revive '+renderedRegion[renderedRegion.indexOf(key) + 1]);
-                                groups.renderedRegion[renderedRegion[renderedRegion.indexOf(key) + 1]].callAll('revive');
-                            }
-
-                        } else if (camera.y > regionRange[key].upperTreshold && renderedRegion.indexOf(key) < renderedRegion.length - 1){
-                            if (groups.renderedRegion[renderedRegion[renderedRegion.indexOf(key) + 1]].countLiving() != 0){
-                                log.debug('kill '+renderedRegion[renderedRegion.indexOf(key) + 1]);
-                                groups.renderedRegion[renderedRegion[renderedRegion.indexOf(key) + 1]].callAll('kill');
-                            }
+            for (var i = 0; i < renderedRegion.length; i++) {
+                if(regionRange[renderedRegion[i]].lowerLimit > camera.y && regionRange[renderedRegion[i]].upperLimit < camera.y ){
+                    if (camera.y < regionRange[renderedRegion[i]].upperTreshold && i < renderedRegion.length - 1) {
+                        if (groups.region[renderedRegion[i+1]].countLiving() == 0){
+                            log.debug('revive '+renderedRegion[i + 1]);
+                            groups.regionBg[renderedRegion[i + 1]].callAll('revive');
+                            groups.region[renderedRegion[i + 1]].callAll('revive');
                         }
 
-                        if ((camera.y + camera.height) > regionRange[key].lowerTreshold  && renderedRegion.indexOf(key) > 0) {
-                            if (groups.renderedRegion[renderedRegion[renderedRegion.indexOf(key) - 1]].countLiving() == 0){
-                                log.debug('revive '+renderedRegion[renderedRegion.indexOf(key) - 1]);
-                                groups.renderedRegion[renderedRegion[renderedRegion.indexOf(key) - 1]].callAll('revive');
-                            }
-                        } else if ((camera.y + camera.height) < regionRange[key].lowerTreshold  && renderedRegion.indexOf(key) > 0){
-                            if (groups.renderedRegion[renderedRegion[renderedRegion.indexOf(key) - 1]].countLiving() != 0){
-                                log.debug('kill '+renderedRegion[renderedRegion.indexOf(key) - 1]);
-                                groups.renderedRegion[renderedRegion[renderedRegion.indexOf(key) - 1]].callAll('kill');
-                            }
+                    } else if (camera.y > regionRange[renderedRegion[i]].upperTreshold && i < renderedRegion.length - 1){
+                        if (groups.region[renderedRegion[i + 1]].countLiving() != 0){
+                            log.debug('kill '+renderedRegion[i + 1]);
+                            groups.regionBg[renderedRegion[i + 1]].callAll('kill');
+                            groups.region[renderedRegion[i + 1]].callAll('kill');
                         }
                     }
 
+                    if ((camera.y + camera.height) > regionRange[renderedRegion[i]].lowerTreshold  && i > 0) {
+                        if (groups.region[renderedRegion[i - 1]].countLiving() == 0){
+                            log.debug('revive '+renderedRegion[i - 1]);
+                            groups.regionBg[renderedRegion[i - 1]].callAll('revive');
+                            groups.region[renderedRegion[i - 1]].callAll('revive');
+                        }
+                    } else if ((camera.y + camera.height) < regionRange[renderedRegion[i]].lowerTreshold  && i > 0){
+                        if (groups.region[renderedRegion[i - 1]].countLiving() != 0){
+                            log.debug('kill '+renderedRegion[i - 1]);
+                            groups.regionBg[renderedRegion[i - 1]].callAll('kill');
+                            groups.region[renderedRegion[i - 1]].callAll('kill');
+                        }
+                    }
                 }
+
             }
+
         },
 
         update: function() {
             // log.debug("groups.region.desert",groups.region.desert);
             // this.dragMap();
             // log.log("CAMERA",game.camera.y);
-            // this.optimize(game.camera,regionRange);
+            this.optimize(game.camera,regionRange);
 
 
         },
