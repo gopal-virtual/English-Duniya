@@ -5,21 +5,30 @@
         .module('common')
         .factory('settings', settings);
 
-    settings.$inject = ['network','$ionicLoading','$ionicPopup', 'Auth', 'Rest', '$state'];
+    settings.$inject = ['network','$ionicLoading','$ionicPopup', 'Auth', 'Rest', '$state','$log'];
 
     /* @ngInject */
-    function settings(network, $ionicLoading, $ionicPopup, Auth, Rest, $state) {
+    function settings(network, $ionicLoading, $ionicPopup, Auth, Rest, $state, $log) {
 
         var settings = {
             updateProfile : updateProfile,
             logout : logout,
             network : network,
-            user : JSON.parse(localStorage.user_details) || {},
+            user : user,
             splitName : splitName
         };
-        settings.user.name = settings.user.first_name + ' ' + settings.user.last_name;
+
 
         return settings;
+        function user(){
+           $log.debug("Ece");
+           if(localStorage.getItem('user_details')){
+             var temp = JSON.parse(localStorage.getItem('user_details'));
+             temp.name = temp.first_name + ' ' + temp.last_name;
+             return temp;
+           }
+              return {}
+        }
 
         function splitName(){
             settings.user.first_name = settings.user.name.substr(0, settings.user.name.indexOf(" "));
@@ -36,6 +45,7 @@
               $state.go('auth.signin', {})
             })
           } else {
+
             Auth.logout(function() {
               $state.go('auth.signin', {})
             }, function() {

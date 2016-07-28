@@ -59,19 +59,19 @@
                 return litmus;
               })
             } else {
-              return demoFactory.show().then(function(response) {
+              return demoFactory.show(5).then(function(response) {
                 // $log.debug('resolving quiz');
                 // $stateParams.quiz.objects[0].node.id == 'demo' ? $stateParams.quiz.objects.shift(data.demo_question) :false;
                 var currentIndex = $stateParams.quiz.objects.length;
                 var temporaryValue, randomIndex;
-
-                while (0 !== currentIndex) {
-                  randomIndex = Math.floor(Math.random() * currentIndex);
-                  currentIndex -= 1;
-                  temporaryValue = $stateParams.quiz.objects[currentIndex];
-                  $stateParams.quiz.objects[currentIndex] = $stateParams.quiz.objects[randomIndex];
-                  $stateParams.quiz.objects[randomIndex] = temporaryValue;
-                }
+                // shuffling of questions
+                // while (0 !== currentIndex) {
+                //   randomIndex = Math.floor(Math.random() * currentIndex);
+                //   currentIndex -= 1;
+                //   temporaryValue = $stateParams.quiz.objects[currentIndex];
+                //   $stateParams.quiz.objects[currentIndex] = $stateParams.quiz.objects[randomIndex];
+                //   $stateParams.quiz.objects[randomIndex] = temporaryValue;
+                // }
                 response && $stateParams.quiz.objects.unshift(data.demo_question);
                 return data.getAssessment($stateParams.quiz).then(function(response) {
                   return response;

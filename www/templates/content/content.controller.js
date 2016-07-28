@@ -17,6 +17,9 @@
                 'audio',
                 '$ionicPlatform',
                 'analytics'
+                'Auth',
+                'data',
+                '$q'
        ];
 
   /* @ngInject */
@@ -31,7 +34,10 @@
                 $timeout,
                 audio,
                 $ionicPlatform,
-                analytics
+                analytics,
+                Auth,
+                dataFactory,
+                $q
            ) {
     var contentCtrl = this;
     $scope.audio = audio;
@@ -68,7 +74,7 @@
       contentCtrl.config.plugins.controls.showControl=!contentCtrl.config.plugins.controls.showControl;
       $log.debug(contentCtrl.config.plugins.controls.showControl);
   }
-
+  $log.debug($stateParams)
   $ionicPlatform.onHardwareBackButton(function(event) {
       try {
         contentCtrl.API.pause();
@@ -79,10 +85,11 @@
   })
 
     function onVideoComplete() {
+      submitReport()
         $timeout(function() {
           orientation.setPortrait();
           $scope.modal.show();
-          analytics.log(
+			analytics.log(
               {
                   name : 'VIDEO',
                   type : 'END',
@@ -92,6 +99,44 @@
                   time : new Date()
               }
           )
+        })
+    }
+
+    function submitReport(){
+      var  lesson = lessonutils.getLocalLesson();
+      var promise = null;
+      if(!lesson.score || !lesson.score[$stateParams.video.resource.node.id]){
+        $log.debug("updating scores")
+        promise = dataFactory.updateSkills({
+          userId: Auth.getProfileId(),
+          lessonId: lesson.node.id,
+          score: $stateParams.video.resource.node.type.score,
+          totalScore: $stateParams.video.resource.node.type.score,
+          skill: lesson.node.tag
+        })
+      }
+      else{
+        $log.debug("not updating scores")
+
+        promise = $q.resolve();
+      }
+      promise
+        .then(function(){
+          $log.debug("updating video score")
+          return dataFactory.updateScore({
+            userId: Auth.getProfileId(),
+            lessonId: lesson.node.id,
+            id: $stateParams.video.resource.node.id,
+            score: $stateParams.video.resource.node.type.score,
+            totalScore: $stateParams.video.resource.node.type.score,
+            type: 'resource'
+          })
+        }).then(function(){
+          return dataFactory.saveReport({
+            'score': $stateParams.video.resource.node.type.score,
+            'userId': Auth.getProfileId(),
+            'node': $stateParams.video.resource.node.id
+          })
         })
     }
 

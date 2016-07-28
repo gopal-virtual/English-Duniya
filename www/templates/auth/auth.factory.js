@@ -60,6 +60,7 @@
     }
 
     function logout(success, failure) {
+      $log.debug("in logout");
       rest_auth.all('logout').post().then(function(response) {
         if (localStorage.getItem('authProvider') == 'google') {
           window.plugins.googleplus.logout();

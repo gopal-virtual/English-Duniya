@@ -160,7 +160,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             // groups.region["forest"] = game.add.group();
             // groups.region["tundra"] = game.add.group();
             // groups.region["region5"] = game.add.group();
-            
+
         },
         create: function() {
             var _this = this;
@@ -522,7 +522,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                     // groups.region[key].add(regionBgGroups[key]);
                     background.scale.setTo(game_scale, 1);
                 }
-                
+
             }
 
             function fetchMapPath (points){
@@ -562,7 +562,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             //     "y" : []
             // };
             // var gameSprites =  game.cache.getJSON('gamesprites');
-            
+
             function renderNodePath(region,points){
                 log.info("info rendering path ...")
                 points.tempX = [];
@@ -577,7 +577,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                 // Somewhere to draw to
                 var bmd = game.add.bitmapData(game.width, game.world.height);
                 for (var j = 0; j < 1; j += increment) {
-                    
+
                 // log.warn("Points",points);
                 // log.warn("TempPoints",tempPoints);
                     var posx = game.math.catmullRomInterpolation(points.tempX, j);
@@ -631,9 +631,9 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                     if (gameSprites[i].id) {
                         sprites[gameSprites[i].id] = gameSprite;
                     }
-                }    
+                }
             }
-            
+
 
             // placing lesson node
             // 1. lesson node count
@@ -754,8 +754,8 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                             createStars(3, $.merge([posx], star_x), $.merge([posy], star_y));
                         } else {}
                     }
-                }    
-                
+                }
+
                 log.debug('node position ', node.currentLesson);
                 localStorage.setItem('demo_node', JSON.stringify({
                         x: node.x - node.width / 2,
@@ -813,7 +813,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                     }
                 },800);
             }
-            
+
             function gameStart(){
                 // $ionicLoading.show();
                 log.debug("new region array",renderedRegion);
@@ -863,7 +863,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
 
             // },2000);
 
-            
+
 
             log.info("Profile Grade",JSON.parse(localStorage.getItem("profile")).grade);
 
@@ -958,9 +958,9 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                             temp["yellowButterflyY"] = sprites.yellowButterfly.y;
                     }
                     sprites.yellowButterfly.y = temp.yellowButterflyY - (regionOffset.tundra - game.camera.y - 500);
-                }    
+                }
             }
-            interactiveAnimate();           
+            interactiveAnimate();
         }
     }
 
@@ -974,5 +974,5 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
         canvas.parentNode.removeChild(canvas);
     });
 
-    
+
 };

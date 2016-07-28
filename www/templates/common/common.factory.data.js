@@ -318,13 +318,27 @@
           $log.debug("scores", scores)
           angular.forEach(scores, function(row) {
             // $log.debug("row", row.contents.assessment)
+            if(row.contents.assessment || row.contents.resource){
+              records.scores[row.id] = {};
+            }
             for (var property in row.contents.assessment) {
               if (row.contents.assessment.hasOwnProperty(property)) {
                 $log.debug(row.contents.assessment[property])
-                records.scores[row.id] = {};
                 records.scores[row.id][property] = {
                   score: row.contents.assessment[property].obtained_score,
-                  totalScore: row.contents.assessment[property].total_score
+                  totalScore: row.contents.assessment[property].total_score,
+                  type: 'assessment'
+                }
+              }
+            }
+            for ( property in row.contents.resource) {
+              if (row.contents.resource.hasOwnProperty(property)) {
+                $log.debug(row.contents.resource[property])
+                records.scores[row.id][property] = {
+                  score: row.contents.resource[property].obtained_score,
+                  totalScore: row.contents.resource[property].total_score,
+                  type: 'resource'
+
                 }
               }
             }
@@ -333,9 +347,9 @@
           return appDB.get(details.userId)
         })
         .then(function(doc) {
-          $log.debug("Found userdb")
           doc.data.skills = records.skills;
           doc.data.scores = records.scores;
+          $log.debug("Found userdb, updating it with",doc)
           return appDB.put({
             '_id': details.userId,
             '_rev': doc._rev,
@@ -396,20 +410,27 @@
         }
         doc.scores[data.lessonId][data.id] = {
           'score': data.score,
-          'totalScore': data.totalScore
+          'totalScore': data.totalScore,
+          'type': data.type
         };
-
+        var temp = JSON.parse(localStorage.getItem('lesson'));
+        temp.score = doc.scores[data.lessonId];
+        localStorage.setItem('lesson',JSON.stringify(temp));
+        $log.debug("local storage updated")
         return appDB.put({
           '_id': data.userId,
           '_rev': response._rev,
           'data': doc
-        }).catch(function(e) {});
-      }).catch(function(e) {})
+        });
+      })
+      .catch(function(e) {})
 
     }
 
     function getLessonScore(data) {
+      $log.debug("getting lessons score")
       return appDB.get(data.userId).then(function(response) {
+      $log.debug("getting lessons score",response)
         return response.data.scores[data.lessonId];
       })
     }

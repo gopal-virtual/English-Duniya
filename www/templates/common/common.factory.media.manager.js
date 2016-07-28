@@ -63,7 +63,10 @@
                     }, function(err) {
                       $log.debug(err)
                       d.reject("Error Downlaoding " + target);
-                    }, function(progress) {});
+                    }, function(progress) {
+                      localStorage.setItem('progress',parseInt((progress.loaded/progress.total) * 100))
+                      // $log.debug(progress,(progress.loaded/progress.total) * 100);
+                    });
                 }
 
               } else {
@@ -74,7 +77,7 @@
 
         } catch (e) {
 
-          d.resolve("Cordova not found");
+          d.resolve(url);
         }
 
         return d.promise;
