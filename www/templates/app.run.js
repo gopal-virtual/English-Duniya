@@ -4,7 +4,7 @@
     .module('zaya')
     .run(runConfig);
 
-  function runConfig($ionicPlatform, $rootScope, $timeout, $log, $state, $http, $cookies, Auth, $window, $cordovaFile, data, demo, audio, $ionicPopup) {
+  function runConfig($ionicPlatform, $rootScope, $timeout, $log, $state, $http, $cookies, Auth, $window, $cordovaFile, data, demo, audio, $ionicPopup, analytics) {
 
 
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
@@ -100,8 +100,16 @@
       // }
     });
     $ionicPlatform.ready(function() {
-
-
+        analytics.log(
+            {
+                name : 'APP',
+                type : 'START',
+                id : 'none'
+            },
+            {
+                time : new Date()
+            }
+        )
       data.queueSync()
       $rootScope.$on('$cordovaNetwork:online', function(event, networkState) {
           data.queueSync()
@@ -170,6 +178,29 @@
         StatusBar.styleDefault();
       }
     })
-
+    $ionicPlatform.on('resume', function(){
+        analytics.log(
+            {
+                name : 'APP',
+                type : 'START',
+                id : 'none'
+            },
+            {
+                time : new Date()
+            }
+        )
+    });
+    $ionicPlatform.on('pause', function(){
+        analytics.log(
+            {
+                name : 'APP',
+                type : 'END',
+                id : 'none'
+            },
+            {
+                time : new Date()
+            }
+        )
+    });
   }
 })();

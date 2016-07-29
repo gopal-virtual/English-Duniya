@@ -132,6 +132,7 @@
     quizCtrl.disableSwipe = disableSwipe;
     quizCtrl.canRemoveFeedback = true;
     quizCtrl.next = next;
+    quizCtrl.logQuestion = logQuestion;
 
 
     // quizCtrl.pauseQuiz = pauseQuiz;
@@ -317,6 +318,7 @@
       } else if ($state.current.name == "quiz.questions") {
 
         quizCtrl.setCurrentIndex(0);
+        quizCtrl.logQuestion(0,'START');
         if ($stateParams.type == 'assessment') {
           quizCtrl.startTimer();
         }
@@ -861,6 +863,20 @@
         angular.element("#audioplayer")[0].load();
         angular.element("#audioplayer")[0].play();
       }
+    }
+
+    function logQuestion(index, type){
+        $log.debug('Question : Log : ', quizCtrl.quiz.objects[index].node.id);
+        analytics.log(
+            {
+                name : 'QUESTION',
+                type : type,
+                id : quizCtrl.quiz.objects[index].node.id
+            },
+            {
+                time : new Date()
+            }
+        )
     }
 
 

@@ -43,7 +43,8 @@
       },
       "locator": "phonegap-facebook-plugin",
       "id": "phonegap-facebook-plugin"
-    }
+    },
+    "cordova-plugin-geolocation"
   ],
   "cordovaPlatforms": [
     "ios",
