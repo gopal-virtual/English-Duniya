@@ -71,23 +71,8 @@
         $stateParams,
         analytics,
         $q
-        // $ionicLoading
     ) {
 
-    // $ionicLoading.show({
-    //   templateUrl: 'templates/common/common.loader.view.html',
-    //   // duration: 3000
-    // });
-    // $timeout(function(){
-    //   $ionicLoading.hide()
-    //   // .then(function(){
-    //     $log.warn("Hidden");
-    //   // });
-
-    // },4000)
-    // .then(function(){
-    //   $log.warn("Ionic Loading hidden");
-    // })
     $scope.audio = audio;
     $log.debug('settings', settings);
     $scope.settings = settings;
