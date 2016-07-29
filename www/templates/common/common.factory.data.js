@@ -5,7 +5,7 @@
     .module('common')
     .factory('data', data);
 
-  data.$inject = ['pouchDB', '$http', '$log', 'Rest', 'CONSTANT', '$q', '$ImageCacheFactory', 'mediaManager', '$interval', 'network', 'Auth', 'widgetParser'];
+  data.$inject = ['pouchDB', '$http', '$log', 'Rest', 'CONSTANT', '$q', '$ImageCacheFactory', 'mediaManager', '$interval', 'network', 'Auth', 'widgetParser',];
 
   /* @ngInject */
   function data(pouchDB, $http, $log, Rest, CONSTANT, $q, $ImageCacheFactory, mediaManager, $interval, network, Auth, widgetParser) {
@@ -26,7 +26,7 @@
         adapter: 'websql'
       });
     }
-
+    var queueDB = pouchDB('queueDB');
     var appDB = pouchDB('appDB');
     var resourceDB = pouchDB('resourceDB');
     var reportsDB = pouchDB('reportsDB');
@@ -127,7 +127,11 @@
           "account": "150c906a-c3ef-4e2b-a19d-c77fdabf2015"
         },
         "objects": []
-      }
+      },
+
+      queuePush : queuePush,
+      queueSync: queueSync,
+      queueUploadRecord: queueUploadRecord
     };
 
 
@@ -770,5 +774,63 @@
         //     }
         //   })
     }
+
+    function queuePush(record){
+      $log.debug("queuePush");
+      return queueDB.post({
+          // '_id': report.userId,
+          // '_rev': response._rev,
+          'data':  record
+        }).then(function(s){
+            $log.debug('activity-log ',s)
+        })
+        .catch(function(a){
+          $log.debug('activity-log ',a)
+        })
+
+
+    }
+
+    function queueSync(){
+      $log.debug("starting queue sync")
+      return queueDB.allDocs({
+          include_docs: true
+        }).then(function(response) {
+          var d = $q.defer();
+          // angular.forEach(response.rows, function(row) {
+          if (response.rows.length == 0) {
+            d.reject("No data");
+          } else {
+            var record = response.rows[0].doc.data;
+            queueUploadRecord(record).then(function() {
+
+                d.resolve({
+                  'record_doc': response.rows[0].doc,
+                })
+              })
+              .catch(function(error) {
+                d.reject(error)
+              })
+          }
+          return d.promise;
+        })
+        .then(function(response) {
+          $log.debug("Removing record")
+          return queueDB.remove(response.record_doc)
+        })
+        .then(function(response) {
+          $log.debug("Calling sync again")
+
+          data.queueSync()
+        })
+        .catch(function(e) {})
+    }
+
+
+    function queueUploadRecord(record){
+      return Rest.all(record.url).post(record.data);
+    }
+
   }
+
 })();
