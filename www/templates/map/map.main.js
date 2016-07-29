@@ -486,9 +486,9 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                 for (var i = renderedRegion.length - 1; i >= 0; i--) {
                     groups.region[region[i]] = game.add.group();
                 }
-                groups.nonRegion["starClone"] = game.add.group();
                 groups.nonRegion["nodes"] = game.add.group();
                 groups.nonRegion["stars"] = game.add.group();
+                groups.nonRegion["starClone"] = game.add.group();
 
             }
 
@@ -670,7 +670,6 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                 for (var i = 0; i < count; i++) {
                     star[i] = groups.nonRegion.stars.create(x[0] + x[i + 1], y[0] + y[i + 1], 'star');
                     star[i].anchor.setTo(0.5, 0.5);
-                    // star[i].scale.setTo(0.2,0.2);
                 }
                 return star;
             }
@@ -727,7 +726,6 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                                     }
                                     localStorage.setItem("animateStarFlag",JSON.stringify(animateStarFlag));
                                     scope.$emit('openNode', currentLesson, currentPosition);
-                                    // scope.$emit('game', game);
                                 } else if (currentLesson.locked && displacement) {
                                     audio.play('locked');
                                 } else {}
