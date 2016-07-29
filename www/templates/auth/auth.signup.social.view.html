@@ -40,7 +40,7 @@
           <div class="input-group input-group-social">
             <button type="button" class="icon icon-phone icon-fit-width input-group-item input-group-addon input-group-addon-light font-md">
             </button>
-            <input class="input-control input-group-item input-default input-block font-sm input-sm padding-x-0" tabindex="1" name="phoneNumber" type="text" placeholder="Phone" ng-model="authCtrl.user.phoneNumber" autocomplete="off">
+            <input class="input-control input-group-item input-default input-block font-sm input-sm padding-x-0" tabindex="1" name="phoneNumber" type="text" ng-trim="false" valid-number placeholder="Phone" ng-model="authCtrl.user.phoneNumber" autocomplete="off">
           </div>
 
           <div class="input-group input-group-social">
