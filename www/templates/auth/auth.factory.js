@@ -42,6 +42,7 @@
     function login(url, user_credentials) {
       var d = $q.defer();
       rest_auth.all(url).post($.param(user_credentials)).then(function(response) {
+        Auth.setAuthProvider(url);
         localStorage.setItem('Authorization', response.key || response.token);
         d.resolve(response);
       }, function(response) {
@@ -63,7 +64,7 @@
       $log.debug("in logout");
       rest_auth.all('logout').post().then(function(response) {
         if (localStorage.getItem('authProvider') == 'google') {
-          window.plugins.googleplus.logout();
+          window.plugins.googleplus.disconnect();
         }
         if (localStorage.getItem('authProvider') == 'facebook') {
           facebookConnectPlugin.logout();
