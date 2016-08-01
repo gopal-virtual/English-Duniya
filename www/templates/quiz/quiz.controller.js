@@ -586,8 +586,8 @@
     }
 
     function playAudio(key, index) {
+      angular.element("#audioplayer")[0].pause();
       if (key) {
-        angular.element("#audioplayer")[0].pause();
         var src = key;
         angular.element("#audioSource")[0].src = src;
         angular.element("#audioplayer")[0].load();
