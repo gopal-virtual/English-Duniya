@@ -29,7 +29,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
     }
     var svgPathHeight = 10000;
     var regionOffset = {};
-    var tresholdOffset = -200;
+    var tresholdOffset = 200;
     var regionRange = {};
     var points = {
         "x" : [],
