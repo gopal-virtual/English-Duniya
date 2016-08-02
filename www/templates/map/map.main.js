@@ -450,8 +450,8 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
 
             function renderWorld(region){
                 log.info("Creating World ...");
+                game.input.maxPointers = 1;
                 var totalRegionHeight = 0;
-                // var revRegion = region.reverse();
                 var tempRegionHeight = 0;
                 for (var i = region.length - 1; i >= 0; i--) {
                     totalRegionHeight += regionHeight[region[i]];
@@ -787,9 +787,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             }
 
             function gameStart(){
-                // game.input.maxPointers = 1;
                 log.info("Starting Game ...")
-                // $ionicLoading.show();
                 log.info("Rendering these regions - ",renderedRegion);
                 addGroups(renderedRegion);
                 renderWorld(renderedRegion);
@@ -834,10 +832,8 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
 
             }
 
-            // setTimeout(function(){
-                gameStart();
+            gameStart();
 
-            // },2000);
 
 
 
