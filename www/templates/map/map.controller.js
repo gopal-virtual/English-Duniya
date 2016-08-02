@@ -173,7 +173,9 @@
                     time : new Date()
                 }
             )
-          $ionicLoading.show();
+          $ionicLoading.show({
+            hideOnStateChange: true
+          });
           $log.debug("Starts", node)
           var d = new Date();
           var promise;
@@ -242,6 +244,8 @@
     $scope.openNodeMenu = function() {
       $log.debug("Opening node menu")
       $scope.nodeMenu.show();
+      $ionicLoading.hide();
+      $log.debug("Force closing loading");
       return true;
     }
     $scope.closeNodeMenu = function() {
