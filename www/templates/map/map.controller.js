@@ -244,6 +244,8 @@
     $scope.openNodeMenu = function() {
       $log.debug("Opening node menu")
       $scope.nodeMenu.show();
+      $ionicLoading.hide();
+      $log.debug("Force closing loading");
       return true;
     }
     $scope.closeNodeMenu = function() {
