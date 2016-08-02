@@ -145,7 +145,10 @@
       $log.debug('Analytics : Action : ', action);
       $log.debug('Analytics : Data : ', data);
       $log.debug('Analytics : Verb : ', analytics.activity);
+      $log.debug('Analytics : platform : ', ionic.Platform);
 
+
+      ionic.Platform.device().available &&
       getPostParam(
           getUserDetails('id'),
           analytics.activity[action.name][action.type],
