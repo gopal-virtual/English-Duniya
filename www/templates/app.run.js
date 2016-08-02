@@ -191,6 +191,8 @@
         )
     });
     $ionicPlatform.on('pause', function(){
+      angular.element("#audioplayer")[0].pause();
+      $log.debug(angular.element("#audioplayer")[0])
         analytics.log(
             {
                 name : 'APP',
