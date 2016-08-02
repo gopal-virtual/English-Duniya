@@ -19,7 +19,7 @@
     <div class="padding-y-40"></div>
     <div class="row padding-x-30">
       <div class="col">
-        <button class="button bg-pale button-round button-block" ui-sref="quiz.questions({id : quizCtrl.quiz.node.id})"><i class="ed-icon icon-contain icon-redo"></i></button>
+        <button class="button bg-pale button-round button-block" ng-click="lessonutils.playResource(quizCtrl.quiz)"><i class="ed-icon icon-contain icon-redo"></i></button>
       </div>
       <div class="col">
         <button class="button bg-brand-yellow button-round button-block" ng-click="quizCtrl.next()"><i class="ed-icon icon-contain icon-next"></i></button>

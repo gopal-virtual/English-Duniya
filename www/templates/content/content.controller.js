@@ -44,6 +44,7 @@
     $scope.orientation = orientation;
     contentCtrl.onPlayerReady = onPlayerReady;
     contentCtrl.onStateChange = onStateChange;
+    contentCtrl.play = play;
     $scope.lessonutils = lessonutils;
     $scope.selectedNode = lessonutils.getLocalLesson();
     contentCtrl.toggleControls = toggleControls;
@@ -144,6 +145,19 @@
       contentCtrl.API = API;
     }
 
+    function play(){
+        analytics.log(
+            {
+                name : 'VIDEO',
+                type : 'START',
+                id : $stateParams.video.resource.node.id
+            },
+            {
+                time : new Date()
+            }
+        )
+        contentCtrl.API.play();
+    }
     function onStateChange(state) {
       if (state == 'play') {
         $timeout(function() {
