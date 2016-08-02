@@ -387,24 +387,28 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                     "key" : "llamaWiggle"
                 }
             },{
+                "id":"cloudMiddle",
                 "name" : "cloud_middle",
                 "region" : "peru",
                 "x" : 190,
                 "y" : 794,
                 "scale" : [game_scale,1],
             },{
+                "id":"cloudLeft",
                 "name" : "cloud_left",
                 "region" : "peru",
                 "x" : 80,
                 "y" : 830,
                 "scale" : [game_scale,1],
             },{
+                "id":"cloudRightBehind",
                 "name" : "cloud_right_behind",
                 "region" : "peru",
                 "x" : 290,
                 "y" : 810,
                 "scale" : [game_scale,1],
             },{
+                "id":"cloudRight",
                 "name" : "cloud_right",
                 "region" : "peru",
                 "x" : 280,
@@ -929,6 +933,43 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                     }
                    sprites.plantLeft.x = temp.plantLeftX - (180 * (regionOffset.tundra - game.camera.y - 200)/360);
                    sprites.plantRight.x = temp.plantRightX + (180 * (regionOffset.tundra - game.camera.y - 200)/360);
+                }
+
+                if (game.camera.y + 100 < regionOffset.peru + 800 && game.camera.y + 100 > regionOffset.peru + 800 - 360) {
+                    // game.debug.spriteInfo(sprites.cloudLeft, 20, 32);
+                    var checkTempClouds = temp.cloudLeft==undefined && temp.cloudMiddle==undefined && temp.cloudRight==undefined && temp.cloudRightBehin==undefined;
+                    if (checkTempClouds) {
+                            temp["cloudLeft"] = {
+                                "x" : sprites.cloudLeft.x,
+                                "y" : sprites.cloudLeft.y  
+                            };
+                            temp["cloudRight"] = {
+                                "x" : sprites.cloudRight.x,
+                                "y" : sprites.cloudRight.y  
+                            };
+                            temp["cloudMiddle"] = {
+                                "x" : sprites.cloudMiddle.x,
+                                "y" : sprites.cloudMiddle.y  
+                            };
+                            temp["cloudRightBehind"] = {
+                                "x" : sprites.cloudRightBehind.x,
+                                "y" : sprites.cloudRightBehind.y  
+                            };
+                    }
+                    // log.warn(temp["cloudLeft"]);
+                   sprites.cloudLeft.x = temp.cloudLeft.x + ((regionOffset.peru + 800 - game.camera.y - 100)/8);
+                   sprites.cloudRight.x = temp.cloudRight.x + ((regionOffset.peru + 800 - game.camera.y - 100)/8);
+                   sprites.cloudMiddle.x = temp.cloudMiddle.x - ((regionOffset.peru + 800 - game.camera.y - 100)/8);
+                   sprites.cloudRightBehind.x = temp.cloudRightBehind.x - ((regionOffset.peru + 800 - game.camera.y - 100)/8);
+                   sprites.cloudLeft.y = temp.cloudLeft.y + ((regionOffset.peru + 800 - game.camera.y - 100)/8);
+                   sprites.cloudRight.y = temp.cloudRight.y + ((regionOffset.peru + 800 - game.camera.y - 100)/8);
+                   sprites.cloudMiddle.y = temp.cloudMiddle.y + ((regionOffset.peru + 800 - game.camera.y - 100)/8);
+                   sprites.cloudRightBehind.y = temp.cloudRightBehind.y + ((regionOffset.peru + 800 - game.camera.y - 100)/8);
+                   sprites.cloudLeft.alpha = 1 - (regionOffset.peru + 800 - game.camera.y - 100)/720;
+                   sprites.cloudRight.alpha = 1 - (regionOffset.peru + 800 - game.camera.y - 100)/720;
+                   sprites.cloudMiddle.alpha = 1 - (regionOffset.peru + 800 - game.camera.y - 100)/720;
+                   sprites.cloudRightBehind.alpha = 1 - (regionOffset.peru + 800 - game.camera.y - 100)/720;
+
                 }
 
                 if (game.camera.y + 500 < regionOffset.tundra && game.camera.y + 500 > regionOffset.forest + 300) {
