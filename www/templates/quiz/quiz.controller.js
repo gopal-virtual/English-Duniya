@@ -862,12 +862,15 @@
     function playInstruction(index){
       $log.debug("playInstruction",index)
       if(quizCtrl.quiz.objects[index].node.instructionSound){
-        $log.debug("playInstruction",quizCtrl.quiz.objects[index].node.instructionSound)
 
         angular.element("#audioplayer")[0].pause();
         angular.element("#audioSource")[0].src = quizCtrl.quiz.objects[index].node.instructionSound;
         angular.element("#audioplayer")[0].load();
         angular.element("#audioplayer")[0].play();
+      }else if(quizCtrl.quiz.objects[index].node){
+
+        quizCtrl.playAudio(quizCtrl.quiz.objects[index].node.widgetSound,index);
+        quizCtrl.highlightSoundIcon(index);
       }
     }
 
