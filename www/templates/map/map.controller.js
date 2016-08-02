@@ -366,9 +366,10 @@
           if (result && demoFactory.getStep() == '1') {
             $timeout(function() {
               $scope.demo.show().then(function() {
-                $log.debug('aaaaaa');
-
-                audio['demo-1'].play();
+                angular.element("#audioplayer")[0].pause();
+                angular.element("#audioSource")[0].src = 'sound/demo-1.mp3';
+                angular.element("#audioplayer")[0].load();
+                angular.element("#audioplayer")[0].play();
                 demoFactory.setStep(2)
               });
             })

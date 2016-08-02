@@ -322,11 +322,15 @@
 
         if (utils.demoFactory.getStep() == 2) {
           $log.debug("Playing audio init 2")
-          audio['demo-1'].stop();
-          audio['demo-2'].play();
+          angular.element("#audioplayer")[0].pause();
+          angular.element("#audioSource")[0].src = 'sound/demo-2.mp3';
+          angular.element("#audioplayer")[0].load();
+          angular.element("#audioplayer")[0].play();
         } else if (utils.demoFactory.getStep() == 4) {
-          audio['demo-3'].stop();
-          audio['demo-4'].play();
+          angular.element("#audioplayer")[0].pause();
+          angular.element("#audioSource")[0].src = 'sound/demo-4.mp3';
+          angular.element("#audioplayer")[0].load();
+          angular.element("#audioplayer")[0].play();
           $log.debug("Playing audio init 4")
 
         } else if (node.meta && node.meta.parsed_sound) {
