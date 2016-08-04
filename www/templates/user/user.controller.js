@@ -5,9 +5,39 @@
     .module('zaya-user')
     .controller('userController', userController);
 
-  userController.$inject = ['CONSTANT', '$scope', '$state', 'Auth', 'Rest', '$log', '$ionicPopup', '$ionicPlatform', '$ionicLoading', '$ionicModal', 'formHelper', 'network', 'data'];
+  userController.$inject = [
+            'CONSTANT',
+            '$scope',
+            '$state',
+            'Auth',
+            'Rest',
+            '$log',
+            '$ionicPopup',
+            '$ionicPlatform',
+            '$ionicLoading',
+            '$ionicModal',
+            'formHelper',
+            'network',
+            'data',
+            '$ionicSlideBoxDelegate'
+          ];
 
-  function userController(CONSTANT, $scope, $state, Auth, Rest, $log, $ionicPopup, $ionicPlatform, $ionicLoading, $ionicModal, formHelper, network, dataService) {
+  function userController(
+            CONSTANT,
+            $scope,
+            $state,
+            Auth,
+            Rest,
+            $log,
+            $ionicPopup,
+            $ionicPlatform,
+            $ionicLoading,
+            $ionicModal,
+            formHelper,
+            network,
+            dataService,
+            $ionicSlideBoxDelegate
+              ) {
     var userCtrl = this;
     userCtrl.calcAge = calcAge;
     userCtrl.closeKeyboard = closeKeyboard;
@@ -20,6 +50,22 @@
     userCtrl.skills = $state.current.data.skills;
     userCtrl.network = network;
     userCtrl.goToMap = goToMap;
+    userCtrl.splitName = splitName;
+    userCtrl.nextSlide = nextSlide;
+    userCtrl.disableSwipe = disableSwipe;
+
+    function splitName(){
+        userCtrl.user.first_name = userCtrl.user.name.substr(0, userCtrl.user.name.indexOf(" "));
+        userCtrl.user.last_name = userCtrl.user.name.substr(userCtrl.user.name.indexOf(" ")+1);
+    }
+
+    function disableSwipe(){
+        $ionicSlideBoxDelegate.enableSlide(false);
+    }
+
+    function nextSlide() {
+        $ionicSlideBoxDelegate.$getByHandle('slide').next();
+    }
 
     function goToMap() {
       $ionicLoading.show({
@@ -61,10 +107,13 @@
         noBackdrop: false,
         hideOnStateChange: true
       });
-      formHelper.validateForm(formData, userCtrl.personaliseFormValidations)
-        .then(function(data) {
-          return Rest.all('profiles').post(data);
-        })
+    //   formHelper.validateForm(formData, userCtrl.personaliseFormValidations)
+    //     .then(function(data) {
+    //       return Rest.all('profiles').post(data);
+    //     })
+        delete formData['name'];
+
+        Rest.all('profiles').post(formData)
         .then(function(response) {
           return Auth.getUser();
         })
@@ -104,11 +153,11 @@
       $log.debug("USer logout",type)
       if (type == 'clean') {
         Auth.clean(function() {
-          $state.go('auth.signin', {})
+          $state.go('auth.signup', {})
         })
       } else {
         Auth.logout(function() {
-          $state.go('auth.signin', {})
+          $state.go('auth.signup', {})
         }, function() {
           // body...
         })

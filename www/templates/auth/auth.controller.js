@@ -3,9 +3,47 @@
   angular
     .module('zaya-auth')
     .controller('authController', authController)
-  authController.$inject = ['$q', '$ionicModal', '$state', 'Auth', 'audio', '$rootScope', '$ionicPopup', '$log', '$cordovaOauth', 'CONSTANT', '$interval', '$scope', '$ionicLoading', 'formHelper', '$ionicPlatform','data','network','demo'];
+  authController.$inject = [
+                '$q',
+                '$ionicModal',
+                '$state',
+                'Auth',
+                'audio',
+                '$rootScope',
+                '$ionicPopup',
+                '$log',
+                '$cordovaOauth',
+                'CONSTANT',
+                '$interval',
+                '$scope',
+                '$ionicLoading',
+                'formHelper',
+                '$ionicPlatform',
+                'data',
+                'network',
+                'demo'
+            ];
 
-  function authController($q, $ionicModal, $state, Auth, audio, $rootScope, $ionicPopup, $log, $cordovaOauth, CONSTANT, $interval, $scope, $ionicLoading, formHelper, $ionicPlatform, dataService, network, demoFactory) {
+  function authController(
+                    $q,
+                    $ionicModal,
+                    $state,
+                    Auth,
+                    audio,
+                    $rootScope,
+                    $ionicPopup,
+                    $log,
+                    $cordovaOauth,
+                    CONSTANT,
+                    $interval,
+                    $scope,
+                    $ionicLoading,
+                    formHelper,
+                    $ionicPlatform,
+                    dataService,
+                    network,
+                    demoFactory
+                   ) {
     var authCtrl = this;
     $log.debug("Inside auth controller")
     authCtrl.formHelper = formHelper;
@@ -30,7 +68,7 @@
     authCtrl.recoverAccount = recoverAccount;
     authCtrl.cleanLocalStorage = cleanLocalStorage;
     authCtrl.signUpFormValidations = {
-      'emailAddress': ['emailAddress'],
+    //   'emailAddress': ['emailAddress'],
       'phoneNumber': ['required', 'phoneNumber'],
       'password': ['required', 'password']
     }; // {fieldname: [validations]}
@@ -365,7 +403,7 @@
 
     function cleanLocalStorage() {
       Auth.cleanLocalStorage();
-      $state.go('auth.signin', {});
+      $state.go('auth.signup', {});
     }
     function exitApp(){
         try{

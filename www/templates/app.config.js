@@ -35,7 +35,7 @@
           $log.debug("error", rejection)
           if ([401].indexOf(rejection.status) != -1) {
             localStorage.clear();
-            $injector.get('$state').go('auth.signin');
+            $injector.get('$state').go('auth.signup');
           }
           if ([400, 500].indexOf(rejection.status) != -1) {
             $rootScope.error = $rootScope.error || [];

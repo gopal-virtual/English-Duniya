@@ -26,29 +26,35 @@
 
     var ACTIVITY_TYPE = {
       "LESSON": {
+          "CONTENT" : "lesson",
         "START": "start lesson",
         "END": "end lesson",
         "AVAILABLE": "available lessons",
         "UNLOCKED": "unlocked lessons"
       },
       "VIDEO": {
+          "CONTENT" : "resource",
         "START": "start video",
         "END": "end video",
         "SEEK": "seek video"
       },
       "PRACTICE": {
+          "CONTENT" : "assessment",
         "START": "start practice",
         "END": "end practice"
       },
       "QUIZ": {
+          "CONTENT" : "assessment",
         "START": "start quiz",
         "END": "end quiz"
       },
       "QUESTION": {
+          "CONTENT" : "jsonquestion",
         "START": "start question",
         "END": "end question"
       },
       "APP": {
+          "CONTENT" : null,
         "START": "start app",
         "END": "end app"
       }
@@ -128,16 +134,13 @@
     }
 
     function getUserDetails(prop) {
-      var user = localStorage.profile ? JSON.parse(localStorage.profile) : false;
-      if (user) {
-        if (prop == 'id') {
+      var user = localStorage.user_details ? JSON.parse(localStorage.user_details) : false;
+      var profile = localStorage.profile ? JSON.parse(localStorage.profile) : false;
+      if (prop == 'id') {
           return user.id;
-        }
-        if (prop == 'account') {
-          return user.accounts[user.username].id;
-        }
-      } else {
-        return "none";
+      }
+      if (prop == 'account') {
+          return profile ? profile.accounts[profile.username].id : null;
       }
     }
 
@@ -147,12 +150,11 @@
       $log.debug('Analytics : Verb : ', analytics.activity);
       $log.debug('Analytics : platform : ', ionic.Platform);
 
-
       ionic.Platform.device().available &&
       getPostParam(
           getUserDetails('id'),
           analytics.activity[action.name][action.type],
-          action.name.toLowerCase(),
+          analytics.activity[action.name].CONTENT,
           action.id,
           getUserDetails('account'),
           data

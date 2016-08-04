@@ -1,4 +1,4 @@
-<ion-view class="bg-pale">
+<!-- <ion-view class="bg-pale">
   <ion-content>
       <form name="personaliseForm" class="row" novalidate ng-submit="userCtrl.closeKeyboard();userCtrl.createProfile(personaliseForm)">
           <div class="col no-padding">
@@ -33,7 +33,7 @@
               <div class="row">
                   <div class="col">
                       <div class="input-group input-group-social no-margin">
-                          <!-- <i class="icon ion-search placeholder-icon"></i> -->
+                          <i class="icon ion-search placeholder-icon"></i>
                           <div type="button" class="input-group-item input-group-addon input-group-addon-light font-sm">
                             <i class="ed-icon icon-contain icon-profile"></i>
                           </div>
@@ -71,5 +71,61 @@
               </div>
           </div>
       </form>
+  </ion-content>
+</ion-view> -->
+
+<ion-view class="bg-pink">
+  <ion-content>
+    <ion-slide-box delegate-handle="slide" show-pager="false" ng-init="userCtrl.disableSwipe()">
+      <ion-slide>
+        <div class="box">
+          <div class="row padding-40">
+            <div class="col">
+              <h1 class="center">Welcome to English Dunyia</h1>
+              <h1 class="center">What is your name?</h1>
+              <input type="text" class="input input-control input-block" placeholder="Your Name" ng-model="userCtrl.user.name" ng-change="userCtrl.splitName()">
+              <virtual-keyboard type="alpha" reference=""></virtual-keyboard>
+              <button ng-disabled="!userCtrl.user.name" class="button button-balanced button-round button-block font-md" ng-click="userCtrl.nextSlide()">Next</button>
+            </div>
+          </div>
+        </div>
+      </ion-slide>
+      <ion-slide>
+        <div class="box">
+          <div class="row padding-40">
+            <div class="col">
+              <h1 class="center">Gender</h1>
+              <div class="row no-padding">
+                <div class="col text-center no-padding">
+                  <label for="" class="radio radio-male radio-icon-check" ng-class="{'checked':userCtrl.user.gender=='M'}">
+                    <i class="font-xl color-blue icon ion-checkmark-circled"></i>
+                    <input type="radio" name="gender" value="M" ng-model="userCtrl.user.gender">
+                  </label>
+                </div>
+                <div class="radio-graphic-or font-md">or</div>
+                <div class="col text-center no-padding">
+                  <label for="" class="radio radio-female radio-icon-check" ng-class="{'checked':userCtrl.user.gender=='F'}">
+                    <i class="font-xl color-blue icon ion-checkmark-circled"></i>
+                    <input type="radio" name="gender" value="F" ng-model="userCtrl.user.gender">
+                  </label>
+                </div>
+              </div>
+              <button ng-disabled="!userCtrl.user.gender" class="button button-balanced button-round button-block font-md" ng-click="userCtrl.nextSlide()">Next</button>
+            </div>
+          </div>
+        </div>
+      </ion-slide>
+      <ion-slide>
+        <div class="box">
+          <div class="row padding-40">
+            <div class="col">
+              <h1 class="center">In which class do you study?</h1>
+              <ion-radio ng-model="userCtrl.user.grade" ng-value="$index+1" ng-repeat="grade in [1,2,3]">Class {{grade}}</ion-radio>
+              <button ng-disabled="!userCtrl.user.grade" class="button button-balanced button-round button-block font-md" ng-click="userCtrl.createProfile(userCtrl.user)">Done</button>
+            </div>
+          </div>
+        </div>
+      </ion-slide>
+    </ion-slide-box>
   </ion-content>
 </ion-view>

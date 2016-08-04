@@ -42,12 +42,12 @@
           });
           if (type == 'clean') {
             Auth.clean(function() {
-              $state.go('auth.signin', {})
+              $state.go('auth.signup', {})
             })
           } else {
 
             Auth.logout(function() {
-              $state.go('auth.signin', {})
+              $state.go('auth.signup', {})
             }, function() {
               // body...
             })

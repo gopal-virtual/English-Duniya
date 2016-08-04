@@ -19,17 +19,27 @@
         views: {
           'state-user': {
             templateUrl: CONSTANT.PATH.USER + '/user.personalise' + CONSTANT.VIEW,
+            // templateUrl: CONSTANT.PATH.USER + '/user.personalise.grade' + CONSTANT.VIEW,
             controller: 'userController as userCtrl'
           }
       },
       data : {
           personaliseFormValidations: {
-            'gender': ['required'],
-            'firstName': ['required'],
+            // 'gender': ['required'],
+            // 'firstName': ['required'],
             'grade': ['required'],
-            'motherTongue': ['required']
+            // 'motherTongue': ['required']
           }
       }
+      })
+      .state('user.nointernet',{
+          url : '/nointernet',
+          views : {
+              'state-user' : {
+                  templateUrl : CONSTANT.PATH.USER + '/user.nointernet' + CONSTANT.VIEW,
+                  controller : 'userController as userCtrl'
+              }
+          }
       })
       .state('user.profile', {
         url: '/profile',

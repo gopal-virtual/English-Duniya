@@ -4,7 +4,7 @@
     .module('zaya')
     .run(runConfig);
 
-  function runConfig($ionicPlatform, $rootScope, $timeout, $log, $state, $http, $cookies, Auth, $window, $cordovaFile, data, demo, audio, $ionicPopup, analytics) {
+  function runConfig($ionicPlatform, $rootScope, $timeout, $log, $state, $http, $cookies, Auth, $window, $cordovaFile, data, demo, audio, $ionicPopup, analytics, network) {
 
 
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
@@ -12,33 +12,43 @@
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
 
       $log.debug('state changed ', toState.name);
-      $log.debug(Auth.isAuthorised(), Auth.isVerified(), Auth.hasProfile())
+      $log.debug('User state : ', Auth.isAuthorised(), Auth.isVerified(), Auth.hasProfile())
         //if not authenticated, redirect to login page
-      if (!Auth.isAuthorised() && toState.name != 'auth.signin' && toState.name != 'auth.signup' && toState.name != 'auth.forgot') {
+    //   if (!Auth.isAuthorised() && toState.name != 'auth.signin' && toState.name != 'auth.signup' && toState.name != 'auth.forgot') {
+    //     $log.debug("You are not authorized");
+    //     event.preventDefault();
+    //     $state.go('auth.signup');
+    //   }
+      if (!Auth.isAuthorised() && network.isOnline() && toState.name != 'auth.autologin') {
         $log.debug("You are not authorized");
         event.preventDefault();
-        $state.go('auth.signin');
+        $state.go('auth.autologin');
+      }
+      if (!Auth.isAuthorised() && !network.isOnline() && toState.name != 'user.nointernet') {
+        $log.debug("Offline ; UnAuthorised");
+        event.preventDefault();
+        $state.go('user.nointernet');
       }
 
       // if authenticated but not verified clear localstorage and redirect to login
-      if (Auth.isAuthorised() && !Auth.isVerified() && toState.name != 'auth.verify.phone' && toState.name != 'auth.forgot_verify_otp' && toState.name != 'auth.change_password') {
-        $log.debug("User account not verified");
-        event.preventDefault();
-        Auth.cleanLocalStorage();
-        $state.go('auth.signin');
-      }
+    //   if (Auth.isAuthorised() && !Auth.isVerified() && toState.name != 'auth.verify.phone' && toState.name != 'auth.forgot_verify_otp' && toState.name != 'auth.change_password') {
+    //     $log.debug("User account not verified");
+    //     event.preventDefault();
+    //     Auth.cleanLocalStorage();
+    //     $state.go('auth.signup');
+    //   }
 
 
 
       //if authenticated and verified but has no profile, redirect to user.personalise
-      if (Auth.isAuthorised() && Auth.isVerified() && !Auth.hasProfile() && (toState.name != 'user.personalise')) {
+      if (Auth.isAuthorised() && !Auth.hasProfile() && (toState.name != 'user.personalise')) {
         $log.debug("Account authorised and verfified , profile not complete");
         event.preventDefault();
         $state.go('user.personalise');
       }
       //if authenticated, verified and has profile, redirect to userpage
 
-      if (Auth.isAuthorised() && Auth.isVerified() && Auth.hasProfile() && (toState.name == 'auth.signin' || toState.name == 'auth.signup' || toState.name == 'intro' || toState.name == 'auth.verify.phone' || toState.name == 'auth.forgot' || toState.name == 'auth.change_password' || toState.name == 'auth.forgot_verify_otp' || toState.name == 'user.personalise')) {
+      if (Auth.isAuthorised() && Auth.hasProfile() && (toState.name == 'auth.signin' || toState.name == 'auth.signup' || toState.name == 'intro' || toState.name == 'auth.verify.phone' || toState.name == 'auth.forgot' || toState.name == 'auth.change_password' || toState.name == 'auth.forgot_verify_otp' || toState.name == 'user.personalise')) {
         $log.debug("Account authorised , verififed and profile completed");
         event.preventDefault();
         $state.go('map.navigate');
@@ -100,11 +110,11 @@
       // }
     });
     $ionicPlatform.ready(function() {
-        analytics.log(
+        Auth.isAuthorised() && analytics.log(
             {
                 name : 'APP',
                 type : 'START',
-                id : 'none'
+                id : null
             },
             {
                 time : new Date()
@@ -179,11 +189,11 @@
       }
     })
     $ionicPlatform.on('resume', function(){
-        analytics.log(
+        Auth.isAuthorised() && analytics.log(
             {
                 name : 'APP',
                 type : 'START',
-                id : 'none'
+                id : null
             },
             {
                 time : new Date()
@@ -191,11 +201,11 @@
         )
     });
     $ionicPlatform.on('pause', function(){
-        analytics.log(
+        Auth.isAuthorised() && analytics.log(
             {
                 name : 'APP',
                 type : 'END',
-                id : 'none'
+                id : null
             },
             {
                 time : new Date()

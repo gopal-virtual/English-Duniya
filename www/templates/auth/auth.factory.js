@@ -3,9 +3,27 @@
   angular
     .module('zaya-auth')
     .factory('Auth', Auth)
-  Auth.$inject = ['Restangular', 'CONSTANT', '$cookies', '$log', '$window', 'Rest', '$q'];
+  Auth.$inject = [
+            'Restangular',
+            'CONSTANT',
+            '$cookies',
+            '$log',
+            '$window',
+            'Rest',
+            '$q',
+            '$state'
+    ];
 
-  function Auth(Restangular, CONSTANT, $cookies, $log, $window, Rest, $q) {
+  function Auth(
+            Restangular,
+            CONSTANT,
+            $cookies,
+            $log,
+            $window,
+            Rest,
+            $q,
+            $state
+        ) {
     var rest_auth = Restangular.withConfig(function(RestangularConfigurer) {
       RestangularConfigurer.setBaseUrl(CONSTANT.BACKEND_SERVICE_DOMAIN + '/rest-auth');
       RestangularConfigurer.setRequestSuffix('/');
@@ -36,9 +54,18 @@
     Auth.hasProfile = hasProfile;
     Auth.getProfileId = getProfileId;
     Auth.getLocalProfile = getLocalProfile;
+    Auth.autoLogin = autoLogin;
 
     return Auth;
 
+    function autoLogin(user_credentials){
+        return rest_auth.all('no-login')
+        .post($.param(user_credentials))
+        .then(function(response){
+            localStorage.setItem('Authorization', response.key || response.token);
+            return $q.resolve(response);
+        })
+    }
     function login(url, user_credentials) {
       var d = $q.defer();
       rest_auth.all(url).post($.param(user_credentials)).then(function(response) {
