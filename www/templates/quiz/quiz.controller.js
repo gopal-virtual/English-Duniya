@@ -155,6 +155,7 @@
     quizCtrl.isScroll = isScroll;
     //helper functions
     quizCtrl.getQuestionType = getQuestionType;
+    quizCtrl.redo = redo;
 
 
     // initialisation call
@@ -190,6 +191,17 @@
     function isScroll(id){
 
     }
+
+    function redo(){
+     $log.debug("Redo with",quizCtrl.quiz)
+     var t = quizCtrl.quiz
+     if(quizCtrl.quiz.objects[0].node.id === 'demo'){
+       $log.debug("Redo Demo found",t.objects.shift())
+     }
+     $log.debug("Redo Finally with",t)
+   lessonutils.playResource(t)
+   }
+
     function stopTimer() {
       $interval.cancel(quizCtrl.interval);
     }

@@ -137,7 +137,7 @@
       var user = localStorage.user_details ? JSON.parse(localStorage.user_details) : false;
       var profile = localStorage.profile ? JSON.parse(localStorage.profile) : false;
       if (prop == 'id') {
-          return user.id;
+          return profile ? profile.id : user.id;
       }
       if (prop == 'account') {
           return profile ? profile.accounts[profile.username].id : null;
