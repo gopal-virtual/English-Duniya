@@ -19,10 +19,10 @@
                   templateUrl : CONSTANT.PATH.COMMON + '/common.loader' + CONSTANT.VIEW,
               }
           },
-          onEnter : ['Auth','$state','$log','data','demo',function(Auth, $state, $log, data, demo){
+          onEnter : ['Auth','$state','$log','data','demo','$ionicPopup',function(Auth, $state, $log, data, demo,$ionicPopup){
               $log.debug('Auth : autologin : device :',ionic.Platform.device());
               var device = ionic.Platform.device();
-            //   var device = {uuid : parseInt(Math.random(1,9)*10000000).toString()} || ionic.Platform.device();
+              var device = {uuid : parseInt(Math.random(1,9)*10000000).toString()} || ionic.Platform.device();
               var user_credentials = {
                   username : device.uuid,
                   password1 : device.uuid,

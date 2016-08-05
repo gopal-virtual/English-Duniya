@@ -748,17 +748,14 @@
       quizCtrl.pauseModal = modal;
     });
 
-    $ionicPlatform.onHardwareBackButton(function(event) {
-        if ($state.is('quiz.questions')) {
-          try {
-              if(!nzTour.current && !$scope.modal.isShown()){
-                  $scope.showNodeMenu();
-              }
-          } catch (error) {
-            $log.debug(error);
-          }
-        }
-      })
+    // $ionicPlatform.onHardwareBackButton(function(event) {
+    //     if ($state.is('quiz.questions')) {
+    //
+    //     }
+    //   })
+    $ionicPlatform.registerBackButtonAction(function(event) {
+      event.preventDefault()
+    }, 101);
       // $ionicPlatform.registerBackButtonAction(function(event) {
       //     if($state.is('quiz.questions')){
       //         try {
@@ -838,6 +835,7 @@
     };
     $state.is('quiz.questions') && demoFactory.show(5).then(function(result) {
       if(result){
+
         $timeout(function(){
           $log.debug($scope.demo.tourFlag);
           angular.element("#audioplayer")[0].pause();
@@ -853,6 +851,11 @@
           }
         },3000)
       }
+      else{
+        $ionicPlatform.registerBackButtonAction(function(event) {
+          $scope.showNodeMenu();
+        }, 101);
+      }
     })
 
     function tourNextStep() {
@@ -867,6 +870,11 @@
           angular.element("#audioSource")[0].src = 'sound/demo-quiz-3.mp3';
           angular.element("#audioplayer")[0].load();
           angular.element("#audioplayer")[0].play();
+        }
+        else if(nzTour.current.step === 3){
+          $ionicPlatform.registerBackButtonAction(function(event) {
+            $scope.showNodeMenu();
+          }, 101);
         }
         nzTour.next();
       }
