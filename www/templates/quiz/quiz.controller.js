@@ -317,11 +317,12 @@
           // });
       }
       if ($state.current.name == "quiz.summary") {
+        $log.debug("Summary controller")
         quizCtrl.report = $stateParams.report;
         quizCtrl.quiz = $stateParams.quiz;
         quizCtrl.summary = $stateParams.summary;
         quizCtrl.playStarSound();
-        quizCtrl.submitReport(quizCtrl.quiz, quizCtrl.report, quizCtrl.summary)
+        // quizCtrl.submitReport(quizCtrl.quiz, quizCtrl.report, quizCtrl.summary)
           // .then(function(s){
           //   $log.debug("s",s)
           // }).catch(function(e){
@@ -859,6 +860,7 @@
     })
 
     function tourNextStep() {
+      $log.debug("Next step",nzTour.current)
       if (nzTour.current) {
         if(nzTour.current.step === 0){
           angular.element("#audioplayer")[0].pause();
@@ -871,7 +873,7 @@
           angular.element("#audioplayer")[0].load();
           angular.element("#audioplayer")[0].play();
         }
-        else if(nzTour.current.step === 3){
+        else if(nzTour.current.step === 2){
           $ionicPlatform.registerBackButtonAction(function(event) {
             $scope.showNodeMenu();
           }, 101);
