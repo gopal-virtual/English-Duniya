@@ -46,7 +46,7 @@
     userCtrl.showError = showError;
     userCtrl.convertDate = convertDate;
     userCtrl.tabIndex = 0;
-    userCtrl.personaliseFormValidations = $state.current.data.personaliseFormValidations;
+    userCtrl.personaliseFormValidations = $state.current.data.personaliseFormValidations || {};
     userCtrl.skills = $state.current.data.skills;
     userCtrl.network = network;
     userCtrl.goToMap = goToMap;
@@ -74,14 +74,14 @@
       $state.go('map.navigate', {})
     }
 
-    $ionicPlatform.registerBackButtonAction(function(event) {
-      userCtrl.goToMap();
-    }, 101);
-
     function calcAge(dateString) {
       var birthday = +new Date(dateString);
       return ~~((Date.now() - birthday) / (31557600000));
     }
+
+    $ionicPlatform.registerBackButtonAction(function(event) {
+      event.preventDefault();
+    }, 100);
 
     function convertDate(date) {
       function pad(s) {
@@ -130,6 +130,7 @@
 
         })
         .then(function() {
+        localStorage.setItem('demo_flag',1);
           $state.go('map.navigate', {});
         })
         .catch(function(error) {

@@ -87,6 +87,9 @@
         catch(e){
 
         }
+      },
+      stopAll: function(){
+
       }
     };
   }

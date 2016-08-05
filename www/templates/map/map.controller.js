@@ -173,7 +173,9 @@
                     time : new Date()
                 }
             )
-          $ionicLoading.show();
+          $ionicLoading.show({
+            hideOnStateChange: true
+          });
           $log.debug("Starts", node)
           var d = new Date();
           var promise;
@@ -242,6 +244,8 @@
     $scope.openNodeMenu = function() {
       $log.debug("Opening node menu")
       $scope.nodeMenu.show();
+      $ionicLoading.hide();
+      $log.debug("Force closing loading");
       return true;
     }
     $scope.closeNodeMenu = function() {
@@ -366,9 +370,10 @@
           if (result && demoFactory.getStep() == '1') {
             $timeout(function() {
               $scope.demo.show().then(function() {
-                $log.debug('aaaaaa');
-
-                audio['demo-1'].play();
+                angular.element("#audioplayer")[0].pause();
+                angular.element("#audioSource")[0].src = 'sound/demo-1.mp3';
+                angular.element("#audioplayer")[0].load();
+                angular.element("#audioplayer")[0].play();
                 demoFactory.setStep(2)
               });
             })

@@ -37,7 +37,6 @@
           views : {
               'state-user' : {
                   templateUrl : CONSTANT.PATH.USER + '/user.nointernet' + CONSTANT.VIEW,
-                  controller : 'userController as userCtrl'
               }
           }
       })

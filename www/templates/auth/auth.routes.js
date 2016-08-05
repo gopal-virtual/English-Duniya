@@ -16,12 +16,13 @@
           url : '/autologin',
           views : {
               'state-auth' : {
-                  template : "<ion-view></ion-view>",
+                  templateUrl : CONSTANT.PATH.COMMON + '/common.loader' + CONSTANT.VIEW,
               }
           },
           onEnter : ['Auth','$state','$log','data','demo',function(Auth, $state, $log, data, demo){
               $log.debug('Auth : autologin : device :',ionic.Platform.device());
               var device = ionic.Platform.device();
+            //   var device = {uuid : parseInt(Math.random(1,9)*10000000).toString()} || ionic.Platform.device();
               var user_credentials = {
                   username : device.uuid,
                   password1 : device.uuid,
@@ -62,8 +63,11 @@
                   $state.go('user.personalise')
                 }
                 else{
-                  authCtrl.showError("Could not login", error || "Please try again");
-                  authCtrl.audio.play('wrong');
+                  $ionicPopup.alert({
+                    title: "Could not login",
+                    template: error || "Please try again"
+                  });
+                //   authCtrl.audio.play('wrong');
                 }
               })
           }]

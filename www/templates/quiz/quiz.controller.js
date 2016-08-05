@@ -598,8 +598,8 @@
     }
 
     function playAudio(key, index) {
+      angular.element("#audioplayer")[0].pause();
       if (key) {
-        angular.element("#audioplayer")[0].pause();
         var src = key;
         angular.element("#audioSource")[0].src = src;
         angular.element("#audioplayer")[0].load();
@@ -840,8 +840,10 @@
       if(result){
         $timeout(function(){
           $log.debug($scope.demo.tourFlag);
-          audio['demo-4'].stop();
-          audio['demo-quiz-1'].play();
+          angular.element("#audioplayer")[0].pause();
+          angular.element("#audioSource")[0].src = 'sound/demo-quiz-1.mp3';
+          angular.element("#audioplayer")[0].load();
+          angular.element("#audioplayer")[0].play();
           nzTour.start($scope.tour);
           demoFactory.setStep(5);
         });
@@ -856,11 +858,15 @@
     function tourNextStep() {
       if (nzTour.current) {
         if(nzTour.current.step === 0){
-            audio['demo-quiz-1'].stop();
-            audio['demo-quiz-2'].play();
+          angular.element("#audioplayer")[0].pause();
+          angular.element("#audioSource")[0].src = 'sound/demo-quiz-2.mp3';
+          angular.element("#audioplayer")[0].load();
+          angular.element("#audioplayer")[0].play();
         }else if(nzTour.current.step === 1){
-            audio['demo-quiz-2'].stop();
-            audio['demo-quiz-3'].play();
+          angular.element("#audioplayer")[0].pause();
+          angular.element("#audioSource")[0].src = 'sound/demo-quiz-3.mp3';
+          angular.element("#audioplayer")[0].load();
+          angular.element("#audioplayer")[0].play();
         }
         nzTour.next();
       }
@@ -868,12 +874,15 @@
     function playInstruction(index){
       $log.debug("playInstruction",index)
       if(quizCtrl.quiz.objects[index].node.instructionSound){
-        $log.debug("playInstruction",quizCtrl.quiz.objects[index].node.instructionSound)
 
         angular.element("#audioplayer")[0].pause();
         angular.element("#audioSource")[0].src = quizCtrl.quiz.objects[index].node.instructionSound;
         angular.element("#audioplayer")[0].load();
         angular.element("#audioplayer")[0].play();
+      }else if(quizCtrl.quiz.objects[index].node){
+
+        quizCtrl.playAudio(quizCtrl.quiz.objects[index].node.widgetSound,index);
+        quizCtrl.highlightSoundIcon(index);
       }
     }
 

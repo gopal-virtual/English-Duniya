@@ -201,6 +201,7 @@
         )
     });
     $ionicPlatform.on('pause', function(){
+        angular.element("#audioplayer")[0].pause();
         Auth.isAuthorised() && analytics.log(
             {
                 name : 'APP',

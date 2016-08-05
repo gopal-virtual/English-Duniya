@@ -29,7 +29,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
     }
     var svgPathHeight = 10000;
     var regionOffset = {};
-    var tresholdOffset = -200;
+    var tresholdOffset = 200;
     var regionRange = {};
     var points = {
         "x" : [],
@@ -116,51 +116,6 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
 
             // debug value
             this.game.time.advancedTiming = true;
-
-
-            // $.get("img/assets/map_path.svg", function(data) {
-            //     var x = [];
-            //     var y = [];
-            //     var ydiff = [];
-            //     var renderRegionHeight = 0;
-            //     for (var i = 0; i < renderedRegion.length; i++) {
-            //         renderRegionHeight += regionHeight[region[i]];
-            //     }
-            //     // log.warn("Region height", renderRegionHeight);
-            //     // log.warn("SVG height", data.getElementById("mappathid").getTotalLength());
-            //     var path = data.getElementById("mappathid");
-            //     for (var i = path.getTotalLength() - 1; i >= 0 ; i-=75) {
-            //         var pathPoint = path.getPointAtLength(i);
-            //         // log.debug(parseInt(pathPoint.y) - (totalRegionHeight - renderRegionHeight),parseInt(pathPoint.x),svgPathHeight - parseInt(pathPoint.y));
-            //         if (svgPathHeight - pathPoint.y + 100 > renderRegionHeight) {
-            //             // log.warn("Should be cut here",pathPoint.y,svgPathHeight- pathPoint.y);
-            //             break;
-            //         }
-            //         x.push(parseInt(pathPoint.x));
-            //         y.push(parseInt(pathPoint.y) - (totalRegionHeight - renderRegionHeight));
-            //     }
-
-            //     points.x = x.reverse();
-            //     points.y = y.reverse();
-            // });
-
-            // for(var key in regionRange){
-            //     regionRange[key].upperTreshold = regionRange[key].upperLimit + game.camera.height + tresholdOffset;
-            //     regionRange[key].lowerTreshold = regionRange[key].lowerLimit - game.camera.height + tresholdOffset;
-            // }
-
-            // groups.regionBg["desert"] = game.add.group();
-            // groups.regionBg["peru"] = game.add.group();
-            // groups.regionBg["forest"] = game.add.group();
-            // groups.regionBg["tundra"] = game.add.group();
-            // groups.regionBg["region5"] = game.add.group();
-            // groups.nonRegion["nodePath"] = game.add.group();
-            // groups.region["desert"] = game.add.group();
-            // groups.region["peru"] = game.add.group();
-            // groups.region["forest"] = game.add.group();
-            // groups.region["tundra"] = game.add.group();
-            // groups.region["region5"] = game.add.group();
-
         },
         create: function() {
             var _this = this;
@@ -432,24 +387,28 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                     "key" : "llamaWiggle"
                 }
             },{
+                "id":"cloudMiddle",
                 "name" : "cloud_middle",
                 "region" : "peru",
                 "x" : 190,
                 "y" : 794,
                 "scale" : [game_scale,1],
             },{
+                "id":"cloudLeft",
                 "name" : "cloud_left",
                 "region" : "peru",
                 "x" : 80,
                 "y" : 830,
                 "scale" : [game_scale,1],
             },{
+                "id":"cloudRightBehind",
                 "name" : "cloud_right_behind",
                 "region" : "peru",
                 "x" : 290,
                 "y" : 810,
                 "scale" : [game_scale,1],
             },{
+                "id":"cloudRight",
                 "name" : "cloud_right",
                 "region" : "peru",
                 "x" : 280,
@@ -479,6 +438,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
 
 
             function addGroups(region){
+                log.info("Grouping stuff ...");
                 for (var i = renderedRegion.length - 1; i >= 0; i--) {
                     groups.regionBg[region[i]] = game.add.group();
                 }
@@ -493,11 +453,11 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             }
 
             function renderWorld(region){
+                log.info("Creating World ...");
+                game.input.maxPointers = 1;
                 var totalRegionHeight = 0;
-                // var revRegion = region.reverse();
                 var tempRegionHeight = 0;
                 for (var i = region.length - 1; i >= 0; i--) {
-                    log.debug(region[i]);
                     totalRegionHeight += regionHeight[region[i]];
                     regionRange[region[i]] = {};
                     regionRange[region[i]]["upperLimit"] = tempRegionHeight;
@@ -514,6 +474,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                 // for (var i = 0; i < region.length; i++) {
                 //     region[i]
                 // }
+                log.info("Rendering Background ...");
                 for (var i = region.length - 1; i >= 0; i--) {
 
                     groups.regionBg[region[i]].position.set(0, 0 + regionOffset[region[i]]);
@@ -526,6 +487,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             }
 
             function fetchMapPath (points){
+                log.info("Fetching Path ...")
                 var fetchMapRequest = $.get("img/assets/map_path.svg", function(data) {
                     var x = [];
                     var y = [];
@@ -564,7 +526,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             // var gameSprites =  game.cache.getJSON('gamesprites');
 
             function renderNodePath(region,points){
-                log.info("info rendering path ...")
+                log.info("Rendering Fetched Path ...")
                 points.tempX = [];
                 points.tempY = [];
                 for (var i = 0, points_count = points.x.length; i < points_count; i++) {
@@ -591,6 +553,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
 
             // nongroups.region.nodePath.callAll('kill');
             function renderSprites(region,gameSprites){
+                log.info("Rendering Sprites ...");
                 for (var i = 0; i < gameSprites.length; i++) {
                     if (region.indexOf(gameSprites[i].region) == -1) {
                         // log.debug("breaking at",gameSprites[i].region)
@@ -642,6 +605,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
 
             // sand particles
             function renderParticles(){
+                log.info("Rendering Particles ...")
                 for (var i = 0; i < 100; i++) {
                     var s = game.add.sprite(game.world.randomX, game.rnd.between(regionOffset.desert, game.world.height), 'particle' + game.rnd.between(1, 3));
                     s.scale.setTo(game.rnd.between(1, 2) / 20);
@@ -684,6 +648,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
 
             // Place nodes
             function renderNodes(){
+                log.info("Rendering Nodes ...")
                 for (var j = 0, i = lessons.length - 1, distance = 1 / (lessons.length); i >= 0; j += distance, i--) {
 
                     var currentLesson = lessons[i];
@@ -754,7 +719,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                     }
                 }
 
-                log.debug('node position ', node.currentLesson);
+                // log.debug('node position ', node.currentLesson);
                 localStorage.setItem('demo_node', JSON.stringify({
                         x: node.x - node.width / 2,
                         y: game.height - (game.world.height - node.y) - node.height / 2,
@@ -767,6 +732,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             }
 
             function animateStar(lessonKey){
+                log.info("Animating Stars ...")
                 setTimeout(function(){
 
                     // log.debug("GUchaMI",temp.activeLessonKey);
@@ -782,7 +748,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                     var j =  lessons.length - lessonKey - 1;
                     var posx = _this.math.catmullRomInterpolation(points.x, j/lessons.length);
                     var posy = _this.math.catmullRomInterpolation(points.y, j/lessons.length);
-                    log.info("In star animation function, \nlessonFromQuizKey: ",lessonKey," activeLessonKey: ",temp.activeLessonKey,"\nactivatedLesson: ",lessons[lessonKey],"\nactiveLesson: ",lessons[temp.activeLessonKey]);
+                    // log.debug("In star animation function, \nlessonFromQuizKey: ",lessonKey," activeLessonKey: ",temp.activeLessonKey,"\nactivatedLesson: ",lessons[lessonKey],"\nactiveLesson: ",lessons[temp.activeLessonKey]);
                     var starCloneTween = [];  
                     for (var i = 0; i < lessons[lessonKey].stars; i++) {
 
@@ -790,7 +756,6 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                             starClone[i].anchor.setTo(0.5, 0.5);
                             starCloneTween[i] = {};
 
-                            log.warn("lessonTag: ",lessonTag[lessons[lessonKey].tag.toLowerCase()])
                             starCloneTween[i]["pos"] = game.add.tween(starClone[i]).to( { x: ((lessonTag[lessons[lessonKey].tag.toLowerCase()]-1)*game.width)/5, y: parseInt(game.camera.y)}, 1000, Phaser.Easing.Exponential.InOut);
                             starCloneTween[i]["scale"] = game.add.tween(starClone[i].scale).from( { x: 0.1, y: 0.1 }, 800, Phaser.Easing.Bounce.Out,false,i*800);
                             starCloneTween[i]["scalePos"] = game.add.tween(starClone[i]).to( { x: (lessonTag[lessons[lessonKey].tag.toLowerCase()]>2?"+100":"-100"), y: "-100" }, 800, Phaser.Easing.Cubic.Out,false,i*800);
@@ -799,7 +764,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                             starCloneTween[i].scale.start();
                             starCloneTween[i].scalePos.start();
                             starCloneTween[i].rotate.start();
-                            log.info("Star Clone "+i+":",starClone[i],"\nstarCloneTween "+i+":",starCloneTween[i]);
+                            // log.debug("Star Clone "+i+":",starClone[i],"\nstarCloneTween "+i+":",starCloneTween[i]);
                             function playStarAudio() {
                                 audio.play('star_hud');
                             }
@@ -812,9 +777,22 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                 },800);
             }
 
+            function killUselessRegions(region) {
+                log.info("Killing all off camera regions ...")
+                for (var i = region.length - 1; i >= 0; i--) {
+                    if(regionRange[region[i]].lowerLimit > game.camera.y && regionRange[region[i]].upperLimit < game.camera.y ){
+                        continue;
+                    }
+                    // log.info("Force Kill ",region[i])
+                    groups.regionBg[region[i]].callAll('kill');
+                    groups.region[region[i]].callAll('kill');
+
+                }
+            }
+
             function gameStart(){
-                // $ionicLoading.show();
-                log.debug("new region array",renderedRegion);
+                log.info("Starting Game ...")
+                log.info("Rendering these regions - ",renderedRegion);
                 addGroups(renderedRegion);
                 renderWorld(renderedRegion);
                 renderRegion(renderedRegion);
@@ -832,15 +810,16 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                     // log.debug("ActiveLesson",lessons[temp.activeLessonKey]);
                     scope.$emit('show_demo');
                     _this.init();
+                    killUselessRegions(renderedRegion);
                     game.kineticScrolling.start();
                     var lessonFromQuizStars = typeof(temp.lessonFromQuizKey)!="undefined"?lessons[temp.lessonFromQuizKey].stars:false;
                     var animateStarFlag = JSON.parse(localStorage.getItem("animateStarFlag"));
                     if (animateStarFlag) {
-                        log.debug("Is it Current Node?",animateStarFlag.isCurrentNode);
-                        log.debug("Lesson From QuizStars",lessonFromQuizStars);
-                        log.debug("if condition",animateStarFlag.isCurrentNode && lessonFromQuizStars);
+                        // log.debug("Is it Current Node?",animateStarFlag.isCurrentNode);
+                        // log.debug("Lesson From QuizStars",lessonFromQuizStars);
+                        // log.debug("if condition",animateStarFlag.isCurrentNode && lessonFromQuizStars);
                         if ((animateStarFlag.isCurrentNode && lessonFromQuizStars) || (lessonFromQuizStars > animateStarFlag.clickedNodeStar && lessonFromQuizStars)) {
-                            log.debug("Activating star animation");
+                            // log.debug("Activating star animation");
                             animateStar(temp.lessonFromQuizKey);
                             scope.$emit('animateStar');
                         }
@@ -857,14 +836,11 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
 
             }
 
-            // setTimeout(function(){
-                gameStart();
-
-            // },2000);
+            gameStart();
 
 
 
-            log.info("Profile Grade",JSON.parse(localStorage.getItem("profile")).grade);
+
 
         },
         init: function() {
@@ -940,6 +916,14 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
 
         },
         render: function() {
+            // game.debug.pointer(game.input.mousePointer);
+            // game.debug.pointer(game.input.pointer1);
+            // game.debug.pointer(game.input.pointer2);
+            // game.debug.pointer(game.input.pointer3);
+            // game.debug.pointer(game.input.pointer4);
+            // game.debug.pointer(game.input.pointer5);
+            // game.debug.pointer(game.input.pointer6);
+
             function interactiveAnimate(){
                 if (game.camera.y + 200 < regionOffset.tundra && game.camera.y + 200 > regionOffset.tundra - 360) {
                     // game.debug.spriteInfo(sprites.plantLeft, 20, 32);
@@ -949,6 +933,43 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                     }
                    sprites.plantLeft.x = temp.plantLeftX - (180 * (regionOffset.tundra - game.camera.y - 200)/360);
                    sprites.plantRight.x = temp.plantRightX + (180 * (regionOffset.tundra - game.camera.y - 200)/360);
+                }
+
+                if (game.camera.y + 100 < regionOffset.peru + 800 && game.camera.y + 100 > regionOffset.peru + 800 - 360) {
+                    // game.debug.spriteInfo(sprites.cloudLeft, 20, 32);
+                    var checkTempClouds = temp.cloudLeft==undefined && temp.cloudMiddle==undefined && temp.cloudRight==undefined && temp.cloudRightBehin==undefined;
+                    if (checkTempClouds) {
+                            temp["cloudLeft"] = {
+                                "x" : sprites.cloudLeft.x,
+                                "y" : sprites.cloudLeft.y  
+                            };
+                            temp["cloudRight"] = {
+                                "x" : sprites.cloudRight.x,
+                                "y" : sprites.cloudRight.y  
+                            };
+                            temp["cloudMiddle"] = {
+                                "x" : sprites.cloudMiddle.x,
+                                "y" : sprites.cloudMiddle.y  
+                            };
+                            temp["cloudRightBehind"] = {
+                                "x" : sprites.cloudRightBehind.x,
+                                "y" : sprites.cloudRightBehind.y  
+                            };
+                    }
+                    // log.warn(temp["cloudLeft"]);
+                   sprites.cloudLeft.x = temp.cloudLeft.x + ((regionOffset.peru + 800 - game.camera.y - 100)/8);
+                   sprites.cloudRight.x = temp.cloudRight.x + ((regionOffset.peru + 800 - game.camera.y - 100)/8);
+                   sprites.cloudMiddle.x = temp.cloudMiddle.x - ((regionOffset.peru + 800 - game.camera.y - 100)/8);
+                   sprites.cloudRightBehind.x = temp.cloudRightBehind.x - ((regionOffset.peru + 800 - game.camera.y - 100)/8);
+                   sprites.cloudLeft.y = temp.cloudLeft.y + ((regionOffset.peru + 800 - game.camera.y - 100)/8);
+                   sprites.cloudRight.y = temp.cloudRight.y + ((regionOffset.peru + 800 - game.camera.y - 100)/8);
+                   sprites.cloudMiddle.y = temp.cloudMiddle.y + ((regionOffset.peru + 800 - game.camera.y - 100)/8);
+                   sprites.cloudRightBehind.y = temp.cloudRightBehind.y + ((regionOffset.peru + 800 - game.camera.y - 100)/8);
+                   sprites.cloudLeft.alpha = 1 - (regionOffset.peru + 800 - game.camera.y - 100)/720;
+                   sprites.cloudRight.alpha = 1 - (regionOffset.peru + 800 - game.camera.y - 100)/720;
+                   sprites.cloudMiddle.alpha = 1 - (regionOffset.peru + 800 - game.camera.y - 100)/720;
+                   sprites.cloudRightBehind.alpha = 1 - (regionOffset.peru + 800 - game.camera.y - 100)/720;
+
                 }
 
                 if (game.camera.y + 500 < regionOffset.tundra && game.camera.y + 500 > regionOffset.forest + 300) {

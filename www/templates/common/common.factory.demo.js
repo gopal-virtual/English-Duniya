@@ -5,9 +5,10 @@
     .module('common')
     .factory('demo', demo)
 
-  function demo($log, data, Auth) {
+  function demo($log, data, Auth, $q) {
     return {
       show: function(step) {
+          var deferred = $q.defer();
         $log.debug("demoFactory OP", Auth.getProfileId())
         return data.getSkills({
             'userId': Auth.getProfileId()
@@ -19,9 +20,11 @@
               score = score + skill.lesson_scores;
             })
             if(step && step === 5 && score === 50){
-              return true;
+              deferred.resolve(true);
+              return deferred.promise;
             }
-            return score  ? false : true;
+            score  ? deferred.resolve(false) : deferred.resolve(true);
+            return deferred.promise;
 
             // $log.debug("demoFactory  score", score,score > 50 ? false : true)
           }).catch(function(e) {
