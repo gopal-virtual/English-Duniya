@@ -68,10 +68,10 @@
       startReportSyncing: startReportSyncing,
       demo_question: {
         "node": {
-          "id": "demo",
+          "id": CONSTANT.QUESTION.DEMO,
           "content_type_name": "json question",
           "type": {
-            "id": "demo",
+            "id": CONSTANT.QUESTION.DEMO,
             "created": "2016-07-08T14:44:19.871339Z",
             "updated": "2016-07-08T14:44:19.871370Z",
             "microstandard": "ELL.1.RE.V.9.MOB",
