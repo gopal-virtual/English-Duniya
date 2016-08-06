@@ -80,11 +80,12 @@
       <ion-slide>
         <div class="box">
           <div class="row padding-40">
-            <div class="col">
+            <div class="col" ng-init="userCtrl.user.name=''">
               <h1 class="center">Welcome to English Dunyia</h1>
               <h1 class="center">What is your name?</h1>
-              <input type="text" class="input input-control input-block" placeholder="Your Name" ng-model="userCtrl.user.name" ng-change="userCtrl.splitName()">
-              <virtual-keyboard type="alpha" reference=""></virtual-keyboard>
+              <!-- <input type="text" class="input input-control input-block" placeholder="Your Name" ng-model="userCtrl.user.name" ng-change="userCtrl.splitName()"> -->
+              <div>{{userCtrl.user.name}}</div>
+              <virtual-keyboard reference="userCtrl.user.name"></virtual-keyboard>
               <button ng-disabled="!userCtrl.user.name" class="button button-balanced button-round button-block font-md" ng-click="userCtrl.nextSlide()">Next</button>
             </div>
           </div>

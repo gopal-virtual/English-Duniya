@@ -111,6 +111,7 @@
     //     .then(function(data) {
     //       return Rest.all('profiles').post(data);
     //     })
+        userCtrl.splitName();
         delete formData['name'];
 
         Rest.all('profiles').post(formData)
