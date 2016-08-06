@@ -75,7 +75,7 @@
 </ion-view> -->
 <ion-view class="bg-yellow">
     <ion-content>
-        <ion-slide-box delegate-handle="slide" show-pager="false" ng-init="userCtrl.disableSwipe()">
+        <ion-slide-box delegate-handle="slide" show-pager="false" ng-init="userCtrl.disableSwipe()" on-slide-changed="userCtrl.playAudio($index)">
             <ion-slide>
                 <div class="box">
                     <div class="name-avatar">
@@ -89,14 +89,14 @@
                                 </div>
                                 <br>
                                 <virtual-keyboard reference="userCtrl.user.name"></virtual-keyboard>
-                                <button ng-disabled="!userCtrl.user.name" class="button button-balanced button-round margin-20 padding-x-40 font-md" ng-click="userCtrl.nextSlide()"><i class="ed-icon lg icon-contain icon-next-2"></i></button>
+                                <button ng-disabled="userCtrl.user.name.length < 5" class="button button-balanced button-round margin-20 padding-x-40 font-md" ng-click="userCtrl.nextSlide()"><i class="ed-icon lg icon-contain icon-next-2"></i></button>
                             </div>
                         </div>
                     </div>
                 </div>
             </ion-slide>
             <ion-slide>
-                <div class="box">
+                <div class="box" >
                     <div class="row padding-20">
                         <div class="col">
                             <h1 class="center margin-10">I am a ...</h1>

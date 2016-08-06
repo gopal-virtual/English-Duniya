@@ -31,7 +31,9 @@
         keyCtrl.erase = erase;
 
         function input (key) {
-            keyCtrl.reference += key;
+            if(keyCtrl.reference.length <= 15){
+                keyCtrl.reference += key;
+            }
         }
         function erase (key) {
             keyCtrl.reference = keyCtrl.reference.substr(0,keyCtrl.reference.length - 1);
