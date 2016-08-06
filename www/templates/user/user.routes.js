@@ -37,11 +37,11 @@
           views : {
               'state-user' : {
                   templateUrl : CONSTANT.PATH.USER + '/user.nointernet' + CONSTANT.VIEW,
-                  // controller: : ['$rootscope','$cordovaNetwork',function($rootscope, $cordovaNetwork){
-                  //   $rootscope.$on('$cordovaNetwork:online',function(event, networkState){
-                  //     $state.go('auth.autologin');
-                  //   });
-                  // }];   
+                  controller: ['$rootScope','$cordovaNetwork','$state',function($rootScope, $cordovaNetwork, $state){
+                    $rootScope.$on('$cordovaNetwork:online',function(event, networkState){
+                      $state.go('auth.autologin');
+                    })
+                  }]
               }
           }
       })

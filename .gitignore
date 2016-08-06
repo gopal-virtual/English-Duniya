@@ -13,7 +13,6 @@ plugins/
 /www/css/
 /www/templates/templates.js
 .DS_Store
-port.js
 _replicator
 _replicator/*
 _users

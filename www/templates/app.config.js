@@ -9,7 +9,7 @@
 
 
     // global debug log
-    $logProvider.debugEnabled(true);
+    $logProvider.debugEnabled(false);
     // request/response interceptors
     $httpProvider.interceptors.push(function($rootScope, $q, $log, $injector) {
       return {
