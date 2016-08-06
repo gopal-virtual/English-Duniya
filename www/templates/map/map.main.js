@@ -82,7 +82,11 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             this.load.image('cloud_right_behind', 'img/assets/cloud_right_behind.png');
             this.load.image('forest_plant_left', 'img/assets/plant_left.png');
             this.load.image('forest_plant_right', 'img/assets/plant_right.png');
+            this.load.image('star-confetti', 'img/assets/star_particle.png');
+            this.load.image('lock-glow', 'img/assets/lock_glow.png');
 
+            this.load.spritesheet('paper-confetti', 'img/assets/confetti_particle.png',16,21);
+            this.load.spritesheet('lock-unlock', 'img/assets/locks.png', 184, 184);
             this.load.spritesheet('fire_animation', 'img/assets/fire_animation.png', 122, 193, 39);
             this.load.spritesheet('cactus_animation', 'img/assets/cactus_animation.png', 180, 303, 35);
             this.load.spritesheet('plant_animation', 'img/assets/plant_animation.png', 201, 275);
@@ -101,7 +105,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             this.load.spritesheet('llama', 'img/assets/llama_animation.png', 124, 201);
             this.load.spritesheet('llama2', 'img/assets/llama2_animation.png', 124, 201);
 
-            this.load.image('node', 'img/icons/node.png');
+            this.load.image('node', 'img/icons/icon-node.png');
             this.load.image('node-litmus', 'img/icons/icon-litmus-node.png');
             this.load.image('node-vocabulary', 'img/icons/icon-vocabulary-node.png');
             this.load.image('node-listening', 'img/icons/icon-listening-node.png');
@@ -448,6 +452,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                 }
                 groups.nonRegion["nodes"] = game.add.group();
                 groups.nonRegion["stars"] = game.add.group();
+                groups.nonRegion["unlockAnim"] = game.add.group();
                 groups.nonRegion["starClone"] = game.add.group();
 
             }
@@ -659,11 +664,13 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                     var node = game.make.button(posx, posy, 'node' + type + locked);
 
 
-                    !locked && lessons[i + 1] && lessons[i + 1].locked && game.add.tween(node.scale).to({ x: [1.2, 1], y: [1.2, 1] }, 700, Phaser.Easing.Back.Out, true, 1000).loop(true);
                     !locked && lessons[i + 1] && lessons[i + 1].locked && localStorage.setItem('region',posy);
 
                     if(!locked && lessons[i + 1] && lessons[i + 1].locked){
                         temp["activeLessonKey"] = i;
+                        temp["activeLessonPosY"] = posy;
+                        temp["activeLessonPosX"] = posx;
+                        temp["nodeWobbleTween"] = game.add.tween(node.scale).to({ x: [1.2, 1], y: [1.2, 1] }, 700, Phaser.Easing.Back.Out, true, 1000).loop(true);
                     }
 
                     if (stateParams.activatedLesson && stateParams.activatedLesson.node.id == currentLesson.id) {
@@ -732,49 +739,64 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             }
 
             function animateStar(lessonKey){
-                log.info("Animating Stars ...")
-                setTimeout(function(){
+                // var d = $q.defer()
+                log.info("Animating Stars ...");
+                var promise = new Promise(function(resolve,reject){
+                    // setTimeout(function(){
 
-                    // log.debug("GUchaMI",temp.activeLessonKey);
-                    // log.debug("GUchaMI2",lessonKey);
+                        // log.debug("GUchaMI",temp.activeLessonKey);
+                        // log.debug("GUchaMI2",lessonKey);
 
-                    // log.debug(currentLesson.tag);
-                    var lessonTag =  {
-                        "vocabulary" : 1,
-                        "reading" : 2,
-                        "grammar" : 3,
-                        "listening" : 4
-                    }
-                    var j =  lessons.length - lessonKey - 1;
-                    var posx = _this.math.catmullRomInterpolation(points.x, j/lessons.length);
-                    var posy = _this.math.catmullRomInterpolation(points.y, j/lessons.length);
-                    // log.debug("In star animation function, \nlessonFromQuizKey: ",lessonKey," activeLessonKey: ",temp.activeLessonKey,"\nactivatedLesson: ",lessons[lessonKey],"\nactiveLesson: ",lessons[temp.activeLessonKey]);
-                    var starCloneTween = [];  
-                    for (var i = 0; i < lessons[lessonKey].stars; i++) {
+                        // log.debug(currentLesson.tag);
+                        var lessonTag =  {
+                            "vocabulary" : 1,
+                            "reading" : 2,
+                            "grammar" : 3,
+                            "listening" : 4
+                        }
+                        var j =  lessons.length - lessonKey - 1;
+                        var posx = _this.math.catmullRomInterpolation(points.x, j/lessons.length);
+                        var posy = _this.math.catmullRomInterpolation(points.y, j/lessons.length);
+                        // log.debug("In star animation function, \nlessonFromQuizKey: ",lessonKey," activeLessonKey: ",temp.activeLessonKey,"\nactivatedLesson: ",lessons[lessonKey],"\nactiveLesson: ",lessons[temp.activeLessonKey]);
+                        var starCloneTween = [];  
+                        for (var i = 0; i < lessons[lessonKey].stars; i++) {
 
-                            starClone[i] = groups.nonRegion.starClone.create(posx + star_x[i], posy + star_y[i], 'star_medium');
-                            starClone[i].anchor.setTo(0.5, 0.5);
-                            starCloneTween[i] = {};
+                                starClone[i] = groups.nonRegion.starClone.create((posx+ star_x[i])*game_scale, posy + star_y[i], 'star_medium');
+                                
+                                starClone[i].anchor.setTo(0.5, 0.5);
+                                starCloneTween[i] = {};
 
-                            starCloneTween[i]["pos"] = game.add.tween(starClone[i]).to( { x: ((lessonTag[lessons[lessonKey].tag.toLowerCase()]-1)*game.width)/5, y: parseInt(game.camera.y)}, 1000, Phaser.Easing.Exponential.InOut);
-                            starCloneTween[i]["scale"] = game.add.tween(starClone[i].scale).from( { x: 0.1, y: 0.1 }, 800, Phaser.Easing.Bounce.Out,false,i*800);
-                            starCloneTween[i]["scalePos"] = game.add.tween(starClone[i]).to( { x: (lessonTag[lessons[lessonKey].tag.toLowerCase()]>2?"+100":"-100"), y: "-100" }, 800, Phaser.Easing.Cubic.Out,false,i*800);
-                            starCloneTween[i]["rotate"] = game.add.tween(starClone[i]).to( { angle: 450 }, 3000, Phaser.Easing.Quadratic.Out);
-                            starCloneTween[i].scale.chain(starCloneTween[i].pos);
-                            starCloneTween[i].scale.start();
-                            starCloneTween[i].scalePos.start();
-                            starCloneTween[i].rotate.start();
-                            // log.debug("Star Clone "+i+":",starClone[i],"\nstarCloneTween "+i+":",starCloneTween[i]);
-                            function playStarAudio() {
-                                audio.play('star_hud');
-                            }
-                            function destroyStar() {
-                                groups.nonRegion.starClone.callAll('kill');
-                            }
-                            starCloneTween[i].scale.onStart.add(playStarAudio,this);
-                            starCloneTween[i].rotate.onComplete.add(destroyStar,this);
-                    }
-                },800);
+                                starCloneTween[i]["pos"] = game.add.tween(starClone[i]).to( { x: ((lessonTag[lessons[lessonKey].tag.toLowerCase()]-1)*game.width)/5, y: parseInt(game.camera.y)}, 1000, Phaser.Easing.Exponential.InOut);
+                                starCloneTween[i]["scale"] = game.add.tween(starClone[i].scale).from( { x: 0, y: 0 }, 800, Phaser.Easing.Bounce.Out,false,i*800);
+                                starCloneTween[i]["scalePos"] = game.add.tween(starClone[i]).to( { x: (lessonTag[lessons[lessonKey].tag.toLowerCase()]>2?"+100":"-100"), y: "-100" }, 800, Phaser.Easing.Cubic.Out,false,i*800);
+                                starCloneTween[i]["rotate"] = game.add.tween(starClone[i]).to( { angle: 450 }, 3000, Phaser.Easing.Quadratic.Out);
+                                starCloneTween[i].scale.chain(starCloneTween[i].pos);
+                                starCloneTween[i].scale.start();
+                                starCloneTween[i].scalePos.start();
+                                starCloneTween[i].rotate.start();
+                                // log.debug("Star Clone "+i+":",starClone[i],"\nstarCloneTween "+i+":",starCloneTween[i]);
+                                function playStarAudio() {
+                                    audio.play('star_hud');
+                                }
+                                if (i == lessons[lessonKey].stars - 1) {
+                                    starCloneTween[i].rotate.onComplete.add(destroyStar,this);
+                                    function destroyStar() {
+                                        groups.nonRegion.starClone.callAll('kill');
+                                        log.debug("Hello");
+                                        log.debug("i",i);
+                                        log.debug("Lessons max",lessons[lessonKey].stars - 1);
+                                            log.debug("Return promise");
+                                            resolve(true);
+                                    }
+                                }
+                                starCloneTween[i].scale.onStart.add(playStarAudio,this);
+
+                        }
+                        // resolve(true)
+                    // },800);
+                });
+                return promise;
+
             }
 
             function killUselessRegions(region) {
@@ -788,6 +810,110 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                     groups.region[region[i]].callAll('kill');
 
                 }
+            }
+
+            // function wiggle(aProgress: number, aPeriod1: number, aPeriod2: number): number {
+            //     var current1: number = aProgress * Math.PI * 2 * aPeriod1;
+            //     var current2: number = aProgress * (Math.PI * 2 * aPeriod2 + Math.PI / 2);
+            //     return Math.sin(current1) * Math.cos(current2);
+            // }
+
+            function animateUnlock(lockedNode) {
+                log.info("Unlocking new node ...");
+                // log.debug("Unlocked Node Pos Y",temp.activeLessonPosY);
+                // log.debug("Camera Y",game.camera.y);
+                // var autoScrollFlag = true;
+                
+                var randomX = 100;
+                var randomY = 100;
+                var unlockAnimTween = {};
+                var lockVibrateArray = {
+                    "x" : [],
+                    "y" : []
+                }
+                for (var i = 0; i < 100; i++) {
+                    randomY = game.rnd.between(-1, 1);
+                    randomX = game.rnd.between(-1, 1);
+                    lockVibrateArray.x[i] = temp.activeLessonPosX + randomX;
+                    lockVibrateArray.y[i] = temp.activeLessonPosY + randomY;
+                }
+                // log.debug(lockVibrateArray);
+                // confetti.width = 150;
+                // confetti.height = 150;
+                // unlockAnimTween["scaleLock"] = game.add.tween(lockedNode.lock.scale).from({x:0.2, y: 0.2},1000,Phaser.Easing.Linear.None,true);
+                unlockAnimTween["shakeLock"] = game.add.tween(lockedNode.lock).to({ x: lockVibrateArray.x, y: lockVibrateArray.y}, 1000, Phaser.Easing.Linear.None,true);
+                unlockAnimTween["scaleLock2"] = game.add.tween(lockedNode.lock.scale).to({x:0.4, y: 0.4},1000,Phaser.Easing.Bounce.Out);
+                unlockAnimTween["lockGlowScale"] = game.add.tween(lockedNode.glow.scale).to({x:1,y:1},400,Phaser.Easing.Exponential.Out,true,1000);
+                // unlockAnimTween["lockGlow"] = game.add.tween(lockedNode.glow.scale).to({x:0.8, y:0.8},500,Phaser.Easing.Cubic.InOut,false,0,1,true);
+                unlockAnimTween["hideOverlay"] = game.add.tween(lockedNode.overlay).to({alpha: 0},400,Phaser.Easing.Exponential.In,true,1800);
+                unlockAnimTween["shrinkLock"] = game.add.tween(lockedNode.lock.scale).to({x:0,y:0},100,Phaser.Easing.Exponential.In);
+                unlockAnimTween["hideGlow"] = game.add.tween(lockedNode.glow).to({alpha: 0},800,Phaser.Easing.Exponential.In);
+                unlockAnimTween.shakeLock.chain(unlockAnimTween.scaleLock2);
+                unlockAnimTween.lockGlowScale.chain(unlockAnimTween.hideGlow, unlockAnimTween.shrinkLock, unlockAnimTween.hideOverlay);
+                // unlockAnimTween.lockGlow.chain(unlockAnimTween.shrinkGlow);
+
+                unlockAnimTween.shakeLock.onComplete.add(unlockIt,this);
+                unlockAnimTween.shrinkLock.onComplete.add(unlockComplete,this);
+                function unlockIt(){
+                    lockedNode.lock.animations.add("unlock");
+                    lockedNode.lock.animations.play("unlock",30);
+                    lockedNode.confetti.start(true,5000,null,20);
+                }
+
+                function unlockComplete() {
+                    temp.nodeWobbleTween.resume();
+                    setTimeout(function(){
+                        groups.nonRegion.unlockAnim.callAll("kill");
+                    },3000);
+                }
+                // unlockAnimTween.shake.onRepeat.add(vibrateValue, this);
+            }
+
+            function hideActiveNode(lockedNode){
+                log.info("Overlaying Node ...");
+                temp.nodeWobbleTween.pause();
+                lockedNode["overlay"] = groups.nonRegion.unlockAnim.create(temp.activeLessonPosX,temp.activeLessonPosY,'node');
+                lockedNode["glow"] = groups.nonRegion.unlockAnim.create(temp.activeLessonPosX,temp.activeLessonPosY,'lock-glow');
+                lockedNode["confetti"] = game.add.emitter(temp.activeLessonPosX,temp.activeLessonPosY,50);
+                lockedNode["lock"] = groups.nonRegion.unlockAnim.create(temp.activeLessonPosX,temp.activeLessonPosY,'lock-unlock');
+                lockedNode.overlay.anchor.setTo(0.5,0.5);
+                lockedNode.lock.anchor.setTo(0.5,0.5);
+                lockedNode.lock.scale.setTo(0.2,0.2);
+                lockedNode.glow.anchor.setTo(0.5,0.5);
+                lockedNode.glow.scale.setTo(0,0);
+                lockedNode.confetti.makeParticles('paper-confetti',[0,1,2,3,4],50);
+                lockedNode.confetti.minParticleSpeed.set(-800, -800);
+                lockedNode.confetti.maxParticleSpeed.set(800, 800);
+                // confetti.gravity = 0;
+                groups.nonRegion.unlockAnim.add(lockedNode.confetti);
+                // lockedNode.glow.scale.setTo(0,0);
+                // unlockAnimTween = {};
+            }
+
+            function newNodeUnlock() {
+                var lockedNode = {};   
+                hideActiveNode(lockedNode);
+                animateStar(temp.lessonFromQuizKey).then(function(){
+                    if (game.camera.y+game.height/2 > temp.activeLessonPosY) {
+                        scrollTo(temp.activeLessonPosY);
+                    }
+                    animateUnlock(lockedNode);
+                });
+            }
+
+            function scrollTo(limitY){
+                // log.debug("Unlocked Node Pos Y",temp.activeLessonPosY);
+                // log.debug("Camera Y",game.camera.y);
+                // var intervalScroll = setInterval(function(){
+                log.info("Scrolling to current node ...");
+                game.add.tween(game.camera).to({y:"-200"},800,Phaser.Easing.Quadratic.InOut,true);
+                    // }
+                //     // log.debug("I am here",game.camera.y)
+                //     game.camera.y-=3;
+                // });
+                // function clearScroll() {
+                //     clearInterval(intervalScroll);
+                // }
             }
 
             function gameStart(){
@@ -815,17 +941,29 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                     var lessonFromQuizStars = typeof(temp.lessonFromQuizKey)!="undefined"?lessons[temp.lessonFromQuizKey].stars:false;
                     var animateStarFlag = JSON.parse(localStorage.getItem("animateStarFlag"));
                     if (animateStarFlag) {
-                        // log.debug("Is it Current Node?",animateStarFlag.isCurrentNode);
-                        // log.debug("Lesson From QuizStars",lessonFromQuizStars);
-                        // log.debug("if condition",animateStarFlag.isCurrentNode && lessonFromQuizStars);
-                        if ((animateStarFlag.isCurrentNode && lessonFromQuizStars) || (lessonFromQuizStars > animateStarFlag.clickedNodeStar && lessonFromQuizStars)) {
+                        log.debug("Is it Current Node?",animateStarFlag.isCurrentNode);
+                        log.debug("Lesson From QuizStars",lessonFromQuizStars);
+                        log.debug("if condition",animateStarFlag.isCurrentNode && lessonFromQuizStars);
+                        if (animateStarFlag.isCurrentNode && lessonFromQuizStars) {
                             // log.debug("Activating star animation");
-                            animateStar(temp.lessonFromQuizKey);
                             scope.$emit('animateStar');
+                            setTimeout(function(){
+                                newNodeUnlock();
+                            },800)
+                        }
+
+                        if(lessonFromQuizStars > animateStarFlag.clickedNodeStar && lessonFromQuizStars){
+                            scope.$emit('animateStar');
+                            setTimeout(function(){
+                                animateStar(temp.lessonFromQuizKey);
+                            },800)    
                         }
                     }else{
-                        log.warn("localStorage Animate Star is not set. Not checking for animateStar")
+                        log.warn("localStorage Animate Star is not set. Not checking for animateStar");
                     }
+                    // .then(function(){
+                    // });
+                    // animateUnlock();
                     // $ionicLoading.hide();
                 },function(error){
                     log.error("Failed to fetchMapPath",error);
@@ -981,7 +1119,10 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                 }
             }
             interactiveAnimate();
+            // game.camera.y-= 4;
+        
         }
+
     }
 
     game.state.add('play', playState);
