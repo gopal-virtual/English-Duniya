@@ -17,13 +17,15 @@
       </div>
     </div>
     <div class="padding-y-40"></div>
-    <div class="row padding-x-30">
+    <div class="row padding-x-30" ng-show="quizCtrl.summary.stars == 0">
       <div class="col">
-        <button class="button bg-pale button-round button-block" ng-click="quizCtrl.redo()"><i class="ed-icon icon-contain icon-redo"></i></button>
+        <button class="button bg-pale button-round button-block animation-repeat-bounce" ng-click="lessonutils.getVideo() ? lessonutils.playResource(lessonutils.getVideo()) : quizCtrl.redo()"><i class="ed-icon icon-contain icon-redo"></i></button>
       </div>
-      <div class="col">
-        <button class="button bg-brand-yellow button-round button-block" ng-click="quizCtrl.next()"><i class="ed-icon icon-contain icon-next"></i></button>
-      </div>
+    </div>
+    <div class="row padding-x-30" ng-show="quizCtrl.summary.stars >= 1">
+        <div class="col">
+            <button class="button bg-brand-yellow button-round button-block animation-repeat-bounce" ng-click="quizCtrl.next()"><i class="ed-icon icon-contain icon-next"></i></button>
+        </div>
     </div>
     <div ng-class="{'display-none':!quizCtrl.isAssessment}">
       <div class="row bg-pale padding-y-20">

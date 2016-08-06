@@ -194,12 +194,10 @@
 
     function redo(){
      $log.debug("Redo with",quizCtrl.quiz)
-     var t = quizCtrl.quiz
      if(quizCtrl.quiz.objects[0].node.id === CONSTANT.QUESTION.DEMO){
-       $log.debug("Redo Demo found",t.objects.shift())
+       quizCtrl.quiz.objects.shift()
      }
-     $log.debug("Redo Finally with",t)
-   lessonutils.playResource(t)
+       lessonutils.playResource(quizCtrl.quiz)
    }
 
     function stopTimer() {
