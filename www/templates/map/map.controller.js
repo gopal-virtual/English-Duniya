@@ -106,6 +106,16 @@
     }
     mapCtrl.animateStar["resetColor"] = resetColor;
     // $log.debug("selectedNode",selectedNode);
+    mapCtrl.setAnimateStarFlag = setAnimateStarFlag;
+
+    function setAnimateStarFlag() {
+      var animateStarFlag = {
+          isCurrentNode : true,
+          clickedNodeStar : 0
+      }
+      localStorage.setItem("animateStarFlag",JSON.stringify(animateStarFlag));
+    }
+
     function getNodeProperty(prop) {
       if (prop == 'x')
         return localStorage.demo_node ? JSON.parse(localStorage.demo_node).x : 0;
