@@ -13,3 +13,14 @@ plugins/
 /www/css/
 /www/templates/templates.js
 .DS_Store
+port.js
+_replicator
+_replicator/*
+_users
+_users/*
+pouch__all_dbs__
+pouch__all_dbs__/*
+lesson.json
+log.txt
+lessonsGrade*
+config.json
