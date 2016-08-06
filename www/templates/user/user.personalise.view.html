@@ -73,71 +73,84 @@
       </form>
   </ion-content>
 </ion-view> -->
-
 <ion-view class="bg-yellow">
-  <ion-content>
-    <ion-slide-box delegate-handle="slide" show-pager="false" ng-init="userCtrl.disableSwipe()">
-      <ion-slide>
-        <div class="box">
-          <div class="row">
-            <div class="col center">
-              <img style="width: 100%;" src="img/personalise1.png" />
-            </div>
-          </div>
-          <div class="row padding-x-40">
-            <div class="col center">
-              <h1 class="center font-sl" style="color:#48494B;line-height:1.8em">My name is...</h1>
+    <ion-content>
+        <ion-slide-box delegate-handle="slide" show-pager="false" ng-init="userCtrl.disableSwipe()">
+            <ion-slide>
+                <div class="box">
+                    <div class="name-avatar">
+                    </div>
+                    <div class="row padding-x-10">
+                        <div class="col center">
+                            <h2 class="center" style="font-size:2.5em !important;color:#48494B;line-height:1.8em">My name is...</h2>
+                            <div class="col" ng-init="userCtrl.user.name=''">
+                                <div class="row">
+                                    <div class="col font-lg" style="line-height:0.8em;border-bottom:1px solid black;color:#48494B;">{{userCtrl.user.name}}&nbsp;</div>
+                                </div>
+                                <br>
+                                <virtual-keyboard reference="userCtrl.user.name"></virtual-keyboard>
+                                <button ng-disabled="!userCtrl.user.name" class="button button-balanced button-round margin-20 padding-x-40 font-md" ng-click="userCtrl.nextSlide()"><i class="ed-icon lg icon-contain icon-next-2"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ion-slide>
+            <ion-slide>
+                <div class="box">
+                    <div class="row padding-20">
+                        <div class="col">
+                            <h1 class="center margin-10">I am a ...</h1>
+                            <div class="row no-padding">
+                                <div class="col text-center no-padding">
+                                    <label for="" class="radio radio-male radio-icon-check" ng-class="{'checked':userCtrl.user.gender=='M'}">
+                                        <!-- <i class="font-xl color-blue icon ion-checkmark-circled"></i> -->
+                                        <input type="radio" name="gender" value="M" ng-model="userCtrl.user.gender">
+                                    </label>
+                                    <div style="padding-left:40px;text-align:left;font-weight:600;" class="font-xl color-balanced">
+                                      BOY
+                                    </div>
+                                </div>
+                                <!-- <div class="radio-graphic-or font-md">or</div> -->
+                                <div class="col text-center no-padding">
+                                    <label for="" class="radio radio-female radio-icon-check" ng-class="{'checked':userCtrl.user.gender=='F'}">
+                                        <!-- <i class="font-xl color-blue icon ion-checkmark-circled"></i> -->
+                                        <input type="radio" name="gender" value="F" ng-model="userCtrl.user.gender">
+                                    </label>
+                                    <div style="padding-right:40px;text-align:right;font-weight:600;" class="font-xl color-balanced">
+                                      GIRL
+                                    </div>
+                                </div>
+                            </div>
+                            <center>
+                              <button ng-disabled="!userCtrl.user.gender" class="button button-balanced button-round margin-20 padding-x-40 font-md" ng-click="userCtrl.nextSlide()"><i class="ed-icon lg icon-contain icon-next-2"></i></button>
+                            </center>
+                        </div>
+                    </div>
+                </div>
+            </ion-slide>
+            <ion-slide>
+                <div class="box">
+                    <div class="row padding-20">
+                        <div class="col">
+                            <center>
+                              <img ng-src="{{userCtrl.user.gender == 'M'?'../img/assets/upperbody-boy.png':'../img/assets/upperbody-girl.png'}}" alt="">
+                            </center>
+                            <h1 class="center">I am in class ...</h1>
+                            <div class="radio-box-container-outer">
+                              <div class="radio-box-container-inner">
+                                <label style="line-height:120px;" class="margin-10 radio radio-box font-sxl bg-pink center color-balanced" ng-repeat="grade in [1,2,3]" ng-class="{'checked':userCtrl.user.grade == grade,'margin-x-70':$index == 0}">{{grade}}
+                                  <input type="radio" name="grade" value="{{grade}}" ng-model="userCtrl.user.grade">
+                                </label>
+                              </div>
+                            </div>
+                            <center>
+                              <button ng-disabled="!userCtrl.user.grade" class="button button-balanced button-round margin-20 padding-x-40 font-md" ng-click="userCtrl.createProfile(userCtrl.user)"><i class="ed-icon lg icon-contain icon-next-2"></i></button>
+                            </center>
 
-            <div class="col" ng-init="userCtrl.user.name=''">
-              <div class="row">
-                <div class="font-sl col-80" style="line-height:0.8em;border-bottom:1px solid black;color:#48494B;">{{userCtrl.user.name}}&nbsp;</div>
-                <div class="col icon-green-cross key" ng-click="userCtrl.user.name=''">
+                        </div>
+                    </div>
                 </div>
-              </div>
-              <br>
-              <virtual-keyboard reference="userCtrl.user.name"></virtual-keyboard>
-              <button ng-disabled="!userCtrl.user.name" class="button button-balanced button-round margin-20 padding-x-40 font-md" ng-click="userCtrl.nextSlide()"><i class="ed-icon lg icon-contain icon-next-2"></i></button>
-            </div>
-          </div>
-        </div>
-        </div>
-      </ion-slide>
-      <ion-slide>
-        <div class="box">
-          <div class="row padding-40">
-            <div class="col">
-              <h1 class="center">Gender</h1>
-              <div class="row no-padding">
-                <div class="col text-center no-padding">
-                  <label for="" class="radio radio-male radio-icon-check" ng-class="{'checked':userCtrl.user.gender=='M'}">
-                    <i class="font-xl color-blue icon ion-checkmark-circled"></i>
-                    <input type="radio" name="gender" value="M" ng-model="userCtrl.user.gender">
-                  </label>
-                </div>
-                <div class="radio-graphic-or font-md">or</div>
-                <div class="col text-center no-padding">
-                  <label for="" class="radio radio-female radio-icon-check" ng-class="{'checked':userCtrl.user.gender=='F'}">
-                    <i class="font-xl color-blue icon ion-checkmark-circled"></i>
-                    <input type="radio" name="gender" value="F" ng-model="userCtrl.user.gender">
-                  </label>
-                </div>
-              </div>
-              <button ng-disabled="!userCtrl.user.gender" class="button button-balanced button-round button-block font-md" ng-click="userCtrl.nextSlide()">Next</button>
-            </div>
-          </div>
-        </div>
-      </ion-slide>
-      <ion-slide>
-        <div class="box">
-          <div class="row padding-40">
-            <div class="col">
-              <h1 class="center">In which class do you study?</h1>
-              <ion-radio ng-model="userCtrl.user.grade" ng-value="$index+1" ng-repeat="grade in [1,2,3]">Class {{grade}}</ion-radio>
-              <button ng-disabled="!userCtrl.user.grade" class="button button-balanced button-round button-block font-md" ng-click="userCtrl.createProfile(userCtrl.user)">Done</button>
-            </div>
-          </div>
-        </div>
-      </ion-slide>
-    </ion-slide-box>
-  </ion-content>
+            </ion-slide>
+        </ion-slide-box>
+    </ion-content>
 </ion-view>
