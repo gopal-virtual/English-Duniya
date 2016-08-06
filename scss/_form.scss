@@ -98,7 +98,7 @@ input[type=radio].hide{
 }
 
 .radio-male{
-    height: 360px;
+    height: 300px;
     position: relative;
     background: url('#{$assets-path}/avatar-boy.png') no-repeat top left;
     display: block;
@@ -112,7 +112,7 @@ input[type=radio].hide{
     opacity: 1;
 }
 .radio-female{
-    height: 360px;
+    height: 300px;
     position: relative;
     background: url('#{$assets-path}/avatar-girl.png') no-repeat top right;
     display: block;
