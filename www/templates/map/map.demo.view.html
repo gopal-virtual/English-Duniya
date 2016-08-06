@@ -26,7 +26,7 @@
         <div class="row height-50">
             <div class="col height-100">
                 <center>
-                    <div class="animation-repeat-bounce" ng-show="!selectedNode" ng-click="$emit('openNode', mapCtrl.getNodeProperty('node'))" style="width:60vw;height:60vw;border-radius:50%;border:3px solid #39B89A;background : url('img/icons/icon-{{mapCtrl.getNodeProperty('type')}}.png') #FCF3D8 no-repeat center center; background-size : auto 50%">
+                    <div class="animation-repeat-bounce" ng-show="!selectedNode" ng-click="$emit('openNode', mapCtrl.getNodeProperty('node'));mapCtrl.setAnimateStarFlag();" style="width:60vw;height:60vw;border-radius:50%;border:3px solid #39B89A;background : url('img/icons/icon-{{mapCtrl.getNodeProperty('type')}}.png') #FCF3D8 no-repeat center center; background-size : auto 50%">
                     </div>
                 </center>
             </div>
