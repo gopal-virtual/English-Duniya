@@ -74,19 +74,29 @@
   </ion-content>
 </ion-view> -->
 
-<ion-view class="bg-pink">
+<ion-view class="bg-yellow">
   <ion-content>
     <ion-slide-box delegate-handle="slide" show-pager="false" ng-init="userCtrl.disableSwipe()">
       <ion-slide>
         <div class="box">
-          <div class="row padding-40">
+          <div class="row">
+            <div class="col center">
+              <img style="width: 100%;" src="img/personalise1.png" />
+            </div>
+          </div>
+          <div class="row padding-x-40">
+            <div class="col center">
+              <h1 class="center font-sl" style="color:#48494B;line-height:1.8em">My name is...</h1>
+
             <div class="col" ng-init="userCtrl.user.name=''">
-              <h1 class="center">Welcome to English Dunyia</h1>
-              <h1 class="center">What is your name?</h1>
-              <!-- <input type="text" class="input input-control input-block" placeholder="Your Name" ng-model="userCtrl.user.name" ng-change="userCtrl.splitName()"> -->
-              <div>{{userCtrl.user.name}}</div>
+              <div class="row">
+                <div class="font-sl col-80" style="line-height:0.8em;border-bottom:1px solid black;color:#48494B;">{{userCtrl.user.name}}&nbsp;</div>
+                <div class="col icon-green-cross key" ng-click="userCtrl.user.name=''">
+                </div>
+              </div>
+              <br>
               <virtual-keyboard reference="userCtrl.user.name"></virtual-keyboard>
-              <button ng-disabled="!userCtrl.user.name" class="button button-balanced button-round button-block font-md" ng-click="userCtrl.nextSlide()">Next</button>
+              <button ng-disabled="!userCtrl.user.name" class="button button-balanced button-round margin-20 padding-x-40 font-md" ng-click="userCtrl.nextSlide()"><i class="ed-icon lg icon-contain icon-next-2"></i></button>
             </div>
           </div>
         </div>

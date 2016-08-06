@@ -111,8 +111,64 @@
 
     .state('quiz.summary', {
       url: 'summary',
-      onEnter: ['$log', 'audio', function($log, audio) {
+      onEnter: ['$log', 'audio','data','$stateParams', 'lessonutils','Auth', function($log, audio,data, $stateParams, lessonutils, Auth) {
         $log.debug("Enter summary")
+        var report = $stateParams.report;
+        var quiz = $stateParams.quiz;
+        var summary = $stateParams.summary;
+        var lesson = lessonutils.getLocalLesson();
+
+            data.updateSkills({
+              userId: Auth.getProfileId(),
+              lessonId: lesson.node.id,
+              id: quiz.node.id,
+              score: summary.score.marks,
+              totalScore: quiz.node.type.score,
+              skill: lesson.node.tag,
+            })
+            .then(function() {
+              return data.getQuizScore({
+                  'userId': Auth.getProfileId(),
+                  'lessonId': lesson.node.id,
+                  'id': quiz.node.id
+                })
+            })
+            .then(function(previousScore) {
+              if ((!previousScore) || (!previousScore.hasOwnProperty('score')) || (previousScore && parseInt(previousScore.score) < summary.score.marks)) {
+
+                return data.updateScore({
+                  userId: Auth.getProfileId(),
+                  lessonId: lesson.node.id,
+                  id: quiz.node.id,
+                  score: summary.score.marks,
+                  totalScore: quiz.node.type.score,
+                  type: 'assessment'
+                })
+
+              }
+            })
+
+            .then(function(success) {
+              // var report_id = success.id;
+              var attempts = [];
+              angular.forEach(report.attempts, function(value, key) {
+                attempts.push({
+                  answer: value.length > 0 ? value : null,
+                  score: summary.analysis[key].score,
+                  status: value.length > 0 ? CONSTANT.ATTEMPT.STATUS.ATTEMPTED : CONSTANT.ATTEMPT.STATUS.SKIPPED,
+                  // person: Auth.getProfileId(),
+                  // report: report_id,
+                  node: key
+                });
+              });
+              return data.saveReport({
+                'score': summary.score.marks,
+                'attempts': attempts,
+                'userId': Auth.getProfileId(),
+                'node': quiz.node.id
+              })
+
+            })
       }],
       onExit: ['$log', 'audio', function($log, audio) {
         $log.debug("Exit summary")
