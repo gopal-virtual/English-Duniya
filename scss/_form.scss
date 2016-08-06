@@ -91,42 +91,42 @@ input[type=radio].hide{
 }
 .radio > input[type="radio"]{
     visibility: hidden;
+    position:absolute;
 }
 .radio {
     margin: 0 auto;
 }
 
 .radio-male{
-    width: 144px;
-    height: 144px;
+    height: 360px;
     position: relative;
-    background: url('#{$icon-path}/icon-boy.png') no-repeat 0 0;
+    background: url('#{$assets-path}/avatar-boy.png') no-repeat top left;
     display: block;
-    background-size: cover;
-    @include xs-screen{
-      height: 120px;
-      width: 120px;
-    }
+    background-size: contain;
+    opacity: 0.6;
+    // @include xs-screen{
+    //   height: 120px;
+    // }
 }
 .radio-male.checked{
-    background-position: 100% 0 !important;
-    background-size: cover !important;
+    opacity: 1;
 }
 .radio-female{
-    width: 144px;
-    height: 144px;
+    height: 360px;
     position: relative;
-    background: url('#{$icon-path}/icon-girl.png') no-repeat 0 0;
+    background: url('#{$assets-path}/avatar-girl.png') no-repeat top right;
     display: block;
-    background-size: cover;
-    @include xs-screen{
-      height: 120px;
-      width: 120px;
-    }
+    background-size: contain;
+    opacity: 0.6;
+    // @include xs-screen{
+    //   height: 120px;
+    //   width: 120px;
+    // }
 }
 .radio-female.checked{
-    background-position: 100% 0 !important;
-    background-size: cover !important;
+    opacity: 1;
+    // background-position: 100% 0 !important;
+    // background-size: cover !important;
 }
 
 .radio-icon-check .icon{
@@ -171,4 +171,23 @@ input[type=radio].hide{
 
 .input-sm{
   padding: $padding-x*2.5 $padding-x*1.5 !important;
+}
+
+.radio-box{
+  height: 100px;
+  width: 100px;
+  display: inline-block;
+  float: left;
+  border-radius: 10px;
+  box-shadow: rgba(0,0,0,0.3) 0 0 10px;
+}
+
+.radio-box.checked{
+  background-color: #{$selected-color} !important;
+}
+
+.radio-box-container-inner{
+  width: 240px;
+  margin-left: auto;
+  margin-right: auto;
 }

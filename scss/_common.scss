@@ -121,3 +121,16 @@ meter::-webkit-meter-even-less-good-value {
   position: relative;
   z-index: 14;
 }
+
+.name-avatar{
+  background: url('../img/assets/name-boy.png'),url('../img/assets/name-girl.png');
+  background-repeat: no-repeat;
+  background-position: top left, top right;
+  height: 200px;
+  margin-top: 20px;
+}
+
+.radio-box-container{
+  margin-left: auto;
+  margin-right: auto;
+}
