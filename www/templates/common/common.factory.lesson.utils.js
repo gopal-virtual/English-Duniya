@@ -57,7 +57,8 @@
       demoFactory: demoFactory,
       isState: isState,
       playDemoAudio: playDemoAudio,
-      canClickDemo: canClickDemo
+      canClickDemo: canClickDemo,
+      getVideo: getVideo
     };
     demoFactory.show().then(function(result) {
       utils.demoShown = result;
@@ -156,6 +157,17 @@
       } else if (resource.node.content_type_name == 'resource' && resource.node.type.file_type == 'mp4') {
         return 'video';
       } else {}
+    }
+
+    function getVideo(){
+        var lesson = utils.getLocalLesson();
+        var resources = lesson.objects;
+        for (var i = 0, count = resources.length; i < count; i++) {
+            if(resourceType(resources[i]) == 'video'){
+                return resources[i];
+            }
+        }
+        return null ;
     }
 
     function getIcon(resource) {
