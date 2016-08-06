@@ -12,7 +12,9 @@
       // 'RESOURCE_SERVER': 'http://cc-pre-prod.zaya.in/',
       // 'RESOURCE_SERVER': 'https://eg-api.zaya.in/',
       // 'BACKEND_SERVICE_DOMAIN' : 'http://192.168.1.6:9000/',
-
+      'QUESTION' : {
+        'DEMO' : '33c0asdf-b7f6-4f1c-8db5-234f5613a854'
+      },
       'PATH': {
         'INTRO': ROOT + '/intro',
         'AUTH': ROOT + '/auth',

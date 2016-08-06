@@ -195,7 +195,7 @@
     function redo(){
      $log.debug("Redo with",quizCtrl.quiz)
      var t = quizCtrl.quiz
-     if(quizCtrl.quiz.objects[0].node.id === 'demo'){
+     if(quizCtrl.quiz.objects[0].node.id === CONSTANT.QUESTION.DEMO){
        $log.debug("Redo Demo found",t.objects.shift())
      }
      $log.debug("Redo Finally with",t)
@@ -457,7 +457,7 @@
           status: 'correct',
           score: question.node.type.score
         }
-        quizCtrl.summary.score.marks += question.node.id!='demo' ? question.node.type.score : 0;
+        quizCtrl.summary.score.marks += question.node.id!=CONSTANT.QUESTION.DEMO ? question.node.type.score : 0;
         quizCtrl.summary.score.percent = parseInt((quizCtrl.summary.score.marks / quizCtrl.quiz.node.type.score) * 100);
         quizCtrl.summary.stars = quizCtrl.calculateStars(quizCtrl.summary.score.percent);
       } else {
@@ -669,10 +669,10 @@
     }
 
     function submitQuiz(quizType) {
-        if(quizCtrl.summary.analysis['demo'])
-            delete quizCtrl.summary.analysis['demo'];
-        if(quizCtrl.report.attempts['demo'])
-            delete quizCtrl.report.attempts['demo'];
+        if(quizCtrl.summary.analysis[CONSTANT.QUESTION.DEMO])
+            delete quizCtrl.summary.analysis[CONSTANT.QUESTION.DEMO];
+        if(quizCtrl.report.attempts[CONSTANT.QUESTION.DEMO])
+            delete quizCtrl.report.attempts[CONSTANT.QUESTION.DEMO];
       if (quizType === 'practice') {
         $scope.modal.hide().then(function() {
             analytics.log(
@@ -723,10 +723,10 @@
 
     function generateReport(quiz) {
       angular.forEach(quiz.objects, function(value, key) {
-        if (quizCtrl.getQuestionType(value) == CONSTANT.WIDGETS.QUESTION_TYPES.SCQ && value.attempted !== '' && value.id !='demo') {
+        if (quizCtrl.getQuestionType(value) == CONSTANT.WIDGETS.QUESTION_TYPES.SCQ && value.attempted !== '' && value.id !=CONSTANT.QUESTION.DEMO) {
           quizCtrl.submitAttempt(value.node.id,
             value.attempted);
-        } else if (quizCtrl.getQuestionType(value) == CONSTANT.WIDGETS.QUESTION_TYPES.MCQ && value.attempted.length > 0 && value.id !='demo') {
+        } else if (quizCtrl.getQuestionType(value) == CONSTANT.WIDGETS.QUESTION_TYPES.MCQ && value.attempted.length > 0 && value.id !=CONSTANT.QUESTION.DEMO) {
           quizCtrl.submitAttempt(value.node.id,
             value.attempted);
         }

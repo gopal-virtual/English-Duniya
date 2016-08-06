@@ -74,18 +74,23 @@
   </ion-content>
 </ion-view> -->
 
-<ion-view class="bg-pink">
+<ion-view class="bg-yellow">
   <ion-content>
     <ion-slide-box delegate-handle="slide" show-pager="false" ng-init="userCtrl.disableSwipe()">
       <ion-slide>
         <div class="box">
+          <div class="row">
+            <div class="col center">
+              <img style="width: 100%;" src="img/personalise1.png" />
+            </div>
+          </div>
           <div class="row padding-40">
-            <div class="col">
-              <h1 class="center">Welcome to English Dunyia</h1>
-              <h1 class="center">What is your name?</h1>
-              <input type="text" class="input input-control input-block" placeholder="Your Name" ng-model="userCtrl.user.name" ng-change="userCtrl.splitName()">
+            <div class="col center">
+              <h1 class="center" style="color:#48494B">My name is...</h1>
+              <input type="text" class="input input-control input-block font-lg" placeholder="Your Name" ng-model="userCtrl.user.name" ng-change="userCtrl.splitName()">
               <virtual-keyboard type="alpha" reference=""></virtual-keyboard>
-              <button ng-disabled="!userCtrl.user.name" class="button button-balanced button-round button-block font-md" ng-click="userCtrl.nextSlide()">Next</button>
+
+              <button ng-disabled="!userCtrl.user.name" class="button button-balanced button-round margin-20 padding-x-40 font-md" ng-click="userCtrl.nextSlide()"><i class="ed-icon lg icon-contain icon-next-2"></i></button>
             </div>
           </div>
         </div>
