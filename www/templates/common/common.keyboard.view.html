@@ -1,1 +1,35 @@
-<div ng-repeat="key in keyCtrl.keySet" class="key" ng-click="keyCtrl.input(key)"></div>
+<style>
+  .key {
+    display: inline-block;
+    background-color: #FCF8DB;
+    color: #1AB89A;
+    padding: 5px;
+    border-radius: 5px;
+    margin: 3px;
+    font-size: 24px;
+    font-weight: 800;
+  }
+  .key:active {
+    background-color: rgb(167, 210, 237);
+    transform: scale(0.8);
+  }
+  .key-row {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+  }
+
+</style>
+<div class="key-row">
+  <a ng-repeat="(key,value) in {'Q':'Q', 'W':'W', 'E':'E', 'R':'R', 'T':'T', 'Y':'Y', 'U':'U', 'I':'I', 'O':'O', 'P':'P'}" class="key" on-tap="keyCtrl.input(value)">{{key}}</a>
+</div>
+<div class="key-row">
+  <a ng-repeat="(key,value) in {'A':'A', 'S':'S', 'D':'D', 'F':'F', 'G':'G', 'H':'H', 'J':'J', 'K':'K', 'L':'L'}" class="key" on-tap="keyCtrl.input(value)">{{key}}</a>
+</div>
+<div class="key-row">
+  <a ng-repeat="(key,value) in {'Z':'Z', 'X':'X', 'C':'C', 'V':'V', 'B':'B', 'N':'N', 'M':'M'}" class="key" on-tap="keyCtrl.input(value)">{{key}}</a>
+</div>
+<div class="key-row">
+  <a class="key" on-tap="keyCtrl.input(' ')">SPACE</a>
+  <a class="key" on-tap="keyCtrl.erase()">DELETE</a>
+</div>

@@ -25,6 +25,7 @@
               var device = {uuid : parseInt(Math.random(1,9)*10000000).toString()} || ionic.Platform.device();
               // var device = ionic.Platform.device();
             //   var device = {uuid : parseInt(Math.random(1,9)*10000000).toString()} || ionic.Platform.device();
+            //   var device = ionic.Platform.device();
               var user_credentials = {
                   username : device.uuid,
                   password1 : device.uuid,

@@ -84,12 +84,18 @@
               <img style="width: 100%;" src="img/personalise1.png" />
             </div>
           </div>
-          <div class="row padding-40">
+          <div class="row padding-x-40">
             <div class="col center">
-              <h1 class="center" style="color:#48494B">My name is...</h1>
-              <input type="text" class="input input-control input-block font-lg" placeholder="Your Name" ng-model="userCtrl.user.name" ng-change="userCtrl.splitName()">
-              <virtual-keyboard type="alpha" reference=""></virtual-keyboard>
+              <h1 class="center font-sl" style="color:#48494B;line-height:1.8em">My name is...</h1>
 
+            <div class="col" ng-init="userCtrl.user.name=''">
+              <div class="row">
+                <div class="font-sl col-80" style="line-height:0.8em;border-bottom:1px solid black;color:#48494B;">{{userCtrl.user.name}}&nbsp;</div>
+                <div class="col icon-green-cross key" ng-click="userCtrl.user.name=''">
+                </div>
+              </div>
+              <br>
+              <virtual-keyboard reference="userCtrl.user.name"></virtual-keyboard>
               <button ng-disabled="!userCtrl.user.name" class="button button-balanced button-round margin-20 padding-x-40 font-md" ng-click="userCtrl.nextSlide()"><i class="ed-icon lg icon-contain icon-next-2"></i></button>
             </div>
           </div>
