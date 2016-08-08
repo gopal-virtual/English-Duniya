@@ -122,6 +122,19 @@ Lesson.prototype.parseUrl = function()
 				for (var questions = resources[i].objects, c = questions.length - 1; c >= 0; c--) {
 					meta.questions++;
 					//instruction
+
+					var answer = questions[c].node.type.answer;
+					if(!answer.length){
+						var noanswer = {
+							lesson_title : this.title,
+							grade : this.grade,
+							practice : resources[i].node.title,
+							node_id : questions[c].node.id,
+							object_id : questions[c].node.object_id,
+							status : 'No answer'
+						}
+						console.log(noanswer);
+					}
 					var instruction = questions[c].node.meta && questions[c].node.meta.instructions && questions[c].node.meta.instructions.sounds ? questions[c].node.meta.instructions.sounds : false;
 					if(instruction){
 						for (var z = instruction.length - 1; z >= 0; z--) {
