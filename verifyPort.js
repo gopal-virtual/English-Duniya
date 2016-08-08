@@ -87,14 +87,19 @@ Lesson.prototype.parseUrl = function()
 	var urlList = [];
 
 	//intro sound
-	var introSound =  this.lesson.node.meta && this.lesson.node.meta.intros && this.lesson.node.meta.intros.sound ? this.lesson.node.meta.intros.sound : false;
+	var introSound =  this.lesson.node.meta && this.lesson.node.meta.intros && this.lesson.node.meta.intros.sound && this.lesson.node.meta.intros.sound!='' ? this.lesson.node.meta.intros.sound : false;
 	if(introSound){
 		for (var i = introSound.length - 1; i >= 0; i--) {
 			urlList.push(new urlObj(this.title , this.grade ,'intro', 'lesson', introSound[i], 'not requested').getUrlObj())
 		}
 	}
 	else{
-		urlList.push(new urlObj(this.title , this.grade, 'intro', 'lesson', '', 'not requested').getUrlObj()) ;
+		var intro = {
+			lesson_title : this.title,
+			grade : this.grade,
+			status : 'No Intro sound'
+		}
+		console.log("Warning! ",intro);
 	}
 
 	// resources
