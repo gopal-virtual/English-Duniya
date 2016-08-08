@@ -17,7 +17,8 @@
       </div>
     </div>
     <div class="padding-y-40"></div>
-    <div class="row padding-x-30" ng-show="quizCtrl.summary.stars == 0">
+    <!-- {{quizCtrl.summary.stars}} -->
+    <div class="row padding-x-30" ng-show="!quizCtrl.summary.stars">
       <div class="col">
         <button class="button bg-pale button-round button-block animation-repeat-bounce font-lg" ng-click="lessonutils.getVideo() ? lessonutils.playResource(lessonutils.getVideo()) : quizCtrl.redo()"><i ng-show="!lessonutils.getVideo()" class="ed-icon icon-contain icon-redo"></i>{{lessonutils.getVideo() ? 'Watch Video' : ''}}</button>
       </div>
