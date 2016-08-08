@@ -3,7 +3,7 @@
 var fs = require('fs');
 var http = require('http');
 var request = require('request-promise');
-
+var prompt = require('prompt');
 var meta = {
 	'questions' : 0,
 	'videos' : 0,
@@ -11,26 +11,49 @@ var meta = {
 	'FOUND' : 0,
 	'NOT FOUND' : 0
 };
+var properties = [
+    {
+      name: 'grade', 
+      validator: /^[0-9]+$/,
+      warning: 'Grade must be number you m\'fucker'
+    }
+  ];
 
-fs.readFile('lesson.json', 'utf8', (err,data) => {
+prompt.start();
 
-	var lessons = JSON.parse(data);
-	var grade = 1;
-
-	var lessonLength = false || lessons.length;
-
-	for (var i = lessonLength - 1; i >= 0; i--) {
-		// meta.lessons++;
-		if(lessons[i].node.type.grade == grade){
-			new Lesson(lessons[i]).getStatus();
-		}
+prompt.get( properties, function (err, result) {
+	if (err) { return onErr(err); }
+	else{
+		parse(result.grade)
 	}
+});
 
-	// setTimeout(function(){
-	// 	console.log("%j",meta);
-	// },10000);
+function onErr(err) {
+	console.log(err);
+	return 1;
+}
 
-})
+function parse(grade){
+	fs.readFile('lesson.json', 'utf8', (err,data) => {
+
+		var lessons = JSON.parse(data);
+
+		var lessonLength = false || lessons.length;
+
+		for (var i = lessonLength - 1; i >= 0; i--) {
+			// meta.lessons++;
+			if(lessons[i].node.type.grade == grade){
+				new Lesson(lessons[i]).getStatus();
+			}
+		}
+
+		// setTimeout(function(){
+		// 	console.log("%j",meta);
+		// },10000);
+
+	})
+	
+}
 
 function Lesson (lesson)
 {
@@ -64,14 +87,19 @@ Lesson.prototype.parseUrl = function()
 	var urlList = [];
 
 	//intro sound
-	var introSound =  this.lesson.node.meta && this.lesson.node.meta.intros && this.lesson.node.meta.intros.sound ? this.lesson.node.meta.intros.sound : false;
+	var introSound =  this.lesson.node.meta && this.lesson.node.meta.intros && this.lesson.node.meta.intros.sound && this.lesson.node.meta.intros.sound!='' ? this.lesson.node.meta.intros.sound : false;
 	if(introSound){
 		for (var i = introSound.length - 1; i >= 0; i--) {
 			urlList.push(new urlObj(this.title , this.grade ,'intro', 'lesson', introSound[i], 'not requested').getUrlObj())
 		}
 	}
 	else{
-		urlList.push(new urlObj(this.title , this.grade, 'intro', 'lesson', '', 'not requested').getUrlObj()) ;
+		var intro = {
+			lesson_title : this.title,
+			grade : this.grade,
+			status : 'No Intro sound'
+		}
+		console.log("Warning! ",intro);
 	}
 
 	// resources
@@ -81,22 +109,46 @@ Lesson.prototype.parseUrl = function()
 			urlList.push(new urlObj(this.title , this.grade,'video', 'lesson', resources[i].node.type.path, 'not requested').getUrlObj());
 		}
 		if(this.resourceType(resources[i]) == 'practice'){
-			for (var questions = resources[i].objects, c = questions.length - 1; c >= 0; c--) {
-				meta.questions++;
-				//instruction
-				var instruction = questions[c].node.meta && questions[c].node.meta.instructions && questions[c].node.meta.instructions.sounds ? questions[c].node.meta.instructions.sounds : false;
-				if(instruction){
-					for (var z = instruction.length - 1; z >= 0; z--) {
-						urlList.push(new urlObj(this.title , this.grade, 'question instruction', 'practice', instruction[z], 'not requested').getUrlObj())
-					}
-					
+			if(!resources[i].objects.length){
+				var noquestion = {
+					title : this.title ,
+					grade : this.grade,
+					practice : resources[i].node.title,
+					Question : 'No question found'
 				}
+				console.log(noquestion);
+			}
+			else{
+				for (var questions = resources[i].objects, c = questions.length - 1; c >= 0; c--) {
+					meta.questions++;
+					//instruction
 
-				// widget
-				var widget = questions[c].node.type.content.widgets;
-				for(var type in widget){
-					for(var id in widget[type]){
-						urlList.push(new urlObj(this.title , this.grade, 'question', 'practice', widget[type][id], 'not requested').getUrlObj())
+					var answer = questions[c].node.type.answer;
+					if(!answer.length){
+						var noanswer = {
+							lesson_title : this.title,
+							grade : this.grade,
+							practice : resources[i].node.title,
+							node_id : questions[c].node.id,
+							object_id : questions[c].node.object_id,
+							status : 'No answer'
+						}
+						console.log(noanswer);
+					}
+					var instruction = questions[c].node.meta && questions[c].node.meta.instructions && questions[c].node.meta.instructions.sounds ? questions[c].node.meta.instructions.sounds : false;
+					if(instruction){
+						for (var z = instruction.length - 1; z >= 0; z--) {
+							urlList.push(new urlObj(this.title , this.grade, 'question instruction', 'practice', instruction[z], 'not requested').getUrlObj())
+						}
+						
+					}
+
+					// widget
+					var widget = questions[c].node.type.content.widgets;
+					for(var type in widget){
+						for(var id in widget[type]){
+							urlList.push(new urlObj(this.title , this.grade, 'question', 'practice', widget[type][id], 'not requested').getUrlObj())
+						}
 					}
 				}
 			}
