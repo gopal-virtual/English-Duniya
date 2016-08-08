@@ -104,22 +104,33 @@ Lesson.prototype.parseUrl = function()
 			urlList.push(new urlObj(this.title , this.grade,'video', 'lesson', resources[i].node.type.path, 'not requested').getUrlObj());
 		}
 		if(this.resourceType(resources[i]) == 'practice'){
-			for (var questions = resources[i].objects, c = questions.length - 1; c >= 0; c--) {
-				meta.questions++;
-				//instruction
-				var instruction = questions[c].node.meta && questions[c].node.meta.instructions && questions[c].node.meta.instructions.sounds ? questions[c].node.meta.instructions.sounds : false;
-				if(instruction){
-					for (var z = instruction.length - 1; z >= 0; z--) {
-						urlList.push(new urlObj(this.title , this.grade, 'question instruction', 'practice', instruction[z], 'not requested').getUrlObj())
-					}
-					
+			if(!resources[i].objects.length){
+				var noquestion = {
+					title : this.title ,
+					grade : this.grade,
+					practice : resources[i].node.title,
+					Question : 'No question found'
 				}
+				console.log(noquestion);
+			}
+			else{
+				for (var questions = resources[i].objects, c = questions.length - 1; c >= 0; c--) {
+					meta.questions++;
+					//instruction
+					var instruction = questions[c].node.meta && questions[c].node.meta.instructions && questions[c].node.meta.instructions.sounds ? questions[c].node.meta.instructions.sounds : false;
+					if(instruction){
+						for (var z = instruction.length - 1; z >= 0; z--) {
+							urlList.push(new urlObj(this.title , this.grade, 'question instruction', 'practice', instruction[z], 'not requested').getUrlObj())
+						}
+						
+					}
 
-				// widget
-				var widget = questions[c].node.type.content.widgets;
-				for(var type in widget){
-					for(var id in widget[type]){
-						urlList.push(new urlObj(this.title , this.grade, 'question', 'practice', widget[type][id], 'not requested').getUrlObj())
+					// widget
+					var widget = questions[c].node.type.content.widgets;
+					for(var type in widget){
+						for(var id in widget[type]){
+							urlList.push(new urlObj(this.title , this.grade, 'question', 'practice', widget[type][id], 'not requested').getUrlObj())
+						}
 					}
 				}
 			}
