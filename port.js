@@ -17,11 +17,13 @@ fs.readFile('lesson.json', 'utf8', function (err,data) {
   db[4] = new PouchDB('http://127.0.0.1:5984/lessonsGrade4');
   db[5] = new PouchDB('http://127.0.0.1:5984/lessonsGrade5');
 
+
   var promises = [];
 
-  // for(var i = 0; i <=5 ; i++){
-  //   promises.push(db[i].destroy());
-  // }
+  for(var i = 0; i < db.length ; i++){
+    promises.push(db[i].destroy());
+    console.log("destroying DB Grade",i)
+  }
   Promise.all(promises).then(function(){
     console.log("Deleted all db")
     var promises2 = [];
