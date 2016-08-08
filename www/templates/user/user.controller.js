@@ -85,8 +85,9 @@
     }
 
     function splitName(){
-        userCtrl.user.first_name = userCtrl.user.name.substr(0, userCtrl.user.name.indexOf(" "));
-        userCtrl.user.last_name = userCtrl.user.name.substr(userCtrl.user.name.indexOf(" ")+1);
+        userCtrl.user.first_name = userCtrl.user.name.substr(0, userCtrl.user.name.indexOf(" ") > 0?userCtrl.user.name.indexOf(" "):userCtrl.user.name.length);
+        userCtrl.user.last_name = userCtrl.user.name.substr(userCtrl.user.name.indexOf(" ") > 0?userCtrl.user.name.indexOf(" ")+1:userCtrl.user.name.length,userCtrl.user.name.length);
+        $log.debug("Fist ",userCtrl.user.first_name, "Last",userCtrl.user.last_name);
     }
 
     function disableSwipe(){
