@@ -802,10 +802,15 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             function killUselessRegions(region) {
                 log.info("Killing all off camera regions ...")
                 for (var i = region.length - 1; i >= 0; i--) {
-                    if(regionRange[region[i]].lowerLimit > game.camera.y && regionRange[region[i]].upperLimit < game.camera.y ){
+                    log.debug("Region lowerLimit",regionRange[region[i]].lowerLimit);
+                    log.debug("Region upperLimit",regionRange[region[i]].lowerLimit);
+                    log.debug("Game Camera Y",regionRange[region[i]].lowerLimit);
+                    if(regionRange[region[i]].lowerLimit > game.camera.y && regionRange[region[i]].upperLimit <= game.camera.y ){
+                        log.debug("Not Killing ",region[i]);
                         continue;
                     }
                     // log.info("Force Kill ",region[i])
+                    log.debug("Killing ",region[i]);
                     groups.regionBg[region[i]].callAll('kill');
                     groups.region[region[i]].callAll('kill');
 

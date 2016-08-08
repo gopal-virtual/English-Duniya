@@ -20,10 +20,10 @@ fs.readFile('lesson.json', 'utf8', function (err,data) {
 
   var promises = [];
 
-  for(var i = 0; i < db.length ; i++){
-    promises.push(db[i].destroy());
-    console.log("destroying DB Grade",i)
-  }
+  // for(var i = 0; i < db.length ; i++){
+  //   promises.push(db[i].destroy());
+  //   console.log("destroying DB Grade",i)
+  // }
   Promise.all(promises).then(function(){
     console.log("Deleted all db")
     var promises2 = [];
