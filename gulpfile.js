@@ -49,7 +49,7 @@ var paths = {
   ]
 };
 
-gulp.task('default', ['sass','scripts','html','watch']);
+gulp.task('default', ['sass','scripts','html']);
 
 gulp.task('optimize', function(cb) {
   gulp.src(paths.image)
