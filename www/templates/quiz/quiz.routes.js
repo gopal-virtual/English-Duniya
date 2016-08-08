@@ -86,7 +86,7 @@
         }
       })
       .state('quiz.start', {
-        url: 'start',
+        url: '/start',
         onEnter: function($stateParams, $log) {},
         views: {
           'state-quiz': {
@@ -96,7 +96,12 @@
         }
       })
       .state('quiz.questions', {
-        url: 'questions',
+        url: '/questions',
+        onEnter :  ['$log','$state','$stateParams', function($log, $state, $stateParams) {
+          if (!$stateParams.quiz.objects.length) {
+            $state.go('state.missing');
+          }
+        }],
         // nativeTransitions: null,
         views: {
           'state-quiz': {
@@ -108,9 +113,12 @@
           }
         }
       })
-
+    .state('quiz.missing', {
+      url: '/missing',
+      template : '<h1>Questions not Found</h1>'
+    })
     .state('quiz.summary', {
-      url: 'summary',
+      url: '/summary',
       onEnter: ['$log', 'audio','data','$stateParams', 'lessonutils','Auth', function($log, audio,data, $stateParams, lessonutils, Auth) {
         $log.debug("Enter summary")
         var report = $stateParams.report;

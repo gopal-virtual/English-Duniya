@@ -1,4 +1,4 @@
-<ion-view id="tour-container" class="bg-green">
+<ion-view ng-if="quizCtrl.quiz.objects.length" id="tour-container" class="bg-green">
   <div class="bar bar-header bg-pale practice-header padding-0">
     <div class="col padding-0 vertical-center">
       <div ng-click="showNodeMenu()" class="header-icon icon-pause padding-10" style="background-size:auto 85%"></div>
@@ -111,4 +111,9 @@
       </div>
     </div>
   </div>
+</ion-view>
+<ion-view ng-if="!quizCtrl.quiz.objects.length">
+  <ion-content>
+    No questions in the lesson
+  </ion-content>
 </ion-view>
