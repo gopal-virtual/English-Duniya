@@ -3,7 +3,7 @@
 var fs = require('fs');
 var http = require('http');
 var request = require('request-promise');
-
+var prompt = require('prompt');
 var meta = {
 	'questions' : 0,
 	'videos' : 0,
@@ -11,26 +11,49 @@ var meta = {
 	'FOUND' : 0,
 	'NOT FOUND' : 0
 };
+var properties = [
+    {
+      name: 'grade', 
+      validator: /^[0-9]+$/,
+      warning: 'Grade must be number you m\'fucker'
+    }
+  ];
 
-fs.readFile('lesson.json', 'utf8', (err,data) => {
+prompt.start();
 
-	var lessons = JSON.parse(data);
-	var grade = 1;
-
-	var lessonLength = false || lessons.length;
-
-	for (var i = lessonLength - 1; i >= 0; i--) {
-		// meta.lessons++;
-		if(lessons[i].node.type.grade == grade){
-			new Lesson(lessons[i]).getStatus();
-		}
+prompt.get( properties, function (err, result) {
+	if (err) { return onErr(err); }
+	else{
+		parse(result.grade)
 	}
+});
 
-	// setTimeout(function(){
-	// 	console.log("%j",meta);
-	// },10000);
+function onErr(err) {
+	console.log(err);
+	return 1;
+}
 
-})
+function parse(grade){
+	fs.readFile('lesson.json', 'utf8', (err,data) => {
+
+		var lessons = JSON.parse(data);
+
+		var lessonLength = false || lessons.length;
+
+		for (var i = lessonLength - 1; i >= 0; i--) {
+			// meta.lessons++;
+			if(lessons[i].node.type.grade == grade){
+				new Lesson(lessons[i]).getStatus();
+			}
+		}
+
+		// setTimeout(function(){
+		// 	console.log("%j",meta);
+		// },10000);
+
+	})
+	
+}
 
 function Lesson (lesson)
 {

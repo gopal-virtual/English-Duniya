@@ -28,6 +28,7 @@
     "gulp-util": "^2.2.14",
     "pouchdb": "^5.4.5",
     "preen": "^1.2.0",
+    "prompt": "^1.0.0",
     "shelljs": "^0.3.0"
   },
   "cordovaPlugins": [
@@ -37,14 +38,6 @@
     "cordova-plugin-splashscreen",
     "cordova-plugin-statusbar",
     "ionic-plugin-keyboard",
-    {
-      "variables": {
-        "APP_ID": "1159750564044149",
-        "APP_NAME": "com.ionicframework.zayamobile694033"
-      },
-      "locator": "phonegap-facebook-plugin",
-      "id": "phonegap-facebook-plugin"
-    },
     "cordova-plugin-geolocation"
   ],
   "cordovaPlatforms": [
