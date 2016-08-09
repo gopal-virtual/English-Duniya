@@ -1,9 +1,13 @@
 #!/bin/bash
+pouchdb-server --port 5984 &
+sleep 2
+gulp
 node port.js
 rm $PWD/www/data/lessons*
 pouchdb-dump http://localhost:5984/lessonsGrade1 > $PWD/www/data/lessonsGrade1.db
 pouchdb-dump http://localhost:5984/lessonsGrade2 > $PWD/www/data/lessonsGrade2.db
 pouchdb-dump http://localhost:5984/lessonsGrade3 > $PWD/www/data/lessonsGrade3.db
+
 rm $PWD/*.apk
 ionic build android
 # ionic build android --xwalk64bit
@@ -23,6 +27,7 @@ do
   # $VERSION/zipalign -v 4 $PWD/platforms/android/build/outputs/apk/android-release-unsigned.apk $PWD/angryape.apk
   break
 done
+kill -9 `ps aux | grep pouchdb-server | grep -v grep | awk '{print $2}'`
 cat << "EOF"
   /$$$$$$                                                 /$$$$$$
  /$$__  $$                                               /$$__  $$
