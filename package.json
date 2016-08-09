@@ -38,10 +38,16 @@
     "cordova-plugin-splashscreen",
     "cordova-plugin-statusbar",
     "ionic-plugin-keyboard",
-    "cordova-plugin-geolocation"
+    "cordova-plugin-geolocation",
+    "cordova-plugin-file",
+    "cordova-plugin-file-transfer",
+    "cordova-plugin-nativeaudio",
+    "cordova-plugin-network-information",
+    "cordova-plugin-screen-orientation",
+    "cordova-plugin-compat",
+    "cordova-plugin-crosswalk-webview"
   ],
   "cordovaPlatforms": [
-    "ios",
     "android"
   ]
 }
