@@ -183,9 +183,9 @@
                     time : new Date()
                 }
             )
-          $ionicLoading.show({
-            hideOnStateChange: true
-          });
+          // $ionicLoading.show({
+          //   hideOnStateChange: true
+          // });
           $log.debug("Starts", node)
           var d = new Date();
           var promise;
@@ -199,7 +199,7 @@
           }
 
           promise.then(function(s) {
-            $log.debug("Resolves", new Date() - d, s)
+          $log.debug("Resolves", new Date() - d, s)
           node.meta.parsed_sound = s;
           $log.debug("Download intro here",node)
           audio.setVolume('background', 0.1);
@@ -214,14 +214,14 @@
             $scope.openNodeMenu();
             $scope.selectedNode = response;
           }
-            $ionicLoading.hide()
+            // $ionicLoading.hide()
           }).catch(function(error) {
             $ionicPopup.alert({
               title: 'Please try again',
               template: "No internet conection found"
             })
             $log.debug("Error opening node", error)
-            $ionicLoading.hide()
+            // $ionicLoading.hide()
           })
 
           // $log.debug("NODENODE ",$scope.selectedNode.node.tag);

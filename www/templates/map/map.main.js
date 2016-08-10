@@ -782,10 +782,10 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                                     starCloneTween[i].rotate.onComplete.add(destroyStar,this);
                                     function destroyStar() {
                                         groups.nonRegion.starClone.callAll('kill');
-                                        log.debug("Hello");
-                                        log.debug("i",i);
-                                        log.debug("Lessons max",lessons[lessonKey].stars - 1);
-                                            log.debug("Return promise");
+                                        // log.debug("Hello");
+                                        // log.debug("i",i);
+                                        // log.debug("Lessons max",lessons[lessonKey].stars - 1);
+                                            // log.debug("Return promise");
                                             resolve(true);
                                     }
                                 }
@@ -802,15 +802,15 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             function killUselessRegions(region) {
                 log.info("Killing all off camera regions ...")
                 for (var i = region.length - 1; i >= 0; i--) {
-                    log.debug("Region lowerLimit",regionRange[region[i]].lowerLimit);
-                    log.debug("Region upperLimit",regionRange[region[i]].lowerLimit);
-                    log.debug("Game Camera Y",regionRange[region[i]].lowerLimit);
+                    // log.debug("Region lowerLimit",regionRange[region[i]].lowerLimit);
+                    // log.debug("Region upperLimit",regionRange[region[i]].lowerLimit);
+                    // log.debug("Game Camera Y",regionRange[region[i]].lowerLimit);
                     if(regionRange[region[i]].lowerLimit > game.camera.y && regionRange[region[i]].upperLimit <= game.camera.y ){
-                        log.debug("Not Killing ",region[i]);
+                        // log.debug("Not Killing ",region[i]);
                         continue;
                     }
                     // log.info("Force Kill ",region[i])
-                    log.debug("Killing ",region[i]);
+                    // log.debug("Killing ",region[i]);
                     groups.regionBg[region[i]].callAll('kill');
                     groups.region[region[i]].callAll('kill');
 
@@ -934,11 +934,11 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                     scope.$emit('removeLoader');
                     renderNodePath(renderedRegion,points);
                     renderNodes();
-                    // log.debug("stateParams",stateParams.activatedLesson);
-                    // log.debug("QuizLessonKey",temp.lessonFromQuizKey);
-                    // log.debug("ActiveLessonKey",temp.activeLessonKey);
-                    // log.debug("QuizLesson",lessons[temp.lessonFromQuizKey]);
-                    // log.debug("ActiveLesson",lessons[temp.activeLessonKey]);
+                    log.debug("stateParams",stateParams.activatedLesson);
+                    log.debug("QuizLessonKey",temp.lessonFromQuizKey);
+                    log.debug("ActiveLessonKey",temp.activeLessonKey);
+                    log.debug("QuizLesson",lessons[temp.lessonFromQuizKey]);
+                    log.debug("ActiveLesson",lessons[temp.activeLessonKey]);
                     scope.$emit('show_demo');
                     _this.init();
                     killUselessRegions(renderedRegion);

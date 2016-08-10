@@ -172,7 +172,7 @@
 
     $scope.tourNextStep = tourNextStep;
     $scope.lessonutils = lessonutils;
-    $scope.selectedNode = lessonutils.getLocalLesson();
+    // $scope.selectedNode = lessonutils.getLocalLesson();
     $scope.modal = {};
     quizCtrl.closeModalCallback = closeModalCallback;
 
@@ -807,8 +807,8 @@
         $ionicLoading.show({
           hideOnStateChange: true
         })
-        $log.debug("SCOPE",$scope.selectedNode);
-        $state.go('map.navigate', {"activatedLesson" : $scope.selectedNode});
+        $log.debug("SCOPE",lesson);
+        $state.go('map.navigate', {"activatedLesson" : lesson});
       } else {
         $scope.showNodeMenu();
       }
