@@ -172,7 +172,7 @@
 
     $scope.tourNextStep = tourNextStep;
     $scope.lessonutils = lessonutils;
-    // $scope.selectedNode = lessonutils.getLocalLesson();
+    $scope.selectedNode = lessonutils.getLocalLesson();
     $scope.modal = {};
     quizCtrl.closeModalCallback = closeModalCallback;
 
