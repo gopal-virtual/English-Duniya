@@ -18,10 +18,10 @@
               return target = cordova.file.dataDirectory + 'media/' + filename;
             })
             .catch(function(error) {
-              return target = CONSTANT.RESOURCE_SERVER + url;
+              return target = CONSTANT.BACKEND_SERVICE_DOMAIN + url;
             });
         } catch (e) {
-          return Promise.resolve(CONSTANT.RESOURCE_SERVER + url);
+          return Promise.resolve(CONSTANT.BACKEND_SERVICE_DOMAIN + url);
         }
 
       },

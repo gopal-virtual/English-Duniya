@@ -15,6 +15,10 @@ var templateCache = require('gulp-angular-templatecache');
 var optimization = require('gulp-imagemin');
 var preen = require('preen');
 var strip = require('gulp-strip-comments');
+var argument = require('yargs');
+var file = require('fs');
+var replace_task = require('gulp-replace-task');  
+
 
 var paths = {
   sass: [
@@ -61,27 +65,40 @@ gulp.task('preen', function(cb) {
   preen.preen({}, cb);
 });
 
+var backend = JSON.parse(file.readFileSync('./www/constant.json', 'utf8'));
+
 gulp.task('scripts', function() {
-  gulp.src(paths.script)
-    .pipe(plumber({
-      handleError: function(err) {
-        console.log(err);
-        this.emit('end');
-      }
-    }))
-    .pipe(print(function(filepath) {
-      return "MrGopal modified : " + filepath;
-    }))
-    .pipe(ngAnnotate())
-    .pipe(stripDebug())
-    .pipe(strip())
-    .pipe(concate('mobile.app.js'))
-    .pipe(gulp.dest('www/build'))
-    .pipe(rename({
-      suffix: '.min'
-    }))
-    .pipe(uglify())
-    .pipe(gulp.dest('www/build'))
+    var url = argument.argv.env ? backend.BACKEND_SERVICE[argument.argv.env] : backend.BACKEND_SERVICE.dev;
+    gulp.src(paths.script)
+      .pipe(replace_task({
+        patterns: [{
+          match : 'BACKEND_URL',
+          replacement : url
+        },{
+          match : 'LOCK',
+          replacement : argument.argv.lock || true
+        }]
+      }))
+      .pipe(plumber({
+        handleError: function(err) {
+          console.log(err);
+          this.emit('end');
+        }
+      }))
+      .pipe(print(function(filepath) {
+        return "MrGopal modified : " + filepath;
+      }))
+      .pipe(ngAnnotate())
+      .pipe(stripDebug())
+      .pipe(strip())
+      .pipe(concate('mobile.app.js'))
+      .pipe(gulp.dest('www/build'))
+      .pipe(rename({
+        suffix: '.min'
+      }))
+      .pipe(uglify())
+      .pipe(gulp.dest('www/build'))
+  
     // .pipe(broswerSync.stream())
 })
 

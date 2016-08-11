@@ -191,7 +191,7 @@
           var promise;
           if(node.meta.intros && node.meta.intros.sound  && node.meta.intros.sound[0]){
             $log.debug("has sound")
-            promise = mediaManager.downloadIfNotExists(CONSTANT.RESOURCE_SERVER + node.meta.intros.sound[0])
+            promise = mediaManager.downloadIfNotExists(CONSTANT.BACKEND_SERVICE_DOMAIN + node.meta.intros.sound[0])
           } else {
             $log.debug("not has sound")
 

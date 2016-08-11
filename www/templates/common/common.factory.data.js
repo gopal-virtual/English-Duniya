@@ -503,7 +503,7 @@
 
           ))
         }
-        // quiz.objects[index].node.instructionSound = CONSTANT.RESOURCE_SERVER + quiz.objects[index].node.meta.instructions.sounds[0];
+        // quiz.objects[index].node.instructionSound = CONSTANT.BACKEND_SERVICE_DOMAIN + quiz.objects[index].node.meta.instructions.sounds[0];
 
         $log.debug(quiz.objects[index].node.meta, "Instruction")
         promises.push(widgetParser.parseToDisplay(quiz.objects[index].node.title, index, quiz).then(
@@ -644,7 +644,7 @@
     }
 
     function downloadVideo(video) {
-      return mediaManager.downloadIfNotExists(CONSTANT.RESOURCE_SERVER + video.node.type.path)
+      return mediaManager.downloadIfNotExists(CONSTANT.BACKEND_SERVICE_DOMAIN + video.node.type.path)
     }
 
     function downloadAssessment(assessment) {
@@ -659,7 +659,7 @@
         $log.debug("Check this", object);
         if (object.node.meta.instructions) {
           promises.push(
-            mediaManager.downloadIfNotExists(CONSTANT.RESOURCE_SERVER + object.node.meta.instructions.sounds[0])
+            mediaManager.downloadIfNotExists(CONSTANT.BACKEND_SERVICE_DOMAIN + object.node.meta.instructions.sounds[0])
           );
         }
         angular.forEach(object.node.type.content.widgets, function(widget) {
@@ -668,7 +668,7 @@
               $log.debug(file);
               mediaArray.push(file);
               promises.push(
-                mediaManager.downloadIfNotExists(CONSTANT.RESOURCE_SERVER + file)
+                mediaManager.downloadIfNotExists(CONSTANT.BACKEND_SERVICE_DOMAIN + file)
               );
             }
           })
