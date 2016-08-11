@@ -1,0 +1,6 @@
+{
+	"BACKEND_SERVICE" : {
+		"prod" : "https://eg-api.zaya.in/",
+		"dev" : "https://cc-test.zaya.in/"
+	}
+}
