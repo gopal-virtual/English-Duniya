@@ -808,7 +808,7 @@
           hideOnStateChange: true
         })
         $log.debug("SCOPE",lesson);
-        $state.go('map.navigate', {"activatedLesson" : lesson});
+        $state.go('map.navigate', {"activatedLesson" : $scope.selectedNode});
       } else {
         $scope.showNodeMenu();
       }
