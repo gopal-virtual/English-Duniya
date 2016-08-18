@@ -249,6 +249,11 @@
       }
     }
 
+    $scope.$watch("userCtrl.user.name",function(){
+      userCtrl.user.name = userCtrl.user.name.replace(/  +/g, ' ');
+      $log.debug("Change");
+    });
+
 
     // function createProfile(formData) {
     //   $log.debug(formData)

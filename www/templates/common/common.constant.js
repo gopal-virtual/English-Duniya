@@ -4,10 +4,15 @@
   angular
     .module('common')
     .constant('CONSTANT', {
+<<<<<<< HEAD
       'LOCK': false,
     //   'BACKEND_SERVICE_DOMAIN': 'https://cc-test.zaya.in/',
+=======
+      'LOCK': true,
+      // 'BACKEND_SERVICE_DOMAIN': 'https://cc-test.zaya.in/',
+>>>>>>> c605c285745bdb5a68f097adf52f74429be338b8
       'BACKEND_SERVICE_DOMAIN': 'https://eg-api.zaya.in/',
-    //   'RESOURCE_SERVER': 'https://cc-test.zaya.in/',
+      // 'RESOURCE_SERVER': 'https://cc-test.zaya.in/',
       'RESOURCE_SERVER': 'https://eg-api.zaya.in/',
       // 'BACKEND_SERVICE_DOMAIN' : 'http://192.168.1.6:9000/',
       'QUESTION' : {
