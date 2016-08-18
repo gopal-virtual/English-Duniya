@@ -115,11 +115,11 @@
       }
     }
 
-    function getLesson(id, scope, callback) {
-      $ionicLoading.show();
+    function getLesson(id, scope) {
+      // $ionicLoading.show();
       var lesson = null;
       $log.debug(id);
-      data.getLesson(id).then(function(response) {
+      return data.getLesson(id).then(function(response) {
           lesson = response;
           $log.debug("Lessonid",id,Auth.getProfileId());
           return data.getLessonScore({'lessonId':id,'userId':Auth.getProfileId()});
@@ -128,11 +128,12 @@
           lesson.score = score
           $log.debug("CHeck this", lesson.score,lesson)
           utils.setLocalLesson(JSON.stringify(lesson));
-          $ionicLoading.hide();
-          callback && callback(lesson);
+          return lesson;
+          // $ionicLoading.hide();
+          // callback && callback(lesson);
         })
         .catch(function(error) {
-          $ionicLoading.hide();
+          // $ionicLoading.hide();
           $log.debug(error)
           $ionicPopup.alert({
             title: 'Sorry',
