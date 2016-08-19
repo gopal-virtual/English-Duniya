@@ -172,60 +172,64 @@
           type: 'litmus'
         });
       } else {
-        $scope.lessonutils.getLesson(node.id, $scope, function(response) {
-            analytics.log(
-                {
-                    name : 'LESSON',
-                    type : 'START',
-                    id : node.id
-                },
-                {
-                    time : new Date()
-                }
-            )
-          // $ionicLoading.show({
-          //   hideOnStateChange: true
-          // });
-          $log.debug("Starts", node)
-          var d = new Date();
-          var promise;
-          if(node.meta.intros && node.meta.intros.sound  && node.meta.intros.sound[0]){
-            $log.debug("has sound")
-            promise = mediaManager.downloadIfNotExists(CONSTANT.RESOURCE_SERVER + node.meta.intros.sound[0])
-          } else {
-            $log.debug("not has sound")
-
-            promise = $q.resolve();
-          }
-
-          promise.then(function(s) {
-          $log.debug("Resolves", new Date() - d, s)
-          node.meta.parsed_sound = s;
-          $log.debug("Download intro here",node)
-          audio.setVolume('background', 0.1);
-          if(currentPos)
-          {
-            $log.debug("CurrentPos")
-            mapCtrl.animationExpand.expand(currentPos);
-            lessonutils.playDemoAudio(node);
-            $scope.selectedNode = response;
-          }else{
-            lessonutils.playDemoAudio(node);
-            $scope.openNodeMenu();
-            $scope.selectedNode = response;
-          }
-            // $ionicLoading.hide()
-          }).catch(function(error) {
-            $ionicPopup.alert({
-              title: 'Please try again',
-              template: "No internet conection found"
-            })
-            $log.debug("Error opening node", error)
-            // $ionicLoading.hide()
-          })
-
-          // $log.debug("NODENODE ",$scope.selectedNode.node.tag);
+        $ionicLoading.show({
+          // hideOnStateChange: true
         });
+        $scope.lessonutils.getLesson(node.id, $scope).then(
+
+          function(response) {
+              analytics.log(
+                  {
+                      name : 'LESSON',
+                      type : 'START',
+                      id : node.id
+                  },
+                  {
+                      time : new Date()
+                  }
+              )
+
+            $log.debug("Starts", node)
+            var d = new Date();
+            var promise;
+            if(node.meta.intros && node.meta.intros.sound  && node.meta.intros.sound[0]){
+              $log.debug("has sound")
+              promise = mediaManager.downloadIfNotExists(CONSTANT.RESOURCE_SERVER + node.meta.intros.sound[0])
+            } else {
+              promise = $q.resolve();
+              $log.debug("not has sound")
+            }
+
+            promise.then(function(s) {
+
+            $log.debug("Resolves", new Date() - d, s)
+            node.meta.parsed_sound = s;
+            $log.debug("Download intro here",node)
+            audio.setVolume('background', 0.1);
+            if(currentPos)
+            {
+              $log.debug("CurrentPos")
+              mapCtrl.animationExpand.expand(currentPos,node);
+              $scope.selectedNode = response;
+            }else{
+              $log.debug("Not CurrentPos")
+
+              $scope.openNodeMenu(node);
+              $scope.selectedNode = response;
+            }
+              // $ionicLoading.hide()
+            }).catch(function(error) {
+              $ionicPopup.alert({
+                title: 'Please try again',
+                template: "No internet conection found"
+              })
+              $log.debug("Error opening node", error)
+              // $ionicLoading.hide()
+            })
+
+            // $log.debug("NODENODE ",$scope.selectedNode.node.tag);
+          }
+        );
       }
     })
 
@@ -251,8 +255,10 @@
     }
 
 
-    $scope.openNodeMenu = function() {
+    $scope.openNodeMenu = function(node) {
       $log.debug("Opening node menu")
+      lessonutils.playDemoAudio(node);
+
       $scope.nodeMenu.show();
       $ionicLoading.hide();
       $log.debug("Force closing loading");
@@ -330,7 +336,7 @@
 
     // updateProfile($scope.test);
 
-    function expand(currentPos) {
+    function expand(currentPos,node) {
       // alert(JSON.stringify(e));
       mapCtrl.showResult = false;
       $log.debug("X coords: " + currentPos.x + ", Y coords: " + currentPos.y);
@@ -350,8 +356,8 @@
         mapCtrl.animationExpand.expandContainer = 1;
       }, 50).then(function() {
         $timeout(function() {
-          $scope.openNodeMenu();
-        }, 1000);
+          $scope.openNodeMenu(node);
+        });
       });
 
     }
