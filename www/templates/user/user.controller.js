@@ -250,8 +250,13 @@
     }
 
     $scope.$watch("userCtrl.user.name",function(){
-      userCtrl.user.name = userCtrl.user.name.replace(/  +/g, ' ');
-      $log.debug("Change");
+      try {
+          userCtrl.user.name = userCtrl.user.name.replace(/  +/g, ' ');
+          $log.debug("Change");
+      }
+      catch(err) {
+        $log.debug("User Control Name not found");
+      }
     });
 
 
