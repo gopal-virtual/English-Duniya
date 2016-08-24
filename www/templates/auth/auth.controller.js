@@ -1,3 +1,19 @@
+/**
+ * @ngdoc controller
+ * @name auth.controller:authController
+ * @function
+ *
+ * @description
+ * Controller for handlig authorization
+ *
+ * @example
+   <example module="rfx">
+     <file name="index.html">
+         <textarea ng-model="text"rx-autogrow class="input-block-level"></textarea>
+         <pre>{{text}}</pre>
+     </file>
+   </example>
+ */
 (function() {
   'use strict';
   angular

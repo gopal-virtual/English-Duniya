@@ -1,3 +1,12 @@
+/**
+ * @ngdoc controller
+ * @name map.controller:mapController
+ * @function
+ *
+ * @description
+ * Controller takes care of the navigation map.
+ * Note: The controller gets called before map.main.js
+ */
 (function() {
   'use strict';
 
@@ -73,6 +82,7 @@
         $q
     ) {
 
+
     $scope.audio = audio;
     $log.debug('settings', settings);
     $scope.settings = settings;
@@ -108,6 +118,15 @@
     // $log.debug("selectedNode",selectedNode);
     mapCtrl.setAnimateStarFlag = setAnimateStarFlag;
 
+    /**
+    * @ngdoc property
+    * @name mapCtrl.setAnimateStarFlag
+    * @propertyOf map.controller:mapController
+    * @description
+    * Initializes animateStar flag in localStorage
+    *
+    */
+
     function setAnimateStarFlag() {
       var animateStarFlag = {
           isCurrentNode : true,
@@ -115,6 +134,16 @@
       }
       localStorage.setItem("animateStarFlag",JSON.stringify(animateStarFlag));
     }
+
+    /**
+    * @ngdoc method
+    * @name mapCtrl.getNodeProperty
+    * @methodOf map.controller:mapController
+    * @description
+    * Finds node property values in localstorage and then returns them
+    * @param {string} propertyString A string to define the property of the node. It can take the values 'x', 'y', 'width', 'height', 'node', 'type'
+    * @returns {string} Value of the property stored in localStorage. If nothing is found value 0 is returned
+    */
 
     function getNodeProperty(prop) {
       if (prop == 'x')
@@ -130,31 +159,12 @@
       if (prop == 'type')
         return localStorage.demo_node ? JSON.parse(localStorage.demo_node).type : 0;
     }
-    // mapCtrl.animationShrink.shrink = animationShrink;
 
-    // $ionicPlatform.registerBackButtonAction(function(event) {
-    //   if (mapCtrl.animationExpand.expandContainer == 1) {
-    //     $scope.closeNodeMenu();
-    //     $timeout(function() {
-    //       mapCtrl.animationExpand.shrink();
-    //     }, 200);
-    //   }
-    // }, 210);
     $ionicPlatform.registerBackButtonAction(function(event) {
       event.preventDefault();
-      //     if ($state.is('map.navigate')) { // your check here
-      //     $ionicPopup.confirm({
-      //       title: 'System warning',
-      //       template: 'Are you sure you want to exit?'
-      //     }).then(function(res) {
-      //       if (res) {
-      //         ionic.Platform.exitApp();
-      //       }
-      //     })
-      //   }
     }, 100);
 
-    $log.debug("LEssons in mapCtrl", mapCtrl.lessons)
+    $log.debug("Lessons in mapCtrl", mapCtrl.lessons)
     $scope.$on('removeLoader',function() {
       $ionicLoading.hide();
       $log.info("Loader Hidden")
@@ -246,12 +256,26 @@
       }
     })
 
+
+    /**
+    * @ngdoc method
+    * @name mapCtrl.animateStar.resetColor
+    * @methodOf map.controller:mapController
+    * @description
+    * Used for resetting color flag. The color flag determines whether the previous attempted lesson tag gets highlighted in the HUD.
+    * @param {int} index The index of the current element in the lessons array
+    * @returns {boolean} True if the flag is successfully reset else false
+    *
+    */
+
     function resetColor(index) {
       $log.debug("Resetting Color Flag ...", index);
       if ($stateParams.activatedLesson && mapCtrl.skillSet[index].title.toLowerCase() == $stateParams.activatedLesson.node.tag.toLowerCase()) {
         mapCtrl.animateStar.activeFlag = -2;
+        return true;
         // mapCtrl.animateStar.animateFlag = -1;
       }
+      return false;
     }
 
 
@@ -270,6 +294,18 @@
       });
       return true;
     }
+
+
+    /**
+    * @ngdoc method
+    * @name mapCtrl.openDemo
+    * @methodOf map.controller:mapController
+    * @description
+    * starts the demo on the navigation map by triggering the demo modal.
+    * @returns {boolean} True every time
+    *
+    */
+
     mapCtrl.openDemo = function() {
       $scope.demo.show().then(function() {
         $ionicLoading.hide();
@@ -277,6 +313,17 @@
       $log.debug("Playing audio")
       return true;
     }
+
+    /**
+    * @ngdoc method
+    * @name mapCtrl.closeDemo
+    * @methodOf map.controller:mapController
+    * @description
+    * ends the demo on the navigation map by closing the demo modal.
+    * @returns {boolean} True every time
+    *
+    */
+
     mapCtrl.closeDemo = function() {
       $log.debug('close the demo');
       $scope.demo.hide();
