@@ -26,6 +26,24 @@
   // animation-timing-function: ease-in-out;
   // -webkit-transform-origin: 50% 50%;
 }
+@keyframes pointit{
+  0% {
+    -webkit-transform: rotate3d(0,0,1,-21deg) scale3d(0.5,0.5,1) translate3d(0px,0px,0px);
+  }
+  50% {
+    -webkit-transform: rotate3d(0,0,1,-10deg) scale3d(0.5,0.5,1) translate3d(50px,50px,0px);
+  }
+  100% {
+    -webkit-transform: rotate3d(0,0,1,-21deg) scale3d(0.5,0.5,1) translate3d(0px,0px,0px);
+  }
+}
+.animation-repeat-point{
+  -webkit-animation: pointit 500ms ease-in-out 0s infinite; 
+  // -webkit-animation-duration: 500ms;
+  // -webkit-animation-iteration-count: infinite;
+  // -webkit-animation-timing-function: ease-in-out;
+}
+
 .animation-once-bounce {
   -webkit-animation-name: repeat-bounce;
   -webkit-animation-duration: 500ms;
