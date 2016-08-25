@@ -7,7 +7,7 @@
   <author email="gopal@zaya.in" href="http://www.zaya.in/">
       Gopal Ojha
     </author>
-  <content src="http://192.168.10.156:8100" original-src="index.html"/>
+  <content src="index.html"/>
   <access origin="*"/>
   <preference name="CrosswalkAnimatable" value="true"/>
   <preference name="orientation" value="portrait"/>

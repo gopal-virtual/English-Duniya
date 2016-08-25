@@ -139,8 +139,8 @@
                             </center>
                             <h1 style="margin-top:0px;" class="center">I am in class ...</h1>
                             <div class="radio-box-container-outer">
-                              <div class="radio-box-container-inner">
-                                <label style="line-height:120px;" class="margin-10 radio radio-box font-sxl bg-pink center color-balanced" ng-repeat="grade in [1,2,3]" ng-class="{'checked':userCtrl.user.grade == grade,'margin-x-70':$index == 0}">{{grade}}
+                              <div style="width:200px;" class="radio-box-container-inner clearfix">
+                                <label style="line-height:120px;" class="margin-10 radio radio-box radio-box-xl font-sxl bg-pink center color-balanced" ng-repeat="grade in [1,2,3]" ng-class="{'checked':userCtrl.user.grade == grade,'margin-x-70':$index == 0}">{{grade}}
                                   <input type="radio" name="grade" value="{{grade}}" ng-model="userCtrl.user.grade">
                                 </label>
                               </div>

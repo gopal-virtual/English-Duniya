@@ -1,10 +1,32 @@
-<ion-modal-view class="modal-transparent">
+<ion-modal-view class="modal-dark">
   <ion-content overflow-scroll="true">
     <div class="row">
       <div class="col">
-        <div class="card card-dark padding-x-20">
+        <div class="card card-medium-yellow padding-x-30">
+          <div ng-click="settingsModal.hide()" class="close-icon-con bg-red">
+            <i style="min-height:0px;margin:0px;margin-left:-4px;" class="ed-icon sm icon-white-cross icon-contain"></i>
+          </div>
+          <div class="row padding-20" ng-init="mapCtrl.user.grade">
+              <div class="col">
+                  <center>
+                    <img height="100" ng-src="{{mapCtrl.user.gender == 'M'?'img/assets/upperbody-boy.png':'img/assets/upperbody-girl.png'}}" alt="">
+                  </center>
+                  <h1 style="margin-top:0px;" class="center">कक्षा बदलें</h1>
+                  <div class="radio-box-container-outer">
+                    <div style="width:200px" class="radio-box-container-inner clearfix">
+                      <label style="line-height:93px;font-size:4em;" class="margin-10 radio radio-box radio-box-sm bg-pink center color-balanced" ng-repeat="grade in [1,2,3]" ng-class="{'checked':mapCtrl.user.grade == grade,'margin-x-60':$index == 0}">{{grade}}
+                        <input type="radio" name="grade" value="{{grade}}" ng-model="mapCtrl.user.grade">
+                      </label>
+                    </div>
+                  </div>
+                  <center>
+                    <button style="height: 42px; min-height: 28px;" ng-disabled="!mapCtrl.user.grade" class="button button-balanced button-round  margin-20 padding-x-40 font-sm no-shadow" ng-click=""><i style="height:20px;min-height:20px;" class="ed-icon md icon-contain icon-next-2"></i></button>
+                  </center>
 
-          <div class="row">
+              </div>
+          </div>
+
+          <!-- <div class="row">
             <div class="col">
               <div class="text-center">
                 <button class="button button-balanced button-sm button-round font-xs float-left" ng-click="settingsModal.hide()">
@@ -39,7 +61,7 @@
                 <i class="ion-power"></i> Logout
               </button>
             </div>
-          </div>
+          </div> -->
 
           <!-- <div class="row padding-y-20">
             <div class="col text-center">
