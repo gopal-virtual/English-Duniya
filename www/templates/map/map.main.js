@@ -7,7 +7,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
     var temp = {};
     // var desertRegion, regionGroups.tundra, regionGroups.forest;
     var region = ["desert","tundra","forest","peru"];
-    
+
     var groups = {
         "region" : {},
         "nonRegion" : {},
@@ -758,11 +758,11 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                         var posx = _this.math.catmullRomInterpolation(points.x, j/lessons.length);
                         var posy = _this.math.catmullRomInterpolation(points.y, j/lessons.length);
                         // log.debug("In star animation function, \nlessonFromQuizKey: ",lessonKey," activeLessonKey: ",temp.activeLessonKey,"\nactivatedLesson: ",lessons[lessonKey],"\nactiveLesson: ",lessons[temp.activeLessonKey]);
-                        var starCloneTween = [];  
+                        var starCloneTween = [];
                         for (var i = 0; i < lessons[lessonKey].stars; i++) {
 
                                 starClone[i] = groups.nonRegion.starClone.create((posx+ star_x[i])*game_scale, posy + star_y[i], 'star_medium');
-                                
+
                                 starClone[i].anchor.setTo(0.5, 0.5);
                                 starCloneTween[i] = {};
 
@@ -828,7 +828,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                 // log.debug("Unlocked Node Pos Y",temp.activeLessonPosY);
                 // log.debug("Camera Y",game.camera.y);
                 // var autoScrollFlag = true;
-                
+
                 var randomX = 100;
                 var randomY = 100;
                 var unlockAnimTween = {};
@@ -896,7 +896,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             }
 
             function newNodeUnlock() {
-                var lockedNode = {};   
+                var lockedNode = {};
                 hideActiveNode(lockedNode);
                 animateStar(temp.lessonFromQuizKey).then(function(){
                     if (game.camera.y+game.height/2 > temp.activeLessonPosY) {
@@ -961,7 +961,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                             scope.$emit('animateStar');
                             setTimeout(function(){
                                 animateStar(temp.lessonFromQuizKey);
-                            },800)    
+                            },800)
                         }
                     }else{
                         log.warn("localStorage Animate Star is not set. Not checking for animateStar");
@@ -1084,19 +1084,19 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                     if (checkTempClouds) {
                             temp["cloudLeft"] = {
                                 "x" : sprites.cloudLeft.x,
-                                "y" : sprites.cloudLeft.y  
+                                "y" : sprites.cloudLeft.y
                             };
                             temp["cloudRight"] = {
                                 "x" : sprites.cloudRight.x,
-                                "y" : sprites.cloudRight.y  
+                                "y" : sprites.cloudRight.y
                             };
                             temp["cloudMiddle"] = {
                                 "x" : sprites.cloudMiddle.x,
-                                "y" : sprites.cloudMiddle.y  
+                                "y" : sprites.cloudMiddle.y
                             };
                             temp["cloudRightBehind"] = {
                                 "x" : sprites.cloudRightBehind.x,
-                                "y" : sprites.cloudRightBehind.y  
+                                "y" : sprites.cloudRightBehind.y
                             };
                     }
                     // log.warn(temp["cloudLeft"]);
@@ -1125,7 +1125,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             }
             interactiveAnimate();
             // game.camera.y-= 4;
-        
+
         }
 
     }
@@ -1139,6 +1139,11 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
         var canvas = document.querySelector('#map_canvas');
         canvas.parentNode.removeChild(canvas);
     });
+    scope.$on('reloadMap',function(){
+      log.debug("RELOADI");
+      // game.destroy();
+      location.reload();
+    })
 
 
 };
