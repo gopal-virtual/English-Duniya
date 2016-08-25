@@ -82,7 +82,7 @@
                     </div>
                     <div style="margin-top:-140px;" class="row padding-x-10">
                         <div class="col center">
-                            <h2 class="center" style="font-size:2.5em !important;color:#48494B;line-height:1.8em">My name is...</h2>
+                            <h2 class="center" style="font-size:2em !important;color:#48494B;line-height:1.8em">आपका नाम क्या है?</h2>
                             <div class="col" ng-init="userCtrl.user.name=''">
                                 <div class="row">
                                     <div class="col font-md" style="line-height:0.8em;border-bottom:1px solid black;color:#48494B;max-width: 86%;margin-left: auto;margin-right: auto;">{{userCtrl.user.name}}&nbsp;</div>
@@ -101,26 +101,26 @@
                 <div class="box" >
                     <div class="row padding-20">
                         <div class="col">
-                            <h1 class="center margin-10">I am a ...</h1>
-                            <div class="row no-padding">
+                            <h2 class="center margin-10">लड़का या लड़की</h2>
+                            <div style="margin-bottom:40px;" class="row no-padding">
                                 <div class="col text-center no-padding">
                                     <label for="" class="radio radio-male radio-icon-check" ng-class="{'checked':userCtrl.user.gender=='M'}">
                                         <!-- <i class="font-xl color-blue icon ion-checkmark-circled"></i> -->
                                         <input type="radio" name="gender" value="M" ng-model="userCtrl.user.gender">
+                                      <div style="position:absolute;bottom:-60px;left:20px;text-align:left;font-weight:600;" class="font-xl color-balanced">
+                                        लड़का
+                                      </div>
                                     </label>
-                                    <div style="padding-left:40px;text-align:left;font-weight:600;" class="font-xl color-balanced">
-                                      BOY
-                                    </div>
                                 </div>
                                 <!-- <div class="radio-graphic-or font-md">or</div> -->
                                 <div class="col text-center no-padding">
                                     <label for="" class="radio radio-female radio-icon-check" ng-class="{'checked':userCtrl.user.gender=='F'}">
                                         <!-- <i class="font-xl color-blue icon ion-checkmark-circled"></i> -->
                                         <input type="radio" name="gender" value="F" ng-model="userCtrl.user.gender">
+                                      <div style="position:absolute;bottom:-60px;right:20px;text-align:right;font-weight:600;" class="font-xl color-balanced">
+                                        लड़की
+                                      </div>
                                     </label>
-                                    <div style="padding-right:40px;text-align:right;font-weight:600;" class="font-xl color-balanced">
-                                      GIRL
-                                    </div>
                                 </div>
                             </div>
                             <center>
@@ -137,10 +137,10 @@
                             <center>
                               <img height="140" ng-src="{{userCtrl.user.gender == 'M'?'img/assets/upperbody-boy.png':'img/assets/upperbody-girl.png'}}" alt="">
                             </center>
-                            <h1 style="margin-top:0px;" class="center">I am in class ...</h1>
+                            <h2 style="margin-top:0px;" class="center">आप कौन सी कक्षा मे हो?</h2>
                             <div class="radio-box-container-outer">
-                              <div class="radio-box-container-inner">
-                                <label style="line-height:120px;" class="margin-10 radio radio-box font-sxl bg-pink center color-balanced" ng-repeat="grade in [1,2,3]" ng-class="{'checked':userCtrl.user.grade == grade,'margin-x-70':$index == 0}">{{grade}}
+                              <div class="radio-box-container-inner clearfix">
+                                <label style="line-height:120px;" class="margin-10 radio radio-box radio-box-xl font-sxl bg-pink center color-balanced" ng-repeat="grade in [1,2,3]" ng-class="{'checked':userCtrl.user.grade == grade,'margin-x-70':$index == 0}">{{grade}}
                                   <input type="radio" name="grade" value="{{grade}}" ng-model="userCtrl.user.grade">
                                 </label>
                               </div>
