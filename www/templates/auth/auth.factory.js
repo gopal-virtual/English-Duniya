@@ -55,6 +55,7 @@
     Auth.getProfileId = getProfileId;
     Auth.getLocalProfile = getLocalProfile;
     Auth.autoLogin = autoLogin;
+    Auth.updateProfile = updateProfile;
 
     return Auth;
 
@@ -303,6 +304,9 @@
 
     function getLocalProfile() {
       return JSON.parse(localStorage.getItem('profile'));
+    }
+    function updateProfile(profile) {
+      localStorage.setItem('profile',JSON.stringify(profile));
     }
 
   }
