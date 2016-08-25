@@ -1142,7 +1142,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
     scope.$on('reloadMap',function(){
       log.debug("RELOADI");
       // game.destroy();
-      location.reload();
+      // location.reload();
     })
 
 

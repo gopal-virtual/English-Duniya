@@ -450,13 +450,16 @@
 
     function changeGrade(newGrade){
       $log.debug("here")
-      mapCtrl.dataFactory.changeGrade(newGrade);
-      $scope.settingsModal.hide();
       $ionicLoading.show({
         hideOnStateChange: true
       })
-      // location.reload()
-      $rootScope.$broadcast('reloadMap');
+      mapCtrl.dataFactory.changeGrade(newGrade).then(function(){
+        $scope.settingsModal.hide();
+        location.reload()
+
+      });
+      //
+      // $rootScope.$broadcast('reloadMap');
       // $state.go('map.navigate')
       // $state.reload()
     }

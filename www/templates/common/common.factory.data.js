@@ -842,7 +842,7 @@
        profile.grade = newGrade;
        Auth.updateProfile(profile);
 
-       data.createIfNotExistsLessonDB()
+       return data.createIfNotExistsLessonDB()
 
      }
 
