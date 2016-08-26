@@ -455,6 +455,7 @@
       })
       mapCtrl.dataFactory.changeGrade(newGrade).then(function(){
         $scope.settingsModal.hide();
+        localStorage.removeItem('currentPosition');
         location.reload()
 
       });
