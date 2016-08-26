@@ -66,6 +66,7 @@
       // addNewUser: addNewUser
       putUserifNotExist: putUserifNotExist,
       startReportSyncing: startReportSyncing,
+      changeGrade: changeGrade,
       demo_question: {
         "node": {
           "id": CONSTANT.QUESTION.DEMO,
@@ -504,7 +505,7 @@
 
             ))
           }
-        } 
+        }
         catch (err) {
           $log.debug("No instruction sound found"+err);
         }
@@ -835,6 +836,15 @@
     function queueUploadRecord(record){
       return Rest.all(record.url).post(record.data);
     }
+
+    function changeGrade(newGrade){
+       var profile = Auth.getLocalProfile();
+       profile.grade = newGrade;
+       Auth.updateProfile(profile);
+
+       return data.createIfNotExistsLessonDB()
+
+     }
 
   }
 

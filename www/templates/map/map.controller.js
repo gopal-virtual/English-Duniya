@@ -95,7 +95,8 @@
     var mapCtrl = this;
     var lessonList = CONSTANT.LOCK ? lessonLocked : lessons;
     // $state.current.data && lessonList.unshift($state.current.data.litmus);
-
+    mapCtrl.dataFactory = data;
+    mapCtrl.authFactory = Auth;
     mapCtrl.lessons = lessonList;
     // mapCtrl.userCtrl = $controller('userCtrl');
     // mapCtrl.resetNode = resetNode;
@@ -103,7 +104,7 @@
     mapCtrl.backdrop = false;
     mapCtrl.showScore = -1;
     mapCtrl.skillSet = skills;
-
+    mapCtrl.changeGrade = changeGrade;
     mapCtrl.animationExpand = {};
     mapCtrl.animationExpand['expand'] = expand;
     mapCtrl.animationExpand['shrink'] = shrink;
@@ -447,6 +448,21 @@
         })
     })
 
+    function changeGrade(newGrade){
+      $log.debug("here")
+      $ionicLoading.show({
+        hideOnStateChange: true
+      })
+      mapCtrl.dataFactory.changeGrade(newGrade).then(function(){
+        $scope.settingsModal.hide();
+        location.reload()
+
+      });
+      //
+      // $rootScope.$broadcast('reloadMap');
+      // $state.go('map.navigate')
+      // $state.reload()
+    }
 
   }
 })();
