@@ -1,0 +1,28 @@
+  .key {
+    display: inline-block;
+    background-color: #FCF8DB;
+    color: #1AB89A;
+    line-height: initial !important;
+    padding-top: 8px;
+    border-radius: 5px;
+    margin-left: 1px;
+    margin-right: 1px;
+    margin-bottom: 2px;
+    margin-top: 2px;
+    font-size: 24px;
+    font-weight: 800;
+    width: 300px;
+    @include xs-screen-height{
+      font-size: 16px;
+      padding-top: 4px;
+    }
+  }
+  .key:active {
+    background-color: rgb(167, 210, 237);
+    transform: scale(0.8);
+  }
+  .key-row {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+  }
