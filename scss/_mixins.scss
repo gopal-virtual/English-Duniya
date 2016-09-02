@@ -3,3 +3,9 @@
     @content;
   }
 }
+
+@mixin xs-screen-height{
+  @media (max-height: #{$xs-height}) {
+    @content;
+  }
+}
