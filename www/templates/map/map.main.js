@@ -943,7 +943,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                     log.debug("ActiveLesson",lessons[temp.activeLessonKey]);
                     scope.$emit('show_demo');
                     _this.init();
-                    // killUselessRegions(renderedRegion);
+                    killUselessRegions(renderedRegion);
                     game.kineticScrolling.start();
                     var lessonFromQuizStars = typeof(temp.lessonFromQuizKey)!="undefined"?lessons[temp.lessonFromQuizKey].stars:false;
                     var animateStarFlag = JSON.parse(localStorage.getItem("animateStarFlag"));
@@ -1112,7 +1112,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             // log.debug("groups.region.desert",groups.region.desert);
             // this.dragMap();
             // log.log("CAMERA",game.camera.y);
-            // this.optimize(game.camera,regionRange);
+            this.optimize(game.camera,regionRange);
 
 
         },
@@ -1128,7 +1128,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             // function interactiveAnimate(){
                 
             // }
-            // this.interactiveAnimate();
+            this.interactiveAnimate();
             // game.camera.y-= 4;
 
         }
