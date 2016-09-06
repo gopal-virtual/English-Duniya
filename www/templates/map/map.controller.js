@@ -360,7 +360,7 @@
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.settings' + CONSTANT.VIEW, {
       scope: $scope,
       animation: 'slide-in-up',
-      hardwareBackButtonClose: true
+      hardwareBackButtonClose: false
     }).then(function(settings) {
       $scope.settingsModal = settings;
     });
@@ -460,15 +460,20 @@
 
     function changeGrade(newGrade){
       $log.debug("here")
-      $ionicLoading.show({
-        hideOnStateChange: true
-      })
-      mapCtrl.dataFactory.changeGrade(newGrade).then(function(){
-        $scope.settingsModal.hide();
-        localStorage.removeItem('currentPosition');
-        location.reload()
+      if (newGrade != JSON.parse(localStorage.profile).grade) {
+        $log.debug("Grade has changed. Preparing for blast");
+        $ionicLoading.show({
+          hideOnStateChange: true
+        })
+        mapCtrl.dataFactory.changeGrade(newGrade).then(function(){
+          $scope.settingsModal.hide();
+          localStorage.removeItem('currentPosition');
+          location.reload()
 
-      });
+        });
+      }else{
+        $scope.settingsModal.hide();
+      }
       //
       // $rootScope.$broadcast('reloadMap');
       // $state.go('map.navigate')
