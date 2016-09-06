@@ -199,7 +199,6 @@
                       time : new Date()
                   }
               )
-
             $log.debug("Starts", node)
             var d = new Date();
             var promise;
@@ -290,6 +289,17 @@
       return true;
     }
     $scope.closeNodeMenu = function() {
+      analytics.log(
+          {
+              name : 'LESSON',
+              type : 'END',
+              id : $scope.selectedNode.node.id
+          },
+          {
+              time : new Date()
+          }
+      )
+      // $log.warn("SelectedNode",$scope.selectedNode.node.id);
       $scope.nodeMenu.hide().then(function() {
         mapCtrl.closeDemo();
       });
