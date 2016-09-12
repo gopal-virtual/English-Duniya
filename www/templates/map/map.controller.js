@@ -433,7 +433,7 @@
       $log.debug(profileData);
       User.profile.update(mapCtrl.User.getActiveProfileSync()._id,profileData).then(function(){
         $scope.settingsModal.hide();
-        // location.reload()
+        location.reload()
       });
       //
       // $rootScope.$broadcast('reloadMap');
