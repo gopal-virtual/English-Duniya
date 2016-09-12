@@ -268,6 +268,18 @@
       return true;
     };
     $scope.closeNodeMenu = function() {
+      analytics.log(
+          {
+              name : 'LESSON',
+              type : 'END',
+              id : $scope.selectedNode.node.id
+          },
+          {
+              time : new Date()
+          },
+        User.getActiveProfileSync()._id
+      );
+      // $log.warn("SelectedNode",$scope.selectedNode.node.id);
       $scope.nodeMenu.hide().then(function() {
         mapCtrl.closeDemo();
       });
@@ -327,7 +339,7 @@
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.settings' + CONSTANT.VIEW, {
       scope: $scope,
       animation: 'slide-in-up',
-      hardwareBackButtonClose: true
+      hardwareBackButtonClose: false
     }).then(function(settings) {
       $scope.settingsModal = settings;
     });
@@ -433,7 +445,7 @@
       $log.debug(profileData);
       User.profile.update(mapCtrl.User.getActiveProfileSync()._id,profileData).then(function(){
         $scope.settingsModal.hide();
-        // location.reload()
+        location.reload()
       });
       //
       // $rootScope.$broadcast('reloadMap');

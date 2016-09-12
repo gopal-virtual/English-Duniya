@@ -8,7 +8,7 @@
   function mainRoute($urlRouterProvider, $injector) {
     // anonymous function implemented to avoid digest loop
     $urlRouterProvider.otherwise(function ($injector) {
-        $injector.get('$state').go('map.navigate');
+        $injector.get('$state').go('user.personalise');
     });
   }
 })();

@@ -118,7 +118,7 @@
 
     function log(action, data, profile_id, user_id) {
 
-      $log.debug("here",action,data);
+      $log.debug("----------",action,data,profile_id,user_id);
 
       var post_param = {
         "verb": analytics.activity[action.name][action.type],
@@ -130,10 +130,12 @@
         "data": data
       };
       if(profile_id){
+        $log.debug("CLIENTUID",profile_id)
         post_param.client_uid = profile_id;
       }else{
         post_param.actor_object_id = user_id;
       }
+      $log.debug("Pusg=hing",post_param)
       queue.push('activity-log', post_param);
       // ionic.Platform.device().available &&
 

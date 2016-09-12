@@ -764,7 +764,17 @@
       if (quizCtrl.summary.stars >= 1) {
         $ionicLoading.show({
           hideOnStateChange: true
-        })
+        });
+        analytics.log(
+            {
+                name : 'LESSON',
+                type : 'END',
+                id : $scope.selectedNode.node.id
+            },
+            {
+                time : new Date()
+            }
+        )
         $state.go('map.navigate', {"activatedLesson" : $scope.selectedNode});
       } else {
         $scope.showNodeMenu();
