@@ -9,19 +9,16 @@
                 '$ionicLoading',
                 '$state',
                 '$stateParams',
-                'Rest',
                 '$log',
                 'CONSTANT',
                 '$timeout',
                 '$sce',
                 '$ionicPopup',
-                'data',
+                'content',
                 'mediaManager',
                 'demo',
-                'audio',
-                'ngAudio',
                 'analytics',
-                'Auth'
+                'User'
           ];
 
   /* @ngInject */
@@ -29,19 +26,16 @@
                 $ionicLoading,
                 $state,
                 $stateParams,
-                Rest,
                 $log,
                 CONSTANT,
                 $timeout,
                 $sce,
                 $ionicPopup,
-                data,
+                content,
                 mediaManager,
                 demoFactory,
-                audio,
-                ngAudio,
                 analytics,
-                Auth
+                User
                ) {
     var utils = {
       leaveLesson: leaveLesson,
@@ -118,15 +112,14 @@
     function getLesson(id, scope) {
       // $ionicLoading.show();
       var lesson = null;
-      $log.debug(id);
-      return data.getLesson(id).then(function(response) {
+      return content.getLesson(id).then(function(response) {
+
           lesson = response;
-          $log.debug("Lessonid",id,Auth.getProfileId());
-          return data.getLessonScore({'lessonId':id,'userId':Auth.getProfileId()});
+
+          return User.scores.getScoreOfLesson(id,User.getActiveProfileSync()._id);
         })
         .then(function(score){
-          lesson.score = score
-          $log.debug("CHeck this", lesson.score,lesson)
+          lesson.score = score;
           utils.setLocalLesson(JSON.stringify(lesson));
           return lesson;
           // $ionicLoading.hide();
@@ -134,7 +127,7 @@
         })
         .catch(function(error) {
           // $ionicLoading.hide();
-          $log.debug(error)
+
           $ionicPopup.alert({
             title: 'Sorry',
             template: 'You need to be online!'
@@ -185,25 +178,25 @@
 
     function playResource(resource, video, callback) {
       angular.element("#audioplayer")[0].pause();
-      $log.debug("PPPPPPPP")
+
       if (utils.resourceType(resource) == 'practice' && (utils.demoShown && [2, 3].indexOf(utils.demoFactory.getStep()) >= 0)) {
         return;
       }
 
       if (utils.resourceType(resource) == 'video' && (utils.demoShown && [4].indexOf(utils.demoFactory.getStep()) >= 0)) {
-        $log.debug("Stopped")
+
 
         return;
       }
 
       // to do
-      $log.debug(resource, "Resource", utils.resourceType(resource))
+
       $ionicLoading.show({
         // noBackdrop: false
         hideOnStateChange: true
       });
       if (utils.resourceType(resource) == 'assessment') {
-        data.downloadAssessment(resource)
+        content.downloadAssessment(resource)
           .then(function() {
             $timeout(function() {
               $stateParams.type != 'assessment' &&
@@ -215,7 +208,9 @@
                   },
                   {
                       time : new Date()
-                  }
+                  },
+                User.getActiveProfileSync()._id
+
               ) &&
                 $state.go('quiz.questions', {
                   id: resource.node.id,
@@ -226,13 +221,11 @@
             });
           })
           .catch(function(e) {
-            $log.debug("Error playing resource", e)
+
           })
 
       } else if (utils.resourceType(resource) == 'practice') {
-        $log.debug("PLayed")
-        data.downloadAssessment(resource).then(function() {
-            $log.debug("No errored", $state.current)
+        content.downloadAssessment(resource).then(function() {
             $timeout(function() {
               !($stateParams.type == 'practice' && $state.current.name == 'quiz.questions') &&
               analytics.log(
@@ -243,7 +236,9 @@
                   },
                   {
                       time : new Date()
-                  }
+                  },
+                User.getActiveProfileSync()._id
+
               ) &&
                 $state.go('quiz.questions', {
                   id: resource.node.id,
@@ -258,18 +253,16 @@
                 template: "No internet conection found"
               }).then(function() {
                 if (callback) {
-                  $log.debug(callback)
+
                   callback();
                 }
-              })
-              // $state.go('map.navigate');
-            $log.debug("Error playing resource", e)
+              });
           })
           .finally(function() {
             $ionicLoading.hide();
           })
       } else if (utils.resourceType(resource) == 'video') {
-        data.downloadVideo(resource).then(function() {
+        content.downloadVideo(resource).then(function() {
             mediaManager.getPath(resource.node.type.path).then(function(path) {
                 $timeout(function() {
                   !$state.is('content.video') &&
@@ -281,7 +274,9 @@
                       },
                       {
                           time : new Date()
-                      }
+                      },
+                    User.getActiveProfileSync()._id
+
                   ) &&
                     $state.go('content.video', {
                       video: {
@@ -297,9 +292,7 @@
                   }
                   utils.demoFactory.getStep() != 5 && utils.demoFactory.setStep(3);
                 });
-              })
-              // utils.config.sources[0].src = utils.getSrc(resource.node.type.path);
-
+              });
           })
           .catch(function(e) {
             $ionicPopup.alert({
@@ -307,12 +300,10 @@
                 template: "No internet conection found"
               }).then(function() {
                 if (callback) {
-                  $log.debug(callback)
+
                   callback();
                 }
-              })
-              // $state.go('map.navigate');
-            $log.debug("Error playing resource", e)
+              });
           })
           .finally(function() {
             $ionicLoading.hide();
@@ -329,12 +320,9 @@
     }
 
     function playDemoAudio(node) {
-      $log.debug("Playing audio init",utils.demoShown)
-      if (utils.demoShown) {
-        $log.debug("Playing audio init 1")
 
+      if (utils.demoShown) {
         if (utils.demoFactory.getStep() == 2) {
-          $log.debug("Playing audio init 2")
           angular.element("#audioplayer")[0].pause();
           angular.element("#audioSource")[0].src = 'sound/demo-2.mp3';
           angular.element("#audioplayer")[0].load();
@@ -344,24 +332,18 @@
           angular.element("#audioSource")[0].src = 'sound/demo-4.mp3';
           angular.element("#audioplayer")[0].load();
           angular.element("#audioplayer")[0].play();
-          $log.debug("Playing audio init 4")
-
         } else if (node.meta && node.meta.parsed_sound) {
           angular.element("#audioSource")[0].src = node.meta.parsed_sound;
           angular.element("#audioplayer")[0].load();
           angular.element("#audioplayer")[0].play();
         }
-
       } else {
         if (node.meta && node.meta.parsed_sound) {
-          $log.debug(node.meta.intros.parsed_sound);
           angular.element("#audioSource")[0].src = node.meta.parsed_sound;
           angular.element("#audioplayer")[0].load();
           angular.element("#audioplayer")[0].play();
         }
       }
     }
-
-
   }
 })();

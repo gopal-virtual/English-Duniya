@@ -24,28 +24,24 @@
     'lessons',
     'scores',
     'skills',
-    'extendLesson',
-    'Rest',
     'CONSTANT',
-    '$sce',
     '$ionicLoading',
     '$timeout',
-    '$ionicBackdrop',
     'orientation',
     'Auth',
     'lessonutils',
     'audio',
-    'data',
+    'User',
     'ml',
     'lessonLocked',
     '$ionicPlatform',
     'demo',
-    '$controller',
     'settings',
     'mediaManager',
     '$stateParams',
     'analytics',
-    '$q'
+    '$q',
+    'queue',
 ];
 
   function mapController(
@@ -58,35 +54,30 @@
         lessons,
         scores,
         skills,
-        extendLesson,
-        Rest,
         CONSTANT,
-        $sce,
         $ionicLoading,
         $timeout,
-        $ionicBackdrop,
         orientation,
         Auth,
         lessonutils,
         audio,
-        data,
+        User,
         ml,
         lessonLocked,
         $ionicPlatform,
         demoFactory,
-        $controller,
         settings,
         mediaManager,
         $stateParams,
         analytics,
-        $q
+        $q,
+        queue
     ) {
 
-
     $scope.audio = audio;
-    $log.debug('settings', settings);
+    ;
     $scope.settings = settings;
-    var temp = JSON.parse(localStorage.getItem('user_details'));
+    var temp = JSON.parse(localStorage.getItem('profile')).data.profile;
     temp.name = temp.first_name + ' ' + temp.last_name;
     $scope.settings.user = temp
     $scope.orientation = orientation;
@@ -95,8 +86,9 @@
     var mapCtrl = this;
     var lessonList = CONSTANT.LOCK ? lessonLocked : lessons;
     // $state.current.data && lessonList.unshift($state.current.data.litmus);
-    mapCtrl.dataFactory = data;
+    mapCtrl.User = User;
     mapCtrl.authFactory = Auth;
+    mapCtrl.queue = queue;
     mapCtrl.lessons = lessonList;
     // mapCtrl.userCtrl = $controller('userCtrl');
     // mapCtrl.resetNode = resetNode;
@@ -104,7 +96,7 @@
     mapCtrl.backdrop = false;
     mapCtrl.showScore = -1;
     mapCtrl.skillSet = skills;
-    mapCtrl.changeGrade = changeGrade;
+    mapCtrl.updateProfile = updateProfile;
     mapCtrl.animationExpand = {};
     mapCtrl.animationExpand['expand'] = expand;
     mapCtrl.animationExpand['shrink'] = shrink;
@@ -114,9 +106,9 @@
     mapCtrl.animateStar = {
       "activeFlag": -1,
       // "resetFlag" : -1
-    }
+    };
     mapCtrl.animateStar["resetColor"] = resetColor;
-    // $log.debug("selectedNode",selectedNode);
+    // ;
     mapCtrl.setAnimateStarFlag = setAnimateStarFlag;
 
     /**
@@ -165,11 +157,10 @@
       event.preventDefault();
     }, 100);
 
-    $log.debug("Lessons in mapCtrl", mapCtrl.lessons)
+
     $scope.$on('removeLoader',function() {
       $ionicLoading.hide();
-      $log.info("Loader Hidden")
-    })
+    });
 
     $scope.$on('openNode', function(event, node, currentPos) {
       // audio.stop('demo-1')
@@ -186,10 +177,12 @@
         $ionicLoading.show({
           // hideOnStateChange: true
         });
+
         $scope.lessonutils.getLesson(node.id, $scope).then(
 
           function(response) {
-              analytics.log(
+
+            analytics.log(
                   {
                       name : 'LESSON',
                       type : 'START',
@@ -197,56 +190,43 @@
                   },
                   {
                       time : new Date()
-                  }
-              )
+                  },
+                  User.getActiveProfileSync()._id
+              );
 
-            $log.debug("Starts", node)
-            var d = new Date();
             var promise;
             if(node.meta.intros && node.meta.intros.sound  && node.meta.intros.sound[0]){
-              $log.debug("has sound")
               promise = mediaManager.downloadIfNotExists(CONSTANT.RESOURCE_SERVER + node.meta.intros.sound[0])
             } else {
               promise = $q.resolve();
-              $log.debug("not has sound")
             }
 
             promise.then(function(s) {
 
-            $log.debug("Resolves", new Date() - d, s)
-            node.meta.parsed_sound = s;
-            $log.debug("Download intro here",node)
-            audio.setVolume('background', 0.1);
+              audio.setVolume('background', 0.1);
             if(currentPos)
             {
-              $log.debug("CurrentPos")
+
               mapCtrl.animationExpand.expand(currentPos,node);
               $scope.selectedNode = response;
             }else{
-              $log.debug("Not CurrentPos")
-
               $scope.openNodeMenu(node);
               $scope.selectedNode = response;
             }
-              // $ionicLoading.hide()
             }).catch(function(error) {
+
               $ionicPopup.alert({
                 title: 'Please try again',
                 template: "No internet conection found"
-              })
-              $log.debug("Error opening node", error)
-              // $ionicLoading.hide()
-            })
-
-            // $log.debug("NODENODE ",$scope.selectedNode.node.tag);
+              });
+            });
           }
         );
       }
     })
 
-    $log.info("MapControl Skill Set", mapCtrl.skillSet.length);
+    ;
     $scope.$on('animateStar', function() {
-      $log.info("Animate Star Event detected,");
       for (var i = 0; i < mapCtrl.skillSet.length; i++) {
         $log.info("Loop", i, "\nskillSetTag : ", mapCtrl.skillSet[i].title.toLowerCase(), "\nactivatedLessonTag : ", $stateParams.activatedLesson.node.tag.toLowerCase())
         if (mapCtrl.skillSet[i].title.toLowerCase() == $stateParams.activatedLesson.node.tag.toLowerCase()) {
@@ -255,7 +235,7 @@
           break;
         }
       }
-    })
+    });
 
 
     /**
@@ -270,7 +250,6 @@
     */
 
     function resetColor(index) {
-      $log.debug("Resetting Color Flag ...", index);
       if ($stateParams.activatedLesson && mapCtrl.skillSet[index].title.toLowerCase() == $stateParams.activatedLesson.node.tag.toLowerCase()) {
         mapCtrl.animateStar.activeFlag = -2;
         return true;
@@ -281,20 +260,19 @@
 
 
     $scope.openNodeMenu = function(node) {
-      $log.debug("Opening node menu")
+
       lessonutils.playDemoAudio(node);
 
       $scope.nodeMenu.show();
       $ionicLoading.hide();
-      $log.debug("Force closing loading");
       return true;
-    }
+    };
     $scope.closeNodeMenu = function() {
       $scope.nodeMenu.hide().then(function() {
         mapCtrl.closeDemo();
       });
       return true;
-    }
+    };
 
 
     /**
@@ -311,9 +289,9 @@
       $scope.demo.show().then(function() {
         $ionicLoading.hide();
       });
-      $log.debug("Playing audio")
+
       return true;
-    }
+    };
 
     /**
     * @ngdoc method
@@ -326,10 +304,9 @@
     */
 
     mapCtrl.closeDemo = function() {
-      $log.debug('close the demo');
       $scope.demo.hide();
       return true;
-    }
+    };
 
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal-rope' + CONSTANT.VIEW, {
       scope: $scope,
@@ -387,20 +364,18 @@
     function expand(currentPos,node) {
       // alert(JSON.stringify(e));
       mapCtrl.showResult = false;
-      $log.debug("X coords: " + currentPos.x + ", Y coords: " + currentPos.y);
       // $mapCtrl.animationExpand.lessonType = currentPos.lessonType
       mapCtrl.animationExpand.containerStyle = {
         "margin-left": currentPos.x - 30 + "px",
         "margin-top": currentPos.y - 30 + "px",
         "opacity": 1
       }
-      $log.debug(mapCtrl.animationExpand.containerStyle);
 
       $timeout(function() {
         mapCtrl.animationExpand.iconTranslateOffset = {
           "transform": "translate(" + ((screen.width / 2) - currentPos.x) + "px," + (40 - currentPos.y) + "px) scale3d(2,2,2)",
           "transition": "transform 0.5s ease-in-out"
-        }
+        };
         mapCtrl.animationExpand.expandContainer = 1;
       }, 50).then(function() {
         $timeout(function() {
@@ -416,7 +391,7 @@
       mapCtrl.animationExpand.iconTranslateOffset = {
         "transform": "translate(0px,0px) scale3d(1,1,1)",
         "transition": "transform 0.4s ease-in-out"
-      }
+      };
       mapCtrl.animationExpand.expandContainer = 0;
 
       $timeout(function() {
@@ -429,7 +404,9 @@
     }
     $scope.$on('show_demo', function() {
       // $ionicLoading.show();
+      $log.debug("showDemoEvent");
       demoFactory.show().then(function(result) {
+        $log.debug("result demo",result)
           mapCtrl.demoShown = result;
           if (result && demoFactory.getStep() == '1') {
             $timeout(function() {
@@ -446,17 +423,17 @@
         .finally(function() {
           //   $ionicLoading.hide();
         })
-    })
+    });
 
-    function changeGrade(newGrade){
-      $log.debug("here")
+    function updateProfile(profileData){
+
       $ionicLoading.show({
         hideOnStateChange: true
-      })
-      mapCtrl.dataFactory.changeGrade(newGrade).then(function(){
+      });
+      $log.debug(profileData);
+      User.profile.update(mapCtrl.User.getActiveProfileSync()._id,profileData).then(function(){
         $scope.settingsModal.hide();
-        location.reload()
-
+        // location.reload()
       });
       //
       // $rootScope.$broadcast('reloadMap');

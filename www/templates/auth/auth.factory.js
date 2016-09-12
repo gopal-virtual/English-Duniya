@@ -6,23 +6,21 @@
   Auth.$inject = [
             'Restangular',
             'CONSTANT',
-            '$cookies',
             '$log',
-            '$window',
             'Rest',
             '$q',
-            '$state'
+            '$state',
+            'device'
     ];
 
   function Auth(
             Restangular,
             CONSTANT,
-            $cookies,
             $log,
-            $window,
             Rest,
             $q,
-            $state
+            $state,
+            device
         ) {
     var rest_auth = Restangular.withConfig(function(RestangularConfigurer) {
       RestangularConfigurer.setBaseUrl(CONSTANT.BACKEND_SERVICE_DOMAIN + '/rest-auth');
@@ -56,16 +54,41 @@
     Auth.getLocalProfile = getLocalProfile;
     Auth.autoLogin = autoLogin;
     Auth.updateProfile = updateProfile;
+    Auth.loginIfNotAuthorised = loginIfNotAuthorised;
 
     return Auth;
 
     function autoLogin(user_credentials){
-        return rest_auth.all('no-login')
+
+      return rest_auth.all('no-login')
         .post($.param(user_credentials))
         .then(function(response){
-            localStorage.setItem('Authorization', response.key || response.token);
-            return $q.resolve(response);
+          localStorage.setItem('Authorization', response.key || response.token);
+          return Auth.getUser()
         })
+        .then(function(response){
+          return $q.resolve(response);
+        })
+        // return dataFactory.queuePush({
+        //   'type' : 'login',
+        //   'method': 'post',
+        //   'body' : user_credentials
+        // });
+
+    }
+
+    function loginIfNotAuthorised(){
+      var user_credentials = {
+          username: device.uuid,
+          password1: device.uuid,
+          password2: device.uuid,
+          device_id: device.uuid
+        };
+      if(Auth.isAuthorised()){
+        return $q.resolve()
+      }else{
+        return Auth.autoLogin(user_credentials);
+      }
     }
     function login(url, user_credentials) {
       var d = $q.defer();
@@ -74,7 +97,7 @@
         localStorage.setItem('Authorization', response.key || response.token);
         d.resolve(response);
       }, function(response) {
-        $log.debug(response.data);
+        ;
         if (response.data && response.data.email) {
           d.reject(response.data.email[0]);
       } else if (response.data && response.data.phone_number) {
@@ -89,7 +112,7 @@
     }
 
     function logout(success, failure) {
-      $log.debug("in logout");
+      ;
       rest_auth.all('logout').post().then(function(response) {
         if (localStorage.getItem('authProvider') == 'google') {
           window.plugins.googleplus.disconnect();
@@ -114,7 +137,7 @@
     }
 
     function cleanLocalStorage() {
-      $log.debug("Cleaing")
+
         localStorage.clear();
     }
 
@@ -125,7 +148,7 @@
         d.resolve(response)
       }, function(error) {
         d.reject(error.data.details || 'Please try again.');
-      })
+      });
       return d.promise;
     }
 
@@ -190,7 +213,7 @@
       rest_auth.all('password/reset').post($.param(reset_password_credentials)).then(function(response) {
         d.resolve(response);
       }, function(error) {
-        $log.debug(error)
+
         d.reject(error.data.email || error.data.phone_number)
       })
       return d.promise;

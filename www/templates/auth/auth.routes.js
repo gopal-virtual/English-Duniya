@@ -1,4 +1,4 @@
-(function() {
+(function () {
   'use strict';
 
   angular
@@ -7,70 +7,81 @@
 
   function authRoute($stateProvider, $urlRouterProvider, CONSTANT) {
     $stateProvider
-    .state('auth', {
+      .state('auth', {
         url: '/auth',
         abstract: true,
         template: "<ion-nav-view name='state-auth'></ion-nav-view>",
       })
+
       .state('auth.autologin', {
-          url : '/autologin',
-          views : {
-              'state-auth' : {
-                  templateUrl : CONSTANT.PATH.COMMON + '/common.loader' + CONSTANT.VIEW,
-              }
-          },
-          onEnter : ['Auth','$state','$log','data','demo','$ionicPopup',function(Auth, $state, $log, data, demo,$ionicPopup){
-              $log.debug('Auth : autologin : device :',ionic.Platform.device());
-              var device = ionic.Platform.device();
-              // var device = {uuid : parseInt(Math.random(1,9)*10000000).toString()} || ionic.Platform.device();
-              var user_credentials = {
-                  username : device.uuid,
-                  password1 : device.uuid,
-                  password2 : device.uuid,
-                  device_id : device.uuid
-              };
-              $log.debug('Auth : autologin : user_credentials', user_credentials);
-              Auth.autoLogin(user_credentials)
-              .then(function() {
-                return Auth.getUser();
-              })
-              .then(function() {
-                return Auth.getProfile();
-              })
-              .then(function(){
-                return data.putUserifNotExist({
-                  'userId': Auth.getProfileId()
-                })
-              })
-              .then(function(){
-                return data.createIfNotExistsLessonDB()
-              })
-              .then(function(){
-                return demo.show()
-              })
-              .then(function(show){
-                $log.debug("demo",show)
-                if(!show){
-                  !localStorage.getItem('demo_flag') && localStorage.setItem('demo_flag',5);
-                }else{
-                  !localStorage.getItem('demo_flag') && localStorage.setItem('demo_flag',1);
-                }
-                $state.go('map.navigate', {});
-              })
-              .catch(function(error) {
-                $log.debug("Found error",error)
-                if(error.message === 'no_profile'){
-                  $state.go('user.personalise')
-                }
-                else{
-                  $ionicPopup.alert({
-                    title: "Could not login",
-                    template: error || "Please try again"
-                  });
-                //   authCtrl.audio.play('wrong');
-                }
-              })
-          }]
+        url: '/autologin',
+        views: {
+          'state-auth': {
+            templateUrl: CONSTANT.PATH.COMMON + '/common.loader' + CONSTANT.VIEW,
+          }
+        },
+        onEnter: ['Auth', '$state', '$log', 'User', 'device', function (Auth, $state, $log, User, device) {
+          // var user_credentials = {
+          //   username: device.uuid,
+          //   password1: device.uuid,
+          //   password2: device.uuid,
+          //   device_id: device.uuid
+          // };
+
+          // Auth.autoLogin(user_credentials)
+          // .then(function() {
+          //   return Auth.getUser();
+          // })
+          // .then(function() {
+          //   return Auth.getProfile();
+          // })
+          // .then(function(){
+          //   return
+          // })
+          $log.debug("here")
+          User.profile.getAll.then(function(response){
+
+            if(response.length){
+              $log.debug("profiles found")
+              $state.go('user.personalise')
+            }else{
+              $log.debug("no profiles found")
+              $state.go('user.personalise')
+            }
+          });
+
+          // dataFactory.putUserifNotExist({
+          //   'userId': Auth.getProfileId()
+          // })
+          //   .then(function () {
+          //     return dataFactory.createLessonDBIfNotExists()
+          //   })
+          //   .then(function () {
+          //     return demo.show()
+          //   })
+          //   .then(function (show) {
+          //
+          //     if (!show) {
+          //       !localStorage.getItem('demo_flag') && localStorage.setItem('demo_flag', 5);
+          //     } else {
+          //       !localStorage.getItem('demo_flag') && localStorage.setItem('demo_flag', 1);
+          //     }
+          //     $state.go('map.navigate', {});
+          //   })
+          //   .catch(function (error) {
+          //
+          //     if (error.message === 'no_profile') {
+          //       $state.go('user.personalise')
+          //     }
+          //     else {
+          //       $ionicPopup.alert({
+          //         title: "Could not login",
+          //         template: error || "Please try again"
+          //       });
+          //       //   authCtrl.audio.play('wrong');
+          //     }
+          //   })
+        }]
       })
       // intro is now the main screen
       // .state('auth.main', {
@@ -86,7 +97,7 @@
         nativeTransitions: {
           "type": "slide",
           "direction": "left",
-          "duration" :  300
+          "duration": 300
         },
         views: {
           'state-auth': {
@@ -101,7 +112,7 @@
         nativeTransitions: {
           "type": "slide",
           "direction": "left",
-          "duration" :  300
+          "duration": 300
         },
         views: {
           'state-auth': {
@@ -116,7 +127,7 @@
         nativeTransitions: {
           "type": "slide",
           "direction": "up",
-          "duration" :  400
+          "duration": 400
         },
         views: {
           'state-auth': {
@@ -131,7 +142,7 @@
         nativeTransitions: {
           "type": "slide",
           "direction": "up",
-          "duration" :  400
+          "duration": 400
         },
         views: {
           'state-auth': {
@@ -146,7 +157,7 @@
         nativeTransitions: {
           "type": "slide",
           "direction": "up",
-          "duration" :  400
+          "duration": 400
         },
         views: {
           'state-auth': {
@@ -156,12 +167,12 @@
           }
         }
       })
-      .state('auth.verify',{
-        abstract : true,
-        url : '/verify',
-        views : {
-          "state-auth" : {
-            template : "<ion-nav-view name='state-auth-verify'></ion-nav-view>"
+      .state('auth.verify', {
+        abstract: true,
+        url: '/verify',
+        views: {
+          "state-auth": {
+            template: "<ion-nav-view name='state-auth-verify'></ion-nav-view>"
           }
         }
       })
@@ -170,7 +181,7 @@
         nativeTransitions: {
           "type": "slide",
           "direction": "left",
-          "duration" :  400
+          "duration": 400
         },
         views: {
           'state-auth-verify': {

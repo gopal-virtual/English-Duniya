@@ -1,28 +1,43 @@
-(function() {
+(function () {
   'use strict';
 
   angular
     .module('common')
     .factory('data', data);
 
-  data.$inject = ['pouchDB', '$http', '$log', 'Rest', 'CONSTANT', '$q', '$ImageCacheFactory', 'mediaManager', '$interval', 'network', 'Auth', 'widgetParser',];
+  data.$inject = [
+    'pouchDB',
+    '$http',
+    '$log',
+    'Rest',
+    'CONSTANT',
+    '$q',
+    'mediaManager',
+    '$interval',
+    'network',
+    'User',
+    'widgetParser'
+  ];
 
   /* @ngInject */
-  function data(pouchDB, $http, $log, Rest, CONSTANT, $q, $ImageCacheFactory, mediaManager, $interval, network, Auth, widgetParser) {
-    // var diagnosisQuestionsDB = pouchDB('diagnosisQuestions');
-    // var kmapsDB = pouchDB('kmaps');
-    // var inputDB = pouchDB('http://127.0.0.1:5984/lessonDB');
-    // var outputDB = pouchDB('turtles.db', {adapter: 'websql'});
-
-    // replicate
-    // inputDB.replicate.to(outputDB);
+  function data(pouchDB,
+                $http,
+                $log,
+                Rest,
+                CONSTANT,
+                $q,
+                mediaManager,
+                $interval,
+                network,
+                User,
+                widgetParser) {
 
     var diagLitmusMappingDB = pouchDB('diagLitmusMapping');
     var kmapsJSONDB = pouchDB('kmapsJSON');
     var dqJSONDB = pouchDB('dqJSON');
     var lessonDB = null;
-    if (Auth.hasProfile()) {
-      lessonDB = pouchDB('lessonsGrade' + Auth.getLocalProfile().grade, {
+    if (User.getActiveProfileSync()) {
+      lessonDB = pouchDB('lessonsGrade' + User.getActiveProfileSync().data.profile.grade, {
         adapter: 'websql'
       });
     }
@@ -31,113 +46,58 @@
     var resourceDB = pouchDB('resourceDB');
     var reportsDB = pouchDB('reportsDB');
     var data = {
-      // createDiagnosisQuestionDB: createDiagnosisQuestionDB(),
-      // createKmapsDB: createKmapsDB(),
-
       createDiagLitmusMappingDB: createDiagLitmusMappingDB(),
       createKmapsJSON: createKmapsJSON(),
       createDiagQJSON: createDiagQJSON(),
-      createIfNotExistsLessonDB: createIfNotExistsLessonDB,
-      // getDiagnosisQuestionById: getDiagnosisQuestionById,
-      // getDiagnosisQuestionByLevelNSkill: getDiagnosisQuestionByLevelNSkill,
       getDiagnosisLitmusMapping: getDiagnosisLitmusMapping,
       getTestParams: getTestParams,
-      // getFromKmapsBySr: getFromKmapsBySr,
       getKmapsJSON: getKmapsJSON,
       getDQJSON: getDQJSON,
-      // diagnosisQuestionsDB: diagnosisQuestionsDB,
-      // kmapsDB: kmapsDB,
-      // diagLitmusMappingDB: diagLitmusMappingDB
       getQuizScore: getQuizScore,
       getLessonScore: getLessonScore,
       getLessonsScore: getLessonsScore,
-      getLessonsList: getLessonsList,
-      getAssessment: getAssessment,
       getSkills: getSkills,
       saveReport: saveReport,
-      saveAttempts: saveAttempts,
-      // getResults : getResults, // for results in hud screen
-      downloadAssessment: downloadAssessment,
-      downloadVideo: downloadVideo,
-      getLesson: getLesson,
-      updateLesson: updateLesson,
       updateScore: updateScore,
       updateSkills: updateSkills,
-      // addNewUser: addNewUser
       putUserifNotExist: putUserifNotExist,
-      startReportSyncing: startReportSyncing,
       changeGrade: changeGrade,
-      demo_question: {
-        "node": {
-          "id": CONSTANT.QUESTION.DEMO,
-          "content_type_name": "json question",
-          "type": {
-            "id": CONSTANT.QUESTION.DEMO,
-            "created": "2016-07-08T14:44:19.871339Z",
-            "updated": "2016-07-08T14:44:19.871370Z",
-            "microstandard": "ELL.1.RE.V.9.MOB",
-            "is_critical_thinking": false,
-            "level": 1,
-            "answer": [2],
-            "score": 10,
-            "content": {
-              "is_multiple": false,
-              "widgets": {
-                "videos": {},
-                "sounds": {},
-                "images": {
-                  "1": "/media/ell/images/dog_O5P4I8.png",
-                  "2": "/media/ell/images/person_GLUMUY.png",
-                  "3": "/media/ell/images/place_KJMRCN.png",
-                  "4": "/media/ell/images/animal_2W0HQG.png",
-                  "5": "/media/ell/images/thing_DV4JY6.png"
-                }
-              },
-              "instruction": null,
-              "options": [{
-                "option": "person [[img id=2]]",
-                "key": 1
-              }, {
-                "option": "place [[img id=3]]",
-                "key": 3
-              }, {
-                "option": "animal [[img id=4]]",
-                "key": 2
-              }, {
-                "option": "thing [[img id=5]]",
-                "key": 4
-              }],
-              "tags": [],
-              "hints": "[]"
-            },
-            "type": "choicequestion"
-          },
-          "tag": null,
-          "created": "2016-07-08T14:44:19.881208Z",
-          "updated": "2016-07-08T14:44:19.881242Z",
-          "title": "dog [[img id=1]]",
-          "description": "",
-          "object_id": "e3ea1ecb-997a-4d2f-9a45-378fa3201e57",
-          "status": "PUBLISHED",
-          "lft": 936,
-          "rght": 937,
-          "tree_id": 1,
-          "level": 3,
-          "parent": "29f41d84-fda3-4964-94be-25a6800d93a3",
-          "content_type": 21,
-          "account": "150c906a-c3ef-4e2b-a19d-c77fdabf2015"
+      skills: [
+        {
+          "id": "fd6044b3-aa49-4599-b1b9-e66d3cb03bce",
+          "title": "Vocabulary",
+          "lesson_scores": 0,
+          "question_scores": 0
         },
-        "objects": []
-      },
-
-      queuePush : queuePush,
+        {
+          "id": "18059dd6-a37d-44f0-9e92-efca7ec31d3b",
+          "title": "Reading",
+          "lesson_scores": 0,
+          "question_scores": 0
+        },
+        {
+          "id": "d82f6ac3-6401-49f5-b787-642b041cfa9e",
+          "title": "Grammar",
+          "lesson_scores": 0,
+          "question_scores": 0
+        },
+        {
+          "id": "f0f0d75b-8671-49db-b2d0-5b0ba6135be8",
+          "title": "Listening",
+          "lesson_scores": 0,
+          "question_scores": 0
+        }
+      ],
+      queuePush: queuePush,
       queueSync: queueSync,
-      queueUploadRecord: queueUploadRecord
+      queueUploadRecord: queueUploadRecord,
+      local: {
+        getProfiles: getLocalProfiles,
+        createProfile: createLocalProfile
+      }
     };
 
-
     return data;
-
 
 
     function getTestParams(realTimeGrade) {
@@ -205,47 +165,51 @@
       }];
     }
 
-
-
     function createDiagLitmusMappingDB() {
-      var promise = $http.get(CONSTANT.PATH.DATA + '/diagnosticLitmusMapping.json').success(function(data) {
+      var promise = $http.get(CONSTANT.PATH.DATA + '/diagnosticLitmusMapping.json').success(function (data) {
         return diagLitmusMappingDB.put({
-            "_id": "diagnostic_litmus_mapping",
-            "diagnostic_litmus_mapping": data[0]
+          "_id": "diagnostic_litmus_mapping",
+          "diagnostic_litmus_mapping": data[0]
+        })
+          .then(function () {
           })
-          .then(function() {})
-          .catch(function(err) {});
+          .catch(function (err) {
+          });
       });
       return promise;
-    };
+    }
 
     function createKmapsJSON() {
-      var promise = $http.get(CONSTANT.PATH.DATA + '/kmapsJSON.json').success(function(data) {
+      var promise = $http.get(CONSTANT.PATH.DATA + '/kmapsJSON.json').success(function (data) {
         return kmapsJSONDB.put({
-            "_id": "kmapsJSON",
-            "kmapsJSON": data[0]
+          "_id": "kmapsJSON",
+          "kmapsJSON": data[0]
+        })
+          .then(function () {
           })
-          .then(function() {})
-          .catch(function(err) {});
+          .catch(function (err) {
+          });
       });
       return promise;
-    };
+    }
 
     function createDiagQJSON() {
-      var promise = $http.get(CONSTANT.PATH.DATA + '/diagnosisQJSON.json').success(function(data) {
+      var promise = $http.get(CONSTANT.PATH.DATA + '/diagnosisQJSON.json').success(function (data) {
         return dqJSONDB.put({
-            "_id": "dqJSON",
-            "dqJSON": data[0]
+          "_id": "dqJSON",
+          "dqJSON": data[0]
+        })
+          .then(function () {
           })
-          .then(function() {})
-          .catch(function(err) {});
+          .catch(function (err) {
+          });
       });
       return promise;
     }
 
     function getDQJSON() {
       var result = dqJSONDB.get("dqJSON")
-        .then(function(doc) {
+        .then(function (doc) {
           return doc.dqJSON;
         })
       return result;
@@ -253,7 +217,7 @@
 
     function getKmapsJSON() {
       var result = kmapsJSONDB.get("kmapsJSON")
-        .then(function(doc) {
+        .then(function (doc) {
           return doc.kmapsJSON;
         })
       return result;
@@ -261,51 +225,34 @@
 
     function getDiagnosisLitmusMapping() {
       var result = diagLitmusMappingDB.get("diagnostic_litmus_mapping")
-        .then(function(doc) {
+        .then(function (doc) {
           return doc.diagnostic_litmus_mapping;
-        })
+        });
       return result;
     }
 
-    function createIfNotExistsLessonDB() {
-      // var ddoc = {
-      //   _id: '_design/index',
-      //   views: {
-      //     by_grade: {
-      //       map: function(doc) {
-      //         emit(doc.lesson.node.type.grade);
-      //       }.toString()
-      //     }
-      //   }
-      // };
-      lessonDB = pouchDB('lessonsGrade' + Auth.getLocalProfile().grade, {
+    function createLessonDBIfNotExists() {
+
+      lessonDB = pouchDB('lessonsGrade' + User.getActiveProfileSync().data.profile.grade, {
         adapter: 'websql'
       });
-      $log.debug("in lessons make db ")
-      return lessonDB.get('_local/preloaded').then(function(doc) {
-        $log.debug("lessons db found ")
 
-      }).catch(function(err) {
+
+
+
+      return lessonDB.get('_local/preloaded').then(function (doc) {
+      }).catch(function (err) {
         if (err.name !== 'not_found') {
           throw err;
         }
-        var filename = CONSTANT.PATH.DATA + '/lessonsGrade' + Auth.getLocalProfile().grade + '.db';
-        return lessonDB.load(filename).then(function() {
-            return lessonDB.put({
-              _id: '_local/preloaded'
-            });
-          })
-          .then(function() {
-            $log.debug("lessons db created")
-              // return lessonDB.put(ddoc).then(function() {
-              // }).catch(function(err) {
-              //
-              // });
+        return lessonDB.load(CONSTANT.PATH.DATA + '/lessonsGrade' + User.getActiveProfileSync().data.profile.grade + '.db').then(function () {
+          return lessonDB.put({
+            _id: '_local/preloaded'
           });
+        })
+
       })
-
     }
-
 
     function putUserifNotExist(details) {
       var records = {
@@ -313,22 +260,19 @@
       };
       var d = $q.defer();
       Rest.one('profiles', JSON.parse(localStorage.user_details).profile).all('scores').all('skills').getList()
-        .then(function(skills) {
-          $log.debug("skills", skills.plain())
+        .then(function (skills) {
           records.skills = skills.plain();
           return data.getLessonsScore();
         })
-        .then(function(scores) {
+        .then(function (scores) {
           records.scores = {};
-          $log.debug("scores", scores)
-          angular.forEach(scores, function(row) {
-            // $log.debug("row", row.contents.assessment)
-            if(row.contents.assessment || row.contents.resource){
+          angular.forEach(scores, function (row) {
+            if (row.contents.assessment || row.contents.resource) {
               records.scores[row.id] = {};
             }
             for (var property in row.contents.assessment) {
               if (row.contents.assessment.hasOwnProperty(property)) {
-                $log.debug(row.contents.assessment[property])
+
                 records.scores[row.id][property] = {
                   score: row.contents.assessment[property].obtained_score,
                   totalScore: row.contents.assessment[property].total_score,
@@ -336,79 +280,73 @@
                 }
               }
             }
-            for ( property in row.contents.resource) {
+            for (property in row.contents.resource) {
               if (row.contents.resource.hasOwnProperty(property)) {
-                $log.debug(row.contents.resource[property])
                 records.scores[row.id][property] = {
                   score: row.contents.resource[property].obtained_score,
                   totalScore: row.contents.resource[property].total_score,
                   type: 'resource'
-
                 }
               }
             }
-          })
+          });
 
           return appDB.get(details.userId)
         })
-        .then(function(doc) {
+        .then(function (doc) {
           doc.data.skills = records.skills;
           doc.data.scores = records.scores;
-          $log.debug("Found userdb, updating it with",doc)
+
           return appDB.put({
             '_id': details.userId,
             '_rev': doc._rev,
             'data': doc.data
           })
         })
-        .then(function() {
+        .then(function () {
           d.resolve();
         })
-        .catch(function(error) {
-          $log.debug("Not Found userdb", error)
+        .catch(function (error) {
           if (error.status === 404) {
-            $log.debug("MAking user db")
             return appDB.put({
-                '_id': details.userId,
-                'data': {
-                  'scores': records.scores,
-                  'reports': [],
-                  'skills': records.skills
-                }
-              }).then(function() {
-                d.resolve()
-                $log.debug("MAde user db")
-              })
-              .catch(function(e) {
+              '_id': details.userId,
+              'data': {
+                'scores': records.scores,
+                'reports': [],
+                'skills': records.skills
+              }
+            }).then(function () {
+              d.resolve()
+            })
+              .catch(function (e) {
                 d.reject();
-                $log.debug("Error making user db", e)
               })
           }
-        })
+        });
       return d.promise;
 
     }
 
     function updateSkills(data) {
-      return appDB.get(data.userId).then(function(response) {
-          var doc = response.data;
-          angular.forEach(doc.skills, function(skill, key) {
-            if (skill.title == data.skill) {
-              doc.skills[key].lesson_scores += data.score;
-            }
-          })
-
-          return appDB.put({
-            '_id': data.userId,
-            '_rev': response._rev,
-            'data': doc
-          })
+      return appDB.get(data.userId).then(function (response) {
+        var doc = response.data;
+        angular.forEach(doc.skills, function (skill, key) {
+          if (skill.title == data.skill) {
+            doc.skills[key].lesson_scores += data.score;
+          }
+        });
+        return appDB.put({
+          '_id': data.userId,
+          '_rev': response._rev,
+          'data': doc
         })
-        .catch(function(error) {})
+      })
+        .catch(function (error) {
+        })
     }
 
     function updateScore(data) {
-      return appDB.get(data.userId).then(function(response) {
+      return appDB.get(data.userId).then(function (response) {
         var doc = response.data;
         if (!doc.scores.hasOwnProperty(data.lessonId)) {
           doc.scores[data.lessonId] = {};
@@ -420,29 +358,29 @@
         };
         var temp = JSON.parse(localStorage.getItem('lesson'));
         temp.score = doc.scores[data.lessonId];
-        localStorage.setItem('lesson',JSON.stringify(temp));
-        $log.debug("local storage updated")
+        localStorage.setItem('lesson', JSON.stringify(temp));
+
         return appDB.put({
           '_id': data.userId,
           '_rev': response._rev,
           'data': doc
         });
       })
-      .catch(function(e) {})
+        .catch(function (e) {
+        })
 
     }
 
     function getLessonScore(data) {
-      $log.debug("getting lessons score")
-      return appDB.get(data.userId).then(function(response) {
-      $log.debug("getting lessons score",response)
+
+      return appDB.get(data.userId).then(function (response) {
         return response.data.scores[data.lessonId];
       })
     }
 
     function getQuizScore(data) {
       var d = $q.defer();
-      appDB.get(data.userId).then(function(response) {
+      appDB.get(data.userId).then(function (response) {
         var result = null;
         if (response.data.scores.hasOwnProperty(data.lessonId)) {
           if (response.data.scores[data.lessonId].hasOwnProperty(data.id)) {
@@ -450,228 +388,146 @@
           }
         }
         d.resolve(result);
-      }).catch(function(e) {
+      }).catch(function () {
         d.reject();
-      })
+      });
       return d.promise;
     }
 
     function getLessonsScore() {
-      return Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('profiles', JSON.parse(localStorage.user_details).profile).customGET('lessons-score').then(function(score) {
+      return Rest.one('accounts', CONSTANT.CLIENTID.ELL).one('profiles', JSON.parse(localStorage.user_details).profile).customGET('lessons-score').then(function (score) {
         return score.plain();
-      }, function(error) {})
+      }, function (error) {
+      })
     }
 
-    function getLessonsList(grade) {
-      $log.debug("getting lessons")
-      var start = new Date();
+    function getLessonsList() {
       var d = $q.defer();
       lessonDB.allDocs({
-          include_docs: true
-        }).then(function(data) {
-          $log.debug("Time taken 1", new Date() - start, data)
-          var lessons = [];
-          for (var i = 0; i < data.rows.length; i++) {
-            data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key
-            lessons.push(data.rows[i].doc.lesson.node);
-          }
-          lessons = _.sortBy(lessons, 'key');
-          $log.debug("Time taken", new Date() - start)
-          d.resolve(lessons)
-        })
-        .catch(function(error) {
+        include_docs: true
+      }).then(function (data) {
+
+
+        var lessons = [];
+        for (var i = 0; i < data.rows.length; i++) {
+          data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key;
+          lessons.push(data.rows[i].doc.lesson.node);
+        }
+        lessons = _.sortBy(lessons, 'key');
+
+        d.resolve(lessons)
+      })
+        .catch(function (error) {
           d.reject(error)
-          $log.debug(error)
-        })
+        });
+
       return d.promise;
     }
 
     function getAssessment(quiz) {
       var d = $q.defer();
-      var promises = []
+      var promises = [];
       for (var index = 0; index < quiz.objects.length; index++) {
-        try {
-          if (quiz.objects[index].node.meta && quiz.objects[index].node.meta.instructions && quiz.objects[index].node.meta.instructions.sounds[0] && localStorage.getItem(quiz.objects[index].node.meta.instructions.sounds[0]) != 'played') {
-            localStorage.setItem(quiz.objects[index].node.meta.instructions.sounds[0],'played');
-
-            promises.push(mediaManager.getPath(quiz.objects[index].node.meta.instructions.sounds[0]).then(
-
-              function(index) {
-
-                return function(path) {
-                  quiz.objects[index].node.instructionSound = path
-                }
-              }(index)
-
-            ))
-          }
+        if (quiz.objects[index].node.meta && quiz.objects[index].node.meta.instructions && quiz.objects[index].node.meta.instructions.sounds[0] && localStorage.getItem(quiz.objects[index].node.meta.instructions.sounds[0]) != 'played') {
+          localStorage.setItem(quiz.objects[index].node.meta.instructions.sounds[0], 'played');
+          promises.push(mediaManager.getPath(quiz.objects[index].node.meta.instructions.sounds[0]).then(
+            function (index) {
+              return function (path) {
+                quiz.objects[index].node.instructionSound = path
+              }
+            }(index)
+          ))
         }
-        catch (err) {
-          $log.debug("No instruction sound found"+err);
-        }
-        // quiz.objects[index].node.instructionSound = CONSTANT.RESOURCE_SERVER + quiz.objects[index].node.meta.instructions.sounds[0];
 
-        $log.debug(quiz.objects[index].node.meta, "Instruction")
         promises.push(widgetParser.parseToDisplay(quiz.objects[index].node.title, index, quiz).then(
-          function(index) {
-            return function(result) {
+          function (index) {
+            return function (result) {
               quiz.objects[index].node.widgetHtml = result;
             }
           }(index)
-
-        ))
+        ));
         quiz.objects[index].node.widgetSound = null;
         if (widgetParser.getSoundId(quiz.objects[index].node.title)) {
           promises.push(widgetParser.getSoundSrc(widgetParser.getSoundId(quiz.objects[index].node.title), index, quiz).then(
-
-            function(index) {
-              return function(result) {
+            function (index) {
+              return function (result) {
                 quiz.objects[index].node.widgetSound = result;
               }
             }(index)
-
           ))
         }
 
         for (var j = 0; j < quiz.objects[index].node.type.content.options.length; j++) {
           promises.push(widgetParser.parseToDisplay(quiz.objects[index].node.type.content.options[j].option, index, quiz).then(
-            function(index, j) {
-              return function(result) {
+            function (index, j) {
+              return function (result) {
                 quiz.objects[index].node.type.content.options[j].widgetHtml = result;
               }
             }(index, j)
-          ))
+          ));
           quiz.objects[index].node.type.content.options[j].widgetSound = null;
 
           if (widgetParser.getSoundId(quiz.objects[index].node.type.content.options[j].option)) {
             promises.push(widgetParser.getSoundSrc(widgetParser.getSoundId(quiz.objects[index].node.type.content.options[j].option), index, quiz).then(
-              function(index, j) {
-                return function(result) {
+              function (index, j) {
+                return function (result) {
                   quiz.objects[index].node.type.content.options[j].widgetSound = result;
                 }
               }(index, j)
-
             ))
           }
-
         }
       }
-      $q.all(promises).then(function() {
+      $q.all(promises).then(function () {
         d.resolve(quiz)
-      })
+      });
       return d.promise;
     }
 
     function getSkills(data) {
       return appDB.get(data.userId)
-        .then(function(doc) {
+        .then(function (doc) {
           return doc.data.skills;
         })
     }
 
-    function saveAttempts(data) {
-      return Rest.all('attempts').post(data);
-    }
-
     function saveReport(report) {
-      // var id = localStorage.getItem('report_id')
-      // var r = new ReportResource({
-      // id: localStorage.getItem('report_id')
-      // });
-      // localStorage.setItem('report_id', parseInt(localStorage.getItem('report_id') )+ 1);
-      // var r = {};
-      // r.node = report.node;
-      // r.score = report.score;
-      // r.attempt = report.attempts;
-      // r.person = report.userId;
-      // r.local_id = id;
-      // return $http.post(CONSTANT.BACKEND_SERVICE_DOMAIN+'api/v1/reports/',r,{offline: true})
-      // localStorage.setItem('report_id',parseInt(localStorage.getItem('report_id')) + 1)
-
-
-      // r.$save();
-      // (function(local_id){
-      //   r.$promise.then(
-      //     function(s) {
-      //       localStorage.removeItem('cachedResource://reportResource?id=' + s.id);
-      //     }
-      //   );
-      // })(id)
-
-      // return appDB.get(report.userId).then(function(response) {
-      //     var doc = response.data;
-      //     doc.reports.push({
-      //       'node': report.node,
-      //       'score': report.score,
-      //       'attempts': report.attempts
-      //     });
-
-      return reportsDB.post({
-          // '_id': report.userId,
-          // '_rev': response._rev,
-          'data': {
-            'user': report.userId,
-            'node': report.node,
-            'score': report.score,
-            'attempts': report.attempts
-          }
-        })
-        // })
-        .then(function() {
-          if (network.isOnline()) {
-            data.startReportSyncing({
-              'userId': report.userId
-            })
-          }
-        })
+      return data.queuePush({
+        'report': {
+          'user': report.userId,
+          'node': report.node,
+          'score': report.score,
+          'attempts': report.attempts
+        }
+      });
     }
-
-    function downloadQuiz(id) {}
 
     function getLesson(id) {
-      var d = $q.defer();
-      lessonDB.get(id).then(function(data) {
-        d.resolve(data.lesson)
-
-      }).catch(function(error) {
-        d.reject(error)
-      })
-      return d.promise;
-    }
-
-    function updateLesson(lesson) {
-      lessonDB.get(lesson.node.id).then(function(doc) {
-        return lessonDB.put({
-          _id: lesson.node.id,
-          _rev: doc._rev,
-          lesson: lesson
-        });
+      return lessonDB.get(id).then(function (data) {
+        return data.lesson;
       });
     }
 
     function downloadVideo(video) {
+
       return mediaManager.downloadIfNotExists(CONSTANT.RESOURCE_SERVER + video.node.type.path)
     }
 
     function downloadAssessment(assessment) {
-      $log.debug("downloadAssessment")
+
       var d = $q.defer();
       var promises = [];
-      var mediaTypes = ['videos', 'sounds', 'images']
-      var mediaArray = []
-      var count = 0;
+      var mediaArray = [];
 
-      angular.forEach(assessment.objects, function(object) {
-        $log.debug("Check this", object);
+      angular.forEach(assessment.objects, function (object) {
         if (object.node.meta.instructions && object.node.meta.instructions.sounds) {
           promises.push(
             mediaManager.downloadIfNotExists(CONSTANT.RESOURCE_SERVER + object.node.meta.instructions.sounds[0])
           );
         }
-        angular.forEach(object.node.type.content.widgets, function(widget) {
-          angular.forEach(widget, function(file) {
+        angular.forEach(object.node.type.content.widgets, function (widget) {
+          angular.forEach(widget, function (file) {
             if (mediaArray.indexOf(file) < 0) {
-              $log.debug(file);
               mediaArray.push(file);
               promises.push(
                 mediaManager.downloadIfNotExists(CONSTANT.RESOURCE_SERVER + file)
@@ -679,173 +535,93 @@
             }
           })
         })
+      });
+      $q.all(promises).then(function (success) {
+        d.resolve(data);
       })
-      $q.all(promises).then(function(success) {
-          d.resolve(data);
-        })
-        .catch(function(err) {
+        .catch(function (err) {
           d.reject(err)
         });
       return d.promise;
 
     }
 
-
-
-    function syncReport(report) {
-      report.attempt = report.attempts;
-      report.person = report.user;
-      // return Rest.all('reports').post({
-      //   'score': report.score,
-      //   'person': user.userId,
-      //   'node': report.node
-      // }).then(function(success) {
-      //   var attempts = [];
-      //   angular.forEach(report.attempts, function(attempt) {
-      //     attempts.push({
-      //       "answer": attempt.answer,
-      //       "status": attempt.status,
-      //       "person": user.userId,
-      //       "report": success.id,
-      //       "node": attempt.node
-      //     })
-      //   })
-      // return Promise.resolve();
-
-      return Rest.all('reports').post(report);
-      // })
-    }
-
-    function startReportSyncing() {
-      return reportsDB.allDocs({
-          include_docs: true
-        }).then(function(response) {
-          var d = $q.defer();
-          // angular.forEach(response.rows, function(row) {
-          if (response.rows.length == 0) {
-            d.reject("No reports");
-          } else {
-            var report = response.rows[0].doc.data;
-            syncReport(report).then(function() {
-                var callback = false;
-                if (response.rows.length > 2) {
-                  callback = true;
-                }
-                d.resolve({
-                  'report_doc': response.rows[0].doc,
-                  'callback': callback
-                })
-              })
-              .catch(function(error) {
-                d.reject(error)
-              })
-
-          }
-          return d.promise;
-          // })
-        })
-        .then(function(response) {
-          return reportsDB.remove(response.report_doc)
-        })
-        .then(function(response) {
-          data.startReportSyncing()
-        })
-        .catch(function(e) {})
-        // return appDB.get(user.userId).then(function(response) {
-        //   appData = response;
-        //     $log.debug("Here", response)
-        //     if (response.data.reports.length) {
-        //         syncReport(response.data.reports[0],user)
-        //     }else{
-        //       return $q.reject("No data to sync")
-        //     }
-        //   })
-        //   .then(function(success) {
-        //     appData.data.reports = appData.data.reports.splice(0,0);
-        //     return appDB.put({
-        //       '_id':appData._id,
-        //       '_rev': appData._rev,
-        //       'data': appData.data
-        //     })
-        //   })
-        //   .then(function() {
-        //     if(appData.data.reports.length){
-        //       return startReportSyncing({'userId':Auth.getProfileId()});
-        //     }else{
-        //       return true
-        //     }
-        //   })
-        //   .catch(function(e) {
-        //     if(e === 'No data to sync'){
-        //     }
-        //   })
-    }
-
-    function queuePush(record){
-      $log.debug("queuePush");
+    function queuePush(record) {
       return queueDB.post({
-          // '_id': report.userId,
-          // '_rev': response._rev,
-          'data':  record
-        }).then(function(s){
-            $log.debug('activity-log ',s)
-        })
-        .catch(function(a){
-          $log.debug('activity-log ',a)
-        })
-
-
+        'data': record
+      })
     }
 
-    function queueSync(){
-      $log.debug("starting queue sync")
-      return queueDB.allDocs({
-          include_docs: true
-        }).then(function(response) {
-          var d = $q.defer();
-          // angular.forEach(response.rows, function(row) {
-          if (response.rows.length == 0) {
-            d.reject("No data");
-          } else {
-            var record = response.rows[0].doc.data;
-            queueUploadRecord(record).then(function() {
+    function queueSync() {
 
-                d.resolve({
-                  'record_doc': response.rows[0].doc,
-                })
-              })
-              .catch(function(error) {
-                d.reject(error)
-              })
-          }
-          return d.promise;
-        })
-        .then(function(response) {
-          $log.debug("Removing record")
+      return queueDB.allDocs({
+        include_docs: true
+      }).then(function (response) {
+        var d = $q.defer();
+        if (response.rows.length == 0) {
+          d.reject("No data");
+        } else {
+          var record = response.rows[0].doc.data;
+          queueUploadRecord(record).then(function () {
+
+            d.resolve({
+              'record_doc': response.rows[0].doc,
+            })
+          })
+            .catch(function (error) {
+              d.reject(error)
+            })
+        }
+        return d.promise;
+      })
+        .then(function (response) {
+
           return queueDB.remove(response.record_doc)
         })
-        .then(function(response) {
-          $log.debug("Calling sync again")
-
+        .then(function (response) {
           data.queueSync()
         })
-        .catch(function(e) {})
+        .catch(function (e) {
+        })
     }
 
-
-    function queueUploadRecord(record){
+    function queueUploadRecord(record) {
       return Rest.all(record.url).post(record.data);
     }
 
-    function changeGrade(newGrade){
-       var profile = Auth.getLocalProfile();
-       profile.grade = newGrade;
-       Auth.updateProfile(profile);
+    function changeGrade(newGrade) {
+      var profile = User.getLocalProfile();
+      profile.grade = newGrade;
+      User.updateProfile(profile);
 
-       return data.createIfNotExistsLessonDB()
+      return data.createLessonDBIfNotExists()
 
-     }
+    }
 
+    function createLocalProfile(profile) {
+      var record = {
+        "_id": data.generateUUID(),
+        "data": {
+          "scores": {},
+          "reports": [],
+          "skills": data.skills,
+          "profile" : profile
+        }
+      };
+
+       return profilesDB.put(record).then(function(){
+         return record;
+       })
+
+    }
+
+    function getLocalProfiles() {
+      return profilesDB.allDocs({
+        include_docs: true
+      }).then(function (response) {
+        return response.rows;
+      })
+    }
   }
 
 })();

@@ -3,10 +3,10 @@
     <div class="row">
       <div class="col">
         <div class="card card-medium-yellow padding-x-30">
-          <div ng-click="settingsModal.hide();mapCtrl.user.grade = mapCtrl.authFactory.getLocalProfile().grade" class="close-icon-con bg-red">
+          <div ng-click="settingsModal.hide();mapCtrl.user = mapCtrl.User.getActiveProfileSync().data.profile" class="close-icon-con bg-red">
             <i style="min-height:0px;margin:0px;margin-left:-4px;" class="ed-icon sm icon-white-cross icon-contain"></i>
           </div>
-          <div class="row padding-20" ng-init="mapCtrl.user.grade = mapCtrl.authFactory.getLocalProfile().grade">
+          <div class="row padding-20" ng-init="mapCtrl.user = mapCtrl.User.getActiveProfileSync().data.profile">
               <div class="col">
                   <center>
                     <img height="100" ng-src="{{mapCtrl.user.gender == 'M'?'img/assets/upperbody-boy.png':'img/assets/upperbody-girl.png'}}" alt="">
@@ -20,7 +20,7 @@
                     </div>
                   </div>
                   <center>
-                    <button style="height: 42px; min-height: 28px;"  ng-disabled="!mapCtrl.user.grade" class="button button-balanced button-round  margin-20 padding-x-40 font-sm no-shadow" ng-click="mapCtrl.changeGrade(mapCtrl.user.grade);"><i style="height:20px;min-height:20px;" class="ed-icon md icon-contain icon-next-2"></i></button>
+                    <button style="height: 42px; min-height: 28px;"  ng-disabled="!mapCtrl.user.grade" class="button button-balanced button-round  margin-20 padding-x-40 font-sm no-shadow" ng-click="mapCtrl.updateProfile(mapCtrl.user);"><i style="height:20px;min-height:20px;" class="ed-icon md icon-contain icon-next-2"></i></button>
                   </center>
 
               </div>

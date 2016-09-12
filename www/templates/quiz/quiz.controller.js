@@ -21,26 +21,17 @@
                             '$ionicPopup',
                             'lessonutils',
                             'orientation',
-                            '$location',
-                            '$anchorScroll',
-                            '$document',
                             '$ionicScrollDelegate',
-                            '$ionicPosition',
                             '$timeout',
-                            '$window',
-                            'mediaManager',
-                            '$cordovaFileTransfer',
-                            '$cordovaFile',
                             '$interval',
                             '$q',
-                            '$ImageCacheFactory',
                             'ml',
                             'data',
-                            'lessonutils',
                             '$ionicPlatform',
                             'nzTour',
                             'demo',
-                            'analytics'
+                            'analytics',
+                            'User'
                                 ];
 
   function QuizController(
@@ -60,32 +51,23 @@
                             $ionicPopup,
                             lessonutils,
                             orientation,
-                            $location,
-                            $anchorScroll,
-                            $document,
                             $ionicScrollDelegate,
-                            $ionicPosition,
                             $timeout,
-                            $window,
-                            mediaManager,
-                            $cordovaFileTransfer,
-                            $cordovaFile,
                             $interval,
                             $q,
-                            $ImageCacheFactory,
                             ml,
                             data,
-                            lessonutils,
                             $ionicPlatform,
                             nzTour,
                             demoFactory,
-                            analytics
+                            analytics,
+                            User
                                     ) {
-    $log.debug("Inside quiz controller",$stateParams)
+
     var quizCtrl = this;
     //bind quiz resolved to controller
     quizCtrl.quiz = quiz;
-    $log.debug('unshifted quiz', quiz);
+    ;
     //report
     quizCtrl.report = {};
     quizCtrl.submitReport = submitReport;
@@ -167,7 +149,7 @@
 
     $scope.demo = {
       'tourNextStep': tourNextStep,
-      'tourFlag': localStorage.getItem('tourFlag'),
+      'tourFlag': localStorage.getItem('tourFlag')
     }
 
     $scope.tourNextStep = tourNextStep;
@@ -193,7 +175,7 @@
     }
 
     function redo(){
-     $log.debug("Redo with",quizCtrl.quiz)
+
      if(quizCtrl.quiz.objects[0].node.id === CONSTANT.QUESTION.DEMO){
        quizCtrl.quiz.objects.shift()
      }
@@ -217,7 +199,6 @@
     }
 
     function playStarSound() {
-      var star;
       if (quizCtrl.summary.stars) {
         star = quizCtrl.summary.stars;
       } else if (quizCtrl.summary.score.percent) {
@@ -239,28 +220,28 @@
     }
 
     function submitReport(quiz, report, summary) {
-      lesson = lessonutils.getLocalLesson();
+      var lesson = lessonutils.getLocalLesson();
 
-        data.updateSkills({
-          userId: Auth.getProfileId(),
+        User.skills.update({
+          profileId: User.getActiveProfileSync()._id,
           lessonId: lesson.node.id,
           id: quiz.node.id,
           score: summary.score.marks,
           totalScore: quizCtrl.quiz.node.type.score,
-          skill: lesson.node.tag,
+          skill: lesson.node.tag
         })
         .then(function() {
           return data.getQuizScore({
-              'userId': Auth.getProfileId(),
+              'profileId': User.getActiveProfileSync()._id,
               'lessonId': lesson.node.id,
               'id': quizCtrl.quiz.node.id
-            })
+            });
         })
         .then(function(previousScore) {
           if ((!previousScore) || (!previousScore.hasOwnProperty('score')) || (previousScore && parseInt(previousScore.score) < summary.score.marks)) {
 
-            return data.updateScore({
-              userId: Auth.getProfileId(),
+            return User.scores.update({
+              profileId: User.getActiveProfileSync()._id,
               lessonId: lesson.node.id,
               id: quiz.node.id,
               score: summary.score.marks,
@@ -270,38 +251,26 @@
 
           }
         })
-        // .then(function(response) {
-        //   return data.saveReport({
-        //     node: quiz.node.id,
-        //     person: Auth.getProfileId(),
-        //     score: summary.score.marks
-        //   })
-        // })
-        .then(function(success) {
-          // var report_id = success.id;
+
+        .then(function() {
           var attempts = [];
           angular.forEach(report.attempts, function(value, key) {
             attempts.push({
               answer: value.length > 0 ? value : null,
               score: summary.analysis[key].score,
               status: value.length > 0 ? CONSTANT.ATTEMPT.STATUS.ATTEMPTED : CONSTANT.ATTEMPT.STATUS.SKIPPED,
-              // person: Auth.getProfileId(),
-              // report: report_id,
               node: key
             });
           });
-          return data.saveReport({
+          return User.reports.save({
             'score': summary.score.marks,
             'attempts': attempts,
-            'userId': Auth.getProfileId(),
+            'profileId': User.getActiveProfileSync()._id,
             'node': quizCtrl.quiz.node.id
           })
 
         })
-        .then(function(data) {
-        })
-        .catch(function(e) {
-        })
+
     }
 
     function disableSwipe() {
@@ -309,31 +278,18 @@
     }
     function init(quiz) {
       if ($state.current.name == "quiz.start") {
-          // $ionicLoading.show();
-          // quizCtrl.preloadResources(quiz).then(function(success) {
-          //   $ionicLoading.hide();
-          // });
       }
       if ($state.current.name == "quiz.summary") {
-        $log.debug("Summary controller")
         quizCtrl.report = $stateParams.report;
         quizCtrl.quiz = $stateParams.quiz;
         quizCtrl.summary = $stateParams.summary;
         quizCtrl.playStarSound();
-        // quizCtrl.submitReport(quizCtrl.quiz, quizCtrl.report, quizCtrl.summary)
-          // .then(function(s){
-          //   $log.debug("s",s)
-          // }).catch(function(e){
-          //   $log.debug("e",e)
-          // });
       } else if ($state.current.name == "quiz.questions") {
-
         quizCtrl.setCurrentIndex(0);
         quizCtrl.logQuestion(0,'START');
         if ($stateParams.type == 'assessment') {
           quizCtrl.startTimer();
         }
-
         if ($stateParams.type == 'practice') {
           $ionicSlideBoxDelegate.enableSlide(false);
 
@@ -509,7 +465,7 @@
         quizCtrl.report.attempts[questionId].push(angular.copy(attempt));
         return true;
       }
-      return false;
+
     }
 
     function setSuggestion() {
@@ -584,7 +540,7 @@
     }
 
     function isKeyCorrect(question, key) {
-      return question.node.type.answer.indexOf(key) != -1 ? true : false;
+      return question.node.type.answer.indexOf(key) != -1 ;
     }
 
     function isKeyAttempted(question, key) {
@@ -592,7 +548,7 @@
       if (question.node.type.content.is_multiple) {
         return _.chain(quizCtrl.report.attempts[question.node.id]).last().has(key).value();
       } else {
-        return quizCtrl.report.attempts[question.node.id].indexOf(key) != -1 ? true : false;
+        return quizCtrl.report.attempts[question.node.id].indexOf(key) != -1 ;
       }
     }
 
@@ -681,7 +637,8 @@
                 },
                 {
                     time : new Date()
-                }
+                },
+              User.getActiveProfileSync()._id
             ) &&
           $state.go('quiz.summary', {
             report: (quizCtrl.report),
@@ -705,7 +662,8 @@
                 },
                 {
                     time : new Date()
-                }
+                },
+              User.getActiveProfileSync()._id
             ) &&
             $state.go('quiz.summary', {
               report: angular.copy(quizCtrl.report),
@@ -760,7 +718,7 @@
       //         try {
       //             $scope.showNodeMenu();
       //         } catch (error) {
-      //             $log.debug(error);
+      //             ;
       //         }
       //     }
       // }, 101);
@@ -835,7 +793,6 @@
       if(result){
 
         $timeout(function(){
-          $log.debug($scope.demo.tourFlag);
           angular.element("#audioplayer")[0].pause();
           angular.element("#audioSource")[0].src = 'sound/demo-quiz-1.mp3';
           angular.element("#audioplayer")[0].load();
@@ -857,7 +814,7 @@
     })
 
     function tourNextStep() {
-      $log.debug("Next step",nzTour.current)
+
       if (nzTour.current) {
         if(nzTour.current.step === 0){
           angular.element("#audioplayer")[0].pause();
@@ -879,7 +836,7 @@
       }
     }
     function playInstruction(index){
-      $log.debug("playInstruction",index)
+
       if(quizCtrl.quiz.objects[index].node.instructionSound){
 
         angular.element("#audioplayer")[0].pause();
@@ -894,7 +851,6 @@
     }
 
     function logQuestion(index, type){
-        $log.debug('Question : Log : ', quizCtrl.quiz.objects[index].node.id);
         analytics.log(
             {
                 name : 'QUESTION',
@@ -903,7 +859,8 @@
             },
             {
                 time : new Date()
-            }
+            },
+          User.getActiveProfileSync()._id
         )
     }
 

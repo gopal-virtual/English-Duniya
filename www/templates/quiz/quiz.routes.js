@@ -1,4 +1,4 @@
-(function() {
+(function () {
   'use strict';
 
   angular
@@ -13,7 +13,7 @@
         abstract: true,
         cache: false,
         template: '<ion-nav-view name="state-quiz"></ion-nav-view>',
-        onEnter: ['orientation', 'audio', function(orientation, audio) {
+        onEnter: ['orientation', 'audio', function (orientation, audio) {
           orientation.setPortrait();
           audio.stop('background');
         }],
@@ -23,7 +23,7 @@
           summary: null
         },
         resolve: {
-          quiz: ['$stateParams', 'Rest', '$log', 'data', 'ml', '$q', '$http','demo', function($stateParams, Rest, $log, data, ml, $q, $http,demoFactory) {
+          quiz: ['$stateParams', 'Rest', '$log', 'content', 'ml', '$q', '$http', 'demo', 'data', function ($stateParams, Rest, $log, content, ml, $q, $http, demoFactory, data) {
             if ($stateParams.type == 'litmus') {
               var all_promises = [];
               if (ml.kmapsJSON == undefined) {
@@ -51,7 +51,7 @@
                 },
                 "objects": []
               };
-              return $q.all(all_promises).then(function() {
+              return $q.all(all_promises).then(function () {
                 var suggestion = ml.getNextQSr(data.getTestParams(JSON.parse(localStorage.profile).grade), ml.mapping);
                 var question = ml.dqJSON[suggestion.qSr];
                 question && litmus.objects.push(question);
@@ -59,8 +59,8 @@
                 return litmus;
               })
             } else {
-              return demoFactory.show(5).then(function(response) {
-                // $log.debug('resolving quiz');
+              return demoFactory.show(5).then(function (response) {
+                // ;
                 // $stateParams.quiz.objects[0].node.id == 'demo' ? $stateParams.quiz.objects.shift(data.demo_question) :false;
                 var currentIndex = $stateParams.quiz.objects.length;
                 var temporaryValue, randomIndex;
@@ -72,8 +72,8 @@
                 //   $stateParams.quiz.objects[currentIndex] = $stateParams.quiz.objects[randomIndex];
                 //   $stateParams.quiz.objects[randomIndex] = temporaryValue;
                 // }
-                response && $stateParams.quiz.objects.unshift(data.demo_question);
-                return data.getAssessment($stateParams.quiz).then(function(response) {
+                response && $stateParams.quiz.objects.unshift(content.demo_question);
+                return content.getAssessment($stateParams.quiz).then(function (response) {
                   return response;
                 });
 
@@ -87,7 +87,8 @@
       })
       .state('quiz.start', {
         url: '/start',
-        onEnter: function($stateParams, $log) {},
+        onEnter: function ($stateParams, $log) {
+        },
         views: {
           'state-quiz': {
             templateUrl: CONSTANT.PATH.QUIZ + '/quiz.start' + CONSTANT.VIEW,
@@ -97,7 +98,7 @@
       })
       .state('quiz.questions', {
         url: '/questions',
-        onEnter :  ['$log','$state','$stateParams', function($log, $state, $stateParams) {
+        onEnter: ['$log', '$state', '$stateParams', function ($log, $state, $stateParams) {
           if (!$stateParams.quiz.objects.length) {
             $state.go('state.missing');
           }
@@ -106,46 +107,42 @@
         views: {
           'state-quiz': {
             // templateUrl : CONSTANT.PATH.QUIZ+'/quiz.questions'+CONSTANT.VIEW,
-            templateUrl: function($stateParams) {
+            templateUrl: function ($stateParams) {
               return CONSTANT.PATH.QUIZ + '/quiz.' + $stateParams.type + '.questions' + CONSTANT.VIEW;
             },
             controller: 'QuizController as quizCtrl'
           }
         }
       })
-    .state('quiz.missing', {
-      url: '/missing',
-      template : '<h1>Questions not Found</h1>'
-    })
-    .state('quiz.summary', {
-      url: '/summary',
-      onEnter: ['$log', 'audio','data','$stateParams', 'lessonutils','Auth', function($log, audio,data, $stateParams, lessonutils, Auth) {
-        $log.debug("Enter summary")
-        var report = $stateParams.report;
-        var quiz = $stateParams.quiz;
-        var summary = $stateParams.summary;
-        var lesson = lessonutils.getLocalLesson();
+      .state('quiz.missing', {
+        url: '/missing',
+        template: '<h1>Questions not Found</h1>'
+      })
+      .state('quiz.summary', {
+        url: '/summary',
+        onEnter: ['$log', 'audio', 'content', '$stateParams', 'lessonutils', 'User', function ($log, audio, content, $stateParams, lessonutils, User) {
 
-            data.updateSkills({
-              userId: Auth.getProfileId(),
-              lessonId: lesson.node.id,
-              id: quiz.node.id,
-              score: summary.score.marks,
-              totalScore: quiz.node.type.score,
-              skill: lesson.node.tag,
+          var report = $stateParams.report;
+          var quiz = $stateParams.quiz;
+          var summary = $stateParams.summary;
+          var lesson = lessonutils.getLocalLesson();
+
+          User.skills.update({
+            profileId: User.getActiveProfileSync()._id,
+            lessonId: lesson.node.id,
+            id: quiz.node.id,
+            score: summary.score.marks,
+            totalScore: quiz.node.type.score,
+            skill: lesson.node.tag,
+          })
+            .then(function () {
+              return User.scores.getScoreOfAssessment(quiz.node.id, lesson.node.id, User.getActiveProfileSync()._id)
             })
-            .then(function() {
-              return data.getQuizScore({
-                  'userId': Auth.getProfileId(),
-                  'lessonId': lesson.node.id,
-                  'id': quiz.node.id
-                })
-            })
-            .then(function(previousScore) {
+            .then(function (previousScore) {
               if ((!previousScore) || (!previousScore.hasOwnProperty('score')) || (previousScore && parseInt(previousScore.score) < summary.score.marks)) {
 
-                return data.updateScore({
-                  userId: Auth.getProfileId(),
+                return User.scores.update({
+                  profileId: User.getActiveProfileSync()._id,
                   lessonId: lesson.node.id,
                   id: quiz.node.id,
                   score: summary.score.marks,
@@ -156,10 +153,10 @@
               }
             })
 
-            .then(function(success) {
+            .then(function (success) {
               // var report_id = success.id;
               var attempts = [];
-              angular.forEach(report.attempts, function(value, key) {
+              angular.forEach(report.attempts, function (value, key) {
                 attempts.push({
                   answer: value.length > 0 ? value : null,
                   score: summary.analysis[key].score,
@@ -169,24 +166,24 @@
                   node: key
                 });
               });
-              return data.saveReport({
+              return User.reports.save({
                 'score': summary.score.marks,
                 'attempts': attempts,
-                'userId': Auth.getProfileId(),
+                'profileId': User.getActiveProfileSync()._id,
                 'node': quiz.node.id
               })
 
             })
-      }],
-      onExit: ['$log', 'audio', function($log, audio) {
-        $log.debug("Exit summary")
-      }],
-      views: {
-        'state-quiz': {
-          templateUrl: CONSTANT.PATH.QUIZ + '/quiz.summary' + CONSTANT.VIEW,
-          controller: 'QuizController as quizCtrl'
+        }],
+        onExit: ['$log', 'audio', function ($log, audio) {
+
+        }],
+        views: {
+          'state-quiz': {
+            templateUrl: CONSTANT.PATH.QUIZ + '/quiz.summary' + CONSTANT.VIEW,
+            controller: 'QuizController as quizCtrl'
+          }
         }
-      }
-    })
+      })
   }
 })();
