@@ -35,7 +35,7 @@
         // $cordovaNativeAudio.preloadComplex('demo-quiz-3', 'sound/demo-quiz-3.mp3',1.0,0,0,false, false);
       }
       catch(error){
-        console.log('native audio not supported');
+        ;
       }
 
 

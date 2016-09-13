@@ -32,7 +32,7 @@
         keyCtrl.erase = erase;
 
         function input (key, limit) {
-            $log.debug("Length", keyCtrl.reference.trim().length);
+            ;
             if(keyCtrl.reference.trim().length <= keyCtrl.limit){
                 keyCtrl.reference += key;
             }

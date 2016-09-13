@@ -12,32 +12,23 @@
         url: '/map',
         abstract: true,
         resolve: {
-          lessons: ['Rest', '$log', '$http', 'data','Auth', function(Rest, $log, $http, data, Auth) {
-            return data.getLessonsList(Auth.getLocalProfile().grade).then(function(result){
-
+          lessons: ['$log','content','User', function($log,content,User) {
+            return content.getLessonsList(User.getActiveProfileSync().data.profile.grade).then(function(result){
               return result
             })
           }],
-          lessonLocked: ['Rest', '$log', '$http', 'data','extendLesson','Auth', function(Rest, $log, $http, data,extendLesson,Auth) {
-            var d = new Date();
-            $log.debug("HERE")
-            return data.getLessonsList(Auth.getLocalProfile().grade).then(function(lessons){
-              $log.debug(new Date()- d,"secornds lessonlocked 1")
-
+          lessonLocked: ['$log','content','extendLesson','User', function($log, content,extendLesson,User) {
+            return content.getLessonsList(User.getActiveProfileSync().data.profile.grade).then(function(lessons){
               return extendLesson.getLesson(lessons,[]).then(function(result){
-                $log.debug(new Date()- d,"secornds lessonlocked")
-                  return result;
+                    return result;
               });
             })
           }],
-          scores: ['Rest', '$log', 'data', function(Rest, $log, data) {
+          scores: ['Rest', '$log', 'content', function(Rest, $log, content) {
             return [];
         }],
-        skills : ['Rest', '$log','network','data','Auth', function(Rest, $log, network,data,Auth){
-                var d = new Date();
-          return data.getSkills({'userId':Auth.getProfileId()}).then(function(response){
-            $log.debug(new Date()- d,"secornds skills")
-
+        skills : ['$log','content','User', function($log,content,User){
+          return User.skills.get(User.getActiveProfileSync()._id).then(function(response){
             return response;
           })
         }]

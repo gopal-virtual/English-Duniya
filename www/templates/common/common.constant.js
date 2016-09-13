@@ -5,13 +5,15 @@
     .module('common')
     .constant('CONSTANT', {
       'LOCK': true,
+      'FAKE_LOGIN': true,
+      'FAKE_DEVICE': true,
       'BACKEND_SERVICE_DOMAIN': 'https://cc-test.zaya.in/',
       // 'BACKEND_SERVICE_DOMAIN': 'https://eg-api.zaya.in/',
       'RESOURCE_SERVER': 'https://cc-test.zaya.in/',
       // 'RESOURCE_SERVER': 'https://eg-api.zaya.in/',
       // 'BACKEND_SERVICE_DOMAIN' : 'http://192.168.1.6:9000/',
       'QUESTION' : {
-        'DEMO' : '33c0asdf-b7f6-4f1c-8db5-234f5613a854'
+        'DEMO' : '5ecf8ad5-4c3a-4a67-9758-dd7e3993c4d8'
       },
       'PATH': {
         'INTRO': ROOT + '/intro',

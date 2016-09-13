@@ -17,8 +17,7 @@
                 'audio',
                 '$ionicPlatform',
                 'analytics',
-                'Auth',
-                'data',
+                'User',
                 '$q'
        ];
 
@@ -35,8 +34,7 @@
                 audio,
                 $ionicPlatform,
                 analytics,
-                Auth,
-                dataFactory,
+                User,
                 $q
            ) {
     var contentCtrl = this;
@@ -67,21 +65,21 @@
   //       contentCtrl.API.pause();
   //       $scope.modal.show();
   //     } catch (error) {
-  //       $log.debug(error);
+  //       ;
   //     }
   // }, 101);
 
   function toggleControls(){
       contentCtrl.config.plugins.controls.showControl=!contentCtrl.config.plugins.controls.showControl;
-      $log.debug(contentCtrl.config.plugins.controls.showControl);
+      ;
   }
-  $log.debug($stateParams)
+
   $ionicPlatform.onHardwareBackButton(function(event) {
       try {
         contentCtrl.API.pause();
         $scope.openNodeMenu();
       } catch (error) {
-        $log.debug(error);
+        ;
       }
   })
 
@@ -98,8 +96,10 @@
               },
               {
                   time : new Date()
-              }
-          )
+              },
+        User.getActiveProfileSync()._id
+
+      )
         })
     }
 
@@ -107,9 +107,9 @@
       var  lesson = lessonutils.getLocalLesson();
       var promise = null;
       if(!lesson.score || !lesson.score[$stateParams.video.resource.node.id]){
-        $log.debug("updating scores")
-        promise = dataFactory.updateSkills({
-          userId: Auth.getProfileId(),
+
+        promise = User.skills.update({
+          profileId: User.getActiveProfileSync()._id,
           lessonId: lesson.node.id,
           score: $stateParams.video.resource.node.type.score,
           totalScore: $stateParams.video.resource.node.type.score,
@@ -117,15 +117,13 @@
         })
       }
       else{
-        $log.debug("not updating scores")
-
         promise = $q.resolve();
       }
       promise
         .then(function(){
-          $log.debug("updating video score")
-          return dataFactory.updateScore({
-            userId: Auth.getProfileId(),
+
+          return User.scores.update({
+            profileId: User.getActiveProfileSync()._id,
             lessonId: lesson.node.id,
             id: $stateParams.video.resource.node.id,
             score: $stateParams.video.resource.node.type.score,
@@ -133,9 +131,9 @@
             type: 'resource'
           })
         }).then(function(){
-          return dataFactory.saveReport({
+          return User.reports.save({
             'score': $stateParams.video.resource.node.type.score,
-            'userId': Auth.getProfileId(),
+            'profileId': User.getActiveProfileSync()._id,
             'node': $stateParams.video.resource.node.id
           })
         })
@@ -154,7 +152,9 @@
             },
             {
                 time : new Date()
-            }
+            },
+          User.getActiveProfileSync()._id
+
         )
         contentCtrl.API.play();
     }

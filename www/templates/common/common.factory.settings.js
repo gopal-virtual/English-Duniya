@@ -21,7 +21,7 @@
 
         return settings;
         function user(){
-           $log.debug("Ece");
+           ;
            if(localStorage.getItem('user_details')){
              var temp = JSON.parse(localStorage.getItem('user_details'));
              temp.name = temp.first_name + ' ' + temp.last_name;

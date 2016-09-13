@@ -126,8 +126,10 @@ meter::-webkit-meter-even-less-good-value {
   background: url('../img/assets/name-boy.png'),url('../img/assets/name-girl.png');
   background-repeat: no-repeat;
   background-position: top left, top right;
-  height: 240px;
-  margin-top: 20px;
+  background-size: auto 40%, auto 40%;
+  @include xs-screen{
+    background-size: auto 30%, auto 30%;
+  }
 }
 
 .radio-box-container{
@@ -149,4 +151,14 @@ meter::-webkit-meter-even-less-good-value {
   left: 5px;
   top: 5px;
   padding: 10px;
+}
+
+.personalize-title{
+  font-size: 2em !important;
+  color: #48494B;
+  line-height: 1.8em;
+  @include xs-screen-height{
+    font-size: 1.7em !important;
+    line-height: 1em;
+  }
 }

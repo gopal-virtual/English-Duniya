@@ -1,4 +1,4 @@
-(function() {
+(function () {
   'use strict';
 
   angular
@@ -6,40 +6,40 @@
     .controller('userController', userController);
 
   userController.$inject = [
-            'CONSTANT',
-            '$scope',
-            '$state',
-            'Auth',
-            'Rest',
-            '$log',
-            '$ionicPopup',
-            '$ionicPlatform',
-            '$ionicLoading',
-            '$ionicModal',
-            'formHelper',
-            'network',
-            'data',
-            '$ionicSlideBoxDelegate',
-            '$timeout'
-          ];
+    'CONSTANT',
+    '$scope',
+    '$state',
+    'Auth',
+    'Rest',
+    '$log',
+    '$ionicPopup',
+    '$ionicPlatform',
+    '$ionicLoading',
+    '$ionicModal',
+    'formHelper',
+    'network',
+    'content',
+    '$ionicSlideBoxDelegate',
+    '$timeout',
+    'User'
+  ];
 
-  function userController(
-            CONSTANT,
-            $scope,
-            $state,
-            Auth,
-            Rest,
-            $log,
-            $ionicPopup,
-            $ionicPlatform,
-            $ionicLoading,
-            $ionicModal,
-            formHelper,
-            network,
-            dataService,
-            $ionicSlideBoxDelegate,
-            $timeout
-              ) {
+  function userController(CONSTANT,
+                          $scope,
+                          $state,
+                          Auth,
+                          Rest,
+                          $log,
+                          $ionicPopup,
+                          $ionicPlatform,
+                          $ionicLoading,
+                          $ionicModal,
+                          formHelper,
+                          network,
+                          content,
+                          $ionicSlideBoxDelegate,
+                          $timeout,
+                          User) {
     var userCtrl = this;
     userCtrl.calcAge = calcAge;
     userCtrl.closeKeyboard = closeKeyboard;
@@ -58,23 +58,23 @@
     userCtrl.playAudio = playAudio;
 
     userCtrl.playAudio(-1);
-    $timeout(function(){
-        userCtrl.playAudio(0);
-    },5000);
+    $timeout(function () {
+      userCtrl.playAudio(0);
+    }, 5000);
     function playAudio(index) {
-        var src;
-        if(index == -1){
-            src = 'sound/voice_welcome.mp3'
-        }
-        if(index == 0){
-            src = 'sound/voice_name.mp3'
-        }
-        if(index == 1){
-            src = 'sound/voice_gender.mp3'
-        }
-        if(index == 2){
-            src = 'sound/voice_class.mp3'
-        }
+      var src;
+      if (index == -1) {
+        src = 'sound/voice_welcome.mp3'
+      }
+      if (index == 0) {
+        src = 'sound/voice_name.mp3'
+      }
+      if (index == 1) {
+        src = 'sound/voice_gender.mp3'
+      }
+      if (index == 2) {
+        src = 'sound/voice_class.mp3'
+      }
 
       angular.element("#audioplayer")[0].pause();
       if (src) {
@@ -84,18 +84,18 @@
       }
     }
 
-    function splitName(){
-        userCtrl.user.first_name = userCtrl.user.name.substr(0, userCtrl.user.name.indexOf(" ") > 0?userCtrl.user.name.indexOf(" "):userCtrl.user.name.length);
-        userCtrl.user.last_name = userCtrl.user.name.substr(userCtrl.user.name.indexOf(" ") > 0?userCtrl.user.name.indexOf(" ")+1:userCtrl.user.name.length,userCtrl.user.name.length);
-        $log.debug("Fist ",userCtrl.user.first_name, "Last",userCtrl.user.last_name);
+    function splitName() {
+      userCtrl.user.first_name = userCtrl.user.name.substr(0, userCtrl.user.name.indexOf(" ") > 0 ? userCtrl.user.name.indexOf(" ") : userCtrl.user.name.length);
+      userCtrl.user.last_name = userCtrl.user.name.substr(userCtrl.user.name.indexOf(" ") > 0 ? userCtrl.user.name.indexOf(" ") + 1 : userCtrl.user.name.length, userCtrl.user.name.length);
+
     }
 
-    function disableSwipe(){
-        $ionicSlideBoxDelegate.enableSlide(false);
+    function disableSwipe() {
+      $ionicSlideBoxDelegate.enableSlide(false);
     }
 
     function nextSlide() {
-        $ionicSlideBoxDelegate.$getByHandle('slide').next();
+      $ionicSlideBoxDelegate.$getByHandle('slide').next();
     }
 
     function goToMap() {
@@ -110,7 +110,7 @@
       return ~~((Date.now() - birthday) / (31557600000));
     }
 
-    $ionicPlatform.registerBackButtonAction(function(event) {
+    $ionicPlatform.registerBackButtonAction(function (event) {
       event.preventDefault();
     }, 100);
 
@@ -118,8 +118,9 @@
       function pad(s) {
         return (s < 10) ? '0' + s : s;
       }
+
       var d = new Date(date);
-      $log.debug([d.getFullYear(), pad(d.getMonth() + 1), pad(d.getDate())].join('-'))
+
       return [d.getFullYear(), pad(d.getMonth() + 1), pad(d.getDate())].join('-');
     }
 
@@ -133,44 +134,27 @@
     }
 
     function createProfile(formData) {
-      $log.debug(formData)
+
       $ionicLoading.show({
         noBackdrop: false,
         hideOnStateChange: true
       });
-    //   formHelper.validateForm(formData, userCtrl.personaliseFormValidations)
-    //     .then(function(data) {
-    //       return Rest.all('profiles').post(data);
-    //     })
-        userCtrl.splitName();
-        delete formData['name'];
-
-        Rest.all('profiles').post(formData)
-        .then(function(response) {
-          return Auth.getUser();
+      userCtrl.splitName();
+      delete formData['name'];
+      User.profile.add(formData)
+        .then(function (response) {
+          User.setActiveProfileSync(response);
+          $log.debug(content);
+          return content.createLessonDBIfNotExists()
         })
-        .then(function(response) {
-          return Auth.getProfile();
-        })
-        .then(function(){
-            return dataService.putUserifNotExist({
-                'userId': Auth.getProfileId()
-            })
-        })
-        .then(function(){
-          return dataService.createIfNotExistsLessonDB()
-
-        })
-        .then(function() {
-        localStorage.setItem('demo_flag',1);
+        .then(function () {
+          localStorage.setItem('demo_flag', 1);
           $state.go('map.navigate', {});
         })
-        .catch(function(error) {
+        .catch(function (error) {
           userCtrl.showError('Could not make your profile', error || 'Please try again');
           $ionicLoading.hide();
         })
-
-
     }
 
     function updateProfile(userdata) {
@@ -183,22 +167,20 @@
         noBackdrop: false,
         hideOnStateChange: true
       });
-      $log.debug("USer logout",type)
+
       if (type == 'clean') {
-        Auth.clean(function() {
+        Auth.clean(function () {
           $state.go('auth.signup', {})
         })
       } else {
-        Auth.logout(function() {
+        Auth.logout(function () {
           $state.go('auth.signup', {})
-        }, function() {
-          // body...
+        }, function () {
         })
       }
     }
 
     function showError(title, msg) {
-      $log.debug(title, msg);
       $ionicPopup.alert({
         title: title,
         template: msg
@@ -207,13 +189,12 @@
 
     function showAlert(title, msg) {
       var d = $q.defer();
-      $log.debug(title, msg);
       $ionicPopup.alert({
         title: title,
         template: msg
-      }).then(function(response) {
+      }).then(function (response) {
         d.resolve(response)
-      }, function(error) {
+      }, function (error) {
         d.reject(error)
       });
 
@@ -221,7 +202,6 @@
     }
 
     function validatePersonaliseForm(formData) {
-      $log.debug(formData);
       if (formData.first_name && !formData.first_name.$viewValue) {
         userCtrl.showError("Child's name", "Please enter child's name");
         return false;
@@ -245,52 +225,16 @@
       try {
         cordova.plugins.Keyboard.close();
       } catch (e) {
-        $log.debug(e);
       }
     }
 
-    $scope.$watch("userCtrl.user.name",function(){
+    $scope.$watch("userCtrl.user.name", function () {
       try {
-          userCtrl.user.name = userCtrl.user.name.replace(/  +/g, ' ');
-          $log.debug("Change");
+        userCtrl.user.name = userCtrl.user.name.replace(/  +/g, ' ');
       }
-      catch(err) {
-        $log.debug("User Control Name not found");
+      catch (err) {
       }
     });
 
-
-    // function createProfile(formData) {
-    //   $log.debug(formData)
-    //   $ionicLoading.show({
-    //     noBackdrop: false,
-    //     hideOnStateChange: true
-    //   });
-    //   formHelper.validateForm(formData, userCtrl.personaliseFormValidations)
-    //     .then(function(data) {
-    //       return Rest.all('profiles').post(data);
-    //     })
-    //     .then(function(response) {
-    //       return Auth.getUser();
-    //     })
-    //     .then(function(response) {
-    //       return Auth.getProfile();
-    //     })
-    //     .then(function() {
-    //       return dataService.putUserifNotExist({
-    //         'userId': Auth.getProfileId()
-    //       })
-    //     })
-    //     .then(function() {
-    //       $state.go('map.navigate', {});
-    //     })
-    //     .catch(function(error) {
-    //       $ionicPopup.alert({
-    //         title: 'Could not make your profile',
-    //         template: error || 'Please try again'
-    //       });
-    //       $ionicLoading.hide();
-    //     })
-    // }
   }
 })();

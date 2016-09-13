@@ -1,19 +1,3 @@
-/**
- * @ngdoc controller
- * @name auth.controller:authController
- * @function
- *
- * @description
- * Controller for handlig authorization
- *
- * @example
-   <example module="rfx">
-     <file name="index.html">
-         <textarea ng-model="text"rx-autogrow class="input-block-level"></textarea>
-         <pre>{{text}}</pre>
-     </file>
-   </example>
- */
 (function() {
   'use strict';
   angular
@@ -61,7 +45,7 @@
                     demoFactory
                    ) {
     var authCtrl = this;
-    $log.debug("Inside auth controller")
+
     authCtrl.formHelper = formHelper;
     authCtrl.exitApp = exitApp;
     authCtrl.network = network;
@@ -152,7 +136,7 @@
     });
 
     function signin(url, data) {
-      $log.debug("network",network.isOnline())
+
       if(!network.isOnline()){
         $ionicPopup.alert({
           title: 'Please try again',
@@ -171,7 +155,7 @@
         var d = $q.defer();
         window.plugins.googleplus.login(CONSTANT.CONFIG.AUTH.GOOGLEPLUS,
           function(response) {
-            $log.debug("here",response)
+
             d.resolve({
               "access_token": response.serverAuthCode
             });
@@ -185,12 +169,12 @@
       if (url === 'facebook') {
         var d = $q.defer();
         facebookConnectPlugin.login(CONSTANT.CONFIG.AUTH.FB, function(response) {
-          $log.debug("facebook",response)
+
           d.resolve({
             "access_token": response.authResponse.accessToken
           });
         }, function(error) {
-          $log.debug("FAB ERROR",error)
+
           d.reject(error);
         });
         getCredentials = d.promise;
@@ -210,14 +194,14 @@
           })
         })
         .then(function(){
-          return dataService.createIfNotExistsLessonDB()
+          return dataService.createLessonDBIfNotExists()
 
         })
         .then(function(){
           return demoFactory.show()
         })
         .then(function(show){
-          $log.debug("demoFactory",show)
+
           if(!show){
             !localStorage.getItem('demo_flag') && localStorage.setItem('demo_flag',5);
           }else{
@@ -228,7 +212,7 @@
 
         .catch(function(error) {
           $ionicLoading.hide()
-          $log.debug("Found error",error)
+
           if(error.message === 'no_profile'){
             $state.go('user.personalise')
           }
@@ -373,7 +357,7 @@
         cordova.plugins.Keyboard.close();
       }
       catch(e){
-        $log.debug(e)
+
       }
     }
 
@@ -426,16 +410,16 @@
             navigator.app.exitApp();
         }
         catch(error){
-            $log.debug(error);
+            ;
         }
     }
 
 
   $scope.$on('smsArrived',function(e,sms){
-    $log.debug(e,sms)
+
     Auth.getOTPFromSMS(sms)
     .then(function(otp){
-      $log.debug("gere",sms)
+
       authCtrl.verification = {'otp':otp};
       document.getElementById('verifyOtpFormSubmit').click()
     })

@@ -32,10 +32,10 @@
           return response;
         },
         responseError: function(rejection) {
-          $log.debug("error", rejection)
           if ([401].indexOf(rejection.status) != -1) {
             localStorage.clear();
             $injector.get('$state').go('auth.signup');
+
           }
           if ([400, 500].indexOf(rejection.status) != -1) {
             $rootScope.error = $rootScope.error || [];
@@ -45,7 +45,7 @@
             }, 3000)
           }
           if (rejection.status == 404) {
-            console.log(rejection);
+            ;
             $rootScope.error = $rootScope.error || [];
             $rootScope.error.push({
               'Not Found': 'Functionality not available'
@@ -63,7 +63,7 @@
     $ionicNativeTransitionsProvider.enable(false, false);
     // Example for nolanlawson/pouchdb-authentication
     var loadMethods = {
-      load: 'qify',
+      load: 'qify'
     };
     pouchDBProvider.methods = angular.extend({}, POUCHDB_METHODS, loadMethods);
   }

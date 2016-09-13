@@ -38,11 +38,11 @@
     //   return data.getDQJSON()
     //   .then(function(res){
     //     ml.dqJSON = res;
-    //     $log.debug('ml.dqJSON', ml.dqJSON);
+    //     ;
     //     return ml.dqJSON;
     //   })
     //   .catch(function(err){
-    //     $log.debug('ERR setMLDqJSON', err);
+    //     ;
     //   })
     // }
 
@@ -50,11 +50,11 @@
     //   return data.getKmapsJSON()
     //   .then(function(res){
     //     ml.kmapsJSON = res;
-    //     $log.debug('ml.kmapsJSON', ml.kmapsJSON);
+    //     ;
     //     return ml.kmapsJSON;
     //   })
     //   .catch(function(err){
-    //     $log.debug('ERR setMLKmapsJSON', err);
+    //     ;
     //   })
     // }
 
@@ -62,11 +62,11 @@
     //   return data.getDiagnosisLitmusMapping()
     //   .then(function(res){
     //     ml.mapping = res;
-    //     $log.debug('ml.mapping', ml.mapping);
+    //     ;
     //     return ml.mapping;
     //   })
     //   .catch(function(err){
-    //     $log.debug('ERR setMapping', err);
+    //     ;
     //   })
     // }
 
@@ -77,11 +77,11 @@
       })
       .then(function(res){
         ml.dqJSON = res;
-        $log.debug('ml.dqJSON', ml.dqJSON);
+        ;
         return ml.dqJSON;
       })
       .catch(function(err){
-        $log.debug('ERR setMLDqJSON', err);
+        ;
       })
     }
 
@@ -92,11 +92,11 @@
       })
       .then(function(res){
         ml.kmapsJSON = res;
-        $log.debug('ml.kmapsJSON', ml.kmapsJSON);
+        ;
         return ml.kmapsJSON;
       })
       .catch(function(err){
-        $log.debug('ERR setMLKmapsJSON', err);
+        ;
       })
     }
 
@@ -107,55 +107,55 @@
       })
       .then(function(res){
         ml.mapping = res;
-        $log.debug('ml.mapping', ml.mapping);
+        ;
         return ml.mapping;
       })
       .catch(function(err){
-        $log.debug('ERR setMapping', err);
+        ;
       })
     }
 
     // var q = $q.defer();
-    // $log.debug('ml $q', Object.keys($q));
+    // ;
 
     // var result = data.getKmapsJSON();
     // result.then(function(res) {
-    //     $log.debug('ml res', res);
+    //     ;
     // })
 
     // var result = data.getDiagnosisQuestionById(92423);
     // result.then(function(res) {
-    //     $log.debug('ml res', res);
+    //     ;
     // })
 
     // var result = data.getDiagnosisQuestionByLevelNSkill(0, "vocabulary");
     // result.then(function(res) {
-    //     $log.debug('ml res', res);
+    //     ;
     // });
 
     // var result = data.getDiagnosisLitmusMapping();
     // result.then(function(res) {
-    //     $log.debug('ml res', res);
+    //     ;
     // });
 
     // var result = data.getKmapsLevels();
     // result.then(function(res) {
-    //     $log.debug('ml res', res);
+    //     ;
     // });
 
     return ml;
 
     function runDiagnostic(quiz, studentName) {
       var recommendations = ml.getRecommendationFromDiagnosticTest(quiz, studentName);
-      console.log('diagnosticRecommendations', recommendations);
+      ;
 
       var insufficientSkillSrs = ml.checkIfInsufficientSrs(recommendations);
-      console.log('insufficientSkillSrs', insufficientSkillSrs);
+      ;
 
-      console.log('forced reductions in diagnosticRecommendations', recommendations);
+      ;
 
       if (insufficientSkillSrs.length > 0) {
-        console.log('running lastResort');
+        ;
 
         for (var i = 0; i < insufficientSkillSrs.length; i++) {
           var insufficientSkill = insufficientSkillSrs[i];
@@ -166,7 +166,7 @@
             recommendations[insufficientSkill] = ml.pushIfAbsent(recommendations[insufficientSkill], lastResortRecommendations); // to add all the lastResortRecommendations
           }
         }
-        console.log('lastResortRecommendations', recommendations);
+        ;
       }
 
       var rankedUniqueRecommendations = {};
@@ -176,7 +176,7 @@
         }, undefined, 1);
       }
 
-      console.log('rankedUniqueRecommendations', rankedUniqueRecommendations);
+      ;
 
       var recommendationsWithPrereqs = {};
 
@@ -291,7 +291,7 @@
         levelArray.push(parseInt(level));
       }
       levelArray.sort();
-      console.log('levelArray', levelArray);
+      ;
       // var level_one = -1*parseInt(levelArray[0]);
 
       if (questionSet["0"]["answered"] == "wrong") {
@@ -319,11 +319,11 @@
         // }
 
         if (pushSr == null) {
-          console.log('here1');
+          ;
           if (minWrong == null) {
-            console.log('here2');
+            ;
             if (questionSet["-1"] != undefined) {
-              console.log('here3');
+              ;
               pushSr = questionSet["-1"]["sr"];
               // levelPushSr = -1;
               levelPushSr = questionSet["-1"]["level"];
@@ -335,16 +335,16 @@
               skillPushSr = questionSet["0"]["skill"];
             }
           } else {
-            console.log('here4');
+            ;
             var index = minWrong - 1;
             if (questionSet[String(index)] != undefined) {
-              console.log('here5');
+              ;
               pushSr = questionSet[String(index)]["sr"];
               // levelPushSr = parseInt(index);
               levelPushSr = questionSet[String(index)]["level"];
               skillPushSr = questionSet[String(index)]["skill"];
             } else {
-              console.log('here6');
+              ;
               pushSr = questionSet[String(Math.min.apply(null, levelArray))]["sr"];
               // levelPushSr = parseInt(Math.min.apply(null, levelArray));
               levelPushSr = questionSet[String(Math.min.apply(null, levelArray))]["level"];
@@ -415,8 +415,8 @@
         return levelsOfSuggestedSrs;
       }
 
-      console.log('levelsOfSuggestedSrs', levelsOfSuggestedSrs);
-      console.log('suggestedSrs', suggestedSrs);
+      ;
+      ;
 
       return suggestedSrs;
     }
@@ -471,7 +471,7 @@
       for (var index = 0; index < quiz.length; index++) {
         var questionSet = quiz[index];
         var output = ml.getSuggestedSr2(questionSet, "getSuggestedLevel")[0];
-        console.log('output', output);
+        ;
         if (output == undefined) {
           continue;
         }
@@ -485,7 +485,7 @@
         }
       }
 
-      console.log('suggestedRootSrs', suggestedRootSrs);
+      ;
 
       // var suggestedSrs = [];
       var skillBasedSuggestedSrs = {};
@@ -498,16 +498,16 @@
         skillBasedSuggestedSrs[suggestedRootSrs[i].skill] = ml.pushIfAbsent(skillBasedSuggestedSrs[suggestedRootSrs[i].skill], prereqSrs);
       }
 
-      console.log('skillBasedSuggestedSrs', skillBasedSuggestedSrs);
+      ;
 
       var insufficientSkillSrs = ml.checkIfInsufficientSrs(skillBasedSuggestedSrs);
 
       if (insufficientSkillSrs.length == 0) {
-        console.log('insufficientSkillSrs 0');
+        ;
         return skillBasedSuggestedSrs;
       }
 
-      console.log('insufficientSkillSrs', insufficientSkillSrs);
+      ;
       for (var i = 0; i < insufficientSkillSrs.length; i++) {
         var rootSuggestedSrs = skillBasedSuggestedSrs[insufficientSkillSrs[i]];
         var prereqsRecommendations = ml.ifInsufficientSrs(rootSuggestedSrs, studentName);
@@ -524,7 +524,7 @@
       if (uniqueSuggestedSrs == undefined || uniqueSuggestedSrs.length == 0) {
         return [];
       }
-      console.log('uniqueSuggestedSrs', uniqueSuggestedSrs);
+      ;
       var prereqList = [];
       for (var i = 0; i < uniqueSuggestedSrs.length; i++) {
         // hard code
@@ -538,7 +538,7 @@
       var rankedPrereqList = ml.rankPlaylist({
         0: prereqList
       }, undefined, 1);
-      console.log('rankedPrereqList', rankedPrereqList);
+      ;
 
       // change to - check if student exist in db
       var studentData;
@@ -555,7 +555,7 @@
       }
 
       if (studentData == undefined) {
-        console.log('student not found in db');
+        ;
         var recommendations = [];
         // return rankedPrereqList.slice(0, ml.MAX - uniqueSuggestedSrs.length).concat(uniqueSuggestedSrs);
         return rankedPrereqList;
@@ -576,7 +576,7 @@
 
       // recommendations = recommendations.concat(uniqueSuggestedSrs);
 
-      console.log('trimmed recommendations', recommendations);
+      ;
       return recommendations;
     }
 
@@ -600,7 +600,7 @@
     }
 
     function lastResort(studentName, insufficientSkill) {
-      console.log('in LR', studentName, insufficientSkill);
+      ;
       // StudentLessonData has the mapping of student to lessons result
       var studentData;
 
@@ -687,32 +687,32 @@
         }
       }
 
-      console.log('lastResort additions', suggestedSrs);
+      ;
 
       return suggestedSrs;
     }
 
     function getNextQSr(test,diagLitmusMapping) {
       try{
-        console.log('in function getNextQSr');
-        console.log('in getNextQSr', JSON.stringify(test[0]));
+        ;
+
         if (test.length > 0) {
           if (test[0]["count"] >= 2) {
-            console.log('slicing');
+            ;
             test = displaySuggestedSr(test, diagLitmusMapping);
             var newTest = test.slice(1, test.length);
             return getNextQSr(newTest, diagLitmusMapping);
           }
           if (test[0]["previousAnswer"] == null) {
             if (diagLitmusMapping[test[0]["skill"]][test[0]["level"]] != undefined) {
-              console.log('if 1');
+              ;
               var q_set = diagLitmusMapping[test[0]["skill"]][test[0]["level"]]["questions"];
               if(q_set.length == 0){
-                  console.log('q_set empty');
+                  
                   var newTest = test.slice(1, test.length);
                   return getNextQSr(newTest, diagLitmusMapping);
               }
-              console.log('qSet', JSON.stringify(q_set));
+              
               return ({
                 "skill": test[0]["skill"],
                 "qSr": q_set[Math.floor(Math.random() * (q_set.length)) + 0],
@@ -721,21 +721,21 @@
                 "microstandard": diagLitmusMapping[test[0]["skill"]][test[0]["level"]]["microstandard"]
               });
             } else {
-              console.log('else 1');
+              ;
               test = displaySuggestedSr(test, diagLitmusMapping);
               var newTest = test.slice(1, test.length);
               return getNextQSr(newTest, diagLitmusMapping);
             }
           } else if (test[0]["previousAnswer"] == 0) {
             if (diagLitmusMapping[test[0]["skill"]][test[0]["level"] - 2] != undefined) {
-              console.log('if 2');
+              ;
               var q_set = diagLitmusMapping[test[0]["skill"]][test[0]["level"] - 2]["questions"];
               if(q_set.length == 0){
-                  console.log('q_set empty');
+                  
                   var newTest = test.slice(1, test.length);
                   return getNextQSr(newTest, diagLitmusMapping);
               }
-              console.log('qSet', JSON.stringify(q_set));
+              
               var intermediate_q_set = diagLitmusMapping[test[0]["skill"]][test[0]["level"] - 1]["questions"];
               test[0]["qSet"][test[0]["level"] - 1] = {
                 "qSr": intermediate_q_set[Math.floor(Math.random() * (intermediate_q_set.length)) + 0],
@@ -749,21 +749,21 @@
                 "microstandard": diagLitmusMapping[test[0]["skill"]][test[0]["level"] - 2]["microstandard"]
               });
             } else {
-              console.log('else 2');
+              ;
               test = displaySuggestedSr(test, diagLitmusMapping);
               var newTest = test.slice(1, test.length);
               return getNextQSr(newTest, diagLitmusMapping);
             }
           } else if (test[0]["previousAnswer"] == 1) {
             if (diagLitmusMapping[test[0]["skill"]][test[0]["level"] + 2] != undefined) {
-              console.log('if 3');
+              ;
               var q_set = diagLitmusMapping[test[0]["skill"]][test[0]["level"] + 2]["questions"];
               if(q_set.length == 0){
-                  console.log('q_set empty');
+                  
                   var newTest = test.slice(1, test.length);
                   return getNextQSr(newTest, diagLitmusMapping);
               }
-              console.log('qSet', JSON.stringify(q_set));
+              
               var intermediate_q_set = diagLitmusMapping[test[0]["skill"]][test[0]["level"] + 1]["questions"];
               test[0]["qSet"][test[0]["level"] + 1] = {
                 "qSr": intermediate_q_set[Math.floor(Math.random() * (intermediate_q_set.length)) + 0],
@@ -777,18 +777,18 @@
                 "microstandard": diagLitmusMapping[test[0]["skill"]][test[0]["level"] + 2]["microstandard"]
               });
             } else {
-              console.log('else 3');
+              ;
               test = displaySuggestedSr(test, diagLitmusMapping);
               var newTest = test.slice(1, test.length);
               return getNextQSr(newTest, diagLitmusMapping);
             }
           }
         } else {
-          console.log('diagnosis complete');
+          ;
           return (null);
         }
       }catch(err){
-        $log.debug('err skipping skill - ', test[0]["skill"]);
+        ;
         var newTest = test.slice(1, test.length);
         return getNextQSr(newTest, diagLitmusMapping);
       }
@@ -796,10 +796,10 @@
 
     function displaySuggestedSr(test, diagLitmusMapping) {
       var level_one = test[0]["level"];
-      console.log('in function displaySuggestedSr', diagLitmusMapping);
+      ;
       var test_one = test[0];
       var oldqSet = test_one["qSet"];
-      console.log('oldqSet', oldqSet);
+      ;
       var qSet = {};
       for (var i in oldqSet) {
         qSet[i - level_one] = {
@@ -811,7 +811,7 @@
           qSet[i - level_one]["sr"] = oldqSet[i]["qSr"];
         }
       }
-      console.log('qSet', qSet);
+      ;
       var newQSet = {};
       // array = [];
       var last = null;
@@ -840,9 +840,9 @@
         }
       }
       ml.dqQuiz.push(newQSet);
-      console.log('newQSet', newQSet);
+      ;
       var suggestedQ = ml.getSuggestedSr2(newQSet)[0];
-      console.log('suggestedQ', suggestedQ);
+      ;
       if (test.length > 1) {
         if (suggestedQ != undefined) {
           test[1]["level"] = parseInt(ml.dqJSON[suggestedQ]["node"].level);
@@ -855,7 +855,7 @@
 
 
     function getChildren(nodeData, gatheredNodeNumbers, gatheredNodeDict, classWiseScores, noColorRequired) {
-      // console.log('in function getChildren');
+      // ;
 
       var children = [];
       if (typeof(nodeData.parent) != "undefined") {
@@ -869,13 +869,13 @@
           // });
 
           if (childData == undefined) {
-            // console.log('no map found with sr ', nodeSr);
+            // ;
             continue;
           }
           child.name = childData.name;
 
           if (gatheredNodeNumbers.indexOf((child.sr)) != -1) {
-            // console.log('here', child.sr);
+            // ;
             continue;
           }
           gatheredNodeNumbers.push((child.sr));
@@ -902,7 +902,7 @@
     }
 
     function genTree(nodeSr, classWiseScores, noColorRequired) {
-      // console.log('in function genTree');
+      // ;
 
       var node = {};
       node.sr = nodeSr;
@@ -940,12 +940,12 @@
     }
 
     function getRecPlaylist(n, classWiseScores) {
-      // console.log('in function getRecPlaylist');
+      // ;
 
       // this will determine the color of a node depending on the score of the student in that lesson node
 
       if (typeof(classWiseScores) == "undefined") {
-        // console.log('classWiseScores empty');
+        // ;
         return {
           "color": "blue"
         };
@@ -953,7 +953,7 @@
     }
 
     function rankPlaylist(playlistUnordered, playlistSrName, recommendationsOnly) {
-      // console.log('in function rankPlaylist');
+      // ;
 
       // this will rank all the prerequisites according to the KnowledgeMapsLevels in sucha way that the nodes which are of level smaller that the others gets added to the playlist before
 
@@ -985,8 +985,8 @@
     }
 
     function makeTree(node, classWiseScores, appendAll, recommendationsOnly) {
-      // console.log('in function makeTree');
-      // console.log('from makeTree', node, classWiseScores, appendAll, recommendationsOnly);
+      // ;
+      // ;
 
       var genTreeOutput = ml.genTree(node, classWiseScores);
       var tempTree = genTreeOutput[0];

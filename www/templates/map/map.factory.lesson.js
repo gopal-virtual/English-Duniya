@@ -5,10 +5,10 @@
     .module('zaya-map')
     .factory('extendLesson', extendLesson);
 
-  extendLesson.$inject = ['$log', 'CONSTANT', 'data', 'Auth','$q'];
+  extendLesson.$inject = ['$log', 'CONSTANT','$q','User'];
 
   /* @ngInject */
-  function extendLesson($log, CONSTANT, data, Auth, $q) {
+  function extendLesson($log, CONSTANT, $q, User) {
     var extendLesson = {
       getLesson: getLesson
     };
@@ -29,26 +29,25 @@
       angular.forEach(lessons, function(value, key) {
         setLock(key, value, true);
       })
+
       angular.forEach(lessons, function(value, key) {
         var total_score = 0;
         var obtained_score = 0;
 
         promises.push(
-        data.getLessonScore({
-            'userId': Auth.getProfileId(),
-            'lessonId': value.id
-          }).then(function(score) {
-            if (score) {
+        User.scores.getScoreOfLesson(value.id,User.getActiveProfileSync()._id).then(function(score) {
+
+          if (score) {
               for (var property in score) {
-                $log.debug("score found",score[property].type)
+
                 if (score.hasOwnProperty(property) && score[property].type === 'assessment') {
-                  $log.debug("Score found",property)
+
                   total_score = total_score + score[property].totalScore;
                   obtained_score = obtained_score + score[property].score;
                 }
               }
 
-              $log.debug("score found",total_score,obtained_score)
+
               if (total_score > 0) {
                 var percent = (obtained_score / total_score) * 100;
 
@@ -82,7 +81,7 @@
       })
 
       $q.all(promises).then(function(success) {
-        $log.debug("this works")
+
         d.resolve(success);
       });
       // include litmus test

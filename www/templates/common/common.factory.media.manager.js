@@ -6,83 +6,146 @@
     .factory('mediaManager', mediaManager)
 
   function mediaManager($cordovaNativeAudio, $log, $cordovaFile, $cordovaFileTransfer, $q, CONSTANT, network) {
-    return {
 
-      getPath: function(url) {
-        var filename = url.split('/').pop();
-        var target = null;
-        try {
+    var mediaManager = {};
 
-          return $cordovaFile.checkFile(cordova.file.dataDirectory, 'media/' + filename)
-            .then(function(success) {
-              return target = cordova.file.dataDirectory + 'media/' + filename;
-            })
-            .catch(function(error) {
-              return target = CONSTANT.BACKEND_SERVICE_DOMAIN + url;
-            });
-        } catch (e) {
-          return Promise.resolve(CONSTANT.BACKEND_SERVICE_DOMAIN + url);
+    mediaManager.getPath = getPath;
+    mediaManager.downloadIfNotExists = downloadIfNotExists;
+    mediaManager.isBundled = isBundled;
+    mediaManager.getFileNameFromURl = getFileNameFromURl;
+
+    function getFileNameFromURl(url){
+      return url.split('/')[url.split('/').length-2]+'-'+url.split('/')[url.split('/').length-1];
+    }
+
+    function isBundled(filename) {
+
+      var d = $q.defer();
+      var url = 'bundled/' + filename;
+      var request = new XMLHttpRequest();
+      request.open('HEAD', url, true);
+      request.onload = function(e) {
+
+        if (request.readyState === 4) {
+          if (request.status === 200) {
+            d.resolve(true);
+          } else {
+            d.resolve(false);
+          }
         }
+      };
+      request.onerror = function(e) {
+        d.resolve(false);
+      };
+      request.send(null);
 
-      },
-      play: function(sound) {
-        try {
-          $cordovaNativeAudio.play(sound);
-        } catch (error) {}
-      },
-      downloadIfNotExists: function(url) {
-        $log.debug("downloadIfNotExists")
-        var d = $q.defer();
-        var filename = url.split("/").pop();
-        try {
-          $log.debug("downloadIfNotExists 1")
+      return d.promise;
+    }
 
-          var target = cordova.file.dataDirectory + 'media/' + filename;
-          $cordovaFile.checkFile(cordova.file.dataDirectory, 'media/' + filename).then(function(result) {
-              $log.debug("downloadIfNotExists 2")
+    function getPath(url) {
+      var filename = mediaManager.getFileNameFromURl(url)
 
-              d.resolve(target);
-            })
-            .catch(function(e) {
-              $log.debug("downloadIfNotExists 3", e, network.isOnline())
+      var target = null;
+      var d = $q.defer();
+      try {
 
-              if (e.message === 'NOT_FOUND_ERR') {
-                if (!network.isOnline()) {
-                  $log.debug("downloadIfNotExists 4")
+        mediaManager.isBundled(filename).then(function(result) {
 
-                  d.reject({
-                    "error": true,
-                    "message": "offline"
-                  });
-                } else {
-                  $log.debug("downloadIfNotExists 5")
+          if (result) {
 
-                  $cordovaFileTransfer.download(url, target)
-                    .then(function(result) {
-                      d.resolve(target);
-                    }, function(err) {
-                      $log.debug(err)
-                      d.reject("Error Downlaoding " + target);
-                    }, function(progress) {
-                      localStorage.setItem('progress',parseInt((progress.loaded/progress.total) * 100))
-                      // $log.debug(progress,(progress.loaded/progress.total) * 100);
+            d.resolve('bundled/' + filename);
+          } else {
+            try{
+              $cordovaFile.checkFile(cordova.file.dataDirectory, 'media/' + filename)
+                .then(function(success) {
+
+                  d.resolve(cordova.file.dataDirectory + 'media/' + filename)
+                })
+                .catch(function(error) {
+
+                  d.resolve(CONSTANT.RESOURCE_SERVER + url)
+                });
+            }
+            catch (e) {
+
+              d.resolve(CONSTANT.RESOURCE_SERVER + url);
+            }
+
+          }
+        })
+
+      } catch (e) {
+
+        d.resolve(CONSTANT.RESOURCE_SERVER + url);
+      }
+      return d.promise;
+    }
+
+    function downloadIfNotExists(url) {
+      var d = $q.defer();
+      var filename = mediaManager.getFileNameFromURl(url)
+      try {
+        var target = cordova.file.dataDirectory + 'media/' + filename;
+
+        mediaManager.isBundled(filename).then(function(result) {
+
+          if (result) {
+
+            d.resolve('bundled/' + filename);
+
+          } else {
+
+            $cordovaFile.checkFile(cordova.file.dataDirectory, 'media/' + filename)
+
+              .then(function(result) {
+
+
+
+                d.resolve(target);
+              })
+              .catch(function(e) {
+
+
+                if (e.message === 'NOT_FOUND_ERR') {
+                  if (!network.isOnline()) {
+
+
+                    d.reject({
+                      "error": true,
+                      "message": "offline"
                     });
+                  } else {
+
+
+                    $cordovaFileTransfer.download(url, target)
+                      .then(function(result) {
+                        d.resolve(target);
+                      }, function(err) {
+
+                        d.reject("Error Downlaoding " + target);
+                      }, function(progress) {
+                        localStorage.setItem('progress', parseInt((progress.loaded / progress.total) * 100))
+                      });
+                  }
+
+                } else {
+
+                  d.reject("Error Downlaoding " + target);
                 }
+              })
+          }
+        })
 
-              } else {
 
-                d.reject("Error Downlaoding " + target);
-              }
-            })
+      } catch (e) {
 
-        } catch (e) {
+        d.resolve(url);
+      }
 
-          d.resolve(url);
-        }
+      return d.promise;
 
-        return d.promise;
+    }
 
-      },
-    };
+    return mediaManager;
   }
 })();

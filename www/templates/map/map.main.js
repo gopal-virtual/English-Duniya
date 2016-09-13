@@ -473,6 +473,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                     regionRange[region[i]]["lowerTreshold"] = regionRange[region[i]].lowerLimit - game.camera.height - tresholdOffset;
                 }
                 game.world.setBounds(0, 0, game.width, totalRegionHeight);
+                game.forceSingleUpdate = true;
             }
 
             function renderRegion(region){
@@ -923,12 +924,13 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
 
             function gameStart(){
                 log.info("Starting Game ...")
+
                 log.info("Rendering these regions - ",renderedRegion);
                 addGroups(renderedRegion);
                 renderWorld(renderedRegion);
                 renderRegion(renderedRegion);
                 renderSprites(renderedRegion,gameSprites);
-                renderParticles();
+                // renderParticles();
                 var fetchMapRequest = fetchMapPath(points);
                 fetchMapRequest.then(function(){
                     scope.$emit('removeLoader');
@@ -1049,6 +1051,62 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             }
 
         },
+        interactiveAnimate : function() {
+            if (game.camera.y + 200 < regionOffset.tundra && game.camera.y + 200 > regionOffset.tundra - 360) {
+                // game.debug.spriteInfo(sprites.plantLeft, 20, 32);
+                if (temp.plantLeftX == undefined && temp.plantRightX ==undefined) {
+                        temp["plantLeftX"] = sprites.plantLeft.x;
+                        temp["plantRightX"] = sprites.plantRight.x;
+                }
+               sprites.plantLeft.x = temp.plantLeftX - (180 * (regionOffset.tundra - game.camera.y - 200)/360);
+               sprites.plantRight.x = temp.plantRightX + (180 * (regionOffset.tundra - game.camera.y - 200)/360);
+            }
+
+            if (game.camera.y + 100 < regionOffset.peru + 800 && game.camera.y + 100 > regionOffset.peru + 800 - 360) {
+                // game.debug.spriteInfo(sprites.cloudLeft, 20, 32);
+                var checkTempClouds = temp.cloudLeft==undefined && temp.cloudMiddle==undefined && temp.cloudRight==undefined && temp.cloudRightBehin==undefined;
+                if (checkTempClouds) {
+                        temp["cloudLeft"] = {
+                            "x" : sprites.cloudLeft.x,
+                            "y" : sprites.cloudLeft.y
+                        };
+                        temp["cloudRight"] = {
+                            "x" : sprites.cloudRight.x,
+                            "y" : sprites.cloudRight.y
+                        };
+                        temp["cloudMiddle"] = {
+                            "x" : sprites.cloudMiddle.x,
+                            "y" : sprites.cloudMiddle.y
+                        };
+                        temp["cloudRightBehind"] = {
+                            "x" : sprites.cloudRightBehind.x,
+                            "y" : sprites.cloudRightBehind.y
+                        };
+                }
+                // log.warn(temp["cloudLeft"]);
+               sprites.cloudLeft.x = temp.cloudLeft.x + ((regionOffset.peru + 800 - game.camera.y - 100)/8);
+               sprites.cloudRight.x = temp.cloudRight.x + ((regionOffset.peru + 800 - game.camera.y - 100)/8);
+               sprites.cloudMiddle.x = temp.cloudMiddle.x - ((regionOffset.peru + 800 - game.camera.y - 100)/8);
+               sprites.cloudRightBehind.x = temp.cloudRightBehind.x - ((regionOffset.peru + 800 - game.camera.y - 100)/8);
+               sprites.cloudLeft.y = temp.cloudLeft.y + ((regionOffset.peru + 800 - game.camera.y - 100)/8);
+               sprites.cloudRight.y = temp.cloudRight.y + ((regionOffset.peru + 800 - game.camera.y - 100)/8);
+               sprites.cloudMiddle.y = temp.cloudMiddle.y + ((regionOffset.peru + 800 - game.camera.y - 100)/8);
+               sprites.cloudRightBehind.y = temp.cloudRightBehind.y + ((regionOffset.peru + 800 - game.camera.y - 100)/8);
+               sprites.cloudLeft.alpha = 1 - (regionOffset.peru + 800 - game.camera.y - 100)/720;
+               sprites.cloudRight.alpha = 1 - (regionOffset.peru + 800 - game.camera.y - 100)/720;
+               sprites.cloudMiddle.alpha = 1 - (regionOffset.peru + 800 - game.camera.y - 100)/720;
+               sprites.cloudRightBehind.alpha = 1 - (regionOffset.peru + 800 - game.camera.y - 100)/720;
+
+            }
+
+            if (game.camera.y + 500 < regionOffset.tundra && game.camera.y + 500 > regionOffset.forest + 300) {
+                // game.debug.spriteInfo(sprites.yellowButterfly,20,132);
+                if (temp.yellowButterflyY == undefined) {
+                        temp["yellowButterflyY"] = sprites.yellowButterfly.y;
+                }
+                sprites.yellowButterfly.y = temp.yellowButterflyY - (regionOffset.tundra - game.camera.y - 500);
+            }
+        },
 
         update: function() {
             // log.debug("groups.region.desert",groups.region.desert);
@@ -1067,63 +1125,10 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             // game.debug.pointer(game.input.pointer5);
             // game.debug.pointer(game.input.pointer6);
 
-            function interactiveAnimate(){
-                if (game.camera.y + 200 < regionOffset.tundra && game.camera.y + 200 > regionOffset.tundra - 360) {
-                    // game.debug.spriteInfo(sprites.plantLeft, 20, 32);
-                    if (temp.plantLeftX == undefined && temp.plantRightX ==undefined) {
-                            temp["plantLeftX"] = sprites.plantLeft.x;
-                            temp["plantRightX"] = sprites.plantRight.x;
-                    }
-                   sprites.plantLeft.x = temp.plantLeftX - (180 * (regionOffset.tundra - game.camera.y - 200)/360);
-                   sprites.plantRight.x = temp.plantRightX + (180 * (regionOffset.tundra - game.camera.y - 200)/360);
-                }
-
-                if (game.camera.y + 100 < regionOffset.peru + 800 && game.camera.y + 100 > regionOffset.peru + 800 - 360) {
-                    // game.debug.spriteInfo(sprites.cloudLeft, 20, 32);
-                    var checkTempClouds = temp.cloudLeft==undefined && temp.cloudMiddle==undefined && temp.cloudRight==undefined && temp.cloudRightBehin==undefined;
-                    if (checkTempClouds) {
-                            temp["cloudLeft"] = {
-                                "x" : sprites.cloudLeft.x,
-                                "y" : sprites.cloudLeft.y
-                            };
-                            temp["cloudRight"] = {
-                                "x" : sprites.cloudRight.x,
-                                "y" : sprites.cloudRight.y
-                            };
-                            temp["cloudMiddle"] = {
-                                "x" : sprites.cloudMiddle.x,
-                                "y" : sprites.cloudMiddle.y
-                            };
-                            temp["cloudRightBehind"] = {
-                                "x" : sprites.cloudRightBehind.x,
-                                "y" : sprites.cloudRightBehind.y
-                            };
-                    }
-                    // log.warn(temp["cloudLeft"]);
-                   sprites.cloudLeft.x = temp.cloudLeft.x + ((regionOffset.peru + 800 - game.camera.y - 100)/8);
-                   sprites.cloudRight.x = temp.cloudRight.x + ((regionOffset.peru + 800 - game.camera.y - 100)/8);
-                   sprites.cloudMiddle.x = temp.cloudMiddle.x - ((regionOffset.peru + 800 - game.camera.y - 100)/8);
-                   sprites.cloudRightBehind.x = temp.cloudRightBehind.x - ((regionOffset.peru + 800 - game.camera.y - 100)/8);
-                   sprites.cloudLeft.y = temp.cloudLeft.y + ((regionOffset.peru + 800 - game.camera.y - 100)/8);
-                   sprites.cloudRight.y = temp.cloudRight.y + ((regionOffset.peru + 800 - game.camera.y - 100)/8);
-                   sprites.cloudMiddle.y = temp.cloudMiddle.y + ((regionOffset.peru + 800 - game.camera.y - 100)/8);
-                   sprites.cloudRightBehind.y = temp.cloudRightBehind.y + ((regionOffset.peru + 800 - game.camera.y - 100)/8);
-                   sprites.cloudLeft.alpha = 1 - (regionOffset.peru + 800 - game.camera.y - 100)/720;
-                   sprites.cloudRight.alpha = 1 - (regionOffset.peru + 800 - game.camera.y - 100)/720;
-                   sprites.cloudMiddle.alpha = 1 - (regionOffset.peru + 800 - game.camera.y - 100)/720;
-                   sprites.cloudRightBehind.alpha = 1 - (regionOffset.peru + 800 - game.camera.y - 100)/720;
-
-                }
-
-                if (game.camera.y + 500 < regionOffset.tundra && game.camera.y + 500 > regionOffset.forest + 300) {
-                    // game.debug.spriteInfo(sprites.yellowButterfly,20,132);
-                    if (temp.yellowButterflyY == undefined) {
-                            temp["yellowButterflyY"] = sprites.yellowButterfly.y;
-                    }
-                    sprites.yellowButterfly.y = temp.yellowButterflyY - (regionOffset.tundra - game.camera.y - 500);
-                }
-            }
-            interactiveAnimate();
+            // function interactiveAnimate(){
+                
+            // }
+            this.interactiveAnimate();
             // game.camera.y-= 4;
 
         }
