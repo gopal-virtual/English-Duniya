@@ -4,8 +4,12 @@
   angular
     .module('common')
     .constant('CONSTANT', {
-      'LOCK': @@LOCK,
-      'BACKEND_SERVICE_DOMAIN': @@BACKEND_URL,
+      'LOCK': true,
+      'BACKEND_SERVICE_DOMAIN': 'https://cc-test.zaya.in/',
+      // 'BACKEND_SERVICE_DOMAIN': 'https://eg-api.zaya.in/',
+      'RESOURCE_SERVER': 'https://cc-test.zaya.in/',
+      // 'RESOURCE_SERVER': 'https://eg-api.zaya.in/',
+      // 'BACKEND_SERVICE_DOMAIN' : 'http://192.168.1.6:9000/',
       'QUESTION' : {
         'DEMO' : '33c0asdf-b7f6-4f1c-8db5-234f5613a854'
       },

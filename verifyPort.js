@@ -4,6 +4,7 @@ var fs = require('fs');
 var http = require('http');
 var request = require('request-promise');
 var prompt = require('prompt');
+var chalk = require('chalk');
 var meta = {
 	'questions' : 0,
 	'videos' : 0,
@@ -99,7 +100,7 @@ Lesson.prototype.parseUrl = function()
 			grade : this.grade,
 			status : 'No Intro sound'
 		}
-		console.log("Warning! ",intro);
+		console.warn(chalk.yellow("\nMissing Intro File\n"),intro);
 	}
 
 	// resources
@@ -116,7 +117,7 @@ Lesson.prototype.parseUrl = function()
 					practice : resources[i].node.title,
 					Question : 'No question found'
 				}
-				console.log(noquestion);
+				console.log(chalk.yellow("\nNo Questions Found\n"),noquestion);
 			}
 			else{
 				for (var questions = resources[i].objects, c = questions.length - 1; c >= 0; c--) {
@@ -133,7 +134,7 @@ Lesson.prototype.parseUrl = function()
 							object_id : questions[c].node.object_id,
 							status : 'No answer'
 						}
-						console.log(noanswer);
+						console.log(chalk.yellow("\nNo Answer Found\n"),noanswer);
 					}
 					var instruction = questions[c].node.meta && questions[c].node.meta.instructions && questions[c].node.meta.instructions.sounds ? questions[c].node.meta.instructions.sounds : false;
 					if(instruction){
@@ -204,7 +205,9 @@ urlObj.prototype.getUrlObj = function ()
 				parent : _this.parent,
 				url : typeof(_this.url) == 'string' ? _this.url : JSON.stringify(_this.url),
 			}
-		if(err.statusCode == 404)
-			console.log(err.statusCode, NOT_FOUND);
+		if(err.statusCode == 404){
+			console.log(chalk.red("\nMissing FIle - 404\n"),err.statusCode, NOT_FOUND);
+			// console.log();
+		}
     })
 }

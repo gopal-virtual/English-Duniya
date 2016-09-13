@@ -6,12 +6,13 @@
         .directive('virtualKeyboard', virtualKeyboard);
 
     /* @ngInject */
-    function virtualKeyboard(CONSTANT) {
+    function virtualKeyboard(CONSTANT,$log) {
         var directive = {
             restrict: 'E',
             templateUrl: CONSTANT.PATH.COMMON + '/common.keyboard' + CONSTANT.VIEW,
             scope: {
-                'reference' : '='
+                'reference' : '=',
+                'limit' : '='
             },
             controller: keyController,
             controllerAs: 'keyCtrl',
@@ -30,8 +31,9 @@
         keyCtrl.input = input;
         keyCtrl.erase = erase;
 
-        function input (key) {
-            if(keyCtrl.reference.length <= 15){
+        function input (key, limit) {
+            $log.debug("Length", keyCtrl.reference.trim().length);
+            if(keyCtrl.reference.trim().length <= keyCtrl.limit){
                 keyCtrl.reference += key;
             }
         }

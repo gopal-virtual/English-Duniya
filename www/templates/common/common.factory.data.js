@@ -66,6 +66,7 @@
       // addNewUser: addNewUser
       putUserifNotExist: putUserifNotExist,
       startReportSyncing: startReportSyncing,
+      changeGrade: changeGrade,
       demo_question: {
         "node": {
           "id": CONSTANT.QUESTION.DEMO,
@@ -489,19 +490,24 @@
       var d = $q.defer();
       var promises = []
       for (var index = 0; index < quiz.objects.length; index++) {
-        if (quiz.objects[index].node.meta && quiz.objects[index].node.meta.instructions && quiz.objects[index].node.meta.instructions.sounds[0] && localStorage.getItem(quiz.objects[index].node.meta.instructions.sounds[0]) != 'played') {
-          localStorage.setItem(quiz.objects[index].node.meta.instructions.sounds[0],'played');
+        try {
+          if (quiz.objects[index].node.meta && quiz.objects[index].node.meta.instructions && quiz.objects[index].node.meta.instructions.sounds[0] && localStorage.getItem(quiz.objects[index].node.meta.instructions.sounds[0]) != 'played') {
+            localStorage.setItem(quiz.objects[index].node.meta.instructions.sounds[0],'played');
 
-          promises.push(mediaManager.getPath(quiz.objects[index].node.meta.instructions.sounds[0]).then(
+            promises.push(mediaManager.getPath(quiz.objects[index].node.meta.instructions.sounds[0]).then(
 
-            function(index) {
+              function(index) {
 
-              return function(path) {
-                quiz.objects[index].node.instructionSound = path
-              }
-            }(index)
+                return function(path) {
+                  quiz.objects[index].node.instructionSound = path
+                }
+              }(index)
 
-          ))
+            ))
+          }
+        }
+        catch (err) {
+          $log.debug("No instruction sound found"+err);
         }
         // quiz.objects[index].node.instructionSound = CONSTANT.BACKEND_SERVICE_DOMAIN + quiz.objects[index].node.meta.instructions.sounds[0];
 
@@ -657,7 +663,7 @@
 
       angular.forEach(assessment.objects, function(object) {
         $log.debug("Check this", object);
-        if (object.node.meta.instructions) {
+        if (object.node.meta.instructions && object.node.meta.instructions.sounds) {
           promises.push(
             mediaManager.downloadIfNotExists(CONSTANT.BACKEND_SERVICE_DOMAIN + object.node.meta.instructions.sounds[0])
           );
@@ -830,6 +836,15 @@
     function queueUploadRecord(record){
       return Rest.all(record.url).post(record.data);
     }
+
+    function changeGrade(newGrade){
+       var profile = Auth.getLocalProfile();
+       profile.grade = newGrade;
+       Auth.updateProfile(profile);
+
+       return data.createIfNotExistsLessonDB()
+
+     }
 
   }
 

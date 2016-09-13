@@ -249,6 +249,16 @@
       }
     }
 
+    $scope.$watch("userCtrl.user.name",function(){
+      try {
+          userCtrl.user.name = userCtrl.user.name.replace(/  +/g, ' ');
+          $log.debug("Change");
+      }
+      catch(err) {
+        $log.debug("User Control Name not found");
+      }
+    });
+
 
     // function createProfile(formData) {
     //   $log.debug(formData)

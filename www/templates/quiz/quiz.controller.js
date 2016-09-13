@@ -807,7 +807,6 @@
         $ionicLoading.show({
           hideOnStateChange: true
         })
-        $log.debug("SCOPE",$scope.selectedNode);
         $state.go('map.navigate', {"activatedLesson" : $scope.selectedNode});
       } else {
         $scope.showNodeMenu();

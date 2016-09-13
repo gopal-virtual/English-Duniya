@@ -174,8 +174,6 @@ input[type=radio].hide{
 }
 
 .radio-box{
-  height: 100px;
-  width: 100px;
   display: inline-block;
   float: left;
   border-radius: 10px;
@@ -190,4 +188,14 @@ input[type=radio].hide{
   width: 240px;
   margin-left: auto;
   margin-right: auto;
+}
+
+.radio-box-xl{
+  height: 100px;
+  width: 100px;
+}
+
+.radio-box-sm{
+  height: 80px;
+  width: 80px;
 }

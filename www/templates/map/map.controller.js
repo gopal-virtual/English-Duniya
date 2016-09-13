@@ -1,3 +1,12 @@
+/**
+ * @ngdoc controller
+ * @name map.controller:mapController
+ * @function
+ *
+ * @description
+ * Controller takes care of the navigation map.
+ * Note: The controller gets called before map.main.js
+ */
 (function() {
   'use strict';
 
@@ -73,6 +82,7 @@
         $q
     ) {
 
+
     $scope.audio = audio;
     $log.debug('settings', settings);
     $scope.settings = settings;
@@ -85,7 +95,8 @@
     var mapCtrl = this;
     var lessonList = CONSTANT.LOCK ? lessonLocked : lessons;
     // $state.current.data && lessonList.unshift($state.current.data.litmus);
-
+    mapCtrl.dataFactory = data;
+    mapCtrl.authFactory = Auth;
     mapCtrl.lessons = lessonList;
     // mapCtrl.userCtrl = $controller('userCtrl');
     // mapCtrl.resetNode = resetNode;
@@ -93,7 +104,7 @@
     mapCtrl.backdrop = false;
     mapCtrl.showScore = -1;
     mapCtrl.skillSet = skills;
-
+    mapCtrl.changeGrade = changeGrade;
     mapCtrl.animationExpand = {};
     mapCtrl.animationExpand['expand'] = expand;
     mapCtrl.animationExpand['shrink'] = shrink;
@@ -108,6 +119,15 @@
     // $log.debug("selectedNode",selectedNode);
     mapCtrl.setAnimateStarFlag = setAnimateStarFlag;
 
+    /**
+    * @ngdoc property
+    * @name mapCtrl.setAnimateStarFlag
+    * @propertyOf map.controller:mapController
+    * @description
+    * Initializes animateStar flag in localStorage
+    *
+    */
+
     function setAnimateStarFlag() {
       var animateStarFlag = {
           isCurrentNode : true,
@@ -115,6 +135,16 @@
       }
       localStorage.setItem("animateStarFlag",JSON.stringify(animateStarFlag));
     }
+
+    /**
+    * @ngdoc method
+    * @name mapCtrl.getNodeProperty
+    * @methodOf map.controller:mapController
+    * @description
+    * Finds node property values in localstorage and then returns them
+    * @param {string} propertyString A string to define the property of the node. It can take the values 'x', 'y', 'width', 'height', 'node', 'type'
+    * @returns {string} Value of the property stored in localStorage. If nothing is found value 0 is returned
+    */
 
     function getNodeProperty(prop) {
       if (prop == 'x')
@@ -130,31 +160,12 @@
       if (prop == 'type')
         return localStorage.demo_node ? JSON.parse(localStorage.demo_node).type : 0;
     }
-    // mapCtrl.animationShrink.shrink = animationShrink;
 
-    // $ionicPlatform.registerBackButtonAction(function(event) {
-    //   if (mapCtrl.animationExpand.expandContainer == 1) {
-    //     $scope.closeNodeMenu();
-    //     $timeout(function() {
-    //       mapCtrl.animationExpand.shrink();
-    //     }, 200);
-    //   }
-    // }, 210);
     $ionicPlatform.registerBackButtonAction(function(event) {
       event.preventDefault();
-      //     if ($state.is('map.navigate')) { // your check here
-      //     $ionicPopup.confirm({
-      //       title: 'System warning',
-      //       template: 'Are you sure you want to exit?'
-      //     }).then(function(res) {
-      //       if (res) {
-      //         ionic.Platform.exitApp();
-      //       }
-      //     })
-      //   }
     }, 100);
 
-    $log.debug("LEssons in mapCtrl", mapCtrl.lessons)
+    $log.debug("Lessons in mapCtrl", mapCtrl.lessons)
     $scope.$on('removeLoader',function() {
       $ionicLoading.hide();
       $log.info("Loader Hidden")
@@ -172,60 +183,64 @@
           type: 'litmus'
         });
       } else {
-        $scope.lessonutils.getLesson(node.id, $scope, function(response) {
-            analytics.log(
-                {
-                    name : 'LESSON',
-                    type : 'START',
-                    id : node.id
-                },
-                {
-                    time : new Date()
-                }
-            )
-          $ionicLoading.show({
-            hideOnStateChange: true
-          });
-          $log.debug("Starts", node)
-          var d = new Date();
-          var promise;
-          if(node.meta.intros && node.meta.intros.sound  && node.meta.intros.sound[0]){
-            $log.debug("has sound")
-            promise = mediaManager.downloadIfNotExists(CONSTANT.BACKEND_SERVICE_DOMAIN + node.meta.intros.sound[0])
-          } else {
-            $log.debug("not has sound")
-
-            promise = $q.resolve();
-          }
-
-          promise.then(function(s) {
-            $log.debug("Resolves", new Date() - d, s)
-          node.meta.parsed_sound = s;
-          $log.debug("Download intro here",node)
-          audio.setVolume('background', 0.1);
-          if(currentPos)
-          {
-            $log.debug("CurrentPos")
-            mapCtrl.animationExpand.expand(currentPos);
-            lessonutils.playDemoAudio(node);
-            $scope.selectedNode = response;
-          }else{
-            lessonutils.playDemoAudio(node);
-            $scope.openNodeMenu();
-            $scope.selectedNode = response;
-          }
-            $ionicLoading.hide()
-          }).catch(function(error) {
-            $ionicPopup.alert({
-              title: 'Please try again',
-              template: "No internet conection found"
-            })
-            $log.debug("Error opening node", error)
-            $ionicLoading.hide()
-          })
-
-          // $log.debug("NODENODE ",$scope.selectedNode.node.tag);
+        $ionicLoading.show({
+          // hideOnStateChange: true
         });
+        $scope.lessonutils.getLesson(node.id, $scope).then(
+
+          function(response) {
+              analytics.log(
+                  {
+                      name : 'LESSON',
+                      type : 'START',
+                      id : node.id
+                  },
+                  {
+                      time : new Date()
+                  }
+              )
+
+            $log.debug("Starts", node)
+            var d = new Date();
+            var promise;
+            if(node.meta.intros && node.meta.intros.sound  && node.meta.intros.sound[0]){
+              $log.debug("has sound")
+              promise = mediaManager.downloadIfNotExists(CONSTANT.RESOURCE_SERVER + node.meta.intros.sound[0])
+            } else {
+              promise = $q.resolve();
+              $log.debug("not has sound")
+            }
+
+            promise.then(function(s) {
+
+            $log.debug("Resolves", new Date() - d, s)
+            node.meta.parsed_sound = s;
+            $log.debug("Download intro here",node)
+            audio.setVolume('background', 0.1);
+            if(currentPos)
+            {
+              $log.debug("CurrentPos")
+              mapCtrl.animationExpand.expand(currentPos,node);
+              $scope.selectedNode = response;
+            }else{
+              $log.debug("Not CurrentPos")
+
+              $scope.openNodeMenu(node);
+              $scope.selectedNode = response;
+            }
+              // $ionicLoading.hide()
+            }).catch(function(error) {
+              $ionicPopup.alert({
+                title: 'Please try again',
+                template: "No internet conection found"
+              })
+              $log.debug("Error opening node", error)
+              // $ionicLoading.hide()
+            })
+
+            // $log.debug("NODENODE ",$scope.selectedNode.node.tag);
+          }
+        );
       }
     })
 
@@ -242,17 +257,33 @@
       }
     })
 
+
+    /**
+    * @ngdoc method
+    * @name mapCtrl.animateStar.resetColor
+    * @methodOf map.controller:mapController
+    * @description
+    * Used for resetting color flag. The color flag determines whether the previous attempted lesson tag gets highlighted in the HUD.
+    * @param {int} index The index of the current element in the lessons array
+    * @returns {boolean} True if the flag is successfully reset else false
+    *
+    */
+
     function resetColor(index) {
       $log.debug("Resetting Color Flag ...", index);
       if ($stateParams.activatedLesson && mapCtrl.skillSet[index].title.toLowerCase() == $stateParams.activatedLesson.node.tag.toLowerCase()) {
         mapCtrl.animateStar.activeFlag = -2;
+        return true;
         // mapCtrl.animateStar.animateFlag = -1;
       }
+      return false;
     }
 
 
-    $scope.openNodeMenu = function() {
+    $scope.openNodeMenu = function(node) {
       $log.debug("Opening node menu")
+      lessonutils.playDemoAudio(node);
+
       $scope.nodeMenu.show();
       $ionicLoading.hide();
       $log.debug("Force closing loading");
@@ -264,6 +295,18 @@
       });
       return true;
     }
+
+
+    /**
+    * @ngdoc method
+    * @name mapCtrl.openDemo
+    * @methodOf map.controller:mapController
+    * @description
+    * starts the demo on the navigation map by triggering the demo modal.
+    * @returns {boolean} True every time
+    *
+    */
+
     mapCtrl.openDemo = function() {
       $scope.demo.show().then(function() {
         $ionicLoading.hide();
@@ -271,6 +314,17 @@
       $log.debug("Playing audio")
       return true;
     }
+
+    /**
+    * @ngdoc method
+    * @name mapCtrl.closeDemo
+    * @methodOf map.controller:mapController
+    * @description
+    * ends the demo on the navigation map by closing the demo modal.
+    * @returns {boolean} True every time
+    *
+    */
+
     mapCtrl.closeDemo = function() {
       $log.debug('close the demo');
       $scope.demo.hide();
@@ -330,7 +384,7 @@
 
     // updateProfile($scope.test);
 
-    function expand(currentPos) {
+    function expand(currentPos,node) {
       // alert(JSON.stringify(e));
       mapCtrl.showResult = false;
       $log.debug("X coords: " + currentPos.x + ", Y coords: " + currentPos.y);
@@ -350,8 +404,8 @@
         mapCtrl.animationExpand.expandContainer = 1;
       }, 50).then(function() {
         $timeout(function() {
-          $scope.openNodeMenu();
-        }, 1000);
+          $scope.openNodeMenu(node);
+        });
       });
 
     }
@@ -394,6 +448,21 @@
         })
     })
 
+    function changeGrade(newGrade){
+      $log.debug("here")
+      $ionicLoading.show({
+        hideOnStateChange: true
+      })
+      mapCtrl.dataFactory.changeGrade(newGrade).then(function(){
+        $scope.settingsModal.hide();
+        location.reload()
+
+      });
+      //
+      // $rootScope.$broadcast('reloadMap');
+      // $state.go('map.navigate')
+      // $state.reload()
+    }
 
   }
 })();

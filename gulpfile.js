@@ -15,9 +15,8 @@ var templateCache = require('gulp-angular-templatecache');
 var optimization = require('gulp-imagemin');
 var preen = require('preen');
 var strip = require('gulp-strip-comments');
-var argument = require('yargs');
-var file = require('fs');
-var replace_task = require('gulp-replace-task');  
+var gulpDocs = require('gulp-ngdocs');
+var browserSync = require('browser-sync').create();
 
 
 var paths = {
@@ -136,6 +135,31 @@ gulp.task('html', function() {
       moduleSystem: 'IIFE'
     }))
     .pipe(gulp.dest('./www/templates/'));
+});
+
+gulp.task('docs', [], function () {
+    var options = {
+      html5Mode: false,
+      title: "Awesome English Duniya Docs"
+    }
+    return gulp.src('www/templates/**/*.js')
+    .pipe(gulpDocs.process(options))
+    .pipe(gulp.dest('./docs'));
+    browserSync.reload();
+});
+
+gulp.task('reload', [], function () {
+  browserSync.reload();
+});
+
+gulp.task('docsrun', ['docs'], function () {
+  browserSync.init({
+    'server': {
+      'baseDir': './docs/'
+    }
+  });
+  gulp.watch('www/templates/**/*.js', ['docs','reload']);
+  console.log("HUAHAHAHA ~~ DOCS SERVED HOT ~~");
 });
 
 gulp.task('watch', function() {
