@@ -15,10 +15,10 @@ var templateCache = require('gulp-angular-templatecache');
 var optimization = require('gulp-imagemin');
 var preen = require('preen');
 var strip = require('gulp-strip-comments');
-var gulpDocs = require('gulp-ngdocs');
-var browserSync = require('browser-sync').create();
-
-
+var argument = require('yargs');
+var file = require('fs');
+var replace_task = require('gulp-replace-task');
+var gulpif = require('gulp-if');
 var paths = {
   sass: [
     './scss/**/*.scss',
@@ -49,59 +49,80 @@ var paths = {
     './www/img/*.png',
     './www/img/*.jpg',
     './www/img/*.jpeg'
-  ]
+  ],
+  constants : {
+    environment : './www/constant.json',
+    template : './constant.template.txt',
+    destination : './www/templates/common/',
+    destination_filename : 'common.constant.js'
+  }
+
 };
+var environments = {
+  default: 'PRODUCTION',
+  prod: 'PRODUCTION',
+  dev: 'DEVELOPMENT',
+  test: 'TESTING'
+};
+var env = argument.argv.env ? environments[argument.argv.env] : environments.default;
+var constants = JSON.parse(file.readFileSync(paths.constants.environment, 'utf8'));
 
-gulp.task('default', ['sass','scripts','html']);
+gulp.task('default', ['generate-constants', 'sass', 'scripts', 'html']);
 
-gulp.task('optimize', function(cb) {
-  gulp.src(paths.image)
-    .pipe(optimization())
-    .pipe(gulp.dest('www/img'))
-});
+// gulp.task('optimize', function(cb) {
+//   gulp.src(paths.image)
+//     .pipe(optimization())
+//     .pipe(gulp.dest('www/img'))
+// });
 
-gulp.task('preen', function(cb) {
+gulp.task('preen', function (cb) {
   preen.preen({}, cb);
 });
 
-var backend = JSON.parse(file.readFileSync('./www/constant.json', 'utf8'));
+gulp.task('generate-constants', function () {
 
-gulp.task('scripts', function() {
-    var url = argument.argv.env ? backend.BACKEND_SERVICE[argument.argv.env] : backend.BACKEND_SERVICE.dev;
-    gulp.src(paths.script)
-      .pipe(replace_task({
-        patterns: [{
-          match : 'BACKEND_URL',
-          replacement : url
-        },{
-          match : 'LOCK',
-          replacement : argument.argv.lock || true
-        }]
-      }))
-      .pipe(plumber({
-        handleError: function(err) {
-          console.log(err);
-          this.emit('end');
-        }
-      }))
-      .pipe(print(function(filepath) {
-        return "MrGopal modified : " + filepath;
-      }))
-      .pipe(ngAnnotate())
-      .pipe(stripDebug())
-      .pipe(strip())
-      .pipe(concate('mobile.app.js'))
-      .pipe(gulp.dest('www/build'))
-      .pipe(rename({
-        suffix: '.min'
-      }))
-      .pipe(uglify())
-      .pipe(gulp.dest('www/build'))
-  
-    // .pipe(broswerSync.stream())
+
+  gulp.src(paths.constants.template)
+    .pipe(replace_task({
+      patterns: [{
+        match: 'BACKEND_SERVICE_DOMAIN',
+        replacement: constants[env]['BACKEND_SERVICE_DOMAIN']
+      }, {
+        match: 'LOCK',
+        replacement: constants[env]['LOCK']
+      }, {
+        match: 'FAKE_LOGIN',
+        replacement: constants[env]['FAKE_LOGIN']
+      }, {
+        match: 'FAKE_DEVICE',
+        replacement: constants[env]['FAKE_DEVICE']
+      }, {
+        match: 'RESOURCE_SERVER',
+        replacement: constants[env]['RESOURCE_SERVER']
+      }]
+    }))
+    .pipe(rename(paths.constants.destination_filename))
+    .pipe(gulp.dest(paths.constants.destination))
+
+});
+
+
+gulp.task('scripts', function () {
+
+  gulp.src(paths.script)
+    .pipe(print(function (filepath) {
+      // return "MrGopal modified : " + filepath;
+    }))
+    .pipe(ngAnnotate())
+    .pipe(stripDebug())
+    .pipe(strip())
+    .pipe(concate('mobile.app.js'))
+    .pipe(gulpif(env !== environments.dev,uglify()))
+    .pipe(gulp.dest('www/build'));
+  // .pipe(broswerSync.stream())
 })
 
-gulp.task('sass', function(done) {
+gulp.task('sass', function (done) {
   gulp.src('./scss/ionic.app.scss')
     .pipe(sass())
     .on('error', sass.logError)
@@ -120,14 +141,14 @@ gulp.task('sass', function(done) {
     .on('end', done);
 });
 
-gulp.task('html', function() {
+gulp.task('html', function () {
   return gulp.src(paths.html)
-    .pipe(print(function(filepath) {
-      return "html modified : " + filepath;
+    .pipe(print(function (filepath) {
+      // return "html modified : " + filepath;
     }))
     .pipe(strip())
     .pipe(templateCache({
-      base: function(file) {
+      base: function (file) {
         var filename = file.relative.replace('www/', '');
         return 'templates/' + filename;
       },
@@ -137,32 +158,7 @@ gulp.task('html', function() {
     .pipe(gulp.dest('./www/templates/'));
 });
 
-gulp.task('docs', [], function () {
-    var options = {
-      html5Mode: false,
-      title: "Awesome English Duniya Docs"
-    }
-    return gulp.src('www/templates/**/*.js')
-    .pipe(gulpDocs.process(options))
-    .pipe(gulp.dest('./docs'));
-    browserSync.reload();
-});
-
-gulp.task('reload', [], function () {
-  browserSync.reload();
-});
-
-gulp.task('docsrun', ['docs'], function () {
-  browserSync.init({
-    'server': {
-      'baseDir': './docs/'
-    }
-  });
-  gulp.watch('www/templates/**/*.js', ['docs','reload']);
-  console.log("HUAHAHAHA ~~ DOCS SERVED HOT ~~");
-});
-
-gulp.task('watch', function() {
+gulp.task('watch',['generate-constants'], function () {
   gulp.watch(paths.sass, ['sass']);
   gulp.watch(paths.script, ['scripts']);
   gulp.watch(paths.html, ['html']);

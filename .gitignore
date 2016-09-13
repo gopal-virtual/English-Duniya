@@ -25,3 +25,4 @@ lessonsGrade*
 config.json
 verifyPortLog*
 showLessonJson.js
+www/bundled/*
