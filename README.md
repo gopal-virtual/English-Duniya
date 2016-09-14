@@ -1,2 +1,2 @@
 # zaya-mobile
-# githook test 1 
+# githook test 2
