@@ -20,8 +20,7 @@
                 'formHelper',
                 '$ionicPlatform',
                 'data',
-                'network',
-                'demo'
+                'network'
             ];
 
   function authController(
@@ -41,8 +40,7 @@
                     formHelper,
                     $ionicPlatform,
                     dataService,
-                    network,
-                    demoFactory
+                    network
                    ) {
     var authCtrl = this;
 
@@ -197,12 +195,9 @@
           return dataService.createLessonDBIfNotExists()
 
         })
-        .then(function(){
-          return demoFactory.show()
-        })
-        .then(function(show){
 
-          if(!show){
+        .then(function(){
+          if(!user.demo.isShown()){
             !localStorage.getItem('demo_flag') && localStorage.setItem('demo_flag',5);
           }else{
             !localStorage.getItem('demo_flag') && localStorage.setItem('demo_flag',1);

@@ -16,7 +16,6 @@
                 '$ionicPopup',
                 'content',
                 'mediaManager',
-                'demo',
                 'analytics',
                 'User'
           ];
@@ -33,7 +32,6 @@
                 $ionicPopup,
                 content,
                 mediaManager,
-                demoFactory,
                 analytics,
                 User
                ) {
@@ -48,16 +46,13 @@
       getSrc: getSrc,
       currentState: currentState,
       getGender: getGender,
-      demoFactory: demoFactory,
       isState: isState,
       playDemoAudio: playDemoAudio,
       canClickDemo: canClickDemo,
-      getVideo: getVideo
+      getVideo: getVideo,
+      user : User
     };
-    demoFactory.show().then(function(result) {
-      utils.demoShown = result;
-    })
-    utils.demoFactory = demoFactory;
+    utils.demoShown = User.demo.isShown();
     return utils;
 
 
@@ -72,13 +67,13 @@
     function canClickDemo(resource) {
       if (
         (utils.resourceType(resource) == 'video') &&
-        (demoFactory.getStep() == 2 || demoFactory.getStep() == 3)
+        (User.demo.getStep() == 2 || User.demo.getStep()  == 3)
       ) {
         return true;
       }
       if (
         (utils.resourceType(resource) == 'practice') &&
-        (demoFactory.getStep() == 4)
+        (User.demo.getStep() == 4)
       ) {
         return true;
       }
@@ -179,11 +174,11 @@
     function playResource(resource, video, callback) {
       angular.element("#audioplayer")[0].pause();
 
-      if (utils.resourceType(resource) == 'practice' && (utils.demoShown && [2, 3].indexOf(utils.demoFactory.getStep()) >= 0)) {
+      if (utils.resourceType(resource) == 'practice' && (User.demo.isShown() && [2, 3].indexOf(User.demo.getStep()) >= 0)) {
         return;
       }
 
-      if (utils.resourceType(resource) == 'video' && (utils.demoShown && [4].indexOf(utils.demoFactory.getStep()) >= 0)) {
+      if (utils.resourceType(resource) == 'video' && (User.demo.isShown() && [4].indexOf(User.demo.getStep() ) >= 0)) {
 
 
         return;
@@ -226,7 +221,8 @@
 
       } else if (utils.resourceType(resource) == 'practice') {
         content.downloadAssessment(resource).then(function() {
-            $timeout(function() {
+
+          $timeout(function() {
               !($stateParams.type == 'practice' && $state.current.name == 'quiz.questions') &&
               analytics.log(
                   {
@@ -259,6 +255,8 @@
               });
           })
           .finally(function() {
+            $log.debug("here");
+
             $ionicLoading.hide();
           })
       } else if (utils.resourceType(resource) == 'video') {
@@ -290,7 +288,7 @@
                     video.play();
                     $ionicLoading.hide();
                   }
-                  utils.demoFactory.getStep() != 5 && utils.demoFactory.setStep(3);
+                  User.demo.getStep() != 5 && User.demo.setStep(3);
                 });
               });
           })
@@ -321,13 +319,14 @@
 
     function playDemoAudio(node) {
 
-      if (utils.demoShown) {
-        if (utils.demoFactory.getStep() == 2) {
+      $log.debug("a",User.demo.isShown(), User.demo.getStep());
+      if (User.demo.isShown() ) {
+        if (User.demo.getStep() == 2) {
           angular.element("#audioplayer")[0].pause();
           angular.element("#audioSource")[0].src = 'sound/demo-2.mp3';
           angular.element("#audioplayer")[0].load();
           angular.element("#audioplayer")[0].play();
-        } else if (utils.demoFactory.getStep() == 4) {
+        } else if (User.demo.getStep() == 4) {
           angular.element("#audioplayer")[0].pause();
           angular.element("#audioSource")[0].src = 'sound/demo-4.mp3';
           angular.element("#audioplayer")[0].load();
@@ -338,7 +337,9 @@
           angular.element("#audioplayer")[0].play();
         }
       } else {
+        $log.debug(node.meta,node.meta.parsed_sound )
         if (node.meta && node.meta.parsed_sound) {
+
           angular.element("#audioSource")[0].src = node.meta.parsed_sound;
           angular.element("#audioplayer")[0].load();
           angular.element("#audioplayer")[0].play();

@@ -134,20 +134,26 @@
     }
 
     function createProfile(formData) {
-
+        
       $ionicLoading.show({
         noBackdrop: false,
         hideOnStateChange: true
       });
       userCtrl.splitName();
       delete formData['name'];
+      
+
       User.profile.add(formData)
         .then(function (response) {
+          
+
           User.setActiveProfileSync(response);
-          $log.debug(content);
+          
           return content.createLessonDBIfNotExists()
         })
         .then(function () {
+          
+
           localStorage.setItem('demo_flag', 1);
           $state.go('map.navigate', {});
         })

@@ -5,8 +5,8 @@
     .module('common')
     .constant('CONSTANT', {
       'LOCK': true,
-      'FAKE_LOGIN': false,
-      'FAKE_DEVICE': false,
+      'FAKE_LOGIN': true,
+      'FAKE_DEVICE': true,
       'BACKEND_SERVICE_DOMAIN': 'https://eg-api.zaya.in/',
       'RESOURCE_SERVER': 'https://eg-api.zaya.in/',
       'QUESTION' : {

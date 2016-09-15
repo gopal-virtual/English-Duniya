@@ -39,11 +39,18 @@
       // }
       //if authenticated, verified and has profile, redirect to userpage
 
-      if (Auth.isAuthorised() && Auth.hasProfile() && (toState.name == 'auth.signin' || toState.name == 'auth.signup' || toState.name == 'intro' || toState.name == 'auth.verify.phone' || toState.name == 'auth.forgot' || toState.name == 'auth.change_password' || toState.name == 'auth.forgot_verify_otp' || toState.name == 'user.personalise')) {
-        event.preventDefault();
-        $state.go('map.navigate');
-      }
+      // if (Auth.isAuthorised() && Auth.hasProfile() && (toState.name == 'auth.signin' || toState.name == 'auth.signup' || toState.name == 'intro' || toState.name == 'auth.verify.phone' || toState.name == 'auth.forgot' || toState.name == 'auth.change_password' || toState.name == 'auth.forgot_verify_otp' || toState.name == 'user.personalise')) {
+      //   event.preventDefault();
+      //   $state.go('map.navigate');
+      // }
       // block access to quiz summary page if there is no quiz data
+//
+      $log.debug("A")
+      if(toState.name !== 'user.personalise' && localStorage.getItem('profile') === null ){
+
+        event.preventDefault();
+        $state.go('user.personalise');
+      }
       if (toState.name == 'quiz.questions' && !toParams.quiz) {
         event.preventDefault();
         $state.go('map.navigate');
@@ -66,40 +73,40 @@
         $state.go('map.navigate');
       }
 
-      if (toState.name == 'auth.verify.phone') {
+      // if (toState.name == 'auth.verify.phone') {
         // $ionicPlatform.ready(function() {
         //   if (SMS) SMS.startWatch(function() {
         //   }, function() {
         //   });
         // })
 
-      }
+      // }
 
     });
     $ionicPlatform.ready(function() {
-        // analytics.log(
-        //     {
-        //         name : 'APP',
-        //         type : 'START',
-        //         id : null
-        //     },
-        //     {
-        //         time : new Date()
-        //     },
-        //   (User.getActiveProfileSync() && User.getActiveProfileSync()._id ),
-        //   User.user.getIdSync()
-        //
-        //
-        // );
-      queue.startSync()
+
+        analytics.log(
+            {
+                name : 'APP',
+                type : 'START',
+                id : null
+            },
+            {
+                time : new Date()
+            }
+        );
+      network.isOnline() && queue.startSync();
 
       $rootScope.$on('$cordovaNetwork:online', function(event, networkState) {
           // data.queueSync()
+        $log.debug("online vent triggered");
+        queue.startSync()
+
       });
 
-      if (Auth.isAuthorised() && Auth.hasProfile()) {
-        data.createLessonDBIfNotExists()
-      }
+      // if (Auth.isAuthorised() && Auth.hasProfile()) {
+      //   data.createLessonDBIfNotExists()
+      // }
       if (navigator.splashscreen) {
         navigator.splashscreen.hide();
       }
@@ -127,38 +134,30 @@
       // for form inputs)
 
     });
-    // $ionicPlatform.on('resume', function(){
-    //      analytics.log(
-    //         {
-    //             name : 'APP',
-    //             type : 'START',
-    //             id : null
-    //         },
-    //         {
-    //             time : new Date()
-    //         },
-    //        (User.getActiveProfileSync() && User.getActiveProfileSync()._id ),
-    //        User.user.getIdSync()
-    //
-    //
-    //
-    //      )
-    // });
-    // $ionicPlatform.on('pause', function(){
-    //     angular.element("#audioplayer")[0].pause();
-    //      analytics.log(
-    //         {
-    //             name : 'APP',
-    //             type : 'END',
-    //             id : null
-    //         },
-    //         {
-    //             time : new Date()
-    //         },
-    //        (User.getActiveProfileSync() && User.getActiveProfileSync()._id ),
-    //        User.user.getIdSync()
-    //
-    //     )
-    // });
+    $ionicPlatform.on('resume', function(){
+         analytics.log(
+            {
+                name : 'APP',
+                type : 'START',
+                id : null
+            },
+            {
+                time : new Date()
+            }
+         )
+    });
+    $ionicPlatform.on('pause', function(){
+        angular.element("#audioplayer")[0].pause();
+         analytics.log(
+            {
+                name : 'APP',
+                type : 'END',
+                id : null
+            },
+            {
+                time : new Date()
+            }
+         )
+    });
   }
 })();
