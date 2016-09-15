@@ -20,7 +20,7 @@
                 'formHelper',
                 '$ionicPlatform',
                 'data',
-                'network',
+                'network'
             ];
 
   function authController(
@@ -40,7 +40,7 @@
                     formHelper,
                     $ionicPlatform,
                     dataService,
-                    network,
+                    network
                    ) {
     var authCtrl = this;
 

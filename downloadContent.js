@@ -9,7 +9,11 @@ var getFileNameFromURl = function(url){
 var json = [];
 var lessons = process.argv[2];
 var media = [];
-
+media.push('/media/ell/images/dog_O5P4I8.png');
+media.push('/media/ell/images/person_GLUMUY.png');
+media.push('/media/ell/images/place_KJMRCN.png');
+media.push('/media/ell/images/animal_2W0HQG.png');
+media.push('/media/ell/images/thing_DV4JY6.png');
 
 // Delete all the contents of the folder first
 var dir_contents = (fs.readdirSync(target_folder))

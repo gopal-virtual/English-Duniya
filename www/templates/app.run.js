@@ -45,6 +45,7 @@
       // }
       // block access to quiz summary page if there is no quiz data
 //
+      $log.debug("A")
       if(toState.name !== 'user.personalise' && localStorage.getItem('profile') === null ){
 
         event.preventDefault();
