@@ -35,7 +35,6 @@
     'ml',
     'lessonLocked',
     '$ionicPlatform',
-    'demo',
     'settings',
     'mediaManager',
     '$stateParams',
@@ -65,7 +64,6 @@
         ml,
         lessonLocked,
         $ionicPlatform,
-        demoFactory,
         settings,
         mediaManager,
         $stateParams,
@@ -102,7 +100,6 @@
     mapCtrl.animationExpand['shrink'] = shrink;
     mapCtrl.showResult = true;
     mapCtrl.getNodeProperty = getNodeProperty;
-    mapCtrl.demoFactory = demoFactory;
     mapCtrl.animateStar = {
       "activeFlag": -1,
       // "resetFlag" : -1
@@ -177,7 +174,7 @@
         $ionicLoading.show({
           // hideOnStateChange: true
         });
-
+        $scope.user = User;
         $scope.lessonutils.getLesson(node.id, $scope).then(
 
           function(response) {
@@ -196,12 +193,16 @@
 
             var promise;
             if(node.meta.intros && node.meta.intros.sound  && node.meta.intros.sound[0]){
+
               promise = mediaManager.downloadIfNotExists(CONSTANT.RESOURCE_SERVER + node.meta.intros.sound[0])
             } else {
               promise = $q.resolve();
             }
 
             promise.then(function(s) {
+              if(s){
+                node.meta.parsed_sound = s;
+              }
 
               audio.setVolume('background', 0.1);
             if(currentPos)
@@ -215,6 +216,7 @@
             }
             }).catch(function(error) {
 
+              $ionicLoading.hide();
               $ionicPopup.alert({
                 title: 'Please try again',
                 template: "No internet conection found"
@@ -279,7 +281,7 @@
           },
         User.getActiveProfileSync()._id
       );
-      // $log.warn("SelectedNode",$scope.selectedNode.node.id);
+      //
       $scope.nodeMenu.hide().then(function() {
         mapCtrl.closeDemo();
       });
@@ -416,25 +418,18 @@
     }
     $scope.$on('show_demo', function() {
       // $ionicLoading.show();
-      $log.debug("showDemoEvent");
-      demoFactory.show().then(function(result) {
-        $log.debug("result demo",result)
-          mapCtrl.demoShown = result;
-          if (result && demoFactory.getStep() == '1') {
-            $timeout(function() {
-              $scope.demo.show().then(function() {
-                angular.element("#audioplayer")[0].pause();
-                angular.element("#audioSource")[0].src = 'sound/voice_letstart.mp3';
-                angular.element("#audioplayer")[0].load();
-                angular.element("#audioplayer")[0].play();
-                demoFactory.setStep(2)
-              });
-            })
-          }
-        })
-        .finally(function() {
-          //   $ionicLoading.hide();
-        })
+        if (User.demo.isShown() && User.demo.getStep() == '1') {
+          $timeout(function() {
+            $scope.demo.show().then(function() {
+              angular.element("#audioplayer")[0].pause();
+              angular.element("#audioSource")[0].src = 'sound/voice_letstart.mp3';
+              angular.element("#audioplayer")[0].load();
+              angular.element("#audioplayer")[0].play();
+              User.demo.setStep(2)
+            });
+          })
+        }
+
     });
 
     function updateProfile(profileData){
@@ -442,8 +437,8 @@
       $ionicLoading.show({
         hideOnStateChange: true
       });
-      $log.debug(profileData);
-      User.profile.update(mapCtrl.User.getActiveProfileSync()._id,profileData).then(function(){
+
+      User.profile.update(mapCtrl.User.getActiveProfileSync()._id,profileData).then(function(){a
         $scope.settingsModal.hide();
         location.reload()
       });

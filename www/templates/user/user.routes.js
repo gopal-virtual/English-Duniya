@@ -25,14 +25,14 @@
       },
         onEnter: ['Auth', '$state', '$log', 'User', 'device', function (Auth, $state, $log, User, device) {
 
-          $log.debug("here")
+          
           User.profile.getAll().then(function(response){
 
             if(response.length){
-              $log.debug("profiles found")
+              
               $state.go('map.navigate')
             }else{
-              $log.debug("no profiles found")
+              
               // $state.go('user.personalise')
             }
           });

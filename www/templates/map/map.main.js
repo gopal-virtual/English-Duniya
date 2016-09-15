@@ -442,7 +442,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
 
 
             function addGroups(region){
-                log.info("Grouping stuff ...");
+                
                 for (var i = renderedRegion.length - 1; i >= 0; i--) {
                     groups.regionBg[region[i]] = game.add.group();
                 }

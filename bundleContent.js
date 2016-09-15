@@ -2,20 +2,22 @@ var http = require('http');
 var fs = require('fs');
 var request = require('request');
 var wget = require('wget-improved');
-var target_folder = 'content/';
+var source_folder = 'content/'
+var target_folder = 'www/bundled/';
+var ncp = require('ncp').ncp;
 var getFileNameFromURl = function(url){
-    return url.split('/')[url.split('/').length-2]+'-'+url.split('/')[url.split('/').length-1];
+  return url.split('/')[url.split('/').length-2]+'-'+url.split('/')[url.split('/').length-1];
 };
 var json = [];
 var lessons = process.argv[2];
 var media = [];
 
 
-// Delete all the contents of the folder first
-var dir_contents = (fs.readdirSync(target_folder))
-  // for(var i in dir_contents){
-  //   fs.unlinkSync(target_folder+dir_contents[i])
-  // }
+// Delete all the contents of the target folder first
+var dir_contents = (fs.readdirSync(target_folder));
+// for(var i in dir_contents){
+//   fs.unlinkSync(target_folder+dir_contents[i])
+// }
 // console.log(dir_contents);
 // wait();
 // Read the lessons json
@@ -26,7 +28,7 @@ fs.readFile('lesson.json', 'utf8', function(err, data) {
   json = JSON.parse(data);
   // console.log(json)
   var counter = [0, 0, 0, 0]
-    // Iterate lessons
+  // Iterate lessons
   for (var i = 0; i < json.length; i++) {
     // Check if lesson is to be bundled
     if (lessons == 'all' || counter[json[i].node.type.grade] < lessons) {
@@ -76,9 +78,9 @@ fs.readFile('lesson.json', 'utf8', function(err, data) {
   var media_retained = 0;
   var strip_media = [];
   media = media.reduce(function(a,b){
-      if (a.indexOf(b) < 0 ) a.push(b);
-      return a;
-    },[]);
+    if (a.indexOf(b) < 0 ) a.push(b);
+    return a;
+  },[]);
   console.log("Found " + media.length + " media files");
 
   for (i in media) {
@@ -108,96 +110,24 @@ fs.readFile('lesson.json', 'utf8', function(err, data) {
     if(strip_media.indexOf(dir_contents[i]) >= 0){
       console.log("Found again")
       i--;
-      continue;
     }
   }
   // console.log(media)
   console.log("Retained " + media_retained + " media files");
   console.log("Deleted " + media_deleted + " media files");
-  console.log("Please wait while we download " + media.length + " media files");
-  console.log(media)
-  // exit();
-  // console.log(media);
-  // fileWrite = [];
-  // multiDownload(media);
-  // downloadAll(media);
-  // if(media.length){
-  //   i = 0;
-  //   console.log("Starting "+'http://cc-test.zaya.in'+media[i] + ' inside '  + 'www/bundled/'+filename)
-  //   var m = media.shift();
-  //   download('http://cc-test.zaya.in'+media[i], 'www/bundled/'+filename, function(){
-  //   });
-  //
-  // }
-  // wget.download('https://cc-test.zaya.in/media/ell/sounds/drinks.mp3','www/bundled/drinks.mp3' , {});
+  console.log("Please wait while we bundle " + media.length + " media files");
 
-  // for(i = 0 ; i < media.length ; i++){
-  // console.log(media)
 
-  var d = [];
-  var count = 0;
-  var mediaSize = 0;
-  var errors = [];
-  var mediaDownloadedSize = 0;
-  var percent = [];
-  var percentage = 0;
-  var new_media = 0;
-  var start = (new Date()).getTime();
-  var callback_end = function() {
-    count++;
-    // console.log("Download ended");
-    console.log(parseInt(percentage/media.length*100)+ " %" + " Total size : " + mediaSize + " Completed " + count + " files of " + media.length + " Errors : " + errors.length + " Time "  + parseInt(((new Date()).getTime() - start)/1000) + "\r")
-    if (count == media.length - errors.length) {
-      clearInterval(interval);
-      console.log("Completed in " + ((new Date()).getTime() - start) / 1000 + " with following errors", errors)
-      console.log("Downloaded", media.length, "Errors", errors.length, "Retained", media_retained, "Deleted", media_deleted)
-    }
-
-  }
-
-  var interval = setInterval(function() {
-    percentage = 0;
-    for (var j in percent) {
-      if(percent[j])
-      percentage += percent[j]
-    }
-  }, 1000);
-
-  var callback_start = function(fileSize) {
-    console.log(parseInt(percentage/media.length*100)+ " %" + " Total size : " + mediaSize + " Completed " + count + " files of " + media.length + " Errors : " + errors.length+ " Time "  + parseInt(((new Date()).getTime() - start)/1000) + "\r")
-    mediaSize += parseInt(fileSize);
-  }
   for (i in media) {
     var filename = getFileNameFromURl(media[i]);
-    // console.log(dir_contents.indexOf(filename));
-    // if (dir_contents.indexOf(filename) >= 0) {
-    //   continue;
-    // }
-    // new_media++;
-
-    d[i] = wget.download('https://eg-api.zaya.in/' + media[i], target_folder + filename, {});
-    d[i].on('end', callback_end);
-    d[i].on('start', callback_start);
-
-    (function(i) {
-      d[i].on('progress', function(chunk) {
-        percent[i] = chunk;
-        console.log(parseInt(percentage/media.length*100)+ " %" + " Total size : " + mediaSize + " Completed " + count +" files of " + media.length + " Errors : " + errors.length+ " Time " + parseInt(((new Date()).getTime() - start)/1000) + "\r")
-      });
-      d[i].on('error', function(error) {
-        errors.push(media[i])
-        console.log(i, error);
-        if (count == media.length - errors.length) {
-          clearInterval(interval);
-          console.log("Completed in " + ((new Date()).getTime() - start) / 1000 + " with following errors", errors)
-          console.log("Downloaded", media.length, "Errors", errors.length, "Retained", media_retained, "Deleted", media_deleted)
-        }
-      });
-    })(i)
+    ncp(source_folder+filename, target_folder+filename,function(error){
+      if(error){
+        console.log("Error Occured")
+      }
+    });
   }
   if (media.length === 0) {
     console.log("Completed in " + ((new Date()).getTime() - start) / 1000 + " with following errors", errors)
     console.log("Downloaded", media.length, "Errors", errors.length, "Retained", media_retained, "Deleted", media_deleted)
-    clearInterval(interval);
   }
 });
