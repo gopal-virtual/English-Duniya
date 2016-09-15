@@ -27,7 +27,8 @@
                    widgetParser) {
 
     var lessonDB = null;
-    if (User.getActiveProfileSync()) {
+    
+    if (User.getActiveProfileSync() && User.getActiveProfileSync().data) {
       lessonDB = pouchDB('lessonsGrade' + User.getActiveProfileSync().data.profile.grade, {
         adapter: 'websql'
       });
@@ -110,10 +111,10 @@
         adapter: 'websql'
       });
 
-      $log.debug("OP",lessonDB)
+      
 
       return lessonDB.get('_local/preloaded').then(function (doc) {
-        $log.debug("OP")
+        
 
       }).catch(function (err) {
         if (err.name !== 'not_found') {

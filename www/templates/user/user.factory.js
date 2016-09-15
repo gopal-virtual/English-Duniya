@@ -89,6 +89,11 @@
     };
     User.reports = {
       save : saveReport
+    };
+    User.demo = {
+      isShown : isDemoShown,
+      getStep : getDemoStep,
+      setStep : setDemoStep
     }
 
     function getUserIdSync(){
@@ -103,6 +108,7 @@
       })
     }
     function addNewProfile(profile) {
+
       var record = {
         "_id": generateProfileID(),
         "data": {
@@ -113,17 +119,18 @@
         }
       };
       profile.client_uid = record._id;
-      $log.debug(profile)
+
+
       return profilesDB.put(record)
         .then(function () {
-          $log.debug("gete")
+
 
           return queue.push('profiles', profile);
         }).then(function () {
           return record;
         })
         .catch(function(e){
-          $log.debug("EE",e)
+
         })
     }
 
@@ -135,7 +142,7 @@
     }
 
     function updateProfile(profileId,profileData) {
-      $log.debug("updateProfile",profileData,profileId);
+
       var new_profile;
       return profilesDB.get(profileId).then(function(response){
         new_profile = response;
@@ -143,12 +150,12 @@
         return profilesDB.put(new_profile);
       }).then(function(){
         updateActiveProfileSync(new_profile);
-        $log.debug("Here");
+
 
         return $injector.get('content').createLessonDBIfNotExists()
       })
         .catch(function (e) {
-        $log.debug("Error",e)
+
       });
         // profile.grade = newGrade;
         // Auth.updateProfile(profile);
@@ -167,15 +174,16 @@
     }
 
     function getSkills(profileId) {
-      $log.debug("getting skills",profileId)
+
       return profilesDB.get(profileId).then(function (response) {
-            $log.debug(response.data.skills)
+
         return response.data.skills;
       })
     }
 
 
     function updateSkills(data) {
+
       return profilesDB.get(data.profileId).then(function(response) {
         var doc = response.data;
         angular.forEach(doc.skills, function(skill, key) {
@@ -183,7 +191,7 @@
             doc.skills[key].lesson_scores += data.score;
           }
         })
-
+        updateActiveProfileSync({'_id':data.profileId,'data':doc});
         return profilesDB.put({
           '_id': data.profileId,
           '_rev': response._rev,
@@ -220,7 +228,7 @@
         };
         var temp = JSON.parse(localStorage.getItem('lesson'));
         temp.score = doc.scores[data.lessonId];
-        $log.debug("updating scores in local",temp,JSON.parse(localStorage.getItem('lesson')))
+
         localStorage.setItem('lesson',JSON.stringify(temp));
         return profilesDB.put({
           '_id': data.profileId,
@@ -253,6 +261,29 @@
       })
     }
 
+
+    function isDemoShown(step) {
+
+      var skills = getActiveProfileSync().data.skills;
+      var score = 0;
+      angular.forEach(skills, function(skill) {
+        score = score + skill.lesson_scores;
+      });
+      $log.debug(score,skills)
+      if(step && step === 5 && score === 50){
+        return true;
+      }
+      return score ? false:true;
+    }
+
+    function getDemoStep() {
+      return parseInt(localStorage.getItem('demo_flag'));
+    }
+    function setDemoStep(step){
+      $log.debug("set Step",step)
+
+      localStorage.setItem('demo_flag', step);
+    }
     return User;
 
 

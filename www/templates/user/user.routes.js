@@ -23,6 +23,20 @@
             controller: 'userController as userCtrl'
           }
       },
+        onEnter: ['Auth', '$state', '$log', 'User', 'device', function (Auth, $state, $log, User, device) {
+
+          
+          User.profile.getAll().then(function(response){
+
+            if(response.length){
+              
+              $state.go('map.navigate')
+            }else{
+              
+              // $state.go('user.personalise')
+            }
+          });
+        }],
       data : {
           personaliseFormValidations: {
             // 'gender': ['required'],

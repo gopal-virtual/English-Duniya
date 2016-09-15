@@ -441,22 +441,24 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             var star_y = [-10, -15, -10];
 
 
-            function addGroups(region) {
-              ;
-              for (var i = renderedRegion.length - 1; i >= 0; i--) {
-                groups.regionBg[region[i]] = game.add.group();
-              }
-              groups.nonRegion["nodePath"] = game.add.group();
-              for (var i = renderedRegion.length - 1; i >= 0; i--) {
-                groups.region[region[i]] = game.add.group();
-              }
-              groups.nonRegion["nodes"] = game.add.group();
-              groups.nonRegion["stars"] = game.add.group();
-              groups.nonRegion["unlockAnim"] = game.add.group();
-              groups.nonRegion["starClone"] = game.add.group();
+            function addGroups(region){
+                
+                for (var i = renderedRegion.length - 1; i >= 0; i--) {
+                    groups.regionBg[region[i]] = game.add.group();
+                }
+                groups.nonRegion["nodePath"] = game.add.group();
+                for (var i = renderedRegion.length - 1; i >= 0; i--) {
+                    groups.region[region[i]] = game.add.group();
+                }
+                groups.nonRegion["nodes"] = game.add.group();
+                groups.nonRegion["stars"] = game.add.group();
+                groups.nonRegion["unlockAnim"] = game.add.group();
+                groups.nonRegion["starClone"] = game.add.group();
 
             }
+
             function renderWorld(region){
+                
                 game.input.maxPointers = 1;
                 var totalRegionHeight = 0;
                 var tempRegionHeight = 0;
@@ -471,13 +473,14 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                     regionRange[region[i]]["lowerTreshold"] = regionRange[region[i]].lowerLimit - game.camera.height - tresholdOffset;
                 }
                 game.world.setBounds(0, 0, game.width, totalRegionHeight);
+                game.forceSingleUpdate = true;
             }
 
             function renderRegion(region){
                 // for (var i = 0; i < region.length; i++) {
                 //     region[i]
                 // }
-                ;
+                
                 for (var i = region.length - 1; i >= 0; i--) {
 
                     groups.regionBg[region[i]].position.set(0, 0 + regionOffset[region[i]]);
@@ -490,7 +493,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             }
 
             function fetchMapPath (points){
-
+                
                 var fetchMapRequest = $.get("img/assets/map_path.svg", function(data) {
                     var x = [];
                     var y = [];
@@ -529,12 +532,12 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             // var gameSprites =  game.cache.getJSON('gamesprites');
 
             function renderNodePath(region,points){
-
+                
                 points.tempX = [];
                 points.tempY = [];
                 for (var i = 0, points_count = points.x.length; i < points_count; i++) {
                     // if (points.y[i]  - (60 - regionOffset[region[region.length - 1]]) < ) {}
-                    // ;
+                    // 
                     points.tempX.push(points.x[i] * game_scale);
                     points.tempY.push(points.y[i] );
                 }
@@ -547,7 +550,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                 // 
                     var posx = game.math.catmullRomInterpolation(points.tempX, j);
                     var posy = game.math.catmullRomInterpolation(points.tempY, j);
-                    // ;
+                    // 
                     bmd.rect(posx, posy, 4, 4, '#219C7F');
                 }
                 groups.nonRegion.nodePath.create(0,0,bmd);
@@ -556,7 +559,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
 
             // nongroups.region.nodePath.callAll('kill');
             function renderSprites(region,gameSprites){
-                ;
+                
                 for (var i = 0; i < gameSprites.length; i++) {
                     if (region.indexOf(gameSprites[i].region) == -1) {
                         // 
@@ -608,7 +611,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
 
             // sand particles
             function renderParticles(){
-
+                
                 for (var i = 0; i < 100; i++) {
                     var s = game.add.sprite(game.world.randomX, game.rnd.between(regionOffset.desert, game.world.height), 'particle' + game.rnd.between(1, 3));
                     s.scale.setTo(game.rnd.between(1, 2) / 20);
@@ -651,7 +654,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
 
             // Place nodes
             function renderNodes(){
-
+                
                 for (var j = 0, i = lessons.length - 1, distance = 1 / (lessons.length); i >= 0; j += distance, i--) {
 
                     var currentLesson = lessons[i];
@@ -688,7 +691,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                                         "x": game.input._x,
                                         "y": game.input._y,
                                     }
-                                    ;
+                                    
                                     
                                     var animateStarFlag = {
                                         isCurrentNode : temp.activeLessonKey==i,
@@ -738,7 +741,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
 
             function animateStar(lessonKey){
                 // var d = $q.defer()
-                ;
+                
                 var promise = new Promise(function(resolve,reject){
                     // setTimeout(function(){
 
@@ -798,7 +801,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             }
 
             function killUselessRegions(region) {
-
+                
                 for (var i = region.length - 1; i >= 0; i--) {
                     // 
                     // 
@@ -822,7 +825,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             // }
 
             function animateUnlock(lockedNode) {
-                ;
+                
                 // 
                 // 
                 // var autoScrollFlag = true;
@@ -873,7 +876,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             }
 
             function hideActiveNode(lockedNode){
-                ;
+                
                 temp.nodeWobbleTween.pause();
                 lockedNode["overlay"] = groups.nonRegion.unlockAnim.create(temp.activeLessonPosX,temp.activeLessonPosY,'node');
                 lockedNode["glow"] = groups.nonRegion.unlockAnim.create(temp.activeLessonPosX,temp.activeLessonPosY,'lock-glow');
@@ -908,7 +911,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
                 // 
                 // 
                 // var intervalScroll = setInterval(function(){
-                ;
+                
                 game.add.tween(game.camera).to({y:"-200"},800,Phaser.Easing.Quadratic.InOut,true);
                     // }
                 //     // 
@@ -920,13 +923,14 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             }
 
             function gameStart(){
+                
 
-                ;
+                
                 addGroups(renderedRegion);
                 renderWorld(renderedRegion);
                 renderRegion(renderedRegion);
                 renderSprites(renderedRegion,gameSprites);
-                renderParticles();
+                // renderParticles();
                 var fetchMapRequest = fetchMapPath(points);
                 fetchMapRequest.then(function(){
                     scope.$emit('removeLoader');
@@ -1047,6 +1051,62 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             }
 
         },
+        interactiveAnimate : function() {
+            if (game.camera.y + 200 < regionOffset.tundra && game.camera.y + 200 > regionOffset.tundra - 360) {
+                // game.debug.spriteInfo(sprites.plantLeft, 20, 32);
+                if (temp.plantLeftX == undefined && temp.plantRightX ==undefined) {
+                        temp["plantLeftX"] = sprites.plantLeft.x;
+                        temp["plantRightX"] = sprites.plantRight.x;
+                }
+               sprites.plantLeft.x = temp.plantLeftX - (180 * (regionOffset.tundra - game.camera.y - 200)/360);
+               sprites.plantRight.x = temp.plantRightX + (180 * (regionOffset.tundra - game.camera.y - 200)/360);
+            }
+
+            if (game.camera.y + 100 < regionOffset.peru + 800 && game.camera.y + 100 > regionOffset.peru + 800 - 360) {
+                // game.debug.spriteInfo(sprites.cloudLeft, 20, 32);
+                var checkTempClouds = temp.cloudLeft==undefined && temp.cloudMiddle==undefined && temp.cloudRight==undefined && temp.cloudRightBehin==undefined;
+                if (checkTempClouds) {
+                        temp["cloudLeft"] = {
+                            "x" : sprites.cloudLeft.x,
+                            "y" : sprites.cloudLeft.y
+                        };
+                        temp["cloudRight"] = {
+                            "x" : sprites.cloudRight.x,
+                            "y" : sprites.cloudRight.y
+                        };
+                        temp["cloudMiddle"] = {
+                            "x" : sprites.cloudMiddle.x,
+                            "y" : sprites.cloudMiddle.y
+                        };
+                        temp["cloudRightBehind"] = {
+                            "x" : sprites.cloudRightBehind.x,
+                            "y" : sprites.cloudRightBehind.y
+                        };
+                }
+                // 
+               sprites.cloudLeft.x = temp.cloudLeft.x + ((regionOffset.peru + 800 - game.camera.y - 100)/8);
+               sprites.cloudRight.x = temp.cloudRight.x + ((regionOffset.peru + 800 - game.camera.y - 100)/8);
+               sprites.cloudMiddle.x = temp.cloudMiddle.x - ((regionOffset.peru + 800 - game.camera.y - 100)/8);
+               sprites.cloudRightBehind.x = temp.cloudRightBehind.x - ((regionOffset.peru + 800 - game.camera.y - 100)/8);
+               sprites.cloudLeft.y = temp.cloudLeft.y + ((regionOffset.peru + 800 - game.camera.y - 100)/8);
+               sprites.cloudRight.y = temp.cloudRight.y + ((regionOffset.peru + 800 - game.camera.y - 100)/8);
+               sprites.cloudMiddle.y = temp.cloudMiddle.y + ((regionOffset.peru + 800 - game.camera.y - 100)/8);
+               sprites.cloudRightBehind.y = temp.cloudRightBehind.y + ((regionOffset.peru + 800 - game.camera.y - 100)/8);
+               sprites.cloudLeft.alpha = 1 - (regionOffset.peru + 800 - game.camera.y - 100)/720;
+               sprites.cloudRight.alpha = 1 - (regionOffset.peru + 800 - game.camera.y - 100)/720;
+               sprites.cloudMiddle.alpha = 1 - (regionOffset.peru + 800 - game.camera.y - 100)/720;
+               sprites.cloudRightBehind.alpha = 1 - (regionOffset.peru + 800 - game.camera.y - 100)/720;
+
+            }
+
+            if (game.camera.y + 500 < regionOffset.tundra && game.camera.y + 500 > regionOffset.forest + 300) {
+                // game.debug.spriteInfo(sprites.yellowButterfly,20,132);
+                if (temp.yellowButterflyY == undefined) {
+                        temp["yellowButterflyY"] = sprites.yellowButterfly.y;
+                }
+                sprites.yellowButterfly.y = temp.yellowButterflyY - (regionOffset.tundra - game.camera.y - 500);
+            }
+        },
 
         update: function() {
             // 
@@ -1065,63 +1125,10 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log) 
             // game.debug.pointer(game.input.pointer5);
             // game.debug.pointer(game.input.pointer6);
 
-            function interactiveAnimate(){
-                if (game.camera.y + 200 < regionOffset.tundra && game.camera.y + 200 > regionOffset.tundra - 360) {
-                    // game.debug.spriteInfo(sprites.plantLeft, 20, 32);
-                    if (temp.plantLeftX == undefined && temp.plantRightX ==undefined) {
-                            temp["plantLeftX"] = sprites.plantLeft.x;
-                            temp["plantRightX"] = sprites.plantRight.x;
-                    }
-                   sprites.plantLeft.x = temp.plantLeftX - (180 * (regionOffset.tundra - game.camera.y - 200)/360);
-                   sprites.plantRight.x = temp.plantRightX + (180 * (regionOffset.tundra - game.camera.y - 200)/360);
-                }
-
-                if (game.camera.y + 100 < regionOffset.peru + 800 && game.camera.y + 100 > regionOffset.peru + 800 - 360) {
-                    // game.debug.spriteInfo(sprites.cloudLeft, 20, 32);
-                    var checkTempClouds = temp.cloudLeft==undefined && temp.cloudMiddle==undefined && temp.cloudRight==undefined && temp.cloudRightBehin==undefined;
-                    if (checkTempClouds) {
-                            temp["cloudLeft"] = {
-                                "x" : sprites.cloudLeft.x,
-                                "y" : sprites.cloudLeft.y
-                            };
-                            temp["cloudRight"] = {
-                                "x" : sprites.cloudRight.x,
-                                "y" : sprites.cloudRight.y
-                            };
-                            temp["cloudMiddle"] = {
-                                "x" : sprites.cloudMiddle.x,
-                                "y" : sprites.cloudMiddle.y
-                            };
-                            temp["cloudRightBehind"] = {
-                                "x" : sprites.cloudRightBehind.x,
-                                "y" : sprites.cloudRightBehind.y
-                            };
-                    }
-                    // 
-                   sprites.cloudLeft.x = temp.cloudLeft.x + ((regionOffset.peru + 800 - game.camera.y - 100)/8);
-                   sprites.cloudRight.x = temp.cloudRight.x + ((regionOffset.peru + 800 - game.camera.y - 100)/8);
-                   sprites.cloudMiddle.x = temp.cloudMiddle.x - ((regionOffset.peru + 800 - game.camera.y - 100)/8);
-                   sprites.cloudRightBehind.x = temp.cloudRightBehind.x - ((regionOffset.peru + 800 - game.camera.y - 100)/8);
-                   sprites.cloudLeft.y = temp.cloudLeft.y + ((regionOffset.peru + 800 - game.camera.y - 100)/8);
-                   sprites.cloudRight.y = temp.cloudRight.y + ((regionOffset.peru + 800 - game.camera.y - 100)/8);
-                   sprites.cloudMiddle.y = temp.cloudMiddle.y + ((regionOffset.peru + 800 - game.camera.y - 100)/8);
-                   sprites.cloudRightBehind.y = temp.cloudRightBehind.y + ((regionOffset.peru + 800 - game.camera.y - 100)/8);
-                   sprites.cloudLeft.alpha = 1 - (regionOffset.peru + 800 - game.camera.y - 100)/720;
-                   sprites.cloudRight.alpha = 1 - (regionOffset.peru + 800 - game.camera.y - 100)/720;
-                   sprites.cloudMiddle.alpha = 1 - (regionOffset.peru + 800 - game.camera.y - 100)/720;
-                   sprites.cloudRightBehind.alpha = 1 - (regionOffset.peru + 800 - game.camera.y - 100)/720;
-
-                }
-
-                if (game.camera.y + 500 < regionOffset.tundra && game.camera.y + 500 > regionOffset.forest + 300) {
-                    // game.debug.spriteInfo(sprites.yellowButterfly,20,132);
-                    if (temp.yellowButterflyY == undefined) {
-                            temp["yellowButterflyY"] = sprites.yellowButterfly.y;
-                    }
-                    sprites.yellowButterfly.y = temp.yellowButterflyY - (regionOffset.tundra - game.camera.y - 500);
-                }
-            }
-            interactiveAnimate();
+            // function interactiveAnimate(){
+                
+            // }
+            this.interactiveAnimate();
             // game.camera.y-= 4;
 
         }

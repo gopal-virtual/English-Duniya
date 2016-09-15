@@ -33,8 +33,8 @@
         },
         responseError: function(rejection) {
           if ([401].indexOf(rejection.status) != -1) {
-            localStorage.clear();
-            $injector.get('$state').go('auth.signup');
+            localStorage.removeItem('Authorization');
+            localStorage.setItem('syncing','false');
 
           }
           if ([400, 500].indexOf(rejection.status) != -1) {

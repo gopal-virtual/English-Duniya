@@ -104,10 +104,11 @@
                 d.resolve(target);
               })
               .catch(function(e) {
-
+              
 
                 if (e.message === 'NOT_FOUND_ERR') {
                   if (!network.isOnline()) {
+                    
 
 
                     d.reject({
@@ -116,6 +117,7 @@
                     });
                   } else {
 
+                    
 
                     $cordovaFileTransfer.download(url, target)
                       .then(function(result) {

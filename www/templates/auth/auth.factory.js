@@ -59,25 +59,27 @@
     return Auth;
 
     function autoLogin(user_credentials){
+      $log.debug("autologin called")
 
       return rest_auth.all('no-login')
         .post($.param(user_credentials))
         .then(function(response){
+          
+
           localStorage.setItem('Authorization', response.key || response.token);
           return Auth.getUser()
         })
         .then(function(response){
+          
+
           return $q.resolve(response);
         })
-        // return dataFactory.queuePush({
-        //   'type' : 'login',
-        //   'method': 'post',
-        //   'body' : user_credentials
-        // });
 
     }
 
     function loginIfNotAuthorised(){
+      $log.debug("login if not authorised called")
+      
       var user_credentials = {
           username: device.uuid,
           password1: device.uuid,
@@ -85,8 +87,12 @@
           device_id: device.uuid
         };
       if(Auth.isAuthorised()){
+        
+
         return $q.resolve()
       }else{
+        
+
         return Auth.autoLogin(user_credentials);
       }
     }
@@ -242,6 +248,7 @@
     }
 
     function getProfile() {
+
       var d = $q.defer();
       if(JSON.parse(localStorage.user_details).profile)
       {

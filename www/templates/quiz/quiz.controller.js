@@ -29,7 +29,6 @@
                             'data',
                             '$ionicPlatform',
                             'nzTour',
-                            'demo',
                             'analytics',
                             'User'
                                 ];
@@ -59,7 +58,6 @@
                             data,
                             $ionicPlatform,
                             nzTour,
-                            demoFactory,
                             analytics,
                             User
                                     ) {
@@ -764,7 +762,18 @@
       if (quizCtrl.summary.stars >= 1) {
         $ionicLoading.show({
           hideOnStateChange: true
-        })
+        });
+        analytics.log(
+            {
+                name : 'LESSON',
+                type : 'END',
+                id : $scope.selectedNode.node.id
+            },
+            {
+                time : new Date()
+            },
+          User.getActiveProfileSync()._id
+        )
         $state.go('map.navigate', {"activatedLesson" : $scope.selectedNode});
       } else {
         $scope.showNodeMenu();
@@ -789,29 +798,27 @@
 
       }]
     };
-    $state.is('quiz.questions') && demoFactory.show(5).then(function(result) {
-      if(result){
 
-        $timeout(function(){
-          angular.element("#audioplayer")[0].pause();
-          angular.element("#audioSource")[0].src = 'sound/demo-quiz-1.mp3';
-          angular.element("#audioplayer")[0].load();
-          angular.element("#audioplayer")[0].play();
-          nzTour.start($scope.tour);
-          demoFactory.setStep(5);
-        });
-        $timeout(function(){
-          if(nzTour.current.step === 0){
-              tourNextStep();
-          }
-        },3000)
-      }
-      else{
-        $ionicPlatform.registerBackButtonAction(function(event) {
-          $scope.showNodeMenu();
-        }, 101);
-      }
-    })
+    if($state.is('quiz.questions') && User.demo.isShown(5)){
+      $timeout(function(){
+        angular.element("#audioplayer")[0].pause();
+        angular.element("#audioSource")[0].src = 'sound/demo-quiz-1.mp3';
+        angular.element("#audioplayer")[0].load();
+        angular.element("#audioplayer")[0].play();
+        nzTour.start($scope.tour);
+        User.demo.setStep(5);
+      });
+      $timeout(function(){
+        if(nzTour.current.step === 0){
+          tourNextStep();
+        }
+      },3000)
+    }else{
+      $ionicPlatform.registerBackButtonAction(function(event) {
+        $scope.showNodeMenu();
+      }, 101);
+    }
+
 
     function tourNextStep() {
 

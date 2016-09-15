@@ -11,7 +11,8 @@
     'Rest',
     'CONSTANT',
     '$q',
-    'Auth'
+    'Auth',
+    'network'
   ];
 
   /* @ngInject */
@@ -20,7 +21,8 @@
                  Rest,
                  CONSTANT,
                  $q,
-                 Auth) {
+                 Auth,
+                 network) {
 
     var queueDB = pouchDB('queueDB');
     var queueProperties = {
@@ -35,18 +37,18 @@
 
 
     function push(url, body) {
-      // $log.debug(typeof new Date().getTime().toString())
+      $log.debug("P",url,body)
       return queueDB.put({
         '_id': new Date().getTime().toString(),
         'url': url,
         'body': body
       }).then(function(){
-        if(localStorage.getItem('syncing') !== 'true'){
+        if(localStorage.getItem('syncing') !== 'true' && network.isOnline()){
           startSync();
-          $log.debug("starting sync")
+
         }else{
 
-          $log.debug("not starting sync")
+
         }
         return $q.resolve();
       })
@@ -59,7 +61,7 @@
     //     $q.reject("No data");
     //   } else {
     //     var record = response.rows[0].doc;
-    //     $log.debug(record,response);
+    //
     //     uploadRecord(record).then(function () {
     //       d.resolve({
     //         'record_doc': record
@@ -79,7 +81,7 @@
     }
 
     function startSync() {
-      $log.debug("start Sync");
+      $log.debug("start sync called");
       localStorage.setItem('syncing',true)
       Auth.loginIfNotAuthorised()
         .then(function () {
@@ -91,28 +93,34 @@
           return uploadIfRecord(response.rows)
         })
         .then(function (response) {
-            $log.debug("f1")
+
           if(response === 'no_data'){
-            $log.debug("f2")
+
 
             localStorage.setItem('syncing',false);
             return true;
           }else{
-            $log.debug("f3")
+
 
             startSync()
           }
         })
         .catch(function(e){
-          $log.debug("Error",e)
+
         })
 
     }
 
     function uploadAndDelete(record) {
-        $log.debug("upload and delete",record)
+
+      if(record.doc.url === 'activity-log'){
+        if(record.doc.body.client_uid === undefined && record.doc.body.actor_object_id === undefined){
+        record.doc.body.actor_object_id = JSON.parse(localStorage.getItem('user_details')).id;
+        }
+      }
+
       return Rest.all(record.doc.url).post(record.doc.body).then(function () {
-        $log.debug("uploaded and deleteing",record)
+
 
         return queueDB.remove(record.doc)
       })
