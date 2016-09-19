@@ -148,10 +148,14 @@
         new_profile = response;
         new_profile.data.profile = profileData;
         return profilesDB.put(new_profile);
-      }).then(function(){
+      }).then(function () {
+        var temp = new_profile.data.profile;
+        delete temp['client_uid'];
+        return queue.push('/profiles/'+profileId,temp,'patch')
+      })
+        .then(function(){
+
         updateActiveProfileSync(new_profile);
-
-
         return $injector.get('content').createLessonDBIfNotExists()
       })
         .catch(function (e) {
