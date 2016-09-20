@@ -24,7 +24,7 @@
             </ion-slide>
             <ion-slide>
                 <div class="box" >
-                    <div class="row padding-20">
+                    <div class="row padding-x-40">
                         <div class="col">
                             <h2 class="center personalize-title margin-10">लड़का या लड़की</h2>
                             <div style="margin-bottom:40px;" class="row no-padding">
@@ -60,7 +60,7 @@
                     <div class="row padding-x-30">
                         <div class="col">
                             <center>
-                              <img height="120" ng-src="{{userCtrl.user.gender == 'M'?'img/assets/upperbody-boy.png':'img/assets/upperbody-girl.png'}}" alt="">
+                              <img height="110" ng-src="{{userCtrl.user.gender == 'M'?'img/assets/upperbody-boy.png':'img/assets/upperbody-girl.png'}}" alt="">
                             </center>
                             <h2 style="margin-top:0px;" class="center personalize-title">आप कौन सी कक्षा मे हो?</h2>
                             <div class="radio-box-container-outer">
@@ -70,12 +70,12 @@
                                 </label>
                               </div>
                             </div>
-                            <center>
-                              <button ng-disabled="!userCtrl.user.grade" class="button button-balanced button-round margin-20 padding-x-40 font-md" ng-click="userCtrl.createProfile(userCtrl.user)"><i class="ed-icon lg icon-contain icon-next-2"></i></button>
-                            </center>
 
                         </div>
                     </div>
+                    <center class="personalize-button-container">
+                      <button ng-disabled="!userCtrl.user.grade" class="button button-balanced button-round margin-20 padding-x-40 font-md" ng-click="userCtrl.createProfile(userCtrl.user)"><i class="ed-icon lg icon-contain icon-next-2"></i></button>
+                    </center>
                 </div>
             </ion-slide>
         </ion-slide-box>
