@@ -121,7 +121,7 @@
       var animateStarFlag = {
           isCurrentNode : true,
           clickedNodeStar : 0
-      }
+      };
       localStorage.setItem("animateStarFlag",JSON.stringify(animateStarFlag));
     }
 
@@ -269,6 +269,8 @@
       $ionicLoading.hide();
       return true;
     };
+
+
     $scope.closeNodeMenu = function() {
       analytics.log(
           {
@@ -438,7 +440,7 @@
         hideOnStateChange: true
       });
 
-      User.profile.update(mapCtrl.User.getActiveProfileSync()._id,profileData).then(function(){a
+      User.profile.update(mapCtrl.User.getActiveProfileSync()._id,profileData).then(function(){
         $scope.settingsModal.hide();
         location.reload()
       });
