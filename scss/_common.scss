@@ -125,10 +125,10 @@ meter::-webkit-meter-even-less-good-value {
 .name-avatar{
   background: url('../img/assets/name-boy.png'),url('../img/assets/name-girl.png');
   background-repeat: no-repeat;
-  background-position: top left, top right;
-  background-size: auto 40%, auto 40%;
+  background-position: 0 0, 100% 0;
+  background-size: auto 180px, auto 170px;
   @include xs-screen{
-    background-size: auto 30%, auto 30%;
+    background-size: auto 150px, auto 140px;
   }
 }
 
@@ -160,5 +160,29 @@ meter::-webkit-meter-even-less-good-value {
   @include xs-screen-height{
     font-size: 1.7em !important;
     line-height: 1em;
+  }
+}
+
+.personalize-input{
+  line-height:0.8em;
+  border-bottom:1px solid black;
+  color:#48494B;
+  max-width: 73%;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0px;
+  height: 13px;
+  @include xs-screen-height{
+    font-size: 1.3em !important;
+  }
+}
+
+.personalize-button-container{
+  position: absolute;
+  width: 100%;
+  bottom: 0px;
+  @include xs-screen-height{
+    position: relative;
+    width: auto;
   }
 }
