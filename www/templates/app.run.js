@@ -45,12 +45,29 @@
       // }
       // block access to quiz summary page if there is no quiz data
 //
-      $log.debug("A")
+      $log.debug("A",toState,toParams)
       if(toState.name !== 'user.personalise' && localStorage.getItem('profile') === null ){
-
+        $log.debug("gere");
         event.preventDefault();
         $state.go('user.personalise');
       }
+      if(toState.name !== 'user.personalise' && localStorage.getItem('profile') !== null && JSON.parse(localStorage.getItem(('profile')))._id === undefined){
+        event.preventDefault();
+        $log.debug("here")
+          var user = {
+            name : JSON.parse(localStorage.getItem(('profile'))).first_name,
+            grade : JSON.parse(localStorage.getItem(('profile'))).grade,
+            gender :JSON.parse(localStorage.getItem(('profile'))).gender
+          };
+
+        User.profile.patch(user,JSON.parse(localStorage.getItem(('profile'))).id).then(function(response){
+          $log.debug("ITS DONE",response)
+          User.setActiveProfileSync(response);
+          $state.go('map.navigate');
+
+        });
+      }
+
       if (toState.name == 'quiz.questions' && !toParams.quiz) {
         event.preventDefault();
         $state.go('map.navigate');

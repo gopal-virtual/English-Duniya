@@ -27,7 +27,7 @@
                    widgetParser) {
 
     var lessonDB = null;
-    
+
     if (User.getActiveProfileSync() && User.getActiveProfileSync().data) {
       lessonDB = pouchDB('lessonsGrade' + User.getActiveProfileSync().data.profile.grade, {
         adapter: 'websql'
@@ -111,10 +111,10 @@
         adapter: 'websql'
       });
 
-      
+
 
       return lessonDB.get('_local/preloaded').then(function (doc) {
-        
+
 
       }).catch(function (err) {
         if (err.name !== 'not_found') {
@@ -130,6 +130,7 @@
     }
 
     function getLessonsList() {
+      $log.debug("in getLessonslist",lessonDB)
       var d = $q.defer();
       lessonDB.allDocs({
         include_docs: true
@@ -142,10 +143,12 @@
           lessons.push(data.rows[i].doc.lesson.node);
         }
         lessons = _.sortBy(lessons, 'key');
+        $log.debug("in getLessonslist 1" , lessons)
 
         d.resolve(lessons)
       })
         .catch(function (error) {
+          $log.debug("In getLessonslisterror",error)
           d.reject(error)
         });
 
