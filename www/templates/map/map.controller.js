@@ -444,6 +444,7 @@
         $ionicLoading.show({
           hideOnStateChange: true
         });
+        localStorage.removeItem("currentPosition")
 
         User.profile.update(mapCtrl.User.getActiveProfileSync()._id,profileData).then(function(){
           $scope.settingsModal.hide();
