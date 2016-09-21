@@ -30,6 +30,7 @@
     "gulp-uglify": "^1.5.3",
     "gulp-util": "^2.2.14",
     "pouchdb": "^5.4.5",
+    "pouchdb-server": "^1.2.0",
     "preen": "^1.2.0",
     "prompt": "^1.0.0",
     "request-promise": "^4.1.1",
