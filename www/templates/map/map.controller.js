@@ -437,10 +437,10 @@
     function updateProfile(profileData){
       //If conflict arises. Don't delete this
       
-      // $log.debug("profile Data grade",profileData.grade);
-      // $log.debug("Current Grade",JSON.parse(localStorage.profile).data.profile.grade);
+      // 
+      // 
       if (profileData.grade != JSON.parse(localStorage.profile).data.profile.grade) {
-        $log.debug("Grade has changed. Preparing for blast");
+        
         $ionicLoading.show({
           hideOnStateChange: true
         });

@@ -22,7 +22,7 @@ select VERSION in $ANDROID_HOME/build-tools/*;
 do
 #  $VERSION/zipalign -v 4 $PWD/platforms/android/build/outputs/apk/android-x86-release-unsigned.apk $PWD/angryape_x86.apk
   # $VERSION/zipalign -v 4 $PWD/platforms/android/build/outputs/apk/android-x86_64-release-unsigned.apk $PWD/angryape_x86_64.apk
-  $VERSION/zipalign -v 4 $PWD/platforms/android/build/outputs/apk/android-armv7-release-unsigned.apk $PWD/angryape_armv7.apk
+ $VERSION/zipalign -v 4 $PWD/platforms/android/build/outputs/apk/android-armv7-release-unsigned.apk $PWD/angryape_armv7.apk
   # $VERSION/zipalign -v 4 $PWD/platforms/android/build/outputs/apk/android-arm64-release-unsigned.apk $PWD/angryape_armv64.apk
   # $VERSION/zipalign -v 4 $PWD/platforms/android/build/outputs/apk/android-release-unsigned.apk $PWD/angryape.apk
   break

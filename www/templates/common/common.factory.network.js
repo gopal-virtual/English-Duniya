@@ -19,15 +19,15 @@
     function isOnline() {
       if (window.Connection) {
         if (navigator.connection.type == Connection.NONE) {
-          $log.debug("NF")
+          
           return false;
         } else {
-          $log.debug("NT")
+          
 
           return true;
         }
       } else {
-        $log.debug("Nt")
+        
 
         return true;
       }

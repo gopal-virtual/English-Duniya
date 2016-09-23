@@ -4,16 +4,21 @@
   angular
     .module('common')
     .constant('CONSTANT', {
+      'APP': {
+        'VERSION': '0.2',
+        'TYPE': 'NON_BUNDLED'
+      },
       'LOCK': true,
-      'FAKE_LOGIN': true,
-      'FAKE_DEVICE': true,
-      'BACKEND_SERVICE_DOMAIN': 'https://cc-test.zaya.in/',
-      // 'BACKEND_SERVICE_DOMAIN': 'https://eg-api.zaya.in/',
-      'RESOURCE_SERVER': 'https://cc-test.zaya.in/',
-      // 'RESOURCE_SERVER': 'https://eg-api.zaya.in/',
+      'FAKE_LOGIN': false,
+      'FAKE_DEVICE': false,
+      'ANALYTICS': true,
+      // 'BACKEND_SERVICE_DOMAIN': 'https://cc-test.zaya.in/',
+      'BACKEND_SERVICE_DOMAIN': 'https://eg-api.zaya.in/',
+      // 'RESOURCE_SERVER': 'https://cc-test.zaya.in/',
+      'RESOURCE_SERVER': 'https://eg-api.zaya.in/',
       // 'BACKEND_SERVICE_DOMAIN' : 'http://192.168.1.6:9000/',
       'QUESTION' : {
-        'DEMO' : '5ecf8ad5-4c3a-4a67-9758-dd7e3993c4d8'
+        'DEMO' : '2579f7d0-220b-44ea-bcda-de6fc407a21e'
       },
       'PATH': {
         'INTRO': ROOT + '/intro',

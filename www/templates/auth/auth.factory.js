@@ -59,7 +59,7 @@
     return Auth;
 
     function autoLogin(user_credentials){
-      $log.debug("autologin called")
+      
 
       return rest_auth.all('no-login')
         .post($.param(user_credentials))
@@ -78,7 +78,7 @@
     }
 
     function loginIfNotAuthorised(){
-      $log.debug("login if not authorised called")
+      
       
       var user_credentials = {
           username: device.uuid,

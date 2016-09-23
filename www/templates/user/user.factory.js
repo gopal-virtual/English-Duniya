@@ -136,7 +136,7 @@
 
 
     function patchProfile(profile, id) {
-      $log.debug("inside patche profile")
+
 
       var record = {
         "_id": id ? id : generateProfileID(),
@@ -148,17 +148,33 @@
         }
       };
       return appDB.get(id).then(function (response) {
-        $log.debug("inside patche profile 1", response)
+
         record.data.scores = response.data.scores;
         record.data.skills = response.data.skills;
+
         return profilesDB.put(record)
+
+      })
+        .then(function(){
+          var temp = profile;
+          temp.client_uid = id;
+          $log.debug("Patching profile",temp,profile)
+          return updateProfile(id,temp)
+        })
+
+        .then(function(){
+
+          User.setActiveProfileSync(record);
+
+          return $injector.get('content').createLessonDBIfNotExistsPatch()
         })
         .then(function () {
-          $log.debug("inside patche profile 2", record)
+
+
           return record;
         })
       .catch(function(error){
-        $log.debug("Error",error)
+
 
       })
     }
@@ -172,6 +188,7 @@
     }
 
     function updateProfile(profileId, profileData) {
+      $log.debug("Update profile 1",profileId,profileData)
 
       var new_profile;
       return profilesDB.get(profileId).then(function (response) {
@@ -180,7 +197,9 @@
         return profilesDB.put(new_profile);
       }).then(function () {
         var temp = new_profile.data.profile;
-        delete temp['client_uid'];
+        // delete temp['client_uid'];
+        $log.debug("Update profile 1",profileId,profileData,temp)
+
         return queue.push('/profiles/' + profileId, temp, 'patch')
       })
         .then(function () {
@@ -304,7 +323,7 @@
       angular.forEach(skills, function (skill) {
         score = score + skill.lesson_scores;
       });
-      $log.debug(score, skills)
+
       if (step && step === 5 && score === 50) {
         return true;
       }
@@ -316,7 +335,7 @@
     }
 
     function setDemoStep(step) {
-      $log.debug("set Step", step)
+
 
       localStorage.setItem('demo_flag', step);
     }

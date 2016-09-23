@@ -35,6 +35,7 @@
     }
     var contentProperties = {
       createLessonDBIfNotExists: createLessonDBIfNotExists,
+      createLessonDBIfNotExistsPatch: createLessonDBIfNotExistsPatch,
       getLessonsList: getLessonsList,
       getAssessment: getAssessment,
       getLesson: getLesson,
@@ -129,8 +130,43 @@
       })
     }
 
+    function createLessonDBIfNotExistsPatch() {
+      lessonDB = pouchDB('lessonsGrade' + User.getActiveProfileSync().data.profile.grade, {
+        adapter: 'websql'
+      });
+      
+
+      return lessonDB.allDocs()
+        .then(function(result){
+          
+
+          return Promise.all(result.rows.map(function(row){
+            
+
+            return lessonDB.remove(row.id,row.value.rev);
+          }))
+        })
+        .then(function(){
+          
+
+          return lessonDB.load(CONSTANT.PATH.DATA + '/lessonsGrade' + User.getActiveProfileSync().data.profile.grade + '.db')
+        })
+        .then(function () {
+          
+
+          return lessonDB.put({
+            _id: '_local/preloaded'
+          });
+        })
+        .catch(function(e){
+          
+
+        })
+
+    }
+
     function getLessonsList() {
-      $log.debug("in getLessonslist",lessonDB)
+      
       var d = $q.defer();
       lessonDB.allDocs({
         include_docs: true
@@ -143,12 +179,12 @@
           lessons.push(data.rows[i].doc.lesson.node);
         }
         lessons = _.sortBy(lessons, 'key');
-        $log.debug("in getLessonslist 1" , lessons)
+        
 
         d.resolve(lessons)
       })
         .catch(function (error) {
-          $log.debug("In getLessonslisterror",error)
+          
           d.reject(error)
         });
 
