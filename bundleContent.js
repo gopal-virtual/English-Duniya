@@ -13,10 +13,10 @@ var lessons = process.argv[2];
 var media = [];
 
 media.push('/media/ell/images/dog_O5P4I8.png');
-media.push('/media/ell/images/person_GLUMUY.png');
+media.push('/media/ell/images/person_9FDOFJ.png');
 media.push('/media/ell/images/place_KJMRCN.png');
-media.push('/media/ell/images/animal_2W0HQG.png');
-media.push('/media/ell/images/thing_DV4JY6.png');
+media.push('/media/ell/images/animal_7C4FVV.png');
+media.push('/media/ell/images/thing_0IS1M4.png');
 
 
 // Delete all the contents of the target folder first
