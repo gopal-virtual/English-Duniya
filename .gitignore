@@ -19,7 +19,7 @@ _users
 _users/*
 pouch__all_dbs__
 pouch__all_dbs__/*
-lesson.json
+#lesson.json
 log.txt
 lessonsGrade*
 config.json
