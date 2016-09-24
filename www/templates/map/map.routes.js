@@ -13,14 +13,24 @@
         abstract: true,
         resolve: {
           lessons: ['$log','content','User', function($log,content,User) {
+            
+
             return content.getLessonsList(User.getActiveProfileSync().data.profile.grade).then(function(result){
+              
+
               return result
             })
           }],
           lessonLocked: ['$log','content','extendLesson','User', function($log, content,extendLesson,User) {
+            
+
             return content.getLessonsList(User.getActiveProfileSync().data.profile.grade).then(function(lessons){
+              
+
               return extendLesson.getLesson(lessons,[]).then(function(result){
-                    return result;
+                
+
+                return result;
               });
             })
           }],
@@ -28,7 +38,11 @@
             return [];
         }],
         skills : ['$log','content','User', function($log,content,User){
+          
+
           return User.skills.get(User.getActiveProfileSync()._id).then(function(response){
+            
+
             return response;
           })
         }]
@@ -51,7 +65,7 @@
           },
       },
       params: {"activatedLesson" : null},
-        onEnter: ['$state', 'lessons', 'audio', '$ionicLoading', 'orientation','CONSTANT', function($state, lessons, audio, $ionicLoading, orientation, CONSTANT) {
+        onEnter: ['$state', 'lessons', 'audio', '$ionicLoading', 'orientation','CONSTANT','$log', function($state, lessons, audio, $ionicLoading, orientation, CONSTANT, $log) {
           orientation.setPortrait();
           $ionicLoading.show({
             templateUrl: 'templates/common/common.loader.view.html',
@@ -60,6 +74,7 @@
           if (!lessons) {
             $state.go('map.unauthorised');
           }
+          
           // audio.play('background');
         //   if(localStorage.getItem('region')>'3409'){
         //   }

@@ -99,7 +99,11 @@ gulp.task('generate-constants', function () {
       }, {
         match: 'RESOURCE_SERVER',
         replacement: constants[env]['RESOURCE_SERVER']
-      }]
+      }, {
+        match: 'ANALYTICS',
+        replacement: constants[env]['ANALYTICS']
+      }
+      ]
     }))
     .pipe(rename(paths.constants.destination_filename))
     .pipe(gulp.dest(paths.constants.destination))
@@ -120,7 +124,7 @@ gulp.task('scripts', function () {
     .pipe(gulpif(env !== environments.dev,uglify()))
     .pipe(gulp.dest('www/build'));
   // .pipe(broswerSync.stream())
-})
+});
 
 gulp.task('sass', function (done) {
   gulp.src('./scss/ionic.app.scss')

@@ -255,7 +255,7 @@
               });
           })
           .finally(function() {
-            $log.debug("here");
+            
 
             $ionicLoading.hide();
           })
@@ -319,7 +319,7 @@
 
     function playDemoAudio(node) {
 
-      $log.debug("a",User.demo.isShown(), User.demo.getStep());
+      
       if (User.demo.isShown() ) {
         if (User.demo.getStep() == 2) {
           angular.element("#audioplayer")[0].pause();
@@ -337,7 +337,7 @@
           angular.element("#audioplayer")[0].play();
         }
       } else {
-        $log.debug(node.meta,node.meta.parsed_sound )
+        
         if (node.meta && node.meta.parsed_sound) {
 
           angular.element("#audioSource")[0].src = node.meta.parsed_sound;

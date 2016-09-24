@@ -12,7 +12,8 @@
     '$cordovaGeolocation',
     '$q',
     'device',
-    'User'
+    'User',
+    'CONSTANT'
   ];
 
   /* @ngInject */
@@ -23,7 +24,8 @@
     $cordovaGeolocation,
     $q,
     device,
-    User
+    User,
+    CONSTANT
   ) {
 
     var ACTIVITY_TYPE = {
@@ -116,8 +118,11 @@
 
     function log(action, data, profile_id, user_id) {
 
-
-
+      data["network"] = network.getConnectionType();
+      data["device"] = device;
+      data["app_version"] = CONSTANT.APP.VERSION;
+      data["app_type"] = CONSTANT.APP.TYPE;
+      data["location"] = {};
       var post_param = {
         "verb": analytics.activity[action.name][action.type],
         "actor_content_type": "person",
@@ -128,13 +133,16 @@
         "data": data
       };
       if(profile_id){
-
         post_param.client_uid = profile_id;
       }else{
         post_param.actor_object_id = user_id;
       }
 
-      queue.push('activity-log', post_param);
+      if(CONSTANT.ANALYTICS){
+        $log.debug("Logging",action,data,profile_id,user_id);
+
+        queue.push('activity-log', post_param);
+      }
       // ionic.Platform.device().available &&
 
         // .then(function() {

@@ -36,12 +36,16 @@
     return queueProperties;
 
 
-    function push(url, body) {
-      $log.debug("P",url,body)
+    function push(url, body,method) {
+      if(!method){
+        method = 'post'
+      }
+      $log.debug("Pushing",url,body,method);
       return queueDB.put({
         '_id': new Date().getTime().toString(),
         'url': url,
-        'body': body
+        'body': body,
+        'method' : method
       }).then(function(){
         if(localStorage.getItem('syncing') !== 'true' && network.isOnline()){
           startSync();
@@ -81,7 +85,7 @@
     }
 
     function startSync() {
-      $log.debug("start sync called");
+
       localStorage.setItem('syncing',true)
       Auth.loginIfNotAuthorised()
         .then(function () {
@@ -113,13 +117,34 @@
 
     function uploadAndDelete(record) {
 
+      $log.debug("R",record)
+      //patch
+      if(!record.doc.body){
+        record.doc.body = record.doc.data.data;
+        record.doc.method = 'post';
+        record.doc.url = 'activity-log';
+      }
+      $log.debug("R'",record)
+
+      //patch end
+
       if(record.doc.url === 'activity-log'){
+
         if(record.doc.body.client_uid === undefined && record.doc.body.actor_object_id === undefined){
+$log.debug("HRE CMED")
         record.doc.body.actor_object_id = JSON.parse(localStorage.getItem('user_details')).id;
         }
       }
+      var promise;
+      if(record.doc.method === 'post'){
+        promise = Rest.all(record.doc.url).post(record.doc.body)
+      }else{
+        promise = Rest.all(record.doc.url).patch(record.doc.body)
+      }
 
-      return Rest.all(record.doc.url).post(record.doc.body).then(function () {
+
+
+        return promise.then(function () {
 
 
         return queueDB.remove(record.doc)

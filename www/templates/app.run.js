@@ -4,7 +4,7 @@
     .module('zaya')
     .run(runConfig);
 
-  function runConfig($ionicPlatform, $rootScope,  $log, $state, $http, $cookies, Auth,  data, audio,  analytics, network, User, queue) {
+  function runConfig($ionicPlatform, $rootScope,  $log, $state, $http, $cookies, Auth,  data, audio,  analytics, network, User, queue, content) {
 
 
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
@@ -45,12 +45,55 @@
       // }
       // block access to quiz summary page if there is no quiz data
 //
-      $log.debug("A")
+
       if(toState.name !== 'user.personalise' && localStorage.getItem('profile') === null ){
 
         event.preventDefault();
         $state.go('user.personalise');
       }
+      if(toState.name !== 'user.personalise' && localStorage.getItem('profile') !== null && JSON.parse(localStorage.getItem(('profile')))._id === undefined){
+        event.preventDefault();
+
+          var user = {
+            name : JSON.parse(localStorage.getItem(('profile'))).first_name,
+            grade : JSON.parse(localStorage.getItem(('profile'))).grade,
+            gender :JSON.parse(localStorage.getItem(('profile'))).gender
+          };
+
+        User.profile.patch(user,JSON.parse(localStorage.getItem(('profile'))).id).then(function(response){
+
+          $state.go('map.navigate');
+
+          // User.profile.patch(user,JSON.parse(localStorage.getItem(('profile'))).id).then(function(response){
+          //   User.setActiveProfileSync(response);
+          //
+          //
+          //   var lessonDB = pouchDB('lessonsGrade' + User.getActiveProfileSync().data.profile.grade, {
+          //     adapter: 'websql'
+          //   });
+          //
+          //   lessonDB.destroy()
+          //     .then(function(){
+          //       $log.debug("Here1",CONSTANT.PATH.DATA + '/lessonsGrade' + User.getActiveProfileSync().data.profile.grade + '.db');
+          //       return lessonDB.load(CONSTANT.PATH.DATA + '/lessonsGrade' + User.getActiveProfileSync().data.profile.grade + '.db')
+          //     })
+          //     .then(function () {
+          //
+          //       return lessonDB.put({
+          //         _id: '_local/preloaded'
+          //       });
+          //     }).then(function(){
+          //
+          //
+          //     $state.go('map.navigate');
+          //
+          //   })
+          //     .catch(function(e){
+          //
+          //     })
+        });
+      }
+
       if (toState.name == 'quiz.questions' && !toParams.quiz) {
         event.preventDefault();
         $state.go('map.navigate');
@@ -99,7 +142,7 @@
 
       $rootScope.$on('$cordovaNetwork:online', function(event, networkState) {
           // data.queueSync()
-        $log.debug("online vent triggered");
+
         queue.startSync()
 
       });

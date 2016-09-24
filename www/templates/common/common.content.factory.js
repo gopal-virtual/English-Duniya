@@ -27,7 +27,7 @@
                    widgetParser) {
 
     var lessonDB = null;
-    
+
     if (User.getActiveProfileSync() && User.getActiveProfileSync().data) {
       lessonDB = pouchDB('lessonsGrade' + User.getActiveProfileSync().data.profile.grade, {
         adapter: 'websql'
@@ -35,6 +35,7 @@
     }
     var contentProperties = {
       createLessonDBIfNotExists: createLessonDBIfNotExists,
+      createLessonDBIfNotExistsPatch: createLessonDBIfNotExistsPatch,
       getLessonsList: getLessonsList,
       getAssessment: getAssessment,
       getLesson: getLesson,
@@ -111,10 +112,10 @@
         adapter: 'websql'
       });
 
-      
+
 
       return lessonDB.get('_local/preloaded').then(function (doc) {
-        
+
 
       }).catch(function (err) {
         if (err.name !== 'not_found') {
@@ -129,7 +130,43 @@
       })
     }
 
+    function createLessonDBIfNotExistsPatch() {
+      lessonDB = pouchDB('lessonsGrade' + User.getActiveProfileSync().data.profile.grade, {
+        adapter: 'websql'
+      });
+      
+
+      return lessonDB.allDocs()
+        .then(function(result){
+          
+
+          return Promise.all(result.rows.map(function(row){
+            
+
+            return lessonDB.remove(row.id,row.value.rev);
+          }))
+        })
+        .then(function(){
+          
+
+          return lessonDB.load(CONSTANT.PATH.DATA + '/lessonsGrade' + User.getActiveProfileSync().data.profile.grade + '.db')
+        })
+        .then(function () {
+          
+
+          return lessonDB.put({
+            _id: '_local/preloaded'
+          });
+        })
+        .catch(function(e){
+          
+
+        })
+
+    }
+
     function getLessonsList() {
+      
       var d = $q.defer();
       lessonDB.allDocs({
         include_docs: true
@@ -142,10 +179,12 @@
           lessons.push(data.rows[i].doc.lesson.node);
         }
         lessons = _.sortBy(lessons, 'key');
+        
 
         d.resolve(lessons)
       })
         .catch(function (error) {
+          
           d.reject(error)
         });
 

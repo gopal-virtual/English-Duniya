@@ -800,19 +800,24 @@
     };
 
     if($state.is('quiz.questions') && User.demo.isShown(5)){
+      
       $timeout(function(){
+        
+
         angular.element("#audioplayer")[0].pause();
         angular.element("#audioSource")[0].src = 'sound/demo-quiz-1.mp3';
         angular.element("#audioplayer")[0].load();
         angular.element("#audioplayer")[0].play();
         nzTour.start($scope.tour);
         User.demo.setStep(5);
-      });
       $timeout(function(){
+        
         if(nzTour.current.step === 0){
           tourNextStep();
         }
-      },3000)
+      },3500)
+      });
+
     }else{
       $ionicPlatform.registerBackButtonAction(function(event) {
         $scope.showNodeMenu();

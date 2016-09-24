@@ -121,7 +121,7 @@
       var animateStarFlag = {
           isCurrentNode : true,
           clickedNodeStar : 0
-      }
+      };
       localStorage.setItem("animateStarFlag",JSON.stringify(animateStarFlag));
     }
 
@@ -269,6 +269,8 @@
       $ionicLoading.hide();
       return true;
     };
+
+
     $scope.closeNodeMenu = function() {
       analytics.log(
           {
@@ -433,15 +435,25 @@
     });
 
     function updateProfile(profileData){
+      //If conflict arises. Don't delete this
+      
+      // 
+      // 
+      if (profileData.grade != JSON.parse(localStorage.profile).data.profile.grade) {
+        
+        $ionicLoading.show({
+          hideOnStateChange: true
+        });
+        localStorage.removeItem("currentPosition")
 
-      $ionicLoading.show({
-        hideOnStateChange: true
-      });
-
-      User.profile.update(mapCtrl.User.getActiveProfileSync()._id,profileData).then(function(){a
+        User.profile.update(mapCtrl.User.getActiveProfileSync()._id,profileData).then(function(){
+          $scope.settingsModal.hide();
+          location.reload()
+        });
+      }else{
         $scope.settingsModal.hide();
-        location.reload()
-      });
+      }
+      
       //
       // $rootScope.$broadcast('reloadMap');
       // $state.go('map.navigate')

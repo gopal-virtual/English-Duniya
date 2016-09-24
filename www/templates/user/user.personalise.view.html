@@ -2,27 +2,29 @@
     <ion-content>
         <ion-slide-box delegate-handle="slide" show-pager="false" ng-init="userCtrl.disableSwipe()" on-slide-changed="userCtrl.playAudio($index)">
             <ion-slide ng-init="userCtrl.user.limit = 15">
-                <div class="box name-avatar vertical-center">
+                <div class="box name-avatar">
                     <div class="row padding-x-10">
                         <div class="col center">
-                            <h2 class="center personalize-title">आपका नाम क्या है?</h2>
+                            <div style="padding-top: 70px;">
+                                <h2 class="center personalize-title">आपका नाम क्या है?</h2>
+                                <div class="col font-md personalize-input" style="">{{userCtrl.user.name}}</div>
+                            </div>
                             <div class="col" ng-init="userCtrl.user.name=''">
-                                <div class="row">
-                                    <div class="col font-md" style="line-height:0.8em;border-bottom:1px solid black;color:#48494B;max-width: 86%;margin-left: auto;margin-right: auto;">{{userCtrl.user.name}}&nbsp;</div>
-                                </div>
                                 <!-- {{userCtrl.user.name.trim().length}} -->
                                 <br>
                                 <!-- {{userCtrl.user.limit}} -->
                                 <virtual-keyboard reference="userCtrl.user.name" limit="userCtrl.user.limit"></virtual-keyboard>
-                                <button ng-disabled="userCtrl.user.name.trim().length < 3" class="button button-balanced button-round margin-20 padding-x-40 font-md" ng-click="userCtrl.nextSlide()"><i class="ed-icon lg icon-contain icon-next-2"></i></button>
                             </div>
                         </div>
                     </div>
+                    <center class="personalize-button-container">
+                        <button ng-disabled="userCtrl.user.name.trim().length < 3" class="button button-balanced button-round margin-20 padding-x-40 font-md" ng-click="userCtrl.nextSlide()"><i class="ed-icon lg icon-contain icon-next-2"></i></button>
+                    </center>
                 </div>
             </ion-slide>
             <ion-slide>
                 <div class="box" >
-                    <div class="row padding-20">
+                    <div class="row padding-x-40">
                         <div class="col">
                             <h2 class="center personalize-title margin-10">लड़का या लड़की</h2>
                             <div style="margin-bottom:40px;" class="row no-padding">
@@ -46,11 +48,11 @@
                                     </label>
                                 </div>
                             </div>
-                            <center>
-                              <button ng-disabled="!userCtrl.user.gender" class="button button-balanced button-round margin-20 padding-x-40 font-md" ng-click="userCtrl.nextSlide()"><i class="ed-icon lg icon-contain icon-next-2"></i></button>
-                            </center>
                         </div>
                     </div>
+                    <center class="personalize-button-container">
+                      <button ng-disabled="!userCtrl.user.gender" class="button button-balanced button-round margin-20 padding-x-40 font-md" ng-click="userCtrl.nextSlide()"><i class="ed-icon lg icon-contain icon-next-2"></i></button>
+                    </center>
                 </div>
             </ion-slide>
             <ion-slide>
@@ -58,7 +60,7 @@
                     <div class="row padding-x-30">
                         <div class="col">
                             <center>
-                              <img height="120" ng-src="{{userCtrl.user.gender == 'M'?'img/assets/upperbody-boy.png':'img/assets/upperbody-girl.png'}}" alt="">
+                              <img height="110" ng-src="{{userCtrl.user.gender == 'M'?'img/assets/upperbody-boy.png':'img/assets/upperbody-girl.png'}}" alt="">
                             </center>
                             <h2 style="margin-top:0px;" class="center personalize-title">आप कौन सी कक्षा मे हो?</h2>
                             <div class="radio-box-container-outer">
@@ -68,12 +70,12 @@
                                 </label>
                               </div>
                             </div>
-                            <center>
-                              <button ng-disabled="!userCtrl.user.grade" class="button button-balanced button-round margin-20 padding-x-40 font-md" ng-click="userCtrl.createProfile(userCtrl.user)"><i class="ed-icon lg icon-contain icon-next-2"></i></button>
-                            </center>
 
                         </div>
                     </div>
+                    <center class="personalize-button-container">
+                      <button ng-disabled="!userCtrl.user.grade" class="button button-balanced button-round margin-20 padding-x-40 font-md" ng-click="userCtrl.createProfile(userCtrl.user)"><i class="ed-icon lg icon-contain icon-next-2"></i></button>
+                    </center>
                 </div>
             </ion-slide>
         </ion-slide-box>
