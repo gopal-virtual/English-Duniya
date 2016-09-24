@@ -1,65 +1,189 @@
-#!/bin/bash
-source /home/ubuntu/.bashrc
-export ANDROID_HOME=/home/ubuntu/apps/android-sdk-linux
-export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/home/ubuntu/apps/android-sdk-linux/platform-tools:/home/ubuntu/apps/android-sdk-linux/tools:/opt/nodej/bin
-export NODE_PATH=/opt/nodej/lib/node_modules
-cd $WORKSPACE
-#npm install orchestrator
-npm list | grep gulp
-#bower install
-echo "Initiating build process "
-REPO_PATH=$WORKSPACE
-cd $REPO_PATH
-cp $REPO_PATH/resources/android/drawable-xxhdpi/icon.png $REPO_PATH/resources/android/drawable-xxdpi/icon.png
-mkdir -p $REPO_PATH/resources/android/drawable-xxdpi
-cp $REPO_PATH/resources/android/drawable-xxhdpi/icon.png $REPO_PATH/resources/android/drawable-xxdpi/icon.png
-mkdir -p $REPO_PATH/resources/android/drawable-xxxdpi
-cp $REPO_PATH/resources/android/drawable-xxhdpi/icon.png  $REPO_PATH/resources/android/drawable-xxxdpi/icon.png
-mkdir -p  $REPO_PATH/resources/android/splash/
-cp $REPO_PATH/resources/android/drawable-mdpi/screen.png $REPO_PATH/resources/android/splash/screen.png
+var gulp = require('gulp');
+var gutil = require('gulp-util');
+var bower = require('bower');
+var concate = require('gulp-concat');
+var plumber = require('gulp-plumber');
+var print = require('gulp-print');
+var ngAnnotate = require('gulp-ng-annotate');
+var sass = require('gulp-sass');
+var minifyCss = require('gulp-minify-css');
+var rename = require('gulp-rename');
+var uglify = require('gulp-uglify');
+var sh = require('shelljs');
+var stripDebug = require('gulp-strip-debug');
+var templateCache = require('gulp-angular-templatecache');
+var optimization = require('gulp-imagemin');
+var preen = require('preen');
+var strip = require('gulp-strip-comments');
+var argument = require('yargs');
+var file = require('fs');
+var replace_task = require('gulp-replace-task');
+var gulpif = require('gulp-if');
+var paths = {
+  sass: [
+    './scss/**/*.scss',
+    './scss/*.scss'
+  ],
+  script: [
+    './www/templates/templates.js',
+    './www/templates/common/common.module.js',
+    './www/templates/map/map.module.js',
+    './www/templates/content/content.module.js',
+    './www/templates/intro/intro.module.js',
+    './www/templates/search/search.module.js',
+    './www/templates/auth/auth.module.js',
+    './www/templates/user/user.module.js',
+    './www/templates/profile/profile.module.js',
+    './www/templates/quiz/quiz.module.js',
+    './www/templates/group/group.module.js',
+    './www/templates/app.module.js',
+    './www/templates/**/*.js'
+  ],
+  html: [
+    './www/templates/**/*.html'
+  ],
+  image: [
+    './www/img/**/*.png',
+    './www/img/**/*.jpg',
+    './www/img/**/*.jpeg',
+    './www/img/*.png',
+    './www/img/*.jpg',
+    './www/img/*.jpeg'
+  ],
+  constants : {
+    environment : './www/constant.json',
+    template : './constant.template.txt',
+    destination : './www/templates/common/',
+    destination_filename : 'common.constant.js'
+  }
 
-echo "Bundling Content"
-#node bundleContent.js 3
+};
+var environments = {
+  default: 'PRODUCTION',
+  prod: 'PRODUCTION',
+  dev: 'DEVELOPMENT',
+  test: 'TESTING'
+};
+var env = argument.argv.env ? environments[argument.argv.env] : environments.default;
+var constants = JSON.parse(file.readFileSync(paths.constants.environment, 'utf8'));
 
-echo "Configuring Environment"
-gulp --env=prod
-echo "starting to build"
-#ionic build android
-#cordova build --release android
+gulp.task('default', ['generate-constants', 'sass', 'scripts', 'html']);
 
-# cordova build --release android --xwalk64bit
-#jarsigner -verbose -tsa http://timestamp.comodoca.com/rfc3161 -sigalg SHA1withRSA -digestalg SHA1 -keystore classcloud.keystore -storepass zayaayaz1234 $REPO_PATH/platforms/android/build/outputs/apk/android-x86-release-unsigned.apk angryape
-  # jarsigner -verbose -tsa http://timestamp.comodoca.com/rfc3161 -sigalg SHA1withRSA -digestalg SHA1 -keystore classcloud.keystore -storepass zayaayaz1234 $PWD/platforms/android/build/outputs/apk/android-x86_64-release-unsigned.apk angryape
-  #jarsigner -verbose -tsa http://timestamp.comodoca.com/rfc3161 -sigalg SHA1withRSA -digestalg SHA1 -keystore classcloud.keystore -storepass zayaayaz1234 $REPO_PATH/platforms/android/build/outputs/apk/android-armv7-release-unsigned.apk angryape
-  # jarsigner -verbose -tsa http://timestamp.comodoca.com/rfc3161 -sigalg SHA1withRSA -digestalg SHA1 -keystore classcloud.keystore -storepass zayaayaz1234 $PWD/platforms/android/build/outputs/apk/android-arm64-release-unsigned.apk angryape
-  # jarsigner -verbose -tsa http://timestamp.comodoca.com/rfc3161 -sigalg SHA1withRSA -digestalg SHA1 -keystore classcloud.keystore -storepass zayaayaz1234 $PWD/platforms/android/build/outputs/apk/android-release-unsigned.apk angryape
-  #select VERSION in $ANDROID_HOME/build-tools/*;
- VERSION="$ANDROID_HOME/build-tools/23.0.1"
- BUILD_PATH="/tmp"
- BUILD_NAME="englishduniya-$BUILD_NUMBER"
- echo $BUILD_NAME
- #do
- #  $VERSION/zipalign -v 4 $REPO_PATH/platforms/android/build/outputs/apk/android-x86-release-unsigned.apk "$BUILD_PATH/$BUILD_NAME-x86.apk"
- # $VERSION/zipalign -v 4 $PWD/platforms/android/build/outputs/apk/android-x86_64-release-unsigned.apk $PWD/angryape_x86_64.apk
- #  $VERSION/zipalign -v 4 $REPO_PATH/platforms/android/build/outputs/apk/android-armv7-release-unsigned.apk "$BUILD_PATH/$BUILD_NAME-armv7.apk"
- # $VERSION/zipalign -v 4 $PWD/platforms/android/build/outputs/apk/android-arm64-release-unsigned.apk $PWD/angryape_armv64.apk
- # $VERSION/zipalign -v 4 $PWD/platforms/android/build/outputs/apk/android-release-unsigned.apk $PWD/angryape.apk
- #break
- #done
- kill -9 `ps aux | grep pouchdb-server | grep -v grep | awk '{print $2}'`
- cat << "EOF"
- /$$$$$$                                                 /$$$$$$
- /$$__  $$                                               /$$__  $$
- | $$  \ $$ /$$$$$$$   /$$$$$$   /$$$$$$  /$$   /$$      | $$  \ $$  /$$$$$$   /$$$$$$
- | $$$$$$$$| $$__  $$ /$$__  $$ /$$__  $$| $$  | $$      | $$$$$$$$ /$$__  $$ /$$__  $$
- | $$__  $$| $$  \ $$| $$  \ $$| $$  \__/| $$  | $$      | $$__  $$| $$  \ $$| $$$$$$$$
- | $$  | $$| $$  | $$| $$  | $$| $$      | $$  | $$      | $$  | $$| $$  | $$| $$_____/
- | $$  | $$| $$  | $$|  $$$$$$$| $$      |  $$$$$$$      | $$  | $$| $$$$$$$/|  $$$$$$$
- |__/  |__/|__/  |__/ \____  $$|__/       \____  $$      |__/  |__/| $$____/  \_______/
- /$$  \ $$           /$$  | $$                | $$
- |  $$$$$$/          |  $$$$$$/                | $$
- \______/            \______/                 |__/
- EOF
+// gulp.task('optimize', function(cb) {
+//   gulp.src(paths.image)
+//     .pipe(optimization())
+//     .pipe(gulp.dest('www/img'))
+// });
+
+gulp.task('preen', function (cb) {
+  preen.preen({}, cb);
+});
+
+gulp.task('generate-constants', function () {
 
 
+  gulp.src(paths.constants.template)
+    .pipe(replace_task({
+      patterns: [{
+        match: 'BACKEND_SERVICE_DOMAIN',
+        replacement: constants[env]['BACKEND_SERVICE_DOMAIN']
+      }, {
+        match: 'LOCK',
+        replacement: constants[env]['LOCK']
+      }, {
+        match: 'FAKE_LOGIN',
+        replacement: constants[env]['FAKE_LOGIN']
+      }, {
+        match: 'FAKE_DEVICE',
+        replacement: constants[env]['FAKE_DEVICE']
+      }, {
+        match: 'RESOURCE_SERVER',
+        replacement: constants[env]['RESOURCE_SERVER']
+      }, {
+        match: 'ANALYTICS',
+        replacement: constants[env]['ANALYTICS']
+      }
+      ]
+    }))
+    .pipe(rename(paths.constants.destination_filename))
+    .pipe(gulp.dest(paths.constants.destination))
 
+});
+
+
+gulp.task('scripts', function () {
+
+  gulp.src(paths.script)
+    .pipe(print(function (filepath) {
+      // return "MrGopal modified : " + filepath;
+    }))
+    .pipe(ngAnnotate())
+    .pipe(stripDebug())
+    .pipe(strip())
+    .pipe(concate('mobile.app.js'))
+    .pipe(gulpif(env !== environments.dev,uglify()))
+    .pipe(gulp.dest('www/build'));
+  // .pipe(broswerSync.stream())
+});
+
+gulp.task('sass', function (done) {
+  gulp.src('./scss/ionic.app.scss')
+    .pipe(sass())
+    .on('error', sass.logError)
+    // .pipe(autoprefixer({
+    // 	browsers: ['last 2 versions'],
+    // 	cascade: false
+    // }))
+    .pipe(gulp.dest('./www/css/'))
+    .pipe(minifyCss({
+      keepSpecialComments: 1
+    }))
+    .pipe(rename({
+      extname: '.min.css'
+    }))
+    .pipe(gulp.dest('./www/css/'))
+    .on('end', done);
+});
+
+gulp.task('html', function () {
+  return gulp.src(paths.html)
+    .pipe(print(function (filepath) {
+      // return "html modified : " + filepath;
+    }))
+    .pipe(strip())
+    .pipe(templateCache({
+      base: function (file) {
+        var filename = file.relative.replace('www/', '');
+        return 'templates/' + filename;
+      },
+      standalone: true,
+      moduleSystem: 'IIFE'
+    }))
+    .pipe(gulp.dest('./www/templates/'));
+});
+
+gulp.task('watch',['generate-constants'], function () {
+  gulp.watch(paths.sass, ['sass']);
+  gulp.watch(paths.script, ['scripts']);
+  gulp.watch(paths.html, ['html']);
+});
+
+// gulp.task('install', ['git-check'], function() {
+//   return bower.commands.install()
+//     .on('log', function(data) {
+//       gutil.log('bower', gutil.colors.cyan(data.id), data.message);
+//     });
+// });
+
+// gulp.task('git-check', function(done) {
+//   if (!sh.which('git')) {
+//     console.log(
+//       '  ' + gutil.colors.red('Git is not installed.'),
+//       '\n  Git, the version control system, is required to download Ionic.',
+//       '\n  Download git here:', gutil.colors.cyan('http://git-scm.com/downloads') + '.',
+//       '\n  Once git is installed, run \'' + gutil.colors.cyan('gulp install') + '\' again.'
+//     );
+//     process.exit(1);
+//   }
+//   done();
+// });

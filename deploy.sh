@@ -5,7 +5,7 @@ export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/ga
 export NODE_PATH=/opt/nodej/lib/node_modules
 cd $WORKSPACE
 #npm install orchestrator
-npm install
+npm list | grep gulp
 #bower install
 echo "Initiating build process "
 REPO_PATH=$WORKSPACE
