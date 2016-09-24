@@ -23,7 +23,7 @@ echo "Bundling Content"
 #node bundleContent.js 3
 
 echo "Configuring Environment"
-#gulp --env=prod
+gulp --env=prod
 echo "starting to build"
 #ionic build android
 #cordova build --release android
