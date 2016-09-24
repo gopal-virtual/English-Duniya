@@ -18,7 +18,10 @@ mkdir -p  $REPO_PATH/resources/android/splash/
 cp $REPO_PATH/resources/android/drawable-mdpi/screen.png $REPO_PATH/resources/android/splash/screen.png
 
 echo "Bundling Content"
-node bundleContent.js 3
+#node bundleContent.js 3
+
+echo "Configuring Environment"
+gulp --env=prod
 echo "starting to build"
 #ionic build android
 #cordova build --release android
