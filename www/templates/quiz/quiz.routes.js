@@ -24,7 +24,6 @@
         },
         resolve: {
           quiz: ['$stateParams', 'Rest', '$log', 'content', 'ml', '$q', '$http', 'User', 'data', function ($stateParams, Rest, $log, content, ml, $q, $http, User, data) {
-
             if ($stateParams.type == 'litmus') {
               var all_promises = [];
               if (ml.kmapsJSON == undefined) {
@@ -59,7 +58,9 @@
                 litmus['suggestion'] = suggestion;
                 return litmus;
               })
-            } else {
+            }
+            else {
+                $log.debug('trying to resolve quiz', $stateParams.quiz.objects.length);
 
                 // ;
                 // $stateParams.quiz.objects[0].node.id == 'demo' ? $stateParams.quiz.objects.shift(data.demo_question) :false;
@@ -73,7 +74,7 @@
                 //   $stateParams.quiz.objects[currentIndex] = $stateParams.quiz.objects[randomIndex];
                 //   $stateParams.quiz.objects[randomIndex] = temporaryValue;
                 // }
-                User.demo.isShown(5) && $stateParams.quiz.objects.unshift(content.demo_question);
+                // User.demo.isShown(5) && $stateParams.quiz.objects.unshift(content.demo_question);
                 return content.getAssessment($stateParams.quiz).then(function (response) {
                   return response;
                 });

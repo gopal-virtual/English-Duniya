@@ -134,39 +134,32 @@
       lessonDB = pouchDB('lessonsGrade' + User.getActiveProfileSync().data.profile.grade, {
         adapter: 'websql'
       });
-      
 
       return lessonDB.allDocs()
         .then(function(result){
-          
 
           return Promise.all(result.rows.map(function(row){
-            
 
             return lessonDB.remove(row.id,row.value.rev);
           }))
         })
         .then(function(){
-          
 
           return lessonDB.load(CONSTANT.PATH.DATA + '/lessonsGrade' + User.getActiveProfileSync().data.profile.grade + '.db')
         })
         .then(function () {
-          
 
           return lessonDB.put({
             _id: '_local/preloaded'
           });
         })
         .catch(function(e){
-          
 
         })
 
     }
 
     function getLessonsList() {
-      
       var d = $q.defer();
       lessonDB.allDocs({
         include_docs: true
@@ -176,15 +169,18 @@
         var lessons = [];
         for (var i = 0; i < data.rows.length; i++) {
           data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key;
-          lessons.push(data.rows[i].doc.lesson.node);
+        //   lessons.push(data.rows[i].doc.lesson.node);
+            for (var c = 0; c < data.rows[i].doc.lesson.objects.length; c++) {
+                data.rows[i].doc.lesson.objects[c].node.tag = data.rows[i].doc.lesson.node.tag;
+                $log.debug('resource from db',data.rows[i].doc.lesson.objects[c])
+                lessons.push(data.rows[i].doc.lesson.objects[c])
+            }
         }
         lessons = _.sortBy(lessons, 'key');
-        
 
         d.resolve(lessons)
       })
         .catch(function (error) {
-          
           d.reject(error)
         });
 

@@ -174,15 +174,14 @@
     function playResource(resource, video, callback) {
       angular.element("#audioplayer")[0].pause();
 
-      if (utils.resourceType(resource) == 'practice' && (User.demo.isShown() && [2, 3].indexOf(User.demo.getStep()) >= 0)) {
-        return;
-      }
-
-      if (utils.resourceType(resource) == 'video' && (User.demo.isShown() && [4].indexOf(User.demo.getStep() ) >= 0)) {
-
-
-        return;
-      }
+      $log.debug('trying to play resource',resource)
+    //   if (utils.resourceType(resource) == 'practice' && (User.demo.isShown() && [2, 3].indexOf(User.demo.getStep()) >= 0)) {
+    //     return;
+    //   }
+      //
+    //   if (utils.resourceType(resource) == 'video' && (User.demo.isShown() && [4].indexOf(User.demo.getStep() ) >= 0)) {
+    //     return;
+    //   }
 
       // to do
 
@@ -255,7 +254,7 @@
               });
           })
           .finally(function() {
-            
+
 
             $ionicLoading.hide();
           })
@@ -319,7 +318,7 @@
 
     function playDemoAudio(node) {
 
-      
+
       if (User.demo.isShown() ) {
         if (User.demo.getStep() == 2) {
           angular.element("#audioplayer")[0].pause();
@@ -337,7 +336,7 @@
           angular.element("#audioplayer")[0].play();
         }
       } else {
-        
+
         if (node.meta && node.meta.parsed_sound) {
 
           angular.element("#audioSource")[0].src = node.meta.parsed_sound;

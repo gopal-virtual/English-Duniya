@@ -162,69 +162,74 @@
     $scope.$on('openNode', function(event, node, currentPos) {
       // audio.stop('demo-1')
       //   $scope.demo.isShown() && $scope.demo.hide();
+      lessonutils.playResource(node);
+
       if (currentPos)
         currentPos.lessonType = node.tag;
+      //
+    //   if (node.content_type_name == 'litmus') {
+    //     $state.go('quiz.questions', {
+    //       id: node.id,
+    //       type: 'litmus'
+    //     });
+    //   } else {
+    //     $ionicLoading.show({
+    //       // hideOnStateChange: true
+    //     });
+    //     $scope.user = User;
+    //     $scope.lessonutils.getLesson(node.id, $scope).then(
+      //
+    //       function(response) {
+    //         $log.debug('lesson opened', response)
+      //
+    //         analytics.log(
+    //               {
+    //                   name : 'LESSON',
+    //                   type : 'START',
+    //                   id : node.id
+    //               },
+    //               {
+    //                   time : new Date()
+    //               },
+    //               User.getActiveProfileSync()._id
+    //           );
+      //
+    //         var promise;
+    //         if(node.meta.intros && node.meta.intros.sound  && node.meta.intros.sound[0]){
+      //
+    //           promise = mediaManager.downloadIfNotExists(CONSTANT.RESOURCE_SERVER + node.meta.intros.sound[0])
+    //         } else {
+    //           promise = $q.resolve();
+    //         }
+      //
+    //         promise.then(function(s) {
+    //           if(s){
+    //             node.meta.parsed_sound = s;
+    //           }
+      //
+    //           audio.setVolume('background', 0.1);
+    //         if(currentPos)
+    //         {
+      //
+    //           mapCtrl.animationExpand.expand(currentPos,node);
+    //           $scope.selectedNode = response;
+    //         }else{
+    //           $scope.openNodeMenu(node);
+    //           $scope.selectedNode = response;
+    //         }
+    //         }).catch(function(error) {
+      //
+    //           $ionicLoading.hide();
+    //           $ionicPopup.alert({
+    //             title: 'Please try again',
+    //             template: "No internet conection found"
+    //           });
+    //         });
+    //       }
+    //     );
+    //   }
+      //
 
-      if (node.content_type_name == 'litmus') {
-        $state.go('quiz.questions', {
-          id: node.id,
-          type: 'litmus'
-        });
-      } else {
-        $ionicLoading.show({
-          // hideOnStateChange: true
-        });
-        $scope.user = User;
-        $scope.lessonutils.getLesson(node.id, $scope).then(
-
-          function(response) {
-
-            analytics.log(
-                  {
-                      name : 'LESSON',
-                      type : 'START',
-                      id : node.id
-                  },
-                  {
-                      time : new Date()
-                  },
-                  User.getActiveProfileSync()._id
-              );
-
-            var promise;
-            if(node.meta.intros && node.meta.intros.sound  && node.meta.intros.sound[0]){
-
-              promise = mediaManager.downloadIfNotExists(CONSTANT.RESOURCE_SERVER + node.meta.intros.sound[0])
-            } else {
-              promise = $q.resolve();
-            }
-
-            promise.then(function(s) {
-              if(s){
-                node.meta.parsed_sound = s;
-              }
-
-              audio.setVolume('background', 0.1);
-            if(currentPos)
-            {
-
-              mapCtrl.animationExpand.expand(currentPos,node);
-              $scope.selectedNode = response;
-            }else{
-              $scope.openNodeMenu(node);
-              $scope.selectedNode = response;
-            }
-            }).catch(function(error) {
-
-              $ionicLoading.hide();
-              $ionicPopup.alert({
-                title: 'Please try again',
-                template: "No internet conection found"
-              });
-            });
-          }
-        );
-      }
     })
 
     ;
@@ -436,11 +441,11 @@
 
     function updateProfile(profileData){
       //If conflict arises. Don't delete this
-      
-      // 
-      // 
+
+      //
+      //
       if (profileData.grade != JSON.parse(localStorage.profile).data.profile.grade) {
-        
+
         $ionicLoading.show({
           hideOnStateChange: true
         });
@@ -453,7 +458,7 @@
       }else{
         $scope.settingsModal.hide();
       }
-      
+
       //
       // $rootScope.$broadcast('reloadMap');
       // $state.go('map.navigate')

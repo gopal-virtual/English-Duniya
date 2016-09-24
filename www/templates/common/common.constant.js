@@ -9,13 +9,13 @@
         'TYPE': 'NON_BUNDLED'
       },
       'LOCK': true,
-      'FAKE_LOGIN': false,
-      'FAKE_DEVICE': false,
+      'FAKE_LOGIN': true,
+      'FAKE_DEVICE': true,
       'ANALYTICS': true,
-      // 'BACKEND_SERVICE_DOMAIN': 'https://cc-test.zaya.in/',
-      'BACKEND_SERVICE_DOMAIN': 'https://eg-api.zaya.in/',
-      // 'RESOURCE_SERVER': 'https://cc-test.zaya.in/',
-      'RESOURCE_SERVER': 'https://eg-api.zaya.in/',
+      'BACKEND_SERVICE_DOMAIN': 'https://cc-test.zaya.in/',
+    //   'BACKEND_SERVICE_DOMAIN': 'https://eg-api.zaya.in/',
+      'RESOURCE_SERVER': 'https://cc-test.zaya.in/',
+    //   'RESOURCE_SERVER': 'https://eg-api.zaya.in/',
       // 'BACKEND_SERVICE_DOMAIN' : 'http://192.168.1.6:9000/',
       'QUESTION' : {
         'DEMO' : '2579f7d0-220b-44ea-bcda-de6fc407a21e'
