@@ -4,12 +4,12 @@ export ANDROID_HOME=/home/ubuntu/apps/android-sdk-linux
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/home/ubuntu/apps/android-sdk-linux/platform-tools:/home/ubuntu/apps/android-sdk-linux/tools:/opt/nodej/bin
 export NODE_PATH=/opt/nodej/lib/node_modules
 cd $WORKSPACE
+echo "branch name-$BRANCH_NAME"
 #npm install orchestrator
 #npm list | grep gulp
 #bower install
 echo "Initiating build process "
 REPO_PATH=$WORKSPACE
-
 cd $REPO_PATH
 cp $REPO_PATH/resources/android/drawable-xxhdpi/icon.png $REPO_PATH/resources/android/drawable-xxdpi/icon.png
 mkdir -p $REPO_PATH/resources/android/drawable-xxdpi
