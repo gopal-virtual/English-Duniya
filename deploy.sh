@@ -4,8 +4,8 @@ export ANDROID_HOME=/home/ubuntu/apps/android-sdk-linux
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/home/ubuntu/apps/android-sdk-linux/platform-tools:/home/ubuntu/apps/android-sdk-linux/tools:/opt/nodej/bin
 export NODE_PATH=/opt/nodej/lib/node_modules
 cd $WORKSPACE
-npm install
-bower install
+#npm install
+#bower install
 echo "Initiating build process "
 REPO_PATH=$WORKSPACE
 cd $REPO_PATH
@@ -20,8 +20,8 @@ cp $REPO_PATH/resources/android/drawable-mdpi/screen.png $REPO_PATH/resources/an
 echo "Bundling Content"
 node bundleContent.js 3
 echo "starting to build"
-ionic build android
-cordova build --release android
+#ionic build android
+#cordova build --release android
 
 # cordova build --release android --xwalk64bit
 #jarsigner -verbose -tsa http://timestamp.comodoca.com/rfc3161 -sigalg SHA1withRSA -digestalg SHA1 -keystore classcloud.keystore -storepass zayaayaz1234 $REPO_PATH/platforms/android/build/outputs/apk/android-x86-release-unsigned.apk angryape
