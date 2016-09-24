@@ -6,7 +6,7 @@ export NODE_PATH=/opt/nodej/lib/node_modules
 echo $WORKSPACE
 cd $WORKSPACE
 echo "branch name-$BRANCH_NAME"
-#npm install orchestrator
+npm install vinyl
 #npm list | grep gulp
 #bower install
 echo "Initiating build process "
