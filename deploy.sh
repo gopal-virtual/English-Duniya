@@ -5,7 +5,7 @@ export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/ga
 export NODE_PATH=/opt/nodej/lib/node_modules
 cd $WORKSPACE
 #npm install orchestrator
-npm list | grep gulp
+#npm list | grep gulp
 #bower install
 echo "Initiating build process "
 REPO_PATH=$WORKSPACE
@@ -22,7 +22,7 @@ echo "Bundling Content"
 #node bundleContent.js 3
 
 echo "Configuring Environment"
-gulp --env=prod
+#gulp --env=prod
 echo "starting to build"
 #ionic build android
 #cordova build --release android
