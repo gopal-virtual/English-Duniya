@@ -1,7 +1,7 @@
 var http = require('http');
 var fs = require('fs');
 // var request = require('request');
-var wget = require('wget-improved');
+// var wget = require('wget-improved');
 var source_folder = 'content/'
 var target_folder = 'www/bundled/';
 var ncp = require('ncp').ncp;
