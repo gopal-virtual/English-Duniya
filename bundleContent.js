@@ -128,7 +128,7 @@ fs.readFile('lesson.json', 'utf8', function(err, data) {
     var filename = getFileNameFromURl(media[i]);
     ncp(source_folder+filename, target_folder+filename,function(error){
       if(error){
-        console.log("Error Occured")
+        console.log("Error Occured",error)
       }
     });
   }
