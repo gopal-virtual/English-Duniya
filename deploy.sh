@@ -34,11 +34,11 @@ jarsigner -verbose -tsa http://timestamp.comodoca.com/rfc3161 -sigalg SHA1withRS
 #jarsigner -verbose -tsa http://timestamp.comodoca.com/rfc3161 -sigalg SHA1withRSA -digestalg SHA1 -keystore classcloud.keystore -storepass zayaayaz1234 $REPO_PATH/platforms/android/build/outputs/apk/android-armv7-release-unsigned.apk angryape
 # jarsigner -verbose -tsa http://timestamp.comodoca.com/rfc3161 -sigalg SHA1withRSA -digestalg SHA1 -keystore classcloud.keystore -storepass zayaayaz1234 $PWD/platforms/android/build/outputs/apk/android-arm64-release-unsigned.apk angryape
 # jarsigner -verbose -tsa http://timestamp.comodoca.com/rfc3161 -sigalg SHA1withRSA -digestalg SHA1 -keystore classcloud.keystore -storepass zayaayaz1234 $PWD/platforms/android/build/outputs/apk/android-release-unsigned.apk angryape
-#select VERSION in $ANDROID_HOME/build-tools/*;
 VERSION="$ANDROID_HOME/build-tools/23.0.1"
 BUILD_PATH="/tmp"
 BUILD_NAME="englishduniya-$BUILD_NUMBER"
 echo $BUILD_NAME
+select VERSION in $ANDROID_HOME/build-tools/*;
 do
   $VERSION/zipalign -v 4 $REPO_PATH/platforms/android/build/outputs/apk/android-x86-release-unsigned.apk "$BUILD_PATH/$BUILD_NAME-x86.apk"
   # $VERSION/zipalign -v 4 $PWD/platforms/android/build/outputs/apk/android-x86_64-release-unsigned.apk $PWD/angryape_x86_64.apk
@@ -47,7 +47,7 @@ do
   # $VERSION/zipalign -v 4 $PWD/platforms/android/build/outputs/apk/android-release-unsigned.apk $PWD/angryape.apk
   break
 done
-#kill -9 `ps aux | grep pouchdb-server | grep -v grep | awk '{print $2}'`
+kill -9 `ps aux | grep pouchdb-server | grep -v grep | awk '{print $2}'`
 cat << "EOF"
   /$$$$$$                                                 /$$$$$$
  /$$__  $$                                               /$$__  $$

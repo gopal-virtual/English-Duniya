@@ -7,8 +7,8 @@
       'LOCK': true,
       'FAKE_LOGIN': false,
       'FAKE_DEVICE': false,
-      'BACKEND_SERVICE_DOMAIN': 'https://eg-api.zaya.in/',
-      'RESOURCE_SERVER': 'https://eg-api.zaya.in/',
+      'BACKEND_SERVICE_DOMAIN': 'https://cc-test.zaya.in/',
+      'RESOURCE_SERVER': 'https://cc-test.zaya.in/',
       'ANALYTICS' : '@@TRUE',
       'QUESTION' : {
         'DEMO' : '5ecf8ad5-4c3a-4a67-9758-dd7e3993c4d8'
