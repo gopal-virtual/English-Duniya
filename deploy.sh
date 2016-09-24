@@ -3,6 +3,7 @@ source /home/ubuntu/.bashrc
 export ANDROID_HOME=/home/ubuntu/apps/android-sdk-linux
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/home/ubuntu/apps/android-sdk-linux/platform-tools:/home/ubuntu/apps/android-sdk-linux/tools:/opt/nodej/bin
 export NODE_PATH=/opt/nodej/lib/node_modules
+echo $WORKSPACE
 cd $WORKSPACE
 echo "branch name-$BRANCH_NAME"
 #npm install orchestrator
