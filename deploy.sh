@@ -4,7 +4,7 @@ export ANDROID_HOME=/home/ubuntu/apps/android-sdk-linux
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/home/ubuntu/apps/android-sdk-linux/platform-tools:/home/ubuntu/apps/android-sdk-linux/tools:/opt/nodej/bin
 export NODE_PATH=/opt/nodej/lib/node_modules
 cd $WORKSPACE
-echo "branch name-$BRANCH_NAME"
+echo "branch name-"
 npm install ansi-regex
 #npm list | grep gulp
 #bower install
@@ -19,15 +19,18 @@ cp $REPO_PATH/resources/android/drawable-xxhdpi/icon.png  $REPO_PATH/resources/a
 mkdir -p  $REPO_PATH/resources/android/splash/
 cp $REPO_PATH/resources/android/drawable-mdpi/screen.png $REPO_PATH/resources/android/splash/screen.png
 
+array=( 3 all )
+for i in "${array[@]}"
+do
 echo "Bundling Content"
-node bundleContent.js 3
+node bundleContent.js $i
 
 echo "Configuring Environment"
 gulp --env=prod
+
 echo "starting to build"
 ionic build android
 cordova build --release android
-
 # cordova build --release android --xwalk64bit
 jarsigner -verbose -tsa http://timestamp.comodoca.com/rfc3161 -sigalg SHA1withRSA -digestalg SHA1 -keystore classcloud.keystore -storepass zayaayaz1234 $REPO_PATH/platforms/android/build/outputs/apk/android-x86-release-unsigned.apk angryape
 # jarsigner -verbose -tsa http://timestamp.comodoca.com/rfc3161 -sigalg SHA1withRSA -digestalg SHA1 -keystore classcloud.keystore -storepass zayaayaz1234 $PWD/platforms/android/build/outputs/apk/android-x86_64-release-unsigned.apk angryape
@@ -36,7 +39,14 @@ jarsigner -verbose -tsa http://timestamp.comodoca.com/rfc3161 -sigalg SHA1withRS
 # jarsigner -verbose -tsa http://timestamp.comodoca.com/rfc3161 -sigalg SHA1withRSA -digestalg SHA1 -keystore classcloud.keystore -storepass zayaayaz1234 $PWD/platforms/android/build/outputs/apk/android-release-unsigned.apk angryape
 VERSION="$ANDROID_HOME/build-tools/23.0.1"
 BUILD_PATH="/tmp"
-BUILD_NAME="englishduniya-$BUILD_NUMBER"
+
+if $i == 3 ; then
+BUILD_NAME="englishduniya-dev-non-bundled-$BUILD_NUMBER"
+fi
+
+if $i == all ; then
+BUILD_NAME="englishduniya-dev-bundled-$BUILD_NUMBER"
+fi
 echo $BUILD_NAME
 select VERSION in $ANDROID_HOME/build-tools/*;
 do
@@ -47,7 +57,11 @@ do
   # $VERSION/zipalign -v 4 $PWD/platforms/android/build/outputs/apk/android-release-unsigned.apk $PWD/angryape.apk
   break
 done
-kill -9 `ps aux | grep pouchdb-server | grep -v grep | awk '{print $2}'`
+
+done
+
+
+#kill -9 `ps aux | grep pouchdb-server | grep -v grep | awk '{print $2}'`
 cat << "EOF"
   /$$$$$$                                                 /$$$$$$
  /$$__  $$                                               /$$__  $$
