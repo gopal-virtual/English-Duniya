@@ -3,10 +3,9 @@ source /home/ubuntu/.bashrc
 export ANDROID_HOME=/home/ubuntu/apps/android-sdk-linux
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/home/ubuntu/apps/android-sdk-linux/platform-tools:/home/ubuntu/apps/android-sdk-linux/tools:/opt/nodej/bin
 export NODE_PATH=/opt/nodej/lib/node_modules
-echo $WORKSPACE
 cd $WORKSPACE
 echo "branch name-$BRANCH_NAME"
-npm install vinyl
+npm install ansi-regex
 #npm list | grep gulp
 #bower install
 echo "Initiating build process "
@@ -36,6 +35,7 @@ echo "starting to build"
 # jarsigner -verbose -tsa http://timestamp.comodoca.com/rfc3161 -sigalg SHA1withRSA -digestalg SHA1 -keystore classcloud.keystore -storepass zayaayaz1234 $PWD/platforms/android/build/outputs/apk/android-arm64-release-unsigned.apk angryape
 # jarsigner -verbose -tsa http://timestamp.comodoca.com/rfc3161 -sigalg SHA1withRSA -digestalg SHA1 -keystore classcloud.keystore -storepass zayaayaz1234 $PWD/platforms/android/build/outputs/apk/android-release-unsigned.apk angryape
 #select VERSION in $ANDROID_HOME/build-tools/*;
+
 VERSION="$ANDROID_HOME/build-tools/23.0.1"
 BUILD_PATH="/tmp"
 BUILD_NAME="englishduniya-$BUILD_NUMBER"
