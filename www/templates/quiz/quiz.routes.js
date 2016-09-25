@@ -185,5 +185,12 @@
           }
         }
       })
+      .state('quiz.diagnosis', {
+        url: '/diagnosis',
+        views: {
+          templateUrl: CONSTANT.PATH.QUIZ + '/quiz.diagnosis' + CONSTANT.VIEW,
+          // controller: 'QuizController as quizCtrl'
+        }
+      })
   }
 })();

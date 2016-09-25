@@ -155,7 +155,7 @@
           
 
           localStorage.setItem('demo_flag', 1);
-          $state.go('map.navigate', {});
+          $state.go('quiz.diagnosis', {});
         })
         .catch(function (error) {
           userCtrl.showError('Could not make your profile', error || 'Please try again');
