@@ -63,10 +63,12 @@ BUILD_PATH="/tmp"
 echo $BUILD_NUMBER
 if [ $i -eq 3 ]; then
 BUILD_NAME="englishduniya-$ENV-non-bundled-$BUILD_NUMBER"
+BUILD_DESCRIPTION="Non-Bundled with -"$BUILD_DESCRIPTION
 fi
 
 if [ "$i" == "all" ]; then
 BUILD_NAME="englishduniya-$ENV-bundled-$BUILD_NUMBER"
+BUILD_DESCRIPTION="Bundled with -"$BUILD_DESCRIPTION
 fi
 echo $BUILD_NAME
 X86_BUILD_NAME="$BUILD_PATH/$BUILD_NAME-x86.apk"
@@ -85,8 +87,8 @@ echo "$BUILD_PATH/$BUILD_NAME-x86.apk"
 
 
 #echo "Club Vars "$BRANCH"-"$BUILD_DESCRIPTION"-"$HOST"-"$BUILD_DESCRIPTION"-"$BUILD_PATH
-echo "club -h $HOST -t $BUILD_TYPE -l $BUILD_PLATFORM -a arm -d \"$BUILD_DESCRIPTION\" -f $ARM_BUILD_NAME -u $USERNAME -p $PASSWORD"
-club -h $HOST -t $BUILD_TYPE -l $BUILD_PLATFORM -a arm -d \"$BUILD_DESCRIPTION\" -f $ARM_BUILD_NAME -u $USERNAME -p $PASSWORD
+echo "club -h $HOST -t $BUILD_TYPE -l $BUILD_PLATFORM -a x86 -d \"$BUILD_DESCRIPTION\" -f $X86_BUILD_NAME -u $USERNAME -p $PASSWORD"
+club -h $HOST -t $BUILD_TYPE -l $BUILD_PLATFORM -a x86 -d \"$BUILD_DESCRIPTION\" -f $X86_BUILD_NAME -u $USERNAME -p $PASSWORD
 done
 
 
