@@ -47,9 +47,13 @@ if [ $i == "all" ]; then
 BUILD_NAME="englishduniya-dev-bundled-$BUILD_NUMBER"
 fi
 echo $BUILD_NAME
+X86_BUILD_NAME="$BUILD_PATH/$BUILD_NAME-x86.apk"
+ARM_BUILD_NAME="$BUILD_PATH/$BUILD_NAME-arm.apk"
+echo X86_BUILD_NAME
 select VERSION in $ANDROID_HOME/build-tools/*;
 do
-  $VERSION/zipalign -v 4 $REPO_PATH/platforms/android/build/outputs/apk/android-x86-release-unsigned.apk "$BUILD_PATH/$BUILD_NAME-x86.apk"
+echo "$BUILD_PATH/$BUILD_NAME-x86.apk"
+  $VERSION/zipalign -v 4 $REPO_PATH/platforms/android/build/outputs/apk/android-x86-release-unsigned.apk $X86_BUILD_NAME
   # $VERSION/zipalign -v 4 $PWD/platforms/android/build/outputs/apk/android-x86_64-release-unsigned.apk $PWD/angryape_x86_64.apk
 #  $VERSION/zipalign -v 4 $REPO_PATH/platforms/android/build/outputs/apk/android-armv7-release-unsigned.apk "$BUILD_PATH/$BUILD_NAME-armv7.apk"
   # $VERSION/zipalign -v 4 $PWD/platforms/android/build/outputs/apk/android-arm64-release-unsigned.apk $PWD/angryape_armv64.apk
