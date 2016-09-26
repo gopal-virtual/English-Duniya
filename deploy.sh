@@ -4,9 +4,9 @@ export ANDROID_HOME=/home/ubuntu/apps/android-sdk-linux
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/home/ubuntu/apps/android-sdk-linux/platform-tools:/home/ubuntu/apps/android-sdk-linux/tools:/opt/nodej/bin
 export NODE_PATH=/opt/nodej/lib/node_modules
 cd $WORKSPACE
-npm install
+#npm install
 #npm list | grep gulp
-bower install
+#bower install
 echo "Initiating build process "
 REPO_PATH=$WORKSPACE
 cd $REPO_PATH
@@ -39,11 +39,11 @@ echo "starting to build"
 VERSION="$ANDROID_HOME/build-tools/23.0.1"
 BUILD_PATH="/tmp"
 echo $BUILD_NUMBER
-if [$i == 3]; then
+if [ $i == 3 ]; then
 BUILD_NAME="englishduniya-dev-non-bundled-$BUILD_NUMBER"
 fi
 
-if [$i == "all"]; then
+if [ $i == "all" ]; then
 BUILD_NAME="englishduniya-dev-bundled-$BUILD_NUMBER"
 fi
 echo $BUILD_NAME
