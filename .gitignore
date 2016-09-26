@@ -28,3 +28,4 @@ showLessonJson.js
 content/*
 www/bundled/*
 bundled.zip
+bundleContent.js
