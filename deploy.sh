@@ -38,7 +38,7 @@ echo "starting to build"
 # jarsigner -verbose -tsa http://timestamp.comodoca.com/rfc3161 -sigalg SHA1withRSA -digestalg SHA1 -keystore classcloud.keystore -storepass zayaayaz1234 $PWD/platforms/android/build/outputs/apk/android-release-unsigned.apk angryape
 VERSION="$ANDROID_HOME/build-tools/23.0.1"
 BUILD_PATH="/tmp"
-
+echo $BUILD_NUMBER
 if $i == 3 ; then
 BUILD_NAME="englishduniya-dev-non-bundled-$BUILD_NUMBER"
 fi
