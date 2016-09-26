@@ -7,7 +7,7 @@ cd $WORKSPACE
 npm install
 #npm list | grep gulp
 bower install
-echo "Initiating build process "
+echo "Initiating build process"
 REPO_PATH=$WORKSPACE
 cd $REPO_PATH
 cp $REPO_PATH/resources/android/drawable-xxhdpi/icon.png $REPO_PATH/resources/android/drawable-xxdpi/icon.png

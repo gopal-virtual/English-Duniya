@@ -2,7 +2,7 @@ var http = require('http');
 var fs = require('fs');
 // var request = require('request');
 // var wget = require('wget-improved');
-var source_folder = 'content/'
+var source_folder = '/media/kartik/78ec906f-9e9a-4bcf-935c-e58f6165b7db/ed/EllOffline/media/'
 var target_folder = 'www/bundled/';
 var ncp = require('ncp').ncp;
 var getFileNameFromURl = function(url){
@@ -126,7 +126,7 @@ fs.readFile('lesson.json', 'utf8', function(err, data) {
 
   for (i in media) {
     var filename = getFileNameFromURl(media[i]);
-    ncp(source_folder+filename, target_folder+filename,function(error){
+    ncp(source_folder + media[i].split('/')[media[i].split('/').length-2] +'/'+  media[i].split('/').pop(), target_folder+filename,function(error){
       if(error){
         console.log("Error Occured",error)
       }
