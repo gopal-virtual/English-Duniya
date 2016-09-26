@@ -1,6 +1,28 @@
-<ion-view class="bg-green">
+<ion-view class="modal-dark">
   <ion-content overflow-scroll="false">
-    <div class="row">
+  <div class="row center position-relative" style="height:100px">
+    <div class="col stars position-absolute">
+      <img ng-repeat="star in [1,2,3]" ng-src="img/assets_svg/star-grey.svg">
+    </div>
+    <div class="col stars position-absolute">
+      <img ng-repeat="star in [1,2,3]" class="animation-zoom-out-{{quizCtrl.starCount($index) ? star : ''}}" style="-webkit-animation-delay: {{$index+1}}s;" ng-src="{{ quizCtrl.starCount($index) ? 'img/assets_svg/star-yellow.svg' : 'img/assets_svg/star-grey.svg'}}">
+    </div>
+  </div>
+  <div style="padding-top:40px;text-align:center;">
+    <img height="250" src="img/assets_svg/boy-lose-badge.svg">
+  </div>
+  <div class="row padding-x-30" ng-show="!quizCtrl.summary.stars">
+    <div class="col">
+      <button class="button bg-pale button-round button-block animation-repeat-bounce font-lg" ng-click="lessonutils.getVideo() ? lessonutils.playResource(lessonutils.getVideo()) : quizCtrl.redo()"><i ng-show="!lessonutils.getVideo()" class="ed-icon icon-contain icon-redo"></i>{{lessonutils.getVideo() ? 'Watch Video' : ''}}</button>
+    </div>
+  </div>
+  <div class="row padding-x-30 animation-fade-in-from-bottom" style="animation-delay: 2500ms;" ng-show="quizCtrl.summary.stars >= 1">
+    <center style="width: 100%;padding-top:20px;">
+      <button class="sbtn sbtn-next-yellow"></button>
+      <!-- <button class="button bg-brand-yellow button-round button-block animation-repeat-bounce" ng-click="quizCtrl.next()"><i class="ed-icon icon-contain icon-next"></i></button> -->
+    </center>
+  </div>
+<!--     <div class="row">
       <div class="col font-lg text-white text-center">
         LESSON COMPLETE!
       </div>
@@ -17,7 +39,6 @@
       </div>
     </div>
     <div class="padding-y-40"></div>
-    <!-- {{quizCtrl.summary.stars}} -->
     <div class="row padding-x-30" ng-show="!quizCtrl.summary.stars">
       <div class="col">
         <button class="button bg-pale button-round button-block animation-repeat-bounce font-lg" ng-click="lessonutils.getVideo() ? lessonutils.playResource(lessonutils.getVideo()) : quizCtrl.redo()"><i ng-show="!lessonutils.getVideo()" class="ed-icon icon-contain icon-redo"></i>{{lessonutils.getVideo() ? 'Watch Video' : ''}}</button>
@@ -53,20 +74,8 @@
             </div>
           </ion-list>
 
-          <!-- <div class="list card" ng-repeat="item in quizCtrl.summary.analysis">
-            <div>
-              <div class="item item-divider padding-20 font-md" ng-class="{'bg-assertive-light':item.status==0,'bg-green' : item.status==1, 'bg-grey-light' : item.status==-1}">
-                Question {{$index + 1}}
-              </div>
-              <div class="item padding-40 item-text-wrap">
-                <div class="text-center" ng-class="{'color-assertive-light':item.status=='correct','color-green' : item.status==1, 'color-grey' : item.status==-1}">
-                  <h3>{{item.status}}</h3>
-                </div>
-              </div>
-            </div>
-          </div> -->
         </div>
       </div>
-    </div>
+    </div> -->
   </ion-content>
 </ion-view>

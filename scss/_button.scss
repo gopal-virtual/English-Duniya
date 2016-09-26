@@ -72,3 +72,31 @@
 .button-sm.button-round .icon:before{
   line-height: 22px;
 }
+
+
+.sbtn{
+  display: inline-block;
+  border: none;
+}
+
+.sbtn-next-yellow{
+  background: url('../img/assets_svg/button-yellow.svg');
+  // background-size: contain;
+  background-position: 0 0 !important;
+  background-repeat:no-repeat;
+  width: 175px;
+  height: 56px;
+}
+
+
+.sbtn-next-yellow.activated{
+  background-position: 100% 0 !important;
+}
+// .sbtn-next-yellow:focus{
+//   background-position: 100% 0 !important;
+// }
+
+
+// .sbtn-next-yellow:hover{
+//   background-position: 100% 0 !important;
+// }

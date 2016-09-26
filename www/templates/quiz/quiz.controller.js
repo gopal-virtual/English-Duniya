@@ -877,5 +877,19 @@
     }
 
 
+    $ionicModal.fromTemplateUrl(CONSTANT.PATH.CONTENT + '/content.modal-ribbon' + CONSTANT.VIEW, {
+      scope: $scope,
+      // animation: 'slide-in-up',
+      backdropClickToClose: true
+    }).then(function(modal){
+      $scope.nodeRibbon = modal;
+      $scope.nodeRibbonFlag = true;
+      // modal.show();
+      $timeout(function() {
+        $scope.nodeRibbonFlag = false;
+        modal.hide();
+        // contentCtrl.play();
+      }, 2000);
+    })
   }
 })();
