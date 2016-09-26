@@ -664,15 +664,10 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                     var posx = game.math.catmullRomInterpolation(points.tempX, j);
                     var posy = game.math.catmullRomInterpolation(points.tempY, j);
                     log.debug('resource type ', 'node' + '-' + lessonutils.resourceType(lessons[i]))
-                    var node = game.make.button(posx, posy, 'node' + '-' + lessonutils.resourceType(lessons[i]), false, this, 0,0,1,0);
                     // node.scale.setTo(0.5)
-                    if(lessons[i].locked){
+                    if(!lessons[i].locked){
+                        var node = game.make.button(posx, posy, 'node' + '-' + lessonutils.resourceType(lessons[i]), false, this, 0,0,1,0);
                         log.debug('current lesson' ,currentLesson);
-
-                        // for (var i = currentLessonResources.length - 1 ; i >= 0; i--) {
-                        //     log.debug('resource title', lessonutils.resourceType(currentLessonResources[i]))
-                        // }
-
 
                         !locked && lessons[i + 1] && lessons[i + 1].locked && localStorage.setItem('region',posy);
 

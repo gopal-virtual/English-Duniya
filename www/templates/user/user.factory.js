@@ -83,6 +83,7 @@
     User.scores = {
       getScoreList: getScoreList,
       getScoreOfLesson: getScoreOfLesson,
+      getScoreOfResource: getScoreOfResource,
       update: updateScores,
       getScoreOfAssessment: getScoreOfAssessment
     };
@@ -265,6 +266,17 @@
       return profilesDB.get(profileId).then(function (response) {
 
         return response.data.scores[lessonId];
+      })
+
+    }
+    function getScoreOfResource(lessonId, resourceId, profileId) {
+      return profilesDB.get(profileId).then(function (response) {
+          if(response.data.scores.hasOwnProperty(lessonId) && response.data.scores[lessonId].hasOwnProperty(resourceId)){
+              return response.data.scores[lessonId][resourceId];
+          }
+          else{
+              return null
+          }
       })
 
     }
