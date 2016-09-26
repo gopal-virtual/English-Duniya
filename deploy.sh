@@ -21,7 +21,7 @@ if [ "$BRANCH_NAME" = 'master' ]; then
 ENV='prod'
 fi
 
-echo $ENV
+echo "Env-"$ENV
 echo "Initiating build process"
 cp $REPO_PATH/resources/android/drawable-xxhdpi/icon.png $REPO_PATH/resources/android/drawable-xxdpi/icon.png
 mkdir -p $REPO_PATH/resources/android/drawable-xxdpi
