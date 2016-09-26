@@ -14,11 +14,11 @@ rsync -avzh ubuntu@eg-api.zaya.in:/home/ubuntu/classcloud/classcloud/media/ell m
 
 BRANCH_NAME=`git branch -a |grep \* |grep -o "[a-zA-Z0-9].*"`
 echo $BRANCH_NAME
-if [ $BRANCH_NAME = 'development' ]; then
-ENV = 'dev'
+if [ "$BRANCH_NAME" = 'development' ]; then
+ENV='dev'
 fi
-if [ $BRANCH_NAME = 'master' ]; then
-ENV = 'prod'
+if [ "$BRANCH_NAME" = 'master' ]; then
+ENV='prod'
 fi
 
 echo $ENV
@@ -37,7 +37,7 @@ do
 echo "Bundling Content"
 node bundleContent.js 3
 
-echo "Configuring Environment for"
+echo "Configuring Environment for "$ENV
 gulp --env=$ENV
 
 echo "starting to build"
@@ -52,11 +52,11 @@ jarsigner -tsa http://timestamp.comodoca.com/rfc3161 -sigalg SHA1withRSA -digest
 VERSION="$ANDROID_HOME/build-tools/23.0.1"
 BUILD_PATH="/tmp"
 echo $BUILD_NUMBER
-if [ $i == 3 ]; then
+if [ $i -eq 3 ]; then
 BUILD_NAME="englishduniya-$ENV-non-bundled-$BUILD_NUMBER"
 fi
 
-if [ $i == "all" ]; then
+if [ "$i" == "all" ]; then
 BUILD_NAME="englishduniya-$ENV-bundled-$BUILD_NUMBER"
 fi
 echo $BUILD_NAME
