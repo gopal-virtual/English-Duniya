@@ -14,8 +14,8 @@ USERNAME='admin'
 PASSWORD='admin-builds'
 cd $REPO_PATH
 
-npm install
-bower install
+#npm install
+#bower install
 
 echo "Starting content sync"
 rsync -avzh ubuntu@eg-api.zaya.in:/home/ubuntu/classcloud/classcloud/media/ell media/
@@ -86,8 +86,8 @@ echo "$BUILD_PATH/$BUILD_NAME-x86.apk"
 #done
 
 
-echo "club -h $HOST -t $BUILD_TYPE -l $BUILD_PLATFORM -a x86 -f /tmp/englishduniya-dev-non-bundled-67-x86.apk -u $USERNAME -p $PASSWORD -d $BUNDLED \"$BUILD_DESCRIPTION\""
-/usr/local/bin/club -h $HOST -t $BUILD_TYPE -l $BUILD_PLATFORM -a x86 -f /tmp/englishduniya-dev-non-bundled-67-x86.apk -u $USERNAME -p $PASSWORD -d \"$BUNDLED $BUILD_DESCRIPTION\"
+echo "club -h $HOST -t $BUILD_TYPE -l $BUILD_PLATFORM -a x86 -f /tmp/englishduniya-dev-non-bundled-67-x86.apk -u $USERNAME -p $PASSWORD -d $BUNDLED $BUILD_DESCRIPTION"
+/usr/local/bin/club -h $HOST -t $BUILD_TYPE -l $BUILD_PLATFORM -a x86 -f /tmp/englishduniya-dev-non-bundled-67-x86.apk -u $USERNAME -p $PASSWORD -d \"testmessage\"
 done1
 
 
