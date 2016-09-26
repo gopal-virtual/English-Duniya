@@ -70,7 +70,7 @@ if [ "$i" == "all" ]; then
 BUILD_NAME="englishduniya-$ENV-bundled-$BUILD_NUMBER"
 BUNDLED=" Bundled "
 fi
-echo $BUILD_NAME
+#echo $BUILD_NAME
 X86_BUILD_NAME="$BUILD_PATH/$BUILD_NAME-x86.apk"
 ARM_BUILD_NAME="$BUILD_PATH/$BUILD_NAME-arm.apk"
 echo $X86_BUILD_NAME
