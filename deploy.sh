@@ -4,9 +4,9 @@ export ANDROID_HOME=/home/ubuntu/apps/android-sdk-linux
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/home/ubuntu/apps/android-sdk-linux/platform-tools:/home/ubuntu/apps/android-sdk-linux/tools:/opt/nodej/bin
 export NODE_PATH=/opt/nodej/lib/node_modules
 cd $WORKSPACE
-#npm install
+npm install
 #npm list | grep gulp
-#bower install
+bower install
 echo "Initiating build process "
 REPO_PATH=$WORKSPACE
 cd $REPO_PATH
@@ -22,16 +22,16 @@ array=( 3 all )
 for i in "${array[@]}"
 do
 echo "Bundling Content"
-#node bundleContent.js $i
+node bundleContent.js $i
 
 echo "Configuring Environment"
-#gulp --env=prod
+gulp --env=prod
 
 echo "starting to build"
-#ionic build android
-#cordova build --release android
+ionic build android
+cordova build --release android
 # cordova build --release android --xwalk64bit
-#jarsigner -verbose -tsa http://timestamp.comodoca.com/rfc3161 -sigalg SHA1withRSA -digestalg SHA1 -keystore classcloud.keystore -storepass zayaayaz1234 $REPO_PATH/platforms/android/build/outputs/apk/android-x86-release-unsigned.apk angryape
+jarsigner -verbose -tsa http://timestamp.comodoca.com/rfc3161 -sigalg SHA1withRSA -digestalg SHA1 -keystore classcloud.keystore -storepass zayaayaz1234 $REPO_PATH/platforms/android/build/outputs/apk/android-x86-release-unsigned.apk angryape
 # jarsigner -verbose -tsa http://timestamp.comodoca.com/rfc3161 -sigalg SHA1withRSA -digestalg SHA1 -keystore classcloud.keystore -storepass zayaayaz1234 $PWD/platforms/android/build/outputs/apk/android-x86_64-release-unsigned.apk angryape
 #jarsigner -verbose -tsa http://timestamp.comodoca.com/rfc3161 -sigalg SHA1withRSA -digestalg SHA1 -keystore classcloud.keystore -storepass zayaayaz1234 $REPO_PATH/platforms/android/build/outputs/apk/android-armv7-release-unsigned.apk angryape
 # jarsigner -verbose -tsa http://timestamp.comodoca.com/rfc3161 -sigalg SHA1withRSA -digestalg SHA1 -keystore classcloud.keystore -storepass zayaayaz1234 $PWD/platforms/android/build/outputs/apk/android-arm64-release-unsigned.apk angryape
@@ -49,7 +49,7 @@ fi
 echo $BUILD_NAME
 select VERSION in $ANDROID_HOME/build-tools/*;
 do
-#  $VERSION/zipalign -v 4 $REPO_PATH/platforms/android/build/outputs/apk/android-x86-release-unsigned.apk "$BUILD_PATH/$BUILD_NAME-x86.apk"
+  $VERSION/zipalign -v 4 $REPO_PATH/platforms/android/build/outputs/apk/android-x86-release-unsigned.apk "$BUILD_PATH/$BUILD_NAME-x86.apk"
   # $VERSION/zipalign -v 4 $PWD/platforms/android/build/outputs/apk/android-x86_64-release-unsigned.apk $PWD/angryape_x86_64.apk
 #  $VERSION/zipalign -v 4 $REPO_PATH/platforms/android/build/outputs/apk/android-armv7-release-unsigned.apk "$BUILD_PATH/$BUILD_NAME-armv7.apk"
   # $VERSION/zipalign -v 4 $PWD/platforms/android/build/outputs/apk/android-arm64-release-unsigned.apk $PWD/angryape_armv64.apk
