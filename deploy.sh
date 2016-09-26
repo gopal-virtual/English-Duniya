@@ -22,7 +22,7 @@ rsync -avzh ubuntu@eg-api.zaya.in:/home/ubuntu/classcloud/classcloud/media/ell m
 
 BRANCH_NAME=`git branch -a |grep \* |grep -o "[a-zA-Z0-9].*"`
 echo "Branch name-"$BRANCH_NAME
-if [ "$BRANCH_NAME" = 'development' ]; then
+if [ "$BRANCH_NAME" = 'build' ]; then
 BUILD_TYPE='test'
 ENV='dev'
 fi
@@ -85,8 +85,8 @@ echo "$BUILD_PATH/$BUILD_NAME-x86.apk"
 #done
 
 
-echo "Club Vars "$BRANCH"-"$BUILD_DESCRIPTION"-"$HOST"-"$BUILD_DESCRIPTION"-"$BUILD_PATH
-
+#echo "Club Vars "$BRANCH"-"$BUILD_DESCRIPTION"-"$HOST"-"$BUILD_DESCRIPTION"-"$BUILD_PATH
+echo "club -h $HOST -t $BUILD_TYPE -l $BUILD_PLATFORM -a arm -d $BUILD_DESCRIPTION -f $ARM_BUILD_NAME -u $USERNAME -p $PASSWORD"
 
 club -h $HOST -t $BUILD_TYPE -l $BUILD_PLATFORM -a arm -d $BUILD_DESCRIPTION -f $ARM_BUILD_NAME -u $USERNAME -p $PASSWORD
 done
