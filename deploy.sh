@@ -13,6 +13,7 @@ echo "Starting content sync"
 rsync -avzh ubuntu@eg-api.zaya.in:/home/ubuntu/classcloud/classcloud/media/ell media/
 
 BRANCH_NAME=`git branch -a |grep \* |grep -o "[a-zA-Z0-9].*"`
+echo $BRANCH_NAME
 if [ $BRANCH_NAME = 'development' ]; then
 ENV = 'dev'
 fi
@@ -20,6 +21,7 @@ if [ $BRANCH_NAME = 'master' ]; then
 ENV = 'prod'
 fi
 
+echo $ENV
 echo "Initiating build process"
 cp $REPO_PATH/resources/android/drawable-xxhdpi/icon.png $REPO_PATH/resources/android/drawable-xxdpi/icon.png
 mkdir -p $REPO_PATH/resources/android/drawable-xxdpi
