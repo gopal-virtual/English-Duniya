@@ -86,8 +86,8 @@ echo "$BUILD_PATH/$BUILD_NAME-x86.apk"
 #done
 
 
-echo "club -h $HOST -t $BUILD_TYPE -l $BUILD_PLATFORM -a x86 -d $BUNDLED $BUILD_DESCRIPTION -f /tmp/englishduniya-dev-non-bundled-67-x86.apk -u $USERNAME -p $PASSWORD"
-club -h $HOST -t $BUILD_TYPE -l $BUILD_PLATFORM -a x86 -d $BUNDLED $BUILD_DESCRIPTION -f /tmp/englishduniya-dev-non-bundled-67-x86.apk -u $USERNAME -p $PASSWORD
+echo "club -h $HOST -t $BUILD_TYPE -l $BUILD_PLATFORM -a x86 -f /tmp/englishduniya-dev-non-bundled-67-x86.apk -u $USERNAME -p $PASSWORD -d $BUNDLED $BUILD_DESCRIPTION"
+/usr/local/bin/club -h $HOST -t $BUILD_TYPE -l $BUILD_PLATFORM -a x86 -f /tmp/englishduniya-dev-non-bundled-67-x86.apk -u $USERNAME -p $PASSWORD -d \'$BUNDLED $BUILD_DESCRIPTION\'
 done
 
 
