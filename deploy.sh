@@ -22,7 +22,7 @@ array=( 3 all )
 for i in "${array[@]}"
 do
 echo "Bundling Content"
-node bundleContent.js $i
+node bundleContent.js 3
 
 echo "Configuring Environment"
 gulp --env=prod
