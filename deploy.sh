@@ -4,7 +4,7 @@ export ANDROID_HOME=/home/ubuntu/apps/android-sdk-linux
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/home/ubuntu/apps/android-sdk-linux/platform-tools:/home/ubuntu/apps/android-sdk-linux/tools:/opt/nodej/bin
 export NODE_PATH=/opt/nodej/lib/node_modules
 REPO_PATH=$WORKSPACE
-HOST="builds.zaya.in/"
+HOST="builds.zaya.in"
 BUILD_PLATFORM='android'
 echo "Git variables values are "
 BRANCH_NAME=`echo $GIT_BRANCH |grep -o "/.*"|grep -o "[A-Za-z0-9].*"`
@@ -86,9 +86,9 @@ echo "$BUILD_PATH/$BUILD_NAME-x86.apk"
 #done
 
 
-echo "club -h $HOST -t $BUILD_TYPE -l $BUILD_PLATFORM -a x86 -f /tmp/englishduniya-dev-non-bundled-67-x86.apk -u $USERNAME -p $PASSWORD -d $BUNDLED $BUILD_DESCRIPTION"
-/usr/local/bin/club -h $HOST -t $BUILD_TYPE -l $BUILD_PLATFORM -a x86 -f /tmp/englishduniya-dev-non-bundled-67-x86.apk -u $USERNAME -p $PASSWORD -d \'$BUNDLED $BUILD_DESCRIPTION\'
-done
+echo "club -h $HOST -t $BUILD_TYPE -l $BUILD_PLATFORM -a x86 -f /tmp/englishduniya-dev-non-bundled-67-x86.apk -u $USERNAME -p $PASSWORD -d $BUNDLED \"$BUILD_DESCRIPTION\""
+/usr/local/bin/club -h $HOST -t $BUILD_TYPE -l $BUILD_PLATFORM -a x86 -f /tmp/englishduniya-dev-non-bundled-67-x86.apk -u $USERNAME -p $PASSWORD -d \"$BUNDLED $BUILD_DESCRIPTION\"
+done1
 
 
 #kill -9 `ps aux | grep pouchdb-server | grep -v grep | awk '{print $2}'`
