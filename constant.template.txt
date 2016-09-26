@@ -9,7 +9,7 @@
       'FAKE_DEVICE': @@FAKE_DEVICE,
       'BACKEND_SERVICE_DOMAIN': '@@BACKEND_SERVICE_DOMAIN',
       'RESOURCE_SERVER': '@@RESOURCE_SERVER',
-      'ANALYTICS' : '@@TRUE',
+      'ANALYTICS' : '@@ANALYTICS',
       'QUESTION' : {
         'DEMO' : '5ecf8ad5-4c3a-4a67-9758-dd7e3993c4d8'
       },
