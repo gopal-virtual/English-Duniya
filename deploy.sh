@@ -4,10 +4,9 @@ export ANDROID_HOME=/home/ubuntu/apps/android-sdk-linux
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/home/ubuntu/apps/android-sdk-linux/platform-tools:/home/ubuntu/apps/android-sdk-linux/tools:/opt/nodej/bin
 export NODE_PATH=/opt/nodej/lib/node_modules
 cd $WORKSPACE
-echo "branch name-"
-npm install ansi-regex
+npm install
 #npm list | grep gulp
-#bower install
+bower install
 echo "Initiating build process "
 REPO_PATH=$WORKSPACE
 cd $REPO_PATH
