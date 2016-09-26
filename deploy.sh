@@ -3,13 +3,24 @@ source /home/ubuntu/.bashrc
 export ANDROID_HOME=/home/ubuntu/apps/android-sdk-linux
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/home/ubuntu/apps/android-sdk-linux/platform-tools:/home/ubuntu/apps/android-sdk-linux/tools:/opt/nodej/bin
 export NODE_PATH=/opt/nodej/lib/node_modules
-cd $WORKSPACE
-npm install
-#npm list | grep gulp
-bower install
-echo "Initiating build process"
 REPO_PATH=$WORKSPACE
 cd $REPO_PATH
+
+npm install
+bower install
+
+echo "Starting content sync"
+rsync -avzh ubuntu@eg-api.zaya.in:/home/ubuntu/classcloud/classcloud/media/ell media/
+
+BRANCH_NAME=`git branch -a |grep \* |grep -o "[a-zA-Z0-9].*"`
+if [ $BRANCH_NAME = 'development' ]; then
+ENV = 'dev'
+fi
+if [ $BRANCH_NAME = 'master' ]; then
+ENV = 'prod'
+fi
+
+echo "Initiating build process"
 cp $REPO_PATH/resources/android/drawable-xxhdpi/icon.png $REPO_PATH/resources/android/drawable-xxdpi/icon.png
 mkdir -p $REPO_PATH/resources/android/drawable-xxdpi
 cp $REPO_PATH/resources/android/drawable-xxhdpi/icon.png $REPO_PATH/resources/android/drawable-xxdpi/icon.png
@@ -24,8 +35,8 @@ do
 echo "Bundling Content"
 node bundleContent.js 3
 
-echo "Configuring Environment"
-gulp --env=prod
+echo "Configuring Environment for"
+gulp --env=$ENV
 
 echo "starting to build"
 ionic build android
@@ -40,11 +51,11 @@ VERSION="$ANDROID_HOME/build-tools/23.0.1"
 BUILD_PATH="/tmp"
 echo $BUILD_NUMBER
 if [ $i == 3 ]; then
-BUILD_NAME="englishduniya-dev-non-bundled-$BUILD_NUMBER"
+BUILD_NAME="englishduniya-$ENV-non-bundled-$BUILD_NUMBER"
 fi
 
 if [ $i == "all" ]; then
-BUILD_NAME="englishduniya-dev-bundled-$BUILD_NUMBER"
+BUILD_NAME="englishduniya-$ENV-bundled-$BUILD_NUMBER"
 fi
 echo $BUILD_NAME
 X86_BUILD_NAME="$BUILD_PATH/$BUILD_NAME-x86.apk"
