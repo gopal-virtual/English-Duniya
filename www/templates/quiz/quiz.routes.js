@@ -130,11 +130,11 @@
 
           User.skills.update({
             profileId: User.getActiveProfileSync()._id,
-            lessonId: lesson.node.id,
+            lessonId: quiz.parent,
             id: quiz.node.id,
             score: summary.score.marks,
             totalScore: quiz.node.type.score,
-            skill: lesson.node.tag,
+            skill: quiz.node.tag,
           })
             .then(function () {
               return User.scores.getScoreOfAssessment(quiz.node.id, lesson.node.id, User.getActiveProfileSync()._id)
