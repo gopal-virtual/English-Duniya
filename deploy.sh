@@ -50,10 +50,10 @@ echo "Configuring Environment for "$ENV
 gulp --env=$ENV
 
 echo "starting to build"
-ionic build android
-cordova build --release android
+#ionic build android
+#cordova build --release android
 # cordova build --release android --xwalk64bit
-jarsigner -tsa http://timestamp.comodoca.com/rfc3161 -sigalg SHA1withRSA -digestalg SHA1 -keystore classcloud.keystore -storepass zayaayaz1234 $REPO_PATH/platforms/android/build/outputs/apk/android-x86-release-unsigned.apk angryape
+#jarsigner -tsa http://timestamp.comodoca.com/rfc3161 -sigalg SHA1withRSA -digestalg SHA1 -keystore classcloud.keystore -storepass zayaayaz1234 $REPO_PATH/platforms/android/build/outputs/apk/android-x86-release-unsigned.apk angryape
 # jarsigner -verbose -tsa http://timestamp.comodoca.com/rfc3161 -sigalg SHA1withRSA -digestalg SHA1 -keystore classcloud.keystore -storepass zayaayaz1234 $PWD/platforms/android/build/outputs/apk/android-x86_64-release-unsigned.apk angryape
 #jarsigner -verbose -tsa http://timestamp.comodoca.com/rfc3161 -sigalg SHA1withRSA -digestalg SHA1 -keystore classcloud.keystore -storepass zayaayaz1234 $REPO_PATH/platforms/android/build/outputs/apk/android-armv7-release-unsigned.apk angryape
 # jarsigner -verbose -tsa http://timestamp.comodoca.com/rfc3161 -sigalg SHA1withRSA -digestalg SHA1 -keystore classcloud.keystore -storepass zayaayaz1234 $PWD/platforms/android/build/outputs/apk/android-arm64-release-unsigned.apk angryape
@@ -77,7 +77,7 @@ echo $X86_BUILD_NAME
 #select VERSION in $ANDROID_HOME/build-tools/*;
 #do
 echo "$BUILD_PATH/$BUILD_NAME-x86.apk"
-  $VERSION/zipalign -v 4 $REPO_PATH/platforms/android/build/outputs/apk/android-x86-release-unsigned.apk $X86_BUILD_NAME
+#  $VERSION/zipalign -v 4 $REPO_PATH/platforms/android/build/outputs/apk/android-x86-release-unsigned.apk $X86_BUILD_NAME
   # $VERSION/zipalign -v 4 $PWD/platforms/android/build/outputs/apk/android-x86_64-release-unsigned.apk $PWD/angryape_x86_64.apk
   # $VERSION/zipalign -v 4 $REPO_PATH/platforms/android/build/outputs/apk/android-armv7-release-unsigned.apk "$BUILD_PATH/$BUILD_NAME-armv7.apk"
   # $VERSION/zipalign -v 4 $PWD/platforms/android/build/outputs/apk/android-arm64-release-unsigned.apk $PWD/angryape_armv64.apk
@@ -86,9 +86,8 @@ echo "$BUILD_PATH/$BUILD_NAME-x86.apk"
 #done
 
 
-#echo "Club Vars "$BRANCH"-"$BUILD_DESCRIPTION"-"$HOST"-"$BUILD_DESCRIPTION"-"$BUILD_PATH
-#echo "club -h $HOST -t $BUILD_TYPE -l $BUILD_PLATFORM -a x86 -d \"$BUNDLED$BUILD_DESCRIPTION\" -f $X86_BUILD_NAME -u $USERNAME -p $PASSWORD"
-club -h $HOST -t $BUILD_TYPE -l $BUILD_PLATFORM -a x86 -d $BUNDLED $BUILD_DESCRIPTION -f $X86_BUILD_NAME -u $USERNAME -p $PASSWORD
+echo "club -h $HOST -t $BUILD_TYPE -l $BUILD_PLATFORM -a x86 -d $BUNDLED $BUILD_DESCRIPTION -f /tmp/englishduniya-dev-non-bundled-67-x86.apk -u $USERNAME -p $PASSWORD"
+club -h $HOST -t $BUILD_TYPE -l $BUILD_PLATFORM -a x86 -d $BUNDLED $BUILD_DESCRIPTION -f /tmp/englishduniya-dev-non-bundled-67-x86.apk -u $USERNAME -p $PASSWORD
 done
 
 
