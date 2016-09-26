@@ -39,13 +39,11 @@ echo "starting to build"
 VERSION="$ANDROID_HOME/build-tools/23.0.1"
 BUILD_PATH="/tmp"
 echo $BUILD_NUMBER
-if $i == 3
- then
+if [$i == 3]; then
 BUILD_NAME="englishduniya-dev-non-bundled-$BUILD_NUMBER"
 fi
 
-if $i == all
- then
+if [$i == "all"]; then
 BUILD_NAME="englishduniya-dev-bundled-$BUILD_NUMBER"
 fi
 echo $BUILD_NAME
