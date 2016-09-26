@@ -70,7 +70,7 @@ if [ "$i" == "all" ]; then
 BUILD_NAME="englishduniya-$ENV-bundled-$BUILD_NUMBER"
 BUNDLED=" Bundled "
 fi
-echo $BUILD_NAME
+#echo $BUILD_NAME
 X86_BUILD_NAME="$BUILD_PATH/$BUILD_NAME-x86.apk"
 ARM_BUILD_NAME="$BUILD_PATH/$BUILD_NAME-arm.apk"
 echo $X86_BUILD_NAME
@@ -90,16 +90,6 @@ echo "club -h $HOST -t $BUILD_TYPE -l $BUILD_PLATFORM -a x86 -f /tmp/englishduni
 /usr/local/bin/club -h $HOST -t $BUILD_TYPE -l $BUILD_PLATFORM -a x86 -f /tmp/englishduniya-dev-non-bundled-67-x86.apk -u $USERNAME -p $PASSWORD -d "$BUNDLED $BUILD_DESCRIPTION"
 done
 
-
-if [ $? -eq 0 ] ; then
-	echo "******************************** Starting to create tag and push ************************************"
-    TAG_NAME="$BUILD_TYPE-v.0.0.$BUILD_NUMBER"
-    echo $TAG_NAME
-    TAG_MESSAGE="Tag created on branch $BRANCH_NAME for commit $GIT_COMMIT by jenkins job $BUILD_NUMBER. [Message] $COMMIT_MESSAGE "
-	echo $TAG_MESSAGE
-    git tag -fa $TAG_NAME -m $TAG_MESSAGE
-    git push origin --tags
-fi
 
 #kill -9 `ps aux | grep pouchdb-server | grep -v grep | awk '{print $2}'`
 cat << "EOF"
