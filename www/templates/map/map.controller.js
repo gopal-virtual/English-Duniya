@@ -41,6 +41,7 @@
     'analytics',
     '$q',
     'queue',
+    'content'
 ];
 
   function mapController(
@@ -69,7 +70,8 @@
         $stateParams,
         analytics,
         $q,
-        queue
+        queue,
+        content
     ) {
 
     $scope.audio = audio;
@@ -163,9 +165,13 @@
       // audio.stop('demo-1')
       //   $scope.demo.isShown() && $scope.demo.hide();
       lessonutils.playResource(node);
+      content.getLesson(node.node.parent)
+      .then(function(lesson){
+          lessonutils.setLocalLesson(JSON.stringify(lesson))
+      })
 
-      if (currentPos)
-        currentPos.lessonType = node.tag;
+    //   if (currentPos)
+    //     currentPos.lessonType = node.tag;
       //
     //   if (node.content_type_name == 'litmus') {
     //     $state.go('quiz.questions', {
