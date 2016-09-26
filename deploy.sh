@@ -13,7 +13,7 @@ echo "Starting content sync"
 rsync -avzh ubuntu@eg-api.zaya.in:/home/ubuntu/classcloud/classcloud/media/ell media/
 
 BRANCH_NAME=`git branch -a |grep \* |grep -o "[a-zA-Z0-9].*"`
-echo $BRANCH_NAME
+echo "Branch name-"$BRANCH_NAME
 if [ "$BRANCH_NAME" = 'development' ]; then
 ENV='dev'
 fi
