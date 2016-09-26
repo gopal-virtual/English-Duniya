@@ -1,4 +1,4 @@
-window.createGame = function(scope, stateParams, lessons, audio, injector, log, lessonutils) {
+window.createGame = function(scope, stateParams, lessons, audio, injector, log, lessonutils, selected_region, first_node_index, last_node_index) {
     'use strict';
 
     var game = new Phaser.Game("100", "100", Phaser.CANVAS, 'map_canvas', null, true, true, null);
@@ -42,16 +42,17 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
         "peru" : 23
     }
     var totalLesson = lessons.length;
-    var renderedRegion = [];
-    for (var key in regionNodes) {
-        if (totalLesson > regionNodes[key]) {
-            totalLesson -= regionNodes[key];
-            renderedRegion.push(key);
-        }else{
-            renderedRegion.push(key);
-            break;
-        }
-    }
+    var renderedRegion = selected_region;
+    // var renderedRegion = [];
+    // for (var key in regionNodes) {
+    //     if (totalLesson > regionNodes[key]) {
+    //         totalLesson -= regionNodes[key];
+    //         renderedRegion.push(key);
+    //     }else{
+    //         renderedRegion.push(key);
+    //         break;
+    //     }
+    // }
     var playState = {
         preload: function() {
             // crisp image rendering
@@ -106,6 +107,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
             this.load.spritesheet('llama2', 'img/assets/llama2_animation.png', 124, 201);
             this.load.spritesheet('node-video', 'img/icons/video.png',65,68);
             this.load.spritesheet('node-practice', 'img/icons/practice.png', 66, 68);
+            this.load.spritesheet('node-port', 'img/icons/icon-port.png',113,132);
 
             this.load.image('node', 'img/icons/icon-node.png');
             this.load.image('node-litmus', 'img/icons/icon-litmus-node.png');
@@ -547,8 +549,6 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                 // Somewhere to draw to
                 var bmd = game.add.bitmapData(game.width, game.world.height);
                 for (var j = 0; j < 1; j += increment) {
-
-                //
                 //
                     var posx = game.math.catmullRomInterpolation(points.tempX, j);
                     var posy = game.math.catmullRomInterpolation(points.tempY, j);
@@ -654,16 +654,42 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                 }
             };
 
-            function renderNodesByOne(){
 
-                for (var j = 0, i = lessons.length - 1, distance = 1 / (lessons.length); i >= 0; j += distance, i--) {
+
+            function renderNodesByOne(){
+                log.debug('node index', last_node_index, first_node_index)
+                points.tempX = points.tempX.reverse();
+                points.tempY = points.tempY.reverse();
+
+
+                // port node
+                var port_back = game.add.button(game.world.centerX + 50, game.world.height - 200, 'node-port', function(){
+                    if((first_node_index - 5) > 0){
+                        var end_index = first_node_index - 1;
+                        var start_index = end_index - 5;
+                        scope.$emit('prevRegion', start_index, end_index);
+                    }
+                }, this, 0,0,1,0);
+                var port_forward = game.add.button(game.world.centerX + 50, game.world.height - 500, 'node-port', function(){
+                    if(last_node_index + 1 < lessons.length){
+                        var start_index = last_node_index + 1;
+                        var end_index = start_index + 5;
+                        scope.$emit('nextRegion', start_index, end_index);
+                    }
+                }, this, 0,0,1,0);
+
+                port_back.scale.setTo(0.5)
+                port_forward.scale.setTo(0.5)
+                // end : port node
+
+                for (var j = 0, i = last_node_index, distance = 1 / (lessons.length); i >= first_node_index; j += distance, i--) {
 
                     var currentLesson = lessons[i].node;
                     var locked = lessons[i].locked ? '-locked' : '';
                     var type = lessonType(currentLesson, i) == '' ? '' : '-' + lessonType(currentLesson, i);
                     var posx = game.math.catmullRomInterpolation(points.tempX, j);
                     var posy = game.math.catmullRomInterpolation(points.tempY, j);
-                    log.debug('resource type ', 'node' + '-' + lessonutils.resourceType(lessons[i]))
+                    log.debug('coordinate',posx,posy)
                     // node.scale.setTo(0.5)
                     if(!lessons[i].locked){
                         var node = game.make.button(posx, posy, 'node' + '-' + lessonutils.resourceType(lessons[i]), false, this, 0,0,1,0);

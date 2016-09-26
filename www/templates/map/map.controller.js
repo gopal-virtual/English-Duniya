@@ -109,6 +109,23 @@
     mapCtrl.animateStar["resetColor"] = resetColor;
     // ;
     mapCtrl.setAnimateStarFlag = setAnimateStarFlag;
+    mapCtrl.setLessonRange = setLessonRange;
+
+    // port node
+    mapCtrl.first_node_index = parseInt(localStorage.first_node_index) || 0;
+    mapCtrl.last_node_index = parseInt(localStorage.last_node_index) || 20;
+
+    $scope.$on('prevRegion', mapCtrl.setLessonRange )
+    $scope.$on('nextRegion', mapCtrl.setLessonRange )
+
+    function setLessonRange(event, start_index, end_index){
+        localStorage.setItem('first_node_index', start_index)
+        localStorage.setItem('last_node_index', end_index)
+        window.location.reload()
+        $log.debug(start_index, end_index)
+    }
+    // end : port node
+
 
     /**
     * @ngdoc property
