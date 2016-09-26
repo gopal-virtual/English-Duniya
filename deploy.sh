@@ -44,7 +44,7 @@ array=( 3 all )
 for i in "${array[@]}"
 do
 echo "Bundling Content"
-node bundleContent.js 3
+node bundleContent.js $i
 
 echo "Configuring Environment for "$ENV
 gulp --env=$ENV
