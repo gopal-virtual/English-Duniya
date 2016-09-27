@@ -124,7 +124,7 @@
     //audio
     quizCtrl.playAudio = playAudio;
     quizCtrl.stopAudio = stopAudio;
-    quizCtrl.starCount = starCount;
+    // quizCtrl.starCount = starCount;
     quizCtrl.highlightSoundIcon = highlightSoundIcon;
     quizCtrl.playInstruction = playInstruction;
     quizCtrl.calculateStars = calculateStars;
@@ -194,10 +194,10 @@
       }, 1000);
     }
 
-    function starCount(index) {
-      var count = quizCtrl.summary.stars - index;
-      return count > 0 ? count : 0;
-    }
+    // function starCount(index) {
+    //   var count = quizCtrl.summary.stars - index;
+    //   return count > 0 ? count : 0;
+    // }
 
     function playStarSound() {
       if (quizCtrl.summary.stars) {
@@ -225,11 +225,11 @@
 
         User.skills.update({
           profileId: User.getActiveProfileSync()._id,
-          lessonId: lesson.node.id,
+          lessonId: quiz.parent,
           id: quiz.node.id,
           score: summary.score.marks,
           totalScore: quizCtrl.quiz.node.type.score,
-          skill: lesson.node.tag
+          skill: quiz.node.tag
         })
         .then(function() {
           return data.getQuizScore({
@@ -832,9 +832,9 @@
     };
 
     if($state.is('quiz.questions') && User.demo.isShown(5)){
-      
+
       $timeout(function(){
-        
+
 
         angular.element("#audioplayer")[0].pause();
         angular.element("#audioSource")[0].src = 'sound/demo-quiz-1.mp3';
@@ -843,7 +843,7 @@
         nzTour.start($scope.tour);
         User.demo.setStep(5);
       $timeout(function(){
-        
+
         if(nzTour.current.step === 0){
           tourNextStep();
         }
@@ -909,5 +909,19 @@
     }
 
 
+    $ionicModal.fromTemplateUrl(CONSTANT.PATH.CONTENT + '/content.modal-ribbon' + CONSTANT.VIEW, {
+      scope: $scope,
+      // animation: 'slide-in-up',
+      backdropClickToClose: true
+    }).then(function(modal){
+      $scope.nodeRibbon = modal;
+      $scope.nodeRibbonFlag = true;
+      // modal.show();
+      $timeout(function() {
+        $scope.nodeRibbonFlag = false;
+        modal.hide();
+        // contentCtrl.play();
+      }, 2000);
+    })
   }
 })();

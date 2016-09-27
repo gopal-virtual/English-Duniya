@@ -1,4 +1,4 @@
-<ion-modal-view ng-class="{'modal-transparent': lessonutils.isState('map.navigate'), 'modal-dark': !lessonutils.isState('map.navigate')}" >
+<!-- <ion-modal-view ng-class="{'modal-transparent': lessonutils.isState('map.navigate'), 'modal-dark': !lessonutils.isState('map.navigate')}" >
     <ion-content ng-init="mapCtrl.selected=false" scroll="false">
         <div class="padding-x-20">
             <div class="rope-modal-title">
@@ -23,5 +23,20 @@
 
     </ion-content>
 </ion-modal-view>
-
-<!--  -->
+-->
+<ion-modal-view style="height:100%;" ng-class="nodeRibbonFlag ? 'slide-in-down':'slide-in-up'" class="modal-dark" >
+    <div style="height:100%;" class="vertical-center">
+        <div style="text-align: center;position: absolute;width: 100%;">
+            <img height="180" ng-src="img/assets_svg/{{lessonutils.getGender()=='M'? 'boy' : 'girl'}}-ribbon.svg">
+                <h5 style="position: absolute;top: 105px;width: 100%;" class="margin-0 padding-y-10 padding-x-20 text-center color-white font-md">{{selectedNode.node.title.split('-', 2).join('-');}}</h5>
+            <div>
+                <div style="display: inline-block;" class="padding-x-10">
+                    <button class="sbtn sbtn-correct" on-tap="audio.play('press');quizCtrl.interval && quizCtrl.startTimer();contentCtrl.API && contentCtrl.play();closeNodeMenu();"></button>
+                </div>
+                <div style="display: inline-block;" class="padding-x-10">
+                    <button class="sbtn sbtn-wrong" on-tap="audio.play('press');audio.setVolume('background', 0.4);mapCtrl.animationExpand.shrink();closeNodeMenu();lessonutils.leaveLesson();mapCtrl && mapCtrl.resetNode();lessonutils.user.demo.getStep() == 3 && lessonutils.user.demo.setStep(4);"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</ion-modal-view>

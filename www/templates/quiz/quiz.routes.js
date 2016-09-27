@@ -24,8 +24,6 @@
         },
         resolve: {
           quiz: ['$stateParams', 'Rest', '$log', 'content', 'ml', '$q', '$http', 'User', 'data', function ($stateParams, Rest, $log, content, ml, $q, $http, User, data) {
-            $log.debug("HERE----")
-
             if ($stateParams.type == 'litmus') {
               var all_promises = [];
               $log.debug("ML1",ml)
@@ -70,7 +68,9 @@
                 return content.getAssessment(litmus);
                 // return litmus;
               })
-            } else {
+            }
+            else {
+                $log.debug('trying to resolve quiz', $stateParams.quiz.objects.length);
 
                 // ;
                 // $stateParams.quiz.objects[0].node.id == 'demo' ? $stateParams.quiz.objects.shift(data.demo_question) :false;
@@ -84,7 +84,7 @@
                 //   $stateParams.quiz.objects[currentIndex] = $stateParams.quiz.objects[randomIndex];
                 //   $stateParams.quiz.objects[randomIndex] = temporaryValue;
                 // }
-                User.demo.isShown(5) && $stateParams.quiz.objects.unshift(content.demo_question);
+                // User.demo.isShown(5) && $stateParams.quiz.objects.unshift(content.demo_question);
                 return content.getAssessment($stateParams.quiz).then(function (response) {
                   return response;
                 });
@@ -140,11 +140,11 @@
 
           User.skills.update({
             profileId: User.getActiveProfileSync()._id,
-            lessonId: lesson.node.id,
+            lessonId: quiz.parent,
             id: quiz.node.id,
             score: summary.score.marks,
             totalScore: quiz.node.type.score,
-            skill: lesson.node.tag,
+            skill: quiz.node.tag,
           })
             .then(function () {
               return User.scores.getScoreOfAssessment(quiz.node.id, lesson.node.id, User.getActiveProfileSync()._id)

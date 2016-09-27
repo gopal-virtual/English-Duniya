@@ -57,11 +57,11 @@
       var filename_patch = mediaManager.getFileNameFromURlPatched(url)
 
       var target = null;
-      var target_patch = cordova.file.dataDirectory + 'media/' + filename_patch;
 
       var d = $q.defer();
       try {
 
+          var target_patch = cordova.file.dataDirectory + 'media/' + filename_patch;
         mediaManager.isBundled(filename).then(function(result) {
 
 
