@@ -65,6 +65,8 @@ var environments = {
   test: 'TESTING'
 };
 var env = argument.argv.env ? environments[argument.argv.env] : environments.default;
+var app_type = argument.argv.app_type ? argument.argv.app_type : 'na';
+var app_version = argument.argv.app_version? argument.argv.app_version : 'na';
 var constants = JSON.parse(file.readFileSync(paths.constants.environment, 'utf8'));
 
 gulp.task('default', ['generate-constants', 'sass', 'scripts', 'html']);
@@ -102,7 +104,13 @@ gulp.task('generate-constants', function () {
       }, {
         match: 'ANALYTICS',
         replacement: constants[env]['ANALYTICS']
-      }
+      }, {
+        match: 'APP_TYPE',
+        replacement: app_type
+      }, {
+        match: 'APP_VERSION',
+        replacement: app_version
+        }
       ]
     }))
     .pipe(rename(paths.constants.destination_filename))

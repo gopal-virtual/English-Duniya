@@ -4,12 +4,16 @@
   angular
     .module('common')
     .constant('CONSTANT', {
+      'APP':{
+      'TYPE': 'bundled',
+      'VERSION': '0.2'
+      },
       'LOCK': true,
       'FAKE_LOGIN': false,
       'FAKE_DEVICE': false,
       'BACKEND_SERVICE_DOMAIN': 'https://cc-test.zaya.in/',
       'RESOURCE_SERVER': 'https://cc-test.zaya.in/',
-      'ANALYTICS' : '@@TRUE',
+      'ANALYTICS' : true,
       'QUESTION' : {
         'DEMO' : '5ecf8ad5-4c3a-4a67-9758-dd7e3993c4d8'
       },
