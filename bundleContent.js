@@ -1,8 +1,8 @@
 var http = require('http');
 var fs = require('fs');
-var request = require('request');
-var wget = require('wget-improved');
-var source_folder = 'content/'
+// var request = require('request');
+// var wget = require('wget-improved');
+var source_folder = 'media/ell/';
 var target_folder = 'www/bundled/';
 var ncp = require('ncp').ncp;
 var getFileNameFromURl = function(url){
@@ -13,10 +13,10 @@ var lessons = process.argv[2];
 var media = [];
 
 media.push('/media/ell/images/dog_O5P4I8.png');
-media.push('/media/ell/images/person_GLUMUY.png');
+media.push('/media/ell/images/person_9FDOFJ.png');
 media.push('/media/ell/images/place_KJMRCN.png');
-media.push('/media/ell/images/animal_2W0HQG.png');
-media.push('/media/ell/images/thing_DV4JY6.png');
+media.push('/media/ell/images/animal_7C4FVV.png');
+media.push('/media/ell/images/thing_0IS1M4.png');
 
 
 // Delete all the contents of the target folder first
@@ -126,9 +126,9 @@ fs.readFile('lesson.json', 'utf8', function(err, data) {
 
   for (i in media) {
     var filename = getFileNameFromURl(media[i]);
-    ncp(source_folder+filename, target_folder+filename,function(error){
+    ncp(source_folder + media[i].split('/')[media[i].split('/').length-2] +'/'+  media[i].split('/').pop(), target_folder+filename,function(error){
       if(error){
-        console.log("Error Occured")
+        console.log("Error Occured",error)
       }
     });
   }

@@ -26,6 +26,7 @@
           quiz: ['$stateParams', 'Rest', '$log', 'content', 'ml', '$q', '$http', 'User', 'data', function ($stateParams, Rest, $log, content, ml, $q, $http, User, data) {
             if ($stateParams.type == 'litmus') {
               var all_promises = [];
+              $log.debug("ML1",ml)
               if (ml.kmapsJSON == undefined) {
                 var promise = ml.setMLKmapsJSON;
                 all_promises.push(promise);
@@ -52,11 +53,20 @@
                 "objects": []
               };
               return $q.all(all_promises).then(function () {
-                var suggestion = ml.getNextQSr(data.getTestParams(JSON.parse(localStorage.profile).grade), ml.mapping);
+                $log.debug("ML2",ml);
+
+                $log.debug("CHECK THIS",User.getActiveProfileSync().data.profile.grade,data.getTestParams(User.getActiveProfileSync().data.profile.grade))
+
+                var suggestion = ml.getNextQSr(data.getTestParams(User.getActiveProfileSync().data.profile.grade), ml.mapping);
+                $log.debug("SUGGESTION",suggestion)
+
                 var question = ml.dqJSON[suggestion.qSr];
+                $log.debug("Question",question)
                 question && litmus.objects.push(question);
                 litmus['suggestion'] = suggestion;
-                return litmus;
+                $log.debug("Litmus",litmus)
+                return content.getAssessment(litmus);
+                // return litmus;
               })
             }
             else {
@@ -100,9 +110,9 @@
       .state('quiz.questions', {
         url: '/questions',
         onEnter: ['$log', '$state', '$stateParams', function ($log, $state, $stateParams) {
-          if (!$stateParams.quiz.objects.length) {
-            $state.go('state.missing');
-          }
+          // if (!$stateParams.quiz.objects.length) {
+            // $state.go('state.missing');
+          // }
         }],
         // nativeTransitions: null,
         views: {
@@ -185,6 +195,14 @@
             controller: 'QuizController as quizCtrl'
           }
         }
+      })
+      .state('litmus_result', {
+        url: '/litmus_result',
+        template: '<h1>Litmus summary</h1><button ui-sref="map.navigate">BAck to map</button>'
+      })
+      .state('litmus_start', {
+        url: '/litmus_start',
+        template: '<h1>Litmus start</h1><button ui-sref=\"map.navigate\">Start</button>'
       })
   }
 })();

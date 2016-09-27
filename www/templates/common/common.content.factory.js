@@ -62,10 +62,10 @@
                 "sounds": {},
                 "images": {
                   "1": "/media/ell/images/dog_O5P4I8.png",
-                  "2": "/media/ell/images/person_GLUMUY.png",
+                  "2": "/media/ell/images/person_9FDOFJ.png",
                   "3": "/media/ell/images/place_KJMRCN.png",
-                  "4": "/media/ell/images/animal_2W0HQG.png",
-                  "5": "/media/ell/images/thing_DV4JY6.png"
+                  "4": "/media/ell/images/animal_7C4FVV.png",
+                  "5": "/media/ell/images/thing_0IS1M4.png"
                 }
               },
               "instruction": null,
@@ -198,7 +198,6 @@
                 lessons.push(data.rows[i].doc.lesson.objects[c])
             }
         }
-        lessons = _.sortBy(lessons, 'key');
 
         d.resolve(lessons)
       })
