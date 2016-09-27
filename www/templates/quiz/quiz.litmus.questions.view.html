@@ -1,32 +1,31 @@
 <ion-view ng-if="quizCtrl.quiz.objects.length" id="tour-container" class="bg-green">
   <div class="bar bar-header bg-pale practice-header padding-0">
-    <div class="col padding-0 vertical-center">
-      <div ng-click="showNodeMenu()" class="header-icon icon-pause padding-10" style="background-size:auto 85%"></div>
-    </div>
-{{quizCtrl.currentIndex}}
-    <div class=" margin-x-10 margin-y-0 row progress-bar-container">
-      <!-- <div class="col-5 mark-0" ng-class="{'mark-filled':quizCtrl.practiceResult.percentCorrect > 0}"  ></div> -->
-      <div
-        class="col-5 mark-star icon-fit-height"
-        style="left: calc({{quizCtrl.CONSTANT.STAR.ONE+'%'}} - 12px);"
-        ng-class="{'icon-star-2 animation-once-bounce':quizCtrl.summary.score.percent >= quizCtrl.CONSTANT.STAR.ONE,'icon-nostar-2':quizCtrl.summary.score.percent < quizCtrl.CONSTANT.STAR.ONE}"></div>
-      <div
-        class="col-5 mark-star icon-fit-height"
-        style="left: calc({{quizCtrl.CONSTANT.STAR.TWO+'%'}} - 12px);"
-        ng-class="{'icon-star-2 animation-once-bounce':quizCtrl.summary.score.percent >= quizCtrl.CONSTANT.STAR.TWO,'icon-nostar-2':quizCtrl.summary.score.percent < quizCtrl.CONSTANT.STAR.TWO}"></div>
-      <div
-        class="col-5 mark-star icon-fit-height"
-        style="left: calc({{quizCtrl.CONSTANT.STAR.THREE+'%'}} - 12px);"
-        ng-class="{'icon-star-2 animation-once-bounce':quizCtrl.summary.score.percent >= quizCtrl.CONSTANT.STAR.THREE,'icon-nostar-2':quizCtrl.summary.score.percent < quizCtrl.CONSTANT.STAR.THREE}"></div>
+    <!--<div class="col padding-0 vertical-center">-->
+      <!--<div ng-click="showNodeMenu()" class="header-icon icon-pause padding-10" style="background-size:auto 85%"></div>-->
+    <!--</div>-->
+    <!--<div class=" margin-x-10 margin-y-0 row progress-bar-container">-->
+      <!--&lt;!&ndash; <div class="col-5 mark-0" ng-class="{'mark-filled':quizCtrl.practiceResult.percentCorrect > 0}"  ></div> &ndash;&gt;-->
+      <!--<div-->
+        <!--class="col-5 mark-star icon-fit-height"-->
+        <!--style="left: calc({{quizCtrl.CONSTANT.STAR.ONE+'%'}} - 12px);"-->
+        <!--ng-class="{'icon-star-2 animation-once-bounce':quizCtrl.summary.score.percent >= quizCtrl.CONSTANT.STAR.ONE,'icon-nostar-2':quizCtrl.summary.score.percent < quizCtrl.CONSTANT.STAR.ONE}"></div>-->
+      <!--<div-->
+        <!--class="col-5 mark-star icon-fit-height"-->
+        <!--style="left: calc({{quizCtrl.CONSTANT.STAR.TWO+'%'}} - 12px);"-->
+        <!--ng-class="{'icon-star-2 animation-once-bounce':quizCtrl.summary.score.percent >= quizCtrl.CONSTANT.STAR.TWO,'icon-nostar-2':quizCtrl.summary.score.percent < quizCtrl.CONSTANT.STAR.TWO}"></div>-->
+      <!--<div-->
+        <!--class="col-5 mark-star icon-fit-height"-->
+        <!--style="left: calc({{quizCtrl.CONSTANT.STAR.THREE+'%'}} - 12px);"-->
+        <!--ng-class="{'icon-star-2 animation-once-bounce':quizCtrl.summary.score.percent >= quizCtrl.CONSTANT.STAR.THREE,'icon-nostar-2':quizCtrl.summary.score.percent < quizCtrl.CONSTANT.STAR.THREE}"></div>-->
 
-      <!-- <div class="col" style="z-index:1"> -->
-      <progress max="100" class="progress-bar-practice" value="{{quizCtrl.summary.score.percent}}"></progress>
-      <!-- </div> -->
-    </div>
-    <div class="col" align="right">
+      <!--&lt;!&ndash; <div class="col" style="z-index:1"> &ndash;&gt;-->
+      <!--<progress max="100" class="progress-bar-practice" value="{{quizCtrl.summary.score.percent}}"></progress>-->
+      <!--&lt;!&ndash; </div> &ndash;&gt;-->
+    <!--</div>-->
+    <!--<div class="col" align="right">-->
 
-      <!-- <a ui-sref="map.navigate" class="header-icon icon-question-mark"></a> -->
-    </div>
+      <!--&lt;!&ndash; <a ui-sref="map.navigate" class="header-icon icon-question-mark"></a> &ndash;&gt;-->
+    <!--</div>-->
   </div>
   <ion-slide-box on-slide-changed="quizCtrl.setCurrentIndex(index);quizCtrl.logQuestion((index),'START');quizCtrl.quiz.objects[index].isVisited = true;quizCtrl.playInstruction(index)" ng-init="(quizCtrl.disableSwipe());quizCtrl.playInstruction(0)" show-pager="false">
     <ion-slide ng-repeat="question in quizCtrl.quiz.objects " ng-class="{'animation-question-slide':quizCtrl.isCurrentIndex($index)}">
@@ -103,8 +102,8 @@
         <button
           class="button button-block button-balanced margin-0 button-round font-md"
           style="height:40px;line-height:45px"
-          ng-click="quizCtrl.submitAttempt(quizCtrl.quiz.objects[quizCtrl.currentIndex].node.id,quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted,'litmus') && quizCtrl.setSuggestion();quizCtrl.logQuestion(quizCtrl.currentIndex,'END');demo.tourNextStep();audio['demo-quiz-3'].stop();quizCtrl.stopAudio()"
-          ng-disabled="!quizCtrl.canSubmit()"
+          ng-click="quizCtrl.disable_submit = true;quizCtrl.submitAttempt(quizCtrl.quiz.objects[quizCtrl.currentIndex].node.id,quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted,'litmus') && quizCtrl.setSuggestion();quizCtrl.logQuestion(quizCtrl.currentIndex,'END');demo.tourNextStep();audio['demo-quiz-3'].stop();quizCtrl.stopAudio()"
+          ng-disabled="!(quizCtrl.canSubmit() && !quizCtrl.disable_submit)"
           ng-class="{'animation-repeat-fade':quizCtrl.canSubmit()}">
           {{quizCtrl.isAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex]) ? 'CONTINUE' : 'SUBMIT'}}
         </button>

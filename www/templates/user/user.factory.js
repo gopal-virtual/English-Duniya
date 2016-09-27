@@ -329,7 +329,6 @@
 
 
     function isDemoShown(step) {
-      return false
       var skills = getActiveProfileSync().data.skills;
       var score = 0;
       angular.forEach(skills, function (skill) {

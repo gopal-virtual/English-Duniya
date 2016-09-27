@@ -145,16 +145,14 @@
 
       User.profile.add(formData)
         .then(function (response) {
-
-
           User.setActiveProfileSync(response);
-
           return content.createLessonDBIfNotExists()
         })
         .then(function () {
           localStorage.setItem('demo_flag', 1);
+          localStorage.setItem('diagnosis_flag', false);
           $log.debug("CHanging state to map");
-          $state.go('map.navigate', {});
+          $state.go('quiz.questions', {'type':'litmus','id':'litmus_question'});
         })
         .catch(function (error) {
           userCtrl.showError('Could not make your profile', error || 'Please try again');

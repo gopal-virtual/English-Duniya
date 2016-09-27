@@ -196,10 +196,10 @@
           }
         }
       })
-      .state('quiz.diagnosis', {
-        url: '/diagnosis',
+      .state('quiz.litmus_result', {
+        url: '/litmus_result',
         views: {
-          templateUrl: CONSTANT.PATH.QUIZ + '/quiz.diagnosis' + CONSTANT.VIEW,
+          templateUrl: CONSTANT.PATH.QUIZ + '/litmus_summary' + CONSTANT.VIEW,
           // controller: 'QuizController as quizCtrl'
         }
       })

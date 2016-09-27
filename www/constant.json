@@ -17,10 +17,10 @@
   },
   "DEVELOPMENT": {
     "LOCK": true,
-    "FAKE_LOGIN": false,
-    "FAKE_DEVICE": false,
+    "FAKE_LOGIN": true,
+    "FAKE_DEVICE": true,
     "BACKEND_SERVICE_DOMAIN": "https://cc-test.zaya.in/",
     "RESOURCE_SERVER": "https://cc-test.zaya.in/",
-    "ANALYTICS": true
+    "ANALYTICS": false
   }
 }

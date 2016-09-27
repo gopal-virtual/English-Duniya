@@ -148,6 +148,7 @@
     quizCtrl.isAssessment = ($stateParams.type == 'assessment');
     // quizCtrl.tourFlag = true;
 
+    quizCtrl.disable_submit = false;
     $scope.demo = {
       'tourNextStep': tourNextStep,
       'tourFlag': localStorage.getItem('tourFlag')
@@ -475,6 +476,7 @@
 
     function setSuggestion() {
       $log.debug("here")
+      quizCtrl.disable_submit = true;
       var temp_quiz = angular.copy(quizCtrl.quiz);
       temp_quiz.suggestion = ml.getNextQSr(quizCtrl.quiz.suggestion.test, ml.mapping);
       if (temp_quiz.suggestion) {
@@ -494,9 +496,11 @@
         // quizCtrl.nextQuestion()
         $ionicSlideBoxDelegate.update();
         quizCtrl.report.attempts[quizCtrl.quiz.objects[quizCtrl.currentIndex+1].node.id] = [];
+
         $timeout(function() {
           quizCtrl.currentIndex++;
           $ionicSlideBoxDelegate.next();
+          quizCtrl.disable_submit = false;
         }, 300);
         $log.debug("HERE")
       });
@@ -721,7 +725,7 @@
         hideOnStateChange: true
       });
       if($stateParams.type == 'litmus'){
-        $state.go('litmus.result')
+        $state.go('quiz.litmus_result',{})
       }else{
         $state.go('map.navigate', {});
       }
