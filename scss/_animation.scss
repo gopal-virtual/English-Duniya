@@ -377,14 +377,13 @@
     background: red;
     opacity: 0;
   }
-  &:hover {
-    @for $i from 1 through 50 {
-      i:nth-of-type(#{$i}) {
-        @include transform( translate3d(random(500) - 250 + px,random(500) - 250 + px,0) rotate(random(360) + deg) );
-        background: hsla(random(360),100%,50%,1);
-        @include animation(bang 1200ms ease-out forwards);
-        opacity: 0;
-      }
+
+  @for $i from 1 through 50 {
+    i:nth-of-type(#{$i}) {
+      @include transform( translate3d(random(500) - 250 + px,random(500) - 250 + px,0) rotate(random(360) + deg) );
+      background: hsla(random(360),100%,50%,1);
+      @include animation(bang 1200ms ease-out forwards);
+      opacity: 0;
     }
   }
 }

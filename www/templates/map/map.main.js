@@ -58,7 +58,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
         var regionPage = localStorage.getItem("regionPage");
     }else{
         localStorage.setItem("regionPage",0);
-        var regionPage = 1;
+        var regionPage = 0;
     }
     var renderedRegion = [regions[regionPage]];
     log.debug("renderedRegionPage",regionPage)
