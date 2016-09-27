@@ -49,7 +49,7 @@
     contentCtrl.onVideoComplete = onVideoComplete;
     contentCtrl.config = {
       sources: [$stateParams.video],
-      autoplay: true,
+      autoplay: false,
       plugins: {
         controls: {
           showControl : true
@@ -194,14 +194,20 @@
     });
 
 
-
+    // $scope.nodeRibbon;
 
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.CONTENT + '/content.modal-ribbon' + CONSTANT.VIEW, {
       scope: $scope,
-      animation: 'slide-in-up',
+      // animation: 'slide-in-up',
       backdropClickToClose: true
     }).then(function(modal){
+      $scope.nodeRibbonFlag = true;
       modal.show();
+      $timeout(function() {
+        $scope.nodeRibbonFlag = false;
+        modal.hide();
+        contentCtrl.play();
+      }, 2000);
     })
 
   }
