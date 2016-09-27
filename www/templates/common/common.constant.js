@@ -8,7 +8,7 @@
         'VERSION': '0.2',
         'TYPE': 'NON_BUNDLED'
       },
-      'LOCK': false,
+      'LOCK': true,
       'FAKE_LOGIN': true,
       'FAKE_DEVICE': true,
       'ANALYTICS': true,

@@ -36,14 +36,16 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
         "y" : []
     };
     var regionNodes = {
-        "desert" : 27,
+        "desert" : 24,
         "tundra" : 26,
         "forest" : 33,
         "peru" : 23
     }
     var regionPathOffset = {
         "desert" : 450,
-        "tundra" : 330
+        "tundra" : 330,
+        "forest" : 300,
+        "peru" : 300
     }
     var nodeColors = {
         "vocabulary" : "blue",
@@ -150,6 +152,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
 
             // debug value
             this.game.time.advancedTiming = true;
+            game.scale.scaleMode = Phaser.ScaleManager.Resize;
         },
         create: function() {
             var _this = this;
@@ -545,7 +548,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                         //     break;
                         // }
                         x.push(parseInt(pathPoint.x));
-                        y.push(parseInt(pathPoint.y));
+                        y.push(parseInt(pathPoint.y) + regionPathOffset[region]);
                     }
 
                     points.x = x.reverse();
@@ -565,24 +568,30 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
 
             function renderNodePath(region,points){
 
-                points.tempX = [];
-                points.tempY = [];
-                for (var i = 0, points_count = points.x.length; i < points_count; i++) {
-                    // if (points.y[i]  - (60 - regionOffset[region[region.length - 1]]) < ) {}
+                // points.tempX = [];
+                // points.tempY = [];
+                // for (var i = 0, points_count = points.x.length; i < points_count; i++) {
+                //     // if (points.y[i]  - (60 - regionOffset[region[region.length - 1]]) < ) {}
                     
-                    points.tempX.push(points.x[i]);
-                    points.tempY.push(points.y[i] + regionPathOffset[region]);
-                }
+                //     points.tempX.push(points.x[i]);
+                //     points.tempY.push(points.y[i] + regionPathOffset[region]);
+                // }
                 var increment = 1 / game.world.height;
                 // Somewhere to draw to
                 var bmd = game.add.bitmapData(game.width, game.world.height);
-                for (var j = 0; j < 1; j += increment) {
-                //
-                    var posx = game.math.catmullRomInterpolation(points.tempX, j);
-                    var posy = game.math.catmullRomInterpolation(points.tempY, j);
+                for (var j = 1; j > 0; j -= increment) {
+                //  
+                    var posx = game.math.catmullRomInterpolation(points.x, j);
+                    var posy = game.math.catmullRomInterpolation(points.y, j);
+                    
+                    // log.debug(temp.activeLessonPosY,posy,temp.activeLessonPosY < posy)
+                    if (temp.activeLessonPosY > posy) {
+                        break;
+                    }
                     //
-                    bmd.rect(posx, posy, 4, 4, '#FFFFFF');
-                    log.debug("pos",posx,posy);
+                    bmd.rect(posx, posy, 8, 8, '#FFFFFF');
+                    // bmd.anchor.setTo(0.5);
+                    // log.debug("pos",posx,posy);
                 }
                 groups.nonRegion.nodePath.create(0,0,bmd);
             }
@@ -687,8 +696,8 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
 
             function renderNodesByOne(region){
                 log.debug('node index', last_node_index, first_node_index)
-                points.tempX = points.tempX.reverse();
-                points.tempY = points.tempY.reverse();
+                // points.tempX = points.tempX.reverse();
+                // points.tempY = points.tempY.reverse();
                 var first_node_index = 0, last_node_index = 0;
                 for (var i = 0; i <= regionPage; i++) {
                     log.debug("This ia")
@@ -702,37 +711,37 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                 log.debug("firstnodeindex",first_node_index);
                 log.debug("lastnodeindex",last_node_index);
                 // port node
-                var port_back = game.add.button(game.world.centerX + 50, game.world.height - 200, 'node-port', function(){
-                    log.debug("HELLO")
-                    if(regionPage > 0){
-                    log.debug("HELLO2")
-                        // var end_index = first_node_index - 1;
-                        // var start_index = end_index - 5;
-                        scope.$emit('pageRegion', regionPage, "prev");
-                    }
-                }, this, 0,0,1,0);
-                var port_forward = game.add.button(game.world.centerX + 50, game.world.height - 500, 'node-port', function(){
-                    log.debug("HELLO")
-                    if(regionPage < 3){
-                        // var start_index = last_node_index + 1;
-                    log.debug("HELLO2")
-                        // var end_index = start_index + regionNodes[region];
-                        scope.$emit('pageRegion', regionPage, "next");
-                    }
-                }, this, 0,0,1,0);
-
+                if(regionPage > 0){
+                    var port_back = game.add.button(game.world.centerX + 50, game.world.height - 200, 'node-port', function(){
+                        log.debug("HELLO")
+                        log.debug("HELLO2")
+                            // var end_index = first_node_index - 1;
+                            // var start_index = end_index - 5;
+                            scope.$emit('pageRegion', regionPage, "prev");
+                    }, this, 0,0,1,0);
                 port_back.scale.setTo(0.5)
+                }
+                if(regionPage < 3){
+                    var port_forward = game.add.button(game.world.centerX + 50, game.world.height - 500, 'node-port', function(){
+                        log.debug("HELLO")
+                            // var start_index = last_node_index + 1;
+                        log.debug("HELLO2")
+                            // var end_index = start_index + regionNodes[region];
+                            scope.$emit('pageRegion', regionPage, "next");
+                    }, this, 0,0,1,0);
                 port_forward.scale.setTo(0.5)
+                }
+
                 // end : port node
 
                 for (var j = 0, i = last_node_index, distance = 1 / (last_node_index-first_node_index); i >= first_node_index; j += distance, i--) {
-                    log.debug("LESSONS",lessons[i])
-                    log.debug('index of ', last_node_index, first_node_index)
+                    // log.debug("LESSONS",lessons[i])
+                    // log.debug('index of ', last_node_index, first_node_index)
                     var currentLesson = lessons[i].node;
                     var locked = lessons[i].locked ? '-locked' : '';
                     var type = lessonType(currentLesson, i) == '' ? '' : '-' + lessonType(currentLesson, i);
-                    var posx = game.math.catmullRomInterpolation(points.tempX, j);
-                    var posy = game.math.catmullRomInterpolation(points.tempY, j);
+                    var posx = game.math.catmullRomInterpolation(points.x, j);
+                    var posy = game.math.catmullRomInterpolation(points.y, j);
                     log.debug('coordinate',posx,posy)
                     // node.scale.setTo(0.5)
                     if(!lessons[i].locked){
@@ -823,8 +832,8 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                     var currentLesson = lessons[i];
                     var locked = currentLesson.locked ? '-locked' : '';
                     var type = lessonType(currentLesson, i) == '' ? '' : '-' + lessonType(currentLesson, i);
-                    var posx = game.math.catmullRomInterpolation(points.tempX, j);
-                    var posy = game.math.catmullRomInterpolation(points.tempY, j);
+                    var posx = game.math.catmullRomInterpolation(points.x, j);
+                    var posy = game.math.catmullRomInterpolation(points.y, j);
                     var node = game.make.button(posx, posy, 'node' + type + locked);
 
 
@@ -1097,8 +1106,8 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                 var fetchMapRequest = fetchMapPath(renderedRegion,points);
                 fetchMapRequest.then(function(){
                     scope.$emit('removeLoader');
-                    renderNodePath(renderedRegion,points);
                     renderNodesByOne(renderedRegion);
+                    renderNodePath(renderedRegion,points);
 
 
 
@@ -1275,7 +1284,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
             //
             // this.dragMap();
             // log.log("CAMERA",game.camera.y);
-            this.optimize(game.camera,regionRange);
+            // this.optimize(game.camera,regionRange);
 
 
         },
