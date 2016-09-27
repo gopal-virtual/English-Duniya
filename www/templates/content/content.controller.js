@@ -87,7 +87,7 @@
       submitReport()
         $timeout(function() {
           orientation.setPortrait();
-          $scope.modal.show();
+          // $scope.nodeMenu.show();
 			analytics.log(
               {
                   name : 'VIDEO',
@@ -176,12 +176,12 @@
     $scope.openNodeMenu = function() {
       if (contentCtrl.API.currentState == 'pause') {
         orientation.setPortrait();
-        $scope.modal.show();
+        $scope.nodeMenu.show();
       }
       return true;
     }
     $scope.closeNodeMenu = function() {
-      $scope.modal.hide();
+      $scope.nodeMenu.hide();
       return true;
     }
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal-rope' + CONSTANT.VIEW, {
@@ -189,8 +189,20 @@
       animation: 'slide-in-down',
       hardwareBackButtonClose: false
     }).then(function(modal) {
-      $scope.modal = modal;
+      $scope.nodeMenu = modal;
+      $log.debug($scope.selectedNode);
     });
+
+
+
+
+    $ionicModal.fromTemplateUrl(CONSTANT.PATH.CONTENT + '/content.modal-ribbon' + CONSTANT.VIEW, {
+      scope: $scope,
+      animation: 'slide-in-up',
+      backdropClickToClose: true
+    }).then(function(modal){
+      modal.show();
+    })
 
   }
 
