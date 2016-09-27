@@ -832,9 +832,9 @@
     };
 
     if($state.is('quiz.questions') && User.demo.isShown(5)){
-      $log.debug("!")
+      
       $timeout(function(){
-        $log.debug("Q")
+        
 
         angular.element("#audioplayer")[0].pause();
         angular.element("#audioSource")[0].src = 'sound/demo-quiz-1.mp3';
@@ -843,7 +843,7 @@
         nzTour.start($scope.tour);
         User.demo.setStep(5);
       $timeout(function(){
-        $log.debug("Timedout")
+        
         if(nzTour.current.step === 0){
           tourNextStep();
         }

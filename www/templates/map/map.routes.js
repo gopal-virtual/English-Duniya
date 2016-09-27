@@ -13,22 +13,22 @@
         abstract: true,
         resolve: {
           lessons: ['$log','content','User', function($log,content,User) {
-            $log.debug("mapRoutes OnlessonsResolve 1",User.getActiveProfileSync().data.profile.grade)
+            
 
             return content.getLessonsList(User.getActiveProfileSync().data.profile.grade).then(function(result){
-              $log.debug("mapRoutes OnlessonsResolve 2",result)
+              
 
               return result
             })
           }],
           lessonLocked: ['$log','content','extendLesson','User', function($log, content,extendLesson,User) {
-            $log.debug("mapRoutes OnlessonLockedResolve 1")
+            
 
             return content.getLessonsList(User.getActiveProfileSync().data.profile.grade).then(function(lessons){
-              $log.debug("mapRoutes OnlessonLockedResolve 2",lessons)
+              
 
               return extendLesson.getLesson(lessons,[]).then(function(result){
-                $log.debug("mapRoutes OnlessonLockedResolve 3",result)
+                
 
                 return result;
               });
@@ -38,10 +38,10 @@
             return [];
         }],
         skills : ['$log','content','User', function($log,content,User){
-          $log.debug("mapRoutes OnSkillsResolve 1",User.getActiveProfileSync()._id)
+          
 
           return User.skills.get(User.getActiveProfileSync()._id).then(function(response){
-            $log.debug("mapRoutes OnSkillsResolve 2",response)
+            
 
             return response;
           })
@@ -74,7 +74,7 @@
           if (!lessons) {
             $state.go('map.unauthorised');
           }
-          $log.debug("mapRoutes OnEnter done")
+          
           // audio.play('background');
         //   if(localStorage.getItem('region')>'3409'){
         //   }

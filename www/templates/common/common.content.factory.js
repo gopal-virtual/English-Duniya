@@ -35,6 +35,7 @@
     }
     var contentProperties = {
       createLessonDBIfNotExists: createLessonDBIfNotExists,
+      createLessonDBIfNotExistsPatch: createLessonDBIfNotExistsPatch,
       getLessonsList: getLessonsList,
       getAssessment: getAssessment,
       getLesson: getLesson,
@@ -60,10 +61,10 @@
                 "sounds": {},
                 "images": {
                   "1": "/media/ell/images/dog_O5P4I8.png",
-                  "2": "/media/ell/images/person_GLUMUY.png",
+                  "2": "/media/ell/images/person_9FDOFJ.png",
                   "3": "/media/ell/images/place_KJMRCN.png",
-                  "4": "/media/ell/images/animal_2W0HQG.png",
-                  "5": "/media/ell/images/thing_DV4JY6.png"
+                  "4": "/media/ell/images/animal_7C4FVV.png",
+                  "5": "/media/ell/images/thing_0IS1M4.png"
                 }
               },
               "instruction": null,
@@ -129,8 +130,43 @@
       })
     }
 
+    function createLessonDBIfNotExistsPatch() {
+      lessonDB = pouchDB('lessonsGrade' + User.getActiveProfileSync().data.profile.grade, {
+        adapter: 'websql'
+      });
+
+
+      return lessonDB.allDocs()
+        .then(function(result){
+
+
+          return Promise.all(result.rows.map(function(row){
+
+
+            return lessonDB.remove(row.id,row.value.rev);
+          }))
+        })
+        .then(function(){
+
+
+          return lessonDB.load(CONSTANT.PATH.DATA + '/lessonsGrade' + User.getActiveProfileSync().data.profile.grade + '.db')
+        })
+        .then(function () {
+
+
+          return lessonDB.put({
+            _id: '_local/preloaded'
+          });
+        })
+        .catch(function(e){
+
+
+        })
+
+    }
+
     function getLessonsList() {
-      $log.debug("in getLessonslist",lessonDB)
+
       var d = $q.defer();
       lessonDB.allDocs({
         include_docs: true
@@ -143,12 +179,12 @@
           lessons.push(data.rows[i].doc.lesson.node);
         }
         lessons = _.sortBy(lessons, 'key');
-        $log.debug("in getLessonslist 1" , lessons)
+
 
         d.resolve(lessons)
       })
         .catch(function (error) {
-          $log.debug("In getLessonslisterror",error)
+
           d.reject(error)
         });
 
