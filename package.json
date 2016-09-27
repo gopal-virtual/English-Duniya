@@ -29,6 +29,7 @@
     "gulp-strip-debug": "^1.1.0",
     "gulp-uglify": "^1.5.3",
     "gulp-util": "^2.2.14",
+    "node-bourbon": "^4.2.8",
     "pouchdb": "^5.4.5",
     "pouchdb-server": "^1.2.0",
     "preen": "^1.2.0",

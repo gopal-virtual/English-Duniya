@@ -547,7 +547,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                         //     //
                         //     break;
                         // }
-                        x.push(parseInt(pathPoint.x));
+                        x.push(parseInt(pathPoint.x*game_scale));
                         y.push(parseInt(pathPoint.y) + regionPathOffset[region]);
                     }
 

@@ -90,7 +90,9 @@ gulp.task('scripts', function() {
 
 gulp.task('sass', function(done) {
   gulp.src('./scss/ionic.app.scss')
-    .pipe(sass())
+    .pipe(sass({
+      includePaths: require('node-bourbon').includePaths
+    }))
     .on('error', sass.logError)
     // .pipe(autoprefixer({
     // 	browsers: ['last 2 versions'],

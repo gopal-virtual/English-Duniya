@@ -188,6 +188,7 @@
 .animation-zoom-in {
   -webkit-animation-name: zoom-in;
   -webkit-transform-origin: 50% 50%;
+  -webkit-animation-duration: 0.5s;
 }
 @keyframes zoom-in {
   0% {
@@ -364,32 +365,24 @@
   }
 }
 .hoverme {
-  width: 240px;
-  margin:150px auto 0;
-  text-align: center;
-  padding: 10px 0;
-  cursor: pointer;
   position: relative;
-  span {
-    color: #333;
-    font-size: .9em;
-  }
   i {
+    z-index: 3;
     position: absolute;
     display: block;
     left: 50%;
-    top: 0;
-    width: 3px;
-    height: 5px;
+    top: 50%;
+    width: 8px;
+    height: 11px;
     background: red;
     opacity: 0;
   }
   &:hover {
     @for $i from 1 through 50 {
       i:nth-of-type(#{$i}) {
-        @include transform( translate3d(random(190) - 100 + px,random(50) - 100 + px,0) rotate(random(360) + deg) );
+        @include transform( translate3d(random(500) - 250 + px,random(500) - 250 + px,0) rotate(random(360) + deg) );
         background: hsla(random(360),100%,50%,1);
-        @include animation(bang 700ms ease-out forwards);
+        @include animation(bang 1200ms ease-out forwards);
         opacity: 0;
       }
     }
