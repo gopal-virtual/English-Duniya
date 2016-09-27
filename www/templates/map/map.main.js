@@ -6,7 +6,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
     var sprites = {};
     var temp = {};
     // var desertRegion, regionGroups.tundra, regionGroups.forest;
-    var region = ["desert","tundra","forest","peru"];
+    var regions = ["desert","tundra","forest","peru"];
 
     var groups = {
         "region" : {},
@@ -18,7 +18,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
     var regionBgGroups = {};
     var regionHeight = {
         "desert" : 2845,
-        "tundra" : 2796,
+        "tundra" : 2845,
         "forest" : 2856,
         "peru" : 1872,
         // "region5" : 392,
@@ -43,10 +43,24 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
     }
     var regionPathOffset = {
         "desert" : 450,
-        "tundra" : 450
+        "tundra" : 330
+    }
+    var nodeColors = {
+        "vocabulary" : "blue",
+        "grammar" : "green",
+        "listening" : "darkblue",
+        "reading" : "orange"
     }
     var totalLesson = lessons.length;
-    var renderedRegion = ["desert"];
+    if (localStorage.getItem("regionPage")) {
+        var regionPage = localStorage.getItem("regionPage");
+    }else{
+        localStorage.setItem("regionPage",0);
+        var regionPage = 1;
+    }
+    var renderedRegion = [regions[regionPage]];
+    log.debug("renderedRegionPage",regionPage)
+    log.debug("renderedRegion",renderedRegion)
     // var renderedRegion = [];
     // for (var key in regionNodes) {
     //     if (totalLesson > regionNodes[key]) {
@@ -114,7 +128,14 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
             this.load.spritesheet('node-practice', 'img/icons/practice.png', 66, 68);
             this.load.spritesheet('node-port', 'img/icons/icon-port.png',113,132);
 
-            this.load.image('node', 'img/icons/icon-node.png');
+            this.load.spritesheet('node-blue-video', 'img/assets/button-blue-video.png',88,91);
+            this.load.spritesheet('node-orange-video', 'img/assets/button-orange-video.png',88,91);
+            this.load.spritesheet('node-green-video', 'img/assets/button-green-video.png',88,91);
+            this.load.spritesheet('node-darkblue-video', 'img/assets/button-darkblue-video.png',88,91);
+            this.load.spritesheet('node-blue-practice', 'img/assets/button-blue-practice.png',88,91);
+            this.load.spritesheet('node-orange-practice', 'img/assets/button-orange-practice.png',88,91);
+            this.load.spritesheet('node-green-practice', 'img/assets/button-green-practice.png',88,91);
+            this.load.spritesheet('node-darkblue-practice', 'img/assets/button-darkblue-practice.png',88,91);
             this.load.image('node-litmus', 'img/icons/icon-litmus-node.png');
             this.load.image('node-vocabulary', 'img/icons/icon-vocabulary-node.png');
             this.load.image('node-listening', 'img/icons/icon-listening-node.png');
@@ -664,25 +685,39 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
 
 
 
-            function renderNodesByOne(){
+            function renderNodesByOne(region){
                 log.debug('node index', last_node_index, first_node_index)
                 points.tempX = points.tempX.reverse();
                 points.tempY = points.tempY.reverse();
-
-
+                var first_node_index = 0, last_node_index = 0;
+                for (var i = 0; i <= regionPage; i++) {
+                    log.debug("This ia")
+                    if (i==0) {
+                        first_node_index = 0;
+                    }else {
+                        first_node_index += regionNodes[regions[i-1]];
+                    }
+                    last_node_index += regionNodes[regions[i]];
+                }
+                log.debug("firstnodeindex",first_node_index);
+                log.debug("lastnodeindex",last_node_index);
                 // port node
                 var port_back = game.add.button(game.world.centerX + 50, game.world.height - 200, 'node-port', function(){
-                    if((first_node_index - 5) > 0){
-                        var end_index = first_node_index - 1;
-                        var start_index = end_index - 5;
-                        scope.$emit('prevRegion', start_index, end_index);
+                    log.debug("HELLO")
+                    if(regionPage > 0){
+                    log.debug("HELLO2")
+                        // var end_index = first_node_index - 1;
+                        // var start_index = end_index - 5;
+                        scope.$emit('pageRegion', regionPage, "prev");
                     }
                 }, this, 0,0,1,0);
                 var port_forward = game.add.button(game.world.centerX + 50, game.world.height - 500, 'node-port', function(){
-                    if(last_node_index + 1 < lessons.length){
-                        var start_index = last_node_index + 1;
-                        var end_index = start_index + 5;
-                        scope.$emit('nextRegion', start_index, end_index);
+                    log.debug("HELLO")
+                    if(regionPage < 3){
+                        // var start_index = last_node_index + 1;
+                    log.debug("HELLO2")
+                        // var end_index = start_index + regionNodes[region];
+                        scope.$emit('pageRegion', regionPage, "next");
                     }
                 }, this, 0,0,1,0);
 
@@ -690,7 +725,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                 port_forward.scale.setTo(0.5)
                 // end : port node
 
-                for (var j = 0, i = last_node_index, distance = 1 / (lessons.length); i >= first_node_index; j += distance, i--) {
+                for (var j = 0, i = last_node_index, distance = 1 / (last_node_index-first_node_index); i >= first_node_index; j += distance, i--) {
                     log.debug("LESSONS",lessons[i])
                     var currentLesson = lessons[i].node;
                     var locked = lessons[i].locked ? '-locked' : '';
@@ -700,7 +735,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                     log.debug('coordinate',posx,posy)
                     // node.scale.setTo(0.5)
                     if(!lessons[i].locked){
-                        var node = game.make.button(posx, posy, 'node' + '-' + lessonutils.resourceType(lessons[i]), false, this, 0,0,1,0);
+                        var node = game.make.button(posx, posy, 'node-' +nodeColors[lessons[i].node.tag.toLowerCase()]+'-'+ lessonutils.resourceType(lessons[i]), false, this, 0,0,1,0);
                         log.debug('current lesson' ,currentLesson);
 
                         !locked && lessons[i + 1] && lessons[i + 1].locked && localStorage.setItem('region',posy);
@@ -746,7 +781,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                         // icon.anchor.setTo(0.5,0.5);
                         // icon.scale.setTo(0.3,0.3);
                         node.anchor.setTo(0.5, 0.5);
-                        // node.scale.setTo(1.8, 1.8);
+                        node.scale.setTo(0.8, 0.8);
                         // add stars
                         groups.nonRegion.nodes.add(node);
 
@@ -1062,7 +1097,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                 fetchMapRequest.then(function(){
                     scope.$emit('removeLoader');
                     renderNodePath(renderedRegion,points);
-                    renderNodesByOne();
+                    renderNodesByOne(renderedRegion);
 
 
 

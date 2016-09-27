@@ -115,14 +115,31 @@
     mapCtrl.first_node_index = parseInt(localStorage.first_node_index) || 0;
     mapCtrl.last_node_index = parseInt(localStorage.last_node_index) || 20;
 
-    $scope.$on('prevRegion', mapCtrl.setLessonRange )
-    $scope.$on('nextRegion', mapCtrl.setLessonRange )
+    $scope.$on('pageRegion', mapCtrl.setLessonRange )
+    // $scope.$on('nextRegion', mapCtrl.setLessonRange )
 
-    function setLessonRange(event, start_index, end_index){
-        localStorage.setItem('first_node_index', start_index)
-        localStorage.setItem('last_node_index', end_index)
+    function setLessonRange(event, regionPage, action){
+        // if (regionPage > 0 && regionPage < 3) {
+          
+          if (action=="next") {
+            if (regionPage < 3) {
+              localStorage.setItem('regionPage',parseInt(regionPage)+1);
+            }else{
+              localStorage.setItem('regionPage',parseInt(regionPage));
+            }
+          }else if (action=="prev") {
+            if (regionPage > 0) {
+              localStorage.setItem('regionPage',parseInt(regionPage)-1);
+            }else{
+              localStorage.setItem('regionPage',parseInt(regionPage));
+            }
+          }
+          
+        // }
+        
+        // localStorage.setItem('last_node_index', end_index)
         window.location.reload()
-        $log.debug(start_index, end_index)
+        // $log.debug(start_index, end_index)
     }
     // end : port node
 
