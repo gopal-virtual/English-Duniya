@@ -30,8 +30,8 @@
       setMLDqJSON: setMLDqJSON(),
       setMLKmapsJSON: setMLKmapsJSON(),
       setMapping: setMapping(),
-    //   dqQuiz: [{"0":{"sr":"54ada475-ce87-411b-a075-60572a36a111","answered":"right","skill":"vocabulary","level":0},"1":{"sr":"4eb50a81-bbe8-49c4-8efb-e284008d5f7f","answered":"NA","skill":"vocabulary","level":1},"2":{"sr":"e7c18a27-457f-422e-975b-b28ddd62fb87","answered":"wrong","skill":"vocabulary","level":2},"3":{"sr":"6d116141-c026-408d-8320-4daf805887a9","answered":"NA","skill":"vocabulary","level":3}},{"0":{"sr":"111f3f9f-0726-4fe2-9f09-c897ba162b53","answered":"right","skill":"reading","level":0},"1":{"sr":"b06d642c-fe00-4ac0-ba05-c13617574b2b","answered":"NA","skill":"reading","level":1},"2":{"sr":"06a0fdc5-0ffd-416f-ab37-fe9fddecfda1","answered":"wrong","skill":"reading","level":2},"-1":{"sr":"b89fc070-d415-4949-854d-591bcaf4f8ab","answered":"NA","skill":"reading","level":0}},{"0":{"sr":"bf7648c4-4f20-4c91-aa7a-a412883317d7","answered":"wrong","skill":"listening","level":0},"1":{"sr":"f76a0a14-023c-4dad-a48c-580ee6e14af0","answered":"NA","skill":"listening","level":1},"2":{"sr":"b7ac6b9a-5423-41b9-8cfb-a4a9efa94ecc","answered":"NA","skill":"listening","level":2},"3":{"sr":"07fddf47-c997-478a-99ce-3a6d20c0dc04","answered":"NA","skill":"listening","level":3}}]
-        dqQuiz : []
+      // dqQuiz: [{"0":{"sr":"54ada475-ce87-411b-a075-60572a36a111","answered":"right","skill":"vocabulary","level":0},"1":{"sr":"4eb50a81-bbe8-49c4-8efb-e284008d5f7f","answered":"NA","skill":"vocabulary","level":1},"2":{"sr":"e7c18a27-457f-422e-975b-b28ddd62fb87","answered":"wrong","skill":"vocabulary","level":2},"3":{"sr":"6d116141-c026-408d-8320-4daf805887a9","answered":"NA","skill":"vocabulary","level":3}},{"0":{"sr":"111f3f9f-0726-4fe2-9f09-c897ba162b53","answered":"right","skill":"reading","level":0},"1":{"sr":"b06d642c-fe00-4ac0-ba05-c13617574b2b","answered":"NA","skill":"reading","level":1},"2":{"sr":"06a0fdc5-0ffd-416f-ab37-fe9fddecfda1","answered":"wrong","skill":"reading","level":2},"-1":{"sr":"b89fc070-d415-4949-854d-591bcaf4f8ab","answered":"NA","skill":"reading","level":0}},{"0":{"sr":"bf7648c4-4f20-4c91-aa7a-a412883317d7","answered":"wrong","skill":"listening","level":0},"1":{"sr":"f76a0a14-023c-4dad-a48c-580ee6e14af0","answered":"NA","skill":"listening","level":1},"2":{"sr":"b7ac6b9a-5423-41b9-8cfb-a4a9efa94ecc","answered":"NA","skill":"listening","level":2},"3":{"sr":"07fddf47-c997-478a-99ce-3a6d20c0dc04","answered":"NA","skill":"listening","level":3}}]
+      dqQuiz : []
     };
 
     // function setMLDqJSON(){
@@ -147,15 +147,11 @@
 
     function runDiagnostic(quiz, studentName) {
       var recommendations = ml.getRecommendationFromDiagnosticTest(quiz, studentName);
-      ;
 
       var insufficientSkillSrs = ml.checkIfInsufficientSrs(recommendations);
-      ;
 
-      ;
 
       if (insufficientSkillSrs.length > 0) {
-        ;
 
         for (var i = 0; i < insufficientSkillSrs.length; i++) {
           var insufficientSkill = insufficientSkillSrs[i];
@@ -166,7 +162,6 @@
             recommendations[insufficientSkill] = ml.pushIfAbsent(recommendations[insufficientSkill], lastResortRecommendations); // to add all the lastResortRecommendations
           }
         }
-        ;
       }
 
       var rankedUniqueRecommendations = {};
@@ -176,7 +171,6 @@
         }, undefined, 1);
       }
 
-      ;
 
       var recommendationsWithPrereqs = {};
 
@@ -291,7 +285,6 @@
         levelArray.push(parseInt(level));
       }
       levelArray.sort();
-      ;
       // var level_one = -1*parseInt(levelArray[0]);
 
       if (questionSet["0"]["answered"] == "wrong") {
@@ -319,11 +312,8 @@
         // }
 
         if (pushSr == null) {
-          ;
           if (minWrong == null) {
-            ;
             if (questionSet["-1"] != undefined) {
-              ;
               pushSr = questionSet["-1"]["sr"];
               // levelPushSr = -1;
               levelPushSr = questionSet["-1"]["level"];
@@ -335,16 +325,13 @@
               skillPushSr = questionSet["0"]["skill"];
             }
           } else {
-            ;
             var index = minWrong - 1;
             if (questionSet[String(index)] != undefined) {
-              ;
               pushSr = questionSet[String(index)]["sr"];
               // levelPushSr = parseInt(index);
               levelPushSr = questionSet[String(index)]["level"];
               skillPushSr = questionSet[String(index)]["skill"];
             } else {
-              ;
               pushSr = questionSet[String(Math.min.apply(null, levelArray))]["sr"];
               // levelPushSr = parseInt(Math.min.apply(null, levelArray));
               levelPushSr = questionSet[String(Math.min.apply(null, levelArray))]["level"];
@@ -415,9 +402,6 @@
         return levelsOfSuggestedSrs;
       }
 
-      ;
-      ;
-
       return suggestedSrs;
     }
 
@@ -485,8 +469,6 @@
         }
       }
 
-      ;
-
       // var suggestedSrs = [];
       var skillBasedSuggestedSrs = {};
       for (var i = 0; i < suggestedRootSrs.length; i++) {
@@ -498,16 +480,12 @@
         skillBasedSuggestedSrs[suggestedRootSrs[i].skill] = ml.pushIfAbsent(skillBasedSuggestedSrs[suggestedRootSrs[i].skill], prereqSrs);
       }
 
-      ;
-
       var insufficientSkillSrs = ml.checkIfInsufficientSrs(skillBasedSuggestedSrs);
 
       if (insufficientSkillSrs.length == 0) {
-        ;
         return skillBasedSuggestedSrs;
       }
 
-      ;
       for (var i = 0; i < insufficientSkillSrs.length; i++) {
         var rootSuggestedSrs = skillBasedSuggestedSrs[insufficientSkillSrs[i]];
         var prereqsRecommendations = ml.ifInsufficientSrs(rootSuggestedSrs, studentName);
@@ -524,7 +502,6 @@
       if (uniqueSuggestedSrs == undefined || uniqueSuggestedSrs.length == 0) {
         return [];
       }
-      ;
       var prereqList = [];
       for (var i = 0; i < uniqueSuggestedSrs.length; i++) {
         // hard code
@@ -538,7 +515,6 @@
       var rankedPrereqList = ml.rankPlaylist({
         0: prereqList
       }, undefined, 1);
-      ;
 
       // change to - check if student exist in db
       var studentData;
@@ -555,7 +531,6 @@
       }
 
       if (studentData == undefined) {
-        ;
         var recommendations = [];
         // return rankedPrereqList.slice(0, ml.MAX - uniqueSuggestedSrs.length).concat(uniqueSuggestedSrs);
         return rankedPrereqList;
@@ -575,8 +550,6 @@
       }
 
       // recommendations = recommendations.concat(uniqueSuggestedSrs);
-
-      ;
       return recommendations;
     }
 
@@ -600,7 +573,6 @@
     }
 
     function lastResort(studentName, insufficientSkill) {
-      ;
       // StudentLessonData has the mapping of student to lessons result
       var studentData;
 
@@ -687,108 +659,107 @@
         }
       }
 
-      ;
-
       return suggestedSrs;
     }
 
     function getNextQSr(test,diagLitmusMapping) {
       try{
-        ;
 
         if (test.length > 0) {
           if (test[0]["count"] >= 2) {
-            ;
             test = displaySuggestedSr(test, diagLitmusMapping);
             var newTest = test.slice(1, test.length);
             return getNextQSr(newTest, diagLitmusMapping);
           }
           if (test[0]["previousAnswer"] == null) {
             if (diagLitmusMapping[test[0]["skill"]][test[0]["level"]] != undefined) {
-              ;
               var q_set = diagLitmusMapping[test[0]["skill"]][test[0]["level"]]["questions"];
               if(q_set.length == 0){
-                  
+
                   var newTest = test.slice(1, test.length);
                   return getNextQSr(newTest, diagLitmusMapping);
               }
-              
-              return ({
+
+              var suggestion = {
                 "skill": test[0]["skill"],
                 "qSr": q_set[Math.floor(Math.random() * (q_set.length)) + 0],
                 "test": test,
                 "actualLevel": test[0]["level"],
                 "microstandard": diagLitmusMapping[test[0]["skill"]][test[0]["level"]]["microstandard"]
-              });
+              };
+
+              $log.debug('suggestion from ml 1', suggestion);
+              return (suggestion);
             } else {
-              ;
               test = displaySuggestedSr(test, diagLitmusMapping);
               var newTest = test.slice(1, test.length);
               return getNextQSr(newTest, diagLitmusMapping);
             }
           } else if (test[0]["previousAnswer"] == 0) {
             if (diagLitmusMapping[test[0]["skill"]][test[0]["level"] - 2] != undefined) {
-              ;
               var q_set = diagLitmusMapping[test[0]["skill"]][test[0]["level"] - 2]["questions"];
               if(q_set.length == 0){
-                  
+
                   var newTest = test.slice(1, test.length);
                   return getNextQSr(newTest, diagLitmusMapping);
               }
-              
+
               var intermediate_q_set = diagLitmusMapping[test[0]["skill"]][test[0]["level"] - 1]["questions"];
               test[0]["qSet"][test[0]["level"] - 1] = {
                 "qSr": intermediate_q_set[Math.floor(Math.random() * (intermediate_q_set.length)) + 0],
                 "answered": "NA"
               };
-              return ({
+
+              var suggestion = {
                 "skill": test[0]["skill"],
                 "qSr": q_set[Math.floor(Math.random() * (q_set.length)) + 0],
                 "test": test,
                 "actualLevel": test[0]["level"] - 2,
                 "microstandard": diagLitmusMapping[test[0]["skill"]][test[0]["level"] - 2]["microstandard"]
-              });
+              };
+
+              $log.debug('suggestion from ml 2', suggestion);
+              return (suggestion);
             } else {
-              ;
               test = displaySuggestedSr(test, diagLitmusMapping);
               var newTest = test.slice(1, test.length);
               return getNextQSr(newTest, diagLitmusMapping);
             }
           } else if (test[0]["previousAnswer"] == 1) {
             if (diagLitmusMapping[test[0]["skill"]][test[0]["level"] + 2] != undefined) {
-              ;
               var q_set = diagLitmusMapping[test[0]["skill"]][test[0]["level"] + 2]["questions"];
               if(q_set.length == 0){
-                  
+
                   var newTest = test.slice(1, test.length);
                   return getNextQSr(newTest, diagLitmusMapping);
               }
-              
+
               var intermediate_q_set = diagLitmusMapping[test[0]["skill"]][test[0]["level"] + 1]["questions"];
               test[0]["qSet"][test[0]["level"] + 1] = {
                 "qSr": intermediate_q_set[Math.floor(Math.random() * (intermediate_q_set.length)) + 0],
                 "answered": "NA"
               };
-              return ({
+
+              var suggestion = {
                 "skill": test[0]["skill"],
                 "qSr": q_set[Math.floor(Math.random() * (q_set.length)) + 0],
                 "test": test,
                 "actualLevel": test[0]["level"] + 2,
                 "microstandard": diagLitmusMapping[test[0]["skill"]][test[0]["level"] + 2]["microstandard"]
-              });
+              };
+
+              $log.debug('suggestion from ml', suggestion);
+              return (suggestion);
             } else {
-              ;
               test = displaySuggestedSr(test, diagLitmusMapping);
               var newTest = test.slice(1, test.length);
               return getNextQSr(newTest, diagLitmusMapping);
             }
           }
         } else {
-          ;
           return (null);
         }
       }catch(err){
-        ;
         var newTest = test.slice(1, test.length);
         return getNextQSr(newTest, diagLitmusMapping);
       }
@@ -796,10 +767,9 @@
 
     function displaySuggestedSr(test, diagLitmusMapping) {
       var level_one = test[0]["level"];
-      ;
       var test_one = test[0];
       var oldqSet = test_one["qSet"];
-      ;
+
       var qSet = {};
       for (var i in oldqSet) {
         qSet[i - level_one] = {
@@ -823,13 +793,15 @@
         }
         // array.push(last);
         if (qSet[last] == undefined) {
-          var srGroup = diagLitmusMapping[test_one["skill"]][last + level_one]["questions"];
-          newQSet[last] = {
-            "sr": srGroup[Math.floor(Math.random() * (srGroup.length)) + 0],
-            "answered": "NA",
-            "skill": test[0]["skill"],
-            "level": last + level_one
-          };
+          if (diagLitmusMapping[test_one["skill"]][last + level_one] != undefined){
+            var srGroup = diagLitmusMapping[test_one["skill"]][last + level_one]["questions"];
+            newQSet[last] = {
+              "sr": srGroup[Math.floor(Math.random() * (srGroup.length)) + 0],
+              "answered": "NA",
+              "skill": test[0]["skill"],
+              "level": last + level_one
+            };
+          }
         } else {
           newQSet[last] = {
             "sr": qSet[last]["sr"],

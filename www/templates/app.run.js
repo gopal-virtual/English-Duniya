@@ -10,7 +10,7 @@
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
     //$http.defaults.headers.common['Access-Control-Request-Headers'] = 'accept, auth-token, content-type, xsrfcookiename';
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
-
+    $log.debug(toState,toParams,'PARAMS')
         //if not authenticated, redirect to login page
       // if (!Auth.isAuthorised() && toState.name != 'auth.signin' && toState.name != 'auth.signup' && toState.name != 'auth.forgot') {
       //   ;
@@ -95,8 +95,8 @@
       }
 
       if (toState.name == 'quiz.questions' && !toParams.quiz) {
-        event.preventDefault();
-        $state.go('map.navigate');
+        // event.preventDefault();
+        // $state.go('map.navigate');
       }
       if (toState.name == 'quiz.start' && !toParams.quiz) {
         event.preventDefault();

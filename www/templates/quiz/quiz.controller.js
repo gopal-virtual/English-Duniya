@@ -30,7 +30,8 @@
                             '$ionicPlatform',
                             'nzTour',
                             'analytics',
-                            'User'
+                            'User',
+                            'content'
                                 ];
 
   function QuizController(
@@ -59,12 +60,14 @@
                             $ionicPlatform,
                             nzTour,
                             analytics,
-                            User
+                            User,
+                            content
                                     ) {
 
     var quizCtrl = this;
     //bind quiz resolved to controller
     quizCtrl.quiz = quiz;
+    $log.debug("LITMUS IS",quiz);
     ;
     //report
     quizCtrl.report = {};
@@ -145,6 +148,7 @@
     quizCtrl.isAssessment = ($stateParams.type == 'assessment');
     // quizCtrl.tourFlag = true;
 
+    quizCtrl.disable_submit = false;
     $scope.demo = {
       'tourNextStep': tourNextStep,
       'tourFlag': localStorage.getItem('tourFlag')
@@ -388,13 +392,17 @@
 
     function nextQuestion(shouldScroll) {
       if (quizCtrl.currentIndex < quizCtrl.quiz.objects.length - 1) {
+        $log.debug("nQ")
         if (shouldScroll) {
           quizCtrl.inViewFlag = false;
           var id = 'question-' + (quizCtrl.getCurrentIndex() + 1);
           var position = $('#' + id).position();
           $ionicScrollDelegate.scrollBy(position.left, position.top, true);
         }
+        $log.debug("nQ",quizCtrl.currentIndex)
+
         ++quizCtrl.currentIndex;
+        $log.debug("nQ",quizCtrl.currentIndex)
 
       }
       return true;
@@ -467,12 +475,37 @@
     }
 
     function setSuggestion() {
-      quizCtrl.quiz.suggestion = ml.getNextQSr(quizCtrl.quiz.suggestion.test, ml.mapping);
-      if (quizCtrl.quiz.suggestion) {
-        quizCtrl.quiz.objects.push(ml.dqJSON[quizCtrl.quiz.suggestion.qSr]);
+      $log.debug("here")
+      quizCtrl.disable_submit = true;
+      var temp_quiz = angular.copy(quizCtrl.quiz);
+      temp_quiz.suggestion = ml.getNextQSr(quizCtrl.quiz.suggestion.test, ml.mapping);
+      if (temp_quiz.suggestion) {
+        $log.debug("here1.1",ml.dqJSON[temp_quiz.suggestion.qSr]);
+
+        temp_quiz.objects.push(ml.dqJSON[temp_quiz.suggestion.qSr]);
+        content.getAssessment(temp_quiz).then(function(response){
+          response.suggestion = temp_quiz.suggestion;
+          quizCtrl.quiz = response;
+
+          $log.debug("here1",quizCtrl.quiz,quizCtrl.getCurrentIndex())
+          // quizCtrl.nextQuestion()
+          $ionicSlideBoxDelegate.update();
+          quizCtrl.report.attempts[quizCtrl.quiz.objects[quizCtrl.currentIndex+1].node.id] = [];
+
+          $timeout(function() {
+            quizCtrl.currentIndex++;
+            $ionicSlideBoxDelegate.next();
+            quizCtrl.disable_submit = false;
+          }, 300);
+          $log.debug("HERE")
+        });
       } else {
+        $log.debug("here1.2");
         quizCtrl.endQuiz();
       }
+
+
+
       return true;
     }
 
@@ -692,7 +725,11 @@
         noBackdrop: false,
         hideOnStateChange: true
       });
-      $state.go('map.navigate', {});
+      if($stateParams.type == 'litmus'){
+        $state.go('litmus_result',{})
+      }else{
+        $state.go('map.navigate', {});
+      }
     }
 
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal-rope' + CONSTANT.VIEW, {
