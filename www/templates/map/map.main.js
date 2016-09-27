@@ -681,9 +681,9 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                 port_back.scale.setTo(0.5)
                 port_forward.scale.setTo(0.5)
                 // end : port node
-
+                log.debug('index of ', last_node_index, first_node_index)
                 for (var j = 0, i = last_node_index, distance = 1 / (lessons.length); i >= first_node_index; j += distance, i--) {
-
+                    
                     var currentLesson = lessons[i].node;
                     var locked = lessons[i].locked ? '-locked' : '';
                     var type = lessonType(currentLesson, i) == '' ? '' : '-' + lessonType(currentLesson, i);

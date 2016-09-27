@@ -121,7 +121,7 @@
     //audio
     quizCtrl.playAudio = playAudio;
     quizCtrl.stopAudio = stopAudio;
-    quizCtrl.starCount = starCount;
+    // quizCtrl.starCount = starCount;
     quizCtrl.highlightSoundIcon = highlightSoundIcon;
     quizCtrl.playInstruction = playInstruction;
     quizCtrl.calculateStars = calculateStars;
@@ -191,10 +191,10 @@
       }, 1000);
     }
 
-    function starCount(index) {
-      var count = quizCtrl.summary.stars - index;
-      return count > 0 ? count : 0;
-    }
+    // function starCount(index) {
+    //   var count = quizCtrl.summary.stars - index;
+    //   return count > 0 ? count : 0;
+    // }
 
     function playStarSound() {
       if (quizCtrl.summary.stars) {
