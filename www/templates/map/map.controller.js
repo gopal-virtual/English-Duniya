@@ -165,7 +165,7 @@
       if (currentPos)
         currentPos.lessonType = node.tag;
 
-      if (node.content_type_name == 'litmus') {
+      if (1) {
         $state.go('quiz.questions', {
           id: node.id,
           type: 'litmus'
@@ -436,11 +436,11 @@
 
     function updateProfile(profileData){
       //If conflict arises. Don't delete this
-      
-      // 
-      // 
+
+      //
+      //
       if (profileData.grade != JSON.parse(localStorage.profile).data.profile.grade) {
-        
+
         $ionicLoading.show({
           hideOnStateChange: true
         });
@@ -453,7 +453,7 @@
       }else{
         $scope.settingsModal.hide();
       }
-      
+
       //
       // $rootScope.$broadcast('reloadMap');
       // $state.go('map.navigate')

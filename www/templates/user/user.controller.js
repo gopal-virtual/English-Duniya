@@ -134,28 +134,27 @@
     }
 
     function createProfile(formData) {
-        
+
       $ionicLoading.show({
         noBackdrop: false,
         hideOnStateChange: true
       });
       userCtrl.splitName();
       delete formData['name'];
-      
+
 
       User.profile.add(formData)
         .then(function (response) {
-          
+
 
           User.setActiveProfileSync(response);
-          
+
           return content.createLessonDBIfNotExists()
         })
         .then(function () {
-          
-
           localStorage.setItem('demo_flag', 1);
-          $state.go('quiz.diagnosis', {});
+          $log.debug("CHanging state to map");
+          $state.go('map.navigate', {});
         })
         .catch(function (error) {
           userCtrl.showError('Could not make your profile', error || 'Please try again');
