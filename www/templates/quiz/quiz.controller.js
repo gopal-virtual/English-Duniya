@@ -222,11 +222,11 @@
 
         User.skills.update({
           profileId: User.getActiveProfileSync()._id,
-          lessonId: lesson.node.id,
+          lessonId: quiz.parent,
           id: quiz.node.id,
           score: summary.score.marks,
           totalScore: quizCtrl.quiz.node.type.score,
-          skill: lesson.node.tag
+          skill: quiz.node.tag
         })
         .then(function() {
           return data.getQuizScore({
@@ -800,9 +800,9 @@
     };
 
     if($state.is('quiz.questions') && User.demo.isShown(5)){
-      
+
       $timeout(function(){
-        
+
 
         angular.element("#audioplayer")[0].pause();
         angular.element("#audioSource")[0].src = 'sound/demo-quiz-1.mp3';
@@ -811,7 +811,7 @@
         nzTour.start($scope.tour);
         User.demo.setStep(5);
       $timeout(function(){
-        
+
         if(nzTour.current.step === 0){
           tourNextStep();
         }

@@ -13,22 +13,22 @@
         abstract: true,
         resolve: {
           lessons: ['$log','content','User', function($log,content,User) {
-            
 
-            return content.getLessonsList(User.getActiveProfileSync().data.profile.grade).then(function(result){
-              
+
+            return content.getResourceList(User.getActiveProfileSync().data.profile.grade).then(function(result){
+
 
               return result
             })
           }],
           lessonLocked: ['$log','content','extendLesson','User', function($log, content,extendLesson,User) {
-            
 
-            return content.getLessonsList(User.getActiveProfileSync().data.profile.grade).then(function(lessons){
-              
+
+            return content.getResourceList(User.getActiveProfileSync().data.profile.grade).then(function(lessons){
+
 
               return extendLesson.getLesson(lessons,[]).then(function(result){
-                
+
 
                 return result;
               });
@@ -38,10 +38,10 @@
             return [];
         }],
         skills : ['$log','content','User', function($log,content,User){
-          
+
 
           return User.skills.get(User.getActiveProfileSync()._id).then(function(response){
-            
+
 
             return response;
           })
@@ -74,7 +74,7 @@
           if (!lessons) {
             $state.go('map.unauthorised');
           }
-          
+
           // audio.play('background');
         //   if(localStorage.getItem('region')>'3409'){
         //   }

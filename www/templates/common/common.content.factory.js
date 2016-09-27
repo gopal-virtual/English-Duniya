@@ -37,6 +37,7 @@
       createLessonDBIfNotExists: createLessonDBIfNotExists,
       createLessonDBIfNotExistsPatch: createLessonDBIfNotExistsPatch,
       getLessonsList: getLessonsList,
+      getResourceList: getResourceList,
       getAssessment: getAssessment,
       getLesson: getLesson,
       downloadAssessment: downloadAssessment,
@@ -169,7 +170,28 @@
         var lessons = [];
         for (var i = 0; i < data.rows.length; i++) {
           data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key;
-        //   lessons.push(data.rows[i].doc.lesson.node);
+          lessons.push(data.rows[i].doc.lesson.node);
+        }
+        lessons = _.sortBy(lessons, 'key');
+
+        d.resolve(lessons)
+      })
+        .catch(function (error) {
+          d.reject(error)
+        });
+
+      return d.promise;
+    }
+    function getResourceList () {
+      var d = $q.defer();
+      lessonDB.allDocs({
+        include_docs: true
+      }).then(function (data) {
+
+
+        var lessons = [];
+        for (var i = 0; i < data.rows.length; i++) {
+          data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key;
             for (var c = 0; c < data.rows[i].doc.lesson.objects.length; c++) {
                 data.rows[i].doc.lesson.objects[c].node.tag = data.rows[i].doc.lesson.node.tag;
                 $log.debug('resource from db',data.rows[i].doc.lesson.objects[c])
