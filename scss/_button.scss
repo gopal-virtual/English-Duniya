@@ -92,6 +92,34 @@
 .sbtn-next-yellow.activated{
   background-position: 100% 0 !important;
 }
+
+.sbtn-wrong{
+  background: url('../img/assets_svg/button-wrong.svg');
+  // background-size: contain;
+  background-position: 0 0 !important;
+  background-repeat:no-repeat;
+  width: 88px;
+  height: 90px;
+}
+
+
+.sbtn-wrong.activated{
+  background-position: 100% 0 !important;
+}
+
+.sbtn-correct{
+  background: url('../img/assets_svg/button-correct.svg');
+  // background-size: contain;
+  background-position: 0 0 !important;
+  background-repeat:no-repeat;
+  width: 88px;
+  height: 90px;
+}
+
+
+.sbtn-correct.activated{
+  background-position: 100% 0 !important;
+}
 // .sbtn-next-yellow:focus{
 //   background-position: 100% 0 !important;
 // }
