@@ -16,9 +16,12 @@
                 '$timeout',
                 'audio',
                 '$ionicPlatform',
+                '$ionicLoading',
                 'analytics',
                 'User',
-                '$q'
+                '$q',
+                'Utilities',
+                '$state'
        ];
 
   /* @ngInject */
@@ -33,9 +36,12 @@
                 $timeout,
                 audio,
                 $ionicPlatform,
+                $ionicLoading,
                 analytics,
                 User,
-                $q
+                $q,
+                Utilities,
+                $state
            ) {
     var contentCtrl = this;
     $scope.audio = audio;
@@ -47,6 +53,8 @@
     $scope.selectedNode = lessonutils.getLocalLesson();
     contentCtrl.toggleControls = toggleControls;
     contentCtrl.onVideoComplete = onVideoComplete;
+    contentCtrl.utilities = Utilities;
+    contentCtrl.next = next;
     contentCtrl.config = {
       sources: [$stateParams.video],
       autoplay: false,
@@ -69,6 +77,14 @@
   //     }
   // }, 101);
 
+  function next() {
+      $ionicLoading.show({
+          hideOnStateChange: true
+      });
+      $scope.closeResult()
+      $state.go('map.navigate', {});
+  }
+
   function toggleControls(){
       contentCtrl.config.plugins.controls.showControl=!contentCtrl.config.plugins.controls.showControl;
       ;
@@ -84,10 +100,13 @@
   })
 
     function onVideoComplete() {
+        contentCtrl.summary = {
+            stars : 3
+        }
       submitReport()
         $timeout(function() {
           orientation.setPortrait();
-          $scope.nodeMenu.show();
+          $scope.resultMenu.show();
 			analytics.log(
               {
                   name : 'VIDEO',
@@ -171,8 +190,6 @@
     //   }
     }
 
-
-
     $scope.openNodeMenu = function() {
       if (contentCtrl.API.currentState == 'pause') {
         orientation.setPortrait();
@@ -191,6 +208,25 @@
     }).then(function(modal) {
       $scope.nodeMenu = modal;
       $log.debug($scope.selectedNode);
+    });
+    $scope.openResult = function() {
+        if (contentCtrl.API.currentState == 'pause') {
+            orientation.setPortrait();
+            $scope.resultMenu.show();
+        }
+        return true;
+    }
+    $scope.closeResult = function() {
+        $scope.resultMenu.hide();
+        return true;
+    }
+    $ionicModal.fromTemplateUrl(CONSTANT.PATH.COMMON + '/common.modal-result' + CONSTANT.VIEW, {
+      scope: $scope,
+      animation: 'slide-in-down',
+      hardwareBackButtonClose: false
+    }).then(function(modal) {
+      $scope.resultMenu = modal;
+      $log.debug('result menu', $scope.resultMenu);
     });
 
 

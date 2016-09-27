@@ -7,7 +7,7 @@
           <img ng-repeat="star in [1,2,3]" ng-src="img/assets_svg/star-grey.svg">
         </div>
         <div class="col stars position-absolute">
-          <img ng-repeat="star in [1,2,3]" class="animation-zoom-out-{{quizCtrl.starCount($index) ? star : ''}}" style="-webkit-animation-delay: {{$index+1}}s;" ng-src="{{ quizCtrl.starCount($index) ? 'img/assets_svg/star-yellow.svg' : 'img/assets_svg/star-grey.svg'}}">
+          <img ng-repeat="star in [1,2,3]" class="animation-zoom-out-{{quizCtrl.utilities.starCount(quizCtrl.summary.stars, $index) ? star : ''}}" style="-webkit-animation-delay: {{$index+1}}s;" ng-src="{{ quizCtrl.utilities.starCount(quizCtrl.summary.stars, $index) ? 'img/assets_svg/star-yellow.svg' : 'img/assets_svg/star-grey.svg'}}">
         </div>
       </div>
       <div style="padding-top:40px;text-align:center;">
