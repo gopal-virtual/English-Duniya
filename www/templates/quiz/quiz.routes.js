@@ -196,12 +196,13 @@
           }
         }
       })
-      .state('quiz.litmus_result', {
+      .state('litmus_result', {
         url: '/litmus_result',
-        views: {
-          templateUrl: CONSTANT.PATH.QUIZ + '/litmus_summary' + CONSTANT.VIEW,
-          // controller: 'QuizController as quizCtrl'
-        }
+        template: '<h1>Litmus summary</h1><button ui-sref="map.navigate">BAck to map</button>'
+      })
+      .state('litmus_start', {
+        url: '/litmus_start',
+        template: '<h1>Litmus start</h1><button ui-sref=\"map.navigate\">Start</button>'
       })
   }
 })();

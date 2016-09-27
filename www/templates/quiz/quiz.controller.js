@@ -483,27 +483,28 @@
         $log.debug("here1.1",ml.dqJSON[temp_quiz.suggestion.qSr]);
 
         temp_quiz.objects.push(ml.dqJSON[temp_quiz.suggestion.qSr]);
+        content.getAssessment(temp_quiz).then(function(response){
+          response.suggestion = temp_quiz.suggestion;
+          quizCtrl.quiz = response;
+
+          $log.debug("here1",quizCtrl.quiz,quizCtrl.getCurrentIndex())
+          // quizCtrl.nextQuestion()
+          $ionicSlideBoxDelegate.update();
+          quizCtrl.report.attempts[quizCtrl.quiz.objects[quizCtrl.currentIndex+1].node.id] = [];
+
+          $timeout(function() {
+            quizCtrl.currentIndex++;
+            $ionicSlideBoxDelegate.next();
+            quizCtrl.disable_submit = false;
+          }, 300);
+          $log.debug("HERE")
+        });
       } else {
         $log.debug("here1.2");
         quizCtrl.endQuiz();
       }
 
-      content.getAssessment(temp_quiz).then(function(response){
-        response.suggestion = temp_quiz.suggestion;
-        quizCtrl.quiz = response;
 
-        $log.debug("here1",quizCtrl.quiz,quizCtrl.getCurrentIndex())
-        // quizCtrl.nextQuestion()
-        $ionicSlideBoxDelegate.update();
-        quizCtrl.report.attempts[quizCtrl.quiz.objects[quizCtrl.currentIndex+1].node.id] = [];
-
-        $timeout(function() {
-          quizCtrl.currentIndex++;
-          $ionicSlideBoxDelegate.next();
-          quizCtrl.disable_submit = false;
-        }, 300);
-        $log.debug("HERE")
-      });
 
       return true;
     }
@@ -725,7 +726,7 @@
         hideOnStateChange: true
       });
       if($stateParams.type == 'litmus'){
-        $state.go('quiz.litmus_result',{})
+        $state.go('litmus_result',{})
       }else{
         $state.go('map.navigate', {});
       }
