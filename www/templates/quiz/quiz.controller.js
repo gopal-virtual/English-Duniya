@@ -30,7 +30,8 @@
                             '$ionicPlatform',
                             'nzTour',
                             'analytics',
-                            'User'
+                            'User',
+                            'content'
                                 ];
 
   function QuizController(
@@ -59,12 +60,14 @@
                             $ionicPlatform,
                             nzTour,
                             analytics,
-                            User
+                            User,
+                            content
                                     ) {
 
     var quizCtrl = this;
     //bind quiz resolved to controller
     quizCtrl.quiz = quiz;
+    $log.debug("LITMUS IS",quiz);
     ;
     //report
     quizCtrl.report = {};
@@ -388,13 +391,17 @@
 
     function nextQuestion(shouldScroll) {
       if (quizCtrl.currentIndex < quizCtrl.quiz.objects.length - 1) {
+        $log.debug("nQ")
         if (shouldScroll) {
           quizCtrl.inViewFlag = false;
           var id = 'question-' + (quizCtrl.getCurrentIndex() + 1);
           var position = $('#' + id).position();
           $ionicScrollDelegate.scrollBy(position.left, position.top, true);
         }
+        $log.debug("nQ",quizCtrl.currentIndex)
+
         ++quizCtrl.currentIndex;
+        $log.debug("nQ",quizCtrl.currentIndex)
 
       }
       return true;
@@ -467,12 +474,28 @@
     }
 
     function setSuggestion() {
-      quizCtrl.quiz.suggestion = ml.getNextQSr(quizCtrl.quiz.suggestion.test, ml.mapping);
-      if (quizCtrl.quiz.suggestion) {
-        quizCtrl.quiz.objects.push(ml.dqJSON[quizCtrl.quiz.suggestion.qSr]);
+      $log.debug("here")
+      var temp_quiz = angular.copy(quizCtrl.quiz);
+      var temp_suggestion = ml.getNextQSr(quizCtrl.quiz.suggestion.test, ml.mapping);
+      if (temp_suggestion) {
+        $log.debug("here1.1")
+
+        temp_quiz.objects.push(ml.dqJSON[quizCtrl.quiz.suggestion.qSr]);
       } else {
+        $log.debug("here1.2")
         quizCtrl.endQuiz();
       }
+      content.getAssessment(temp_quiz).then(function(response){
+        quizCtrl.quiz = response;
+        $log.debug("here1",quizCtrl.quiz,quizCtrl.getCurrentIndex())
+        // quizCtrl.nextQuestion()
+        $ionicSlideBoxDelegate.update();
+        $timeout(function() {
+          quizCtrl.nextQuestion()
+        }, 300)
+        $log.debug("HERE")
+      });
+
       return true;
     }
 
