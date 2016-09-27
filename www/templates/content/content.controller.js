@@ -87,7 +87,7 @@
       submitReport()
         $timeout(function() {
           orientation.setPortrait();
-          // $scope.nodeMenu.show();
+          $scope.nodeMenu.show();
 			analytics.log(
               {
                   name : 'VIDEO',
