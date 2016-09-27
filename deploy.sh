@@ -4,6 +4,7 @@ BUILD_PLATFORM='android'
 echo "Git variables values are "
 ENV=dev
 
+
 node bundleContent.js all
 
 gulp --env=$ENV --app_type=bundled --app_version=0.2
