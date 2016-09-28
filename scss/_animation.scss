@@ -188,6 +188,7 @@
 .animation-zoom-in {
   -webkit-animation-name: zoom-in;
   -webkit-transform-origin: 50% 50%;
+  -webkit-animation-duration: 0.5s;
 }
 @keyframes zoom-in {
   0% {
@@ -355,4 +356,34 @@
 
 .anim-shrink{
   animation: shrink 0.4s cubic-bezier(.61,.09,.48,1) 1 forwards;
+}
+
+@include keyframes(bang) {
+  from {
+    @include transform( translate3d(0,0,0) );
+    opacity: 1;
+  }
+}
+.hoverme {
+  position: relative;
+  i {
+    z-index: 3;
+    position: absolute;
+    display: block;
+    left: 50%;
+    top: 50%;
+    width: 8px;
+    height: 11px;
+    background: red;
+    opacity: 0;
+  }
+
+  @for $i from 1 through 50 {
+    i:nth-of-type(#{$i}) {
+      @include transform( translate3d(random(500) - 250 + px,random(500) - 250 + px,0) rotate(random(360) + deg) );
+      background: hsla(random(360),100%,50%,1);
+      @include animation(bang 1200ms ease-out forwards);
+      opacity: 0;
+    }
+  }
 }
