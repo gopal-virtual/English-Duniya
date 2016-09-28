@@ -139,7 +139,7 @@
       }
 
       if(CONSTANT.ANALYTICS){
-        $log.debug("Logging",action,data,profile_id,user_id);
+        
 
         queue.push('activity-log', post_param);
       }

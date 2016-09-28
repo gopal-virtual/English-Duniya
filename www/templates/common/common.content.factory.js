@@ -194,7 +194,7 @@
           data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key;
             for (var c = 0; c < data.rows[i].doc.lesson.objects.length; c++) {
                 data.rows[i].doc.lesson.objects[c].node.tag = data.rows[i].doc.lesson.node.tag;
-                $log.debug('resource from db',data.rows[i].doc.lesson.objects[c])
+
                 lessons.push(data.rows[i].doc.lesson.objects[c])
             }
         }

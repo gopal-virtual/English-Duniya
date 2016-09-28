@@ -26,7 +26,7 @@
           quiz: ['$stateParams', 'Rest', '$log', 'content', 'ml', '$q', '$http', 'User', 'data', function ($stateParams, Rest, $log, content, ml, $q, $http, User, data) {
             if ($stateParams.type == 'litmus') {
               var all_promises = [];
-              $log.debug("ML1",ml)
+              
               if (ml.kmapsJSON == undefined) {
                 var promise = ml.setMLKmapsJSON;
                 all_promises.push(promise);
@@ -53,24 +53,24 @@
                 "objects": []
               };
               return $q.all(all_promises).then(function () {
-                $log.debug("ML2",ml);
+                
 
-                $log.debug("CHECK THIS",User.getActiveProfileSync().data.profile.grade,data.getTestParams(User.getActiveProfileSync().data.profile.grade))
+                
 
                 var suggestion = ml.getNextQSr(data.getTestParams(User.getActiveProfileSync().data.profile.grade), ml.mapping);
-                $log.debug("SUGGESTION",suggestion)
+                
 
                 var question = ml.dqJSON[suggestion.qSr];
-                $log.debug("Question",question)
+                
                 question && litmus.objects.push(question);
                 litmus['suggestion'] = suggestion;
-                $log.debug("Litmus",litmus)
+                
                 return content.getAssessment(litmus);
                 // return litmus;
               })
             }
             else {
-                $log.debug('trying to resolve quiz', $stateParams.quiz.objects.length);
+                
 
                 // ;
                 // $stateParams.quiz.objects[0].node.id == 'demo' ? $stateParams.quiz.objects.shift(data.demo_question) :false;
@@ -198,7 +198,7 @@
       })
       .state('litmus_result', {
         url: '/litmus_result',
-        template: '<h1>Litmus summary</h1><button ui-sref="map.navigate">BAck to map</button>'
+        templateUrl: CONSTANT.PATH.QUIZ + '/quiz.litmus_summary' + CONSTANT.VIEW
       })
       .state('litmus_start', {
         url: '/litmus_start',

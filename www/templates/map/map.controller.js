@@ -139,7 +139,7 @@
 
         // localStorage.setItem('last_node_index', end_index)
         window.location.reload()
-        // $log.debug(start_index, end_index)
+        // 
     }
     // end : port node
 
@@ -220,7 +220,7 @@
     //     $scope.lessonutils.getLesson(node.id, $scope).then(
       //
     //       function(response) {
-    //         $log.debug('lesson opened', response)
+    //         
       //
     //         analytics.log(
     //               {

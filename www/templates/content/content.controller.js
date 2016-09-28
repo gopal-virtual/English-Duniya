@@ -208,7 +208,7 @@
       hardwareBackButtonClose: false
     }).then(function(modal) {
       $scope.nodeMenu = modal;
-      $log.debug($scope.selectedNode);
+      
     });
     $scope.openResult = function() {
         if (contentCtrl.API.currentState == 'pause') {
@@ -227,7 +227,7 @@
       hardwareBackButtonClose: false
     }).then(function(modal) {
       $scope.resultMenu = modal;
-      $log.debug('result menu', $scope.resultMenu);
+      
     });
 
 
