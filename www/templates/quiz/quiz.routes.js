@@ -202,7 +202,7 @@
       })
       .state('litmus_start', {
         url: '/litmus_start',
-        template: '<h1>Litmus start</h1><button ui-sref=\"map.navigate\">Start</button>'
+        templateUrl: CONSTANT.PATH.QUIZ + '/quiz.litmus_start' + CONSTANT.VIEW
       })
   }
 })();
