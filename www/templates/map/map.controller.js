@@ -84,7 +84,8 @@
     $scope.activatedLesson = $stateParams.activatedLesson;
     $scope.progress = localStorage.getItem('progress');
     var mapCtrl = this;
-    var lessonList = CONSTANT.LOCK ? lessonLocked : lessons;
+    var lessonList = CONSTANT.LOCK ? lessonLocked.lockedLesson : lessons;
+    mapCtrl.total_star = CONSTANT.LOCK ? lessonLocked.total_star : 0;
     // $state.current.data && lessonList.unshift($state.current.data.litmus);
     mapCtrl.User = User;
     mapCtrl.authFactory = Auth;
@@ -117,10 +118,9 @@
 
     $scope.$on('pageRegion', mapCtrl.setLessonRange )
     // $scope.$on('nextRegion', mapCtrl.setLessonRange )
-
     function setLessonRange(event, regionPage, action){
         // if (regionPage > 0 && regionPage < 3) {
-          
+
           if (action=="next") {
             if (regionPage < 3) {
               localStorage.setItem('regionPage',parseInt(regionPage)+1);
@@ -134,9 +134,9 @@
               localStorage.setItem('regionPage',parseInt(regionPage));
             }
           }
-          
+
         // }
-        
+
         // localStorage.setItem('last_node_index', end_index)
         window.location.reload()
         // $log.debug(start_index, end_index)

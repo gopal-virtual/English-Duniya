@@ -811,7 +811,7 @@
             },
           User.getActiveProfileSync()._id
         )
-        $state.go('map.navigate', {"activatedLesson" : $scope.selectedNode});
+        $state.go('map.navigate', {"activatedLesson" : quizCtrl.quiz});
       } else {
         $scope.showNodeMenu();
       }

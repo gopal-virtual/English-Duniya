@@ -77,12 +77,13 @@
   //     }
   // }, 101);
 
+  $log.debug('video object',$stateParams.video.resource)
   function next() {
       $ionicLoading.show({
           hideOnStateChange: true
       });
       $scope.closeResult()
-      $state.go('map.navigate', {});
+      $state.go('map.navigate', {activatedLesson : $stateParams.video.resource});
   }
 
   function toggleControls(){

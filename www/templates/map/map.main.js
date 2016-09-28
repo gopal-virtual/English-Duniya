@@ -472,8 +472,8 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
             }];
             var star = [];
             var starClone = [];
-            var star_x = [-12, 0, 12];
-            var star_y = [-10, -15, -10];
+            var star_x = [-15, 0, 15];
+            var star_y = [-22, -27, -22];
 
 
             function addGroups(region){
@@ -572,7 +572,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                 // points.tempY = [];
                 // for (var i = 0, points_count = points.x.length; i < points_count; i++) {
                 //     // if (points.y[i]  - (60 - regionOffset[region[region.length - 1]]) < ) {}
-                    
+
                 //     points.tempX.push(points.x[i]);
                 //     points.tempY.push(points.y[i] + regionPathOffset[region]);
                 // }
@@ -580,10 +580,10 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                 // Somewhere to draw to
                 var bmd = game.add.bitmapData(game.width, game.world.height);
                 for (var j = 1; j > 0; j -= increment) {
-                //  
+                //
                     var posx = game.math.catmullRomInterpolation(points.x, j);
                     var posy = game.math.catmullRomInterpolation(points.y, j);
-                    
+
                     // log.debug(temp.activeLessonPosY,posy,temp.activeLessonPosY < posy)
                     if (temp.activeLessonPosY > posy) {
                         break;
@@ -757,6 +757,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                             temp["nodeWobbleTween"] = game.add.tween(node.scale).to({ x: [1.2, 1], y: [1.2, 1] }, 700, Phaser.Easing.Back.Out, true, 1000).loop(true);
                         }
 
+                        log.debug('stateParams',stateParams, currentLesson.id)
                         if (stateParams.activatedLesson && stateParams.activatedLesson.node.id == currentLesson.id) {
                             temp["lessonFromQuizKey"] = i;
                         }
@@ -796,15 +797,15 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                         groups.nonRegion.nodes.add(node);
 
                         //
-                        if (!locked && currentLesson.stars >= 0) {
+                        if (!locked && lessons[i].stars >= 0) {
                             // var stars = game.add.group();
-                            if (currentLesson.stars == 0) {
+                            if (lessons[i].stars == 0) {
                                 createStars(0, $.merge([posx], star_x), $.merge([posy], star_y));
-                            } else if (currentLesson.stars == 1) {
+                            } else if (lessons[i].stars == 1) {
                                 createStars(1, $.merge([posx], star_x), $.merge([posy], star_y));
-                            } else if (currentLesson.stars == 2) {
+                            } else if (lessons[i].stars == 2) {
                                 createStars(2, $.merge([posx], star_x), $.merge([posy], star_y));
-                            } else if (currentLesson.stars == 3) {
+                            } else if (lessons[i].stars == 3) {
                                 createStars(3, $.merge([posx], star_x), $.merge([posy], star_y));
                             } else {}
                         }
@@ -912,6 +913,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
             }
 
             function animateStar(lessonKey){
+                log.debug('animate star',lessons, lessonKey)
                 // var d = $q.defer()
 
                 var promise = new Promise(function(resolve,reject){
@@ -928,20 +930,22 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                             "listening" : 4
                         }
                         var j =  lessons.length - lessonKey - 1;
-                        var posx = _this.math.catmullRomInterpolation(points.x, j/lessons.length);
-                        var posy = _this.math.catmullRomInterpolation(points.y, j/lessons.length);
+                        log.debug('i got stars', j)
+                        // var posx = _this.math.catmullRomInterpolation(points.x, j/lessons.length);
+                        // var posy = _this.math.catmullRomInterpolation(points.y, j/lessons.length);
+                        var posx = _this.math.catmullRomInterpolation(points.x, j);
+                        var posy = _this.math.catmullRomInterpolation(points.y, j);
                         // log.debug("In star animation function, \nlessonFromQuizKey: ",lessonKey," activeLessonKey: ",temp.activeLessonKey,"\nactivatedLesson: ",lessons[lessonKey],"\nactiveLesson: ",lessons[temp.activeLessonKey]);
                         var starCloneTween = [];
                         for (var i = 0; i < lessons[lessonKey].stars; i++) {
-
                                 starClone[i] = groups.nonRegion.starClone.create((posx+ star_x[i])*game_scale, posy + star_y[i], 'star_medium');
 
                                 starClone[i].anchor.setTo(0.5, 0.5);
                                 starCloneTween[i] = {};
 
-                                starCloneTween[i]["pos"] = game.add.tween(starClone[i]).to( { x: ((lessonTag[lessons[lessonKey].tag.toLowerCase()]-1)*game.width)/4, y: parseInt(game.camera.y)}, 1000, Phaser.Easing.Exponential.InOut);
+                                starCloneTween[i]["pos"] = game.add.tween(starClone[i]).to( { x: ((lessonTag[lessons[lessonKey].node.tag.toLowerCase()]-1)*game.width)/4, y: parseInt(game.camera.y)}, 1000, Phaser.Easing.Exponential.InOut);
                                 starCloneTween[i]["scale"] = game.add.tween(starClone[i].scale).from( { x: 0, y: 0 }, 800, Phaser.Easing.Bounce.Out,false,i*800);
-                                starCloneTween[i]["scalePos"] = game.add.tween(starClone[i]).to( { x: (lessonTag[lessons[lessonKey].tag.toLowerCase()]>2?"+100":"-100"), y: "-100" }, 800, Phaser.Easing.Cubic.Out,false,i*800);
+                                starCloneTween[i]["scalePos"] = game.add.tween(starClone[i]).to( { x: (lessonTag[lessons[lessonKey].node.tag.toLowerCase()]>2?"+100":"-100"), y: "-100" }, 800, Phaser.Easing.Cubic.Out,false,i*800);
                                 starCloneTween[i]["rotate"] = game.add.tween(starClone[i]).to( { angle: 450 }, 3000, Phaser.Easing.Quadratic.Out);
                                 starCloneTween[i].scale.chain(starCloneTween[i].pos);
                                 starCloneTween[i].scale.start();
@@ -1050,7 +1054,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
             function hideActiveNode(lockedNode){
 
                 temp.nodeWobbleTween.pause();
-                lockedNode["overlay"] = groups.nonRegion.unlockAnim.create(temp.activeLessonPosX,temp.activeLessonPosY,'node');
+                lockedNode["overlay"] = groups.nonRegion.unlockAnim.create(temp.activeLessonPosX,temp.activeLessonPosY,'node-vocabulary');
                 lockedNode["glow"] = groups.nonRegion.unlockAnim.create(temp.activeLessonPosX,temp.activeLessonPosY,'lock-glow');
                 lockedNode["confetti"] = game.add.emitter(temp.activeLessonPosX,temp.activeLessonPosY,50);
                 lockedNode["lock"] = groups.nonRegion.unlockAnim.create(temp.activeLessonPosX,temp.activeLessonPosY,'lock-unlock');

@@ -280,7 +280,7 @@
                         src: utils.getSrc(path),
                         type: 'video/mp4',
                         id : resource.node.id,
-                        resource : resource
+                        "resource" : resource
                       }
                     });
                   if ($state.is('content.video')) {
