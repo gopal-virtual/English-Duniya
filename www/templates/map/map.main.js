@@ -755,7 +755,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                             temp["activeLessonKey"] = i;
                             temp["activeLessonPosY"] = posy;
                             temp["activeLessonPosX"] = posx;
-                            temp["nodeWobbleTween"] = game.add.tween(node.scale).to({ x: [1.2, 1], y: [1.2, 1] }, 700, Phaser.Easing.Back.Out, true, 1000).loop(true);
+                            temp["nodeWobbleTween"] = game.add.tween(node.scale).to({ x: [0.8, 1], y: [0.8, 1] }, 700, Phaser.Easing.Back.Out, true, 1000).loop(true);
                         }
 
                         log.debug('stateParams',stateParams, currentLesson.id)
@@ -1125,19 +1125,19 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                     game.kineticScrolling.start();
                     var lessonFromQuizStars = typeof(temp.lessonFromQuizKey)!="undefined"?lessons[temp.lessonFromQuizKey].stars:false;
                     var animateStarFlag = JSON.parse(localStorage.getItem("animateStarFlag"));
-                    animateStar(temp.activeLessonKey-1);
+                    // animateStar(temp.activeLessonKey-1);
                     
                     if (animateStarFlag) {
 
 
 
-                        if (animateStarFlag.isCurrentNode && lessonFromQuizStars) {
-                            //
-                            scope.$emit('animateStar');
-                            setTimeout(function(){
-                                newNodeUnlock();
-                            },800)
-                        }
+                        // if (animateStarFlag.isCurrentNode && lessonFromQuizStars) {
+                        //     //
+                        //     scope.$emit('animateStar');
+                        //     setTimeout(function(){
+                        //         newNodeUnlock();
+                        //     },800)
+                        // }
 
                         if(lessonFromQuizStars > animateStarFlag.clickedNodeStar && lessonFromQuizStars){
                             scope.$emit('animateStar');
