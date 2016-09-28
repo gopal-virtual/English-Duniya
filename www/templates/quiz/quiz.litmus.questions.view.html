@@ -1,4 +1,4 @@
-<ion-view ng-if="quizCtrl.quiz.objects.length" id="tour-container" class="bg-pale">
+<ion-view ng-if="quizCtrl.quiz.objects.length" class="bg-pale">
   <!-- <div class="bar bar-header bg-pale practice-header padding-0"> -->
     <!--<div class="col padding-0 vertical-center">-->
       <!--<div ng-click="showNodeMenu()" class="header-icon icon-pause padding-10" style="background-size:auto 85%"></div>-->
@@ -13,7 +13,6 @@
         <!--class="col-5 mark-star icon-fit-height"-->
         <!--style="left: calc({{quizCtrl.CONSTANT.STAR.TWO+'%'}} - 12px);"-->
         <!--ng-class="{'icon-star-2 animation-once-bounce':quizCtrl.summary.score.percent >= quizCtrl.CONSTANT.STAR.TWO,'icon-nostar-2':quizCtrl.summary.score.percent < quizCtrl.CONSTANT.STAR.TWO}"></div>-->
-      <!--<div-->
         <!--class="col-5 mark-star icon-fit-height"-->
         <!--style="left: calc({{quizCtrl.CONSTANT.STAR.THREE+'%'}} - 12px);"-->
         <!--ng-class="{'icon-star-2 animation-once-bounce':quizCtrl.summary.score.percent >= quizCtrl.CONSTANT.STAR.THREE,'icon-nostar-2':quizCtrl.summary.score.percent < quizCtrl.CONSTANT.STAR.THREE}"></div>-->
@@ -57,7 +56,7 @@
           <!-- SCQ -->
           <div>
             <div
-              ng-click="question.attempted=(question.attempted==option.key)?'':option.key;demo.tourNextStep();"
+              ng-click="question.attempted=(question.attempted==option.key)?'':option.key;quizCtrl.submitAttempt(quizCtrl.quiz.objects[quizCtrl.currentIndex].node.id,quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted,'litmus') && quizCtrl.setSuggestion();quizCtrl.logQuestion(quizCtrl.currentIndex,'END');quizCtrl.stopAudio()"
               ng-if="question.node.type.type=='choicequestion' && !question.node.type.content.is_multiple"
               ng-class="{'selected':option.key==question.attempted,'card-list':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'list','card-grid practice-card':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'grid'}"
               class="lcard center bg-white card-radius"
@@ -72,18 +71,19 @@
           </div>
 
           <!-- MCQ options -->
-          <div
-            ng-if="question.node.type.type=='choicequestion' && question.node.type.content.is_multiple"
-            ng-class="{'selected':question.attempted[option.key],'card-list':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'list','card-grid practice-card':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'grid'}"
-            class="card center bg-white card-radius"
-            ng-repeat="option in question.node.type.content.options">
-            <label ng-click="quizCtrl.playAudio(option.widgetSound,$parent.$parent.$index);demo.tourNextStep();">
-              <input class="hide" type="checkbox" ng-model="question.attempted[option.key]" ng-value="option.key">
-              <!-- <div class="option-container"  ng-if="option"> -->
-              <div class="padding-10 option" ng-bind-html="option.widgetHtml"></div>
-              <!-- </div> -->
-            </label>
-          </div>
+          <!--<div-->
+            <!--ng-if="question.node.type.type=='choicequestion' && question.node.type.content.is_multiple"-->
+            <!--ng-class="{'selected':question.attempted[option.key],'card-list':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'list','card-grid practice-card':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'grid'}"-->
+            <!--class="card center bg-white card-radius"-->
+            <!--ng-->
+            <!--ng-repeat="option in question.node.type.content.options">-->
+            <!--<label ng-click="quizCtrl.playAudio(option.widgetSound,$parent.$parent.$index);">-->
+              <!--<input class="hide" type="checkbox" ng-model="question.attempted[option.key]" ng-value="option.key">-->
+              <!--&lt;!&ndash; <div class="option-container"  ng-if="option"> &ndash;&gt;-->
+              <!--<div class="padding-10 option" ng-bind-html="option.widgetHtml"></div>-->
+              <!--&lt;!&ndash; </div> &ndash;&gt;-->
+            <!--</label>-->
+          <!--</div>-->
           <!--<label ng-if="question.node.type.type=='choicequestion' && question.node.type.content.is_multiple" ng-repeat="option in question.info.question_type.choices" class="list card padding block" >-->
           <!--<input class="hide" type="checkbox" ng-model="question.attempted[$index+1]" ng-value="option.key" ng-disabled="quizCtrl.isCorrectAttempted(question)">-->
           <!--<div ng-if="option.option">{{option.option}}</div>-->
@@ -97,20 +97,20 @@
   <audio id="audioplayer">
     <source id="audioSource" type="audio/mpeg">
   </audio>
-  <div id="step3" class="bar bar-footer bar-footer-large bg-pale">
-    <div class="row padding-0">
-      <div class="col">
-        <button
-          class="button button-block button-balanced margin-0 button-round font-md"
-          style="height:40px;line-height:45px"
-          ng-click="quizCtrl.disable_submit = true;quizCtrl.submitAttempt(quizCtrl.quiz.objects[quizCtrl.currentIndex].node.id,quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted,'litmus') && quizCtrl.setSuggestion();quizCtrl.logQuestion(quizCtrl.currentIndex,'END');demo.tourNextStep();audio['demo-quiz-3'].stop();quizCtrl.stopAudio()"
-          ng-disabled="!(quizCtrl.canSubmit() && !quizCtrl.disable_submit)"
-          ng-class="{'animation-repeat-fade':quizCtrl.canSubmit()}">
-          {{quizCtrl.isAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex]) ? 'CONTINUE' : 'SUBMIT'}}
-        </button>
-      </div>
-    </div>
-  </div>
+  <!--<div id="step3" class="bar bar-footer bar-footer-large bg-pale">-->
+    <!--<div class="row padding-0">-->
+      <!--<div class="col">-->
+        <!--<button-->
+          <!--class="button button-block button-balanced margin-0 button-round font-md"-->
+          <!--style="height:40px;line-height:45px"-->
+          <!--ng-click=""-->
+          <!--ng-disabled="!(quizCtrl.canSubmit() && !quizCtrl.disable_submit)"-->
+          <!--ng-class="{'animation-repeat-fade':quizCtrl.canSubmit()}">-->
+          <!--{{quizCtrl.isAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex]) ? 'CONTINUE' : 'SUBMIT'}}-->
+        <!--</button>-->
+      <!--</div>-->
+    <!--</div>-->
+  <!--</div>-->
 </ion-view>
 <ion-view ng-if="!quizCtrl.quiz.objects.length">
   <ion-content>
