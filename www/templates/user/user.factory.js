@@ -197,9 +197,12 @@
         return profilesDB.put(new_profile);
       }).then(function () {
         var temp = new_profile.data.profile;
-        // delete temp['client_uid'];
+        if(profileId == temp['client_uid'])
+        {
+          $log.debug("Deleteinh clientUid",temp)
+          delete temp['client_uid'];
+        }
         $log.debug("Update profile 1",profileId,profileData,temp)
-
         return queue.push('/profiles/' + profileId, temp, 'patch')
       })
         .then(function () {

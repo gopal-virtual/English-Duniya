@@ -9,8 +9,8 @@
         'TYPE': 'NON_BUNDLED'
       },
       'LOCK': true,
-      'FAKE_LOGIN': false,
-      'FAKE_DEVICE': false,
+      'FAKE_LOGIN': true,
+      'FAKE_DEVICE': true,
       'ANALYTICS': true,
       // 'BACKEND_SERVICE_DOMAIN': 'https://cc-test.zaya.in/',
       'BACKEND_SERVICE_DOMAIN': 'https://eg-api.zaya.in/',
