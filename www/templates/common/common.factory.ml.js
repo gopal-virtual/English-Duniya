@@ -27,6 +27,7 @@
       getRecPlaylist: getRecPlaylist,
       rankPlaylist: rankPlaylist,
       makeTree: makeTree,
+      getLevelRecommendation: getLevelRecommendation,
       setMLDqJSON: setMLDqJSON(),
       setMLKmapsJSON: setMLKmapsJSON(),
       setMapping: setMapping(),
@@ -442,6 +443,21 @@
         }
       }
       return srs;
+    }
+
+
+    function getLevelRecommendation() {
+      var levels = 0;
+      var quiz = ml.dqQuiz;
+      for (var index = 0; index < quiz.length; index++) {
+          var questionSet = quiz[index];
+          var output = ml.getSuggestedSr2(questionSet, "getSuggestedLevel")[0];
+          if (output != undefined) {
+              levels += parseInt(output["level"])
+          }
+      }
+      var avgLevel = Math.round(levels/quiz.length);
+      return avgLevel;
     }
 
 

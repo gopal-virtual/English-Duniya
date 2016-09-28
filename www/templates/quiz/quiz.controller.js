@@ -726,6 +726,8 @@
         hideOnStateChange: true
       });
       if($stateParams.type == 'litmus'){
+        var avgLevel = ml.getLevelRecommendation();
+        $log.debug('avgLevel', avgLevel);
         $state.go('litmus_result',{})
       }else{
         $state.go('map.navigate', {});
