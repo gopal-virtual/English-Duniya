@@ -19,7 +19,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
     var regionHeight = {
         "desert" : 2845,
         "tundra" : 2845,
-        "forest" : 2856,
+        "forest" : 3016,
         "peru" : 1872,
         // "region5" : 392,
     }
@@ -44,7 +44,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
     var regionPathOffset = {
         "desert" : 450,
         "tundra" : 330,
-        "forest" : 300,
+        "forest" : 170,
         "peru" : 300
     }
     var nodeColors = {
