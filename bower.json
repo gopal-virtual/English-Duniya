@@ -19,7 +19,8 @@
     "angular-ui-sortable": "~0.13.4",
     "angular-pouchdb": "~4.1.0",
     "pouchdb": "~5.3.2",
-    "nz-tour": "^1.1.0"
+    "nz-tour": "^1.1.0",
+    "progressbar.js": "^1.0.1"
   },
   "resolutions": {
     "angular": "~1.2.8",
