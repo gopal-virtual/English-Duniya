@@ -389,8 +389,8 @@
           return levelsOfSuggestedSrs;
       }
 
-      console.log('levelsOfSuggestedSrs', levelsOfSuggestedSrs);
-      console.log('suggestedSrs', suggestedSrs);
+      $log.debug('levelsOfSuggestedSrs', levelsOfSuggestedSrs);
+      $log.debug('suggestedSrs', suggestedSrs);
 
       return suggestedSrs;
     }
@@ -428,8 +428,10 @@
     function getDqsByLevelNSkill(level, skill){
       var srs = [];
       for(var q_id in ml.dqJSON){
-        if(ml.dqJSON[q_id]["node"]["level"] == level && ml.dqJSON[q_id]["node"]["skill_area"] == skill){
+        // if(ml.dqJSON[q_id]["node"]["level"] == level && ml.dqJSON[q_id]["node"]["skill_area"] == skill){ // Ayush -> beware, the structure of ported dqJSON changes quite often
+        if(ml.dqJSON[q_id]["node"]["type"]["level"] == level && ml.dqJSON[q_id]["node"]["tag"] == skill){
           srs.push({"sr": ml.dqJSON[q_id]["node"]["sr"], "skill_area": skill});
+          // Ayush -> check <ml.dqJSON[q_id]["node"]["sr"]> is not undefined
         }
       }
       return srs;
@@ -437,17 +439,18 @@
 
 
     function getLevelRecommendation() {
-      var levels = 0;
+      var levelRec = {"avgLevel": 0};
       var quiz = ml.dqQuiz;
       for (var index = 0; index < quiz.length; index++) {
           var questionSet = quiz[index];
           var output = ml.getSuggestedSr2(questionSet, "getSuggestedLevel")[0];
           if (output != undefined) {
-              levels += parseInt(output["level"])
+              levelRec["avgLevel"] += parseInt(output["level"]);
+              levelRec[output["skill"]] = output["level"];
           }
       }
-      var avgLevel = Math.round(levels/quiz.length);
-      return avgLevel;
+      levelRec["avgLevel"] = Math.round(levelRec["avgLevel"]/quiz.length);
+      return levelRec;
     }
 
 
@@ -781,7 +784,7 @@
         var suggestedQ = ml.getSuggestedSr2(newQSet)[0];
         if (test.length > 1) {
             if (suggestedQ != undefined) {
-                test[1]["level"] = parseInt(ml.dqJSON[suggestedQ]["node"].level);
+                test[1]["level"] = parseInt(ml.dqJSON[suggestedQ]["node"]["type"].level);
             } else {
                 test[1]["level"] = Object.keys(diagLitmusMapping[test[1]["skill"]]).length - 1;
             }
