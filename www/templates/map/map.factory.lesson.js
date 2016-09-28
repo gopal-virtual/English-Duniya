@@ -42,7 +42,7 @@
               total_score = total_score + score.totalScore;
               obtained_score = obtained_score + score.score;
 
-              $log.debug('resource score',total_score, obtained_score)
+              
 
               if (total_score > 0) {
                 var percent = (obtained_score / total_score) * 100;

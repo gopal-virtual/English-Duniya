@@ -28,3 +28,4 @@ content/*
 www/bundled/*
 bundled.zip
 media/*
+.fuse*

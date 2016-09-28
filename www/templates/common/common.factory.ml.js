@@ -641,7 +641,7 @@
 
 
     function getNextQSr(test, diagLitmusMapping) {
-      console.log('in getNextQSr', test[0]);
+      
       try {
           if (test.length > 0) {
               if (test[0]["count"] >= 2) {
@@ -658,7 +658,7 @@
                           return getNextQSr(newTest, diagLitmusMapping);
                       }
                       var suggestion = { "skill": test[0]["skill"], "qSr": q_set[Math.floor(Math.random() * (q_set.length)) + 0], "test": test, "actualLevel": test[0]["level"], "microstandard": diagLitmusMapping[test[0]["skill"]][test[0]["level"]]["microstandard"] };
-                      $log.debug('suggestion from ml 1', suggestion);
+                      
                       return suggestion;
                   } else {
                       test = displaySuggestedSr(test[0]["level"], test, diagLitmusMapping);
@@ -676,7 +676,7 @@
                       var intermediate_q_set = diagLitmusMapping[test[0]["skill"]][test[0]["level"] - 1]["questions"];
                       test[0]["qSet"][test[0]["level"] - 1] = { "qSr": intermediate_q_set[Math.floor(Math.random() * (intermediate_q_set.length)) + 0], "answered": "NA" };
                       var suggestion = { "skill": test[0]["skill"], "qSr": q_set[Math.floor(Math.random() * (q_set.length)) + 0], "test": test, "actualLevel": test[0]["level"] - 2, "microstandard": diagLitmusMapping[test[0]["skill"]][test[0]["level"] - 2]["microstandard"] };
-                      $log.debug('suggestion from ml 2', suggestion);
+                      
                       return suggestion;
                   } else {
                       test = displaySuggestedSr(test[0]["level"], test, diagLitmusMapping);
@@ -694,7 +694,7 @@
                       var intermediate_q_set = diagLitmusMapping[test[0]["skill"]][test[0]["level"] + 1]["questions"];
                       test[0]["qSet"][test[0]["level"] + 1] = { "qSr": intermediate_q_set[Math.floor(Math.random() * (intermediate_q_set.length)) + 0], "answered": "NA" };
                       var suggestion = { "skill": test[0]["skill"], "qSr": q_set[Math.floor(Math.random() * (q_set.length)) + 0], "test": test, "actualLevel": test[0]["level"] + 2, "microstandard": diagLitmusMapping[test[0]["skill"]][test[0]["level"] + 2]["microstandard"] };
-                      $log.debug('suggestion from ml 3', suggestion);
+                      
                       return suggestion;
                   } else {
                       test = displaySuggestedSr(test[0]["level"], test, diagLitmusMapping);
@@ -706,7 +706,7 @@
               return null;
           }
       } catch (err) {
-          console.log('err big', err);
+          
           var newTest = test.slice(1, test.length);
           return getNextQSr(newTest, diagLitmusMapping);
       }
@@ -714,10 +714,10 @@
 
 
     function displaySuggestedSr(level_one, test, diagLitmusMapping) {
-        console.log('in function displaySuggestedSr');
+        
         var test_one = test[0];
         var oldqSet = test_one["qSet"];
-        console.log('oldqSet', oldqSet);
+        
         var qSet = {};
         for (var i in oldqSet) {
             qSet[i - level_one] = { "answered": oldqSet[i]["answered"] };
@@ -727,7 +727,7 @@
                 qSet[i - level_one]["sr"] = oldqSet[i]["qSr"];
             }
         }
-        console.log('qSet', qSet);
+        
         var newQSet = {};
         // array = [];
         var last = null;
@@ -747,7 +747,7 @@
                 newQSet[last] = { "sr": qSet[last]["sr"], "answered": qSet[last]["answered"], "skill": test[0]["skill"], "level": last }
             }
         }
-        console.log('newQSet', newQSet);
+        
         ml.dqQuiz.push(newQSet);
         var suggestedQ = ml.getSuggestedSr2(newQSet)[0];
         if (test.length > 1) {

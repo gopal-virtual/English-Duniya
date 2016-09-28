@@ -151,9 +151,9 @@
         .then(function () {
           localStorage.setItem('demo_flag', 1);
           localStorage.setItem('diagnosis_flag', false);
-          $log.debug("CHanging state to map");
-          // $state.go('litmus_start');
-          $state.go('quiz.questions', {'type':'litmus','id':'litmus_question'});
+          
+          $state.go('litmus_start');
+          // $state.go('quiz.questions', {'type':'litmus','id':'litmus_question'});
         })
         .catch(function (error) {
           userCtrl.showError('Could not make your profile', error || 'Please try again');
