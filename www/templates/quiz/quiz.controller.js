@@ -461,7 +461,7 @@
     function submitAttempt(questionId, attempt, type) {
       if (type == 'litmus') {
         var isCorrect = quizCtrl.isCorrect(quizCtrl.quiz.objects[quizCtrl.currentIndex], attempt);
-        quizCtrl.quiz.suggestion.test[0]['setPreviousAnswer'] = isCorrect ? 1 : 0;
+        quizCtrl.quiz.suggestion.test[0]['setPreviousAnswer'] = [isCorrect, quizCtrl.quiz.suggestion];
         quizCtrl.quiz.suggestion.test[0]["qSet"][quizCtrl.quiz.suggestion["actualLevel"]] = {
           "sr": quizCtrl.quiz.suggestion.qSr,
           "answered": isCorrect ? "right" : "wrong"
