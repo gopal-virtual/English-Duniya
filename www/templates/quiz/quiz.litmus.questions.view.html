@@ -1,5 +1,5 @@
-<ion-view ng-if="quizCtrl.quiz.objects.length" id="tour-container" class="bg-green">
-  <div class="bar bar-header bg-pale practice-header padding-0">
+<ion-view ng-if="quizCtrl.quiz.objects.length" id="tour-container" class="bg-pale">
+  <!-- <div class="bar bar-header bg-pale practice-header padding-0"> -->
     <!--<div class="col padding-0 vertical-center">-->
       <!--<div ng-click="showNodeMenu()" class="header-icon icon-pause padding-10" style="background-size:auto 85%"></div>-->
     <!--</div>-->
@@ -26,7 +26,7 @@
 
       <!--&lt;!&ndash; <a ui-sref="map.navigate" class="header-icon icon-question-mark"></a> &ndash;&gt;-->
     <!--</div>-->
-  </div>
+  <!-- </div> -->
   <ion-slide-box on-slide-changed="quizCtrl.setCurrentIndex(index);quizCtrl.logQuestion((index),'START');quizCtrl.quiz.objects[index].isVisited = true;quizCtrl.playInstruction(index)" ng-init="(quizCtrl.disableSwipe());quizCtrl.playInstruction(0)" show-pager="false">
     <ion-slide ng-repeat="question in quizCtrl.quiz.objects " ng-class="{'animation-question-slide':quizCtrl.isCurrentIndex($index)}">
 
@@ -56,18 +56,20 @@
           class=" has-footer-large center bg-pale"
           ng-init="optionsFontSize=quizCtrl.widgetParser.getOptionsFontSize(question.node.type.content.options)">
           <!-- SCQ -->
-          <div
-            ng-click="question.attempted=(question.attempted==option.key)?'':option.key;demo.tourNextStep();"
-            ng-if="question.node.type.type=='choicequestion' && !question.node.type.content.is_multiple"
-            ng-class="{'selected':option.key==question.attempted,'card-list':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'list','card-grid practice-card':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'grid'}"
-            class="card center bg-white card-radius"
-            ng-repeat="option in question.node.type.content.options">
-            <label ng-click="quizCtrl.playAudio(option.widgetSound,$parent.$parent.$index);">
-              <input class="hide">
-              <!-- <div class="option-container"  ng-if="option"> -->
-              <div class="padding-10 option" ng-bind-html="option.widgetHtml"></div>
-              <!-- </div> -->
-            </label>
+          <div>
+            <div
+              ng-click="question.attempted=(question.attempted==option.key)?'':option.key;demo.tourNextStep();"
+              ng-if="question.node.type.type=='choicequestion' && !question.node.type.content.is_multiple"
+              ng-class="{'selected':option.key==question.attempted,'card-list':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'list','card-grid practice-card':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'grid'}"
+              class="lcard center bg-white card-radius"
+              ng-repeat="option in question.node.type.content.options">
+              <label ng-click="quizCtrl.playAudio(option.widgetSound,$parent.$parent.$index);">
+                <input class="hide">
+                <!-- <div class="option-container"  ng-if="option"> -->
+                <div class="lcard-inner padding-10 option" ng-bind-html="option.widgetHtml"></div>
+                <!-- </div> -->
+              </label>
+            </div>
           </div>
 
           <!-- MCQ options -->
