@@ -163,4 +163,20 @@ $lcard-inner-height : $lcard-min-height - ($lcard-outer-padding*2);
 .lcard.selected .lcard-inner{
   background-color: $hex-yellow;
   box-shadow: 0px -4px 0px #{$hex-dark-yellow} inset;
+  color: #FFF;
+}
+
+.question-diag .content-image{
+  max-width: 60vw;
+  max-height: 32vh;
+}
+
+.question-diag{
+  min-height:45vh;
+  width: 290px;
+  margin: auto;
+  font-size: 1.75em;
+  line-height: 1.15em;
+  color: $hex-dark-blue;
+  text-align: center;
 }
