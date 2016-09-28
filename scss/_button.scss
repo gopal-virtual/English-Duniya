@@ -138,6 +138,18 @@
   width: 88px;
   height: 90px;
 }
+
+.sbtn:disabled{
+  background: url('../img/assets_svg/button-grey.svg');
+  width: 175px;
+  height: 56px;
+}
+
+.lbtn{
+  background-color: $hex-blue;
+  box-shadow: 0px -4px 0px #{$hex-dark-blue} inset;
+  color: $hex-dark-blue;
+}
 // .sbtn-next-yellow:focus{
 //   background-position: 100% 0 !important;
 // }

@@ -1,4 +1,4 @@
-<ion-view class="bg-medium-yellow">
+<ion-view class="bg-pale">
     <ion-content>
         <ion-slide-box delegate-handle="slide" show-pager="false" ng-init="userCtrl.disableSwipe()" on-slide-changed="userCtrl.playAudio($index)">
             <ion-slide ng-init="userCtrl.user.limit = 15">
@@ -18,7 +18,7 @@
                         </div>
                     </div>
                     <center class="personalize-button-container">
-                        <button ng-disabled="userCtrl.user.name.trim().length < 3" class="button button-balanced button-round margin-20 padding-x-40 font-md" ng-click="userCtrl.nextSlide()"><i class="ed-icon lg icon-contain icon-next-2"></i></button>
+                        <button ng-disabled="userCtrl.user.name.trim().length < 3" class="sbtn sbtn-next-blue" on-tap="userCtrl.nextSlide()"></button>
                     </center>
                 </div>
             </ion-slide>
@@ -32,7 +32,7 @@
                                     <label for="" class="radio radio-male radio-icon-check" ng-class="{'checked':userCtrl.user.gender=='M'}">
                                         <!-- <i class="font-xl color-blue icon ion-checkmark-circled"></i> -->
                                         <input type="radio" name="gender" value="M" ng-model="userCtrl.user.gender">
-                                      <div style="position:absolute;bottom:-60px;left:20px;text-align:left;font-weight:600;" class="font-xl color-balanced">
+                                      <div style="position:absolute;bottom:-60px;left:20px;text-align:left;font-weight:600;" class="font-xl color-dblue">
                                         लड़का
                                       </div>
                                     </label>
@@ -42,7 +42,7 @@
                                     <label for="" class="radio radio-female radio-icon-check" ng-class="{'checked':userCtrl.user.gender=='F'}">
                                         <!-- <i class="font-xl color-blue icon ion-checkmark-circled"></i> -->
                                         <input type="radio" name="gender" value="F" ng-model="userCtrl.user.gender">
-                                      <div style="position:absolute;bottom:-60px;right:20px;text-align:right;font-weight:600;" class="font-xl color-balanced">
+                                      <div style="position:absolute;bottom:-60px;right:20px;text-align:right;font-weight:600;" class="font-xl color-dblue">
                                         लड़की
                                       </div>
                                     </label>
@@ -51,7 +51,7 @@
                         </div>
                     </div>
                     <center class="personalize-button-container">
-                      <button ng-disabled="!userCtrl.user.gender" class="button button-balanced button-round margin-20 padding-x-40 font-md" ng-click="userCtrl.nextSlide()"><i class="ed-icon lg icon-contain icon-next-2"></i></button>
+                        <button ng-disabled="!userCtrl.user.gender" class="sbtn sbtn-next-blue" on-tap="userCtrl.nextSlide()"></button>
                     </center>
                 </div>
             </ion-slide>
@@ -64,17 +64,21 @@
                             </center>
                             <h2 style="margin-top:0px;" class="center personalize-title">आप कौन सी कक्षा मे हो?</h2>
                             <div class="radio-box-container-outer">
-                              <div style="width:200px;" class="radio-box-container-inner clearfix">
-                                <label style="line-height:100px;" class="margin-10 radio radio-box radio-box-sm font-sxl bg-pink center color-balanced" ng-repeat="grade in [1,2,3]" ng-class="{'checked':userCtrl.user.grade == grade,'margin-x-60':$index == 0}">{{grade}}
-                                  <input type="radio" name="grade" value="{{grade}}" ng-model="userCtrl.user.grade">
-                                </label>
+
+                              <div class="radio-box-container-inner clearfix">
+                                <div class="lcard radio-con" ng-class="{'radio-box-solo':$index == 0,'selected':userCtrl.user.grade == grade}" ng-repeat="grade in [1,2,3]">
+                                    <label class="lcard-inner radio radio-box center"  ng-class="{}">{{grade}}
+                                        <input type="radio" name="grade" value="{{grade}}" ng-model="userCtrl.user.grade">
+                                    </label>
+                                </div>
                               </div>
                             </div>
 
                         </div>
                     </div>
                     <center class="personalize-button-container">
-                      <button ng-disabled="!userCtrl.user.grade" class="button button-balanced button-round margin-20 padding-x-40 font-md" ng-click="userCtrl.createProfile(userCtrl.user)"><i class="ed-icon lg icon-contain icon-next-2"></i></button>
+                        <button ng-disabled="!userCtrl.user.grade" class="sbtn sbtn-next-blue" on-tap="userCtrl.createProfile(userCtrl.user)"></button>
+                      <!-- <button ng-disabled="!userCtrl.user.grade" class="button button-balanced button-round margin-20 padding-x-40 font-md" ng-click="userCtrl.createProfile(userCtrl.user)"><i class="ed-icon lg icon-contain icon-next-2"></i></button> -->
                     </center>
                 </div>
             </ion-slide>
