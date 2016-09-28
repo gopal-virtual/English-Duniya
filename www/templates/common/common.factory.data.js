@@ -54,67 +54,53 @@
     function getTestParams(realTimeGrade) {
 
       function setPreviousAnswerCallback(tests, x) {
-        tests["previousAnswer"] = x[0];
-        tests["count"]++;
-        if (x[0] == 1) {
-          x[1].test[0]["qSet"][x[1]["actualLevel"]] = {
-            "sr": x[1].qSr,
-            "answered": "right"
-          };
-        } else {
-          x[1].test[0]["qSet"][x[1]["actualLevel"]] = {
-            "sr": x[1].qSr,
-            "answered": "wrong"
-          };
-        }
+          tests["previousAnswer"] = x[0];
+          tests["count"]++;
       }
 
       return [{
-        "skill": "vocabulary",
-        "qSet": {},
-        "level": parseInt(realTimeGrade),
-        "previousAnswer": null,
-        "actualLevel": 0,
-        "count": 0,
-        set setPreviousAnswer(x) {
-          this["previousAnswer"] = x;
-          this["count"]++;
-        }
+          "skill": "vocabulary",
+          "qSet": {},
+          "level": parseInt(realTimeGrade),
+          "previousAnswer": null,
+          "actualLevel": 0,
+          "count": 0,
+          set setPreviousAnswer(x) {
+              setPreviousAnswerCallback(this, x);
+          }
       }, {
-        "skill": "reading",
-        "qSet": {},
-        "level": parseInt(realTimeGrade),
-        "previousAnswer": null,
-        "actualLevel": 0,
-        "count": 0,
-        set setPreviousAnswer(x) {
-          this["previousAnswer"] = x;
-          this["count"]++;
-        }
+          "skill": "reading",
+          "qSet": {},
+          "level": parseInt(realTimeGrade),
+          "previousAnswer": null,
+          "actualLevel": 0,
+          "count": 0,
+          set setPreviousAnswer(x) {
+              setPreviousAnswerCallback(this, x);
+          }
       }, {
-        "skill": "grammar",
-        "qSet": {},
-        "level": parseInt(realTimeGrade),
-        "previousAnswer": null,
-        "actualLevel": 0,
-        "count": 0,
-        set setPreviousAnswer(x) {
-          this["previousAnswer"] = x;
-          this["count"]++;
-        }
+          "skill": "grammar",
+          "qSet": {},
+          "level": parseInt(realTimeGrade),
+          "previousAnswer": null,
+          "actualLevel": 0,
+          "count": 0,
+          set setPreviousAnswer(x) {
+              setPreviousAnswerCallback(this, x);
+          }
       }, {
-        "skill": "listening",
-        "qSet": {},
-        "level": parseInt(realTimeGrade),
-        "previousAnswer": null,
-        "actualLevel": 0,
-        "count": 0,
-        set setPreviousAnswer(x) {
-          this["previousAnswer"] = x;
-          this["count"]++;
-        }
+          "skill": "listening",
+          "qSet": {},
+          "level": parseInt(realTimeGrade),
+          "previousAnswer": null,
+          "actualLevel": 0,
+          "count": 0,
+          set setPreviousAnswer(x) {
+              setPreviousAnswerCallback(this, x);
+          }
       }];
     }
+
 
     function createDiagLitmusMappingDB() {
       var promise = $http.get(CONSTANT.PATH.DATA + '/diagnosticLitmusMapping.json').success(function (data) {

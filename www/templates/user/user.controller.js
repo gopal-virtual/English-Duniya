@@ -134,28 +134,26 @@
     }
 
     function createProfile(formData) {
-        
+
       $ionicLoading.show({
         noBackdrop: false,
         hideOnStateChange: true
       });
       userCtrl.splitName();
       delete formData['name'];
-      
+
 
       User.profile.add(formData)
         .then(function (response) {
-          
-
           User.setActiveProfileSync(response);
-          
           return content.createLessonDBIfNotExists()
         })
         .then(function () {
-          
-
           localStorage.setItem('demo_flag', 1);
-          $state.go('map.navigate', {});
+          localStorage.setItem('diagnosis_flag', false);
+          
+          $state.go('litmus_start');
+          // $state.go('quiz.questions', {'type':'litmus','id':'litmus_question'});
         })
         .catch(function (error) {
           userCtrl.showError('Could not make your profile', error || 'Please try again');

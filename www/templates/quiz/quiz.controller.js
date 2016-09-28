@@ -30,7 +30,8 @@
                             '$ionicPlatform',
                             'nzTour',
                             'analytics',
-                            'User'
+                            'User',
+                            'content'
                                 ];
 
   function QuizController(
@@ -59,12 +60,14 @@
                             $ionicPlatform,
                             nzTour,
                             analytics,
-                            User
+                            User,
+                            content
                                     ) {
 
     var quizCtrl = this;
     //bind quiz resolved to controller
     quizCtrl.quiz = quiz;
+    
     ;
     //report
     quizCtrl.report = {};
@@ -121,7 +124,7 @@
     //audio
     quizCtrl.playAudio = playAudio;
     quizCtrl.stopAudio = stopAudio;
-    quizCtrl.starCount = starCount;
+    // quizCtrl.starCount = starCount;
     quizCtrl.highlightSoundIcon = highlightSoundIcon;
     quizCtrl.playInstruction = playInstruction;
     quizCtrl.calculateStars = calculateStars;
@@ -145,6 +148,7 @@
     quizCtrl.isAssessment = ($stateParams.type == 'assessment');
     // quizCtrl.tourFlag = true;
 
+    quizCtrl.disable_submit = false;
     $scope.demo = {
       'tourNextStep': tourNextStep,
       'tourFlag': localStorage.getItem('tourFlag')
@@ -191,10 +195,10 @@
       }, 1000);
     }
 
-    function starCount(index) {
-      var count = quizCtrl.summary.stars - index;
-      return count > 0 ? count : 0;
-    }
+    // function starCount(index) {
+    //   var count = quizCtrl.summary.stars - index;
+    //   return count > 0 ? count : 0;
+    // }
 
     function playStarSound() {
       if (quizCtrl.summary.stars) {
@@ -222,11 +226,11 @@
 
         User.skills.update({
           profileId: User.getActiveProfileSync()._id,
-          lessonId: lesson.node.id,
+          lessonId: quiz.parent,
           id: quiz.node.id,
           score: summary.score.marks,
           totalScore: quizCtrl.quiz.node.type.score,
-          skill: lesson.node.tag
+          skill: quiz.node.tag
         })
         .then(function() {
           return data.getQuizScore({
@@ -388,13 +392,17 @@
 
     function nextQuestion(shouldScroll) {
       if (quizCtrl.currentIndex < quizCtrl.quiz.objects.length - 1) {
+        
         if (shouldScroll) {
           quizCtrl.inViewFlag = false;
           var id = 'question-' + (quizCtrl.getCurrentIndex() + 1);
           var position = $('#' + id).position();
           $ionicScrollDelegate.scrollBy(position.left, position.top, true);
         }
+        
+
         ++quizCtrl.currentIndex;
+        
 
       }
       return true;
@@ -453,7 +461,7 @@
     function submitAttempt(questionId, attempt, type) {
       if (type == 'litmus') {
         var isCorrect = quizCtrl.isCorrect(quizCtrl.quiz.objects[quizCtrl.currentIndex], attempt);
-        quizCtrl.quiz.suggestion.test[0]['setPreviousAnswer'] = isCorrect ? 1 : 0;
+        quizCtrl.quiz.suggestion.test[0]['setPreviousAnswer'] = [isCorrect, quizCtrl.quiz.suggestion];
         quizCtrl.quiz.suggestion.test[0]["qSet"][quizCtrl.quiz.suggestion["actualLevel"]] = {
           "sr": quizCtrl.quiz.suggestion.qSr,
           "answered": isCorrect ? "right" : "wrong"
@@ -467,12 +475,41 @@
     }
 
     function setSuggestion() {
-      quizCtrl.quiz.suggestion = ml.getNextQSr(quizCtrl.quiz.suggestion.test, ml.mapping);
-      if (quizCtrl.quiz.suggestion) {
-        quizCtrl.quiz.objects.push(ml.dqJSON[quizCtrl.quiz.suggestion.qSr]);
-      } else {
-        quizCtrl.endQuiz();
-      }
+      $timeout(function () {
+
+        
+        quizCtrl.disable_submit = true;
+        var temp_quiz = angular.copy(quizCtrl.quiz);
+        temp_quiz.suggestion = ml.getNextQSr(quizCtrl.quiz.suggestion.test, ml.mapping);
+        if (temp_quiz.suggestion) {
+          
+
+          temp_quiz.objects.push(ml.dqJSON[temp_quiz.suggestion.qSr]);
+          content.getAssessment(temp_quiz).then(function(response){
+            response.suggestion = temp_quiz.suggestion;
+            quizCtrl.quiz = response;
+
+            
+            // quizCtrl.nextQuestion()
+            $ionicSlideBoxDelegate.update();
+            quizCtrl.report.attempts[quizCtrl.quiz.objects[quizCtrl.currentIndex+1].node.id] = [];
+
+            $timeout(function() {
+              quizCtrl.currentIndex++;
+              $ionicSlideBoxDelegate.next();
+              quizCtrl.disable_submit = false;
+            }, 300);
+            
+          });
+        } else {
+          
+          quizCtrl.endQuiz();
+        }
+      },300)
+
+
+
+
       return true;
     }
 
@@ -692,7 +729,13 @@
         noBackdrop: false,
         hideOnStateChange: true
       });
-      $state.go('map.navigate', {});
+      if($stateParams.type == 'litmus'){
+        var avgLevel = ml.getLevelRecommendation();
+        
+        $state.go('litmus_result',{})
+      }else{
+        $state.go('map.navigate', {});
+      }
     }
 
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal-rope' + CONSTANT.VIEW, {
@@ -800,22 +843,26 @@
     };
 
     if($state.is('quiz.questions') && User.demo.isShown(5)){
-      
-      $timeout(function(){
-        
 
-        angular.element("#audioplayer")[0].pause();
-        angular.element("#audioSource")[0].src = 'sound/demo-quiz-1.mp3';
-        angular.element("#audioplayer")[0].load();
-        angular.element("#audioplayer")[0].play();
-        nzTour.start($scope.tour);
-        User.demo.setStep(5);
       $timeout(function(){
-        
-        if(nzTour.current.step === 0){
-          tourNextStep();
+
+
+
+        if($stateParams.type!=='litmus'){
+          angular.element("#audioplayer")[0].pause();
+          angular.element("#audioSource")[0].src = 'sound/demo-quiz-1.mp3';
+          angular.element("#audioplayer")[0].load();
+          angular.element("#audioplayer")[0].play();
+          nzTour.start($scope.tour);
+          User.demo.setStep(5);
+          $timeout(function(){
+
+            if(nzTour.current.step === 0){
+              tourNextStep();
+            }
+          },3500)
         }
-      },3500)
+
       });
 
     }else{
@@ -877,5 +924,19 @@
     }
 
 
+    $ionicModal.fromTemplateUrl(CONSTANT.PATH.CONTENT + '/content.modal-ribbon' + CONSTANT.VIEW, {
+      scope: $scope,
+      // animation: 'slide-in-up',
+      backdropClickToClose: true
+    }).then(function(modal){
+      $scope.nodeRibbon = modal;
+      $scope.nodeRibbonFlag = true;
+      // modal.show();
+      $timeout(function() {
+        $scope.nodeRibbonFlag = false;
+        modal.hide();
+        // contentCtrl.play();
+      }, 2000);
+    })
   }
 })();

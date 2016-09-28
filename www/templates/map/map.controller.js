@@ -41,6 +41,7 @@
     'analytics',
     '$q',
     'queue',
+    'content'
 ];
 
   function mapController(
@@ -69,7 +70,8 @@
         $stateParams,
         analytics,
         $q,
-        queue
+        queue,
+        content
     ) {
 
     $scope.audio = audio;
@@ -107,6 +109,40 @@
     mapCtrl.animateStar["resetColor"] = resetColor;
     // ;
     mapCtrl.setAnimateStarFlag = setAnimateStarFlag;
+    mapCtrl.setLessonRange = setLessonRange;
+
+    // port node
+    mapCtrl.first_node_index = parseInt(localStorage.first_node_index) || 0;
+    mapCtrl.last_node_index = parseInt(localStorage.last_node_index) || mapCtrl.lessons.length - 1;
+
+    $scope.$on('pageRegion', mapCtrl.setLessonRange )
+    // $scope.$on('nextRegion', mapCtrl.setLessonRange )
+
+    function setLessonRange(event, regionPage, action){
+        // if (regionPage > 0 && regionPage < 3) {
+          
+          if (action=="next") {
+            if (regionPage < 3) {
+              localStorage.setItem('regionPage',parseInt(regionPage)+1);
+            }else{
+              localStorage.setItem('regionPage',parseInt(regionPage));
+            }
+          }else if (action=="prev") {
+            if (regionPage > 0) {
+              localStorage.setItem('regionPage',parseInt(regionPage)-1);
+            }else{
+              localStorage.setItem('regionPage',parseInt(regionPage));
+            }
+          }
+          
+        // }
+        
+        // localStorage.setItem('last_node_index', end_index)
+        window.location.reload()
+        // 
+    }
+    // end : port node
+
 
     /**
     * @ngdoc property
@@ -162,69 +198,78 @@
     $scope.$on('openNode', function(event, node, currentPos) {
       // audio.stop('demo-1')
       //   $scope.demo.isShown() && $scope.demo.hide();
-      if (currentPos)
-        currentPos.lessonType = node.tag;
+      lessonutils.playResource(node);
+      content.getLesson(node.node.parent)
+      .then(function(lesson){
+          lessonutils.setLocalLesson(JSON.stringify(lesson))
+      })
 
-      if (node.content_type_name == 'litmus') {
-        $state.go('quiz.questions', {
-          id: node.id,
-          type: 'litmus'
-        });
-      } else {
-        $ionicLoading.show({
-          // hideOnStateChange: true
-        });
-        $scope.user = User;
-        $scope.lessonutils.getLesson(node.id, $scope).then(
+    //   if (currentPos)
+    //     currentPos.lessonType = node.tag;
+      //
+    //   if (node.content_type_name == 'litmus') {
+    //     $state.go('quiz.questions', {
+    //       id: node.id,
+    //       type: 'litmus'
+    //     });
+    //   } else {
+    //     $ionicLoading.show({
+    //       // hideOnStateChange: true
+    //     });
+    //     $scope.user = User;
+    //     $scope.lessonutils.getLesson(node.id, $scope).then(
+      //
+    //       function(response) {
+    //         
+      //
+    //         analytics.log(
+    //               {
+    //                   name : 'LESSON',
+    //                   type : 'START',
+    //                   id : node.id
+    //               },
+    //               {
+    //                   time : new Date()
+    //               },
+    //               User.getActiveProfileSync()._id
+    //           );
+      //
+    //         var promise;
+    //         if(node.meta.intros && node.meta.intros.sound  && node.meta.intros.sound[0]){
+      //
+    //           promise = mediaManager.downloadIfNotExists(CONSTANT.RESOURCE_SERVER + node.meta.intros.sound[0])
+    //         } else {
+    //           promise = $q.resolve();
+    //         }
+      //
+    //         promise.then(function(s) {
+    //           if(s){
+    //             node.meta.parsed_sound = s;
+    //           }
+      //
+    //           audio.setVolume('background', 0.1);
+    //         if(currentPos)
+    //         {
+      //
+    //           mapCtrl.animationExpand.expand(currentPos,node);
+    //           $scope.selectedNode = response;
+    //         }else{
+    //           $scope.openNodeMenu(node);
+    //           $scope.selectedNode = response;
+    //         }
+    //         }).catch(function(error) {
+      //
+    //           $ionicLoading.hide();
+    //           $ionicPopup.alert({
+    //             title: 'Please try again',
+    //             template: "No internet conection found"
+    //           });
+    //         });
+    //       }
+    //     );
+    //   }
+      //
 
-          function(response) {
-
-            analytics.log(
-                  {
-                      name : 'LESSON',
-                      type : 'START',
-                      id : node.id
-                  },
-                  {
-                      time : new Date()
-                  },
-                  User.getActiveProfileSync()._id
-              );
-
-            var promise;
-            if(node.meta.intros && node.meta.intros.sound  && node.meta.intros.sound[0]){
-
-              promise = mediaManager.downloadIfNotExists(CONSTANT.RESOURCE_SERVER + node.meta.intros.sound[0])
-            } else {
-              promise = $q.resolve();
-            }
-
-            promise.then(function(s) {
-              if(s){
-                node.meta.parsed_sound = s;
-              }
-
-              audio.setVolume('background', 0.1);
-            if(currentPos)
-            {
-
-              mapCtrl.animationExpand.expand(currentPos,node);
-              $scope.selectedNode = response;
-            }else{
-              $scope.openNodeMenu(node);
-              $scope.selectedNode = response;
-            }
-            }).catch(function(error) {
-
-              $ionicLoading.hide();
-              $ionicPopup.alert({
-                title: 'Please try again',
-                template: "No internet conection found"
-              });
-            });
-          }
-        );
-      }
     })
 
     ;
@@ -436,11 +481,11 @@
 
     function updateProfile(profileData){
       //If conflict arises. Don't delete this
-      
-      // 
-      // 
+
+      //
+      //
       if (profileData.grade != JSON.parse(localStorage.profile).data.profile.grade) {
-        
+
         $ionicLoading.show({
           hideOnStateChange: true
         });
@@ -453,7 +498,7 @@
       }else{
         $scope.settingsModal.hide();
       }
-      
+
       //
       // $rootScope.$broadcast('reloadMap');
       // $state.go('map.navigate')

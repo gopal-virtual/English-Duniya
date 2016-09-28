@@ -37,6 +37,7 @@
       createLessonDBIfNotExists: createLessonDBIfNotExists,
       createLessonDBIfNotExistsPatch: createLessonDBIfNotExistsPatch,
       getLessonsList: getLessonsList,
+      getResourceList: getResourceList,
       getAssessment: getAssessment,
       getLesson: getLesson,
       downloadAssessment: downloadAssessment,
@@ -135,24 +136,19 @@
         adapter: 'websql'
       });
 
-
       return lessonDB.allDocs()
         .then(function(result){
 
-
           return Promise.all(result.rows.map(function(row){
-
 
             return lessonDB.remove(row.id,row.value.rev);
           }))
         })
         .then(function(){
 
-
           return lessonDB.load(CONSTANT.PATH.DATA + '/lessonsGrade' + User.getActiveProfileSync().data.profile.grade + '.db')
         })
         .then(function () {
-
 
           return lessonDB.put({
             _id: '_local/preloaded'
@@ -160,13 +156,11 @@
         })
         .catch(function(e){
 
-
         })
 
     }
 
     function getLessonsList() {
-
       var d = $q.defer();
       lessonDB.allDocs({
         include_docs: true
@@ -180,11 +174,34 @@
         }
         lessons = _.sortBy(lessons, 'key');
 
+        d.resolve(lessons)
+      })
+        .catch(function (error) {
+          d.reject(error)
+        });
+
+      return d.promise;
+    }
+    function getResourceList () {
+      var d = $q.defer();
+      lessonDB.allDocs({
+        include_docs: true
+      }).then(function (data) {
+
+
+        var lessons = [];
+        for (var i = 0; i < data.rows.length; i++) {
+          data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key;
+            for (var c = 0; c < data.rows[i].doc.lesson.objects.length; c++) {
+                data.rows[i].doc.lesson.objects[c].node.tag = data.rows[i].doc.lesson.node.tag;
+
+                lessons.push(data.rows[i].doc.lesson.objects[c])
+            }
+        }
 
         d.resolve(lessons)
       })
         .catch(function (error) {
-
           d.reject(error)
         });
 

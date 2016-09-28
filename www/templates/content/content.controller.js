@@ -16,9 +16,12 @@
                 '$timeout',
                 'audio',
                 '$ionicPlatform',
+                '$ionicLoading',
                 'analytics',
                 'User',
-                '$q'
+                '$q',
+                'Utilities',
+                '$state'
        ];
 
   /* @ngInject */
@@ -33,9 +36,12 @@
                 $timeout,
                 audio,
                 $ionicPlatform,
+                $ionicLoading,
                 analytics,
                 User,
-                $q
+                $q,
+                Utilities,
+                $state
            ) {
     var contentCtrl = this;
     $scope.audio = audio;
@@ -47,9 +53,11 @@
     $scope.selectedNode = lessonutils.getLocalLesson();
     contentCtrl.toggleControls = toggleControls;
     contentCtrl.onVideoComplete = onVideoComplete;
+    contentCtrl.utilities = Utilities;
+    contentCtrl.next = next;
     contentCtrl.config = {
       sources: [$stateParams.video],
-      autoplay: true,
+      autoplay: false,
       plugins: {
         controls: {
           showControl : true
@@ -69,6 +77,14 @@
   //     }
   // }, 101);
 
+  function next() {
+      $ionicLoading.show({
+          hideOnStateChange: true
+      });
+      $scope.closeResult()
+      $state.go('map.navigate', {});
+  }
+
   function toggleControls(){
       contentCtrl.config.plugins.controls.showControl=!contentCtrl.config.plugins.controls.showControl;
       ;
@@ -84,10 +100,13 @@
   })
 
     function onVideoComplete() {
+        contentCtrl.summary = {
+            stars : 3
+        }
       submitReport()
         $timeout(function() {
           orientation.setPortrait();
-          $scope.modal.show();
+          $scope.resultMenu.show();
 			analytics.log(
               {
                   name : 'VIDEO',
@@ -171,17 +190,15 @@
     //   }
     }
 
-
-
     $scope.openNodeMenu = function() {
       if (contentCtrl.API.currentState == 'pause') {
         orientation.setPortrait();
-        $scope.modal.show();
+        $scope.nodeMenu.show();
       }
       return true;
     }
     $scope.closeNodeMenu = function() {
-      $scope.modal.hide();
+      $scope.nodeMenu.hide();
       return true;
     }
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal-rope' + CONSTANT.VIEW, {
@@ -189,8 +206,45 @@
       animation: 'slide-in-down',
       hardwareBackButtonClose: false
     }).then(function(modal) {
-      $scope.modal = modal;
+      $scope.nodeMenu = modal;
+      
     });
+    $scope.openResult = function() {
+        if (contentCtrl.API.currentState == 'pause') {
+            orientation.setPortrait();
+            $scope.resultMenu.show();
+        }
+        return true;
+    }
+    $scope.closeResult = function() {
+        $scope.resultMenu.hide();
+        return true;
+    }
+    $ionicModal.fromTemplateUrl(CONSTANT.PATH.COMMON + '/common.modal-result' + CONSTANT.VIEW, {
+      scope: $scope,
+      animation: 'slide-in-down',
+      hardwareBackButtonClose: false
+    }).then(function(modal) {
+      $scope.resultMenu = modal;
+      
+    });
+
+
+    // $scope.nodeRibbon;
+
+    $ionicModal.fromTemplateUrl(CONSTANT.PATH.CONTENT + '/content.modal-ribbon' + CONSTANT.VIEW, {
+      scope: $scope,
+      // animation: 'slide-in-up',
+      backdropClickToClose: true
+    }).then(function(modal){
+      $scope.nodeRibbonFlag = true;
+      modal.show();
+      $timeout(function() {
+        $scope.nodeRibbonFlag = false;
+        modal.hide();
+        contentCtrl.play();
+      }, 2000);
+    })
 
   }
 

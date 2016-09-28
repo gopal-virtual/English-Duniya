@@ -35,18 +35,14 @@
         var obtained_score = 0;
 
         promises.push(
-        User.scores.getScoreOfLesson(value.id,User.getActiveProfileSync()._id).then(function(score) {
+        User.scores.getScoreOfResource(value.node.parent, value.node.id,User.getActiveProfileSync()._id).then(function(score) {
 
           if (score) {
-              for (var property in score) {
+              // need score for both video and assessment
+              total_score = total_score + score.totalScore;
+              obtained_score = obtained_score + score.score;
 
-                if (score.hasOwnProperty(property) && score[property].type === 'assessment') {
-
-                  total_score = total_score + score[property].totalScore;
-                  obtained_score = obtained_score + score[property].score;
-                }
-              }
-
+              
 
               if (total_score > 0) {
                 var percent = (obtained_score / total_score) * 100;

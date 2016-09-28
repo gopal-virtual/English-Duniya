@@ -24,9 +24,9 @@
         },
         resolve: {
           quiz: ['$stateParams', 'Rest', '$log', 'content', 'ml', '$q', '$http', 'User', 'data', function ($stateParams, Rest, $log, content, ml, $q, $http, User, data) {
-
             if ($stateParams.type == 'litmus') {
               var all_promises = [];
+              
               if (ml.kmapsJSON == undefined) {
                 var promise = ml.setMLKmapsJSON;
                 all_promises.push(promise);
@@ -53,13 +53,24 @@
                 "objects": []
               };
               return $q.all(all_promises).then(function () {
-                var suggestion = ml.getNextQSr(data.getTestParams(JSON.parse(localStorage.profile).grade), ml.mapping);
+                
+
+                
+
+                var suggestion = ml.getNextQSr(data.getTestParams(User.getActiveProfileSync().data.profile.grade), ml.mapping);
+                
+
                 var question = ml.dqJSON[suggestion.qSr];
+                
                 question && litmus.objects.push(question);
                 litmus['suggestion'] = suggestion;
-                return litmus;
+                
+                return content.getAssessment(litmus);
+                // return litmus;
               })
-            } else {
+            }
+            else {
+                
 
                 // ;
                 // $stateParams.quiz.objects[0].node.id == 'demo' ? $stateParams.quiz.objects.shift(data.demo_question) :false;
@@ -73,7 +84,7 @@
                 //   $stateParams.quiz.objects[currentIndex] = $stateParams.quiz.objects[randomIndex];
                 //   $stateParams.quiz.objects[randomIndex] = temporaryValue;
                 // }
-                User.demo.isShown(5) && $stateParams.quiz.objects.unshift(content.demo_question);
+                // User.demo.isShown(5) && $stateParams.quiz.objects.unshift(content.demo_question);
                 return content.getAssessment($stateParams.quiz).then(function (response) {
                   return response;
                 });
@@ -99,9 +110,9 @@
       .state('quiz.questions', {
         url: '/questions',
         onEnter: ['$log', '$state', '$stateParams', function ($log, $state, $stateParams) {
-          if (!$stateParams.quiz.objects.length) {
-            $state.go('state.missing');
-          }
+          // if (!$stateParams.quiz.objects.length) {
+            // $state.go('state.missing');
+          // }
         }],
         // nativeTransitions: null,
         views: {
@@ -129,11 +140,11 @@
 
           User.skills.update({
             profileId: User.getActiveProfileSync()._id,
-            lessonId: lesson.node.id,
+            lessonId: quiz.parent,
             id: quiz.node.id,
             score: summary.score.marks,
             totalScore: quiz.node.type.score,
-            skill: lesson.node.tag,
+            skill: quiz.node.tag,
           })
             .then(function () {
               return User.scores.getScoreOfAssessment(quiz.node.id, lesson.node.id, User.getActiveProfileSync()._id)
@@ -184,6 +195,14 @@
             controller: 'QuizController as quizCtrl'
           }
         }
+      })
+      .state('litmus_result', {
+        url: '/litmus_result',
+        templateUrl: CONSTANT.PATH.QUIZ + '/quiz.litmus_summary' + CONSTANT.VIEW
+      })
+      .state('litmus_start', {
+        url: '/litmus_start',
+        templateUrl: CONSTANT.PATH.QUIZ + '/quiz.litmus_start' + CONSTANT.VIEW
       })
   }
 })();

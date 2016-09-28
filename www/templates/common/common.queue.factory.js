@@ -40,7 +40,7 @@
       if(!method){
         method = 'post'
       }
-      $log.debug("Pushing",url,body,method);
+      
       return queueDB.put({
         '_id': new Date().getTime().toString(),
         'url': url,
@@ -117,21 +117,21 @@
 
     function uploadAndDelete(record) {
 
-      $log.debug("R",record)
+      
       //patch
       if(!record.doc.body){
         record.doc.body = record.doc.data.data;
         record.doc.method = 'post';
         record.doc.url = 'activity-log';
       }
-      $log.debug("R'",record)
+      
 
       //patch end
 
       if(record.doc.url === 'activity-log'){
 
         if(record.doc.body.client_uid === undefined && record.doc.body.actor_object_id === undefined){
-$log.debug("HRE CMED")
+
         record.doc.body.actor_object_id = JSON.parse(localStorage.getItem('user_details')).id;
         }
       }

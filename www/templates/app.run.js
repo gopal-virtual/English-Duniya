@@ -95,8 +95,8 @@
       }
 
       if (toState.name == 'quiz.questions' && !toParams.quiz) {
-        event.preventDefault();
-        $state.go('map.navigate');
+        // event.preventDefault();
+        // $state.go('map.navigate');
       }
       if (toState.name == 'quiz.start' && !toParams.quiz) {
         event.preventDefault();
