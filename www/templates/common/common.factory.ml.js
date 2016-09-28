@@ -658,7 +658,7 @@
                           return getNextQSr(newTest, diagLitmusMapping);
                       }
                       var suggestion = { "skill": test[0]["skill"], "qSr": q_set[Math.floor(Math.random() * (q_set.length)) + 0], "test": test, "actualLevel": test[0]["level"], "microstandard": diagLitmusMapping[test[0]["skill"]][test[0]["level"]]["microstandard"] };
-                      
+                      $log.debug('suggestion from ml', suggestion);
                       return suggestion;
                   } else {
                       test = displaySuggestedSr(test[0]["level"], test, diagLitmusMapping);
@@ -676,7 +676,7 @@
                       var intermediate_q_set = diagLitmusMapping[test[0]["skill"]][test[0]["level"] - 1]["questions"];
                       test[0]["qSet"][test[0]["level"] - 1] = { "qSr": intermediate_q_set[Math.floor(Math.random() * (intermediate_q_set.length)) + 0], "answered": "NA" };
                       var suggestion = { "skill": test[0]["skill"], "qSr": q_set[Math.floor(Math.random() * (q_set.length)) + 0], "test": test, "actualLevel": test[0]["level"] - 2, "microstandard": diagLitmusMapping[test[0]["skill"]][test[0]["level"] - 2]["microstandard"] };
-                      
+                      $log.debug('suggestion from ml', suggestion);
                       return suggestion;
                   } else {
                       test = displaySuggestedSr(test[0]["level"], test, diagLitmusMapping);
@@ -694,7 +694,7 @@
                       var intermediate_q_set = diagLitmusMapping[test[0]["skill"]][test[0]["level"] + 1]["questions"];
                       test[0]["qSet"][test[0]["level"] + 1] = { "qSr": intermediate_q_set[Math.floor(Math.random() * (intermediate_q_set.length)) + 0], "answered": "NA" };
                       var suggestion = { "skill": test[0]["skill"], "qSr": q_set[Math.floor(Math.random() * (q_set.length)) + 0], "test": test, "actualLevel": test[0]["level"] + 2, "microstandard": diagLitmusMapping[test[0]["skill"]][test[0]["level"] + 2]["microstandard"] };
-                      
+                      $log.debug('suggestion from ml', suggestion);
                       return suggestion;
                   } else {
                       test = displaySuggestedSr(test[0]["level"], test, diagLitmusMapping);
