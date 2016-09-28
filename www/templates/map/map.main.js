@@ -934,19 +934,20 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                         log.debug('i got stars', j)
                         // var posx = _this.math.catmullRomInterpolation(points.x, j/lessons.length);
                         // var posy = _this.math.catmullRomInterpolation(points.y, j/lessons.length);
-                        var posx = _this.math.catmullRomInterpolation(points.x, j);
-                        var posy = _this.math.catmullRomInterpolation(points.y, j);
+                        var posx = _this.math.catmullRomInterpolation(points.x, j/(last_node_index-first_node_index));
+                        var posy = _this.math.catmullRomInterpolation(points.y, j/(last_node_index-first_node_index));
                         // log.debug("In star animation function, \nlessonFromQuizKey: ",lessonKey," activeLessonKey: ",temp.activeLessonKey,"\nactivatedLesson: ",lessons[lessonKey],"\nactiveLesson: ",lessons[temp.activeLessonKey]);
                         var starCloneTween = [];
                         for (var i = 0; i < lessons[lessonKey].stars; i++) {
+                                log.debug("x:",posx,star_x[i],game_scale,(posx+ star_x[i])*game_scale);
                                 starClone[i] = groups.nonRegion.starClone.create((posx+ star_x[i])*game_scale, posy + star_y[i], 'star_medium');
 
                                 starClone[i].anchor.setTo(0.5, 0.5);
                                 starCloneTween[i] = {};
 
-                                starCloneTween[i]["pos"] = game.add.tween(starClone[i]).to( { x: ((lessonTag[lessons[lessonKey].node.tag.toLowerCase()]-1)*game.width)/4, y: parseInt(game.camera.y)}, 1000, Phaser.Easing.Exponential.InOut);
+                                starCloneTween[i]["pos"] = game.add.tween(starClone[i]).to( { x: 20, y: parseInt(game.camera.y)-100}, 1000, Phaser.Easing.Exponential.InOut);
                                 starCloneTween[i]["scale"] = game.add.tween(starClone[i].scale).from( { x: 0, y: 0 }, 800, Phaser.Easing.Bounce.Out,false,i*800);
-                                starCloneTween[i]["scalePos"] = game.add.tween(starClone[i]).to( { x: (lessonTag[lessons[lessonKey].node.tag.toLowerCase()]>2?"+100":"-100"), y: "-100" }, 800, Phaser.Easing.Cubic.Out,false,i*800);
+                                starCloneTween[i]["scalePos"] = game.add.tween(starClone[i]).to( { x: "-50", y: "-100" }, 800, Phaser.Easing.Cubic.Out,false,i*800);
                                 starCloneTween[i]["rotate"] = game.add.tween(starClone[i]).to( { angle: 450 }, 3000, Phaser.Easing.Quadratic.Out);
                                 starCloneTween[i].scale.chain(starCloneTween[i].pos);
                                 starCloneTween[i].scale.start();
@@ -1124,6 +1125,8 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                     game.kineticScrolling.start();
                     var lessonFromQuizStars = typeof(temp.lessonFromQuizKey)!="undefined"?lessons[temp.lessonFromQuizKey].stars:false;
                     var animateStarFlag = JSON.parse(localStorage.getItem("animateStarFlag"));
+                    animateStar(temp.activeLessonKey-1);
+                    
                     if (animateStarFlag) {
 
 
