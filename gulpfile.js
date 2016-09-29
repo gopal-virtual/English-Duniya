@@ -69,7 +69,7 @@ var app_type = argument.argv.app_type ? argument.argv.app_type : 'na';
 var app_version = argument.argv.app_version? argument.argv.app_version : 'na';
 var constants = JSON.parse(file.readFileSync(paths.constants.environment, 'utf8'));
 
-gulp.task('default', ['generate-constants', 'sass', 'scripts', 'html']);
+gulp.task('default', ['generate-constants', 'sass', 'html', 'scripts']);
 
 // gulp.task('optimize', function(cb) {
 //   gulp.src(paths.image)
