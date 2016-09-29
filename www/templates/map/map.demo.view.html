@@ -27,7 +27,7 @@
                     <!-- <button class="sbtn sbtn-"></button> -->
                     <!-- <div class="" ng-show="!selectedNode" ng-click="$emit('openNode', mapCtrl.getNodeProperty('node'));mapCtrl.setAnimateStarFlag();" style="width:60vw;height:60vw;border-radius:50%;border:3px solid #39B89A;background : url('img/icons/icon-{{mapCtrl.getNodeProperty('type')}}.png') #FCF3D8 no-repeat center center; background-size : auto 50%">
                     </div> -->
-                    <button ng-show="!selectedNode" style="height: 180px;width: 176px;" ng-click="$emit('openNode', mapCtrl.lessons[mapCtrl.lessons.length-1]);mapCtrl.setAnimateStarFlag();sele" class="sbtn sbtn-node-video-green"></button>
+                    <button ng-show="!selectedNode" style="height: 180px;width: 176px;" ng-click="$emit('openNode', mapCtrl.lessons[0]);mapCtrl.setAnimateStarFlag();" class="sbtn sbtn-node-{{mapCtrl.lessons[0].node.content_type_name == 'assessment'?'practice':'video'}}-{{mapCtrl.nodeColors[mapCtrl.lessons[0].node.tag.toLowerCase()]}}"></button>
                 </center>
             </div>
         </div>

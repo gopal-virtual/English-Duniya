@@ -115,6 +115,13 @@
     // port node
     mapCtrl.first_node_index = parseInt(localStorage.first_node_index) || 0;
     mapCtrl.last_node_index = parseInt(localStorage.last_node_index) || mapCtrl.lessons.length - 1;
+    mapCtrl.nodeColors = {
+        "vocabulary" : "blue",
+        "grammar" : "green",
+        "listening" : "darkblue",
+        "reading" : "orange"
+    }
+
 
     $scope.$on('pageRegion', mapCtrl.setLessonRange )
     // $scope.$on('nextRegion', mapCtrl.setLessonRange )
