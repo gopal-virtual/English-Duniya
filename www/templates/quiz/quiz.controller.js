@@ -896,30 +896,16 @@
           User.getActiveProfileSync()._id
         )
     }
+    function intro_end_quiz(){
+      $log.debug("removed event listener quiz",$state);
+      angular.element("#audioplayer")[0].removeEventListener('ended',intro_end_quiz, false);
 
-
-    $ionicModal.fromTemplateUrl(CONSTANT.PATH.CONTENT + '/content.modal-ribbon' + CONSTANT.VIEW, {
-      scope: $scope,
-      // animation: 'slide-in-up',
-      backdropClickToClose: true
-    }).then(function(modal){
-      $scope.nodeRibbon = modal;
-      $scope.nodeRibbonFlag = true;
-      // modal.show();
-      $log.debug(quiz)
-      angular.element("#audioplayer")[0].pause();
-      angular.element("#audioSource")[0].src = quiz.node.parsed_sound;
-      angular.element("#audioplayer")[0].load();
-      angular.element("#audioplayer")[0].play();
-      angular.element("#audioplayer")[0].addEventListener('ended', function(){
+      if($state.current.name == 'quiz.questions'){
         $scope.nodeRibbonFlag = false;
-        modal.hide().then(function(){
+        $scope.nodeRibbon.hide().then(function(){
           if($state.is('quiz.questions') && User.demo.isShown(5)){
 
             $timeout(function(){
-
-
-
               if($stateParams.type!=='litmus'){
                 angular.element("#audioplayer")[0].pause();
                 angular.element("#audioSource")[0].src = 'sound/demo-quiz-1.mp3';
@@ -938,6 +924,7 @@
             });
 
           }else{
+            $log.debug("playInstruction")
             quizCtrl.playInstruction(0);
 
             $ionicPlatform.registerBackButtonAction(function(event) {
@@ -946,7 +933,25 @@
           }
 
         });
-      });
+      }
+
+    }
+
+    $ionicModal.fromTemplateUrl(CONSTANT.PATH.CONTENT + '/content.modal-ribbon' + CONSTANT.VIEW, {
+      scope: $scope,
+      // animation: 'slide-in-up',
+      backdropClickToClose: true
+    }).then(function(modal){
+      $scope.nodeRibbon = modal;
+      $scope.nodeRibbonFlag = true;
+      // modal.show();
+      $log.debug(quiz)
+      angular.element("#audioplayer")[0].pause();
+      angular.element("#audioSource")[0].src = quiz.node.parsed_sound;
+      angular.element("#audioplayer")[0].load();
+      angular.element("#audioplayer")[0].play();
+      $log.debug("Added even listener quiz");
+      angular.element("#audioplayer")[0].addEventListener('ended', intro_end_quiz, false);
 
     })
 
