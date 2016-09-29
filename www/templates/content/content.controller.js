@@ -170,10 +170,10 @@
       }).then(function(modal){
         if($stateParams.video.resource.node.parsed_sound){
           $scope.nodeRibbonFlag = true;
-
           modal.show();
-          angular.element("#audioplayer")[0].load();
           angular.element("#audioSource")[0].src = $stateParams.video.resource.node.parsed_sound;
+          angular.element("#audioplayer")[0].load();
+          $log.debug($stateParams.video.resource.node.parsed_sound);
           angular.element("#audioplayer")[0].play();
           angular.element("#audioplayer")[0].addEventListener('ended', function(){
             $log.debug("ENDED");

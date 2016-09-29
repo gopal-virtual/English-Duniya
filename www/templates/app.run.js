@@ -94,9 +94,9 @@
         });
       }
 
-      if (toState.name == 'quiz.questions' && !toParams.quiz) {
-        // event.preventDefault();
-        // $state.go('map.navigate');
+      if (toState.name == 'quiz.questions' && toParams.type=='practice' && !toParams.quiz) {
+        event.preventDefault();
+        $state.go('map.navigate');
       }
       if (toState.name == 'quiz.start' && !toParams.quiz) {
         event.preventDefault();
@@ -107,8 +107,8 @@
         $state.go('map.navigate');
       }
       if (toState.name == 'quiz.practice.summary' && !toParams.report) {
-        // event.preventDefault();
-        // $state.go('map.navigate');
+        event.preventDefault();
+        $state.go('map.navigate');
       }
       // block content state
       if (toState.name == 'content.video' && !toParams.video) {

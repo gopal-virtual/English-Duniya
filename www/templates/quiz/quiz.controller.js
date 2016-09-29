@@ -149,6 +149,7 @@
     // quizCtrl.tourFlag = true;
 
     quizCtrl.disable_submit = false;
+    quizCtrl.enable_litmus = true;
     $scope.demo = {
       'tourNextStep': tourNextStep,
       'tourFlag': localStorage.getItem('tourFlag')
@@ -496,7 +497,8 @@
 
             $timeout(function() {
               quizCtrl.currentIndex++;
-              $ionicSlideBoxDelegate.next();
+              $ionicSlideBoxDelegate.slide(quizCtrl.currentIndex);
+              quizCtrl.enable_litmus = true;
               quizCtrl.disable_submit = false;
             }, 300);
 
@@ -733,7 +735,7 @@
         var levelRec = ml.getLevelRecommendation();
         $log.debug('levelRec', levelRec);
         $state.go('litmus_result',{'average_level':levelRec.avgLevel})
-
+        localStorage.setItem('diagnosis_flag',true);
       }else{
         $state.go('map.navigate', {});
       }
@@ -905,6 +907,7 @@
       $scope.nodeRibbonFlag = true;
       // modal.show();
       $log.debug(quiz)
+      angular.element("#audioplayer")[0].pause();
       angular.element("#audioSource")[0].src = quiz.node.parsed_sound;
       angular.element("#audioplayer")[0].load();
       angular.element("#audioplayer")[0].play();
