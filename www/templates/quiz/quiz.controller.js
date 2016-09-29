@@ -905,6 +905,7 @@
       $scope.nodeRibbonFlag = true;
       // modal.show();
       $log.debug(quiz)
+      angular.element("#audioplayer")[0].pause();
       angular.element("#audioSource")[0].src = quiz.node.parsed_sound;
       angular.element("#audioplayer")[0].load();
       angular.element("#audioplayer")[0].play();
