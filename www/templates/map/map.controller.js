@@ -75,7 +75,6 @@
     ) {
 
     $scope.audio = audio;
-    ;
     $scope.settings = settings;
     var temp = JSON.parse(localStorage.getItem('profile')).data.profile;
     temp.name = temp.first_name + ' ' + temp.last_name;
@@ -122,7 +121,9 @@
         "reading" : "orange"
     }
 
-
+    if(localStorage.getItem('diagnosis_flag') == 'false'){
+      $state.go('litmus_start');
+    }
     $scope.$on('pageRegion', mapCtrl.setLessonRange )
     // $scope.$on('nextRegion', mapCtrl.setLessonRange )
     function setLessonRange(event, regionPage, action){
@@ -146,7 +147,7 @@
 
         // localStorage.setItem('last_node_index', end_index)
         window.location.reload()
-        // 
+        //
     }
     // end : port node
 

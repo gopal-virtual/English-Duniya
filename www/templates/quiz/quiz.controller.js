@@ -733,7 +733,7 @@
         var levelRec = ml.getLevelRecommendation();
         $log.debug('levelRec', levelRec);
         $state.go('litmus_result',{'average_level':levelRec.avgLevel})
-
+        localStorage.setItem('diagnosis_flag',true);
       }else{
         $state.go('map.navigate', {});
       }
