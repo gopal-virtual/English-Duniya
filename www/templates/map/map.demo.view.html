@@ -27,13 +27,13 @@
                     <!-- <button class="sbtn sbtn-"></button> -->
                     <!-- <div class="" ng-show="!selectedNode" ng-click="$emit('openNode', mapCtrl.getNodeProperty('node'));mapCtrl.setAnimateStarFlag();" style="width:60vw;height:60vw;border-radius:50%;border:3px solid #39B89A;background : url('img/icons/icon-{{mapCtrl.getNodeProperty('type')}}.png') #FCF3D8 no-repeat center center; background-size : auto 50%">
                     </div> -->
-                    <button style="height: 180px;width: 176px;" ng-click="$emit('openNode', mapCtrl.getNodeProperty('node'));mapCtrl.setAnimateStarFlag();" class="sbtn sbtn-node-video-green"></button>
+                    <button ng-show="!selectedNode" style="height: 180px;width: 176px;" ng-click="$emit('openNode', mapCtrl.lessons[mapCtrl.lessons.length-1]);mapCtrl.setAnimateStarFlag();sele" class="sbtn sbtn-node-video-green"></button>
                 </center>
             </div>
         </div>
         <div ng-show="!selectedNode" class="demo-point animation-repeat-point"><img src="img/assets/finger_point.png" alt="pointing finger"></div>
         <div class="row height-25">
             <div class="col"></div>
-        </div> -->
+        </div> 
     </ion-content>
 </ion-modal-view>

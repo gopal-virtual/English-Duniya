@@ -731,8 +731,8 @@
       });
       if($stateParams.type == 'litmus'){
         var avgLevel = ml.getLevelRecommendation();
-
-        $state.go('litmus_result',{})
+        $log.debug(avgLevel)
+        $state.go('litmus_result',{'average_level':avgLevel})
       }else{
         $state.go('map.navigate', {});
       }
@@ -945,5 +945,9 @@
       });
 
     })
+
+
+    // $scope.progressBar();
+
   }
 })();

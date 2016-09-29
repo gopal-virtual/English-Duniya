@@ -26,7 +26,7 @@
           quiz: ['$stateParams', 'Rest', '$log', 'content', 'ml', '$q', '$http', 'User', 'data', function ($stateParams, Rest, $log, content, ml, $q, $http, User, data) {
             if ($stateParams.type == 'litmus') {
               var all_promises = [];
-              
+
               if (ml.kmapsJSON == undefined) {
                 var promise = ml.setMLKmapsJSON;
                 all_promises.push(promise);
@@ -53,24 +53,24 @@
                 "objects": []
               };
               return $q.all(all_promises).then(function () {
-                
 
-                
+
+
 
                 var suggestion = ml.getNextQSr(data.getTestParams(User.getActiveProfileSync().data.profile.grade), ml.mapping);
-                
+
 
                 var question = ml.dqJSON[suggestion.qSr];
-                
+
                 question && litmus.objects.push(question);
                 litmus['suggestion'] = suggestion;
-                
+
                 return content.getAssessment(litmus);
                 // return litmus;
               })
             }
             else {
-                
+
 
                 // ;
                 // $stateParams.quiz.objects[0].node.id == 'demo' ? $stateParams.quiz.objects.shift(data.demo_question) :false;
@@ -198,7 +198,25 @@
       })
       .state('litmus_result', {
         url: '/litmus_result',
-        templateUrl: CONSTANT.PATH.QUIZ + '/quiz.litmus_summary' + CONSTANT.VIEW
+        params:{
+          average_level:null
+        },
+        templateUrl: CONSTANT.PATH.QUIZ + '/quiz.litmus_summary' + CONSTANT.VIEW,
+
+        controller: ['$log', 'audio', '$timeout','$stateParams','$scope', function ($log, audio,$timeout,$stateParams,$scope) {
+          $timeout(function() {
+            $log.debug("Printing progressBar",$stateParams);
+            var svgPath = document.getElementById('arc-progress');
+            var progress = new ProgressBar.Path(svgPath, {
+                duration: 800,
+                easing: 'easeIn'
+            });
+            progress.set(0);
+            $scope.average_level = $stateParams.average_level ? $stateParams.average_level : 1 ;
+
+            progress.animate($scope.average_level / 3)
+          }, 10);
+        }]
       })
       .state('litmus_start', {
         url: '/litmus_start',
