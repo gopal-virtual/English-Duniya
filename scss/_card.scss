@@ -75,6 +75,10 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  color: $hex-dark-blue;
+  line-height:1.15em;
+  padding-left: 20px !important;
+  padding-right: 20px !important;
 // height: 50vw;
 }
 .question.practice-question{
