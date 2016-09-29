@@ -108,12 +108,12 @@
   height: 56px;
 }
 .sbtn-submit:disabled{
-  background: url('../img/assets_svg/button-submit-grey.svg');
-  background-size: cover;
+  background: url('../img/assets_svg/button-submit-grey.svg') !important;
+  background-size: cover !important;
   background-position: 0 0 !important;
-  background-repeat:no-repeat;
-  width: 175px;
-  height: 56px;
+  background-repeat:no-repeat !important;
+  width: 175px !important;
+  height: 56px !important;
 }
 
 .sbtn-next-blue{
@@ -144,6 +144,14 @@
   height: 90px;
 }
 
+.sbtn-sound{
+  background: url('../img/assets_svg/button-audio.svg');
+  background-size: cover;
+  background-position: 0 0 !important;
+  background-repeat:no-repeat;
+  width: 125px;
+  height: 120px;
+}
 
 .sbtn-video-yellow{
   background: url('../img/assets_svg/button-video-yellow.svg');
