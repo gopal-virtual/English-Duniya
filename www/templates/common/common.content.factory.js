@@ -187,16 +187,22 @@
       lessonDB.allDocs({
         include_docs: true
       }).then(function (data) {
-
-
-        var lessons = [];
+        $log.debug(data)
         for (var i = 0; i < data.rows.length; i++) {
+          data.rows[i].key = data.rows[i].doc.lesson.key;
+        }
+        data.rows = _.sortBy(data.rows, 'key');
+        var lessons = [];
+        for ( i = 0; i < data.rows.length; i++) {
+          $log.debug(i)
           data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key;
-            for (var c = 0; c < data.rows[i].doc.lesson.objects.length; c++) {
-                data.rows[i].doc.lesson.objects[c].node.tag = data.rows[i].doc.lesson.node.tag;
+          for (var c = 0; c < data.rows[i].doc.lesson.objects.length; c++) {
+            $log.debug(c);
 
-                lessons.push(data.rows[i].doc.lesson.objects[c])
-            }
+            data.rows[i].doc.lesson.objects[c].node.tag = data.rows[i].doc.lesson.node.tag;
+
+            lessons.push(data.rows[i].doc.lesson.objects[c])
+          }
         }
 
         d.resolve(lessons)
