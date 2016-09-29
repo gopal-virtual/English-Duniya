@@ -28,7 +28,7 @@
       <!-- <a ui-sref="map.navigate" class="header-icon icon-question-mark"></a> -->
     </div>
   </div>
-  <ion-slide-box on-slide-changed="quizCtrl.setCurrentIndex(index);quizCtrl.logQuestion((index),'START');quizCtrl.quiz.objects[index].isVisited = true;quizCtrl.playInstruction(index)" ng-init="(quizCtrl.disableSwipe());quizCtrl.playInstruction(0)" show-pager="false">
+  <ion-slide-box on-slide-changed="quizCtrl.setCurrentIndex(index);quizCtrl.logQuestion((index),'START');quizCtrl.quiz.objects[index].isVisited = true;quizCtrl.playInstruction(index)" ng-init="(quizCtrl.disableSwipe());" show-pager="false">
     <ion-slide ng-repeat="question in quizCtrl.quiz.objects " ng-class="{'animation-question-slide':quizCtrl.isCurrentIndex($index)}">
 
       <!-- <div ng-repeat="question in quizCtrl.quiz.objects" ng-if="$index == quizCtrl.getCurrentIndex()"> -->

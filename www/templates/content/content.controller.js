@@ -160,7 +160,35 @@
     }
 
     function onPlayerReady(API) {
+      $log.debug("API",API)
       contentCtrl.API = API;
+
+      $ionicModal.fromTemplateUrl(CONSTANT.PATH.CONTENT + '/content.modal-ribbon' + CONSTANT.VIEW, {
+        scope: $scope,
+        // animation: 'slide-in-up',
+        backdropClickToClose: true
+      }).then(function(modal){
+        if($stateParams.video.resource.node.parsed_sound){
+          $scope.nodeRibbonFlag = true;
+
+          modal.show();
+          angular.element("#audioplayer")[0].load();
+          angular.element("#audioSource")[0].src = $stateParams.video.resource.node.parsed_sound;
+          angular.element("#audioplayer")[0].play();
+          angular.element("#audioplayer")[0].addEventListener('ended', function(){
+            $log.debug("ENDED");
+            $scope.nodeRibbonFlag = false;
+            modal.hide();
+            contentCtrl.play();
+          });
+        }else{
+          $log.debug(contentCtrl.API,"here");
+          // contentCtrl.API.pause();
+          $timeout(function () {
+            contentCtrl.play();
+          },100)
+        }
+      })
     }
 
     function play(){
@@ -208,7 +236,7 @@
       hardwareBackButtonClose: false
     }).then(function(modal) {
       $scope.nodeMenu = modal;
-      
+
     });
     $scope.openResult = function() {
         if (contentCtrl.API.currentState == 'pause') {
@@ -227,25 +255,12 @@
       hardwareBackButtonClose: false
     }).then(function(modal) {
       $scope.resultMenu = modal;
-      
+
     });
 
 
     // $scope.nodeRibbon;
 
-    $ionicModal.fromTemplateUrl(CONSTANT.PATH.CONTENT + '/content.modal-ribbon' + CONSTANT.VIEW, {
-      scope: $scope,
-      // animation: 'slide-in-up',
-      backdropClickToClose: true
-    }).then(function(modal){
-      $scope.nodeRibbonFlag = true;
-      modal.show();
-      $timeout(function() {
-        $scope.nodeRibbonFlag = false;
-        modal.hide();
-        contentCtrl.play();
-      }, 2000);
-    })
 
   }
 
