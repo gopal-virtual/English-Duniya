@@ -128,7 +128,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
             this.load.spritesheet('llama2', 'img/assets/llama2_animation.png', 124, 201);
             this.load.spritesheet('node-video', 'img/icons/video.png',65,68);
             this.load.spritesheet('node-practice', 'img/icons/practice.png', 66, 68);
-            this.load.spritesheet('node-port', 'img/icons/icon-port.png',113,132);
+            this.load.spritesheet('node-port', 'img/assets/port-node.png',118,187);
 
             this.load.spritesheet('node-blue-video', 'img/assets/button-blue-video.png',88,91);
             this.load.spritesheet('node-orange-video', 'img/assets/button-orange-video.png',88,91);
