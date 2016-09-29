@@ -20,7 +20,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
         "desert" : 2845,
         "tundra" : 2845,
         "forest" : 3016,
-        "peru" : 1872,
+        "peru" : 3016,
         // "region5" : 392,
     }
     var totalRegionHeight = 0;
@@ -45,7 +45,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
         "desert" : 450,
         "tundra" : 330,
         "forest" : 170,
-        "peru" : 300
+        "peru" : 350
     }
     var nodeColors = {
         "vocabulary" : "blue",
