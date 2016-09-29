@@ -174,7 +174,7 @@
     function playResource(resource, video, callback) {
       angular.element("#audioplayer")[0].pause();
       $log.debug(resource,"r")
-      playDemoAudio(resource);
+      // playDemoAudio(resource);
 
     //   if (utils.resourceType(resource) == 'practice' && (User.demo.isShown() && [2, 3].indexOf(User.demo.getStep()) >= 0)) {
     //     return;
@@ -184,6 +184,7 @@
     //     return;
     //   }
 
+      
       // to do
       $ionicLoading.show({
         // noBackdrop: false
@@ -318,24 +319,24 @@
 
     function playDemoAudio(node) {
 
-
-      if (User.demo.isShown() ) {
-        if (User.demo.getStep() == 2) {
-          angular.element("#audioplayer")[0].pause();
-          angular.element("#audioSource")[0].src = 'sound/demo-2.mp3';
-          angular.element("#audioplayer")[0].load();
-          angular.element("#audioplayer")[0].play();
-        } else if (User.demo.getStep() == 4) {
-          angular.element("#audioplayer")[0].pause();
-          angular.element("#audioSource")[0].src = 'sound/demo-4.mp3';
-          angular.element("#audioplayer")[0].load();
-          angular.element("#audioplayer")[0].play();
-        } else if (node.meta && node.meta.parsed_sound) {
-          angular.element("#audioSource")[0].src = node.meta.parsed_sound;
-          angular.element("#audioplayer")[0].load();
-          angular.element("#audioplayer")[0].play();
-        }
-      } else {
+      //
+      // if (User.demo.isShown() ) {
+      //   if (User.demo.getStep() == 2) {
+      //     angular.element("#audioplayer")[0].pause();
+      //     angular.element("#audioSource")[0].src = 'sound/demo-2.mp3';
+      //     angular.element("#audioplayer")[0].load();
+      //     angular.element("#audioplayer")[0].play();
+      //   } else if (User.demo.getStep() == 4) {
+      //     angular.element("#audioplayer")[0].pause();
+      //     angular.element("#audioSource")[0].src = 'sound/demo-4.mp3';
+      //     angular.element("#audioplayer")[0].load();
+      //     angular.element("#audioplayer")[0].play();
+      //   } else if (node.meta && node.meta.parsed_sound) {
+      //     angular.element("#audioSource")[0].src = node.meta.parsed_sound;
+      //     angular.element("#audioplayer")[0].load();
+      //     angular.element("#audioplayer")[0].play();
+      //   }
+      // } else {
 
         if (node.node && node.node.parsed_sound) {
 
@@ -343,7 +344,7 @@
           angular.element("#audioplayer")[0].load();
           angular.element("#audioplayer")[0].play();
         }
-      }
+      // }
     }
   }
 })();
