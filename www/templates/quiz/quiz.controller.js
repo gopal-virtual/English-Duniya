@@ -149,6 +149,7 @@
     // quizCtrl.tourFlag = true;
 
     quizCtrl.disable_submit = false;
+    quizCtrl.enable_litmus = true;
     $scope.demo = {
       'tourNextStep': tourNextStep,
       'tourFlag': localStorage.getItem('tourFlag')
@@ -496,7 +497,8 @@
 
             $timeout(function() {
               quizCtrl.currentIndex++;
-              $ionicSlideBoxDelegate.next();
+              $ionicSlideBoxDelegate.slide(quizCtrl.currentIndex);
+              quizCtrl.enable_litmus = true;
               quizCtrl.disable_submit = false;
             }, 300);
 
