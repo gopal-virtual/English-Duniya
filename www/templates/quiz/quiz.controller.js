@@ -938,5 +938,9 @@
         // contentCtrl.play();
       }, 2000);
     })
+
+      
+    // $scope.progressBar();
+
   }
 })();

@@ -198,7 +198,19 @@
       })
       .state('litmus_result', {
         url: '/litmus_result',
-        templateUrl: CONSTANT.PATH.QUIZ + '/quiz.litmus_summary' + CONSTANT.VIEW
+        templateUrl: CONSTANT.PATH.QUIZ + '/quiz.litmus_summary' + CONSTANT.VIEW,
+        onEnter: ['$log', 'audio', '$timeout', function ($log, audio,$timeout) {
+          $timeout(function() {
+            $log.debug("Printing progressBar");
+            var svgPath = document.getElementById('arc-progress');
+            var progress = new ProgressBar.Path(svgPath, {
+                duration: 800,
+                easing: 'easeIn'
+            });
+            progress.set(0);
+            progress.animate(0.25);
+          }, 10);
+        }]
       })
       .state('litmus_start', {
         url: '/litmus_start',

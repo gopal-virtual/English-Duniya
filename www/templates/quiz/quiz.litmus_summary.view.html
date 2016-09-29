@@ -1,17 +1,21 @@
 <ion-view class="bg-pale">
-  <div class="vertical-align" style="height:100%">
+  <div class="vertical-align" style="height:100%" ng-init="progressBar()">
     <div>
       <center style="padding-top: 20px;">
-        <img height="150" src="img/assets/upperbody-girl.png">
+        <img height="120" src="img/assets/upperbody-girl.png">
       </center>
-      <div class="color-dblue padding-20" style="text-align:justify;font-size: 2.5em;line-height: 1.2em">
-        <p style="padding-bottom: 20px">
-          Hi,
-        </p>
-        <p>
-          Congrats you completed litmus
-        </p>
-      </div>
+      <center>
+        <svg height="280" xmlns="http://www.w3.org/2000/svg" version="1.1" x="0px" y="0px" viewBox="0 0 100 100">>
+          <path
+            fill-opacity="0" stroke-width="9.5" stroke="#666"
+            d="m 21.716152,78.283787 a 40,40 0 0 1 0,-56.568543 40,40 0 0 1 56.568543,0 40,40 0 0 1 0,56.568543" />
+          <path
+            id="arc-progress"
+            fill-opacity="0" stroke-width="10" stroke="#A6CDED"
+            d="m 21.715728,78.284271 a 40,40 0 0 1 1e-6,-56.568542 40,40 0 0 1 56.568542,0 40,40 0 0 1 0,56.568542" />
+        </svg>
+        <p class="color-dblue" style="position: absolute;top: 270px;width: 100%;font-size: 3em;">Level 2</p>
+      </center>
       <center>
         <button ui-sref="map.navigate" class="sbtn sbtn-next-blue"></button>
       </center>
