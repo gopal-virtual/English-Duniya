@@ -41,9 +41,9 @@
 .practice-header {
   border: 0 !important;
   height: $practice-header-height;
-  -webkit-box-shadow: 2px 3px 4px 0 transparentize(darken($brand-grey,20),0.5);
-  -moz-box-shadow: 2px 3px 4px 0 transparentize(darken($brand-grey,20),0.5);
-  box-shadow: 2px 3px 4px 0 transparentize(darken($brand-grey,20),0.5);
+  // -webkit-box-shadow: 2px 3px 4px 0 transparentize(darken($brand-grey,20),0.5);
+  // -moz-box-shadow: 2px 3px 4px 0 transparentize(darken($brand-grey,20),0.5);
+  // box-shadow: 2px 3px 4px 0 transparentize(darken($brand-grey,20),0.5);
 }
 .header-icon {
   width: 35px;
@@ -85,8 +85,10 @@ progress[value] {
 }
 progress[value]::-webkit-progress-bar {
   background-color: #727271;
+  box-shadow: 0px 3px 0px #666;
   border-radius: $border-radius-round;
   height: 5px;
+  // border-radius: 4px !important;
 }
 progress[value]::-webkit-progress-value {
 
@@ -102,8 +104,10 @@ progress[value]::-webkit-progress-value {
 }
 .progress-bar-practice,
 progress[value]::-webkit-progress-value {
-  background-color: $brand-green;
+  background-color: $hex-yellow;
+  box-shadow: 0px 3px 0px #{$hex-dark-yellow};
   height: 5px;
+  border-radius: 4px !important;
   z-index: 1;
 }
 .progress-bar-container {

@@ -65,8 +65,8 @@
                             <h2 style="margin-top:0px;" class="center personalize-title">आप कौन सी कक्षा मे हो?</h2>
                             <div class="radio-box-container-outer">
 
-                              <div class="radio-box-container-inner clearfix">
-                                <div class="lcard radio-con" ng-class="{'radio-box-solo':$index == 0,'selected':userCtrl.user.grade == grade}" ng-repeat="grade in [1,2,3]">
+                              <div style="width:180px;" class="radio-box-container-inner clearfix">
+                                <div class="lcard radio-con radio-con-sm" ng-class="{'radio-box-solo':$index == 0,'selected':userCtrl.user.grade == grade}" ng-repeat="grade in [1,2,3]">
                                     <label class="lcard-inner radio radio-box center"  ng-class="{}">{{grade}}
                                         <input type="radio" name="grade" value="{{grade}}" ng-model="userCtrl.user.grade">
                                     </label>
