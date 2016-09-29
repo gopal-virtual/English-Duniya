@@ -34,13 +34,13 @@
       <!-- <div ng-repeat="question in quizCtrl.quiz.objects" ng-if="$index == quizCtrl.getCurrentIndex()"> -->
       <div id="step1" style="position:relative;top:8%">
         <ion-scroll scrollbar-x="false" scrollbar-y="false" ng-init="quizCtrl.isScroll($index)" style="
-    height: 29vh;
+    height: 27vh;
 " direction="y" class="padding-0 bg-pale no-shadow">
           <div
-            style="min-height:24vh"
+            style="min-height:27vh"
             ng-if="question.node.title"
             ng-bind-html="question.node.widgetHtml"
-          class="question card card-transparent center margin-x-0 margin-y-0 padding-10"
+          class="question card card-transparent center margin-x-0 margin-y-0 padding-0"
             ng-click="quizCtrl.playAudio(question.node.widgetSound,$index);quizCtrl.highlightSoundIcon($parent.$index);"></div>
         </ion-scroll>
       </div>
@@ -48,11 +48,11 @@
       <ion-scroll
       scrollbar-x="false" scrollbar-y="false"
       direction="y"
-      style="height:50vh;top:8vh;min-height: "
+      style="height:53vh;top:8vh;"
         id="step2"
       >
       <div
-        style="top:8vh;min-height:50vh"
+        style="top:8vh;min-height:53vh;max-width:360px;margin-left: auto;margin-right: auto;"
         in-view-container
         class=" has-footer-large center bg-pale"
         ng-init="optionsFontSize=quizCtrl.widgetParser.getOptionsFontSize(question.node.type.content.options)">
@@ -102,9 +102,9 @@
   <div id="step3" style="min-height: 70px;" class="bar bar-footer bar-footer-large bg-pale">
     <center style="width: 100%">
       
-        <button ng-show="!quizCtrl.isAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex])" class="sbtn sbtn-submit" on-tap="quizCtrl.getFeedback(quizCtrl.quiz.objects[quizCtrl.currentIndex]);quizCtrl.logQuestion(quizCtrl.currentIndex,'END');demo.tourNextStep();audio['demo-quiz-3'].stop();quizCtrl.stopAudio()" ng-disabled="!quizCtrl.canSubmit()">
+        <button ng-show="!quizCtrl.isAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex])" class="sbtn sbtn-submit" ng-click="quizCtrl.getFeedback(quizCtrl.quiz.objects[quizCtrl.currentIndex]);quizCtrl.logQuestion(quizCtrl.currentIndex,'END');demo.tourNextStep();audio['demo-quiz-3'].stop();quizCtrl.stopAudio()" ng-disabled="!quizCtrl.canSubmit()">
         </button>
-        <button ng-show="quizCtrl.isAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex])" class="sbtn sbtn-continue" on-tap="quizCtrl.getFeedback(quizCtrl.quiz.objects[quizCtrl.currentIndex]);quizCtrl.logQuestion(quizCtrl.currentIndex,'END');demo.tourNextStep();audio['demo-quiz-3'].stop();quizCtrl.stopAudio()" ng-disabled="!quizCtrl.canSubmit()">
+        <button ng-show="quizCtrl.isAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex])" class="sbtn sbtn-continue" ng-click="quizCtrl.getFeedback(quizCtrl.quiz.objects[quizCtrl.currentIndex]);quizCtrl.logQuestion(quizCtrl.currentIndex,'END');demo.tourNextStep();audio['demo-quiz-3'].stop();quizCtrl.stopAudio()" ng-disabled="!quizCtrl.canSubmit()">
         </button>
         <!-- <button
           class="button button-block button-balanced margin-0 button-round font-md"
