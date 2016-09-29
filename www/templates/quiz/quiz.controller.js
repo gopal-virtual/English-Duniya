@@ -896,10 +896,12 @@
           User.getActiveProfileSync()._id
         )
     }
-    function intro_end(){
-      angular.element("#audioplayer")[0].removeEventListener('ended',intro_end);
+    function intro_end_quiz(){
+      $log.debug("removed event listener quiz",$state);
+      angular.element("#audioplayer")[0].removeEventListener('ended',intro_end_quiz, false);
 
-      $scope.nodeRibbonFlag = false;
+      if($state.current.name == 'quiz.questions'){
+        $scope.nodeRibbonFlag = false;
         $scope.nodeRibbon.hide().then(function(){
           if($state.is('quiz.questions') && User.demo.isShown(5)){
 
@@ -931,6 +933,8 @@
           }
 
         });
+      }
+
     }
 
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.CONTENT + '/content.modal-ribbon' + CONSTANT.VIEW, {
@@ -946,7 +950,8 @@
       angular.element("#audioSource")[0].src = quiz.node.parsed_sound;
       angular.element("#audioplayer")[0].load();
       angular.element("#audioplayer")[0].play();
-      angular.element("#audioplayer")[0].addEventListener('ended', intro_end);
+      $log.debug("Added even listener quiz");
+      angular.element("#audioplayer")[0].addEventListener('ended', intro_end_quiz, false);
 
     })
 
