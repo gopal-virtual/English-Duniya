@@ -171,6 +171,7 @@
     * @returns {string} Value of the property stored in localStorage. If nothing is found value 0 is returned
     */
 
+    $log.debug("lessons HAHA",mapCtrl.lessons[lessons.length-1].node);
     function getNodeProperty(prop) {
       if (prop == 'x')
         return localStorage.demo_node ? JSON.parse(localStorage.demo_node).x : 0;
@@ -195,10 +196,12 @@
       $ionicLoading.hide();
     });
 
-    $scope.$on('openNode', function(event, node, currentPos) {
+    $scope.$on('openNode', function(event, node) {
       // audio.stop('demo-1')
-      //   $scope.demo.isShown() && $scope.demo.hide();
+      $scope.demo.isShown() && $scope.demo.hide();
+      $log.debug(node);
       lessonutils.playResource(node);
+      $scope.selectedNode = node;
       content.getLesson(node.node.parent)
       .then(function(lesson){
           lessonutils.setLocalLesson(JSON.stringify(lesson))
@@ -252,7 +255,6 @@
     //         {
       //
     //           mapCtrl.animationExpand.expand(currentPos,node);
-    //           $scope.selectedNode = response;
     //         }else{
     //           $scope.openNodeMenu(node);
     //           $scope.selectedNode = response;
@@ -380,7 +382,8 @@
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.demo' + CONSTANT.VIEW, {
       scope: $scope,
       animation: 'slide-in-down',
-      hardwareBackButtonClose: false
+      hardwareBackButtonClose: false,
+      hideOnStateChange: true
     }).then(function(demo) {
       $scope.demo = demo;
     });

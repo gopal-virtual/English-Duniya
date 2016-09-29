@@ -783,7 +783,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                                             clickedNodeStar : lessons[i].stars
                                         }
                                         localStorage.setItem("animateStarFlag",JSON.stringify(animateStarFlag));
-                                        scope.$emit('openNode', currentObject, currentPosition);
+                                        scope.$emit('openNode', currentObject);
                                     } else if (currentLesson.locked && displacement) {
                                         audio.play('locked');
                                     } else {}
