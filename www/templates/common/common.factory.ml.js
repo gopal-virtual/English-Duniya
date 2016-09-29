@@ -287,20 +287,15 @@
           levelArray.push(parseInt(level));
       }
       levelArray.sort();
-      // var level_one = -1*parseInt(levelArray[0]);
 
       if (questionSet["0"]["answered"] == "wrong") {
           var pushSr = null;
-          // var levelPushSr = null;
-          var levelPushSr = null;
           var skillPushSr = null;
           var minWrong = null;
           for (var i = Math.min.apply(null, levelArray); i <= -1; i++) {
               if (questionSet[String(parseInt(i))]["answered"] == "right") {
                   if (pushSr == null) {
                       pushSr = questionSet[String(parseInt(i + 1))]["sr"];
-                      // levelPushSr = parseInt(i + 1);
-                      levelPushSr = questionSet[String(parseInt(i + 1))]["level"];
                       skillPushSr = questionSet[String(parseInt(i + 1))]["skill"];
                       break;
                   }
@@ -309,48 +304,33 @@
               }
           }
 
-          // if (pushSr == null) {
-          //     pushSr = questionSet[String(Math.min.apply(null, levelArray))]["sr"];
-          // }
-
           if (pushSr == null) {
               if (minWrong == null) {
                   if (questionSet["-1"] != undefined) {
                       pushSr = questionSet["-1"]["sr"];
-                      // levelPushSr = -1;
-                      levelPushSr = questionSet["-1"]["level"];
                       skillPushSr = questionSet["-1"]["skill"];
                   } else {
                       pushSr = questionSet["0"]["sr"];
-                      // levelPushSr = 0;
-                      levelPushSr = questionSet["0"]["level"];
                       skillPushSr = questionSet["0"]["skill"];
                   }
               } else {
                   var index = minWrong - 1;
                   if (questionSet[String(index)] != undefined) {
                       pushSr = questionSet[String(index)]["sr"];
-                      // levelPushSr = parseInt(index);
-                      levelPushSr = questionSet[String(index)]["level"];
                       skillPushSr = questionSet[String(index)]["skill"];
                   } else {
                       pushSr = questionSet[String(Math.min.apply(null, levelArray))]["sr"];
-                      // levelPushSr = parseInt(Math.min.apply(null, levelArray));
-                      levelPushSr = questionSet[String(Math.min.apply(null, levelArray))]["level"];
                       skillPushSr = questionSet[String(Math.min.apply(null, levelArray))]["skill"];
                   }
               }
           }
 
           suggestedSrs.push(pushSr);
-          // levelsOfSuggestedSrs.push(levelPushSr + level_one);
-          // levelsOfSuggestedSrs.push(levelPushSr);
-          levelsOfSuggestedSrs.push({ "level": levelPushSr, "skill": skillPushSr });
+          $log.debug('pushing 1');
+          levelsOfSuggestedSrs.push({"level": ml.dqJSON[pushSr]["node"]["type"]["level"], "skill": ml.dqJSON[pushSr]["node"]["tag"]});
 
       } else if (questionSet["0"]["answered"] == "right") {
           var pushSr = null;
-          // var levelPushSr = null;
-          var levelPushSr = null;
           var skillPushSr = null;
           for (var i = Math.max.apply(null, levelArray); i >= 0; i--) {
               if (questionSet[String(parseInt(i))]["answered"] == "right") {
@@ -358,8 +338,6 @@
                       break;
                   } else if (pushSr == null && i < Math.max.apply(null, levelArray)) {
                       pushSr = questionSet[String(parseInt(i + 1))]["sr"];
-                      // levelPushSr = parseInt(i + 1);
-                      levelPushSr = questionSet[String(parseInt(i + 1))]["level"];
                       skillPushSr = questionSet[String(parseInt(i + 1))]["skill"];
                       break;
                   }
@@ -368,29 +346,28 @@
 
           if (pushSr != null) {
               suggestedSrs.push(pushSr);
-              // levelsOfSuggestedSrs.push(levelPushSr + level_one);
-              // levelsOfSuggestedSrs.push(levelPushSr);
-              levelsOfSuggestedSrs.push({ "level": levelPushSr, "skill": skillPushSr });
+              $log.debug('pushing 2');
+              levelsOfSuggestedSrs.push({"level": ml.dqJSON[pushSr]["node"]["type"]["level"], "skill": ml.dqJSON[pushSr]["node"]["tag"]});
+          }
+          else{
+            var maxLevel = Math.max.apply(null, Object.keys(questionSet));
+            var pushSr = questionSet[maxLevel]["sr"];
+            $log.debug('pushing 3');
+            levelsOfSuggestedSrs.push({"level": ml.dqJSON[pushSr]["node"]["type"]["level"], "skill": ml.dqJSON[pushSr]["node"]["tag"]});
           }
       } else {
-          suggestedSrs.push(questionSet["0"]["sr"]);
-          // levelsOfSuggestedSrs.push(0 + level_one);
-          // levelsOfSuggestedSrs.push(questionSet["0"]["level"]);
-          levelsOfSuggestedSrs.push({ "level": questionSet["0"]["level"], "skill": questionSet["0"]["skill"] });
-      }
-
-      if (levelsOfSuggestedSrs.length == 0) {
-          levelsOfSuggestedSrs = [{ "level": 3, "skill": questionSet["0"]["skill"] }];
-      } else if (levelsOfSuggestedSrs[0].level < 0) {
-          levelsOfSuggestedSrs = [{ "level": 0, "skill": questionSet["0"]["skill"] }];
+          var pushSr = questionSet["0"]["sr"];
+          suggestedSrs.push(pushSr);
+          $log.debug('pushing 4');
+          levelsOfSuggestedSrs.push({"level": ml.dqJSON[pushSr]["node"]["type"]["level"], "skill": ml.dqJSON[pushSr]["node"]["tag"]});
       }
 
       if (getSuggestedLevel != undefined) {
           return levelsOfSuggestedSrs;
       }
 
-      
-      
+      $log.debug('levelsOfSuggestedSrs', levelsOfSuggestedSrs);
+      // $log.debug('suggestedSrs', suggestedSrs);
 
       return suggestedSrs;
     }
@@ -428,8 +405,10 @@
     function getDqsByLevelNSkill(level, skill){
       var srs = [];
       for(var q_id in ml.dqJSON){
-        if(ml.dqJSON[q_id]["node"]["level"] == level && ml.dqJSON[q_id]["node"]["skill_area"] == skill){
+        // if(ml.dqJSON[q_id]["node"]["level"] == level && ml.dqJSON[q_id]["node"]["skill_area"] == skill){ // Ayush -> beware, the structure of ported dqJSON changes quite often
+        if(ml.dqJSON[q_id]["node"]["type"]["level"] == level && ml.dqJSON[q_id]["node"]["tag"] == skill){
           srs.push({"sr": ml.dqJSON[q_id]["node"]["sr"], "skill_area": skill});
+          // Ayush -> check <ml.dqJSON[q_id]["node"]["sr"]> is not undefined
         }
       }
       return srs;
@@ -437,17 +416,18 @@
 
 
     function getLevelRecommendation() {
-      var levels = 0;
+      var levelRec = {"avgLevel": 0, "skillLevel": {}};
       var quiz = ml.dqQuiz;
       for (var index = 0; index < quiz.length; index++) {
           var questionSet = quiz[index];
           var output = ml.getSuggestedSr2(questionSet, "getSuggestedLevel")[0];
           if (output != undefined) {
-              levels += parseInt(output["level"])
+              levelRec["avgLevel"] += parseInt(output["level"]);
+              levelRec["skillLevel"][output["skill"]] = output["level"];
           }
       }
-      var avgLevel = Math.round(levels/quiz.length);
-      return avgLevel;
+      levelRec["avgLevel"] = Math.round(levelRec["avgLevel"]/quiz.length);
+      return levelRec;
     }
 
 
@@ -687,7 +667,7 @@
                           return getNextQSr(newTest, diagLitmusMapping);
                       }
                       var suggestion = { "skill": test[0]["skill"], "qSr": q_set[Math.floor(Math.random() * (q_set.length)) + 0], "test": test, "actualLevel": test[0]["level"], "microstandard": diagLitmusMapping[test[0]["skill"]][test[0]["level"]]["microstandard"] };
-                      
+                      $log.debug('suggestion from ml', suggestion);
                       return suggestion;
                   } else {
                       test = displaySuggestedSr(test[0]["level"], test, diagLitmusMapping);
@@ -705,7 +685,7 @@
                       var intermediate_q_set = diagLitmusMapping[test[0]["skill"]][test[0]["level"] - 1]["questions"];
                       test[0]["qSet"][test[0]["level"] - 1] = { "qSr": intermediate_q_set[Math.floor(Math.random() * (intermediate_q_set.length)) + 0], "answered": "NA" };
                       var suggestion = { "skill": test[0]["skill"], "qSr": q_set[Math.floor(Math.random() * (q_set.length)) + 0], "test": test, "actualLevel": test[0]["level"] - 2, "microstandard": diagLitmusMapping[test[0]["skill"]][test[0]["level"] - 2]["microstandard"] };
-                      
+                      $log.debug('suggestion from ml', suggestion);
                       return suggestion;
                   } else {
                       test = displaySuggestedSr(test[0]["level"], test, diagLitmusMapping);
@@ -723,7 +703,7 @@
                       var intermediate_q_set = diagLitmusMapping[test[0]["skill"]][test[0]["level"] + 1]["questions"];
                       test[0]["qSet"][test[0]["level"] + 1] = { "qSr": intermediate_q_set[Math.floor(Math.random() * (intermediate_q_set.length)) + 0], "answered": "NA" };
                       var suggestion = { "skill": test[0]["skill"], "qSr": q_set[Math.floor(Math.random() * (q_set.length)) + 0], "test": test, "actualLevel": test[0]["level"] + 2, "microstandard": diagLitmusMapping[test[0]["skill"]][test[0]["level"] + 2]["microstandard"] };
-                      
+                      $log.debug('suggestion from ml', suggestion);
                       return suggestion;
                   } else {
                       test = displaySuggestedSr(test[0]["level"], test, diagLitmusMapping);
@@ -781,7 +761,7 @@
         var suggestedQ = ml.getSuggestedSr2(newQSet)[0];
         if (test.length > 1) {
             if (suggestedQ != undefined) {
-                test[1]["level"] = parseInt(ml.dqJSON[suggestedQ]["node"].level);
+                test[1]["level"] = parseInt(ml.dqJSON[suggestedQ]["node"]["type"].level);
             } else {
                 test[1]["level"] = Object.keys(diagLitmusMapping[test[1]["skill"]]).length - 1;
             }

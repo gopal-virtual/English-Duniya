@@ -205,11 +205,27 @@
 
     $scope.$on('openNode', function(event, node) {
       // audio.stop('demo-1')
-      $scope.demo.isShown() && $scope.demo.hide();
-      $log.debug(node);
-      lessonutils.playResource(node);
-      $scope.selectedNode = node;
-      content.getLesson(node.node.parent)
+       $scope.demo.isShown() && $scope.demo.hide();
+       $scope.selectedNode = node;
+      //   $scope.demo.isShown() && $scope.demo.hide();
+              var promise;
+      $log.debug(node.node.intro_sound,node)
+              if(node.node.intro_sound){
+                promise = mediaManager.downloadIfNotExists(CONSTANT.RESOURCE_SERVER + node.node.intro_sound)
+              } else {
+                promise = $q.resolve();
+              }
+      promise.then(function(s){
+        $log.debug("S",s)
+        if(s){
+
+            node.node.parsed_sound = s;
+          }
+        $log.debug(node);
+        lessonutils.playResource(node);
+        return content.getLesson(node.node.parent)
+
+      })
       .then(function(lesson){
           lessonutils.setLocalLesson(JSON.stringify(lesson))
       })
@@ -230,7 +246,7 @@
     //     $scope.lessonutils.getLesson(node.id, $scope).then(
       //
     //       function(response) {
-    //         
+    //
       //
     //         analytics.log(
     //               {
@@ -316,7 +332,7 @@
 
 
     $scope.openNodeMenu = function(node) {
-
+      $log.debug("this")
       lessonutils.playDemoAudio(node);
 
       $scope.nodeMenu.show();
