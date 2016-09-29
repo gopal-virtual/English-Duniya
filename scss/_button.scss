@@ -91,6 +91,30 @@
   width: 175px;
   height: 56px;
 }
+.sbtn-submit{
+  background: url('../img/assets_svg/button-submit.svg');
+  background-size: cover;
+  background-position: 0 0 !important;
+  background-repeat:no-repeat;
+  width: 175px;
+  height: 56px;
+}
+.sbtn-continue{
+  background: url('../img/assets_svg/button-continue.svg');
+  background-size: cover;
+  background-position: 0 0 !important;
+  background-repeat:no-repeat;
+  width: 175px;
+  height: 56px;
+}
+.sbtn-submit:disabled{
+  background: url('../img/assets_svg/button-submit-grey.svg');
+  background-size: cover;
+  background-position: 0 0 !important;
+  background-repeat:no-repeat;
+  width: 175px;
+  height: 56px;
+}
 
 .sbtn-next-blue{
   background: url('../img/assets_svg/button-blue-next.svg');
@@ -194,6 +218,7 @@
   width: 88px;
   height: 90px;
 }
+
 
 .sbtn:disabled{
   background: url('../img/assets_svg/button-grey.svg');

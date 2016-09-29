@@ -43,7 +43,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
     }
     var regionPathOffset = {
         "desert" : 450,
-        "tundra" : 330,
+        "tundra" : 250,
         "forest" : 170,
         "peru" : 350
     }
@@ -128,7 +128,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
             this.load.spritesheet('llama2', 'img/assets/llama2_animation.png', 124, 201);
             this.load.spritesheet('node-video', 'img/icons/video.png',65,68);
             this.load.spritesheet('node-practice', 'img/icons/practice.png', 66, 68);
-            this.load.spritesheet('node-port', 'img/icons/icon-port.png',113,132);
+            this.load.spritesheet('node-port', 'img/assets/port-node.png',118,187);
 
             this.load.spritesheet('node-blue-video', 'img/assets/button-blue-video.png',88,91);
             this.load.spritesheet('node-orange-video', 'img/assets/button-orange-video.png',88,91);
@@ -707,13 +707,13 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                     }else {
                         first_node_index += regionNodes[regions[i-1]];
                     }
-                    last_node_index += regionNodes[regions[i]];
+                    last_node_index += regionNodes[regions[i]]-1;
                 }
                 
-                
+                log.debug(last_node_index-first_node_index)
                 // port node
                 if(regionPage > 0){
-                    var port_back = game.add.button(game.world.centerX + 50, game.world.height - 200, 'node-port', function(){
+                    var port_back = game.add.button(game.world.centerX, game.world.height - 80, 'node-port', function(){
                         
                         
                             // var end_index = first_node_index - 1;
@@ -721,22 +721,25 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                             scope.$emit('pageRegion', regionPage, "prev");
                     }, this, 0,0,1,0);
                 port_back.scale.setTo(0.5)
+                port_back.anchor.setTo(0.5)
                 }
-                if(regionPage < 3){
-                    var port_forward = game.add.button(game.world.centerX + 50, game.world.height - 500, 'node-port', function(){
+                if(regionPage < 3 && i == last_node_index){
+                    var port_forward = game.add.button(game.world.centerX, 150, 'node-port', function(){
                         
                             // var start_index = last_node_index + 1;
                         
                             // var end_index = start_index + regionNodes[region];
                             scope.$emit('pageRegion', regionPage, "next");
                     }, this, 0,0,1,0);
-                port_forward.scale.setTo(0.5)
+                    port_forward.scale.setTo(0.5)
+                    port_forward.anchor.setTo(0.5)
                 }
 
                 // end : port node
 
                 for (var j = 0, i = last_node_index, distance = 1 / (last_node_index-first_node_index); i >= first_node_index; j += distance, i--) {
                     // 
+                    log.debug("node",i,lessons[i].locked)
                     // 
                     var currentLesson = lessons[i].node;
                     var locked = lessons[i].locked ? '-locked' : '';
@@ -1077,7 +1080,8 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
             function newNodeUnlock() {
                 var lockedNode = {};
                 hideActiveNode(lockedNode);
-                animateStar(temp.lessonFromQuizKey).then(function(){
+                animateStar(temp.lessonFromQuizKey)
+                .then(function(){
                     if (game.camera.y+game.height/2 > temp.activeLessonPosY) {
                         scrollTo(temp.activeLessonPosY);
                     }
@@ -1131,13 +1135,15 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
 
 
 
-                        // if (animateStarFlag.isCurrentNode && lessonFromQuizStars) {
-                        //     //
-                        //     scope.$emit('animateStar');
-                        //     setTimeout(function(){
-                        //         newNodeUnlock();
-                        //     },800)
-                        // }
+                        if (animateStarFlag.isCurrentNode && lessonFromQuizStars) {
+                            //
+                            scope.$emit('animateStar');
+                            setTimeout(function(){
+                                animateStar(temp.lessonFromQuizKey)
+
+                                // newNodeUnlock();
+                            },800)
+                        }
 
                         if(lessonFromQuizStars > animateStarFlag.clickedNodeStar && lessonFromQuizStars){
                             scope.$emit('animateStar');
