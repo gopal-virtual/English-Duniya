@@ -9,18 +9,31 @@
 
   /* @ngInject */
   function extendLesson($log, CONSTANT, $q, User) {
+    var total_star = 0;
     var extendLesson = {
-      getLesson: getLesson
+      getLesson: getLesson,
+      getTotalStar : getTotalStar,
+      initStar : initStar
     };
 
     return extendLesson;
 
+    function initStar() {
+        total_star = 0
+    }
+    
     function setLock(key, lesson, bool) {
       lesson.locked = bool;
     }
 
     function setStar(key, lesson, count) {
       lesson.stars = count;
+      if(count != -1)
+        total_star += count;
+    }
+
+    function getTotalStar(){
+        return total_star;
     }
 
     function getLesson(lessons) {

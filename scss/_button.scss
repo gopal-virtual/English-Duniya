@@ -91,6 +91,30 @@
   width: 175px;
   height: 56px;
 }
+.sbtn-submit{
+  background: url('../img/assets_svg/button-submit.svg');
+  background-size: cover;
+  background-position: 0 0 !important;
+  background-repeat:no-repeat;
+  width: 175px;
+  height: 56px;
+}
+.sbtn-continue{
+  background: url('../img/assets_svg/button-continue.svg');
+  background-size: cover;
+  background-position: 0 0 !important;
+  background-repeat:no-repeat;
+  width: 175px;
+  height: 56px;
+}
+.sbtn-submit:disabled{
+  background: url('../img/assets_svg/button-submit-grey.svg') !important;
+  background-size: cover !important;
+  background-position: 0 0 !important;
+  background-repeat:no-repeat !important;
+  width: 175px !important;
+  height: 56px !important;
+}
 
 .sbtn-next-blue{
   background: url('../img/assets_svg/button-blue-next.svg');
@@ -120,6 +144,14 @@
   height: 90px;
 }
 
+.sbtn-sound{
+  background: url('../img/assets_svg/button-audio.svg');
+  background-size: cover;
+  background-position: 0 0 !important;
+  background-repeat:no-repeat;
+  width: 125px;
+  height: 120px;
+}
 
 .sbtn-video-yellow{
   background: url('../img/assets_svg/button-video-yellow.svg');
@@ -128,6 +160,84 @@
   background-repeat:no-repeat;
   width: 175px;
   height: 56px;
+}
+
+.sbtn-node-video-green{
+  background: url('../img/assets_svg/button-green-video.svg');
+  background-size: cover;
+  background-position: 0 0 !important;
+  background-repeat:no-repeat;
+  width: 88px;
+  height: 90px;
+}
+.sbtn-node-video-blue{
+  background: url('../img/assets_svg/button-blue-video.svg');
+  background-size: cover;
+  background-position: 0 0 !important;
+  background-repeat:no-repeat;
+  width: 88px;
+  height: 90px;
+}
+.sbtn-node-video-darkblue{
+  background: url('../img/assets_svg/button-darkblue-video.svg');
+  background-size: cover;
+  background-position: 0 0 !important;
+  background-repeat:no-repeat;
+  width: 88px;
+  height: 90px;
+}
+.sbtn-node-practice-green{
+  background: url('../img/assets_svg/button-green-practice.svg');
+  background-size: cover;
+  background-position: 0 0 !important;
+  background-repeat:no-repeat;
+  width: 88px;
+  height: 90px;
+}
+.sbtn-node-practice-orange{
+  background: url('../img/assets_svg/button-green-practice.svg');
+  background-size: cover;
+  background-position: 0 0 !important;
+  background-repeat:no-repeat;
+  width: 88px;
+  height: 90px;
+}
+.sbtn-node-practice-blue{
+  background: url('../img/assets_svg/button-blue-practice.svg');
+  background-size: cover;
+  background-position: 0 0 !important;
+  background-repeat:no-repeat;
+  width: 88px;
+  height: 90px;
+}
+.sbtn-node-practice-darkblue{
+  background: url('../img/assets_svg/button-darkblue-practice.svg');
+  background-size: cover;
+  background-position: 0 0 !important;
+  background-repeat:no-repeat;
+  width: 88px;
+  height: 90px;
+}
+.sbtn-node-practice-orange{
+  background: url('../img/assets_svg/button-orange-practice.svg');
+  background-size: cover;
+  background-position: 0 0 !important;
+  background-repeat:no-repeat;
+  width: 88px;
+  height: 90px;
+}
+
+
+.sbtn:disabled{
+  background: url('../img/assets_svg/button-grey.svg');
+  width: 175px;
+  height: 56px;
+}
+
+.lbtn{
+  background-color: $hex-blue;
+  box-shadow: 0px -4px 0px #{$hex-dark-blue} inset;
+  color: $hex-dark-blue;
 }
 // .sbtn-next-yellow:focus{
 //   background-position: 100% 0 !important;

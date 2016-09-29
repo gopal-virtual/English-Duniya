@@ -21,6 +21,14 @@ input:-moz-placeholder { overflow: visible; line-height: 1.25em; font-size: 1.25
 .text-white{
   color : $brand-white;
 }
+.text-3d{
+    color: #fdb725;
+    text-shadow: 0 3px 0px #D99828;
+    font-weight: bolder;
+    -webkit-text-stroke-width: 0.01px;
+    -webkit-text-stroke-color: #FAA61A;
+    font-size: 32px;
+}
 .text-positive{
   color : darken($positive, 40%);
 }
