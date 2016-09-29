@@ -100,9 +100,10 @@
   max-height: 95%;
   max-width: 95%;
 }
-.question > .content-image.sound-image {
-  max-height: 45%;
-  max-width: 45%;
+.question > .sound-image {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 .option > .content-image.sound-image {
   max-height: 18vh;

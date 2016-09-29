@@ -65,6 +65,7 @@
       },
       theme: "lib/videogular-themes-default/videogular.css"
     };
+    contentCtrl.playStarSound = playStarSound;
     $timeout(function(){
         contentCtrl.config.plugins.controls.showControl = false;
     },2000);
@@ -76,6 +77,28 @@
   //       ;
   //     }
   // }, 101);
+
+  function playStarSound() {
+      if (quizCtrl.summary.stars) {
+        star = quizCtrl.summary.stars;
+      } else if (quizCtrl.summary.score.percent) {
+        star = quizCtrl.summary.score.percent > CONSTANT.STAR.THREE ? 3 : quizCtrl.summary.score.percent > CONSTANT.STAR.TWO ? 2 : quizCtrl.summary.score.percent > CONSTANT.STAR.ONE ? 1 : 0;
+      } else {
+        star = 0;
+      }
+      $log.debug("Hello");
+      for (var i = 0; i < star; i++) {
+        (i + 1) == 1 && $timeout(function() {
+          audio.play('one_star')
+        }, 1000);
+        (i + 1) == 2 && $timeout(function() {
+          audio.play('two_star')
+        }, 2000);
+        (i + 1) == 3 && $timeout(function() {
+          audio.play('three_star')
+        }, 3000);
+      }
+    }
 
   $log.debug('video object',$stateParams.video.resource)
   function next() {
@@ -243,6 +266,7 @@
             orientation.setPortrait();
             $scope.resultMenu.show();
         }
+        contentCtrl.playStarSound();
         return true;
     }
     $scope.closeResult = function() {
