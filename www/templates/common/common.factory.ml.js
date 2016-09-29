@@ -326,6 +326,7 @@
           }
 
           suggestedSrs.push(pushSr);
+          $log.debug('pushing 1');
           levelsOfSuggestedSrs.push({"level": ml.dqJSON[pushSr]["node"]["type"]["level"], "skill": ml.dqJSON[pushSr]["node"]["tag"]});
 
       } else if (questionSet["0"]["answered"] == "right") {
@@ -345,11 +346,19 @@
 
           if (pushSr != null) {
               suggestedSrs.push(pushSr);
+              $log.debug('pushing 2');
               levelsOfSuggestedSrs.push({"level": ml.dqJSON[pushSr]["node"]["type"]["level"], "skill": ml.dqJSON[pushSr]["node"]["tag"]});
+          }
+          else{
+            var maxLevel = Math.max.apply(null, Object.keys(questionSet));
+            var pushSr = questionSet[maxLevel]["sr"];
+            $log.debug('pushing 3');
+            levelsOfSuggestedSrs.push({"level": ml.dqJSON[pushSr]["node"]["type"]["level"], "skill": ml.dqJSON[pushSr]["node"]["tag"]});
           }
       } else {
           var pushSr = questionSet["0"]["sr"];
           suggestedSrs.push(pushSr);
+          $log.debug('pushing 4');
           levelsOfSuggestedSrs.push({"level": ml.dqJSON[pushSr]["node"]["type"]["level"], "skill": ml.dqJSON[pushSr]["node"]["tag"]});
       }
 
@@ -358,7 +367,7 @@
       }
 
       $log.debug('levelsOfSuggestedSrs', levelsOfSuggestedSrs);
-      $log.debug('suggestedSrs', suggestedSrs);
+      // $log.debug('suggestedSrs', suggestedSrs);
 
       return suggestedSrs;
     }
@@ -407,14 +416,14 @@
 
 
     function getLevelRecommendation() {
-      var levelRec = {"avgLevel": 0};
+      var levelRec = {"avgLevel": 0, "skillLevel": {}};
       var quiz = ml.dqQuiz;
       for (var index = 0; index < quiz.length; index++) {
           var questionSet = quiz[index];
           var output = ml.getSuggestedSr2(questionSet, "getSuggestedLevel")[0];
           if (output != undefined) {
               levelRec["avgLevel"] += parseInt(output["level"]);
-              levelRec[output["skill"]] = output["level"];
+              levelRec["skillLevel"][output["skill"]] = output["level"];
           }
       }
       levelRec["avgLevel"] = Math.round(levelRec["avgLevel"]/quiz.length);
