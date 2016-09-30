@@ -116,8 +116,10 @@
 
   $ionicPlatform.onHardwareBackButton(function(event) {
       try {
-        contentCtrl.API.pause();
-        $scope.openNodeMenu();
+        if (!$scope.ribbon_modal.isShown()) {
+          contentCtrl.API.pause();
+          $scope.openNodeMenu();
+        }
       } catch (error) {
         ;
       }
@@ -198,7 +200,8 @@
       $ionicModal.fromTemplateUrl(CONSTANT.PATH.CONTENT + '/content.modal-ribbon' + CONSTANT.VIEW, {
         scope: $scope,
         // animation: 'slide-in-up',
-        backdropClickToClose: true
+        backdropClickToClose: false,
+        hardwareBackButtonClose: false
       }).then(function(modal){
         $scope.ribbon_modal = modal;
         if($stateParams.video.resource.node.parsed_sound){

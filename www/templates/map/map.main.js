@@ -753,6 +753,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                         !locked && lessons[i + 1] && lessons[i + 1].locked && localStorage.setItem('region',posy);
 
                         if(!locked && lessons[i + 1] && lessons[i + 1].locked){
+                            log.debug("GUCHAHAHA");
                             temp["activeLessonKey"] = i;
                             temp["activeLessonPosY"] = posy;
                             temp["activeLessonPosX"] = posx;
@@ -814,6 +815,8 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                         }
                     }
                 }
+                
+                log.debug("show port node? ",temp["activeLessonKey"],last_node_index,temp["activeLessonKey"] >last_node_index);
 
                 if(regionPage < 3){
                     var port_forward = game.add.button(game.world.centerX, 150, 'node-port', function(){
@@ -827,7 +830,6 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                     port_forward.anchor.setTo(0.5)
                 }
 
-                  log.debug(temp["activeLessonKey"],last_node_index,i > temp["activeLessonKey"]);
 
                 //
                 // localStorage.setItem('demo_node', JSON.stringify({

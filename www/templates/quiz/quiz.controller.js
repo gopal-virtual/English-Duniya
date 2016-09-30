@@ -940,7 +940,8 @@
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.CONTENT + '/content.modal-ribbon' + CONSTANT.VIEW, {
       scope: $scope,
       // animation: 'slide-in-up',
-      backdropClickToClose: true
+      backdropClickToClose: false,
+      hardwareBackButtonClose: false
     }).then(function(modal){
       $scope.nodeRibbon = modal;
       $scope.nodeRibbonFlag = true;
