@@ -106,6 +106,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
             this.load.image('forest_plant_right', 'img/assets/plant_right.png');
             this.load.image('star-confetti', 'img/assets/star_particle.png');
             this.load.image('lock-glow', 'img/assets/lock_glow.png');
+            this.load.image('ribbon-tag', 'img/assets/ribbon-tag.png');
 
             this.load.spritesheet('paper-confetti', 'img/assets/confetti_particle.png',16,21);
             this.load.spritesheet('lock-unlock', 'img/assets/locks.png', 184, 184);
@@ -485,6 +486,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                 for (var i = renderedRegion.length - 1; i >= 0; i--) {
                     groups.region[region[i]] = game.add.group();
                 }
+                groups.nonRegion["nodeTags"] = game.add.group();
                 groups.nonRegion["nodes"] = game.add.group();
                 groups.nonRegion["stars"] = game.add.group();
                 groups.nonRegion["unlockAnim"] = game.add.group();
@@ -749,6 +751,12 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                     
                     // node.scale.setTo(0.5)
                     if(!lessons[i].locked){
+                        var nodeTag = groups.nonRegion.nodeTags.create(posx,posy+50,'ribbon-tag');
+                        nodeTag.anchor.setTo(0.5);
+                        nodeTag.scale.setTo(0.8);
+                        var nodeTagText = game.add.text(posx, posy+50, i+1, { font: "18px kg_primary_penmanship_2Rg", fill: "#FFFFFF", wordWrap: true, wordWrapWidth: nodeTag.width, align: "center"});
+                        nodeTagText.anchor.set(0.5);
+                        groups.nonRegion.nodeTags.add(nodeTagText);
                         var node = game.make.button(posx, posy, 'node-' +nodeColors[lessons[i].node.tag.toLowerCase()]+'-'+ lessonutils.resourceType(lessons[i]), false, this, 0,0,1,0);
                         
 
@@ -758,7 +766,8 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                             temp["activeLessonKey"] = i;
                             temp["activeLessonPosY"] = posy;
                             temp["activeLessonPosX"] = posx;
-                            temp["nodeWobbleTween"] = game.add.tween(node.scale).to({ x: [0.8, 1], y: [0.8, 1] }, 700, Phaser.Easing.Back.Out, true, 1000).loop(true);
+                            temp["nodeWobbleTween"] = game.add.tween(node.scale).to({ x: [0.8,1,0.8], y: [0.8,1,0.8] }, 700, Phaser.Easing.Cubic.Out, true, 1000).loop(true);
+                            // temp["nodeWobbleTween"] = game.add.tween(node).to({ alpha: 0.5 }, 700, Phaser.Easing.Cubic.Out, true, 1000).loop(true);
                         }
 
                         log.debug('stateParams',stateParams, currentLesson.id)
