@@ -50,7 +50,7 @@
     contentCtrl.onStateChange = onStateChange;
     contentCtrl.play = play;
     $scope.lessonutils = lessonutils;
-    $scope.selectedNode = lessonutils.getLocalLesson();
+    $scope.selectedNode = $stateParams.video.resource;
     contentCtrl.toggleControls = toggleControls;
     contentCtrl.onVideoComplete = onVideoComplete;
     contentCtrl.utilities = Utilities;

@@ -725,7 +725,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                 port_back.scale.setTo(0.5)
                 port_back.anchor.setTo(0.5)
                 }
-                if(regionPage < 3 && i == last_node_index){
+                if(regionPage < 3){
                     var port_forward = game.add.button(game.world.centerX, 150, 'node-port', function(){
                         
                             // var start_index = last_node_index + 1;
