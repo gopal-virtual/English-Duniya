@@ -193,3 +193,6 @@ $lcard-inner-height : $lcard-min-height - ($lcard-outer-padding*2);
   color: $hex-dark-blue;
   text-align: center;
 }
+.practice-option-scroll{
+  height: calc(65% - 70px);
+}

@@ -46,13 +46,14 @@
       </div>
 
       <ion-scroll
+      class = "practice-option-scroll"
       scrollbar-x="false" scrollbar-y="false"
       direction="y"
-      style="height:53vh;top:8vh;"
+      style="top:8vh;"
         id="step2"
       >
       <div
-        style="top:8vh;min-height:53vh;max-width:360px;margin-left: auto;margin-right: auto;"
+        style="top:8vh;max-width:360px;margin-left: auto;margin-right: auto;"
         in-view-container
         class=" has-footer-large center bg-pale"
         ng-init="optionsFontSize=quizCtrl.widgetParser.getOptionsFontSize(question.node.type.content.options)">
