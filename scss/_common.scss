@@ -155,7 +155,7 @@ meter::-webkit-meter-even-less-good-value {
 
 .personalize-title{
   font-size: 2em !important;
-  color: #48494B;
+  color: $hex-dark-blue;
   line-height: 1.8em;
   @include xs-screen-height{
     font-size: 1.7em !important;
@@ -165,8 +165,8 @@ meter::-webkit-meter-even-less-good-value {
 
 .personalize-input{
   line-height:0.8em;
-  border-bottom:1px solid black;
-  color:#48494B;
+  border-bottom:1px solid $hex-dark-blue;
+  color:$hex-dark-blue;
   max-width: 73%;
   margin-left: auto;
   margin-right: auto;

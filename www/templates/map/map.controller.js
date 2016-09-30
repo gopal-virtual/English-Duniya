@@ -75,7 +75,6 @@
     ) {
 
     $scope.audio = audio;
-    ;
     $scope.settings = settings;
     var temp = JSON.parse(localStorage.getItem('profile')).data.profile;
     temp.name = temp.first_name + ' ' + temp.last_name;
@@ -115,7 +114,16 @@
     // port node
     mapCtrl.first_node_index = parseInt(localStorage.first_node_index) || 0;
     mapCtrl.last_node_index = parseInt(localStorage.last_node_index) || mapCtrl.lessons.length - 1;
+    mapCtrl.nodeColors = {
+        "vocabulary" : "blue",
+        "grammar" : "green",
+        "listening" : "darkblue",
+        "reading" : "orange"
+    }
 
+    if(localStorage.getItem('diagnosis_flag') == 'false'){
+      $state.go('litmus_start');
+    }
     $scope.$on('pageRegion', mapCtrl.setLessonRange )
     // $scope.$on('nextRegion', mapCtrl.setLessonRange )
     function setLessonRange(event, regionPage, action){
@@ -139,7 +147,7 @@
 
         // localStorage.setItem('last_node_index', end_index)
         window.location.reload()
-        // $log.debug(start_index, end_index)
+        //
     }
     // end : port node
 
@@ -171,6 +179,7 @@
     * @returns {string} Value of the property stored in localStorage. If nothing is found value 0 is returned
     */
 
+    $log.debug("lessons HAHA",mapCtrl.lessons[lessons.length-1].node);
     function getNodeProperty(prop) {
       if (prop == 'x')
         return localStorage.demo_node ? JSON.parse(localStorage.demo_node).x : 0;
@@ -195,11 +204,29 @@
       $ionicLoading.hide();
     });
 
-    $scope.$on('openNode', function(event, node, currentPos) {
+    $scope.$on('openNode', function(event, node) {
       // audio.stop('demo-1')
+       $scope.demo.isShown() && $scope.demo.hide();
+       $scope.selectedNode = node;
       //   $scope.demo.isShown() && $scope.demo.hide();
-      lessonutils.playResource(node);
-      content.getLesson(node.node.parent)
+              var promise;
+      $log.debug(node.node.intro_sound,node)
+              if(node.node.intro_sound){
+                promise = mediaManager.downloadIfNotExists(CONSTANT.RESOURCE_SERVER + node.node.intro_sound)
+              } else {
+                promise = $q.resolve();
+              }
+      promise.then(function(s){
+        $log.debug("S",s)
+        if(s){
+
+            node.node.parsed_sound = s;
+          }
+        $log.debug(node);
+        lessonutils.playResource(node);
+        return content.getLesson(node.node.parent)
+
+      })
       .then(function(lesson){
           lessonutils.setLocalLesson(JSON.stringify(lesson))
       })
@@ -220,7 +247,7 @@
     //     $scope.lessonutils.getLesson(node.id, $scope).then(
       //
     //       function(response) {
-    //         $log.debug('lesson opened', response)
+    //
       //
     //         analytics.log(
     //               {
@@ -252,7 +279,6 @@
     //         {
       //
     //           mapCtrl.animationExpand.expand(currentPos,node);
-    //           $scope.selectedNode = response;
     //         }else{
     //           $scope.openNodeMenu(node);
     //           $scope.selectedNode = response;
@@ -307,7 +333,7 @@
 
 
     $scope.openNodeMenu = function(node) {
-
+      $log.debug("this")
       lessonutils.playDemoAudio(node);
 
       $scope.nodeMenu.show();
@@ -380,7 +406,8 @@
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.demo' + CONSTANT.VIEW, {
       scope: $scope,
       animation: 'slide-in-down',
-      hardwareBackButtonClose: false
+      hardwareBackButtonClose: false,
+      hideOnStateChange: true
     }).then(function(demo) {
       $scope.demo = demo;
     });
