@@ -714,18 +714,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
 
                 log.debug(last_node_index-first_node_index)
                 // port node
-                if(regionPage > 0){
-                    var port_back = game.add.button(game.world.centerX, game.world.height - 80, 'node-port', function(){
-
-
-                            // var end_index = first_node_index - 1;
-                            // var start_index = end_index - 5;
-                            scope.$emit('pageRegion', regionPage, "prev");
-                    }, this, 0,0,1,0);
-                port_back.scale.setTo(0.6)
-                port_back.anchor.setTo(0.5)
-                }
-
+                
 
                 // end : port node
                 log.debug("points y 2",points.y)
@@ -820,13 +809,17 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                     }
                 }
                 
-                log.debug("show port node? ",temp["activeLessonKey"],last_node_index,temp["activeLessonKey"] >last_node_index);
+                if(!temp.activeLessonKey){
+                    temp["activeLessonKey"] = -1;
+                }
 
-                if(regionPage < 3){
+                log.debug("show port node? ",temp["activeLessonKey"],last_node_index,temp["activeLessonKey"] == -1);
+
+                if(regionPage < regions.length-1 && temp.activeLessonKey == -1){
                     var port_forward = game.add.button(game.world.centerX, 150, 'node-port', function(){
                         
-                            // var start_index = last_node_index + 1;
                         
+                            // var start_index = last_node_index + 1;
                             // var end_index = start_index + regionNodes[region];
                             scope.$emit('pageRegion', regionPage, "next");
                     }, this, 0,0,1,0);
@@ -834,7 +827,17 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                     port_forward.anchor.setTo(0.5)
                 }
 
+                if(regionPage > 0){
+                    var port_back = game.add.button(game.world.centerX, game.world.height - 80, 'node-port', function(){
 
+
+                            // var end_index = first_node_index - 1;
+                            // var start_index = end_index - 5;
+                            scope.$emit('pageRegion', regionPage, "prev");
+                    }, this, 0,0,1,0);
+                    port_back.scale.setTo(0.6)
+                    port_back.anchor.setTo(0.5)
+                }
                 //
                 // localStorage.setItem('demo_node', JSON.stringify({
                 //         x: node.x - node.width / 2,
@@ -1166,7 +1169,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                     var animateStarFlag = JSON.parse(localStorage.getItem("animateStarFlag"));
                     // animateStar(temp.activeLessonKey-1);
                     log.debug('animate star')
-                    animateStar(temp.activeLessonKey-1);
+                    // animateStar(temp.activeLessonKey-1);
 
                     if (animateStarFlag) {
 
