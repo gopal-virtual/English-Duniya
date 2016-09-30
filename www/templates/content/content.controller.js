@@ -225,18 +225,7 @@
     }
 
     function play(){
-        analytics.log(
-            {
-                name : 'VIDEO',
-                type : 'START',
-                id : $stateParams.video.resource.node.id
-            },
-            {
-                time : new Date()
-            },
-          User.getActiveProfileSync()._id
-
-        )
+     
         contentCtrl.API.play();
     }
     function onStateChange(state) {

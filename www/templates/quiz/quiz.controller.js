@@ -665,12 +665,13 @@
         if(quizCtrl.report.attempts[CONSTANT.QUESTION.DEMO])
             delete quizCtrl.report.attempts[CONSTANT.QUESTION.DEMO];
       if (quizType === 'practice') {
+        $log.debug("END PRACTICE",quizCtrl.quiz)
         $scope.modal.hide().then(function() {
             analytics.log(
                 {
                     name : 'PRACTICE',
                     type : 'END',
-                    id : quizCtrl.quiz.id
+                    id : quizCtrl.quiz.node.type.id
                 },
                 {
                     time : new Date()
