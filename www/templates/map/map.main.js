@@ -37,9 +37,9 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
     };
     var regionNodes = {
         "desert" : 24,
-        "tundra" : 26,
-        "forest" : 33,
-        "peru" : 23
+        "tundra" : 24,
+        "forest" : 26,
+        "peru" : 26
     }
     var regionPathOffset = {
         "desert" : 450,
@@ -592,7 +592,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                         break;
                     }
                     //
-                    bmd.rect(posx, posy, 8, 8, '#FFFFFF');
+                    bmd.rect(posx-5, posy, 8, 8, '#FFFFFF');
                     // bmd.anchor.setTo(0.5);
                     // 
                 }
@@ -722,20 +722,10 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                             // var start_index = end_index - 5;
                             scope.$emit('pageRegion', regionPage, "prev");
                     }, this, 0,0,1,0);
-                port_back.scale.setTo(0.5)
+                port_back.scale.setTo(0.6)
                 port_back.anchor.setTo(0.5)
                 }
-                if(regionPage < 3){
-                    var port_forward = game.add.button(game.world.centerX, 150, 'node-port', function(){
-                        
-                            // var start_index = last_node_index + 1;
-                        
-                            // var end_index = start_index + regionNodes[region];
-                            scope.$emit('pageRegion', regionPage, "next");
-                    }, this, 0,0,1,0);
-                    port_forward.scale.setTo(0.5)
-                    port_forward.anchor.setTo(0.5)
-                }
+
 
                 // end : port node
 
@@ -824,6 +814,20 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                         }
                     }
                 }
+
+                if(regionPage < 3){
+                    var port_forward = game.add.button(game.world.centerX, 150, 'node-port', function(){
+                        
+                            // var start_index = last_node_index + 1;
+                        
+                            // var end_index = start_index + regionNodes[region];
+                            scope.$emit('pageRegion', regionPage, "next");
+                    }, this, 0,0,1,0);
+                    port_forward.scale.setTo(0.8)
+                    port_forward.anchor.setTo(0.5)
+                }
+
+                  log.debug(temp["activeLessonKey"],last_node_index,i > temp["activeLessonKey"]);
 
                 //
                 // localStorage.setItem('demo_node', JSON.stringify({
