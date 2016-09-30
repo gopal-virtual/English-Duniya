@@ -117,7 +117,7 @@
     }
 
     function log(action, data, profile_id, user_id) {
-
+        $log.debug("Analytics",action,data);
       data["network"] = network.getConnectionType();
       data["device"] = device;
       data["app_version"] = CONSTANT.APP.VERSION;
@@ -139,7 +139,7 @@
       }
 
       if(CONSTANT.ANALYTICS){
-        
+
 
         queue.push('activity-log', post_param);
       }

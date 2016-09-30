@@ -122,6 +122,7 @@
         if (err.name !== 'not_found') {
           throw err;
         }
+        $log.debug("NEW DB MADE");
         return lessonDB.load(CONSTANT.PATH.DATA + '/lessonsGrade' + User.getActiveProfileSync().data.profile.grade + '.db').then(function () {
           return lessonDB.put({
             _id: '_local/preloaded'

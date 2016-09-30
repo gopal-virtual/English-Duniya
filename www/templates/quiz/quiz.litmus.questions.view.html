@@ -31,7 +31,7 @@
 
       <!-- <div ng-repeat="question in quizCtrl.quiz.objects" ng-if="$index == quizCtrl.getCurrentIndex()"> -->
       <div id="step1" style="position:relative;">
-        <ion-scroll scrollbar-x="false" scrollbar-y="false" ng-init="quizCtrl.isScroll($index)" style="height:45vh;" direction="y" class="padding-0 bg-pale no-shadow">
+        <ion-scroll scrollbar-x="false" scrollbar-y="false" ng-init="quizCtrl.isScroll($index)"  direction="y" class="padding-0 bg-pale no-shadow">
           <div
             style=""
             ng-if="question.node.title"
@@ -51,7 +51,7 @@
           style="min-height:44vh"
           id="step2"
           in-view-container
-          class=" has-footer-large center bg-pale"
+          class=" center bg-pale"
           ng-init="optionsFontSize=quizCtrl.widgetParser.getOptionsFontSize(question.node.type.content.options)">
           <!-- SCQ -->
           <div>
