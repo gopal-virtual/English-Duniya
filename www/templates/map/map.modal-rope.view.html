@@ -31,7 +31,7 @@
                 <h5 style="position: absolute;top: 105px;width: 100%;" class="margin-0 padding-y-10 padding-x-20 text-center color-white font-md">Do you want to quit the lesson?</h5>
             <div>
                 <div style="display: inline-block;" class="padding-x-10">
-                    <button class="sbtn sbtn-correct" on-tap="audio.play('press');quizCtrl.interval && quizCtrl.startTimer();contentCtrl.API && contentCtrl.play();closeNodeMenu();"></button>
+                    <button class="sbtn sbtn-play" on-tap="audio.play('press');quizCtrl.interval && quizCtrl.startTimer();contentCtrl.API && contentCtrl.play();closeNodeMenu();"></button>
                 </div>
                 <div style="display: inline-block;" class="padding-x-10">
                     <button class="sbtn sbtn-wrong" on-tap="audio.play('press');audio.setVolume('background', 0.4);mapCtrl.animationExpand.shrink();closeNodeMenu();lessonutils.leaveLesson();mapCtrl && mapCtrl.resetNode();lessonutils.user.demo.getStep() == 3 && lessonutils.user.demo.setStep(4);"></button>

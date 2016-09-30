@@ -109,9 +109,12 @@
   margin-left: auto;
   margin-right: auto;
 }
-.option > .content-image.sound-image {
-  max-height: 18vh;
-  max-width: 30vw;
+.option > .sound-image {
+  background: url(../img/assets_svg/icon-audio.svg);
+  background-size: 80px;
+  background-repeat: no-repeat;
+  background-position: center !important;
+  width: 100%;
 }
 
 .card-brand.wrong-attempt,
@@ -189,4 +192,7 @@ $lcard-inner-height : $lcard-min-height - ($lcard-outer-padding*2);
   line-height: 1.15em;
   color: $hex-dark-blue;
   text-align: center;
+}
+.practice-option-scroll{
+  height: calc(65% - 70px);
 }

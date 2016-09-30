@@ -202,6 +202,7 @@
     // }
 
     function playStarSound() {
+        var star = 0;
       if (quizCtrl.summary.stars) {
         star = quizCtrl.summary.stars;
       } else if (quizCtrl.summary.score.percent) {
@@ -941,7 +942,8 @@
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.CONTENT + '/content.modal-ribbon' + CONSTANT.VIEW, {
       scope: $scope,
       // animation: 'slide-in-up',
-      backdropClickToClose: true
+      backdropClickToClose: false,
+      hardwareBackButtonClose: false
     }).then(function(modal){
       $scope.nodeRibbon = modal;
       $scope.nodeRibbonFlag = true;

@@ -11,6 +11,7 @@
       'LOCK': true,
       'FAKE_LOGIN': true,
       'FAKE_DEVICE': true,
+      'DEBUG' : true,
       'BACKEND_SERVICE_DOMAIN': 'https://cc-test.zaya.in/',
       'RESOURCE_SERVER': 'https://cc-test.zaya.in/',
       'ANALYTICS' : true,
