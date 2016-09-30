@@ -109,9 +109,11 @@
   margin-left: auto;
   margin-right: auto;
 }
-.option > .content-image.sound-image {
-  max-height: 18vh;
-  max-width: 30vw;
+.option > .sound-image {
+  background: url(../img/icons/sound.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center !important;
 }
 
 .card-brand.wrong-attempt,
