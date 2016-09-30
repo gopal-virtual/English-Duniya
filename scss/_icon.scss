@@ -22,6 +22,26 @@
   }
 }
 
+@each $sicon, $sicon-name in $sicon-list{
+  .sicon-#{$sicon}{
+    background-image: url("#{$sicon-path}/#{$sicon-name}#{$sicon-type}");
+    background-repeat: no-repeat;
+    background-position: center center;
+  }
+  .sicon-#{$sicon}.active{
+    background-image: url("#{$sicon-path}/#{$sicon-name}-active#{$sicon-type}");
+    background-repeat: no-repeat;
+    background-position: center center;
+  }
+  // .style-#{$sicon}{
+  //     background-image: url("#{$sicon-path}/#{$sicon-name}#{$sicon-type}");
+  //     background-repeat: no-repeat;
+  //     background-position: left center;
+  //     background-size: auto 70%;
+  //     padding-left : 40px;
+  // }
+}
+
 .ed-icon{
   display: inline-block;
   height: 100%;

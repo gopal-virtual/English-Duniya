@@ -58,7 +58,7 @@
 }
 .card-grid.practice-card {
   width: calc(50% - 10px) !important;
-  height: 23vh !important;
+  height: 25vh !important;
   float: left;
   border-radius: 20px !important;
 }
@@ -101,7 +101,7 @@
   font-size: 1.8em;
 }
 .option > .content-image {
-  max-height: 95%;
+  max-height: 80%;
   max-width: 95%;
 }
 .question > .sound-image {
@@ -110,10 +110,11 @@
   margin-right: auto;
 }
 .option > .sound-image {
-  background: url(../img/icons/sound.png);
-  background-size: contain;
+  background: url(../img/assets_svg/icon-audio.svg);
+  background-size: 80px;
   background-repeat: no-repeat;
   background-position: center !important;
+  width: 100%;
 }
 
 .card-brand.wrong-attempt,
@@ -170,6 +171,7 @@ $lcard-inner-height : $lcard-min-height - ($lcard-outer-padding*2);
   box-shadow: 0px -4px 0px #{$hex-dark-blue} inset;
   font-size: 36px;
   color: $hex-dark-blue;
+  overflow: hidden;
 }
 
 .lcard.selected .lcard-inner{
@@ -191,4 +193,7 @@ $lcard-inner-height : $lcard-min-height - ($lcard-outer-padding*2);
   line-height: 1.15em;
   color: $hex-dark-blue;
   text-align: center;
+}
+.practice-option-scroll{
+  height: calc(65% - 70px);
 }
