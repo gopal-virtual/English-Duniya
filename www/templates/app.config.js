@@ -5,11 +5,11 @@
     .constant('$ionicLoadingConfig', {
       templateUrl:  'templates/common/common.loader.view.html'
     });
-  function AppConfig($httpProvider, $ionicConfigProvider, $ionicNativeTransitionsProvider, $logProvider, $windowProvider, pouchDBProvider, POUCHDB_METHODS, $resourceProvider) {
+  function AppConfig($httpProvider, $ionicConfigProvider, $ionicNativeTransitionsProvider, $logProvider, $windowProvider, pouchDBProvider, POUCHDB_METHODS, $resourceProvider, CONSTANT) {
 
 
     // global debug log
-    $logProvider.debugEnabled(true);
+    $logProvider.debugEnabled(CONSTANT.DEBUG);
     // request/response interceptors
     $httpProvider.interceptors.push(function($rootScope, $q, $log, $injector) {
       return {

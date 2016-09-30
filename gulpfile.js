@@ -110,6 +110,9 @@ gulp.task('generate-constants', function () {
       }, {
         match: 'APP_VERSION',
         replacement: app_version
+      }, {
+        match: 'DEBUG',
+        replacement: constants[env]['DEBUG']
         }
       ]
     }))
