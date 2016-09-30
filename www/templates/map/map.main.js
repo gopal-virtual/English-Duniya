@@ -809,7 +809,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                     }
                 }
                 
-                if(!temp.activeLessonKey){
+                if(temp.activeLessonKey != -1){
                     temp["activeLessonKey"] = -1;
                 }
 
