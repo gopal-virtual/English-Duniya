@@ -172,7 +172,7 @@ gulp.task('html', function () {
     .pipe(gulp.dest('./www/templates/'));
 });
 
-gulp.task('watch',['generate-constants','sass','html','scripts'], function () {
+gulp.task('watch',['generate-constants','sass','scripts','html'], function () {
   gulp.watch(paths.sass, ['sass']);
   gulp.watch(paths.script, ['scripts']);
   gulp.watch(paths.html, ['html']);
