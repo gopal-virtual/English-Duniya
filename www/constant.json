@@ -5,7 +5,8 @@
     "FAKE_DEVICE": false,
     "BACKEND_SERVICE_DOMAIN": "https://eg-api.zaya.in/",
     "RESOURCE_SERVER": "https://eg-api.zaya.in/",
-    "ANALYTICS": true
+    "ANALYTICS": true,
+    "DEBUG" : false
   },
   "TESTING": {
     "LOCK": true,
@@ -13,7 +14,8 @@
     "FAKE_DEVICE": false,
     "BACKEND_SERVICE_DOMAIN": "https://cc-test.zaya.in/",
     "RESOURCE_SERVER": "https://cc-test.zaya.in/",
-    "ANALYTICS": true
+    "ANALYTICS": true,
+    "DEBUG" : true
   },
   "DEVELOPMENT": {
     "LOCK": true,
@@ -21,6 +23,7 @@
     "FAKE_DEVICE": true,
     "BACKEND_SERVICE_DOMAIN": "https://cc-test.zaya.in/",
     "RESOURCE_SERVER": "https://cc-test.zaya.in/",
-    "ANALYTICS": false
+    "ANALYTICS": false,
+    "DEBUG" : true
   }
 }

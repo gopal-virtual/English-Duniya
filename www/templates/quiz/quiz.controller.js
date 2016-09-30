@@ -202,6 +202,7 @@
     // }
 
     function playStarSound() {
+        var star = 0;
       if (quizCtrl.summary.stars) {
         star = quizCtrl.summary.stars;
       } else if (quizCtrl.summary.score.percent) {
