@@ -63,7 +63,16 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
     }
     var renderedRegion = [regions[regionPage]];
 
+    var first_node_index = 0, last_node_index = 0;
+    for (var i = 0; i <= regionPage; i++) {
 
+        if (i==0) {
+            first_node_index = 0;
+        }else {
+            first_node_index += regionNodes[regions[i-1]];
+        }
+        last_node_index += regionNodes[regions[i]]-1;
+    }
     // var renderedRegion = [];
     // for (var key in regionNodes) {
     //     if (totalLesson > regionNodes[key]) {
@@ -697,21 +706,11 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
             };
 
 
-
             function renderNodesByOne(region){
 
                 // points.tempX = points.tempX.reverse();
                 // points.tempY = points.tempY.reverse();
-                var first_node_index = 0, last_node_index = 0;
-                for (var i = 0; i <= regionPage; i++) {
-
-                    if (i==0) {
-                        first_node_index = 0;
-                    }else {
-                        first_node_index += regionNodes[regions[i-1]];
-                    }
-                    last_node_index += regionNodes[regions[i]]-1;
-                }
+                
 
                 log.debug(last_node_index-first_node_index)
                 // port node
@@ -729,14 +728,18 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
 
 
                 // end : port node
-
+                log.debug("points y 2",points.y)
+                var vigo = 0;
                 for (var j = 0, i = last_node_index, distance = 1 / (last_node_index-first_node_index); i >= first_node_index; j += distance, i--) {
-                    //
+                    vigo++;
+                    log.debug("last",last_node_index,"first",first_node_index)
+                    log.debug("iteration",vigo)
                     log.debug("node",i,lessons[i].locked)
-                    //
+                    log.debug("distance",1 / (last_node_index-first_node_index))
                     var currentLesson = lessons[i].node;
                     var locked = lessons[i].locked ? '-locked' : '';
                     var type = lessonType(currentLesson, i) == '' ? '' : '-' + lessonType(currentLesson, i);
+                    log.debug("J",j)
                     var posx = game.math.catmullRomInterpolation(points.x, j);
                     var posy = game.math.catmullRomInterpolation(points.y, j);
 
@@ -959,16 +962,23 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                             "grammar" : 3,
                             "listening" : 4
                         }
-                        var j =  lessons.length - lessonKey - 1;
-                        log.debug('i got stars', j)
+                        // var j =  lessons.length - lessonKey - 1;
+                        log.debug('i got stars', lessonKey)
                         // var posx = _this.math.catmullRomInterpolation(points.x, j/lessons.length);
                         // var posy = _this.math.catmullRomInterpolation(points.y, j/lessons.length);
-                        var posx = _this.math.catmullRomInterpolation(points.x, j/(last_node_index-first_node_index));
-                        var posy = _this.math.catmullRomInterpolation(points.y, j/(last_node_index-first_node_index));
+                log.debug("y points",points.y)
+                        var posx = _this.math.catmullRomInterpolation(points.x, 1 - lessonKey/(last_node_index-first_node_index));
+                        var posy = _this.math.catmullRomInterpolation(points.y, 1 - lessonKey/(last_node_index-first_node_index));
+
+                        log.debug('J2',1-(lessonKey)/(last_node_index-first_node_index));
+                        log.debug("last",last_node_index,"first",first_node_index)
+                        log.debug('distance2',1/(last_node_index-first_node_index))
+
                         // log.debug("In star animation function, \nlessonFromQuizKey: ",lessonKey," activeLessonKey: ",temp.activeLessonKey,"\nactivatedLesson: ",lessons[lessonKey],"\nactiveLesson: ",lessons[temp.activeLessonKey]);
                         var starCloneTween = [];
                         for (var i = 0; i < lessons[lessonKey].stars; i++) {
-                                log.debug("x:",posx,star_x[i],game_scale,(posx+ star_x[i])*game_scale);
+                                log.warn("star x:",posx,star_x[i],game_scale,(posx+ star_x[i])*game_scale);
+                                log.warn("star y:",posy,star_y[i],posy + star_y[i]);
                                 starClone[i] = groups.nonRegion.starClone.create((posx+ star_x[i])*game_scale, posy + star_y[i], 'star_medium');
 
                                 starClone[i].anchor.setTo(0.5, 0.5);
@@ -1130,6 +1140,8 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                 // }
             }
 
+
+
             function gameStart(){
 
 
@@ -1153,6 +1165,8 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                     var lessonFromQuizStars = typeof(temp.lessonFromQuizKey)!="undefined"?lessons[temp.lessonFromQuizKey].stars:false;
                     var animateStarFlag = JSON.parse(localStorage.getItem("animateStarFlag"));
                     // animateStar(temp.activeLessonKey-1);
+                    log.debug('animate star')
+                    animateStar(temp.activeLessonKey-1);
 
                     if (animateStarFlag) {
 
@@ -1184,7 +1198,6 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                 },function(error){
                     log.error("Failed to fetchMapPath",error);
                 })
-
 
 
 
