@@ -2,16 +2,21 @@
   position: fixed;
   box-sizing: border-box;
   top : 0;
-  left : 0;
-  right : 0;
-  width : 100%;
+  padding : $padding-x/2 $padding-x*1.5;
   height : $result-height;
   background-color: $pale;
-  box-shadow: 0px 5px 5px transparentize($dark, 0.5);
+  // box-shadow: 0px 5px 5px transparentize($dark, 0.5);
   z-index: 9;
   border-radius: 0 0 $border-radius $border-radius;
-  border-bottom: $border-thin solid $brand-green;
+  border-bottom: $border-thin*2 solid lighten($dark, 20%);
   @include display-flex();
+  align-items: center;
+}
+.result-left{
+    left : 0;
+}
+.result-right{
+    right : 0;
 }
 .result-hack{
   border-radius: 0 !important;
@@ -27,6 +32,10 @@
 .result > .result-item {
   height: 100%;
   width : 25%;
+}
+.result .icon-settings {
+    width : 50px;
+    height : 30px;
 }
 .result-item > .result-item-dropdown {
   position: absolute;

@@ -173,19 +173,52 @@ input[type=radio].hide{
   padding: $padding-x*2.5 $padding-x*1.5 !important;
 }
 
-.radio-box{
+.lcard.radio-con{
+  height: 100px;
+  width: 100px;
+  border-radius: 10px;
+  display: inline-block;
+  float: left;
+  margin: 10px;
+}
+
+.lcard-inner.radio-box{
   display: inline-block;
   float: left;
   border-radius: 10px;
-  box-shadow: rgba(0,0,0,0.3) 0 0 10px;
+  // box-shadow: rgba(0,0,0,0.3) 0 0 10px;
+  height: 90px;
+  width: 90px;
+  font-size: 4.5em;
+  padding-top: 8px;
 }
 
 .radio-box.checked{
   background-color: #{$selected-color} !important;
 }
 
+.radio-con.radio-con-sm{
+  height: 80px;
+  width: 80px;
+  margin: 5px;
+}
+
+.radio-con.radio-con-sm .radio-box{
+  height: 70px;
+  width: 70px;
+  font-size: 3em;
+  padding-top: 10px;
+}
+
+.lcard.radio-con.radio-box-solo{
+  display: block;
+  float: none;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .radio-box-container-inner{
-  width: 220px;
+  width: 240px;
   margin-left: auto;
   margin-right: auto;
 }

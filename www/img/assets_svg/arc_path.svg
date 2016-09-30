@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg3404"
+   viewBox="0 0 100 100"
+   y="0px"
+   x="0px"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="arc_path.svg">
+  <path
+     fill-opacity="0"
+     stroke-width="10"
+     stroke="#f4f4f4"
+     d="m 21.716152,78.283787 a 40,40 0 0 1 0,-56.568543 40,40 0 0 1 56.568543,0 40,40 0 0 1 0,56.568543"
+     id="path3" />
+  <path
+     id="arc-progress"
+     fill-opacity="0"
+     stroke-width="12"
+     stroke="#555"
+     d="m 21.715728,78.284271 a 40,40 0 0 1 1e-6,-56.568542 40,40 0 0 1 56.568542,0 40,40 0 0 1 0,56.568542" />
+  <flowRoot
+     xml:space="preserve"
+     id="flowRoot3338"
+     style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     transform="translate(8.1355938e-8,5.0847457)"><flowRegion
+       id="flowRegion3340"><rect
+         id="rect3342"
+         width="123.30508"
+         height="45.762711"
+         x="26.271187"
+         y="31.355932" /></flowRegion><flowPara
+       id="flowPara3344"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:17.5px;font-family:'KG Primary Penmanship 2';-inkscape-font-specification:'KG Primary Penmanship 2, '">Level</flowPara></flowRoot></svg>

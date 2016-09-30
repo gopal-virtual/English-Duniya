@@ -33,8 +33,11 @@ fs.readFile('lesson.json', 'utf8', function(err, data) {
   }
   json = JSON.parse(data);
   // console.log(json)
+
+  fs.readFile('diagnosisQJSON.json', 'utf8', function(err, data) {
+   var diagnosis_json = JSON.parse(data);
   var counter = [0, 0, 0, 0]
-  // Iterate lessons
+  // Iterate lessons json
   for (var i = 0; i < json.length; i++) {
     // Check if lesson is to be bundled
     if (lessons == 'all' || counter[json[i].node.type.grade] < lessons) {
@@ -80,6 +83,22 @@ fs.readFile('lesson.json', 'utf8', function(err, data) {
       counter[json[i].node.type.grade]++;
     }
   }
+
+    //Iterate diagnsosis questions json
+    console.log("Diagnosis");
+
+    for(var prop in diagnosis_json[0]){
+      // console.log(prop,diagnosis_json[0][prop])
+      for(var media_type in diagnosis_json[0][prop].node.type.content.widgets){
+          if(diagnosis_json[0][prop].node.type.content.widgets.hasOwnProperty(media_type)){
+            for(var media_file in diagnosis_json[0][prop].node.type.content.widgets[media_type]){
+              media.push(diagnosis_json[0][prop].node.type.content.widgets[media_type][media_file]);
+            }
+          }
+        }
+
+    }
+
   var media_deleted = 0;
   var media_retained = 0;
   var strip_media = [];
@@ -128,9 +147,10 @@ fs.readFile('lesson.json', 'utf8', function(err, data) {
     var filename = getFileNameFromURl(media[i]);
     ncp(source_folder + media[i].split('/')[media[i].split('/').length-2] +'/'+  media[i].split('/').pop(), target_folder+filename,function(error){
       if(error){
-        console.log("Error Occured",error)
+        // console.log("Error Occured",error)
       }
     });
   }
 
+});
 });

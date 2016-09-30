@@ -1,16 +1,16 @@
 <div class="key-row">
-  <a ng-repeat="(key,value) in { '0':'0', '1':'1', '2':'2', '3':'3', '4':'4', '5':'5', '6':'6', '7':'7', '8':'8', '9':'9'}" class="key" on-tap="keyCtrl.input(value)">{{key}}</a>
+  <a ng-repeat="(key,value) in { '0':'0', '1':'1', '2':'2', '3':'3', '4':'4', '5':'5', '6':'6', '7':'7', '8':'8', '9':'9'}" class="key lbtn" on-tap="keyCtrl.input(value)">{{key}}</a>
 </div>
 <div class="key-row">
-  <a ng-repeat="(key,value) in {'A':'A', 'B':'B', 'C':'C', 'D':'D', 'E':'E', 'F':'F', 'G':'G', 'H':'H', 'I':'I', 'J':'J'}" class="key" on-tap="keyCtrl.input(value)">{{key}}</a>
+  <a ng-repeat="(key,value) in {'A':'A', 'B':'B', 'C':'C', 'D':'D', 'E':'E', 'F':'F', 'G':'G', 'H':'H', 'I':'I', 'J':'J'}" class="key lbtn" on-tap="keyCtrl.input(value)">{{key}}</a>
 </div>
 <div class="key-row">
-  <a ng-repeat="(key,value) in {'K':'K', 'L':'L', 'M':'M', 'N':'N', 'O':'O', 'P':'P', 'Q':'Q', 'R':'R', 'S':'S'}" class="key" on-tap="keyCtrl.input(value)">{{key}}</a>
+  <a ng-repeat="(key,value) in {'K':'K', 'L':'L', 'M':'M', 'N':'N', 'O':'O', 'P':'P', 'Q':'Q', 'R':'R', 'S':'S'}" class="key lbtn" on-tap="keyCtrl.input(value)">{{key}}</a>
 </div>
 <div class="key-row">
-  <a ng-repeat="(key,value) in {'T':'T', 'U':'U', 'V':'V', 'W':'W', 'X':'X', 'Y':'Y', 'Z':'Z'}" class="key" on-tap="keyCtrl.input(value)">{{key}}</a>
+  <a ng-repeat="(key,value) in {'T':'T', 'U':'U', 'V':'V', 'W':'W', 'X':'X', 'Y':'Y', 'Z':'Z'}" class="key lbtn" on-tap="keyCtrl.input(value)">{{key}}</a>
 </div>
 <div class="key-row">
-  <a class="key" on-tap="keyCtrl.input(' ')">SPACE</a>
-  <a class="key key-symbol" on-tap="keyCtrl.erase()"><i class="ion-arrow-left-c"></i></a>
+  <a class="key lbtn" on-tap="keyCtrl.input(' ')">SPACE</a>
+  <a class="key key-symbol lbtn" on-tap="keyCtrl.erase()"><i class="ion-arrow-left-c"></i></a>
 </div>

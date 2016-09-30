@@ -67,7 +67,7 @@
     var quizCtrl = this;
     //bind quiz resolved to controller
     quizCtrl.quiz = quiz;
-    
+
     ;
     //report
     quizCtrl.report = {};
@@ -149,6 +149,7 @@
     // quizCtrl.tourFlag = true;
 
     quizCtrl.disable_submit = false;
+    quizCtrl.enable_litmus = true;
     $scope.demo = {
       'tourNextStep': tourNextStep,
       'tourFlag': localStorage.getItem('tourFlag')
@@ -392,17 +393,17 @@
 
     function nextQuestion(shouldScroll) {
       if (quizCtrl.currentIndex < quizCtrl.quiz.objects.length - 1) {
-        
+
         if (shouldScroll) {
           quizCtrl.inViewFlag = false;
           var id = 'question-' + (quizCtrl.getCurrentIndex() + 1);
           var position = $('#' + id).position();
           $ionicScrollDelegate.scrollBy(position.left, position.top, true);
         }
-        
+
 
         ++quizCtrl.currentIndex;
-        
+
 
       }
       return true;
@@ -477,32 +478,33 @@
     function setSuggestion() {
       $timeout(function () {
 
-        
+
         quizCtrl.disable_submit = true;
         var temp_quiz = angular.copy(quizCtrl.quiz);
         temp_quiz.suggestion = ml.getNextQSr(quizCtrl.quiz.suggestion.test, ml.mapping);
         if (temp_quiz.suggestion) {
-          
+
 
           temp_quiz.objects.push(ml.dqJSON[temp_quiz.suggestion.qSr]);
           content.getAssessment(temp_quiz).then(function(response){
             response.suggestion = temp_quiz.suggestion;
             quizCtrl.quiz = response;
 
-            
+
             // quizCtrl.nextQuestion()
             $ionicSlideBoxDelegate.update();
             quizCtrl.report.attempts[quizCtrl.quiz.objects[quizCtrl.currentIndex+1].node.id] = [];
 
             $timeout(function() {
               quizCtrl.currentIndex++;
-              $ionicSlideBoxDelegate.next();
+              $ionicSlideBoxDelegate.slide(quizCtrl.currentIndex);
+              quizCtrl.enable_litmus = true;
               quizCtrl.disable_submit = false;
             }, 300);
-            
+
           });
         } else {
-          
+
           quizCtrl.endQuiz();
         }
       },300)
@@ -732,7 +734,8 @@
       if($stateParams.type == 'litmus'){
         var levelRec = ml.getLevelRecommendation();
         $log.debug('levelRec', levelRec);
-        $state.go('litmus_result',{})
+        $state.go('litmus_result',{'average_level':levelRec.avgLevel})
+        localStorage.setItem('diagnosis_flag',true);
       }else{
         $state.go('map.navigate', {});
       }
@@ -817,7 +820,7 @@
             },
           User.getActiveProfileSync()._id
         )
-        $state.go('map.navigate', {"activatedLesson" : $scope.selectedNode});
+        $state.go('map.navigate', {"activatedLesson" : quizCtrl.quiz});
       } else {
         $scope.showNodeMenu();
       }
@@ -841,35 +844,6 @@
 
       }]
     };
-
-    if($state.is('quiz.questions') && User.demo.isShown(5)){
-
-      $timeout(function(){
-
-
-
-        if($stateParams.type!=='litmus'){
-          angular.element("#audioplayer")[0].pause();
-          angular.element("#audioSource")[0].src = 'sound/demo-quiz-1.mp3';
-          angular.element("#audioplayer")[0].load();
-          angular.element("#audioplayer")[0].play();
-          nzTour.start($scope.tour);
-          User.demo.setStep(5);
-          $timeout(function(){
-
-            if(nzTour.current.step === 0){
-              tourNextStep();
-            }
-          },3500)
-        }
-
-      });
-
-    }else{
-      $ionicPlatform.registerBackButtonAction(function(event) {
-        $scope.showNodeMenu();
-      }, 101);
-    }
 
 
     function tourNextStep() {
@@ -922,7 +896,46 @@
           User.getActiveProfileSync()._id
         )
     }
+    function intro_end_quiz(){
+      $log.debug("removed event listener quiz",$state);
+      angular.element("#audioplayer")[0].removeEventListener('ended',intro_end_quiz, false);
 
+      if($state.current.name == 'quiz.questions'){
+        $scope.nodeRibbonFlag = false;
+        $scope.nodeRibbon.hide().then(function(){
+          if($state.is('quiz.questions') && User.demo.isShown(5)){
+
+            $timeout(function(){
+              if($stateParams.type!=='litmus'){
+                angular.element("#audioplayer")[0].pause();
+                angular.element("#audioSource")[0].src = 'sound/demo-quiz-1.mp3';
+                angular.element("#audioplayer")[0].load();
+                angular.element("#audioplayer")[0].play();
+                nzTour.start($scope.tour);
+                User.demo.setStep(5);
+                $timeout(function(){
+
+                  if(nzTour.current.step === 0){
+                    tourNextStep();
+                  }
+                },3500)
+              }
+
+            });
+
+          }else{
+            $log.debug("playInstruction")
+            quizCtrl.playInstruction(0);
+
+            $ionicPlatform.registerBackButtonAction(function(event) {
+              $scope.showNodeMenu();
+            }, 101);
+          }
+
+        });
+      }
+
+    }
 
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.CONTENT + '/content.modal-ribbon' + CONSTANT.VIEW, {
       scope: $scope,
@@ -932,11 +945,18 @@
       $scope.nodeRibbon = modal;
       $scope.nodeRibbonFlag = true;
       // modal.show();
-      $timeout(function() {
-        $scope.nodeRibbonFlag = false;
-        modal.hide();
-        // contentCtrl.play();
-      }, 2000);
+      $log.debug(quiz)
+      angular.element("#audioplayer")[0].pause();
+      angular.element("#audioSource")[0].src = quiz.node.parsed_sound;
+      angular.element("#audioplayer")[0].load();
+      angular.element("#audioplayer")[0].play();
+      $log.debug("Added even listener quiz");
+      angular.element("#audioplayer")[0].addEventListener('ended', intro_end_quiz, false);
+
     })
+
+
+    // $scope.progressBar();
+
   }
 })();

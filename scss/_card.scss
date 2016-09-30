@@ -57,8 +57,13 @@
   margin: 5px 5px 0;
 }
 .card-grid.practice-card {
-  width: 45% !important;
+  width: calc(50% - 10px) !important;
   height: 23vh !important;
+  float: left;
+  border-radius: 20px !important;
+}
+.card-grid.practice-card .lcard-inner{
+  border-radius: 20px;
 }
 .content-image {
   display: block;
@@ -70,6 +75,10 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  color: $hex-dark-blue;
+  line-height:1.15em;
+  padding-left: 20px !important;
+  padding-right: 20px !important;
 // height: 50vw;
 }
 .question.practice-question{
@@ -95,9 +104,10 @@
   max-height: 95%;
   max-width: 95%;
 }
-.question > .content-image.sound-image {
-  max-height: 45%;
-  max-width: 45%;
+.question > .sound-image {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 .option > .content-image.sound-image {
   max-height: 18vh;
