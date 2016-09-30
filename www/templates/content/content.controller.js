@@ -55,6 +55,8 @@
     contentCtrl.onVideoComplete = onVideoComplete;
     contentCtrl.utilities = Utilities;
     contentCtrl.next = next;
+    contentCtrl.playStarSound = playStarSound;
+
     contentCtrl.config = {
       sources: [$stateParams.video],
       autoplay: false,
@@ -65,7 +67,6 @@
       },
       theme: "lib/videogular-themes-default/videogular.css"
     };
-    contentCtrl.playStarSound = playStarSound;
     $timeout(function(){
         contentCtrl.config.plugins.controls.showControl = false;
     },2000);
@@ -79,14 +80,15 @@
   // }, 101);
 
   function playStarSound() {
-      if (quizCtrl.summary.stars) {
-        star = quizCtrl.summary.stars;
-      } else if (quizCtrl.summary.score.percent) {
-        star = quizCtrl.summary.score.percent > CONSTANT.STAR.THREE ? 3 : quizCtrl.summary.score.percent > CONSTANT.STAR.TWO ? 2 : quizCtrl.summary.score.percent > CONSTANT.STAR.ONE ? 1 : 0;
+      var star = 0;
+      if (contentCtrl.summary.stars) {
+        star = contentCtrl.summary.stars;
+    } else if (contentCtrl.summary.score.percent) {
+        star = contentCtrl.summary.score.percent > CONSTANT.STAR.THREE ? 3 : contentCtrl.summary.score.percent > CONSTANT.STAR.TWO ? 2 : contentCtrl.summary.score.percent > CONSTANT.STAR.ONE ? 1 : 0;
       } else {
         star = 0;
       }
-      $log.debug("Hello");
+      $log.debug("playing star sound", star );
       for (var i = 0; i < star; i++) {
         (i + 1) == 1 && $timeout(function() {
           audio.play('one_star')
@@ -127,6 +129,7 @@
         contentCtrl.summary = {
             stars : 3
         }
+        contentCtrl.playStarSound();
       submitReport()
         $timeout(function() {
           orientation.setPortrait();
@@ -276,7 +279,6 @@
             orientation.setPortrait();
             $scope.resultMenu.show();
         }
-        contentCtrl.playStarSound();
         return true;
     }
     $scope.closeResult = function() {
