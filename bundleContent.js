@@ -71,6 +71,7 @@ fs.readFile('lesson.json', 'utf8', function(err, data) {
             if (json[i].objects[j].objects[k].node.meta && json[i].objects[j].objects[k].node.meta.instructions && json[i].objects[j].objects[k].node.meta.instructions.sounds) {
               // console.log("a",json[i].objects[j].objects[k].node.meta.instructions.sounds, typeof json[i].objects[j].objects[k].node.meta.instructions.sounds,media)
               media = media.concat(json[i].objects[j].objects[k].node.meta.instructions.sounds);
+              console.log()
               // console.log("a",json[i].objects[j].objects[k].node.meta.instructions.sounds, typeof json[i].objects[j].objects[k].node.meta.instructions.sounds,media)
 
             }
@@ -91,7 +92,9 @@ fs.readFile('lesson.json', 'utf8', function(err, data) {
       // console.log(prop,diagnosis_json[0][prop])
       for(var media_type in diagnosis_json[0][prop].node.type.content.widgets){
           if(diagnosis_json[0][prop].node.type.content.widgets.hasOwnProperty(media_type)){
+
             for(var media_file in diagnosis_json[0][prop].node.type.content.widgets[media_type]){
+              console.log(diagnosis_json[0][prop].node.type.content.widgets[media_type][media_file])
               media.push(diagnosis_json[0][prop].node.type.content.widgets[media_type][media_file]);
             }
           }
@@ -107,7 +110,7 @@ fs.readFile('lesson.json', 'utf8', function(err, data) {
     return a;
   },[]);
   console.log("Found " + media.length + " media files");
-
+  console.log(media)
   for (i in media) {
     strip_media[i] = getFileNameFromURl(media[i]);
   }

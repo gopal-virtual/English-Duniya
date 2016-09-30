@@ -62,8 +62,8 @@
         'THREE': 100
       },
       'WIDGETS': {
-        'SPEAKER_IMAGE': '<img class="content-image sound-image" src="img/icons/sound.png">',
-        'SPEAKER_IMAGE_SELECTED': '<img class="content-image sound-image animation-repeat-bounce" src="img/icons/sound.png">',
+        'SPEAKER_IMAGE': '<div class="sound-image sbtn sbtn-sound"></div>',
+        'SPEAKER_IMAGE_SELECTED': '<div class="sound-image sbtn sbtn-sound activated animation-repeat-bounce"></div>',
         'OPTIONS': {
           'LAYOUT_THRESHOLD': 55,
           'FONT_SIZE_THRESHOLD': 6
