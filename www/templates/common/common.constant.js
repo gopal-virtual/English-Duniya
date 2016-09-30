@@ -5,8 +5,8 @@
     .module('common')
     .constant('CONSTANT', {
       'APP':{
-      'TYPE': 'na',
-      'VERSION': 'na'
+      'TYPE': 'non-bundled',
+      'VERSION': '2'
       },
       'LOCK': true,
       'FAKE_LOGIN': true,
