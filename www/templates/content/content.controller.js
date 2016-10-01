@@ -138,6 +138,7 @@
       submitReport()
         $timeout(function() {
           orientation.setPortrait();
+          $scope.ribbon_modal.hide();
           $scope.resultMenu.show();
 			analytics.log(
               {
@@ -252,7 +253,7 @@
 
     $scope.openNodeMenu = function() {
       if (contentCtrl.API.currentState == 'pause') {
-        orientation.setPortrait();
+        // orientation.setPortrait()        ;
         $scope.nodeMenu.show();
       }
       return true;
