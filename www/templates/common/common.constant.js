@@ -9,8 +9,8 @@
       'VERSION': 'na'
       },
       'LOCK': true,
-      'FAKE_LOGIN': true,
-      'FAKE_DEVICE': true,
+      'FAKE_LOGIN': false,
+      'FAKE_DEVICE': false,
       'DEBUG' : true,
       'BACKEND_SERVICE_DOMAIN': 'https://cc-test.zaya.in/',
       'RESOURCE_SERVER': 'https://cc-test.zaya.in/',
