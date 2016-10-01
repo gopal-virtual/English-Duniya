@@ -118,10 +118,13 @@
 
   $ionicPlatform.onHardwareBackButton(function(event) {
       try {
-        if (!$scope.ribbon_modal.isShown()) {
+        if (!$scope.ribbon_modal.isShown() && !$scope.resultMenu.isShown()) {
+          $log.debug("HERE")
           contentCtrl.API.pause();
           $scope.openNodeMenu();
         }
+        $log.debug("HERE2")
+
       } catch (error) {
         ;
       }
@@ -231,7 +234,7 @@
     }
 
     function play(){
-     
+
         contentCtrl.API.play();
     }
     function onStateChange(state) {
