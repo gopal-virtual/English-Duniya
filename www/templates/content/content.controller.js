@@ -179,7 +179,8 @@
             id: $stateParams.video.resource.node.id,
             score: $stateParams.video.resource.node.type.score,
             totalScore: $stateParams.video.resource.node.type.score,
-            type: 'resource'
+            type: 'resource',
+            skill: lesson.node.tag
           })
         }).then(function(){
           return User.reports.save({
