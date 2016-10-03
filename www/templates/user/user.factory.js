@@ -159,7 +159,7 @@
         .then(function(){
           var temp = profile;
           temp.client_uid = id;
-          
+
           return updateProfile(id,temp)
         })
 
@@ -189,7 +189,7 @@
     }
 
     function updateProfile(profileId, profileData) {
-      
+
 
       var new_profile;
       return profilesDB.get(profileId).then(function (response) {
@@ -260,8 +260,10 @@
     }
 
 
-    function getScoreList() {
-
+    function getScoreList(profileId) {
+      return profilesDB.get(profileId).then(function(){
+        return response.data.scores;
+      })
     }
 
     function getScoreOfLesson(lessonId, profileId) {
@@ -293,8 +295,10 @@
         doc.scores[data.lessonId][data.id] = {
           'score': data.score,
           'totalScore': data.totalScore,
-          'type': data.type
+          'type': data.type,
+          'skill' : data.skill
         };
+        $log.debug("HERE",doc.scores[data.lessonId][data.id] )
         var temp = JSON.parse(localStorage.getItem('lesson'));
         temp.score = doc.scores[data.lessonId];
 

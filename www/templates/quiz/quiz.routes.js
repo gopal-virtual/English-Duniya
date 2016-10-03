@@ -158,7 +158,8 @@
                   id: quiz.node.id,
                   score: summary.score.marks,
                   totalScore: quiz.node.type.score,
-                  type: 'assessment'
+                  type: 'assessment',
+                  skill: quiz.node.tag
                 })
 
               }
