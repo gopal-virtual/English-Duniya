@@ -157,6 +157,7 @@
 
     $scope.tourNextStep = tourNextStep;
     $scope.lessonutils = lessonutils;
+    $scope.userGender = User.getActiveProfileSync().data.profile.gender;
     $scope.selectedNode = lessonutils.getLocalLesson();
     $scope.modal = {};
     quizCtrl.closeModalCallback = closeModalCallback;
