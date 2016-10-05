@@ -4,7 +4,6 @@
 // pouchdb-dump http://localhost:5984/lessonDB > ../zaya-mobile/www/data/lessons.db
 var fs = require('fs');
 var request = require('request');
-var diff = require('deep-diff')
 var json = [];
 
 var i;
