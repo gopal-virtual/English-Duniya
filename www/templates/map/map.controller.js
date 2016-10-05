@@ -128,7 +128,7 @@
     // $scope.$on('nextRegion', mapCtrl.setLessonRange )
     function setLessonRange(event, regionPage, action){
         // if (regionPage > 0 && regionPage < 3) {
-
+          $ionicLoading.show();
           if (action=="next") {
             if (regionPage < 3) {
               localStorage.setItem('regionPage',parseInt(regionPage)+1);
