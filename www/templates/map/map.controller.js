@@ -525,7 +525,8 @@
         $ionicLoading.show({
           hideOnStateChange: true
         });
-        localStorage.removeItem("currentPosition")
+        localStorage.setItem("currentPosition",4000);
+        localStorage.removeItem("regionPage");
 
         User.profile.update(mapCtrl.User.getActiveProfileSync()._id,profileData).then(function(){
           $scope.settingsModal.hide();
