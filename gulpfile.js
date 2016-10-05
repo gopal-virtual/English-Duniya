@@ -70,7 +70,9 @@ var app_version = argument.argv.app_version? argument.argv.app_version : 'na';
 var constants = JSON.parse(file.readFileSync(paths.constants.environment, 'utf8'));
 var lock = argument.argv.lock ? argument.argv.lock : constants[env]['LOCK'];
 
-gulp.task('default', ['generate-constants', 'sass', 'html', 'scripts']);
+gulp.task('default', ['generate-constants', 'sass', 'html', 'scripts'],function(){
+  console.log("Gulp Completed")
+});
 
 // gulp.task('optimize', function(cb) {
 //   gulp.src(paths.image)
@@ -123,22 +125,23 @@ gulp.task('generate-constants', function () {
 });
 
 
-gulp.task('scripts', function () {
+gulp.task('scripts',['html'], function (cb) {
 
   gulp.src(paths.script)
     .pipe(print(function (filepath) {
-      // return "MrGopal modified : " + filepath;
+      // return filepath;
     }))
     .pipe(ngAnnotate())
     .pipe(stripDebug())
     .pipe(strip())
     .pipe(concate('mobile.app.js'))
     .pipe(gulpif(env !== environments.dev,uglify()))
-    .pipe(gulp.dest('www/build'));
+    .pipe(gulp.dest('www/build'))
+    .on('end',cb)
   // .pipe(broswerSync.stream())
 });
 
-gulp.task('sass', function (done) {
+gulp.task('sass',['generate-constants'], function () {
   gulp.src('./scss/ionic.app.scss')
     .pipe(sass({
       includePaths: require('node-bourbon').includePaths
@@ -156,13 +159,13 @@ gulp.task('sass', function (done) {
       extname: '.min.css'
     }))
     .pipe(gulp.dest('./www/css/'))
-    .on('end', done);
+    // .on('end', done);
 });
 
-gulp.task('html', function () {
+gulp.task('html',['sass'], function () {
   return gulp.src(paths.html)
     .pipe(print(function (filepath) {
-      // return "html modified : " + filepath;
+      // return filepath;
     }))
     .pipe(strip())
     .pipe(templateCache({
@@ -173,7 +176,8 @@ gulp.task('html', function () {
       standalone: true,
       moduleSystem: 'IIFE'
     }))
-    .pipe(gulp.dest('./www/templates/'));
+    .pipe(gulp.dest('./www/templates/'))
+
 });
 
 gulp.task('watch',['generate-constants','sass','scripts','html'], function () {

@@ -14,6 +14,8 @@ USERNAME='admin'
 PASSWORD='admin-builds'
 cd $REPO_PATH
 
+bash generate-lessondb.sh
+
 npm install
 bower install
 
