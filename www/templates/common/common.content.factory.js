@@ -28,11 +28,11 @@
 
     var lessonDB = null;
 
-    if (User.getActiveProfileSync() && User.getActiveProfileSync().data) {
-      lessonDB = pouchDB('lessonsGrade' + User.getActiveProfileSync().data.profile.grade, {
+    // if (User.getActiveProfileSync() && User.getActiveProfileSync().data) {
+      lessonDB = pouchDB('lessonsDB' , {
         adapter: 'websql'
       });
-    }
+    // }
     var contentProperties = {
       createLessonDBIfNotExists: createLessonDBIfNotExists,
       createLessonDBIfNotExistsPatch: createLessonDBIfNotExistsPatch,
@@ -109,7 +109,7 @@
     return contentProperties;
 
     function createLessonDBIfNotExists() {
-      lessonDB = pouchDB('lessonsGrade' + User.getActiveProfileSync().data.profile.grade, {
+      lessonDB = pouchDB('lessonsDB', {
         adapter: 'websql'
       });
 
@@ -123,7 +123,7 @@
           throw err;
         }
         $log.debug("NEW DB MADE");
-        return lessonDB.load(CONSTANT.PATH.DATA + '/lessonsGrade' + User.getActiveProfileSync().data.profile.grade + '.db').then(function () {
+        return lessonDB.load(CONSTANT.PATH.DATA + '/lessons.db').then(function () {
           return lessonDB.put({
             _id: '_local/preloaded'
           });
