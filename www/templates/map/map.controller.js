@@ -135,17 +135,17 @@
             }else{
               localStorage.setItem('regionPage',parseInt(regionPage));
             }
+            localStorage.setItem('currentPosition', 4000);
           }else if (action=="prev") {
             if (regionPage > 0) {
               localStorage.setItem('regionPage',parseInt(regionPage)-1);
             }else{
               localStorage.setItem('regionPage',parseInt(regionPage));
             }
+            localStorage.setItem('currentPosition', 0);
           }
 
         // }
-
-        // localStorage.setItem('last_node_index', end_index)
         window.location.reload()
         //
     }
