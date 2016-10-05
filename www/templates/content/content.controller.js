@@ -51,6 +51,7 @@
     contentCtrl.play = play;
     $scope.lessonutils = lessonutils;
     $scope.userGender = User.getActiveProfileSync().data.profile.gender;
+    // $scope.currentState = $state.current.name;
     $scope.selectedNode = $stateParams.video.resource;
     contentCtrl.toggleControls = toggleControls;
     contentCtrl.onVideoComplete = onVideoComplete;
@@ -79,10 +80,13 @@
   //       ;
   //     }
   // }, 101);
+
+  // $log.debug("selectednode",$scope.selectedNode)
   // $log.debug("Hello from the other side")
   // $log.debug("User USER",User.getActiveProfileSync().data.profile.gender);
   // $log.debug("lessonutils",$scope.lessonutils.user)
   // $log.debug("lessonutils",$scope.lessonutils.getGender())
+  // $log.debug("STATE",$state)
 
 
   function playStarSound() {
