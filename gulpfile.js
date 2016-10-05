@@ -60,7 +60,7 @@ var paths = {
 };
 var environments = {
   default: 'PRODUCTION',
-  prod: 'PRODUCTION',
+  production: 'PRODUCTION',
   dev: 'DEVELOPMENT',
   test: 'TESTING'
 };
@@ -68,6 +68,7 @@ var env = argument.argv.env ? environments[argument.argv.env] : environments.def
 var app_type = argument.argv.app_type ? argument.argv.app_type : 'na';
 var app_version = argument.argv.app_version? argument.argv.app_version : 'na';
 var constants = JSON.parse(file.readFileSync(paths.constants.environment, 'utf8'));
+var lock = argument.argv.lock ? argument.argv.lock : constants[env]['LOCK'];
 
 gulp.task('default', ['generate-constants', 'sass', 'html', 'scripts']);
 
@@ -91,7 +92,7 @@ gulp.task('generate-constants', function () {
         replacement: constants[env]['BACKEND_SERVICE_DOMAIN']
       }, {
         match: 'LOCK',
-        replacement: constants[env]['LOCK']
+        replacement: lock
       }, {
         match: 'FAKE_LOGIN',
         replacement: constants[env]['FAKE_LOGIN']
