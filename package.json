@@ -42,6 +42,12 @@
     "yargs": "^4.8.1"
   },
   "cordovaPlugins": [
+    {
+      "variables": {
+        "SENDER_ID": "8255413708"
+      },
+      "locator": "phonegap-plugin-push"
+    },
     "cordova-plugin-device",
     "cordova-plugin-console",
     "cordova-plugin-whitelist",

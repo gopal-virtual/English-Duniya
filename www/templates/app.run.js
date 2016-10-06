@@ -4,10 +4,12 @@
     .module('zaya')
     .run(runConfig);
 
-  function runConfig($ionicPlatform, $rootScope,  $log, $state, $http, $cookies, Auth,  data, audio,  analytics, network, User, queue, content) {
+  function runConfig($ionicPlatform, $rootScope,  $log, $state, $http, $cookies, Auth,  data, audio,  analytics, network, User, queue, content, $cordovaPushV5) {
 
 
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
+
+
     //$http.defaults.headers.common['Access-Control-Request-Headers'] = 'accept, auth-token, content-type, xsrfcookiename';
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
 
@@ -140,6 +142,8 @@
         );
       network.isOnline() && queue.startSync();
 
+
+
       $rootScope.$on('$cordovaNetwork:online', function(event, networkState) {
           // data.queueSync()
 
@@ -170,11 +174,36 @@
       if (window.StatusBar) {
         StatusBar.styleDefault();
       }
+
+
+
       // Don't remove this line unless you know what you are doing. It stops the viewport
       // from snapping when text inputs are focused. Ionic handles this internally for
       // a much nicer keyboard experience.
       // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
       // for form inputs)
+
+
+
+      localStorage.myPush = ''; // I use a localStorage variable to persist the token
+      $cordovaPushV5.initialize(  // important to initialize with the multidevice structure !!
+          {
+              android: {
+                  senderID: "8255413708"
+              }
+          }
+      ).then(function (result) {
+          $cordovaPushV5.onNotification();
+          $cordovaPushV5.onError();
+          $cordovaPushV5.register().then(function (resultreg) {
+              localStorage.myPush = resultreg;
+              // SEND THE TOKEN TO THE SERVER, best associated with your device id and user
+          }, function (err) {
+              // handle error
+          });
+      });
+
+
 
     });
     $ionicPlatform.on('resume', function(){
