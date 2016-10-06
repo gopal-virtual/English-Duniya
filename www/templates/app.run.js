@@ -178,8 +178,6 @@
 
     });
     $ionicPlatform.on('resume', function(){
-      $log.debug("Played")
-      angular.element("#audioplayer")[0].play();
          analytics.log(
             {
                 name : 'APP',

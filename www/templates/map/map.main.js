@@ -159,7 +159,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
             this.load.image('star_medium', 'img/icons/icon-star-medium.png');
             this.load.image('star', 'img/icons/icon-star-small.png');
             this.load.image('nostar', 'img/icons/icon-nostar.png');
-            audio.play('background');
+            audio.loop('background');
 
             // debug value
             this.game.time.advancedTiming = true;
@@ -710,11 +710,11 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
 
                 // points.tempX = points.tempX.reverse();
                 // points.tempY = points.tempY.reverse();
-                
+
 
                 log.debug(last_node_index-first_node_index)
                 // port node
-                
+
 
                 // end : port node
                 log.debug("points y 2",points.y)
@@ -808,7 +808,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                         }
                     }
                 }
-                
+
                 if(temp.activeLessonKey == undefined){
                     temp["activeLessonKey"] = -1;
                 }
@@ -817,8 +817,8 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
 
                 if(regionPage < regions.length-1 && temp.activeLessonKey == -1){
                     var port_forward = game.add.button(game.world.centerX, 150, 'node-port', function(){
-                        
-                        
+
+
                             // var start_index = last_node_index + 1;
                             // var end_index = start_index + regionNodes[region];
                             scope.$emit('pageRegion', regionPage, "next");

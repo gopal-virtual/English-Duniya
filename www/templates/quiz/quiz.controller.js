@@ -869,6 +869,7 @@
         }
         else if(nzTour.current.step === 2){
           $ionicPlatform.registerBackButtonAction(function(event) {
+            angular.element("#audioplayer")[0].pause();
             $scope.showNodeMenu();
           }, 101);
         }
@@ -935,6 +936,7 @@
             quizCtrl.playInstruction(0);
 
             $ionicPlatform.registerBackButtonAction(function(event) {
+              angular.element("#audioplayer")[0].pause();
               $scope.showNodeMenu();
             }, 101);
           }
