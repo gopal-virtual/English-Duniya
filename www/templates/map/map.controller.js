@@ -121,9 +121,7 @@
         "reading" : "orange"
     }
 
-    if(localStorage.getItem('diagnosis_flag') == 'false'){
-      $state.go('litmus_start');
-    }
+    
     $scope.$on('pageRegion', mapCtrl.setLessonRange )
     // $scope.$on('nextRegion', mapCtrl.setLessonRange )
     function setLessonRange(event, regionPage, action){
