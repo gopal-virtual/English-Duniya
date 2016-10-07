@@ -4,7 +4,7 @@
     .module('zaya')
     .run(runConfig);
 
-  function runConfig($ionicPlatform, $rootScope,  $log, $state, $http, $cookies, Auth,  data, audio,  analytics, network, User, queue, content, $cordovaPushV5) {
+  function runConfig($ionicPlatform, $rootScope,  $log, $state, $http, $cookies, Auth,  data, audio,  analytics, network, User, queue, content, $cordovaPushV5, CONSTANT) {
 
 
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
@@ -183,13 +183,13 @@
       // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
       // for form inputs)
 
-
+      $log.debug('Yahoo');
 
       localStorage.myPush = ''; // I use a localStorage variable to persist the token
       $cordovaPushV5.initialize(  // important to initialize with the multidevice structure !!
           {
               android: {
-                  senderID: "8255413708"
+                  senderID: CONSTANT.CONFIG.NOTIFICATION.SENDERID
               }
           }
       ).then(function (result) {
@@ -197,8 +197,10 @@
           $cordovaPushV5.onError();
           $cordovaPushV5.register().then(function (resultreg) {
               localStorage.myPush = resultreg;
+              $log.debug('Sending to server',resultreg)
               // SEND THE TOKEN TO THE SERVER, best associated with your device id and user
           }, function (err) {
+              $log.debug("Some error occured")
               // handle error
           });
       });
