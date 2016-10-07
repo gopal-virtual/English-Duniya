@@ -222,25 +222,26 @@
         hardwareBackButtonClose: false
       }).then(function(modal){
         $scope.ribbon_modal = modal;
+        modal.show();
+
         if($stateParams.video.resource.node.parsed_sound){
           $scope.nodeRibbonFlag = true;
-          modal.show();
           angular.element("#audioplayer")[0].pause();
           $log.debug("setting",$stateParams.video.resource.node.parsed_sound);
           angular.element("#audioSource")[0].src = $stateParams.video.resource.node.parsed_sound;
           angular.element("#audioplayer")[0].load();
           $log.debug($stateParams.video.resource.node.parsed_sound);
           angular.element("#audioplayer")[0].play();
-          $log.debug(angular.element("#audioplayer")[0].duration,"duration")
+          $log.debug(angular.element("#audioplayer")[0].duration,"duration");
           $log.debug("Add even listener video");
-
           angular.element("#audioplayer")[0].addEventListener('ended',intro_end_video,false);
         }else{
           $log.debug(contentCtrl.API,"here");
           // contentCtrl.API.pause();
           $timeout(function () {
+            intro_end_video()
             contentCtrl.play();
-          },100)
+          },1000)
         }
       })
     }
