@@ -681,7 +681,7 @@
             report: (quizCtrl.report),
             summary: (quizCtrl.summary),
             type: 'practice'
-          });
+          })
         });
       } else if (quizType === 'assessment') {
         $ionicPopup.confirm({
@@ -727,6 +727,7 @@
     }
 
     function endQuiz() {
+      $log.debug("End quiz called");
       $ionicLoading.show({
         noBackdrop: false,
         hideOnStateChange: true

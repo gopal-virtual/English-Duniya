@@ -95,6 +95,10 @@
       getStep: getDemoStep,
       setStep: setDemoStep
     }
+    User.playlist = {
+        get: getUserPlaylist,
+        // add: addNodeToPlaylist
+    }
 
     function getUserIdSync() {
       return JSON.parse(localStorage.getItem('user_details')).id
@@ -116,7 +120,8 @@
           "scores": {},
           "reports": [],
           "skills": initial_skills,
-          "profile": profile
+          "profile": profile,
+          "playlist": []
         }
       };
       profile.client_uid = record._id;
@@ -159,7 +164,7 @@
         .then(function(){
           var temp = profile;
           temp.client_uid = id;
-          
+
           return updateProfile(id,temp)
         })
 
@@ -189,7 +194,7 @@
     }
 
     function updateProfile(profileId, profileData) {
-      
+
 
       var new_profile;
       return profilesDB.get(profileId).then(function (response) {
@@ -199,7 +204,7 @@
       }).then(function () {
         var temp = new_profile.data.profile;
         // delete temp['client_uid'];
-        
+
 
         return queue.push('/profiles/' + profileId, temp, 'patch')
       })
@@ -346,10 +351,15 @@
     }
 
     function setDemoStep(step) {
-
-
       localStorage.setItem('demo_flag', step);
     }
+
+    function getUserPlaylist(profileId) {
+      return profilesDB.get(profileId).then(function (response) {
+        return response.data.playlist;
+      })
+    }
+
 
     return User;
 
