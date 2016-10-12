@@ -122,8 +122,10 @@
         if (err.name !== 'not_found') {
           throw err;
         }
-        $log.debug("NEW DB MADE");
+        $log.debug("NEW DB MADE 1");
         return lessonDB.load(CONSTANT.PATH.DATA + '/lessons.db').then(function () {
+          $log.debug("NEW DB MADE 2");
+
           return lessonDB.put({
             _id: '_local/preloaded'
           });

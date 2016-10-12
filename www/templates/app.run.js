@@ -184,6 +184,11 @@
 
     });
     $ionicPlatform.on('resume', function(){
+      $rootScope.$broadcast('appResume');
+      $log.debug("Current state",$state.current)
+      if($state.current.name === 'content.video'){
+        // angular.element("#audioplayer")[0].play();
+      }
          analytics.log(
             {
                 name : 'APP',

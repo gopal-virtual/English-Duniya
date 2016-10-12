@@ -302,7 +302,14 @@
 
     });
 
+  $scope.$on('appResume',function(){
+    $log.debug("App resumr in content controller")
+    if($scope.ribbon_modal.isShown()){
+      angular.element("#audioplayer")[0].play();
 
+    }
+
+  })
     // $scope.nodeRibbon;
 
 
