@@ -257,8 +257,10 @@
     }
 
 
-    function getScoreList() {
-
+    function getScoreList(profileId) {
+      return profilesDB.get(profileId).then(function(response){
+        return response.data.scores;
+      })
     }
 
     function getScoreOfLesson(lessonId, profileId) {
