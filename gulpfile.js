@@ -130,9 +130,7 @@ gulp.task('get-version',function(){
   var xml       = file.readFileSync('./config.xml');
   var content         = cheerio.load(xml, { xmlMode: true });
   app_version   = content('widget')[0].attribs.version;
-  setTimeout(function() {
-    console.log("TIME")
-  },1000)
+
 });
 
 gulp.task('scripts', function () {

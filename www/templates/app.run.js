@@ -127,10 +127,13 @@
 
     });
     $ionicPlatform.ready(function() {
-      Raven.setUserContext({
-        device_id: device.uuid,
-        user: localStorage.profile._id
-      })
+      if(localStorage.profile && localStorage.profile._id){
+        Raven.setUserContext({
+          device_id: device.uuid,
+          user: localStorage.profile._id
+        })
+      }
+
         analytics.log(
             {
                 name : 'APP',
