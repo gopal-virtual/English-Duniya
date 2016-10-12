@@ -14,7 +14,7 @@
         resolve: {
           lessons: ['$log','content','User', function($log,content,User) {
             return content.getResourceList(User.getActiveProfileSync().data.profile.grade).then(function(result){
-              return result;
+              return result
             })
           }],
           lessonLocked: ['$log','content','extendLesson','User', function($log, content,extendLesson,User) {
@@ -36,7 +36,11 @@
             return [];
         }],
         skills : ['$log','content','User', function($log,content,User){
+
+
           return User.skills.get(User.getActiveProfileSync()._id).then(function(response){
+
+
             return response;
           })
         }]
