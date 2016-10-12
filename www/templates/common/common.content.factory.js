@@ -188,24 +188,39 @@
       lessonDB.allDocs({
         include_docs: true
       }).then(function (data) {
-        $log.debug(data)
-        for (var i = 0; i < data.rows.length; i++) {
-          data.rows[i].key = data.rows[i].doc.lesson.key;
-        }
-        data.rows = _.sortBy(data.rows, 'key');
-        var lessons = [];
-        for ( i = 0; i < data.rows.length; i++) {
-          data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key;
-          for (var c = 0; c < data.rows[i].doc.lesson.objects.length; c++) {
-            if(data.rows[i].doc.lesson.node.meta && data.rows[i].doc.lesson.node.meta.intros && data.rows[i].doc.lesson.node.meta.intros.sound && data.rows[i].doc.lesson.node.meta.intros.sound[0]){
-              data.rows[i].doc.lesson.objects[c].node.intro_sound = data.rows[i].doc.lesson.node.meta.intros.sound[0];
+          $log.debug("AAAAAAAA",data)
+        User.playlist.get(User.getActiveProfileSync()._id).then(function(playlist){
+            $log.debug("Playlist",playlist)
+            var lessons = [];
+            var resources = [];
+
+            for(var i = 0; i < data.rows.length; i++){
+              if(playlist.indexOf(data.rows[i].id) >= 0){
+                lessons[playlist.indexOf(data.rows[i].id)] = data.rows[i]
+              }
             }
-            data.rows[i].doc.lesson.objects[c].node.tag = data.rows[i].doc.lesson.node.tag;
-            lessons.push(data.rows[i].doc.lesson.objects[c])
-          }
-        }
-          $log.debug("lessons",lessons)
-        d.resolve(lessons)
+
+            for (var i = 0; i < lessons.length; i++) {
+              // data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key;
+              for (var c = 0; c < lessons[i].doc.lesson.objects.length; c++) {
+                if(lessons[i].doc.lesson.node.meta && lessons[i].doc.lesson.node.meta.intros && lessons[i].doc.lesson.node.meta.intros.sound && lessons[i].doc.lesson.node.meta.intros.sound[0]){
+                  lessons[i].doc.lesson.objects[c].node.intro_sound = lessons[i].doc.lesson.node.meta.intros.sound[0];
+                }
+                lessons[i].doc.lesson.objects[c].node.tag = lessons[i].doc.lesson.node.tag;
+                resources.push(lessons[i].doc.lesson.objects[c])
+              }
+            }
+            $log.debug(resources)
+            d.resolve(resources)
+
+        })
+        // $log.debug("data",data)
+        // for (var i = 0; i < data.rows.length; i++) {
+        //   data.rows[i].key = data.rows[i].doc.lesson.key;
+        // }
+        // data.rows = _.sortBy(data.rows, 'key');
+
+          // $log.debug("lessons",lessons)
       })
         .catch(function (error) {
           d.reject(error)
