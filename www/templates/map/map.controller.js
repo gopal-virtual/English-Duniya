@@ -90,6 +90,7 @@
     mapCtrl.authFactory = Auth;
     mapCtrl.queue = queue;
     mapCtrl.lessons = lessonList;
+    mapCtrl.ml = ml;
     // mapCtrl.userCtrl = $controller('userCtrl');
     // mapCtrl.resetNode = resetNode;
     $scope.lessonutils = lessonutils;
@@ -206,6 +207,9 @@
 
     $scope.$on('openNode', function(event, node) {
       // audio.stop('demo-1')
+      $ionicLoading.show({
+        hideOnStateChange: true
+      });
        $scope.demo.isShown() && $scope.demo.hide();
        $scope.selectedNode = node;
       //   $scope.demo.isShown() && $scope.demo.hide();
@@ -229,7 +233,13 @@
       })
       .then(function(lesson){
           lessonutils.setLocalLesson(JSON.stringify(lesson))
-      })
+      }).catch(function () {
+        $ionicLoading.hide()
+        $ionicPopup.alert({
+          title: 'Please try again',
+          template: "No internet conection found"
+        })
+      });
 
     //   if (currentPos)
     //     currentPos.lessonType = node.tag;

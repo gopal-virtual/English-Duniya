@@ -206,6 +206,11 @@
         // delete temp['client_uid'];
 
 
+        if(profileId == temp['client_uid'])
+        {
+          $log.debug("Deleteinh clientUid",temp)
+          delete temp['client_uid'];
+        }
         return queue.push('/profiles/' + profileId, temp, 'patch')
       })
         .then(function () {
@@ -262,8 +267,10 @@
     }
 
 
-    function getScoreList() {
-
+    function getScoreList(profileId) {
+      return profilesDB.get(profileId).then(function(response){
+        return response.data.scores;
+      })
     }
 
     function getScoreOfLesson(lessonId, profileId) {
@@ -295,8 +302,10 @@
         doc.scores[data.lessonId][data.id] = {
           'score': data.score,
           'totalScore': data.totalScore,
-          'type': data.type
+          'type': data.type,
+          'skill' : data.skill
         };
+        $log.debug("HERE",doc.scores[data.lessonId][data.id] )
         var temp = JSON.parse(localStorage.getItem('lesson'));
         temp.score = doc.scores[data.lessonId];
 

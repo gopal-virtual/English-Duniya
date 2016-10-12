@@ -202,6 +202,7 @@
     // }
 
     function playStarSound() {
+        var star = 0;
       if (quizCtrl.summary.stars) {
         star = quizCtrl.summary.stars;
       } else if (quizCtrl.summary.score.percent) {
@@ -249,7 +250,8 @@
               id: quiz.node.id,
               score: summary.score.marks,
               totalScore: quizCtrl.quiz.node.type.score,
-              type: 'assessment'
+              type: 'assessment',
+              skill: quiz.node.tag
             })
 
           }
@@ -665,12 +667,13 @@
         if(quizCtrl.report.attempts[CONSTANT.QUESTION.DEMO])
             delete quizCtrl.report.attempts[CONSTANT.QUESTION.DEMO];
       if (quizType === 'practice') {
+        $log.debug("END PRACTICE",quizCtrl.quiz)
         $scope.modal.hide().then(function() {
             analytics.log(
                 {
                     name : 'PRACTICE',
                     type : 'END',
-                    id : quizCtrl.quiz.id
+                    id : quizCtrl.quiz.node.type.id
                 },
                 {
                     time : new Date()
@@ -941,7 +944,8 @@
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.CONTENT + '/content.modal-ribbon' + CONSTANT.VIEW, {
       scope: $scope,
       // animation: 'slide-in-up',
-      backdropClickToClose: true
+      backdropClickToClose: false,
+      hardwareBackButtonClose: false
     }).then(function(modal){
       $scope.nodeRibbon = modal;
       $scope.nodeRibbonFlag = true;

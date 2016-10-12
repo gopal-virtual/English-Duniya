@@ -11,9 +11,10 @@
       'LOCK': true,
       'FAKE_LOGIN': true,
       'FAKE_DEVICE': true,
+      'DEBUG' : true,
       'BACKEND_SERVICE_DOMAIN': 'https://cc-test.zaya.in/',
       'RESOURCE_SERVER': 'https://cc-test.zaya.in/',
-      'ANALYTICS' : false,
+      'ANALYTICS' : true,
       'QUESTION' : {
         'DEMO' : '5ecf8ad5-4c3a-4a67-9758-dd7e3993c4d8'
       },
@@ -61,8 +62,8 @@
         'THREE': 100
       },
       'WIDGETS': {
-        'SPEAKER_IMAGE': '<img class="content-image sound-image" src="img/icons/sound.png">',
-        'SPEAKER_IMAGE_SELECTED': '<img class="content-image sound-image animation-repeat-bounce" src="img/icons/sound.png">',
+        'SPEAKER_IMAGE': '<div class="sound-image sbtn sbtn-sound"></div>',
+        'SPEAKER_IMAGE_SELECTED': '<div class="sound-image sbtn sbtn-sound activated animation-repeat-bounce"></div>',
         'OPTIONS': {
           'LAYOUT_THRESHOLD': 55,
           'FONT_SIZE_THRESHOLD': 6

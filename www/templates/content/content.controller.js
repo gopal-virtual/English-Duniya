@@ -50,11 +50,13 @@
     contentCtrl.onStateChange = onStateChange;
     contentCtrl.play = play;
     $scope.lessonutils = lessonutils;
-    $scope.selectedNode = lessonutils.getLocalLesson();
+    $scope.selectedNode = $stateParams.video.resource;
     contentCtrl.toggleControls = toggleControls;
     contentCtrl.onVideoComplete = onVideoComplete;
     contentCtrl.utilities = Utilities;
     contentCtrl.next = next;
+    contentCtrl.playStarSound = playStarSound;
+
     contentCtrl.config = {
       sources: [$stateParams.video],
       autoplay: false,
@@ -65,7 +67,6 @@
       },
       theme: "lib/videogular-themes-default/videogular.css"
     };
-    contentCtrl.playStarSound = playStarSound;
     $timeout(function(){
         contentCtrl.config.plugins.controls.showControl = false;
     },2000);
@@ -79,14 +80,15 @@
   // }, 101);
 
   function playStarSound() {
-      if (quizCtrl.summary.stars) {
-        star = quizCtrl.summary.stars;
-      } else if (quizCtrl.summary.score.percent) {
-        star = quizCtrl.summary.score.percent > CONSTANT.STAR.THREE ? 3 : quizCtrl.summary.score.percent > CONSTANT.STAR.TWO ? 2 : quizCtrl.summary.score.percent > CONSTANT.STAR.ONE ? 1 : 0;
+      var star = 0;
+      if (contentCtrl.summary.stars) {
+        star = contentCtrl.summary.stars;
+    } else if (contentCtrl.summary.score.percent) {
+        star = contentCtrl.summary.score.percent > CONSTANT.STAR.THREE ? 3 : contentCtrl.summary.score.percent > CONSTANT.STAR.TWO ? 2 : contentCtrl.summary.score.percent > CONSTANT.STAR.ONE ? 1 : 0;
       } else {
         star = 0;
       }
-      $log.debug("Hello");
+      $log.debug("playing star sound", star );
       for (var i = 0; i < star; i++) {
         (i + 1) == 1 && $timeout(function() {
           audio.play('one_star')
@@ -116,8 +118,13 @@
 
   $ionicPlatform.onHardwareBackButton(function(event) {
       try {
-        contentCtrl.API.pause();
-        $scope.openNodeMenu();
+        if (!$scope.ribbon_modal.isShown() && !$scope.resultMenu.isShown()) {
+          $log.debug("HERE")
+          contentCtrl.API.pause();
+          $scope.openNodeMenu();
+        }
+        $log.debug("HERE2")
+
       } catch (error) {
         ;
       }
@@ -127,6 +134,7 @@
         contentCtrl.summary = {
             stars : 3
         }
+        contentCtrl.playStarSound();
       submitReport()
         $timeout(function() {
           orientation.setPortrait();
@@ -171,7 +179,8 @@
             id: $stateParams.video.resource.node.id,
             score: $stateParams.video.resource.node.type.score,
             totalScore: $stateParams.video.resource.node.type.score,
-            type: 'resource'
+            type: 'resource',
+            skill: lesson.node.tag
           })
         }).then(function(){
           return User.reports.save({
@@ -198,7 +207,8 @@
       $ionicModal.fromTemplateUrl(CONSTANT.PATH.CONTENT + '/content.modal-ribbon' + CONSTANT.VIEW, {
         scope: $scope,
         // animation: 'slide-in-up',
-        backdropClickToClose: true
+        backdropClickToClose: false,
+        hardwareBackButtonClose: false
       }).then(function(modal){
         $scope.ribbon_modal = modal;
         if($stateParams.video.resource.node.parsed_sound){
@@ -225,18 +235,7 @@
     }
 
     function play(){
-        analytics.log(
-            {
-                name : 'VIDEO',
-                type : 'START',
-                id : $stateParams.video.resource.node.id
-            },
-            {
-                time : new Date()
-            },
-          User.getActiveProfileSync()._id
 
-        )
         contentCtrl.API.play();
     }
     function onStateChange(state) {
@@ -276,7 +275,6 @@
             orientation.setPortrait();
             $scope.resultMenu.show();
         }
-        contentCtrl.playStarSound();
         return true;
     }
     $scope.closeResult = function() {
