@@ -869,6 +869,7 @@
         }
         else if(nzTour.current.step === 2){
           $ionicPlatform.registerBackButtonAction(function(event) {
+            angular.element("#audioplayer")[0].pause();
             $scope.showNodeMenu();
           }, 101);
         }
@@ -935,6 +936,7 @@
             quizCtrl.playInstruction(0);
 
             $ionicPlatform.registerBackButtonAction(function(event) {
+              angular.element("#audioplayer")[0].pause();
               $scope.showNodeMenu();
             }, 101);
           }
@@ -953,15 +955,22 @@
       $scope.nodeRibbon = modal;
       $scope.nodeRibbonFlag = true;
       // modal.show();
-      $log.debug(quiz)
-      angular.element("#audioplayer")[0].pause();
-      angular.element("#audioSource")[0].src = quiz.node.parsed_sound;
-      angular.element("#audioplayer")[0].load();
-      angular.element("#audioplayer")[0].play();
-      $log.debug("Added even listener quiz");
-      angular.element("#audioplayer")[0].addEventListener('ended', intro_end_quiz, false);
+      $log.debug(quiz);
+      if(quiz.node.parsed_sound){
+        angular.element("#audioplayer")[0].pause();
+        angular.element("#audioSource")[0].src = quiz.node.parsed_sound;
+        angular.element("#audioplayer")[0].load();
+        angular.element("#audioplayer")[0].play();
+        $log.debug("Added even listener quiz");
+        angular.element("#audioplayer")[0].addEventListener('ended', intro_end_quiz, false);
+      }
+      else{
+        $timeout(function(){
+          intro_end_quiz();
+        },1000)
+      }
 
-    })
+    });
 
 
     // $scope.progressBar();

@@ -8,7 +8,7 @@
       'TYPE': 'na',
       'VERSION': 'na'
       },
-      'LOCK': true,
+      'LOCK': false,
       'FAKE_LOGIN': true,
       'FAKE_DEVICE': true,
       'DEBUG' : true,
