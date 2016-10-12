@@ -83,13 +83,14 @@
     $scope.activatedLesson = $stateParams.activatedLesson;
     $scope.progress = localStorage.getItem('progress');
     var mapCtrl = this;
-    var lessonList = CONSTANT.LOCK ? lessonLocked.lockedLesson : lessons;
+    var lessonList = CONSTANT.LOCK ? lessonLocked : lessons;
     mapCtrl.total_star = CONSTANT.LOCK ? lessonLocked.total_star : 0;
     // $state.current.data && lessonList.unshift($state.current.data.litmus);
     mapCtrl.User = User;
     mapCtrl.authFactory = Auth;
     mapCtrl.queue = queue;
     mapCtrl.lessons = lessonList;
+    $log.debug("LESSONS",mapCtrl.lessons,mapCtrl.lessons.length,CONSTANT.LOCK)
     // mapCtrl.userCtrl = $controller('userCtrl');
     // mapCtrl.resetNode = resetNode;
     $scope.lessonutils = lessonutils;
@@ -114,6 +115,7 @@
     // port node
     mapCtrl.first_node_index = parseInt(localStorage.first_node_index) || 0;
     mapCtrl.last_node_index = parseInt(localStorage.last_node_index) || mapCtrl.lessons.length - 1;
+    $log.debug("LLL",parseInt(localStorage.last_node_index) || mapCtrl.lessons.length - 1)
     mapCtrl.nodeColors = {
         "vocabulary" : "blue",
         "grammar" : "green",
@@ -179,7 +181,7 @@
     * @returns {string} Value of the property stored in localStorage. If nothing is found value 0 is returned
     */
 
-    $log.debug("lessons HAHA",mapCtrl.lessons[lessons.length-1].node);
+    // $log.debug("lessons HAHA",mapCtrl.lessons[lessons.length-1].node);
     function getNodeProperty(prop) {
       if (prop == 'x')
         return localStorage.demo_node ? JSON.parse(localStorage.demo_node).x : 0;

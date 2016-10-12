@@ -61,8 +61,8 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
         var regionPage = 0;
     }
     var renderedRegion = [regions[regionPage]];
-    
-    
+
+
     // var renderedRegion = [];
     // for (var key in regionNodes) {
     //     if (totalLesson > regionNodes[key]) {
@@ -73,7 +73,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
     //         break;
     //     }
     // }
-    
+
     var playState = {
         preload: function() {
             // crisp image rendering
@@ -553,7 +553,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
 
                     points.x = x.reverse();
                     points.y = y.reverse();
-                
+
                 });
                 return fetchMapRequest;
 
@@ -585,14 +585,14 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                     var posy = game.math.catmullRomInterpolation(points.y, j);
 
                     // log.debug(temp.activeLessonPosY,posy,temp.activeLessonPosY < posy)
-                    
+
                     if (temp.activeLessonPosY > posy) {
                         break;
                     }
                     //
                     bmd.rect(posx, posy, 8, 8, '#FFFFFF');
                     // bmd.anchor.setTo(0.5);
-                    // 
+                    //
                 }
                 groups.nonRegion.nodePath.create(0,0,bmd);
             }
@@ -696,12 +696,12 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
 
 
             function renderNodesByOne(region){
-                
+
                 // points.tempX = points.tempX.reverse();
                 // points.tempY = points.tempY.reverse();
                 var first_node_index = 0, last_node_index = 0;
                 for (var i = 0; i <= regionPage; i++) {
-                    
+
                     if (i==0) {
                         first_node_index = 0;
                     }else {
@@ -709,13 +709,13 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                     }
                     last_node_index += regionNodes[regions[i]]-1;
                 }
-                
+
                 log.debug(last_node_index-first_node_index)
                 // port node
                 if(regionPage > 0){
                     var port_back = game.add.button(game.world.centerX, game.world.height - 80, 'node-port', function(){
-                        
-                        
+
+
                             // var end_index = first_node_index - 1;
                             // var start_index = end_index - 5;
                             scope.$emit('pageRegion', regionPage, "prev");
@@ -725,9 +725,9 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                 }
                 if(regionPage < 3 && i == last_node_index){
                     var port_forward = game.add.button(game.world.centerX, 150, 'node-port', function(){
-                        
+
                             // var start_index = last_node_index + 1;
-                        
+
                             // var end_index = start_index + regionNodes[region];
                             scope.$emit('pageRegion', regionPage, "next");
                     }, this, 0,0,1,0);
@@ -738,19 +738,22 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                 // end : port node
 
                 for (var j = 0, i = last_node_index, distance = 1 / (last_node_index-first_node_index); i >= first_node_index; j += distance, i--) {
-                    // 
+                    //
                     log.debug("node",i,lessons[i].locked)
-                    // 
+                    //
+                  // lessons[i].locked = false;
+                    log.debug(last_node_index,i,first_node_index,distance,j)
+                    lessons[i].locked = false
                     var currentLesson = lessons[i].node;
                     var locked = lessons[i].locked ? '-locked' : '';
                     var type = lessonType(currentLesson, i) == '' ? '' : '-' + lessonType(currentLesson, i);
                     var posx = game.math.catmullRomInterpolation(points.x, j);
                     var posy = game.math.catmullRomInterpolation(points.y, j);
-                    
+
                     // node.scale.setTo(0.5)
                     if(!lessons[i].locked){
                         var node = game.make.button(posx, posy, 'node-' +nodeColors[lessons[i].node.tag.toLowerCase()]+'-'+ lessonutils.resourceType(lessons[i]), false, this, 0,0,1,0);
-                        
+
 
                         !locked && lessons[i + 1] && lessons[i + 1].locked && localStorage.setItem('region',posy);
 
@@ -1130,7 +1133,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                     var lessonFromQuizStars = typeof(temp.lessonFromQuizKey)!="undefined"?lessons[temp.lessonFromQuizKey].stars:false;
                     var animateStarFlag = JSON.parse(localStorage.getItem("animateStarFlag"));
                     // animateStar(temp.activeLessonKey-1);
-                    
+
                     if (animateStarFlag) {
 
 

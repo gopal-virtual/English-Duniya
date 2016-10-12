@@ -14,29 +14,21 @@
         resolve: {
           lessons: ['$log','content','User', function($log,content,User) {
             return content.getResourceList(User.getActiveProfileSync().data.profile.grade).then(function(result){
-              return result
+              return result;
             })
           }],
           lessonLocked: ['$log','content','extendLesson','User', function($log, content,extendLesson,User) {
-            extendLesson.initStar();
-            return content.getResourceList(User.getActiveProfileSync().data.profile.grade).then(function(lessons){
-              return extendLesson.getLesson(lessons).then(function(result){
-                return {
-                    lockedLesson : result,
-                    total_star : extendLesson.getTotalStar()
-                };
-              });
+            // extendLesson.initStar();
+            return content.getResourceList(User.getActiveProfileSync().data.profile.grade).then(function(result){
+              $log.debug("HERE",result);
+                  return result;
             })
           }],
           scores: ['Rest', '$log', 'content', function(Rest, $log, content) {
             return [];
         }],
         skills : ['$log','content','User', function($log,content,User){
-
-
           return User.skills.get(User.getActiveProfileSync()._id).then(function(response){
-
-
             return response;
           })
         }]
