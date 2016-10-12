@@ -85,8 +85,8 @@
 }
 
 .question > .content-image {
-  max-height: 31vw;
-  max-width: 41vw;
+  max-height: 40vw;
+  max-width: 52vw;
 }
 .option-container {
   display: table;
@@ -198,3 +198,18 @@ $lcard-inner-height : $lcard-min-height - ($lcard-outer-padding*2);
 .practice-option-scroll{
   height: calc(65% - 70px);
 }
+
+.sound-enlarge{
+  // width: 100% ;
+  text-align: center !important;
+  top: 0px !important;
+  padding-top: 30px; 
+  .sbtn-sound{
+    transform: scale3d(1,1,1) !important;
+    // bottom: initial !important;
+  }
+}
+
+// .sound-enlarge .sbtn-sound{
+//   width: 
+// }
