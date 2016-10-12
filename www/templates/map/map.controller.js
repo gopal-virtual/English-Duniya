@@ -83,7 +83,7 @@
     $scope.activatedLesson = $stateParams.activatedLesson;
     $scope.progress = localStorage.getItem('progress');
     var mapCtrl = this;
-    var lessonList = CONSTANT.LOCK ? lessonLocked : lessons;
+    var lessonList = CONSTANT.LOCK ? lessonLocked.lockedLesson : lessons;
     mapCtrl.total_star = CONSTANT.LOCK ? lessonLocked.total_star : 0;
     // $state.current.data && lessonList.unshift($state.current.data.litmus);
     mapCtrl.User = User;
