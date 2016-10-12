@@ -126,6 +126,7 @@
     quizCtrl.stopAudio = stopAudio;
     // quizCtrl.starCount = starCount;
     quizCtrl.highlightSoundIcon = highlightSoundIcon;
+    quizCtrl.highlightSoundIconFlag = false;
     quizCtrl.playInstruction = playInstruction;
     quizCtrl.calculateStars = calculateStars;
 
@@ -157,6 +158,7 @@
 
     $scope.tourNextStep = tourNextStep;
     $scope.lessonutils = lessonutils;
+    $scope.userGender = User.getActiveProfileSync().data.profile.gender;
     $scope.selectedNode = lessonutils.getLocalLesson();
     $scope.modal = {};
     quizCtrl.closeModalCallback = closeModalCallback;
@@ -796,13 +798,15 @@
     }
 
     function highlightSoundIcon(questionIndex) {
-      if (quizCtrl.quiz.objects[questionIndex].node.widgetHtml.indexOf(CONSTANT.WIDGETS.SPEAKER_IMAGE) >= 0) {
-        quizCtrl.quiz.objects[questionIndex].node.widgetHtml = quizCtrl.quiz.objects[questionIndex].node.widgetHtml.replace(CONSTANT.WIDGETS.SPEAKER_IMAGE, CONSTANT.WIDGETS.SPEAKER_IMAGE_SELECTED)
-      }
+      // if (quizCtrl.quiz.objects[questionIndex].node.widgetHtml.indexOf(CONSTANT.WIDGETS.SPEAKER_IMAGE) >= 0) {
+        // quizCtrl.quiz.objects[questionIndex].node.widgetHtml = quizCtrl.quiz.objects[questionIndex].node.widgetHtml.replace(CONSTANT.WIDGETS.SPEAKER_IMAGE, CONSTANT.WIDGETS.SPEAKER_IMAGE_SELECTED)
+      // }
+      quizCtrl.highlightSoundIconFlag = true;
       var watchAudio = $interval(function() {
         if (angular.element("#audioplayer")[0].paused) {
+          quizCtrl.highlightSoundIconFlag = false;
           $interval.cancel(watchAudio)
-          quizCtrl.quiz.objects[questionIndex].node.widgetHtml = quizCtrl.quiz.objects[questionIndex].node.widgetHtml.replace(CONSTANT.WIDGETS.SPEAKER_IMAGE_SELECTED, CONSTANT.WIDGETS.SPEAKER_IMAGE)
+          // quizCtrl.quiz.objects[questionIndex].node.widgetHtml = quizCtrl.quiz.objects[questionIndex].node.widgetHtml.replace(CONSTANT.WIDGETS.SPEAKER_IMAGE_SELECTED, CONSTANT.WIDGETS.SPEAKER_IMAGE)
         }
       }, 100)
     }
@@ -865,6 +869,7 @@
         }
         else if(nzTour.current.step === 2){
           $ionicPlatform.registerBackButtonAction(function(event) {
+            angular.element("#audioplayer")[0].pause();
             $scope.showNodeMenu();
           }, 101);
         }
@@ -931,6 +936,7 @@
             quizCtrl.playInstruction(0);
 
             $ionicPlatform.registerBackButtonAction(function(event) {
+              angular.element("#audioplayer")[0].pause();
               $scope.showNodeMenu();
             }, 101);
           }
@@ -949,15 +955,22 @@
       $scope.nodeRibbon = modal;
       $scope.nodeRibbonFlag = true;
       // modal.show();
-      $log.debug(quiz)
-      angular.element("#audioplayer")[0].pause();
-      angular.element("#audioSource")[0].src = quiz.node.parsed_sound;
-      angular.element("#audioplayer")[0].load();
-      angular.element("#audioplayer")[0].play();
-      $log.debug("Added even listener quiz");
-      angular.element("#audioplayer")[0].addEventListener('ended', intro_end_quiz, false);
+      $log.debug(quiz);
+      if(quiz.node.parsed_sound){
+        angular.element("#audioplayer")[0].pause();
+        angular.element("#audioSource")[0].src = quiz.node.parsed_sound;
+        angular.element("#audioplayer")[0].load();
+        angular.element("#audioplayer")[0].play();
+        $log.debug("Added even listener quiz");
+        angular.element("#audioplayer")[0].addEventListener('ended', intro_end_quiz, false);
+      }
+      else{
+        $timeout(function(){
+          intro_end_quiz();
+        },1000)
+      }
 
-    })
+    });
 
 
     // $scope.progressBar();

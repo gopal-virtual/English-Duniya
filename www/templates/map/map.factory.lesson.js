@@ -21,7 +21,7 @@
     function initStar() {
         total_star = 0
     }
-    
+
     function setLock(key, lesson, bool) {
       lesson.locked = bool;
     }
@@ -55,15 +55,17 @@
               total_score = total_score + score.totalScore;
               obtained_score = obtained_score + score.score;
 
-              
+
 
               if (total_score > 0) {
                 var percent = (obtained_score / total_score) * 100;
 
                 // if score is >  80%, unlock the next lessons
                 if (percent >= CONSTANT.STAR.ONE) {
-                  if (lessons[key + 1])
-                    setLock(key, lessons[key + 1], false);
+                  if (lessons[key] && lessons[key + 1]){
+                      setLock(key, lessons[key], false);
+                      setLock(key, lessons[key + 1], false);
+                  }
                 }
 
                 // give stars
