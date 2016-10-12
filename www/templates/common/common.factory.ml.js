@@ -11,7 +11,9 @@
   function ml(data, $log, $q, User) {
     var ml = {
       MAX: 10,
-      passingThreshold: 0.7,
+      passingThreshold: 0.75,
+      roadMapMax: 8,
+      maxSuggestionCount: 3,
       runDiagnostic: runDiagnostic,
       suggestBridge: suggestBridge,
       getUniqueArray: getUniqueArray,
@@ -30,15 +32,150 @@
       makeTree: makeTree,
       getKmapsFiltered: getKmapsFiltered,
       getLevelRecommendation: getLevelRecommendation,
+      getNewBatchNodes: getNewBatchNodes,
+      getTempRoadMap: getTempRoadMap,
       setMLDqJSON: setMLDqJSON(),
       setMLKmapsJSON: setMLKmapsJSON(),
       setMapping: setMapping(),
       setLessonResultMapping: setLessonResultMapping(),
+      roadMapData: {},
+      getLessonSuggestion: getLessonSuggestion,
+      updateRoadMapSuggestion: updateRoadMapSuggestion,
       // dqQuiz : []
       dqQuiz: [{"0":{"sr":"99991928-a3f7-49ee-b922-7dd37eb524bb","answered":"right","skill":"vocabulary","level":0},"1":{"sr":"56a3d5ec-ad5a-4917-9d9e-79221a956e88","answered":"NA","skill":"vocabulary","level":1},"2":{"sr":"874738b1-762c-47da-ae3e-a968c6145aa5","answered":"wrong","skill":"vocabulary","level":2},"3":{"sr":"1ef9334b-9d01-4a08-83b9-44e920983a06","answered":"NA","skill":"vocabulary","level":3}},{"0":{"sr":"2651f54b-dfcc-4f37-8560-5ed32965e37b","answered":"right","skill":"reading","level":0},"1":{"sr":"00b2a501-bd8b-4ff8-970e-18b3014f009d","answered":"NA","skill":"reading","level":1},"2":{"sr":"7b5a7976-55ed-4394-8c2d-6682e0670895","answered":"wrong","skill":"reading","level":2},"-1":{"sr":"c4e76df0-e881-4a87-9aab-93779b9eb173","answered":"NA","skill":"reading","level":0}},{"0":{"sr":"da08df75-f90b-4d17-9063-9c0529d8e29e","answered":"right","skill":"grammar","level":0},"1":{"sr":"6a0d68bb-9a0d-4f94-8b7c-0b8126f1d3ee","answered":"NA","skill":"grammar","level":3},"-2":{"sr":"09164dd8-9342-4877-94c9-150b760fb6db","answered":"NA","skill":"grammar","level":0},"-1":{"sr":"48fecd1e-7131-4063-a7ed-7585da8772b0","answered":"NA","skill":"grammar","level":1}},{"0":{"sr":"20d4b188-28e3-4803-b52d-7a52a5c4f4c9","answered":"wrong","skill":"listening","level":0},"-3":{"sr":"a00689f3-055a-4be0-b891-9f949e204f4d","answered":"NA","skill":"listening","level":0},"-2":{"sr":"b7681f96-c544-448e-952f-f0dda0c33b97","answered":"right","skill":"listening","level":-2},"-1":{"sr":"8c21ca7c-b0d4-4c54-9e6c-3aa18772b9df","answered":"NA","skill":"listening","level":-1}}]
     };
 
-    $log.debug('User here', User);
+    function setNewRoadMap(recommendationsWithPrereqs){
+      ml.recommendationsWithPrereqs = angular.copy(recommendationsWithPrereqs);
+      var roadMap = getTempRoadMap(recommendationsWithPrereqs);
+      ml.roadMapData = {"roadMap": [], "recommendationsWithPrereqs": recommendationsWithPrereqs};
+      for(var i = 0; i< roadMap.length;i++){
+        ml.roadMapData["roadMap"].push({"sr": roadMap[i], "suggestionCount": 0, "resultTrack": {}});
+      }
+    }
+
+    function getLessonSuggestion(data){
+      $log.debug("in getLessonSuggestion", data);
+      var suggestion = updateRoadMapSuggestion(data);
+      $log.debug('suggestion from updateRoadMapSuggestion', suggestion);
+      // save to localStorage
+      localStorage.setItem("roadMapData", JSON.stringify(ml.roadMapData));
+      return suggestion;
+    }
+
+    function updateRoadMapSuggestion(data){
+      if(localStorage.roadMapData == undefined){
+        ml.roadMapData = {};
+      }else{
+        ml.roadMapData = JSON.parse(localStorage.roadMapData);        
+      }
+      $log.debug('ml.roadMapData, data', ml.roadMapData, data);
+      if(data["event"] == "diagnosisTest"){
+        // $log.debug('in diagnosisTest', );
+        var recommendationsWithPrereqs = runDiagnostic()[0];
+        setNewRoadMap(recommendationsWithPrereqs);
+        $log.debug('ml.roadMapData 1', ml.roadMapData);
+        return ml.roadMapData["roadMap"][0]["sr"];
+      }
+      else if(data["event"] == "assessment"){
+        var result = data["score"]/data["totalScore"];
+        $log.debug('in assessment', result);
+
+        if(data["sr"] == ml.roadMapData["roadMap"][0]["sr"]){
+          // if roadmap lessons
+          $log.debug('if roadmap lessons');
+          if(result >= ml.passingThreshold){
+            // result roadmap lesson pass
+            $log.debug('result roadmap lesson pass');
+            ml.roadMapData["roadMap"].splice(0, 1);
+            var lesson = ml.roadMapData["roadMap"][0];
+            if (lesson != undefined){
+              // returning suggestion
+              $log.debug('returning suggestion', lesson["sr"]);
+              return lesson["sr"];
+            }else{
+              // if roadmap empty
+              $log.debug('if roadmap empty');
+              var recommendationsWithPrereqs = getNewBatchNodes()[0];
+              setNewRoadMap(recommendationsWithPrereqs);
+              return ml.roadMapData["roadMap"][0]["sr"];
+            }
+          }else{
+            // result roadmap lesson fail
+            $log.debug('result roadmap lesson fail');
+            ml.roadMapData["roadMap"][0]["suggestionCount"] += 1;
+            var suggestion = suggestBridge(data["skill"], ml.roadMapData["roadMap"][0]["sr"], ml.roadMapData["recommendationsWithPrereqs"]);
+            ml.roadMapData["roadMap"][0]["resultTrack"][suggestion] = ml.roadMapData["roadMap"][0]["sr"];
+            return suggestion;
+          }
+        }else{
+          // if not roadmap lessons
+          $log.debug('if not roadmap lessons');
+          ml.roadMapData["roadMap"][0]["suggestionCount"] += 1;
+          if(result >= ml.passingThreshold){
+            // if not roadmap lessons pass
+            $log.debug('if not roadmap lessons pass');
+            return ml.roadMapData["roadMap"][0]["resultTrack"][data["sr"]];
+          }else{
+            // if not roadmap lessons fail
+            $log.debug('if not roadmap lessons fail');
+            if(ml.roadMapData["roadMap"][0]["suggestionCount"] > ml.maxSuggestionCount){
+              // if not roadmap lessons fail, if overcount suggestioncount
+              $log.debug('if not roadmap lessons fail, if overcount suggestioncount');
+              ml.roadMapData["roadMap"][0]["suggestionCount"] = 0;
+              ml.roadMapData["roadMap"][0]["resultTrack"] = {};
+              if(ml.roadMapData["roadMap"][0]["sr"] == data["sr"]){
+                $log.debug('very exceptional condi');
+                var suggestion = suggestBridge(data["skill"], data["sr"], ml.roadMapData["recommendationsWithPrereqs"]);
+                ml.roadMapData["roadMap"][0]["resultTrack"][suggestion] = data["sr"];
+                return suggestion;
+              }else{
+                $log.debug('returni ng suggesiton 2');
+                return ml.roadMapData["roadMap"][0]["sr"];                
+              }
+            }else{
+              // if not roadmap lessons fail, if not overcount suggestioncount
+              $log.debug('if not roadmap lessons fail, if not overcount suggestioncount');
+              var suggestion = suggestBridge(data["skill"], data["sr"], ml.roadMapData["recommendationsWithPrereqs"]);
+              ml.roadMapData["roadMap"][0]["resultTrack"][suggestion] = data["sr"];
+              return suggestion;
+            }
+          }
+        }
+      }
+
+    }
+
+    function getTempRoadMap(recommendationsWithPrereqs){
+      var roadMap = [];
+      var roadMapSkills = [];
+      var maxRecInSkill = 0;
+
+      for(var skill in recommendationsWithPrereqs){
+        roadMapSkills.push(skill);
+        if(recommendationsWithPrereqs[skill].length > maxRecInSkill){
+          maxRecInSkill = recommendationsWithPrereqs[skill].length;
+        }
+      }
+
+      for(var i = 0; i < maxRecInSkill; i++){
+        if(roadMap.length >= ml.roadMapMax){
+          break;
+        }
+
+        for(var skill in recommendationsWithPrereqs){
+          if(recommendationsWithPrereqs[skill][i] != undefined){
+            var lesson = recommendationsWithPrereqs[skill][i];
+            if(roadMap.indexOf(lesson["sr"]) == -1 && roadMap.length < ml.roadMapMax){
+              roadMap.push(lesson["sr"]);
+            }
+          }          
+        }
+
+      }
+      roadMap = rankPlaylist({ 0: roadMap }, undefined, 1);
+      return roadMap;
+    }
 
     function getLessonResultMapping(){
       var student_id = User.getActiveProfileSync()._id;
@@ -156,7 +293,7 @@
                     // recommendations = recommendations.concat(lastResortRecommendations.slice(0, 10 - recommendations.length));
                     recommendations[insufficientSkill] = pushIfAbsent(recommendations[insufficientSkill], lastResortRecommendations); // to add all the lastResortRecommendations
                 }
-                // break;// last resort should now run only once.
+                break;// last resort should now run only once.
             }
             $log.debug('lastResortRecommendations', recommendations);
         }
@@ -291,18 +428,21 @@
                     var rankedPrereqList = rankPlaylist({ 0: unsuccessfulPrereqs }, undefined, 1);
                     // return the first from unsuccessfulPrereqs
                     var suggestion = ml.kmapsJSON[rankedPrereqList[0]]
-                    var suggestionPerSkill = {};
-                    suggestionPerSkill[skill] = [suggestion["sr"]];
+                    return suggestion["sr"];
+                    // var suggestionPerSkill = {};
+                    // $log.debug('prereq suggestion', suggestion);
 
-                    var recommendationsWithPrereqs = structureRecommendations(suggestionPerSkill);
+                    // suggestionPerSkill[skill] = [suggestion["sr"]];
 
-                    return recommendationsWithPrereqs;
+                    // var recommendationsWithPrereqs = structureRecommendations(suggestionPerSkill);
+
+                    // return recommendationsWithPrereqs;
                 }
             }
         }
 
         // if suggestion is null; marisa's jugaad
-        $log.debug('suggestBridge suggestion is null');
+        // $log.debug('suggestBridge suggestion is null');
         var lessonResultMapping = ml.lessonResultMapping;
         var kmLesson = ml.kmapsJSON[sr];
         var level = kmLesson["level"];
@@ -329,31 +469,34 @@
 
         if (contentSrSuggestedLesson) {
             var suggestion = ml.kmapsJSON[contentSrSuggestedLesson];
-            $log.debug('contentSrSuggestedLesson suggestion', suggestion);
-            var suggestionPerSkill = {};
-            suggestionPerSkill[skill] = [suggestion["sr"]];
+            return suggestion["sr"];
+            // $log.debug('contentSrSuggestedLesson suggestion', suggestion);
+            // var suggestionPerSkill = {};
+            // suggestionPerSkill[skill] = [suggestion["sr"]];
 
-            var recommendationsWithPrereqs = structureRecommendations(suggestionPerSkill);
+            // var recommendationsWithPrereqs = structureRecommendations(suggestionPerSkill);
 
-            return recommendationsWithPrereqs;
+            // return recommendationsWithPrereqs;
         } else if (Object.keys(lessonsPerLevel).length > 0) {
             var closestLevel = closest(Object.keys(lessonsPerLevel), level);
             var rankedLessons = rankPlaylist({ 0: lessonsPerLevel[closestLevel] }, undefined, 1);
             var suggestion = ml.kmapsJSON[rankedLessons[0]];
-            $log.debug('lessonsPerLevel suggestion', suggestion);
+            return suggestion["sr"];
+            // $log.debug('lessonsPerLevel suggestion', suggestion);
 
-            var suggestionPerSkill = {};
-            suggestionPerSkill[skill] = [suggestion["sr"]];
+            // var suggestionPerSkill = {};
+            // suggestionPerSkill[skill] = [suggestion["sr"]];
 
-            var recommendationsWithPrereqs = structureRecommendations(suggestionPerSkill);
+            // var recommendationsWithPrereqs = structureRecommendations(suggestionPerSkill);
 
-            return recommendationsWithPrereqs;
+            // return recommendationsWithPrereqs;
         }
 
-        var suggestionPerSkill = {};
-        suggestionPerSkill[skill] = [null];
+        // var suggestionPerSkill = {};
+        // suggestionPerSkill[skill] = [null];
+        // Ayush, write for worst case, if nothing found -> call lastResort
 
-        return suggestionPerSkill;
+        return null;
     }
 
 
