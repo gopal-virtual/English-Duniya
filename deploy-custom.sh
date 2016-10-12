@@ -1,14 +1,4 @@
 #!/bin/bash
-#
-#node curateCouchDb.js
-#rm www/data/lessons.db
-#pouchdb-dump http://127.0.0.1:5984/lessons > www/data/lessons.db
-#
-#
-#
-#
-#
-#
 
 source /home/ubuntu/.bashrc
 export ANDROID_HOME=/home/ubuntu/apps/android-sdk-linux
@@ -21,6 +11,8 @@ BUILD_PLATFORM='android'
 USERNAME='admin'
 PASSWORD='admin-builds'
 cd $REPO_PATH
+
+bash generate-lessondb.sh
 
 npm install
 bower install

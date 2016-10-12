@@ -6,7 +6,7 @@
     .constant('CONSTANT', {
       'APP':{
       'TYPE': 'na',
-      'VERSION': 'na'
+      'VERSION': '0.1.6'
       },
       'LOCK': false,
       'FAKE_LOGIN': true,

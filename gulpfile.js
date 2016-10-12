@@ -19,6 +19,8 @@ var argument = require('yargs');
 var file = require('fs');
 var replace_task = require('gulp-replace-task');
 var gulpif = require('gulp-if');
+var cheerio = require('cheerio');
+var runSequence = require('run-sequence');
 var paths = {
   sass: [
     './scss/**/*.scss',
@@ -66,11 +68,13 @@ var environments = {
 };
 var env = argument.argv.env ? environments[argument.argv.env] : environments.default;
 var app_type = argument.argv.app_type ? argument.argv.app_type : 'na';
-var app_version = argument.argv.app_version? argument.argv.app_version : 'na';
+var app_version = 'na';
 var constants = JSON.parse(file.readFileSync(paths.constants.environment, 'utf8'));
 var lock = argument.argv.lock ? argument.argv.lock : constants[env]['LOCK'];
 
-gulp.task('default', ['generate-constants', 'sass', 'html', 'scripts']);
+gulp.task('default', function(callback){
+  runSequence('get-version','generate-constants', 'sass', 'html', 'scripts',callback);
+});
 
 // gulp.task('optimize', function(cb) {
 //   gulp.src(paths.image)
@@ -122,23 +126,32 @@ gulp.task('generate-constants', function () {
 
 });
 
+gulp.task('get-version',function(){
+  var xml       = file.readFileSync('./config.xml');
+  var content         = cheerio.load(xml, { xmlMode: true });
+  app_version   = content('widget')[0].attribs.version;
+  setTimeout(function() {
+    console.log("TIME")
+  },1000)
+});
 
 gulp.task('scripts', function () {
 
   gulp.src(paths.script)
     .pipe(print(function (filepath) {
-      // return "MrGopal modified : " + filepath;
+      // return filepath;
     }))
     .pipe(ngAnnotate())
     .pipe(stripDebug())
     .pipe(strip())
     .pipe(concate('mobile.app.js'))
     .pipe(gulpif(env !== environments.dev,uglify()))
-    .pipe(gulp.dest('www/build'));
+    .pipe(gulp.dest('www/build'))
+    // .on('end',cb)
   // .pipe(broswerSync.stream())
 });
 
-gulp.task('sass', function (done) {
+gulp.task('sass', function () {
   gulp.src('./scss/ionic.app.scss')
     .pipe(sass({
       includePaths: require('node-bourbon').includePaths
@@ -156,27 +169,30 @@ gulp.task('sass', function (done) {
       extname: '.min.css'
     }))
     .pipe(gulp.dest('./www/css/'))
-    .on('end', done);
+    // .on('end', done);
 });
 
 gulp.task('html', function () {
-  return gulp.src(paths.html)
-    .pipe(print(function (filepath) {
-      // return "html modified : " + filepath;
-    }))
-    .pipe(strip())
-    .pipe(templateCache({
-      base: function (file) {
-        var filename = file.relative.replace('www/', '');
-        return 'templates/' + filename;
-      },
-      standalone: true,
-      moduleSystem: 'IIFE'
-    }))
-    .pipe(gulp.dest('./www/templates/'));
+        return gulp.src(paths.html)
+          .pipe(print(function (filepath) {
+            return filepath;
+          }))
+          .pipe(strip())
+          .pipe(templateCache({
+            base: function (file) {
+              var filename = file.relative.replace('www/', '');
+              return 'templates/' + filename;
+            },
+            standalone: true,
+            moduleSystem: 'IIFE'
+          }))
+          .pipe(gulp.dest('./www/templates/'))
+
+
+
 });
 
-gulp.task('watch',['generate-constants','sass','scripts','html'], function () {
+gulp.task('watch',['default'], function () {
   gulp.watch(paths.sass, ['sass']);
   gulp.watch(paths.script, ['scripts']);
   gulp.watch(paths.html, ['html']);
