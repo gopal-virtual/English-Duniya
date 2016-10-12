@@ -104,7 +104,10 @@
   max-height: 80%;
   max-width: 95%;
 }
-.question > .sound-image {
+.question .sound-image {
+  display: none;
+}
+.question-diag .sound-image {
   display: none;
 }
 .option > .sound-image {
