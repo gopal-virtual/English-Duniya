@@ -579,7 +579,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                 var increment = 1 / game.world.height;
                 // Somewhere to draw to
                 var bmd = game.add.bitmapData(game.width, game.world.height);
-                for (var j = 1; j > 0; j -= increment) {
+                for (var j = 0; j < 1; j += increment) {
                 //
                     var posx = game.math.catmullRomInterpolation(points.x, j);
                     var posy = game.math.catmullRomInterpolation(points.y, j);
@@ -589,8 +589,10 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                     if (temp.activeLessonPosY > posy) {
                         break;
                     }
+
+                    // log.debug(posy,temp.activeLessonPosY,temp.activeLessonPosY < posy)
                     //
-                    bmd.rect(posx, posy, 8, 8, '#FFFFFF');
+                    bmd.rect(posx-4, posy, 8, 8, '#FFFFFF');
                     // bmd.anchor.setTo(0.5);
                     //
                 }
@@ -693,10 +695,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                 }
             };
 
-
-
             function renderNodesByOne(region){
-
                 // points.tempX = points.tempX.reverse();
                 // points.tempY = points.tempY.reverse();
                 var first_node_index = 0, last_node_index = 0;
@@ -819,16 +818,104 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                     }
                 }
 
-                //
-                // localStorage.setItem('demo_node', JSON.stringify({
-                //         x: node.x - node.width / 2,
-                //         y: game.height - (game.world.height - node.y) - node.height / 2,
-                //         width: node.width,
-                //         height: node.height,
-                //         node: node.currentLesson,
-                //         type: node.type
-                //     })
-                // );
+                
+                localStorage.setItem('demo_node', JSON.stringify({
+                        x: node.x - node.width / 2,
+                        y: game.height - (game.world.height - node.y) - node.height / 2,
+                        width: node.width,
+                        height: node.height,
+                        node: node.currentLesson,
+                        type: node.type
+                    })
+                );
+            }
+
+
+            function renderNodesByML(region){
+
+                log.debug("LESSONS",lessons);
+                log.debug("posx",points.x.reverse());
+                log.debug("posy",points.y.reverse());
+                // var j = 0;
+                var first_node_index = 0, last_node_index = 0;
+                for (var i = 0; i <= regionPage; i++) {
+
+                    if (i==0) {
+                        first_node_index = 0;
+                    }else {
+                        first_node_index += regionNodes[regions[i-1]];
+                    }
+                    last_node_index += regionNodes[regions[i]]-1;
+                }
+                for (var i = first_node_index; i < lessons.length; i++) {
+                    if (lessons[i].locked) {
+                        log.debug("lesson locked")
+                        continue;
+                    }
+                    var j = i / (last_node_index-first_node_index);
+                    var posx = game.math.catmullRomInterpolation(points.x, j);
+                    var posy = game.math.catmullRomInterpolation(points.y, j);
+                    var currentLesson = lessons[i].node;
+                    log.debug(posy,posx);
+                    var node = game.make.button(posx, posy, 'node-' +nodeColors[lessons[i].node.tag.toLowerCase()]+'-'+ lessonutils.resourceType(lessons[i]), false, this, 0,0,1,0);
+                    node.anchor.setTo(0.5);
+                    node.scale.setTo(0.8);
+                    node.inputEnabled = true;
+                    node.events.onInputUp.add(
+                        function(currentLesson, game, posy, i, temp, currentObject) {
+                            return function() {
+                                var displacement = game.kineticScrolling.velocityY > -30 && game.kineticScrolling.velocityY < 30;
+                                if (!currentLesson.locked && displacement) {
+                                    localStorage.setItem('currentPosition', (posy - game.height / 2));
+                                    var currentPosition = {
+                                        "x": game.input._x,
+                                        "y": game.input._y,
+                                    }
+
+                                    var animateStarFlag = {
+                                        isCurrentNode : temp.activeLessonKey==i,
+                                        clickedNodeStar : lessons[i].stars
+                                    }
+                                    localStorage.setItem("animateStarFlag",JSON.stringify(animateStarFlag));
+                                    scope.$emit('openNode', currentObject);
+                                } else if (currentLesson.locked && displacement) {
+                                    audio.play('locked');
+                                } else {}
+                            }
+                        }(currentLesson, game, posy, i, temp, lessons[i])
+                    );
+                    node.type = lessonType(currentLesson, i);
+                    groups.nonRegion.nodes.add(node);
+
+                    if(i == lessons.length - 1){
+                        log.debug("Hellujah");
+                        temp["activeLessonKey"] = i;
+                        temp["activeLessonPosY"] = posy;
+                        temp["activeLessonPosX"] = posx;
+                        temp["nodeWobbleTween"] = game.add.tween(node.scale).to({ x: [0.8, 1], y: [0.8, 1] }, 700, Phaser.Easing.Back.Out, true, 1000).loop(true);
+                    }
+
+                    log.debug('stateParams',stateParams, currentLesson.id)
+                    if (stateParams.activatedLesson && stateParams.activatedLesson.node.id == currentLesson.id) {
+                        temp["lessonFromQuizKey"] = i;
+                    }
+
+                    if (!lessons[i].locked && lessons[i].stars >= 0) {
+                        // var stars = game.add.group();
+                        if (lessons[i].stars == 0) {
+                            createStars(0, $.merge([posx], star_x), $.merge([posy], star_y));
+                        } else if (lessons[i].stars == 1) {
+                            createStars(1, $.merge([posx], star_x), $.merge([posy], star_y));
+                        } else if (lessons[i].stars == 2) {
+                            createStars(2, $.merge([posx], star_x), $.merge([posy], star_y));
+                        } else if (lessons[i].stars == 3) {
+                            createStars(3, $.merge([posx], star_x), $.merge([posy], star_y));
+                        } else {}
+                    }
+                }
+
+
+                
             }
 
 
@@ -1119,7 +1206,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                 var fetchMapRequest = fetchMapPath(renderedRegion,points);
                 fetchMapRequest.then(function(){
                     scope.$emit('removeLoader');
-                    renderNodesByOne(renderedRegion);
+                    renderNodesByML(renderedRegion);
                     renderNodePath(renderedRegion,points);
 
 
