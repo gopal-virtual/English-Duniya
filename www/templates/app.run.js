@@ -178,6 +178,8 @@
 
     });
     $ionicPlatform.on('resume', function(){
+      $log.debug("Played")
+      angular.element("#audioplayer")[0].play();
          analytics.log(
             {
                 name : 'APP',
@@ -190,6 +192,7 @@
          )
     });
     $ionicPlatform.on('pause', function(){
+      $log.debug("paused")
         angular.element("#audioplayer")[0].pause();
          analytics.log(
             {

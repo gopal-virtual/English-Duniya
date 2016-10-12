@@ -158,7 +158,8 @@
                   id: quiz.node.id,
                   score: summary.score.marks,
                   totalScore: quiz.node.type.score,
-                  type: 'assessment'
+                  type: 'assessment',
+                  skill: quiz.node.tag
                 })
 
               }
@@ -203,13 +204,14 @@
         },
         templateUrl: CONSTANT.PATH.QUIZ + '/quiz.litmus_summary' + CONSTANT.VIEW,
 
-        controller: ['$log', 'audio', '$timeout','$stateParams','$scope', function ($log, audio,$timeout,$stateParams,$scope) {
+        controller: ['$log','User', 'audio', '$timeout','$stateParams','$scope', function ($log,User, audio,$timeout,$stateParams,$scope) {
+          $scope.gender = User.getActiveProfileSync().data.profile.gender == 'M'?'boy':'girl';
           $timeout(function() {
             $log.debug("Printing progressBar",$stateParams);
             var svgPath = document.getElementById('arc-progress');
             var progress = new ProgressBar.Path(svgPath, {
                 duration: 800,
-                easing: 'easeIn'
+                easing: 'easeInOut'
             });
             progress.set(0);
             $scope.average_level = $stateParams.average_level ? $stateParams.average_level : 1 ;
@@ -220,7 +222,10 @@
       })
       .state('litmus_start', {
         url: '/litmus_start',
-        templateUrl: CONSTANT.PATH.QUIZ + '/quiz.litmus_start' + CONSTANT.VIEW
+        templateUrl: CONSTANT.PATH.QUIZ + '/quiz.litmus_start' + CONSTANT.VIEW,
+        controller: ['$log', 'User','$scope', function ($log,User,$scope) {
+          $scope.gender = User.getActiveProfileSync().data.profile.gender == 'M'?'boy':'girl';
+        }]
       })
   }
 })();

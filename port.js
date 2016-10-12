@@ -10,12 +10,12 @@ fs.readFile('lesson.json', 'utf8', function (err,data) {
   json = JSON.parse(data);
   var PouchDB = require('pouchdb');
   var db = [];
-  db[0] = new PouchDB('http://127.0.0.1:5984/lessonsGrade0');
-  db[1] = new PouchDB('http://127.0.0.1:5984/lessonsGrade1');
-  db[2] = new PouchDB('http://127.0.0.1:5984/lessonsGrade2');
-  db[3] = new PouchDB('http://127.0.0.1:5984/lessonsGrade3');
-  db[4] = new PouchDB('http://127.0.0.1:5984/lessonsGrade4');
-  db[5] = new PouchDB('http://127.0.0.1:5984/lessonsGrade5');
+  db[0] = new PouchDB('http://127.0.0.1:5985/lessonsGrade0');
+  db[1] = new PouchDB('http://127.0.0.1:5985/lessonsGrade1');
+  db[2] = new PouchDB('http://127.0.0.1:5985/lessonsGrade2');
+  db[3] = new PouchDB('http://127.0.0.1:5985/lessonsGrade3');
+  db[4] = new PouchDB('http://127.0.0.1:5985/lessonsGrade4');
+  db[5] = new PouchDB('http://127.0.0.1:5985/lessonsGrade5');
 
 
   var promises = [];

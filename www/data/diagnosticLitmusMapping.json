@@ -34,12 +34,6 @@
             }
         }, 
         "grammar": {
-            "0": {
-                "questions": [
-                    "09164dd8-9342-4877-94c9-150b760fb6db"
-                ], 
-                "microstandard": "724ddf61-c2c2-49df-b08e-6cefb542bee9"
-            },
             "1": {
                 "questions": [
                     "09164dd8-9342-4877-94c9-150b760fb6db", 

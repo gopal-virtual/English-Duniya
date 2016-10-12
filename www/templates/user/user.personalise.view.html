@@ -18,7 +18,7 @@
                         </div>
                     </div>
                     <center class="personalize-button-container">
-                        <button ng-disabled="userCtrl.user.name.trim().length < 3" class="sbtn sbtn-next-blue" on-tap="userCtrl.nextSlide()"></button>
+                        <button ng-disabled="userCtrl.user.name.trim().length < 3" class="sbtn sbtn-next-blue" ng-click="userCtrl.nextSlide()"></button>
                     </center>
                 </div>
             </ion-slide>
@@ -51,7 +51,7 @@
                         </div>
                     </div>
                     <center class="personalize-button-container">
-                        <button ng-disabled="!userCtrl.user.gender" class="sbtn sbtn-next-blue" on-tap="userCtrl.nextSlide()"></button>
+                        <button ng-disabled="!userCtrl.user.gender" class="sbtn sbtn-next-blue" ng-click="userCtrl.nextSlide()"></button>
                     </center>
                 </div>
             </ion-slide>
@@ -77,7 +77,7 @@
                         </div>
                     </div>
                     <center class="personalize-button-container">
-                        <button ng-disabled="!userCtrl.user.grade" class="sbtn sbtn-next-blue" on-tap="userCtrl.createProfile(userCtrl.user)"></button>
+                        <button ng-disabled="!userCtrl.user.grade" class="sbtn sbtn-next-blue" ng-click="userCtrl.createProfile(userCtrl.user)"></button>
                       <!-- <button ng-disabled="!userCtrl.user.grade" class="button button-balanced button-round margin-20 padding-x-40 font-md" ng-click="userCtrl.createProfile(userCtrl.user)"><i class="ed-icon lg icon-contain icon-next-2"></i></button> -->
                     </center>
                 </div>
