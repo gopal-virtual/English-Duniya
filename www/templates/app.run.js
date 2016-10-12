@@ -4,7 +4,7 @@
     .module('zaya')
     .run(runConfig);
 
-  function runConfig($ionicPlatform, $rootScope,  $log, $state, $http, $cookies, Auth,  data, audio,  analytics, network, User, queue, content) {
+  function runConfig($ionicPlatform, $rootScope,  $log, $state, $http, $cookies, Auth,  data, audio,  analytics, network, User, queue, content, Raven, device) {
 
 
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
@@ -127,7 +127,10 @@
 
     });
     $ionicPlatform.ready(function() {
-
+      Raven.setUserContext({
+        device_id: device.uuid,
+        user: localStorage.profile._id
+      })
         analytics.log(
             {
                 name : 'APP',
