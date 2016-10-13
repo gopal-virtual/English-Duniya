@@ -370,11 +370,12 @@
     }
     function addNodeToPlaylist(profileId,nodeId) {
       return profilesDB.get(profileId).then(function (response) {
-        var new_profile = response.data.playlist.push(nodeId);
+        response.data.playlist.push(nodeId);
+        $log.debug("Resonse",response)
         return profilesDB.put({
           '_id': profileId,
           '_rev': response._rev,
-          'data': new_profile.data
+          'data': response.data
         })
       })
     }

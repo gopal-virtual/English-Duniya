@@ -212,7 +212,8 @@
                 resources.push(lessons[i].doc.lesson.objects[c])
               }
             }
-            $log.debug(resources)
+          resources[resources.length-1].node.requiresSuggestion = true;
+            $log.debug(resources,"Resources")
             d.resolve(resources)
 
         })

@@ -12,14 +12,14 @@
       </div>
       <div ng-class="{'hoverme':contentCtrl.summary.stars>0}" style="padding-top:40px;text-align:center;">
         <img height="250" style="z-index: 5;position: relative;" ng-src="img/assets_svg/{{lessonutils.getGender()=='M'?'boy':'girl'}}-{{quizCtrl.summary.stars>0?'win':'lose'}}-badge.svg">
-        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>    
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
       </div>
-      <div class="row padding-x-30" ng-show="!quizCtrl.summary.stars">
-        <center style="width: 100%;padding-top:20px;">
-          <button class="sbtn sbtn-video-yellow animation-fade-in-from-bottom" on-tap="lessonutils.getVideo() ? lessonutils.playResource(lessonutils.getVideo()) : quizCtrl.redo()"></button>
-        </center>
-      </div>
-      <div class="row padding-x-30 animation-fade-in-from-bottom" style="animation-delay: 3000ms;" ng-show="quizCtrl.summary.stars >= 1">
+      <!--<div class="row padding-x-30" ng-show="!quizCtrl.summary.stars">-->
+        <!--<center style="width: 100%;padding-top:20px;">-->
+          <!--<button class="sbtn sbtn-video-yellow animation-fade-in-from-bottom" on-tap="lessonutils.getVideo() ? lessonutils.playResource(lessonutils.getVideo()) : quizCtrl.redo()"></button>-->
+        <!--</center>-->
+      <!--</div>-->
+      <div class="row padding-x-30 animation-fade-in-from-bottom" style="animation-delay: 3000ms;" >
         <center style="width: 100%;padding-top:20px;">
           <button class="sbtn sbtn-next-yellow" on-tap="quizCtrl.next()"></button>
           <!-- <button class="button bg-brand-yellow button-round button-block animation-repeat-bounce" ng-click="quizCtrl.next()"><i class="ed-icon icon-contain icon-next"></i></button> -->

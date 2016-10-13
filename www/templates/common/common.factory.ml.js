@@ -41,8 +41,8 @@
       roadMapData: {},
       getLessonSuggestion: getLessonSuggestion,
       updateRoadMapSuggestion: updateRoadMapSuggestion,
-      // dqQuiz : []
-      dqQuiz: [{"0":{"sr":"99991928-a3f7-49ee-b922-7dd37eb524bb","answered":"right","skill":"vocabulary","level":0},"1":{"sr":"56a3d5ec-ad5a-4917-9d9e-79221a956e88","answered":"NA","skill":"vocabulary","level":1},"2":{"sr":"874738b1-762c-47da-ae3e-a968c6145aa5","answered":"wrong","skill":"vocabulary","level":2},"3":{"sr":"1ef9334b-9d01-4a08-83b9-44e920983a06","answered":"NA","skill":"vocabulary","level":3}},{"0":{"sr":"2651f54b-dfcc-4f37-8560-5ed32965e37b","answered":"right","skill":"reading","level":0},"1":{"sr":"00b2a501-bd8b-4ff8-970e-18b3014f009d","answered":"NA","skill":"reading","level":1},"2":{"sr":"7b5a7976-55ed-4394-8c2d-6682e0670895","answered":"wrong","skill":"reading","level":2},"-1":{"sr":"c4e76df0-e881-4a87-9aab-93779b9eb173","answered":"NA","skill":"reading","level":0}},{"0":{"sr":"da08df75-f90b-4d17-9063-9c0529d8e29e","answered":"right","skill":"grammar","level":0},"1":{"sr":"6a0d68bb-9a0d-4f94-8b7c-0b8126f1d3ee","answered":"NA","skill":"grammar","level":3},"-2":{"sr":"09164dd8-9342-4877-94c9-150b760fb6db","answered":"NA","skill":"grammar","level":0},"-1":{"sr":"48fecd1e-7131-4063-a7ed-7585da8772b0","answered":"NA","skill":"grammar","level":1}},{"0":{"sr":"20d4b188-28e3-4803-b52d-7a52a5c4f4c9","answered":"wrong","skill":"listening","level":0},"-3":{"sr":"a00689f3-055a-4be0-b891-9f949e204f4d","answered":"NA","skill":"listening","level":0},"-2":{"sr":"b7681f96-c544-448e-952f-f0dda0c33b97","answered":"right","skill":"listening","level":-2},"-1":{"sr":"8c21ca7c-b0d4-4c54-9e6c-3aa18772b9df","answered":"NA","skill":"listening","level":-1}}]
+      dqQuiz : []
+      // dqQuiz: [{"0":{"sr":"99991928-a3f7-49ee-b922-7dd37eb524bb","answered":"right","skill":"vocabulary","level":0},"1":{"sr":"56a3d5ec-ad5a-4917-9d9e-79221a956e88","answered":"NA","skill":"vocabulary","level":1},"2":{"sr":"874738b1-762c-47da-ae3e-a968c6145aa5","answered":"wrong","skill":"vocabulary","level":2},"3":{"sr":"1ef9334b-9d01-4a08-83b9-44e920983a06","answered":"NA","skill":"vocabulary","level":3}},{"0":{"sr":"2651f54b-dfcc-4f37-8560-5ed32965e37b","answered":"right","skill":"reading","level":0},"1":{"sr":"00b2a501-bd8b-4ff8-970e-18b3014f009d","answered":"NA","skill":"reading","level":1},"2":{"sr":"7b5a7976-55ed-4394-8c2d-6682e0670895","answered":"wrong","skill":"reading","level":2},"-1":{"sr":"c4e76df0-e881-4a87-9aab-93779b9eb173","answered":"NA","skill":"reading","level":0}},{"0":{"sr":"da08df75-f90b-4d17-9063-9c0529d8e29e","answered":"right","skill":"grammar","level":0},"1":{"sr":"6a0d68bb-9a0d-4f94-8b7c-0b8126f1d3ee","answered":"NA","skill":"grammar","level":3},"-2":{"sr":"09164dd8-9342-4877-94c9-150b760fb6db","answered":"NA","skill":"grammar","level":0},"-1":{"sr":"48fecd1e-7131-4063-a7ed-7585da8772b0","answered":"NA","skill":"grammar","level":1}},{"0":{"sr":"20d4b188-28e3-4803-b52d-7a52a5c4f4c9","answered":"wrong","skill":"listening","level":0},"-3":{"sr":"a00689f3-055a-4be0-b891-9f949e204f4d","answered":"NA","skill":"listening","level":0},"-2":{"sr":"b7681f96-c544-448e-952f-f0dda0c33b97","answered":"right","skill":"listening","level":-2},"-1":{"sr":"8c21ca7c-b0d4-4c54-9e6c-3aa18772b9df","answered":"NA","skill":"listening","level":-1}}]
     };
 
     function setNewRoadMap(recommendationsWithPrereqs){
@@ -67,7 +67,7 @@
       if(localStorage.roadMapData == undefined){
         ml.roadMapData = {};
       }else{
-        ml.roadMapData = JSON.parse(localStorage.roadMapData);        
+        ml.roadMapData = JSON.parse(localStorage.roadMapData);
       }
       $log.debug('ml.roadMapData, data', ml.roadMapData, data);
       if(data["event"] == "diagnosisTest"){
@@ -131,7 +131,7 @@
                 return suggestion;
               }else{
                 $log.debug('returni ng suggesiton 2');
-                return ml.roadMapData["roadMap"][0]["sr"];                
+                return ml.roadMapData["roadMap"][0]["sr"];
               }
             }else{
               // if not roadmap lessons fail, if not overcount suggestioncount
@@ -169,7 +169,7 @@
             if(roadMap.indexOf(lesson["sr"]) == -1 && roadMap.length < ml.roadMapMax){
               roadMap.push(lesson["sr"]);
             }
-          }          
+          }
         }
 
       }
@@ -353,10 +353,10 @@
                           result = "Passed";
                       }else{
                           result = "Unattempted";
-                      }                      
+                      }
                     }else{
                         result = "Unattempted";
-                    } 
+                    }
                     sr_result = result;
                 }
 
@@ -378,10 +378,10 @@
                               result = "Passed";
                           }else{
                               result = "Unattempted";
-                          }                          
+                          }
                         }else{
                             result = "Unattempted";
-                        } 
+                        }
                         prereqs_result.push(result);
                     } else {
                         prereqs_names.push(null);
@@ -945,7 +945,7 @@
 
 
     function getNextQSr(test, diagLitmusMapping) {
-      
+
       try {
           if (test.length > 0) {
               if (test[0]["count"] >= 2) {
@@ -1010,7 +1010,7 @@
               return null;
           }
       } catch (err) {
-          
+
           var newTest = test.slice(1, test.length);
           return getNextQSr(newTest, diagLitmusMapping);
       }
@@ -1018,10 +1018,10 @@
 
 
     function displaySuggestedSr(level_one, test, diagLitmusMapping) {
-        
+
         var test_one = test[0];
         var oldqSet = test_one["qSet"];
-        
+
         var qSet = {};
         for (var i in oldqSet) {
             qSet[i - level_one] = { "answered": oldqSet[i]["answered"] };
@@ -1031,7 +1031,7 @@
                 qSet[i - level_one]["sr"] = oldqSet[i]["qSr"];
             }
         }
-        
+
         var newQSet = {};
         // array = [];
         var last = null;
@@ -1051,7 +1051,7 @@
                 newQSet[last] = { "sr": qSet[last]["sr"], "answered": qSet[last]["answered"], "skill": test[0]["skill"], "level": last }
             }
         }
-        
+
         ml.dqQuiz.push(newQSet);
         var suggestedQ = ml.getSuggestedSr2(newQSet)[0];
         if (test.length > 1) {
