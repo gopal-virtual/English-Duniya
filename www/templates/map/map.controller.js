@@ -146,7 +146,9 @@
           }
 
         // }
-        window.location.reload()
+        $timeout(function() {
+          window.location.reload()
+        }, 10);
         //
     }
     // end : port node

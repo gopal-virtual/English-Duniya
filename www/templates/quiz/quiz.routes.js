@@ -225,6 +225,14 @@
         templateUrl: CONSTANT.PATH.QUIZ + '/quiz.litmus_start' + CONSTANT.VIEW,
         controller: ['$log', 'User','$scope', function ($log,User,$scope) {
           $scope.gender = User.getActiveProfileSync().data.profile.gender == 'M'?'boy':'girl';
+          $scope.pauseAudio = pauseAudio;
+          function pauseAudio(){
+            angular.element("#audioplayer")[0].pause();
+          }
+          angular.element("#audioplayer")[0].pause();
+          angular.element("#audioSource")[0].src = "sound/litmus_start.mp3"
+          angular.element("#audioplayer")[0].load();
+          angular.element("#audioplayer")[0].play();
         }]
       })
   }
