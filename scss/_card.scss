@@ -173,6 +173,7 @@ $lcard-inner-height : $lcard-min-height - ($lcard-outer-padding*2);
   font-size: 36px;
   color: $hex-dark-blue;
   overflow: hidden;
+  line-height: 1.1;
 }
 
 .lcard.selected .lcard-inner{
