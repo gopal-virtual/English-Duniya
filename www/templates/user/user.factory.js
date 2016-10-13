@@ -97,7 +97,7 @@
     }
     User.playlist = {
         get: getUserPlaylist,
-        // add: addNodeToPlaylist
+        add: addNodeToPlaylist
     }
 
     function getUserIdSync() {
@@ -368,7 +368,16 @@
         return response.data.playlist;
       })
     }
-
+    function addNodeToPlaylist(profileId,nodeId) {
+      return profilesDB.get(profileId).then(function (response) {
+        var new_profile = response.data.playlist.push(nodeId);
+        return profilesDB.put({
+          '_id': profileId,
+          '_rev': response._rev,
+          'data': new_profile.data
+        })
+      })
+    }
 
     return User;
 

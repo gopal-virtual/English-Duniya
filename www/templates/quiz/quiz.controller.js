@@ -753,7 +753,16 @@
       if($stateParams.type == 'litmus'){
         var levelRec = ml.getLevelRecommendation();
         $log.debug('levelRec', levelRec);
-        $state.go('litmus_result',{'average_level':levelRec.avgLevel})
+        ml.setLessonResultMapping.then(function() {
+          var suggestion = ml.getLessonSuggestion({
+            "event": "diagnosisTest"
+          });
+          $log.debug(suggestion,"Suggestion");
+          User.playlist.add(User.getActiveProfileSync()._id,suggestion).then(function(){
+            $state.go('litmus_result',{'average_level':levelRec.avgLevel});
+          })
+        });
+
         localStorage.setItem('diagnosis_flag',true);
       }else{
         $state.go('map.navigate', {});
