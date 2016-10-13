@@ -1,3 +1,3 @@
 # zaya-mobile
 # githook test 4
-jenkins test 23
+jenkins test 24
