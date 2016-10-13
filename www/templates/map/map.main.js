@@ -818,13 +818,13 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                 if(regionPage < regions.length-1 && temp.activeLessonKey == -1){
                     var port_forward = game.add.button(game.world.centerX, 150, 'node-port', function(){
 
-
                             // var start_index = last_node_index + 1;
                             // var end_index = start_index + regionNodes[region];
                             scope.$emit('pageRegion', regionPage, "next");
                     }, this, 0,0,1,0);
                     port_forward.scale.setTo(0.8)
                     port_forward.anchor.setTo(0.5)
+                    scrollTo(0);
                 }
 
                 if(regionPage > 0){
@@ -1133,7 +1133,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                 //
                 // var intervalScroll = setInterval(function(){
 
-                game.add.tween(game.camera).to({y:"-200"},800,Phaser.Easing.Quadratic.InOut,true);
+                game.add.tween(game.camera).to({y:limitY},800,Phaser.Easing.Quadratic.InOut,true,800);
                     // }
                 //     //
                 //     game.camera.y-=3;
