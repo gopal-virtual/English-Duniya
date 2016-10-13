@@ -123,31 +123,29 @@
         "reading" : "orange"
     }
 
-    if(localStorage.getItem('diagnosis_flag') == 'false'){
-      $state.go('litmus_start');
-    }
+    
     $scope.$on('pageRegion', mapCtrl.setLessonRange )
     // $scope.$on('nextRegion', mapCtrl.setLessonRange )
     function setLessonRange(event, regionPage, action){
         // if (regionPage > 0 && regionPage < 3) {
-
+          $ionicLoading.show();
           if (action=="next") {
             if (regionPage < 3) {
               localStorage.setItem('regionPage',parseInt(regionPage)+1);
             }else{
               localStorage.setItem('regionPage',parseInt(regionPage));
             }
+            localStorage.setItem('currentPosition', 4000);
           }else if (action=="prev") {
             if (regionPage > 0) {
               localStorage.setItem('regionPage',parseInt(regionPage)-1);
             }else{
               localStorage.setItem('regionPage',parseInt(regionPage));
             }
+            localStorage.setItem('currentPosition', 0);
           }
 
         // }
-
-        // localStorage.setItem('last_node_index', end_index)
         window.location.reload()
         //
     }
@@ -527,7 +525,8 @@
         $ionicLoading.show({
           hideOnStateChange: true
         });
-        localStorage.removeItem("currentPosition")
+        localStorage.setItem("currentPosition",4000);
+        localStorage.removeItem("regionPage");
 
         User.profile.update(mapCtrl.User.getActiveProfileSync()._id,profileData).then(function(){
           $scope.settingsModal.hide();

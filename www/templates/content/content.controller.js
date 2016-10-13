@@ -50,6 +50,8 @@
     contentCtrl.onStateChange = onStateChange;
     contentCtrl.play = play;
     $scope.lessonutils = lessonutils;
+    $scope.userGender = User.getActiveProfileSync().data.profile.gender;
+    // $scope.currentState = $state.current.name;
     $scope.selectedNode = $stateParams.video.resource;
     contentCtrl.toggleControls = toggleControls;
     contentCtrl.onVideoComplete = onVideoComplete;
@@ -78,6 +80,14 @@
   //       ;
   //     }
   // }, 101);
+
+  // $log.debug("selectednode",$scope.selectedNode)
+  // $log.debug("Hello from the other side")
+  // $log.debug("User USER",User.getActiveProfileSync().data.profile.gender);
+  // $log.debug("lessonutils",$scope.lessonutils.user)
+  // $log.debug("lessonutils",$scope.lessonutils.getGender())
+  // $log.debug("STATE",$state)
+
 
   function playStarSound() {
       var star = 0;
@@ -138,6 +148,7 @@
       submitReport()
         $timeout(function() {
           orientation.setPortrait();
+          $scope.ribbon_modal.hide();
           $scope.resultMenu.show();
 			analytics.log(
               {
@@ -211,25 +222,26 @@
         hardwareBackButtonClose: false
       }).then(function(modal){
         $scope.ribbon_modal = modal;
+        modal.show();
+
         if($stateParams.video.resource.node.parsed_sound){
           $scope.nodeRibbonFlag = true;
-          modal.show();
           angular.element("#audioplayer")[0].pause();
           $log.debug("setting",$stateParams.video.resource.node.parsed_sound);
           angular.element("#audioSource")[0].src = $stateParams.video.resource.node.parsed_sound;
           angular.element("#audioplayer")[0].load();
           $log.debug($stateParams.video.resource.node.parsed_sound);
           angular.element("#audioplayer")[0].play();
-          $log.debug(angular.element("#audioplayer")[0].duration,"duration")
+          $log.debug(angular.element("#audioplayer")[0].duration,"duration");
           $log.debug("Add even listener video");
-
           angular.element("#audioplayer")[0].addEventListener('ended',intro_end_video,false);
         }else{
           $log.debug(contentCtrl.API,"here");
           // contentCtrl.API.pause();
           $timeout(function () {
+            intro_end_video()
             contentCtrl.play();
-          },100)
+          },1000)
         }
       })
     }
@@ -253,7 +265,7 @@
 
     $scope.openNodeMenu = function() {
       if (contentCtrl.API.currentState == 'pause') {
-        orientation.setPortrait();
+        // orientation.setPortrait()        ;
         $scope.nodeMenu.show();
       }
       return true;
@@ -290,7 +302,14 @@
 
     });
 
+  $scope.$on('appResume',function(){
+    $log.debug("App resumr in content controller")
+    if($scope.ribbon_modal.isShown()){
+      angular.element("#audioplayer")[0].play();
 
+    }
+
+  })
     // $scope.nodeRibbon;
 
 

@@ -126,6 +126,7 @@
     quizCtrl.stopAudio = stopAudio;
     // quizCtrl.starCount = starCount;
     quizCtrl.highlightSoundIcon = highlightSoundIcon;
+    quizCtrl.highlightSoundIconFlag = false;
     quizCtrl.playInstruction = playInstruction;
     quizCtrl.calculateStars = calculateStars;
 
@@ -157,6 +158,7 @@
 
     $scope.tourNextStep = tourNextStep;
     $scope.lessonutils = lessonutils;
+    $scope.userGender = User.getActiveProfileSync().data.profile.gender;
     $scope.selectedNode = lessonutils.getLocalLesson();
     $scope.modal = {};
     quizCtrl.closeModalCallback = closeModalCallback;
@@ -668,24 +670,37 @@
             delete quizCtrl.report.attempts[CONSTANT.QUESTION.DEMO];
       if (quizType === 'practice') {
         $log.debug("END PRACTICE",quizCtrl.quiz)
-        $scope.modal.hide().then(function() {
+        ml.setLessonResultMapping.then(function(){
+          $log.debug("SUMMARY",quizCtrl.summary)
+          $log.debug("quiz",quizCtrl.quiz)
+          var suggestion = ml.getLessonSuggestion({"event":"assessment",
+          "score":quizCtrl.summary.score.marks,
+          "totalScore":quizCtrl.quiz.node.type.score,
+          "skill": quizCtrl.quiz.node.tag.toLowerCase() ,
+          "sr": quizCtrl.quiz.node.parent
+          });
+          $log.debug("got sugggestion",suggestion);
+
+          $scope.modal.hide().then(function() {
             analytics.log(
-                {
-                    name : 'PRACTICE',
-                    type : 'END',
-                    id : quizCtrl.quiz.node.type.id
-                },
-                {
-                    time : new Date()
-                },
+              {
+                name : 'PRACTICE',
+                type : 'END',
+                id : quizCtrl.quiz.node.type.id
+              },
+              {
+                time : new Date()
+              },
               User.getActiveProfileSync()._id
             ) &&
-          $state.go('quiz.summary', {
-            report: (quizCtrl.report),
-            summary: (quizCtrl.summary),
-            type: 'practice'
-          })
-        });
+            $state.go('quiz.summary', {
+              report: (quizCtrl.report),
+              summary: (quizCtrl.summary),
+              type: 'practice'
+            })
+          });
+        })
+
       } else if (quizType === 'assessment') {
         $ionicPopup.confirm({
           title: 'Submit Quiz?',
@@ -797,13 +812,15 @@
     }
 
     function highlightSoundIcon(questionIndex) {
-      if (quizCtrl.quiz.objects[questionIndex].node.widgetHtml.indexOf(CONSTANT.WIDGETS.SPEAKER_IMAGE) >= 0) {
-        quizCtrl.quiz.objects[questionIndex].node.widgetHtml = quizCtrl.quiz.objects[questionIndex].node.widgetHtml.replace(CONSTANT.WIDGETS.SPEAKER_IMAGE, CONSTANT.WIDGETS.SPEAKER_IMAGE_SELECTED)
-      }
+      // if (quizCtrl.quiz.objects[questionIndex].node.widgetHtml.indexOf(CONSTANT.WIDGETS.SPEAKER_IMAGE) >= 0) {
+        // quizCtrl.quiz.objects[questionIndex].node.widgetHtml = quizCtrl.quiz.objects[questionIndex].node.widgetHtml.replace(CONSTANT.WIDGETS.SPEAKER_IMAGE, CONSTANT.WIDGETS.SPEAKER_IMAGE_SELECTED)
+      // }
+      quizCtrl.highlightSoundIconFlag = true;
       var watchAudio = $interval(function() {
         if (angular.element("#audioplayer")[0].paused) {
+          quizCtrl.highlightSoundIconFlag = false;
           $interval.cancel(watchAudio)
-          quizCtrl.quiz.objects[questionIndex].node.widgetHtml = quizCtrl.quiz.objects[questionIndex].node.widgetHtml.replace(CONSTANT.WIDGETS.SPEAKER_IMAGE_SELECTED, CONSTANT.WIDGETS.SPEAKER_IMAGE)
+          // quizCtrl.quiz.objects[questionIndex].node.widgetHtml = quizCtrl.quiz.objects[questionIndex].node.widgetHtml.replace(CONSTANT.WIDGETS.SPEAKER_IMAGE_SELECTED, CONSTANT.WIDGETS.SPEAKER_IMAGE)
         }
       }, 100)
     }
@@ -866,6 +883,7 @@
         }
         else if(nzTour.current.step === 2){
           $ionicPlatform.registerBackButtonAction(function(event) {
+            angular.element("#audioplayer")[0].pause();
             $scope.showNodeMenu();
           }, 101);
         }
@@ -932,6 +950,7 @@
             quizCtrl.playInstruction(0);
 
             $ionicPlatform.registerBackButtonAction(function(event) {
+              angular.element("#audioplayer")[0].pause();
               $scope.showNodeMenu();
             }, 101);
           }
@@ -950,15 +969,22 @@
       $scope.nodeRibbon = modal;
       $scope.nodeRibbonFlag = true;
       // modal.show();
-      $log.debug(quiz)
-      angular.element("#audioplayer")[0].pause();
-      angular.element("#audioSource")[0].src = quiz.node.parsed_sound;
-      angular.element("#audioplayer")[0].load();
-      angular.element("#audioplayer")[0].play();
-      $log.debug("Added even listener quiz");
-      angular.element("#audioplayer")[0].addEventListener('ended', intro_end_quiz, false);
+      $log.debug(quiz);
+      if(quiz.node.parsed_sound){
+        angular.element("#audioplayer")[0].pause();
+        angular.element("#audioSource")[0].src = quiz.node.parsed_sound;
+        angular.element("#audioplayer")[0].load();
+        angular.element("#audioplayer")[0].play();
+        $log.debug("Added even listener quiz");
+        angular.element("#audioplayer")[0].addEventListener('ended', intro_end_quiz, false);
+      }
+      else{
+        $timeout(function(){
+          intro_end_quiz();
+        },1000)
+      }
 
-    })
+    });
 
 
     // $scope.progressBar();

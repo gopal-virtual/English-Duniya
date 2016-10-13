@@ -32,6 +32,7 @@
           return response;
         },
         responseError: function(rejection) {
+          $log.debug("config rejection",rejection)
           if ([401].indexOf(rejection.status) != -1) {
             localStorage.removeItem('Authorization');
             localStorage.setItem('syncing','false');

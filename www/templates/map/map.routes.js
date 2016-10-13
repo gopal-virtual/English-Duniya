@@ -72,7 +72,10 @@
           if (!lessons) {
             $state.go('map.unauthorised');
           }
-
+          if(localStorage.getItem('diagnosis_flag') == 'false'){
+            $ionicLoading.hide();
+            $state.go('litmus_start');
+          }
           // audio.play('background');
         //   if(localStorage.getItem('region')>'3409'){
         //   }

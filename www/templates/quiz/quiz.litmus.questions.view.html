@@ -35,20 +35,25 @@
           <div
             style=""
             ng-if="question.node.title"
-            class="question-diag padding-y-30 vertical-center"
-            ng-click="quizCtrl.playAudio(question.node.widgetSound,$index);quizCtrl.highlightSoundIcon($parent.$index);">
+            class="question-diag padding-y-20 vertical-center"
+            ng-click="quizCtrl.highlightSoundIcon($parent.$index);">
               <div ng-bind-html="question.node.widgetHtml"></div>
+                <div style="text-align:center;padding-top:20px;">
+                  <div ng-if="question.node.widgetSound" style="height:84px;width:87.5px;" ng-click="quizCtrl.playAudio(question.node.widgetSound,$index);quizCtrl.highlightSoundIcon($parent.$index);" ng-class="{'active animation-repeat-bounce':quizCtrl.highlightSoundIconFlag}" class="sbtn sbtn-sound"></div>
+                </div>
+              <!-- {{question.node.widgetHtml}} -->
             </div>
+
         </ion-scroll>
       </div>
 
       <ion-scroll
         scrollbar-x="false" scrollbar-y="false"
         direction="y"
-        style="height:44vh;"
+        style="height:50vh;"
       >
         <div
-          style="min-height:44vh"
+          style="min-height:50vh"
           id="step2"
           in-view-container
           class=" center bg-pale"

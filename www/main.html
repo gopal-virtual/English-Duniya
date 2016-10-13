@@ -51,7 +51,14 @@
   <script src="lib/nz-tour/dist/nz-tour.js"></script>
   <script src="lib/angular-audio/app/angular.audio.js"></script>
   <script src="lib/progressbar.js/dist/progressbar.min.js"></script>
-
+  <script src="lib/raven-js/dist/raven.min.js"></script>
+  <script src="lib/raven-js/dist/plugins/angular.min.js"></script>
+  <script>
+    Raven
+      .config('http://d52f1916c41a41e9b6506dddf7e805fa@zsentry.zaya.in/4')
+      .addPlugin(Raven.Plugins.Angular)
+      .install();
+  </script>
   <!-- your app's js -->
   <script src="build/mobile.app.js"></script>
 

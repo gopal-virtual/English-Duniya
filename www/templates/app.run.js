@@ -4,7 +4,7 @@
     .module('zaya')
     .run(runConfig);
 
-  function runConfig($ionicPlatform, $rootScope,  $log, $state, $http, $cookies, Auth,  data, audio,  analytics, network, User, queue, content) {
+  function runConfig($ionicPlatform, $rootScope,  $log, $state, $http, $cookies, Auth,  data, audio,  analytics, network, User, queue, content, Raven, device) {
 
 
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
@@ -127,6 +127,12 @@
 
     });
     $ionicPlatform.ready(function() {
+      if(localStorage.profile && localStorage.profile._id){
+        Raven.setUserContext({
+          device_id: device.uuid,
+          user: localStorage.profile._id
+        })
+      }
 
         analytics.log(
             {
@@ -178,8 +184,11 @@
 
     });
     $ionicPlatform.on('resume', function(){
-      $log.debug("Played")
-      angular.element("#audioplayer")[0].play();
+      $rootScope.$broadcast('appResume');
+      $log.debug("Current state",$state.current)
+      if($state.current.name === 'content.video'){
+        // angular.element("#audioplayer")[0].play();
+      }
          analytics.log(
             {
                 name : 'APP',

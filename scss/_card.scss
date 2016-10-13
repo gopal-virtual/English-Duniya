@@ -104,10 +104,11 @@
   max-height: 80%;
   max-width: 95%;
 }
-.question > .sound-image {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
+.question .sound-image {
+  display: none;
+}
+.question-diag .sound-image {
+  display: none;
 }
 .option > .sound-image {
   background: url(../img/assets_svg/icon-audio.svg);
