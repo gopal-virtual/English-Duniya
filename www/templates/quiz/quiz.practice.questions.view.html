@@ -106,7 +106,7 @@
   <div id="step3" style="min-height: 70px;" class="bar bar-footer bar-footer-large bg-pale">
     <center style="width: 100%">
       
-        <button ng-show="!quizCtrl.isAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex])" class="sbtn sbtn-submit" ng-click="quizCtrl.getFeedback(quizCtrl.quiz.objects[quizCtrl.currentIndex]);quizCtrl.logQuestion(quizCtrl.currentIndex,'END');demo.tourNextStep();audio['demo-quiz-3'].stop();quizCtrl.stopAudio()" ng-disabled="!quizCtrl.canSubmit()">
+        <button ng-show="!quizCtrl.isAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex])" ng-class="{'animation-repeat-bounce':quizCtrl.canSubmit()}" class="sbtn sbtn-submit" ng-click="quizCtrl.getFeedback(quizCtrl.quiz.objects[quizCtrl.currentIndex]);quizCtrl.logQuestion(quizCtrl.currentIndex,'END');demo.tourNextStep();audio['demo-quiz-3'].stop();quizCtrl.stopAudio()" ng-disabled="!quizCtrl.canSubmit()">
         </button>
         <button ng-show="quizCtrl.isAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex])" class="sbtn sbtn-continue" ng-click="quizCtrl.getFeedback(quizCtrl.quiz.objects[quizCtrl.currentIndex]);quizCtrl.logQuestion(quizCtrl.currentIndex,'END');demo.tourNextStep();audio['demo-quiz-3'].stop();quizCtrl.stopAudio()" ng-disabled="!quizCtrl.canSubmit()">
         </button>
