@@ -206,9 +206,11 @@
           for(var i = 0; i < data.rows.length; i++) {
             var index = -1;
             while ((index = playlist_ids.indexOf(data.rows[i].id, index + 1)) != -1) {
+              $log.debug("INDEX",index)
               lessons[index] = data.rows[i]
             }
           }
+          $log.debug("LESSINS",lessons)
             // if(playlist.indexOf(data.rows[i].id) >= 0){
             //     lessons[playlist.indexOf(data.rows[i].id)] = data.rows[i]
             //   }

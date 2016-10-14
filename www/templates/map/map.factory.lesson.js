@@ -47,7 +47,7 @@
       angular.forEach(lessons, function(value, key) {
         var total_score = 0;
         var obtained_score = 0;
-
+        $log.debug("Iterating",value)
         promises.push(
         User.scores.getScoreOfResource(value.node.parent, value.node.id,User.getActiveProfileSync()._id, value.node.playlist_index).then(function(score) {
           $log.debug("SCORE",score)
@@ -62,12 +62,12 @@
                 var percent = (obtained_score / total_score) * 100;
 
                 // if score is >  80%, unlock the next lessons
-                if (percent >= CONSTANT.STAR.ONE) {
-                  if (lessons[key] && lessons[key + 1]){
-                      setLock(key, lessons[key], false);
-                      setLock(key, lessons[key + 1], false);
-                  }
-                }
+                // if (percent >= CONSTANT.STAR.ONE) {
+                //   if (lessons[key] && lessons[key + 1]){
+                //       setLock(key, lessons[key], false);
+                //       setLock(key, lessons[key + 1], false);
+                //   }
+                // }
 
                 // give stars
                 if (obtained_score == 0) {
@@ -83,10 +83,16 @@
                 } else {}
 
               }
+            setLock(key, lessons[key], false);
+            setLock(key+1, lessons[key+1], false);
             }
-            // unlock first lessons
-            if (key == 0 || lessons[key].node.content_type_name === 'resource') {
-              setLock(key, value, false);
+          // setLock(key, value, false);
+
+          // unlock all videos
+          $log.debug(lessons[key].node.content_type_name )
+            if (lessons[key].node.content_type_name === 'resource') {
+              $log.debug("Resource found without score",key);
+              setLock(key, lessons[key], false);
             }
             return lessons[key];
           }))
