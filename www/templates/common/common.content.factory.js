@@ -196,15 +196,21 @@
             var lessons = [];
             var resources = [];
 
-            for(var i = 0; i < data.rows.length; i++){
-              if(playlist.indexOf(data.rows[i].id) >= 0){
-                lessons[playlist.indexOf(data.rows[i].id)] = data.rows[i]
-              }
-            }
 
+              for(var i = 0; i < data.rows.length; i++){
+                var index = -1;
+                while ((index = playlist.indexOf(data.rows[i].id, index+1)) != -1){
+                  lessons[index] = data.rows[i]
+                }
+              // if(playlist.indexOf(data.rows[i].id) >= 0){
+              //   lessons[playlist.indexOf(data.rows[i].id)] = data.rows[i]
+              // }
+            }
+            $log.debug("LEssons",lessons)
             for (var i = 0; i < lessons.length; i++) {
               // data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key;
               for (var c = 0; c < lessons[i].doc.lesson.objects.length; c++) {
+                $log.debug(c)
                 if(lessons[i].doc.lesson.node.meta && lessons[i].doc.lesson.node.meta.intros && lessons[i].doc.lesson.node.meta.intros.sound && lessons[i].doc.lesson.node.meta.intros.sound[0]){
                   lessons[i].doc.lesson.objects[c].node.intro_sound = lessons[i].doc.lesson.node.meta.intros.sound[0];
                 }
@@ -213,7 +219,7 @@
               }
             }
           resources[resources.length-1].node.requiresSuggestion = true;
-            $log.debug(resources,"Resources")
+            $log.debug(resources,"Resources",resources.length)
             d.resolve(resources)
 
         })
