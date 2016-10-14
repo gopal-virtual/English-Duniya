@@ -166,13 +166,14 @@
     }
 
     function submitReport(){
+      $log.debug("video in submitReport",$stateParams.video)
       var  lesson = lessonutils.getLocalLesson();
       var promise = null;
       if(!lesson.score || !lesson.score[$stateParams.video.resource.node.id]){
 
         promise = User.skills.update({
           profileId: User.getActiveProfileSync()._id,
-          lessonId: lesson.node.id,
+          lessonId: $stateParams.video.resource.node.parent,
           score: $stateParams.video.resource.node.type.score,
           totalScore: $stateParams.video.resource.node.type.score,
           skill: lesson.node.tag
@@ -186,12 +187,13 @@
 
           return User.scores.update({
             profileId: User.getActiveProfileSync()._id,
-            lessonId: lesson.node.id,
+            lessonId: $stateParams.video.resource.node.parent,
             id: $stateParams.video.resource.node.id,
             score: $stateParams.video.resource.node.type.score,
             totalScore: $stateParams.video.resource.node.type.score,
             type: 'resource',
-            skill: lesson.node.tag
+            skill: lesson.node.tag,
+            playlist_index: $stateParams.video.resource.node.playlist_index
           })
         }).then(function(){
           return User.reports.save({
