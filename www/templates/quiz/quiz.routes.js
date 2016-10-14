@@ -159,7 +159,8 @@
                   score: summary.score.marks,
                   totalScore: quiz.node.type.score,
                   type: 'assessment',
-                  skill: quiz.node.tag
+                  skill: quiz.node.tag,
+                  playlist_index: quiz.node.playlist_index
                 })
 
               }

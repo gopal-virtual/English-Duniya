@@ -18,6 +18,8 @@
             })
           }],
           lessonLocked: ['$log','content','extendLesson','User', function($log, content,extendLesson,User) {
+            extendLesson.initStar();
+
             return content.getResourceList(User.getActiveProfileSync().data.profile.grade).then(function(lessons){
                return extendLesson.getLesson(lessons).then(function(result){
                  return {
@@ -26,7 +28,6 @@
                  };
                });
              })
-            // extendLesson.initStar();
             // return content.getResourceList(User.getActiveProfileSync().data.profile.grade).then(function(result){
             //   $log.debug("HERE",result);
             //       return result;
