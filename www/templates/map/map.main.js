@@ -569,7 +569,9 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
             // var gameSprites =  game.cache.getJSON('gamesprites');
 
             function renderNodePath(region,points){
-
+                if (localStorage.demo_flag == 1) {
+                    return;
+                }
                 // points.tempX = [];
                 // points.tempY = [];
                 // for (var i = 0, points_count = points.x.length; i < points_count; i++) {
@@ -811,7 +813,9 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
             }
 
             function renderNodesByML(region){
-
+                if (localStorage.demo_flag == 1) {
+                    return;
+                }
                 log.debug("LESSONS",lessons);
                 log.debug("posx",points.x.reverse());
                 log.debug("posy",points.y.reverse());
