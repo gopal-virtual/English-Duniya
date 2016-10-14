@@ -90,6 +90,7 @@
     mapCtrl.authFactory = Auth;
     mapCtrl.queue = queue;
     mapCtrl.lessons = lessonList;
+    mapCtrl.ml = ml;
     // mapCtrl.userCtrl = $controller('userCtrl');
     // mapCtrl.resetNode = resetNode;
     $scope.lessonutils = lessonutils;
@@ -114,6 +115,7 @@
     // port node
     mapCtrl.first_node_index = parseInt(localStorage.first_node_index) || 0;
     mapCtrl.last_node_index = parseInt(localStorage.last_node_index) || mapCtrl.lessons.length - 1;
+    $log.debug("LLL",parseInt(localStorage.last_node_index) || mapCtrl.lessons.length - 1)
     mapCtrl.nodeColors = {
         "vocabulary" : "blue",
         "grammar" : "green",
@@ -144,7 +146,9 @@
           }
 
         // }
-        window.location.reload()
+        $timeout(function() {
+          window.location.reload()
+        }, 10);
         //
     }
     // end : port node
@@ -177,7 +181,7 @@
     * @returns {string} Value of the property stored in localStorage. If nothing is found value 0 is returned
     */
 
-    $log.debug("lessons HAHA",mapCtrl.lessons[lessons.length-1].node);
+    // $log.debug("lessons HAHA",mapCtrl.lessons[lessons.length-1].node);
     function getNodeProperty(prop) {
       if (prop == 'x')
         return localStorage.demo_node ? JSON.parse(localStorage.demo_node).x : 0;

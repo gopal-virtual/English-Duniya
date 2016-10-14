@@ -18,15 +18,19 @@
             })
           }],
           lessonLocked: ['$log','content','extendLesson','User', function($log, content,extendLesson,User) {
-            extendLesson.initStar();
             return content.getResourceList(User.getActiveProfileSync().data.profile.grade).then(function(lessons){
-              return extendLesson.getLesson(lessons).then(function(result){
-                return {
-                    lockedLesson : result,
-                    total_star : extendLesson.getTotalStar()
-                };
-              });
-            })
+               return extendLesson.getLesson(lessons).then(function(result){
+                 return {
+                   lockedLesson : result,
+                   total_star : extendLesson.getTotalStar()
+                 };
+               });
+             })
+            // extendLesson.initStar();
+            // return content.getResourceList(User.getActiveProfileSync().data.profile.grade).then(function(result){
+            //   $log.debug("HERE",result);
+            //       return result;
+            // })
           }],
           scores: ['Rest', '$log', 'content', function(Rest, $log, content) {
             return [];

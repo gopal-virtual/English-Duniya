@@ -56,7 +56,7 @@
               obtained_score = obtained_score + score.score;
 
 
-
+              $log.debug("Lesson to check",lessons[key])
               if (total_score > 0) {
                 var percent = (obtained_score / total_score) * 100;
 
@@ -84,7 +84,7 @@
               }
             }
             // unlock first lessons
-            if (key == 0) {
+            if (key == 0 || lessons[key].node.content_type_name === 'resource') {
               setLock(key, value, false);
             }
             return lessons[key];
