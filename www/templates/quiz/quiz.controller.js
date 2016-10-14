@@ -226,6 +226,7 @@
     }
 
     function submitReport(quiz, report, summary) {
+      $log.debug("Submit Report called");
       var lesson = lessonutils.getLocalLesson();
 
         User.skills.update({

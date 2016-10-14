@@ -37,19 +37,20 @@
     }
 
     function getLesson(lessons) {
+      $log.debug("getLessons",lessons)
       var d = $q.defer();
       var promises = []
       angular.forEach(lessons, function(value, key) {
         setLock(key, value, true);
-      })
+      });
 
       angular.forEach(lessons, function(value, key) {
         var total_score = 0;
         var obtained_score = 0;
 
         promises.push(
-        User.scores.getScoreOfResource(value.node.parent, value.node.id,User.getActiveProfileSync()._id).then(function(score) {
-
+        User.scores.getScoreOfResource(value.node.parent, value.node.id,User.getActiveProfileSync()._id, value.node.playlist_index).then(function(score) {
+          $log.debug("SCORE",score)
           if (score) {
               // need score for both video and assessment
               total_score = total_score + score.totalScore;
