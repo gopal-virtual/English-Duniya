@@ -886,7 +886,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                         temp["activeLessonKey"] = i;
                         temp["activeLessonPosY"] = posy;
                         temp["activeLessonPosX"] = posx;
-                        temp["nodeWobbleTween"] = game.add.tween(node.scale).to({ x: [0.8,1], y: [0.8,1] }, 400, Phaser.Easing.Back.Out, true, 400).loop(true);
+                        temp["nodeWobbleTween"] = game.add.tween(node.scale).to({ x: [0.8,1,0.8], y: [0.8,1,0.8] }, 600, Phaser.Easing.Back.Out, true, 400).loop(true);
                     }
                     log.debug('stateParams',stateParams, currentLesson.id)
                     if (stateParams.activatedLesson && stateParams.activatedLesson.node.id == currentLesson.id) {
