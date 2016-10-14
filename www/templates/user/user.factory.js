@@ -281,10 +281,12 @@
       })
 
     }
-    function getScoreOfResource(lessonId, resourceId, profileId) {
+    function getScoreOfResource(lessonId, resourceId, profileId, playlistIndex) {
+      $log.debug("getScoreOfResource",lessonId, resourceId, profileId, playlistIndex)
       return profilesDB.get(profileId).then(function (response) {
-          if(response.data.scores.hasOwnProperty(lessonId) && response.data.scores[lessonId].hasOwnProperty(resourceId)){
-              return response.data.scores[lessonId][resourceId];
+        $log.debug("RESO",response.data.playlist[playlistIndex],response.data.playlist[playlistIndex][resourceId],response.data.playlist[playlistIndex]['lesson_id'])
+          if(response.data.playlist[playlistIndex]['lesson_id'] == lessonId && response.data.playlist[playlistIndex][resourceId]){
+              return response.data.playlist[playlistIndex][resourceId];
           }
           else{
               return null
@@ -294,18 +296,28 @@
     }
 
     function updateScores(data) {
+        $log.debug("Updatign scores",data)
+
       return profilesDB.get(data.profileId).then(function (response) {
         var doc = response.data;
         if (!doc.scores.hasOwnProperty(data.lessonId)) {
           doc.scores[data.lessonId] = {};
         }
-        doc.scores[data.lessonId][data.id] = {
+
+        $log.debug(doc.playlist[data.playlist_index],"Check it");
+        doc.playlist[data.playlist_index][data.id] = {
           'score': data.score,
           'totalScore': data.totalScore,
           'type': data.type,
           'skill' : data.skill
         };
-        $log.debug("HERE",doc.scores[data.lessonId][data.id] )
+        // doc.scores[data.lessonId][data.id] = {
+        //   'score': data.score,
+        //   'totalScore': data.totalScore,
+        //   'type': data.type,
+        //   'skill' : data.skill
+        // };
+        // $log.debug("HERE",doc.scores[data.lessonId][data.id] )
         var temp = JSON.parse(localStorage.getItem('lesson'));
         temp.score = doc.scores[data.lessonId];
 
@@ -370,8 +382,8 @@
     }
     function addNodeToPlaylist(profileId,nodeId) {
       return profilesDB.get(profileId).then(function (response) {
-        response.data.playlist.push(nodeId);
-        $log.debug("Resonse",response)
+        response.data.playlist.push({'lesson_id':nodeId});
+        $log.debug("Resonse",response);
         return profilesDB.put({
           '_id': profileId,
           '_rev': response._rev,

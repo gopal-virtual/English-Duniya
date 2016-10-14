@@ -163,7 +163,10 @@
           break;
         }
 
-        for(var skill in recommendationsWithPrereqs){
+        roadMapSkills = shuffleArray(roadMapSkills);
+        // for(var skill in recommendationsWithPrereqs){
+        for(var j=0; j<roadMapSkills.length;j++){
+          var skill = roadMapSkills[j];
           if(recommendationsWithPrereqs[skill][i] != undefined){
             var lesson = recommendationsWithPrereqs[skill][i];
             if(roadMap.indexOf(lesson["sr"]) == -1 && roadMap.length < ml.roadMapMax){
@@ -171,9 +174,8 @@
             }
           }
         }
-
       }
-      roadMap = rankPlaylist({ 0: roadMap }, undefined, 1);
+      // roadMap = rankPlaylist({ 0: roadMap }, undefined, 1); // This is making the first node same for all users.
       return roadMap;
     }
 
@@ -271,6 +273,16 @@
         var recommendationsWithPrereqs = structureRecommendations(recommendations);
 
         return [recommendationsWithPrereqs, skillLevels];
+    }
+
+    function shuffleArray(array) {
+      for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+      }
+      return array;
     }
 
 

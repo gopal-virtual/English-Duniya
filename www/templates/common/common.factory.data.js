@@ -69,16 +69,6 @@
               setPreviousAnswerCallback(this, x);
           }
       }, {
-          "skill": "reading",
-          "qSet": {},
-          "level": parseInt(realTimeGrade),
-          "previousAnswer": null,
-          "actualLevel": 0,
-          "count": 0,
-          set setPreviousAnswer(x) {
-              setPreviousAnswerCallback(this, x);
-          }
-      }, {
           "skill": "grammar",
           "qSet": {},
           "level": parseInt(realTimeGrade),
@@ -90,6 +80,16 @@
           }
       }, {
           "skill": "listening",
+          "qSet": {},
+          "level": parseInt(realTimeGrade),
+          "previousAnswer": null,
+          "actualLevel": 0,
+          "count": 0,
+          set setPreviousAnswer(x) {
+              setPreviousAnswerCallback(this, x);
+          }
+      }, {
+          "skill": "reading",
           "qSet": {},
           "level": parseInt(realTimeGrade),
           "previousAnswer": null,
