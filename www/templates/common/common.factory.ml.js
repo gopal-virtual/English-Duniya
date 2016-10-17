@@ -139,16 +139,6 @@
         return handleMultipleSuggestions();
       }
       else if(data["event"] == "assessment"){
-
-        if(ml.roadMapData["roadMap"] == undefined){
-          var recommendationsWithPrereqs = getNewBatchNodes()[0];
-          setNewRoadMap(recommendationsWithPrereqs);
-          ml.roadMapData["roadMap"][0]["previousNode"] = null;
-          ml.roadMapData["roadMap"][0]["currentNode"] = ml.roadMapData["roadMap"][0]["sr"];
-          ml.roadMapData["roadMap"][0]["resultTrack"] = {};
-          return handleMultipleSuggestions();
-        }
-
         var result = data["score"]/data["totalScore"];
         $log.debug('in assessment', result);
 
