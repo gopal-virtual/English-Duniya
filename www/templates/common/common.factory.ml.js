@@ -256,9 +256,7 @@
         }
       }
       // roadMap = rankPlaylist({ 0: roadMap }, undefined, 1); // This is making the first node same for all users.
-      $log.debug('before roadMap', roadMap);
       roadMap = shuffleArray(roadMap);
-      $log.debug('after roadMap', roadMap);
       return roadMap;
     }
 
