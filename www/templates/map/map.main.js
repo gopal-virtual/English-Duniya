@@ -6,7 +6,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
     var sprites = {};
     var temp = {};
     // var desertRegion, regionGroups.tundra, regionGroups.forest;
-    var regions = ["desert","tundra","forest","peru"];
+    var regions = ["desert1","desert2","ice1","ice2","forest1","forest2","peru1"];
 
     var groups = {
         "region" : {},
@@ -17,10 +17,13 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
     var regionGroups = {};
     var regionBgGroups = {};
     var regionHeight = {
-        "desert" : 2845,
-        "tundra" : 2845,
-        "forest" : 3016,
-        "peru" : 3016,
+        "desert1" : 2201,
+        "desert2" : 3165,
+        "ice1" : 2930,
+        "ice2" : 3070,
+        "forest1" : 2873,
+        "forest2" : 2768,
+        "peru1" : 3747,
         // "region5" : 392,
     }
     var totalRegionHeight = 0;
@@ -36,16 +39,22 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
         "y" : []
     };
     var regionNodes = {
-        "desert" : 24,
-        "tundra" : 24,
-        "forest" : 26,
-        "peru" : 26
+        "desert1" : 17,
+        "desert2" : 24,
+        "ice1" : 24,
+        "ice2" : 24,
+        "forest1" : 26,
+        "forest2" : 26,
+        "peru1" : 26
     }
     var regionPathOffset = {
-        "desert" : 450,
-        "tundra" : 250,
-        "forest" : 170,
-        "peru" : 350
+        "desert1" : 320,
+        "desert2" : 575,
+        "ice1" : 250,
+        "ice2" : 250,
+        "forest1" : 250,
+        "forest2" : 170,
+        "peru1" : 350
     }
     var nodeColors = {
         "vocabulary" : "blue",
@@ -82,10 +91,13 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
             Phaser.Canvas.setSmoothingEnabled(this.game.context, true); //also for Canvas, legacy approach
             //   PIXI.scaleModes.DEFAULT = PIXI.scaleModes.NEAREST; //for WebGL
 
-            this.load.image('desert', 'img/assets/desert_bg.png');
-            this.load.image('tundra', 'img/assets/snow_bg.png');
-            this.load.image('forest', 'img/assets/forest_bg.png');
-            this.load.image('peru', 'img/assets/peru_bg.png');
+            this.load.image('desert1', 'img/assets/region/desert1.png');
+            this.load.image('desert2', 'img/assets/region/desert2.png');
+            this.load.image('ice1', 'img/assets/region/ice1.png');
+            this.load.image('ice2', 'img/assets/region/ice2.png');
+            this.load.image('forest1', 'img/assets/region/rainforest1.png');
+            this.load.image('forest2', 'img/assets/region/rainforest2.png');
+            this.load.image('peru1', 'img/assets/region/peru1.png');
             this.load.image('region5', 'img/assets/region5.png');
 
             // this.load.image('tent', 'img/assets/tent.png');
@@ -531,7 +543,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
 
             function fetchMapPath (region,points){
 
-                var fetchMapRequest = $.get("img/assets_svg/"+region[0]+"-path.svg", function(data) {
+                var fetchMapRequest = $.get("img/assets/region/path/"+region[0]+"-path.svg", function(data) {
                     var x = [];
                     var y = [];
                     // var ydiff = [];
@@ -555,7 +567,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
 
                     points.x = x.reverse();
                     points.y = y.reverse();
-
+                    log.debug("These are the points",points)
                 });
                 return fetchMapRequest;
 
@@ -590,9 +602,9 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
 
                     // log.debug(temp.activeLessonPosY,posy,temp.activeLessonPosY < posy)
 
-                    if (temp.activeLessonPosY > posy) {
-                        break;
-                    }
+                    // if (temp.activeLessonPosY > posy) {
+                    //     break;
+                    // }
                     //
                     bmd.rect(posx-4, posy, 8, 8, '#FFFFFF');
                     // bmd.anchor.setTo(0.5);
@@ -817,8 +829,8 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                     return;
                 }
                 log.debug("LESSONS",lessons);
-                log.debug("posx",points.x.reverse());
-                log.debug("posy",points.y.reverse());
+                log.debug("posx",points.x);
+                log.debug("posy",points.y);
                 // var j = 0;
                 var first_node_index = 0, last_node_index = 0;
                 for (var i = 0; i <= regionPage; i++) {
@@ -917,29 +929,29 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
 
                 log.debug("show port node? ",temp["activeLessonKey"],last_node_index,temp["activeLessonKey"] == -1);
 
-                if(regionPage < regions.length-1 && temp.activeLessonKey == -1){
+                // if(regionPage < regions.length-1 && temp.activeLessonKey == -1){
                     var port_forward = game.add.button(game.world.centerX, 150, 'node-port', function(){
 
                             // var start_index = last_node_index + 1;
                             // var end_index = start_index + regionNodes[region];
-                            scope.$emit('pageRegion', regionPage, "next");
+                            scope.$emit('pageRegion', regionPage, "next", regions.length);
                     }, this, 0,0,1,0);
                     port_forward.scale.setTo(0.8)
                     port_forward.anchor.setTo(0.5)
                     scrollTo(0);
-                }
+                // }
 
-                if(regionPage > 0){
+                // if(regionPage > 0){
                     var port_back = game.add.button(game.world.centerX, game.world.height - 80, 'node-port', function(){
 
 
                             // var end_index = first_node_index - 1;
                             // var start_index = end_index - 5;
-                            scope.$emit('pageRegion', regionPage, "prev");
+                            scope.$emit('pageRegion', regionPage, "prev", regions.length);
                     }, this, 0,0,1,0);
                     port_back.scale.setTo(0.6)
                     port_back.anchor.setTo(0.5)
-                }
+                // }
                 
             }
 
