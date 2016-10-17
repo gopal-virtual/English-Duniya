@@ -228,8 +228,9 @@
               resources.push(angular.copy(lessons[i].doc.lesson.objects[c]))
             }
           }
-
-          resources[resources.length-1].node.requiresSuggestion = true;
+          if(resources.length){
+            resources[resources.length-1].node.requiresSuggestion = true;
+          }
             d.resolve(resources)
 
         });

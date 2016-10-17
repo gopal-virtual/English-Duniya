@@ -5,12 +5,12 @@
     .module('common')
     .constant('CONSTANT', {
       'APP':{
-      'TYPE': 'na',
-      'VERSION': '0.1.6'
+      'TYPE': 'Non-Bundled',
+      'VERSION': '0.1.7'
       },
       'LOCK': true,
-      'FAKE_LOGIN': true,
-      'FAKE_DEVICE': true,
+      'FAKE_LOGIN': false,
+      'FAKE_DEVICE': false,
       'DEBUG' : true,
       'BACKEND_SERVICE_DOMAIN': 'https://cc-test.zaya.in/',
       'RESOURCE_SERVER': 'https://cc-test.zaya.in/',

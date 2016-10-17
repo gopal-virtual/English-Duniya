@@ -77,6 +77,7 @@
     // })
 
     function uploadIfRecord(records) {
+      $log.debug("Length of records"+records.length)
       if (records.length > 0) {
         return uploadAndDelete(records[0]);
       } else {
@@ -156,7 +157,7 @@
               var e = {
                 "error":error,
                 "function": "queue_push"
-              }
+              };
               Raven.captureException("Error with queue push",{
                 extra: {error:e}
               });

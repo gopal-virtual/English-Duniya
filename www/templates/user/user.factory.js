@@ -300,9 +300,9 @@
 
       return profilesDB.get(data.profileId).then(function (response) {
         var doc = response.data;
-        if (!doc.scores.hasOwnProperty(data.lessonId)) {
-          doc.scores[data.lessonId] = {};
-        }
+        // if (!doc.scores.hasOwnProperty(data.lessonId)) {
+        //   doc.scores[data.lessonId] = {};
+        // }
 
         $log.debug(doc.playlist[data.playlist_index],"Check it");
         doc.playlist[data.playlist_index][data.id] = {
@@ -376,14 +376,69 @@
     }
 
     function getUserPlaylist(profileId) {
+      $log.debug("In user playlist")
       return profilesDB.get(profileId).then(function (response) {
-        return response.data.playlist;
+        $log.debug("Length of playlist "+JSON.stringify(response.data)+ " END")
+        if(response.data.playlist)
+          return response.data.playlist;
+        else
+          return getPatchedUserPlaylist(profileId);
       })
+    }
+
+    function getPatchedUserPlaylist(profileId){
+      var promise = $q.defer();
+      $log.debug("Inside patch playlist")
+      localStorage.setItem('diagnosis_flag',true)
+      var promises = [];
+      profilesDB.get(profileId).then(function (response) {
+          $log.debug("Scores found "+profileId+ JSON.stringify(response.data.scores))
+        if(response.data.scores){
+          $log.debug("Scores found ")
+            response.data.playlist = [];
+          angular.forEach(response.data.scores,function(lesson,lesson_id){
+            $log.debug("Lesson id  "+lesson_id);
+            promises.push(
+            $injector.get('content').getLesson(lesson_id).then(function(lesson_details){
+              var pl = {'lesson_id':lesson_id};
+              $log.debug("Got lesson  "+lesson_id);
+
+              angular.forEach(lesson,function(resource,resource_id){
+                pl[resource_id] = resource;
+                pl[resource_id]['skill'] = lesson_details.node.tag
+              });
+              $log.debug("Pushing a pl in playlist");
+              return response.data.playlist.push(pl);
+
+            }))
+
+          });
+          $q.all(promises).then(function(){
+            $log.debug("Patched profile for updation "+JSON.stringify(response,data));
+
+            return profilesDB.put({
+              '_id': profileId,
+              '_rev': response._rev,
+              'data': response.data
+            });
+          })
+            .then(function(){
+              $log.debug("Returning"+JSON.stringify(response.data));
+
+              promise.resolve(response.data.playlist);
+            })
+            .catch(function(e){
+              $log.debug("ERROR"+JSON.stringify(e))
+            })
+
+        }
+      })
+      return promise;
     }
     function addNodeToPlaylist(profileId,nodeId) {
       return profilesDB.get(profileId).then(function (response) {
         response.data.playlist.push({'lesson_id':nodeId});
-        $log.debug("Resonse",response);
+        $log.debug("Response",response);
         return profilesDB.put({
           '_id': profileId,
           '_rev': response._rev,
