@@ -84,7 +84,7 @@
                 //   $stateParams.quiz.objects[currentIndex] = $stateParams.quiz.objects[randomIndex];
                 //   $stateParams.quiz.objects[randomIndex] = temporaryValue;
                 // }
-                // User.demo.isShown(5) && $stateParams.quiz.objects.unshift(content.demo_question);
+                User.demo.isShown(5) && $stateParams.quiz.objects.unshift(content.demo_question);
                 return content.getAssessment($stateParams.quiz).then(function (response) {
                   return response;
                 });
