@@ -9,6 +9,9 @@
 .inline-block {
   display: inline-block;
 }
+.block{
+  display: block;
+}
 .display-none{
   display: none !important;
 }
@@ -26,6 +29,9 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+.flex{
+  display: flex;
 }
 .no-border {
   border: 0 !important;
@@ -179,7 +185,7 @@ meter::-webkit-meter-even-less-good-value {
   margin-left: auto;
   margin-right: auto;
   padding: 0px;
-  padding-top: 19px;
+  padding-top: 14px;
   font-size: 4vh !important;
   line-height: 1 !important;
   // height: 13px;
