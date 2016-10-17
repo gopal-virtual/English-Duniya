@@ -135,31 +135,29 @@
     }
 
     function createLessonDBIfNotExistsPatch() {
-      lessonDB = pouchDB('lessonsGrade' + User.getActiveProfileSync().data.profile.grade, {
+      lessonDB = pouchDB('lessonsDB', {
         adapter: 'websql'
       });
 
-      return lessonDB.allDocs()
-        .then(function(result){
 
-          return Promise.all(result.rows.map(function(row){
 
-            return lessonDB.remove(row.id,row.value.rev);
-          }))
-        })
-        .then(function(){
+      return lessonDB.get('_local/preloaded').then(function (doc) {
 
-          return lessonDB.load(CONSTANT.PATH.DATA + '/lessonsGrade' + User.getActiveProfileSync().data.profile.grade + '.db')
-        })
-        .then(function () {
+
+      }).catch(function (err) {
+        if (err.name !== 'not_found') {
+          throw err;
+        }
+        $log.debug("NEW DB MADE 1");
+        return lessonDB.load(CONSTANT.PATH.DATA + '/lessons.db').then(function () {
+          $log.debug("NEW DB MADE 2");
 
           return lessonDB.put({
             _id: '_local/preloaded'
           });
         })
-        .catch(function(e){
 
-        })
+      })
 
     }
 
@@ -189,19 +187,21 @@
 
 
       var d = $q.defer();
-      lessonDB.allDocs({
-        include_docs: true
-      }).then(function (data) {
-          $log.debug("AAAAAAAA",data)
+
         User.playlist.get(User.getActiveProfileSync()._id).then(function(playlist){
-            $log.debug("Playlist",playlist)
+            $log.debug("Playlist "+JSON.stringify(playlist) + " END")
+          lessonDB.allDocs({
+            include_docs: true
+          }).then(function (data) {
+            $log.debug("AAAAAAAA "+data+" END");
+
             var lessons = [];
             var resources = [];
           var playlist_ids = [];
           for(var i = 0; i < playlist.length; i++){
             playlist_ids.push(playlist[i].lesson_id);
           }
-          $log.debug("playlist ids",playlist_ids);
+          $log.debug("playlist ids " + JSON.stringify(playlist_ids) + " END");
 
           for(var i = 0; i < data.rows.length; i++) {
             var index = -1;
