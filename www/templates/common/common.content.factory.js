@@ -215,8 +215,7 @@
             //     lessons[playlist.indexOf(data.rows[i].id)] = data.rows[i]
             //   }
 
-              
-          $log.debug("LEssons",lessons)
+
           for (var i = 0; i < lessons.length; i++) {
             // data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key;
             for (var c = 0; c < lessons[i].doc.lesson.objects.length; c++) {
@@ -226,9 +225,10 @@
               }
               lessons[i].doc.lesson.objects[c].node.tag = lessons[i].doc.lesson.node.tag;
               lessons[i].doc.lesson.objects[c].node.playlist_index = i;
-              resources.push(lessons[i].doc.lesson.objects[c])
+              resources.push(angular.copy(lessons[i].doc.lesson.objects[c]))
             }
           }
+
           resources[resources.length-1].node.requiresSuggestion = true;
             d.resolve(resources)
 
