@@ -5,12 +5,21 @@
   <a ng-repeat="(key,value) in {'A':'A', 'B':'B', 'C':'C', 'D':'D', 'E':'E', 'F':'F', 'G':'G', 'H':'H', 'I':'I', 'J':'J'}" class="key lbtn" on-tap="keyCtrl.input(value)">{{key}}</a>
 </div>
 <div class="key-row">
-  <a ng-repeat="(key,value) in {'K':'K', 'L':'L', 'M':'M', 'N':'N', 'O':'O', 'P':'P', 'Q':'Q', 'R':'R', 'S':'S'}" class="key lbtn" on-tap="keyCtrl.input(value)">{{key}}</a>
+  <a ng-repeat="(key,value) in {'K':'K', 'L':'L', 'M':'M', 'N':'N', 'O':'O', 'P':'P', 'Q':'Q', 'R':'R', 'S':'S', 'T':'T'}" class="key lbtn" on-tap="keyCtrl.input(value)">{{key}}</a>
 </div>
 <div class="key-row">
-  <a ng-repeat="(key,value) in {'T':'T', 'U':'U', 'V':'V', 'W':'W', 'X':'X', 'Y':'Y', 'Z':'Z'}" class="key lbtn" on-tap="keyCtrl.input(value)">{{key}}</a>
+  <a class="key lbtn" on-tap="keyCtrl.input('U')">U</a>
+  <a class="key lbtn" on-tap="keyCtrl.input('V')">V</a>
+  <a class="key lbtn" on-tap="keyCtrl.input('W')">W</a>
+  <a class="key lbtn" style="flex-grow:2;" on-tap="keyCtrl.input(' ')">SPACE</a>
+  <a class="key lbtn" on-tap="keyCtrl.input('X')">X</a>
+  <a class="key lbtn" on-tap="keyCtrl.input('Y')">Y</a>
+  <a class="key lbtn" on-tap="keyCtrl.input('Z')">Z</a>
+  <a class="key" on-tap="keyCtrl.erase()"><div style="transform: scale3d(0.8,0.8,1);margin-right: -5vw;" class="sicon-back"></div></a>
+
+  <!-- <a ng-repeat="(key,value) in {'U':'U', 'V':'V', 'W':'W','SPACE':' ', 'X':'X', 'Y':'Y', 'Z':'Z'}" class="key lbtn" on-tap="keyCtrl.input(value)">{{key}}</a> -->
 </div>
-<div class="key-row">
-  <a class="key lbtn" on-tap="keyCtrl.input(' ')">SPACE</a>
-  <a class="key key-symbol lbtn" on-tap="keyCtrl.erase()"><i class="ion-arrow-left-c"></i></a>
-</div>
+<!-- <div class="key-row"> -->
+  <!-- <a class="key lbtn" on-tap="keyCtrl.input(' ')">SPACE</a> -->
+  <!-- <a class="key key-symbol lbtn" on-tap="keyCtrl.erase()"><i class="ion-arrow-left-c"></i></a> -->
+<!-- </div> -->

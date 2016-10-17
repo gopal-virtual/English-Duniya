@@ -53,6 +53,13 @@ ion-content.overflow-visible {
   opacity: 0;
 }
 
+.full-width{
+  width: 100%
+}
+
+.absolute{
+  position: absolute;
+}
 
 .square-60{
   height: 60px;
@@ -125,11 +132,12 @@ meter::-webkit-meter-even-less-good-value {
 .name-avatar{
   background: url('../img/assets/name-boy.png'),url('../img/assets/name-girl.png');
   background-repeat: no-repeat;
-  background-position: 0 0, 100% 0;
-  background-size: auto 180px, auto 170px;
-  @include xs-screen{
-    background-size: auto 150px, auto 140px;
-  }
+  background-position: 0px 3vh, 100% 3vh;
+  background-size: auto 33vh, auto 33vh;
+  height: 100%;
+  // @include xs-screen{
+  //   background-size: auto 150px, auto 140px;
+  // }
 }
 
 .radio-box-container{
@@ -154,27 +162,29 @@ meter::-webkit-meter-even-less-good-value {
 }
 
 .personalize-title{
-  font-size: 2em !important;
+  font-size: 6vh !important;
   color: $hex-dark-blue;
   line-height: 1.8em;
-  @include xs-screen-height{
-    font-size: 1.7em !important;
-    line-height: 1em;
-  }
+  // @include xs-screen-height{
+  //   font-size: 1.7em !important;
+  //   line-height: 1em;
+  // }
 }
 
 .personalize-input{
-  line-height:0.8em;
-  border-bottom:1px solid $hex-dark-blue;
+  // line-height:0.8em;
+  border-bottom:2px solid $hex-dark-blue;
   color:$hex-dark-blue;
-  max-width: 73%;
+  max-width: 66%;
   margin-left: auto;
   margin-right: auto;
   padding: 0px;
-  height: 13px;
-  @include xs-screen-height{
-    font-size: 1.3em !important;
-  }
+  padding-top: 19px;
+  font-size: 4vh !important;
+  line-height: 1 !important;
+  // height: 13px;
+  text-align: center;
+  min-height: 7.5vh;
 }
 
 .personalize-button-container{

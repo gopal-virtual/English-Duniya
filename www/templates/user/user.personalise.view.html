@@ -2,7 +2,7 @@
     <ion-content>
         <ion-slide-box delegate-handle="slide" show-pager="false" ng-init="userCtrl.disableSwipe()" on-slide-changed="userCtrl.playAudio($index)">
             <ion-slide ng-init="userCtrl.user.limit = 15">
-                <div class="box name-avatar">
+                <!-- <div class="box name-avatar">
                     <div class="row padding-x-10">
                         <div class="col center">
                             <div style="padding-top: 70px;">
@@ -10,9 +10,7 @@
                                 <div class="col font-md personalize-input" style="">{{userCtrl.user.name}}</div>
                             </div>
                             <div class="col" ng-init="userCtrl.user.name=''">
-                                <!-- {{userCtrl.user.name.trim().length}} -->
                                 <br>
-                                <!-- {{userCtrl.user.limit}} -->
                                 <virtual-keyboard reference="userCtrl.user.name" limit="userCtrl.user.limit"></virtual-keyboard>
                             </div>
                         </div>
@@ -20,6 +18,19 @@
                     <center class="personalize-button-container">
                         <button ng-disabled="userCtrl.user.name.trim().length < 3" class="sbtn sbtn-next-blue" ng-click="userCtrl.nextSlide()"></button>
                     </center>
+                </div> -->
+                <div class="name-avatar">
+                    <h2 style="top:25vh" class="center full-width absolute personalize-title">मेरा नाम है ...</h2>
+                    <div style="top:34vh"  ng-init="userCtrl.user.name=''" class="full-width absolute">
+                        <div class="col font-md personalize-input" style="">{{userCtrl.user.name}}</div>
+                    </div>
+                    <div style="top:47vh;" class="full-width absolute padding-x-10">
+                        <virtual-keyboard reference="userCtrl.user.name" limit="userCtrl.user.limit"></virtual-keyboard>
+                    </div>
+                    <div style="top:83vh; text-align: center;" class="full-width absolute">
+                        <button ng-disabled="userCtrl.user.name.trim().length < 3" class="sbtn sbtn-next-blue" ng-click="userCtrl.nextSlide()"></button>
+                    </div>
+                    
                 </div>
             </ion-slide>
             <ion-slide>
