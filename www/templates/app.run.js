@@ -46,10 +46,13 @@
       // block access to quiz summary page if there is no quiz data
 //
 
-      if(localStorage.version !== '0.1.7'){
+      if(localStorage.version !== '0.1.7' && User.getActiveProfileSync() && User.getActiveProfileSync()._id){
         localStorage.setItem('version','0.1.7');
+
         event.preventDefault();
-        $state.go('litmus_start');
+        User.playlist.patch(User.getActiveProfileSync()._id).then(function(){
+          $state.go('litmus_start');
+        })
       }
 
       if(toState.name !== 'user.personalise' && localStorage.getItem('profile') === null ){
