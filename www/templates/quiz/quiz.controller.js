@@ -856,9 +856,12 @@
       // if (quizCtrl.quiz.objects[questionIndex].node.widgetHtml.indexOf(CONSTANT.WIDGETS.SPEAKER_IMAGE) >= 0) {
         // quizCtrl.quiz.objects[questionIndex].node.widgetHtml = quizCtrl.quiz.objects[questionIndex].node.widgetHtml.replace(CONSTANT.WIDGETS.SPEAKER_IMAGE, CONSTANT.WIDGETS.SPEAKER_IMAGE_SELECTED)
       // }
+      $log.debug("THIS IS THE INDEX",quizCtrl.quiz.objects[questionIndex].node.widgetSound)
+      $log.debug("dishkau",angular.element("#audioSource")[0].src)
+      // $log.debug("THIS IS THE INDEX",$scope.selectedNode)
       quizCtrl.highlightSoundIconFlag = true;
       var watchAudio = $interval(function() {
-        if (angular.element("#audioplayer")[0].paused) {
+        if (angular.element("#audioplayer")[0].paused || angular.element("#audioSource")[0].src != quizCtrl.quiz.objects[questionIndex].node.widgetSound) {
           quizCtrl.highlightSoundIconFlag = false;
           $interval.cancel(watchAudio)
           // quizCtrl.quiz.objects[questionIndex].node.widgetHtml = quizCtrl.quiz.objects[questionIndex].node.widgetHtml.replace(CONSTANT.WIDGETS.SPEAKER_IMAGE_SELECTED, CONSTANT.WIDGETS.SPEAKER_IMAGE)
