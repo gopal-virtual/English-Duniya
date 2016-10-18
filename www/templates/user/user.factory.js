@@ -97,7 +97,8 @@
     }
     User.playlist = {
         get: getUserPlaylist,
-        add: addNodeToPlaylist
+        add: addNodeToPlaylist,
+      patch: patchUserPlaylist
     }
 
     function getUserIdSync() {
@@ -386,10 +387,13 @@
       })
     }
 
+    function patchUserPlaylist(profileId){
+      return getPatchedUserPlaylist(profileId)
+    }
+
     function getPatchedUserPlaylist(profileId){
       var d = $q.defer();
       $log.debug("Inside patch playlist")
-      localStorage.setItem('diagnosis_flag',true)
       var promises = [];
 
       profilesDB.get(profileId).then(function (response) {

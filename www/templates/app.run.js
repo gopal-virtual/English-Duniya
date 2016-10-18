@@ -48,8 +48,11 @@
 
       if(localStorage.version !== '0.1.7'){
         localStorage.setItem('version','0.1.7');
+
         event.preventDefault();
-        $state.go('litmus_start');
+        User.playlist.patch(User.getActiveProfileSync()._id).then(function(){
+          $state.go('litmus_start');
+        })
       }
 
       if(toState.name !== 'user.personalise' && localStorage.getItem('profile') === null ){
