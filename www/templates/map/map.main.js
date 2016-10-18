@@ -602,9 +602,9 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
 
                     // log.debug(temp.activeLessonPosY,posy,temp.activeLessonPosY < posy)
 
-                    // if (temp.activeLessonPosY > posy) {
-                    //     break;
-                    // }
+                    if (temp.activeLessonPosY > posy) {
+                        break;
+                    }
                     //
                     bmd.rect(posx-4, posy, 8, 8, '#FFFFFF');
                     // bmd.anchor.setTo(0.5);
@@ -929,7 +929,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
 
                 log.debug("show port node? ",temp["activeLessonKey"],last_node_index,temp["activeLessonKey"] == -1);
 
-                // if(regionPage < regions.length-1 && temp.activeLessonKey == -1){
+                if(regionPage < regions.length-1 && temp.activeLessonKey == -1){
                     var port_forward = game.add.button(game.world.centerX, 150, 'node-port', function(){
 
                             // var start_index = last_node_index + 1;
@@ -939,9 +939,9 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                     port_forward.scale.setTo(0.8)
                     port_forward.anchor.setTo(0.5)
                     scrollTo(0);
-                // }
+                }
 
-                // if(regionPage > 0){
+                if(regionPage > 0){
                     var port_back = game.add.button(game.world.centerX, game.world.height - 80, 'node-port', function(){
 
 
@@ -951,7 +951,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                     }, this, 0,0,1,0);
                     port_back.scale.setTo(0.6)
                     port_back.anchor.setTo(0.5)
-                // }
+                }
                 
             }
 
