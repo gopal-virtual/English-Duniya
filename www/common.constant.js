@@ -54,18 +54,14 @@
   <script src="lib/raven-js/dist/raven.min.js"></script>
   <script src="lib/raven-js/dist/plugins/angular.min.js"></script>
   <script>
-    //raven_config_begin
-    Raven
-      .config('http://d52f1916c41a41e9b6506dddf7e805fa@zsentry.zaya.in/4',
-        {
-        release: /*raven_release_start*/'0.1.7'/*raven_release_end*/,
-        environment: 'DEVELOPMENT'
-      }
 
-      )
+    Raven
+      .config('http://d52f1916c41a41e9b6506dddf7e805fa@zsentry.zaya.in/4',{
+        release: '@@APP_VERSION',
+        environment: '@@APP_ENVIRONMENT'
+      })
       .addPlugin(Raven.Plugins.Angular)
       .install();
-    //raven_config_end
   </script>
   <!-- your app's js -->
   <script src="build/mobile.app.js"></script>

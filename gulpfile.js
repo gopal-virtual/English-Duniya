@@ -57,7 +57,8 @@ var paths = {
     template : './constant.template.txt',
     destination : './www/templates/common/',
     destination_filename : 'common.constant.js'
-  }
+  },
+  main : './www/main.html'
 
 };
 var environments = {
@@ -73,7 +74,7 @@ var constants = JSON.parse(file.readFileSync(paths.constants.environment, 'utf8'
 var lock = argument.argv.lock ? argument.argv.lock : constants[env]['LOCK'];
 
 gulp.task('default', function(callback){
-  runSequence('get-version','generate-constants', 'sass', 'html', 'scripts',callback);
+  runSequence('get-version','make-main','generate-constants', 'sass', 'html', 'scripts',callback);
 });
 
 // gulp.task('optimize', function(cb) {
@@ -84,6 +85,26 @@ gulp.task('default', function(callback){
 
 gulp.task('preen', function (cb) {
   preen.preen({}, cb);
+});
+
+gulp.task('make-main',function(){
+  console.log("VERISON",app_version)
+  gulp.src(paths.main)
+    .pipe(replace_task({
+      patterns:[
+        {
+          match : 'APP_VERSION',
+          replacement: app_version
+        },
+        {
+          match : 'APP_ENVIRONMENT',
+          replacement: env
+        }
+      ]
+
+    }))
+    .pipe(rename('main.html'))
+    .pipe(gulp.dest('./www/',{overwrite:true}))
 });
 
 gulp.task('generate-constants', function () {
@@ -130,7 +151,7 @@ gulp.task('get-version',function(){
   var xml       = file.readFileSync('./config.xml');
   var content         = cheerio.load(xml, { xmlMode: true });
   app_version   = content('widget')[0].attribs.version;
-
+  console.log("VERSION",app_version)
 });
 
 gulp.task('scripts', function () {
