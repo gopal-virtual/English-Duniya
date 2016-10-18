@@ -46,7 +46,7 @@
       // block access to quiz summary page if there is no quiz data
 //
 
-      if(localStorage.version !== '0.1.7'){
+      if(localStorage.version !== '0.1.7' && User.getActiveProfileSync() && User.getActiveProfileSync()._id){
         localStorage.setItem('version','0.1.7');
 
         event.preventDefault();
