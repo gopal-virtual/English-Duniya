@@ -50,8 +50,8 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
     var regionPathOffset = {
         "desert1" : 320,
         "desert2" : 575,
-        "ice1" : 250,
-        "ice2" : 250,
+        "ice1" : 400,
+        "ice2" : 480,
         "forest1" : 250,
         "forest2" : 170,
         "peru1" : 350
