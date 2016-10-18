@@ -159,7 +159,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
             this.load.image('node-locked', 'img/icons/icon-node-locked.png');
             this.load.image('star_big', 'img/icons/icon-star-2.png');
             this.load.image('star_medium', 'img/icons/icon-star-medium.png');
-            this.load.image('star', 'img/icons/icon-star-small.png');
+            this.load.image('star', 'img/assets/star.png');
             this.load.image('nostar', 'img/icons/icon-nostar.png');
             audio.loop('background');
 
@@ -485,8 +485,8 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
             }];
             var star = [];
             var starClone = [];
-            var star_x = [-15, 0, 15];
-            var star_y = [-22, -27, -22];
+            var star_x = [-22, 0, 22];
+            var star_y = [-27, -35, -27];
 
 
             function addGroups(region){
@@ -697,6 +697,12 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                 for (var i = 0; i < count; i++) {
                     star[i] = groups.nonRegion.stars.create(x[0] + x[i + 1], y[0] + y[i + 1], 'star');
                     star[i].anchor.setTo(0.5, 0.5);
+                    star[i].scale.setTo(0.7, 0.7);
+                    if (i == 0) {
+                        star[i].angle = -30;
+                    }else if(i == 2){
+                        star[i].angle = 30;
+                    }
                 }
                 return star;
             }
