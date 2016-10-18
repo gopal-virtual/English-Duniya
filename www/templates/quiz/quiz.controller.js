@@ -520,7 +520,11 @@
           temp_quiz.objects.push(ml.dqJSON[temp_quiz.suggestion.qSr]);
           content.getAssessment(temp_quiz).then(function(response){
             response.suggestion = temp_quiz.suggestion;
-            quizCtrl.quiz = response;
+            $log.debug(response.objects.length, response.objects[response.objects.length-1], response, "RESPONSE")
+            quizCtrl.quiz.objects.push(angular.copy(response.objects[response.objects.length-1]))
+            quizCtrl.quiz.suggestion = (response.suggestion);
+            $log.debug(quizCtrl.quiz,response,"Check diff")
+            // quizCtrl.quiz = response;
 
 
             // quizCtrl.nextQuestion()
