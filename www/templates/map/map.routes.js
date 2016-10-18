@@ -13,15 +13,17 @@
         abstract: true,
         resolve: {
           lessons: ['$log','content','User', function($log,content,User) {
-            return content.getResourceList(User.getActiveProfileSync().data.profile.grade).then(function(result){
-              return result
-            })
+            return []
+            // return content.getResourceList(User.getActiveProfileSync().data.profile.grade).then(function(result){
+            //   return result
+            // })
           }],
           lessonLocked: ['$log','content','extendLesson','User', function($log, content,extendLesson,User) {
             extendLesson.initStar();
 
             return content.getResourceList(User.getActiveProfileSync().data.profile.grade).then(function(lessons){
                return extendLesson.getLesson(lessons).then(function(result){
+                 $log.debug("Result is ",result)
                  return {
                    lockedLesson : result,
                    total_star : extendLesson.getTotalStar()
