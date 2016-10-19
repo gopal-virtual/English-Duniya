@@ -24,7 +24,7 @@
                  Auth,
                  network) {
 
-    var queueDB = pouchDB('queueDB');
+    var queueDB = pouchDB('queueDB',{revs_limit: 1});
     var queueProperties = {
       push: push,
       startSync: startSync,

@@ -29,10 +29,9 @@
     var lessonDB = null;
 
     // if (User.getActiveProfileSync() && User.getActiveProfileSync().data) {
-      lessonDB = pouchDB('lessonsDB' , {
-        adapter: 'websql'
-      });
+      lessonDB = pouchDB('lessonsDB',{revs_limit: 1} );
     // }
+
     var contentProperties = {
       createLessonDBIfNotExists: createLessonDBIfNotExists,
       createLessonDBIfNotExistsPatch: createLessonDBIfNotExistsPatch,
@@ -109,11 +108,7 @@
     return contentProperties;
 
     function createLessonDBIfNotExists() {
-      lessonDB = pouchDB('lessonsDB', {
-        adapter: 'websql'
-      });
-
-
+      lessonDB = pouchDB('lessonsDB',{revs_limit: 1});
 
       return lessonDB.get('_local/preloaded').then(function (doc) {
 
@@ -125,7 +120,8 @@
         $log.debug("NEW DB MADE 1");
         return lessonDB.load(CONSTANT.PATH.DATA + '/lessons.db').then(function () {
           $log.debug("NEW DB MADE 2");
-
+          // PouchDB.sync('lessonsDB', 'http://ci-couch.zaya.in/lessons',{live: true,
+          //   retry: true});
           return lessonDB.put({
             _id: '_local/preloaded'
           });
@@ -135,9 +131,7 @@
     }
 
     function createLessonDBIfNotExistsPatch() {
-      lessonDB = pouchDB('lessonsDB', {
-        adapter: 'websql'
-      });
+      lessonDB = pouchDB('lessonsDB',{revs_limit: 1});
 
 
 

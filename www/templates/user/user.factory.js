@@ -23,7 +23,7 @@
                 $injector) {
 
     var User = {};
-    var profilesDB = pouchDB('profilesDB');
+    var profilesDB = pouchDB('profilesDB',{revs_limit: 1});
     var appDB = pouchDB('appDB');
     var initial_skills = [
       {
