@@ -50,8 +50,8 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
     var regionPathOffset = {
         "desert1" : 320,
         "desert2" : 575,
-        "ice1" : 250,
-        "ice2" : 250,
+        "ice1" : 400,
+        "ice2" : 480,
         "forest1" : 250,
         "forest2" : 170,
         "peru1" : 350
@@ -159,7 +159,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
             this.load.image('node-locked', 'img/icons/icon-node-locked.png');
             this.load.image('star_big', 'img/icons/icon-star-2.png');
             this.load.image('star_medium', 'img/icons/icon-star-medium.png');
-            this.load.image('star', 'img/icons/icon-star-small.png');
+            this.load.image('star', 'img/assets/star.png');
             this.load.image('nostar', 'img/icons/icon-nostar.png');
             audio.loop('background');
 
@@ -485,8 +485,8 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
             }];
             var star = [];
             var starClone = [];
-            var star_x = [-15, 0, 15];
-            var star_y = [-22, -27, -22];
+            var star_x = [-22, 0, 22];
+            var star_y = [-27, -35, -27];
 
 
             function addGroups(region){
@@ -605,7 +605,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                     if (temp.activeLessonPosY > posy) {
                         break;
                     }
-                    //
+                    
                     bmd.rect(posx-4, posy, 8, 8, '#FFFFFF');
                     // bmd.anchor.setTo(0.5);
                     //
@@ -697,6 +697,12 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                 for (var i = 0; i < count; i++) {
                     star[i] = groups.nonRegion.stars.create(x[0] + x[i + 1], y[0] + y[i + 1], 'star');
                     star[i].anchor.setTo(0.5, 0.5);
+                    star[i].scale.setTo(0.7, 0.7);
+                    if (i == 0) {
+                        star[i].angle = -30;
+                    }else if(i == 2){
+                        star[i].angle = 30;
+                    }
                 }
                 return star;
             }
@@ -842,16 +848,23 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                     }
                     last_node_index += regionNodes[regions[i]]-1;
                 }
+                log.debug  ("FIRST_NODE",first_node_index,"LAST_NODE",last_node_index);
                 for (var i = first_node_index; i < lessons.length; i++) {
                     if (lessons[i].locked) {
                         log.debug("lesson locked")
                         continue;
                     }
+                    log.debug("BREAK DANCE FLAG MAHN",i, last_node_index+1)
+
+                    if (i == last_node_index +1) {
+                        break;
+                    }
+                    log.debug ("BABUSHKA")
                     var j = i / (last_node_index-first_node_index);
                     var posx = game.math.catmullRomInterpolation(points.x, j);
                     var posy = game.math.catmullRomInterpolation(points.y, j);
                     var currentLesson = lessons[i].node;
-                    log.debug(posy,posx);
+                    log.debug("pos",posx,posy);
 
                     var nodeTag = groups.nonRegion.nodeTags.create(posx,posy+50,'ribbon-tag');
                     nodeTag.anchor.setTo(0.5);
@@ -871,7 +884,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                         function(currentLesson, game, posy, i, temp, currentObject) {
                             return function() {
                                 var displacement = game.kineticScrolling.velocityY > -30 && game.kineticScrolling.velocityY < 30;
-                                log.debug("Hello Hello")
+                                // log.debug("Hello Hello")
                                 if (!currentLesson.locked && displacement) {
                                     localStorage.setItem('currentPosition', (posy - game.height / 2));
                                     var currentPosition = {
@@ -892,21 +905,21 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                     );
                     node.type = lessonType(currentLesson, i);
                     groups.nonRegion.nodes.add(node);
-                    log.debug("i",i,"condition1",lessons.length-2,lessons[lessons.length-1].locked,i==lessons.length-2 && lessons[lessons.length-1].locked,"condition2",lessons.length-1,i==lessons.length-1)
+                    // log.debug("i",i,"condition1",lessons.length-2,lessons[lessons.length-1].locked,i==lessons.length-2 && lessons[lessons.length-1].locked,"condition2",lessons.length-1,i==lessons.length-1)
                     if((i==lessons.length-2 && lessons[lessons.length-1].locked) || (i==lessons.length-1)){
-                        log.debug("Hellujah");
+                        // log.debug("Hellujah");
                         temp["activeLessonKey"] = i;
                         temp["activeLessonPosY"] = posy;
                         temp["activeLessonPosX"] = posx;
                         temp["nodeWobbleTween"] = game.add.tween(node.scale).to({ x: [0.8,1,0.8], y: [0.8,1,0.8] }, 600, Phaser.Easing.Back.Out, true, 400).loop(true);
                     }
-                    log.debug('stateParams',stateParams, currentLesson.id)
+                    // log.debug('stateParams',stateParams, currentLesson.id)
                     if (stateParams.activatedLesson && stateParams.activatedLesson.node.id == currentLesson.id) {
                         temp["lessonFromQuizKey"] = i;
                         temp["lessonFromQuizPosX"] = posx;
                         temp["lessonFromQuizPosY"] = posy;
                     }
-                    log.debug("Temp",temp);
+                    // log.debug("Temp",temp);
 
                     if (!lessons[i].locked && lessons[i].stars >= 0) {
                         // var stars = game.add.group();
@@ -927,7 +940,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                     temp["activeLessonKey"] = -1;
                 }
 
-                log.debug("show port node? ",temp["activeLessonKey"],last_node_index,temp["activeLessonKey"] == -1);
+                log.debug("show port node? ",regionPage, regions.length-1, temp["activeLessonKey"], regionPage < regions.length-1 && temp.activeLessonKey == -1);
 
                 if(regionPage < regions.length-1 && temp.activeLessonKey == -1){
                     var port_forward = game.add.button(game.world.centerX, 150, 'node-port', function(){
@@ -1086,7 +1099,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
 
                                 starCloneTween[i]["pos"] = game.add.tween(starClone[i]).to( { x: 20, y: parseInt(game.camera.y)-100}, 1000, Phaser.Easing.Exponential.InOut);
                                 starCloneTween[i]["scale"] = game.add.tween(starClone[i].scale).from( { x: 0, y: 0 }, 800, Phaser.Easing.Bounce.Out,false,i*800);
-                                starCloneTween[i]["scalePos"] = game.add.tween(starClone[i]).to( { x: "-50", y: "-100" }, 800, Phaser.Easing.Cubic.Out,false,i*800);
+                                starCloneTween[i]["scalePos"] = game.add.tween(starClone[i]).to( { x: "-10", y: "-10" }, 800, Phaser.Easing.Cubic.Out,false,i*800);
                                 starCloneTween[i]["rotate"] = game.add.tween(starClone[i]).to( { angle: 450 }, 3000, Phaser.Easing.Quadratic.Out);
                                 starCloneTween[i].scale.chain(starCloneTween[i].pos);
                                 starCloneTween[i].scale.start();
