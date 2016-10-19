@@ -849,18 +849,20 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                     last_node_index += regionNodes[regions[i]]-1;
                 }
                 log.debug  ("FIRST_NODE",first_node_index,"LAST_NODE",last_node_index);
-                for (var i = first_node_index; i < lessons.length; i++) {
+                for (var i = first_node_index, distance = 1 / (last_node_index-first_node_index), j =0; i < lessons.length; i++, j+=distance) {
+                    log.debug("J Lo",i.j)
                     if (lessons[i].locked) {
                         log.debug("lesson locked")
                         continue;
                     }
                     log.debug("BREAK DANCE FLAG MAHN",i, last_node_index+1)
 
+
                     if (i == last_node_index +1) {
                         break;
                     }
                     log.debug ("BABUSHKA")
-                    var j = i / (last_node_index-first_node_index);
+                    // var ;
                     var posx = game.math.catmullRomInterpolation(points.x, j);
                     var posy = game.math.catmullRomInterpolation(points.y, j);
                     var currentLesson = lessons[i].node;
