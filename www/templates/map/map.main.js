@@ -1092,7 +1092,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
 
                                 starCloneTween[i]["pos"] = game.add.tween(starClone[i]).to( { x: 20, y: parseInt(game.camera.y)-100}, 1000, Phaser.Easing.Exponential.InOut);
                                 starCloneTween[i]["scale"] = game.add.tween(starClone[i].scale).from( { x: 0, y: 0 }, 800, Phaser.Easing.Bounce.Out,false,i*800);
-                                starCloneTween[i]["scalePos"] = game.add.tween(starClone[i]).to( { x: "-50", y: "-100" }, 800, Phaser.Easing.Cubic.Out,false,i*800);
+                                starCloneTween[i]["scalePos"] = game.add.tween(starClone[i]).to( { x: "-10", y: "-10" }, 800, Phaser.Easing.Cubic.Out,false,i*800);
                                 starCloneTween[i]["rotate"] = game.add.tween(starClone[i]).to( { angle: 450 }, 3000, Phaser.Easing.Quadratic.Out);
                                 starCloneTween[i].scale.chain(starCloneTween[i].pos);
                                 starCloneTween[i].scale.start();
