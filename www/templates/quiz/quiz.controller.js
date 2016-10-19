@@ -161,6 +161,7 @@
     $scope.userGender = User.getActiveProfileSync().data.profile.gender;
     $scope.selectedNode = lessonutils.getLocalLesson();
     $scope.modal = {};
+    $scope.resultStarFlag = [];
     quizCtrl.closeModalCallback = closeModalCallback;
 
 
@@ -204,7 +205,8 @@
     // }
 
     function playStarSound() {
-        var star = 0;
+      var starSound = ["one_star","two_star","three_star"];
+      var star = 0;
       if (quizCtrl.summary.stars) {
         star = quizCtrl.summary.stars;
       } else if (quizCtrl.summary.score.percent) {
@@ -212,16 +214,20 @@
       } else {
         star = 0;
       }
+      $log.debug("playing star sound", star );
       for (var i = 0; i < star; i++) {
-        (i + 1) == 1 && $timeout(function() {
-          audio.play('one_star')
-        }, 1000);
-        (i + 1) == 2 && $timeout(function() {
-          audio.play('two_star')
-        }, 2000);
-        (i + 1) == 3 && $timeout(function() {
-          audio.play('three_star')
-        }, 3000);
+        $log.debug("sound source",starSound[i]);
+        (function(count){
+          $timeout( function() { 
+              $scope.resultStarFlag[count] = true;
+              $log.debug("sound source",starSound,count,starSound[count]);
+              angular.element("#audioplayer")[0].pause();
+              angular.element("#audioSource")[0].src = "sound/"+starSound[count]+".mp3";
+              angular.element("#audioplayer")[0].load();
+              angular.element("#audioplayer")[0].play();
+          },(count+1)*1000);
+        })(i)
+        
       }
     }
 
