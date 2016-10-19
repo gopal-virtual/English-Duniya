@@ -1,4 +1,4 @@
-<ion-modal-view class="modal-transparent" on-touch="quizCtrl.canRemoveFeedback && closeModal(quizCtrl.closeModalCallback)">
+<ion-modal-view class="modal-transparent" on-touch="quizCtrl.currentIndex != (quizCtrl.quiz.objects.length -1) && quizCtrl.canRemoveFeedback && closeModal(quizCtrl.closeModalCallback)">
   <ion-content overflow-scroll="true">
     <div class="row padding-0">
 
