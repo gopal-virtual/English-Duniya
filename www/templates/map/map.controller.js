@@ -239,6 +239,9 @@
         $ionicPopup.alert({
           title: 'Please try again',
           template: "No internet conection found"
+        }).then(function(){
+          $ionicLoading.show()
+          location.reload()
         })
       });
 
