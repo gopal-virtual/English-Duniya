@@ -33,18 +33,19 @@
 
       <!-- <div ng-repeat="question in quizCtrl.quiz.objects" ng-if="$index == quizCtrl.getCurrentIndex()"> -->
       <div id="step1" style="position:relative;top:8%">
+        <div ng-if="question.node.widgetSound" ng-class="{'sound-enlarge':(question.node.widgetHtml == quizCtrl.CONSTANT.WIDGETS.SPEAKER_IMAGE)}" style="text-align: left;position: absolute;top: 10px;width: 350px;margin-right: auto;left: 0;margin-left: auto;right: 0;z-index: 200">
+          <div style="height:60px;width:60px;margin-left:5px;transform-origin: bottom left" ng-click="quizCtrl.playAudio(question.node.widgetSound,$index);quizCtrl.highlightSoundIcon($parent.$index);" ng-class="{'active animation-repeat-bounce':quizCtrl.highlightSoundIconFlag}" class="sbtn sbtn-sound"></div>
+        </div>
         <ion-scroll scrollbar-x="false" scrollbar-y="false" ng-init="quizCtrl.isScroll($index)" style="
     height: 27vh;
 " direction="y" class="padding-0 bg-pale no-shadow">
+          <!-- {{quizCtrl.CONSTANT.WIDGETS.SPEAKER_IMAGE}} -->
           <div style="min-height: 20vh" ng-if="question.node.title"
             ng-bind-html="question.node.widgetHtml"
             class="question card card-transparent center margin-x-0 margin-y-0 padding-0">
           
           </div>
             
-            <div ng-class="{'sound-enlarge':((question.node.title.indexOf('img')==-1 || question.node.widgetHtml == '') && question.node.widgetSound == '')}" style="text-align: left;position: absolute;bottom: 0px;width: 360px;margin-right: auto;left: 0;margin-left: auto;right: 0;">
-              <div ng-if="question.node.widgetSound" style="height:60px;width:60px;margin-left:5px;transform-origin: bottom left" ng-click="quizCtrl.playAudio(question.node.widgetSound,$index);quizCtrl.highlightSoundIcon($parent.$index);" ng-class="{'active animation-repeat-bounce':quizCtrl.highlightSoundIconFlag}" class="sbtn sbtn-sound"></div>
-            </div>
         </ion-scroll>
       </div>
 
