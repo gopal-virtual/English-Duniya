@@ -42,13 +42,13 @@
                     </div>
                     <div style="top: 16vh;" class="full-width absolute">
                         <div class="flex">
-                            <label for="" class="radio radio-gender radio-male radio-icon-check" ng-class="{'checked':userCtrl.user.gender=='M'}">
+                            <label on-tap="audio.play('click');" for="" class="radio radio-gender radio-male radio-icon-check" ng-class="{'checked':userCtrl.user.gender=='M'}">
                                 <input type="radio" name="gender" value="M" ng-model="userCtrl.user.gender">
                               <div style="bottom:-60px;text-align:center;font-weight:800;" class="absolute full-width font-xl color-dblue">
                                 लड़का
                               </div>
                             </label>
-                            <label for="" class="radio radio-gender radio-female radio-icon-check" ng-class="{'checked':userCtrl.user.gender=='F'}">
+                            <label on-tap="audio.play('click');"  for="" class="radio radio-gender radio-female radio-icon-check" ng-class="{'checked':userCtrl.user.gender=='F'}">
                                 <input type="radio" name="gender" value="F" ng-model="userCtrl.user.gender">
                               <div style="bottom:-60px;text-align:center;font-weight:800;" class="absolute full-width font-xl color-dblue">
                                 लड़की
@@ -101,22 +101,22 @@
                     </div>
                     <div style="top:40vh" class="full-width absolute padding-x-10">
                         <div class="radio-box-container-inner clearfix">
-                            <div class="lcard radio-con block" style="margin-left: auto;margin-right: auto;" ng-class="{'selected':userCtrl.user.grade == 1}" ng-click="audio.play('click');">
-                                <label class="lcard-inner radio radio-box center">1
+                            <div class="lcard radio-con block" style="margin-left: auto;margin-right: auto;" ng-class="{'selected':userCtrl.user.grade == 1}">
+                                <label on-tap="audio.play('click');"  class="lcard-inner radio radio-box center">1
                                     <input type="radio" name="grade" value="1" ng-model="userCtrl.user.grade">
                                 </label>
                             </div>
                             <div style="margin-top: 3.5vh" class="flex">
                                 <div class="full-width">
-                                    <div style="margin-left: auto;margin-right: 7vw;" class="lcard radio-con" ng-class="{'selected':userCtrl.user.grade == 2}" ng-click="audio.play('click');">
-                                        <label class="lcard-inner radio radio-box center">2
+                                    <div style="margin-left: auto;margin-right: 7vw;" class="lcard radio-con" ng-class="{'selected':userCtrl.user.grade == 2}">
+                                        <label on-tap="audio.play('click');"  class="lcard-inner radio radio-box center">2
                                             <input type="radio" name="grade" value="2" ng-model="userCtrl.user.grade">
                                         </label>
                                     </div>
                                 </div>
                                 <div class="full-width">
-                                    <div style="margin-right: auto;margin-left: 7vw;" class="lcard radio-con" ng-class="{'selected':userCtrl.user.grade == 3}" ng-click="audio.play('click');">
-                                        <label class="lcard-inner radio radio-box center">3
+                                    <div style="margin-right: auto;margin-left: 7vw;" class="lcard radio-con" ng-class="{'selected':userCtrl.user.grade == 3}">
+                                        <label on-tap="audio.play('click');"  class="lcard-inner radio radio-box center">3
                                             <input type="radio" name="grade" value="3" ng-model="userCtrl.user.grade">
                                         </label>
                                     </div>
