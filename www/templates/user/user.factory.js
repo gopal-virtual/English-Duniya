@@ -270,7 +270,7 @@
 
     function getScoreList(profileId) {
       return profilesDB.get(profileId).then(function(response){
-        return response.data.scores;
+        return response.data.playlist;
       })
     }
 
