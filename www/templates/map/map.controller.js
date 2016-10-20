@@ -405,7 +405,9 @@
     */
 
     mapCtrl.closeDemo = function() {
-      $scope.demo.hide();
+      $scope.demo.hide().then(function(){
+        location.reload();
+      });
       return true;
     };
 

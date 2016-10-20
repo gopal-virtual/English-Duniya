@@ -31,9 +31,8 @@
 
 
           $cordovaNativeAudio.play(sound);
-          ;
         } catch (error) {
-          ;
+          $log.warn("Audio Factory can only play sound on phones")
         }
       },
       loop: function(sound) {

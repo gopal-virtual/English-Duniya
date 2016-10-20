@@ -60,6 +60,8 @@
     userCtrl.playAudio = playAudio;
 
     userCtrl.playAudio(-1);
+    $log.debug("Hukata")
+    $scope.audio = audio;
     $timeout(function () {
       userCtrl.playAudio(0);
     }, 5000);
