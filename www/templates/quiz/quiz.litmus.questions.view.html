@@ -38,7 +38,7 @@
             class="question-diag padding-y-20 vertical-center"
             ng-click="quizCtrl.highlightSoundIcon($parent.$index);">
               <div ng-bind-html="question.node.widgetHtml"></div>
-                <div style="text-align:center;padding-top:20px;">
+                <div ng-class="{'sound-enlarge-diag':question.node.widgetHtml == quizCtrl.CONSTANT.WIDGETS.SPEAKER_IMAGE}" style="text-align:center;padding-top:20px;">
                   <div ng-if="question.node.widgetSound" style="height:84px;width:87.5px;" ng-click="quizCtrl.playAudio(question.node.widgetSound,$index);quizCtrl.highlightSoundIcon($parent.$index);" ng-class="{'active animation-repeat-bounce':quizCtrl.highlightSoundIconFlag}" class="sbtn sbtn-sound"></div>
                 </div>
               <!-- {{question.node.widgetHtml}} -->
