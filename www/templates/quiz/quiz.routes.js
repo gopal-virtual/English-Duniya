@@ -220,7 +220,8 @@
         },
         templateUrl: CONSTANT.PATH.QUIZ + '/quiz.litmus_summary' + CONSTANT.VIEW,
 
-        controller: ['$log','User', 'audio', '$timeout','$stateParams','$scope', function ($log,User, audio,$timeout,$stateParams,$scope) {
+        controller: ['$log','User','audio', '$timeout','$stateParams','$scope', function ($log,User,audio,$timeout,$stateParams,$scope) {
+          $scope.audio = audio;
           $scope.gender = User.getActiveProfileSync().data.profile.gender == 'M'?'boy':'girl';
           $timeout(function() {
             $log.debug("Printing progressBar",$stateParams);
@@ -239,7 +240,8 @@
       .state('litmus_start', {
         url: '/litmus_start',
         templateUrl: CONSTANT.PATH.QUIZ + '/quiz.litmus_start' + CONSTANT.VIEW,
-        controller: ['$log', 'User','$scope', function ($log,User,$scope) {
+        controller: ['$log', 'User','$scope','audio', function ($log,User,$scope,audio) {
+          $scope.audio = audio;
           $scope.gender = User.getActiveProfileSync().data.profile.gender == 'M'?'boy':'girl';
           $scope.pauseAudio = pauseAudio;
           function pauseAudio(){

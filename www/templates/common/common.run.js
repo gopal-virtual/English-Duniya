@@ -16,6 +16,7 @@
         $cordovaNativeAudio.preloadSimple('three_star', 'sound/three_star.mp3');
         $cordovaNativeAudio.preloadSimple('locked', 'sound/locked.mp3');
         $cordovaNativeAudio.preloadSimple('press', 'sound/press.mp3');
+        $cordovaNativeAudio.preloadSimple('click', 'sound/click.mp3');
         $cordovaNativeAudio.preloadSimple('star_hud', 'sound/star_hud.mp3');
 
         // $cordovaNativeAudio.preloadSimple('voice_class', 'sound/voice_class.mp3');

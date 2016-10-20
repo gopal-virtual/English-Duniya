@@ -38,7 +38,7 @@
             class="question-diag padding-y-20 vertical-center"
             ng-click="quizCtrl.highlightSoundIcon($parent.$index);">
               <div ng-bind-html="question.node.widgetHtml"></div>
-                <div style="text-align:center;padding-top:20px;">
+                <div ng-class="{'sound-enlarge-diag':question.node.widgetHtml == quizCtrl.CONSTANT.WIDGETS.SPEAKER_IMAGE}" style="text-align:center;padding-top:20px;">
                   <div ng-if="question.node.widgetSound" style="height:84px;width:87.5px;" ng-click="quizCtrl.playAudio(question.node.widgetSound,$index);quizCtrl.highlightSoundIcon($parent.$index);" ng-class="{'active animation-repeat-bounce':quizCtrl.highlightSoundIconFlag}" class="sbtn sbtn-sound"></div>
                 </div>
               <!-- {{question.node.widgetHtml}} -->
@@ -61,7 +61,8 @@
           <!-- SCQ -->
           <div>
             <div
-              ng-click="question.attempted=option.key;(quizCtrl.enable_litmus ) && !( quizCtrl.enable_litmus=false )&& quizCtrl.submitAttempt(quizCtrl.quiz.objects[quizCtrl.currentIndex].node.id,quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted,'litmus') && quizCtrl.setSuggestion();quizCtrl.logQuestion(quizCtrl.currentIndex,'END');quizCtrl.stopAudio()"
+              on-tap="audio.play('click')"
+              ng-click="question.attempted=option.key;(quizCtrl.enable_litmus ) && !( quizCtrl.enable_litmus=false )&& quizCtrl.submitAttempt(quizCtrl.quiz.objects[quizCtrl.currentIndex].node.id,quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted,'litmus') && quizCtrl.setSuggestion();quizCtrl.logQuestion(quizCtrl.currentIndex,'END');quizCtrl.stopAudio();"
               ng-if="question.node.type.type=='choicequestion' && !question.node.type.content.is_multiple"
               ng-class="{'selected':option.key==question.attempted,'card-list':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'list','card-grid practice-card':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'grid'}"
               class="lcard center bg-white card-radius"'
