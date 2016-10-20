@@ -160,6 +160,8 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
             this.load.image('star_big', 'img/icons/icon-star-2.png');
             this.load.image('star_medium', 'img/icons/icon-star-medium.png');
             this.load.image('star', 'img/assets/star.png');
+            this.load.image('star3d', 'img/assets/star3d.png');
+            this.load.image('x', 'img/assets/x.png');
             this.load.image('nostar', 'img/icons/icon-nostar.png');
             audio.loop('background');
 
@@ -498,12 +500,54 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                 for (var i = renderedRegion.length - 1; i >= 0; i--) {
                     groups.region[region[i]] = game.add.group();
                 }
+                groups.nonRegion["hud"] = game.add.group()
+                groups.nonRegion["demoOverlay"] = game.add.group();
                 groups.nonRegion["nodeTags"] = game.add.group();
                 groups.nonRegion["nodes"] = game.add.group();
                 groups.nonRegion["stars"] = game.add.group();
                 groups.nonRegion["unlockAnim"] = game.add.group();
                 groups.nonRegion["starClone"] = game.add.group();
 
+            }
+
+
+            var starcounthaha = 2;
+            function renderHud(){
+                log.debug("I am making HUD. Wohoooo");
+                var graphics = game.add.graphics(0,0);
+                // graphics.beginFill(0xFFFFFF, 0.8);
+                graphics.beginFill(0x968B7B, 1);
+                graphics.drawRoundedRect(-20,-12,185,84,10)
+                graphics.endFill();
+                graphics.beginFill(0xF9F2E8, 1);
+                //shadow color #968B7B
+                graphics.drawRoundedRect(-20,-20,185,84,10)
+                graphics.endFill();
+                groups.nonRegion.hud.add(graphics);
+                groups.nonRegion.hud.fixedToCamera = true;
+                var starSprite = groups.nonRegion.stars.create(10,55,'star3d');
+                starSprite.anchor.setTo(0,1);
+                starSprite.fixedToCamera = true;
+                var spriteX = groups.nonRegion.stars.create(62,55,'x');
+                spriteX.anchor.setTo(0,1);
+                spriteX.fixedToCamera = true;
+                var starText = game.add.text(90, 65, starcounthaha, { font: "48px kg_primary_penmanship_2Rg", fill: "#FDB724", wordWrap: false, align: "center"});
+                starText.setShadow(0, 3, 'rgba(215,151,40,1)', 0);
+                starText.anchor.setTo(0,1);
+                starText.fixedToCamera = true
+
+                // groups.nonRegion.hud.fixedToCamera = true;
+                log.debug("This is my hud",graphics);
+
+            }
+
+            function renderDemoOverlay(){
+                log.debug('graphics',game.camera.y)
+                var graphics = game.add.graphics(game.camera.x,game.camera.y);
+                graphics.beginFill(0x000000, 0.8);
+                graphics.drawRect(0,0,game.camera.width,game.camera.height);
+                graphics.endFill();
+                groups.nonRegion.demoOverlay.add(graphics);
             }
 
             function renderWorld(region){
@@ -1273,6 +1317,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                     scope.$emit('removeLoader');
                     renderNodesByML(renderedRegion);
                     renderNodePath(renderedRegion,points);
+                    log.debug('graphics',game.camera)
 
 
 
@@ -1280,6 +1325,8 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
 
                     scope.$emit('show_demo');
                     _this.init();
+                    renderHud();
+                    // renderDemoOverlay();
                     killUselessRegions(renderedRegion);
                     game.kineticScrolling.start();
                     var lessonFromQuizStars = typeof(temp.lessonFromQuizKey)!="undefined"?lessons[temp.lessonFromQuizKey].stars:false;
