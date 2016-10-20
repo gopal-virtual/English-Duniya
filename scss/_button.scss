@@ -252,6 +252,17 @@
   height: 56px;
 }
 
+
+.sicon-back{
+  border: none;
+  background: url('../img/assets_svg/back-cross.svg');
+  background-size: cover;
+  background-position: 0 0 !important;
+  background-repeat:no-repeat;
+  width: 28px;
+  height: 21px; 
+}
+
 .lbtn{
   background-color: $hex-blue;
   box-shadow: 0px -4px 0px #{$hex-dark-blue} inset;

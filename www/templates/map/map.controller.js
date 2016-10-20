@@ -126,11 +126,11 @@
     
     $scope.$on('pageRegion', mapCtrl.setLessonRange )
     // $scope.$on('nextRegion', mapCtrl.setLessonRange )
-    function setLessonRange(event, regionPage, action){
+    function setLessonRange(event, regionPage, action, regionLength){
         // if (regionPage > 0 && regionPage < 3) {
           $ionicLoading.show();
           if (action=="next") {
-            if (regionPage < 3) {
+            if (regionPage < regionLength) {
               localStorage.setItem('regionPage',parseInt(regionPage)+1);
             }else{
               localStorage.setItem('regionPage',parseInt(regionPage));
@@ -239,6 +239,9 @@
         $ionicPopup.alert({
           title: 'Please try again',
           template: "No internet conection found"
+        }).then(function(){
+          $ionicLoading.show()
+          location.reload()
         })
       });
 

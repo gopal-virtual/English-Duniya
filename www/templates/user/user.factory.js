@@ -97,7 +97,8 @@
     }
     User.playlist = {
         get: getUserPlaylist,
-        add: addNodeToPlaylist
+        add: addNodeToPlaylist,
+      patch: patchUserPlaylist
     }
 
     function getUserIdSync() {
@@ -176,7 +177,7 @@
         })
         .then(function () {
 
-
+          $log.debug("Lesson db is now created")
           return record;
         })
       .catch(function(error){
@@ -300,9 +301,9 @@
 
       return profilesDB.get(data.profileId).then(function (response) {
         var doc = response.data;
-        if (!doc.scores.hasOwnProperty(data.lessonId)) {
-          doc.scores[data.lessonId] = {};
-        }
+        // if (!doc.scores.hasOwnProperty(data.lessonId)) {
+        //   doc.scores[data.lessonId] = {};
+        // }
 
         $log.debug(doc.playlist[data.playlist_index],"Check it");
         doc.playlist[data.playlist_index][data.id] = {
@@ -341,12 +342,13 @@
       })
     }
 
-    function getScoreOfAssessment(assessmentId, lessonId, profileId) {
+    function getScoreOfAssessment(assessmentId, lessonId, profileId, playlistIndex) {
       return profilesDB.get(profileId).then(function (response) {
         var result = null;
-        if (response.data.scores.hasOwnProperty(lessonId)) {
-          if (response.data.scores[lessonId].hasOwnProperty(assessmentId)) {
-            result = response.data.scores[lessonId][assessmentId]
+        if (response.data.playlist[playlistIndex]) {
+          if (response.data.playlist[playlistIndex].hasOwnProperty(assessmentId)) {
+            result = response.data.playlist[playlistIndex][assessmentId]
+            $log.debug("GEt score of assessment",result)
           }
         }
         return result
@@ -376,14 +378,77 @@
     }
 
     function getUserPlaylist(profileId) {
+      $log.debug("In user playlist")
       return profilesDB.get(profileId).then(function (response) {
-        return response.data.playlist;
+        $log.debug("Length of playlist "+JSON.stringify(response.data)+ " END")
+        if(response.data.playlist)
+          return response.data.playlist;
+        else
+          return getPatchedUserPlaylist(profileId);
       })
+    }
+
+    function patchUserPlaylist(profileId){
+      return getPatchedUserPlaylist(profileId)
+    }
+
+    function getPatchedUserPlaylist(profileId){
+      var d = $q.defer();
+      $log.debug("Inside patch playlist")
+      var promises = [];
+
+      profilesDB.get(profileId).then(function (response) {
+          $log.debug("Scores found "+profileId+ JSON.stringify(response.data.scores))
+        if(response.data.scores){
+          $log.debug("Scores found ")
+            response.data.playlist = [];
+          $injector.get('content').createLessonDBIfNotExists().then(function(){
+            angular.forEach(response.data.scores,function(lesson,lesson_id){
+              $log.debug("Lesson id  "+lesson_id);
+              var tmp = $injector.get('content').getLesson(lesson_id).then(function(lesson_details){
+                var pl = {'lesson_id':lesson_id};
+                $log.debug("Got lesson  "+lesson_id);
+
+                angular.forEach(lesson,function(resource,resource_id){
+                  pl[resource_id] = resource;
+                  pl[resource_id]['skill'] = lesson_details.node.tag
+                });
+                $log.debug("Pushing a pl in playlist");
+                return response.data.playlist.push(pl);
+
+              });
+              promises.push(
+               tmp
+              )
+
+            });
+            $q.all(promises).then(function(){
+              response.data.scores = {};
+              $log.debug("Patched profile for updation "+JSON.stringify(response.data));
+
+              return profilesDB.put({
+                '_id': profileId,
+                '_rev': response._rev,
+                'data': response.data
+              });
+            })
+              .then(function(){
+                $log.debug("Returning"+JSON.stringify(response.data.playlist) + " END");
+
+                d.resolve(response.data.playlist);
+              })
+              .catch(function(e){
+                $log.debug("ERROR"+JSON.stringify(e))
+              })
+          })
+        }
+      })
+      return d.promise;
     }
     function addNodeToPlaylist(profileId,nodeId) {
       return profilesDB.get(profileId).then(function (response) {
         response.data.playlist.push({'lesson_id':nodeId});
-        $log.debug("Resonse",response);
+        $log.debug("Response",response);
         return profilesDB.put({
           '_id': profileId,
           '_rev': response._rev,

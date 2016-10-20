@@ -7,7 +7,7 @@
             <img ng-repeat="star in [1,2,3]" ng-src="img/assets_svg/star-grey.svg">
           </div>
           <div class="col stars position-absolute">
-            <img ng-repeat="star in [1,2,3]" class="animation-zoom-out-{{contentCtrl.utilities.starCount(contentCtrl.summary.stars, $index) ? star : ''}}" style="-webkit-animation-delay: {{$index+1}}s;" ng-src="{{ contentCtrl.utilities.starCount(contentCtrl.summary.stars, $index) ? 'img/assets_svg/star-yellow.svg' : 'img/assets_svg/star-grey.svg'}}">
+            <img ng-repeat="star in [1,2,3]" class="transparent" ng-class="{'animation-zoom-out-{{$index+1}} opaque':resultStarFlag[$index]}" ng-src="{{ contentCtrl.utilities.starCount(contentCtrl.summary.stars, $index) ? 'img/assets_svg/star-yellow.svg' : 'img/assets_svg/star-grey.svg'}}">
           </div>
         </div>
         <div ng-class="{'hoverme':contentCtrl.summary.stars>0}" class=" animation-zoom-in" style="padding-top:40px;text-align:center;">

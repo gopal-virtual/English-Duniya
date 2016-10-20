@@ -2,16 +2,14 @@
     display: inline-block;
     // background-color: #FCF8DB;
     // color: #1AB89A;
+    flex-grow: 1;
     line-height: initial !important;
-    padding-top: 8px;
-    border-radius: 10px;
-    margin-left: 1px;
-    margin-right: 1px;
-    margin-bottom: 2px;
-    margin-top: 2px;
-    font-size: 24px;
-    font-weight: 800;
-    width: 300px;
+    padding-top: 6px;
+    border-radius: 8px;
+    margin: 4px 2px;
+    font-size: 3.7vh;
+    font-weight: 400;
+    text-align: center;
     // @include xs-screen-height{
     //   font-size: 16px;
     //   padding-top: 4px;
@@ -30,4 +28,8 @@
 
   .key-symbol{
     padding-top: 3px;
+  }
+
+  .key.lbtn{
+    box-shadow: 0 -2px 0 #1F81C5 inset !important;
   }
