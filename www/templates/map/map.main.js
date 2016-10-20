@@ -885,6 +885,8 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                     node.events.onInputUp.add(
                         function(currentLesson, game, posy, i, temp, currentObject) {
                             return function() {
+                                audio.play('press');
+
                                 var displacement = game.kineticScrolling.velocityY > -30 && game.kineticScrolling.velocityY < 30;
                                 // log.debug("Hello Hello")
                                 if (!currentLesson.locked && displacement) {

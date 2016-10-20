@@ -28,7 +28,7 @@
                         <virtual-keyboard reference="userCtrl.user.name" limit="userCtrl.user.limit"></virtual-keyboard>
                     </div>
                     <div style="top:83vh; text-align: center;" class="full-width absolute">
-                        <button ng-disabled="userCtrl.user.name.trim().length < 3" class="sbtn sbtn-next-blue" ng-click="userCtrl.nextSlide()"></button>
+                        <button ng-disabled="userCtrl.user.name.trim().length < 3" class="sbtn sbtn-next-blue" ng-click="audio.play('press');userCtrl.nextSlide();"></button>
                     </div>
                     
                 </div>
@@ -57,7 +57,7 @@
                         </div>
                     </div>
                     <div style="top:83vh; text-align: center;" class="full-width absolute">
-                        <button ng-disabled="!userCtrl.user.gender" class="sbtn sbtn-next-blue" ng-click="userCtrl.nextSlide()"></button>
+                        <button ng-disabled="!userCtrl.user.gender" class="sbtn sbtn-next-blue" ng-click="audio.play('press');userCtrl.nextSlide();"></button>
                     </div>
                 </div>
 
@@ -101,21 +101,21 @@
                     </div>
                     <div style="top:40vh" class="full-width absolute padding-x-10">
                         <div class="radio-box-container-inner clearfix">
-                            <div class="lcard radio-con block" style="margin-left: auto;margin-right: auto;" ng-class="{'selected':userCtrl.user.grade == 1}">
+                            <div class="lcard radio-con block" style="margin-left: auto;margin-right: auto;" ng-class="{'selected':userCtrl.user.grade == 1}" ng-click="audio.play('click');">
                                 <label class="lcard-inner radio radio-box center">1
                                     <input type="radio" name="grade" value="1" ng-model="userCtrl.user.grade">
                                 </label>
                             </div>
                             <div style="margin-top: 3.5vh" class="flex">
                                 <div class="full-width">
-                                    <div style="margin-left: auto;margin-right: 7vw;" class="lcard radio-con" ng-class="{'selected':userCtrl.user.grade == 2}">
+                                    <div style="margin-left: auto;margin-right: 7vw;" class="lcard radio-con" ng-class="{'selected':userCtrl.user.grade == 2}" ng-click="audio.play('click');">
                                         <label class="lcard-inner radio radio-box center">2
                                             <input type="radio" name="grade" value="2" ng-model="userCtrl.user.grade">
                                         </label>
                                     </div>
                                 </div>
                                 <div class="full-width">
-                                    <div style="margin-right: auto;margin-left: 7vw;" class="lcard radio-con" ng-class="{'selected':userCtrl.user.grade == 3}">
+                                    <div style="margin-right: auto;margin-left: 7vw;" class="lcard radio-con" ng-class="{'selected':userCtrl.user.grade == 3}" ng-click="audio.play('click');">
                                         <label class="lcard-inner radio radio-box center">3
                                             <input type="radio" name="grade" value="3" ng-model="userCtrl.user.grade">
                                         </label>
@@ -125,7 +125,7 @@
                         </div>
                     </div>
                     <div style="top:83vh; text-align: center;" class="full-width absolute">
-                        <button ng-disabled="!userCtrl.user.grade" class="sbtn sbtn-next-blue" ng-click="userCtrl.createProfile(userCtrl.user)"></button>
+                        <button ng-disabled="!userCtrl.user.grade" class="sbtn sbtn-next-blue" ng-click="audio.play('press');userCtrl.createProfile(userCtrl.user);"></button>
                     </div>
                 </div>
                 <!-- <div class="box">

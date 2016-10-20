@@ -16,9 +16,9 @@
       'demo-quiz-1': ngAudio.load('sound/demo-quiz-1.mp3'),
       'demo-quiz-2': ngAudio.load('sound/demo-quiz-2.mp3'),
       'demo-quiz-3': ngAudio.load('sound/demo-quiz-3.mp3'),
-      // 'water-drop': ngAudio.load( 'sound/water-drop.mp3'),
-      // 'correct': ngAudio.load( 'sound/correct.mp3'),
-      // 'wrong': ngAudio.load( 'sound/wrong.wav'),
+      'water-drop': ngAudio.load( 'sound/water-drop.mp3'),
+      'press': ngAudio.load( 'sound/press.mp3'),
+      'click': ngAudio.load( 'sound/pop.mp3'),
       // 'one_star': ngAudio.load( 'sound/one_star.mp3'),
       // 'two_star': ngAudio.load( 'sound/two_star.mp3'),
       // 'three_star': ngAudio.load( 'sound/three_star.mp3'),
@@ -27,11 +27,10 @@
       play: function(sound) {
         try {
           
-
+          $log.debug("Playing audio",sound)
           $cordovaNativeAudio.play(sound);
-          ;
         } catch (error) {
-          ;
+          $log.warn("Audio Factory can only play sound on phones")
         }
       },
       loop: function(sound) {

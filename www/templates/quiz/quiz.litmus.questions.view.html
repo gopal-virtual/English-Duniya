@@ -61,7 +61,7 @@
           <!-- SCQ -->
           <div>
             <div
-              ng-click="question.attempted=option.key;(quizCtrl.enable_litmus ) && !( quizCtrl.enable_litmus=false )&& quizCtrl.submitAttempt(quizCtrl.quiz.objects[quizCtrl.currentIndex].node.id,quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted,'litmus') && quizCtrl.setSuggestion();quizCtrl.logQuestion(quizCtrl.currentIndex,'END');quizCtrl.stopAudio()"
+              ng-click="question.attempted=option.key;(quizCtrl.enable_litmus ) && !( quizCtrl.enable_litmus=false )&& quizCtrl.submitAttempt(quizCtrl.quiz.objects[quizCtrl.currentIndex].node.id,quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted,'litmus') && quizCtrl.setSuggestion();quizCtrl.logQuestion(quizCtrl.currentIndex,'END');quizCtrl.stopAudio();audio.play('click')"
               ng-if="question.node.type.type=='choicequestion' && !question.node.type.content.is_multiple"
               ng-class="{'selected':option.key==question.attempted,'card-list':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'list','card-grid practice-card':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'grid'}"
               class="lcard center bg-white card-radius"'

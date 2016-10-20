@@ -62,7 +62,7 @@
         <!-- SCQ -->
         <div
           style="min-height:40px;"
-          ng-click="question.attempted=(question.attempted==option.key)?'':option.key;demo.tourNextStep();"
+          ng-click="question.attempted=(question.attempted==option.key)?'':option.key;demo.tourNextStep();audio.play('click');"
           ng-if="question.node.type.type=='choicequestion' && !question.node.type.content.is_multiple"
           ng-class="{'selected':option.key==question.attempted,'card-list':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'list','card-grid practice-card':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'grid'}"
           class=" lcard center bg-white card-radius"
@@ -79,7 +79,7 @@
         <div
           style="min-height:40px;"
           ng-if="question.node.type.type=='choicequestion' && question.node.type.content.is_multiple"
-          ng-class="{'selected':question.attempted[option.key],'card-list':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'list','card-grid practice-card':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'grid'}"
+          ng-class="{'selected':question.attempted[option.key],'card-list':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'list','card-grid practice-card':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'grid'};audio.play('click');"
           class="card center bg-white card-radius"
           ng-repeat="option in question.node.type.content.options">
           <label ng-click="quizCtrl.playAudio(option.widgetSound,$parent.$parent.$index);demo.tourNextStep();">
@@ -105,7 +105,7 @@
   <div id="step3" style="min-height: 70px;" class="bar bar-footer bar-footer-large bg-pale">
     <center style="width: 100%">
 
-        <button ng-show="!quizCtrl.isAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex])" ng-class="{'animation-repeat-bounce':quizCtrl.canSubmit()}" class="sbtn sbtn-submit" ng-click="quizCtrl.getFeedback(quizCtrl.quiz.objects[quizCtrl.currentIndex]);quizCtrl.logQuestion(quizCtrl.currentIndex,'END');demo.tourNextStep();audio['demo-quiz-3'].stop();quizCtrl.stopAudio()" ng-disabled="!quizCtrl.canSubmit()">
+        <button ng-show="!quizCtrl.isAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex])" ng-class="{'animation-repeat-bounce':quizCtrl.canSubmit()}" class="sbtn sbtn-submit" ng-click="quizCtrl.getFeedback(quizCtrl.quiz.objects[quizCtrl.currentIndex]);quizCtrl.logQuestion(quizCtrl.currentIndex,'END');demo.tourNextStep();audio['demo-quiz-3'].stop();quizCtrl.stopAudio();audio.play('press')" ng-disabled="!quizCtrl.canSubmit()">
         </button>
 
         <button ng-show="quizCtrl.isAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex])" class="sbtn sbtn-continue" >
