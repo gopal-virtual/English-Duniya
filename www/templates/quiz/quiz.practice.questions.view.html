@@ -71,7 +71,7 @@
           <label ng-click="quizCtrl.playAudio(option.widgetSound,$parent.$parent.$index);">
             <input class="hide">
             <!-- <div class="option-container"  ng-if="option"> -->
-            <div style="min-height:30px;font-size: 24px;" class="lcard-inner padding-10 option" ng-bind-html="option.widgetHtml"></div>
+            <div ng-class="{'direction-column':option.widgetHtml.indexOf('<img') != -1}" style="min-height:30px;font-size: 24px;" class="lcard-inner padding-10 option" ng-bind-html="option.widgetHtml"></div>
             <!-- </div> -->
           </label>
         </div>
