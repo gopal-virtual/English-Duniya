@@ -7,10 +7,10 @@
           <img ng-repeat="star in [1,2,3]" ng-src="img/assets_svg/star-grey.svg">
         </div>
         <div class="col stars position-absolute">
-          <img ng-repeat="star in [1,2,3]" class="animation-zoom-out-{{quizCtrl.utilities.starCount(quizCtrl.summary.stars, $index) ? star : ''}}" style="-webkit-animation-delay: {{$index+1}}s;" ng-src="{{ quizCtrl.utilities.starCount(quizCtrl.summary.stars, $index) ? 'img/assets_svg/star-yellow.svg' : 'img/assets_svg/star-grey.svg'}}">
+          <img ng-repeat="star in [1,2,3]" class="transparent" ng-class="{'animation-zoom-out-{{$index+1}} opaque':resultStarFlag[$index]}" ng-src="{{ quizCtrl.utilities.starCount(quizCtrl.summary.stars, $index) ? 'img/assets_svg/star-yellow.svg' : 'img/assets_svg/star-grey.svg'}}">
         </div>
       </div>
-      <div ng-class="{'hoverme':contentCtrl.summary.stars>0}" style="padding-top:40px;text-align:center;">
+      <div ng-class="hoverme" style="padding-top:40px;text-align:center;">
         <img height="250" style="z-index: 5;position: relative;" ng-src="img/assets_svg/{{userGender=='M'?'boy':'girl'}}-{{quizCtrl.summary.stars>0?'win':'lose'}}-badge.svg">
         <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
       </div>

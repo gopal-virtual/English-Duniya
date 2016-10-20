@@ -342,12 +342,13 @@
       })
     }
 
-    function getScoreOfAssessment(assessmentId, lessonId, profileId) {
+    function getScoreOfAssessment(assessmentId, lessonId, profileId, playlistIndex) {
       return profilesDB.get(profileId).then(function (response) {
         var result = null;
-        if (response.data.scores.hasOwnProperty(lessonId)) {
-          if (response.data.scores[lessonId].hasOwnProperty(assessmentId)) {
-            result = response.data.scores[lessonId][assessmentId]
+        if (response.data.playlist[playlistIndex]) {
+          if (response.data.playlist[playlistIndex].hasOwnProperty(assessmentId)) {
+            result = response.data.playlist[playlistIndex][assessmentId]
+            $log.debug("GEt score of assessment",result)
           }
         }
         return result

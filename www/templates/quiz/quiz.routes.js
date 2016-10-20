@@ -147,7 +147,7 @@
             skill: quiz.node.tag,
           })
             .then(function () {
-              return User.scores.getScoreOfAssessment(quiz.node.id, lesson.node.id, User.getActiveProfileSync()._id)
+              return User.scores.getScoreOfAssessment(quiz.node.id, lesson.node.id, User.getActiveProfileSync()._id, quiz.node.playlist_index)
             })
             .then(function (previousScore) {
               if ((!previousScore) || (!previousScore.hasOwnProperty('score')) || (previousScore && parseInt(previousScore.score) < summary.score.marks)) {

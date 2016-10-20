@@ -51,6 +51,7 @@
     contentCtrl.play = play;
     $scope.lessonutils = lessonutils;
     $scope.userGender = User.getActiveProfileSync().data.profile.gender;
+    $scope.resultStarFlag = [];
     // $scope.currentState = $state.current.name;
     $scope.selectedNode = $stateParams.video.resource;
     contentCtrl.toggleControls = toggleControls;
@@ -87,28 +88,49 @@
   // $log.debug("lessonutils",$scope.lessonutils.user)
   // $log.debug("lessonutils",$scope.lessonutils.getGender())
   // $log.debug("STATE",$state)
+  // function playStarAnimation(index){
+  //   var star = 0; 
+  //   if (contentCtrl.summary.stars) {
+  //     star = contentCtrl.summary.stars;
+  //   }else if (contentCtrl.summary.score.percent) {
+  //     star = contentCtrl.summary.score.percent > CONSTANT.STAR.THREE ? 3 : contentCtrl.summary.score.percent > CONSTANT.STAR.TWO ? 2 : contentCtrl.summary.score.percent > CONSTANT.STAR.ONE ? 1 : 0;
+  //   }else {
+  //     star = 0;
+  //   }
+  //   for (var i = 0; i < star.length; i++) {
+      
+  //   }
+  //   angular.element("#audioplayer")[0].pause();
+  //   angular.element("#audioSource")[0].src = $stateParams.video.resource.node.parsed_sound;
+  //   angular.element("#audioplayer")[0].load();
+  //   angular.element("#audioplayer")[0].play();
+  // }
 
 
   function playStarSound() {
+      var starSound = ["one_star","two_star","three_star"];
       var star = 0;
       if (contentCtrl.summary.stars) {
         star = contentCtrl.summary.stars;
-    } else if (contentCtrl.summary.score.percent) {
+      } else if (contentCtrl.summary.score.percent) {
         star = contentCtrl.summary.score.percent > CONSTANT.STAR.THREE ? 3 : contentCtrl.summary.score.percent > CONSTANT.STAR.TWO ? 2 : contentCtrl.summary.score.percent > CONSTANT.STAR.ONE ? 1 : 0;
       } else {
         star = 0;
       }
       $log.debug("playing star sound", star );
       for (var i = 0; i < star; i++) {
-        (i + 1) == 1 && $timeout(function() {
-          audio.play('one_star')
-        }, 1000);
-        (i + 1) == 2 && $timeout(function() {
-          audio.play('two_star')
-        }, 2000);
-        (i + 1) == 3 && $timeout(function() {
-          audio.play('three_star')
-        }, 3000);
+        $log.debug("sound source",starSound[i]);
+        (function(count){
+          $timeout( function() { 
+              $scope.resultStarFlag[count] = true;
+              $log.debug("sound source",starSound,count,starSound[count]);
+              angular.element("#audioplayer")[0].pause();
+              angular.element("#audioSource")[0].src = "sound/"+starSound[count]+".mp3";
+              angular.element("#audioplayer")[0].load();
+              angular.element("#audioplayer")[0].play();
+          },(count+1)*1000);
+        })(i)
+        
       }
     }
 
