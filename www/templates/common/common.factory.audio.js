@@ -24,9 +24,11 @@
       // 'three_star': ngAudio.load( 'sound/three_star.mp3'),
       // 'locked': ngAudio.load( 'sound/locked.mp3'),
       // 'press': ngAudio.load( 'sound/press.mp3'),
+
+
       play: function(sound) {
         try {
-          
+
 
           $cordovaNativeAudio.play(sound);
           ;
@@ -43,7 +45,7 @@
         }
       },
       stop: function(sound) {
-        
+
         try {
           $cordovaNativeAudio.stop(sound);
         } catch (error) {
@@ -76,12 +78,12 @@
         }
       },
       setVolume: function(sound, volume) {
-        
+
         try{
           window.plugins.NativeAudio.setVolumeForComplexAsset(sound, volume, function(s){
-            
+
           }, function(e){
-            
+
           });
         }
         catch(e){
@@ -91,6 +93,42 @@
       stopAll: function(){
 
       }
+      ,
+      player: {
+        play : playSound,// replaces current sound and removes next sound
+        stop: stopSound,
+        isPaused: isPaused,
+        removeCallback: removeCallback,
+        resume: resume
+      }
+
+
+
     };
+
+    function playSound(url){
+      angular.element("#audioplayer")[0].onended = null;
+      angular.element("#audioplayer")[0].pause();
+      if(url){
+        angular.element("#audioSource")[0].src = url;
+        angular.element("#audioplayer")[0].load();
+        angular.element("#audioplayer")[0].play();
+
+      }
+    }
+    function resume(){
+      angular.element("#audioplayer")[0].play();
+    }
+    function stopSound(){
+      angular.element("#audioplayer")[0].onended = null;
+      angular.element("#audioplayer")[0].pause();
+    }
+    function isPaused(){
+      return angular.element("#audioplayer")[0].paused;
+    }
+    function removeCallback() {
+      angular.element("#audioplayer")[0].onended = null;
+    }
+
   }
 })();

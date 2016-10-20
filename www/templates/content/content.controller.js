@@ -89,7 +89,7 @@
   // $log.debug("lessonutils",$scope.lessonutils.getGender())
   // $log.debug("STATE",$state)
   // function playStarAnimation(index){
-  //   var star = 0; 
+  //   var star = 0;
   //   if (contentCtrl.summary.stars) {
   //     star = contentCtrl.summary.stars;
   //   }else if (contentCtrl.summary.score.percent) {
@@ -98,7 +98,7 @@
   //     star = 0;
   //   }
   //   for (var i = 0; i < star.length; i++) {
-      
+
   //   }
   //   angular.element("#audioplayer")[0].pause();
   //   angular.element("#audioSource")[0].src = $stateParams.video.resource.node.parsed_sound;
@@ -121,16 +121,17 @@
       for (var i = 0; i < star; i++) {
         $log.debug("sound source",starSound[i]);
         (function(count){
-          $timeout( function() { 
+          $timeout( function() {
               $scope.resultStarFlag[count] = true;
               $log.debug("sound source",starSound,count,starSound[count]);
-              angular.element("#audioplayer")[0].pause();
-              angular.element("#audioSource")[0].src = "sound/"+starSound[count]+".mp3";
-              angular.element("#audioplayer")[0].load();
-              angular.element("#audioplayer")[0].play();
+            audio.player.play("sound/"+starSound[count]+".mp3");
+              // angular.element("#audioplayer")[0].pause();
+              // angular.element("#audioSource")[0].src = ;
+              // angular.element("#audioplayer")[0].load();
+              // angular.element("#audioplayer")[0].play();
           },(count+1)*1000);
         })(i)
-        
+
       }
     }
 
@@ -230,10 +231,11 @@
       $scope.nodeRibbonFlag = false;
       $scope.ribbon_modal.hide();
       contentCtrl.play();
-      angular.element("#audioSource")[0].src = '';
-      $log.debug("Remove even listener video");
+      audio.player.removeCallback();
+      // angular.element("#audioSource")[0].src = '';
+      // $log.debug("Remove even listener video");
 
-      angular.element("#audioplayer")[0].removeEventListener('ended',intro_end_video,false);
+      // angular.element("#audioplayer")[0].removeEventListener('ended',intro_end_video,false);
     }
     function onPlayerReady(API) {
       $log.debug("API",API)
@@ -250,18 +252,18 @@
 
         if($stateParams.video.resource.node.parsed_sound){
           $scope.nodeRibbonFlag = true;
-          angular.element("#audioplayer")[0].pause();
-          $log.debug("setting",$stateParams.video.resource.node.parsed_sound);
-          angular.element("#audioSource")[0].src = $stateParams.video.resource.node.parsed_sound;
-          angular.element("#audioplayer")[0].load();
-          $log.debug($stateParams.video.resource.node.parsed_sound);
-          angular.element("#audioplayer")[0].play();
-          $log.debug(angular.element("#audioplayer")[0].duration,"duration");
-          $log.debug("Add even listener video");
-          angular.element("#audioplayer")[0].addEventListener('ended',intro_end_video,false);
+          audio.player.play($stateParams.video.resource.node.parsed_sound);
+          // angular.element("#audioplayer")[0].pause();
+          // $log.debug("setting",$stateParams.video.resource.node.parsed_sound);
+          // angular.element("#audioSource")[0].src = ;
+          // angular.element("#audioplayer")[0].load();
+          // $log.debug($stateParams.video.resource.node.parsed_sound);
+          // angular.element("#audioplayer")[0].play();
+          // $log.debug(angular.element("#audioplayer")[0].duration,"duration");
+          // $log.debug("Add even listener video");
+          angular.element("#audioplayer")[0].onended = intro_end_video;
         }else{
           $log.debug(contentCtrl.API,"here");
-          // contentCtrl.API.pause();
           $timeout(function () {
             intro_end_video()
             contentCtrl.play();
@@ -327,10 +329,8 @@
     });
 
   $scope.$on('appResume',function(){
-    $log.debug("App resumr in content controller")
     if($scope.ribbon_modal.isShown()){
-      angular.element("#audioplayer")[0].play();
-
+      audio.player.resume();
     }
 
   })
