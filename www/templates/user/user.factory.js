@@ -275,7 +275,7 @@
     }
 
     function getScoreOfLesson(lessonId, profileId) {
-
+      $log.debug("get score of lesson");
       return profilesDB.get(profileId).then(function (response) {
 
         return response.data.scores[lessonId];

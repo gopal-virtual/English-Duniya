@@ -218,7 +218,7 @@
       for (var i = 0; i < star; i++) {
         $log.debug("sound source",starSound[i]);
         (function(count){
-          $timeout( function() { 
+          $timeout( function() {
               $scope.resultStarFlag[count] = true;
               $log.debug("sound source",starSound,count,starSound[count]);
               angular.element("#audioplayer")[0].pause();
@@ -227,7 +227,7 @@
               angular.element("#audioplayer")[0].play();
           },(count+1)*1000);
         })(i)
-        
+
       }
     }
 
@@ -708,45 +708,7 @@
             delete quizCtrl.report.attempts[CONSTANT.QUESTION.DEMO];
       if (quizType === 'practice') {
 
-        if(quizCtrl.quiz.node.requiresSuggestion){
-          ml.setLessonResultMapping.then(function(){
-            // $log.debug("quiz",quizCtrl.quiz)
-            // $log.debug("Ask suggestions",{"event":"assessment",
-            //   "score":quizCtrl.summary.score.marks,
-            //   "totalScore":quizCtrl.quiz.node.type.score,
-            //   "skill": quizCtrl.quiz.node.tag.toLowerCase() ,
-            //   "sr": quizCtrl.quiz.node.parent
-            // });
-            var suggestion = ml.getLessonSuggestion({"event":"assessment",
-              "score":quizCtrl.summary.score.marks,
-              "totalScore":quizCtrl.quiz.node.type.score,
-              "skill": quizCtrl.quiz.node.tag.toLowerCase() ,
-              "sr": quizCtrl.quiz.node.parent
-            });
-            // $log.debug("got sugggestion",suggestion);
-            User.playlist.add(User.getActiveProfileSync()._id,suggestion).then(function(){
-              $scope.modal.hide().then(function() {
-                analytics.log(
-                  {
-                    name : 'PRACTICE',
-                    type : 'END',
-                    id : quizCtrl.quiz.node.type.id
-                  },
-                  {
-                    time : new Date()
-                  },
-                  User.getActiveProfileSync()._id
-                ) &&
-                $state.go('quiz.summary', {
-                  report: (quizCtrl.report),
-                  summary: (quizCtrl.summary),
-                  type: 'practice'
-                })
-              });
-            })
 
-          })
-        }else{
           $scope.modal.hide().then(function() {
             analytics.log(
               {
@@ -765,7 +727,7 @@
               type: 'practice'
             })
           });
-        }
+
 
 
       } else if (quizType === 'assessment') {
