@@ -131,7 +131,7 @@
       })
       .state('quiz.summary', {
         url: '/summary',
-        onEnter: ['$log', 'audio', 'content', '$stateParams', 'lessonutils', 'User', function ($log, audio, content, $stateParams, lessonutils, User) {
+        onEnter: ['$log', 'audio', 'content', '$stateParams', 'lessonutils', 'User', 'ml', function ($log, audio, content, $stateParams, lessonutils, User, ml) {
 
           var report = $stateParams.report;
           var quiz = $stateParams.quiz;
@@ -165,7 +165,22 @@
 
               }
             })
+            .then(function () {
+              if(quiz.node.requiresSuggestion){
+                ml.setLessonResultMapping.then(function(){
 
+                  var suggestion = ml.getLessonSuggestion({"event":"assessment",
+                    "score":summary.score.marks,
+                    "totalScore":quiz.node.type.score,
+                    "skill": quiz.node.tag.toLowerCase() ,
+                    "sr": quiz.node.parent
+                  });
+                  // $log.debug("got sugggestion",suggestion);
+                  return User.playlist.add(User.getActiveProfileSync()._id,suggestion)
+
+                })
+              }
+            })
             .then(function (success) {
               // var report_id = success.id;
               var attempts = [];

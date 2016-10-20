@@ -218,16 +218,17 @@
       for (var i = 0; i < star; i++) {
         $log.debug("sound source",starSound[i]);
         (function(count){
-          $timeout( function() { 
+          $timeout( function() {
               $scope.resultStarFlag[count] = true;
               $log.debug("sound source",starSound,count,starSound[count]);
-              angular.element("#audioplayer")[0].pause();
-              angular.element("#audioSource")[0].src = "sound/"+starSound[count]+".mp3";
-              angular.element("#audioplayer")[0].load();
-              angular.element("#audioplayer")[0].play();
+            audio.player.play("sound/"+starSound[count]+".mp3")
+              // angular.element("#audioplayer")[0].pause();
+              // angular.element("#audioSource")[0].src = ;
+              // angular.element("#audioplayer")[0].load();
+              // angular.element("#audioplayer")[0].play();
           },(count+1)*1000);
         })(i)
-        
+
       }
     }
 
@@ -632,17 +633,14 @@
     }
 
     function playAudio(key, index) {
-      angular.element("#audioplayer")[0].pause();
-      if (key) {
-        var src = key;
-        angular.element("#audioSource")[0].src = src;
-        angular.element("#audioplayer")[0].load();
-        angular.element("#audioplayer")[0].play();
+      if(key){
+        audio.player.play(key)
       }
+
     }
     function stopAudio() {
-      angular.element("#audioSource")[0].src = '';
-      angular.element("#audioplayer")[0].pause();
+      audio.player.stop()
+
     }
 
     function generateSummary(report, quiz) {
@@ -708,45 +706,7 @@
             delete quizCtrl.report.attempts[CONSTANT.QUESTION.DEMO];
       if (quizType === 'practice') {
 
-        if(quizCtrl.quiz.node.requiresSuggestion){
-          ml.setLessonResultMapping.then(function(){
-            // $log.debug("quiz",quizCtrl.quiz)
-            // $log.debug("Ask suggestions",{"event":"assessment",
-            //   "score":quizCtrl.summary.score.marks,
-            //   "totalScore":quizCtrl.quiz.node.type.score,
-            //   "skill": quizCtrl.quiz.node.tag.toLowerCase() ,
-            //   "sr": quizCtrl.quiz.node.parent
-            // });
-            var suggestion = ml.getLessonSuggestion({"event":"assessment",
-              "score":quizCtrl.summary.score.marks,
-              "totalScore":quizCtrl.quiz.node.type.score,
-              "skill": quizCtrl.quiz.node.tag.toLowerCase() ,
-              "sr": quizCtrl.quiz.node.parent
-            });
-            // $log.debug("got sugggestion",suggestion);
-            User.playlist.add(User.getActiveProfileSync()._id,suggestion).then(function(){
-              $scope.modal.hide().then(function() {
-                analytics.log(
-                  {
-                    name : 'PRACTICE',
-                    type : 'END',
-                    id : quizCtrl.quiz.node.type.id
-                  },
-                  {
-                    time : new Date()
-                  },
-                  User.getActiveProfileSync()._id
-                ) &&
-                $state.go('quiz.summary', {
-                  report: (quizCtrl.report),
-                  summary: (quizCtrl.summary),
-                  type: 'practice'
-                })
-              });
-            })
 
-          })
-        }else{
           $scope.modal.hide().then(function() {
             analytics.log(
               {
@@ -765,7 +725,7 @@
               type: 'practice'
             })
           });
-        }
+
 
 
       } else if (quizType === 'assessment') {
@@ -951,19 +911,13 @@
 
       if (nzTour.current) {
         if(nzTour.current.step === 0){
-          angular.element("#audioplayer")[0].pause();
-          angular.element("#audioSource")[0].src = 'sound/demo-quiz-2.mp3';
-          angular.element("#audioplayer")[0].load();
-          angular.element("#audioplayer")[0].play();
+          audio.player.play('sound/demo-quiz-2.mp3');
         }else if(nzTour.current.step === 1){
-          angular.element("#audioplayer")[0].pause();
-          angular.element("#audioSource")[0].src = 'sound/demo-quiz-3.mp3';
-          angular.element("#audioplayer")[0].load();
-          angular.element("#audioplayer")[0].play();
+          audio.player.play('sound/demo-quiz-3.mp3');
         }
         else if(nzTour.current.step === 2){
           $ionicPlatform.registerBackButtonAction(function(event) {
-            angular.element("#audioplayer")[0].pause();
+            audio.player.stop();
             $scope.showNodeMenu();
           }, 101);
         }
@@ -973,16 +927,18 @@
     function playInstruction(index){
 
       if(quizCtrl.quiz.objects[index].node.instructionSound){
+        audio.player.play(quizCtrl.quiz.objects[index].node.instructionSound)
+        angular.element("#audioplayer")[0].onended = instructionEndCallback
 
-        angular.element("#audioplayer")[0].pause();
-        angular.element("#audioSource")[0].src = quizCtrl.quiz.objects[index].node.instructionSound;
-        angular.element("#audioplayer")[0].load();
-        angular.element("#audioplayer")[0].play();
       }else if(quizCtrl.quiz.objects[index].node){
-
-        quizCtrl.playAudio(quizCtrl.quiz.objects[index].node.widgetSound,index);
+        audio.player.play(quizCtrl.quiz.objects[index].node.widgetSound);
         quizCtrl.highlightSoundIcon(index);
       }
+    }
+    function instructionEndCallback(){
+      var index = quizCtrl.currentIndex;
+      audio.player.play(quizCtrl.quiz.objects[index].node.widgetSound);
+      quizCtrl.highlightSoundIcon(index);
     }
 
     function logQuestion(index, type){
@@ -999,9 +955,10 @@
         )
     }
     function intro_end_quiz(){
-      // $log.debug("removed event listener quiz",$state);
-      angular.element("#audioplayer")[0].removeEventListener('ended',intro_end_quiz, false);
+      $log.debug("Inside onended event");
 
+      // $log.debug("removed event listener quiz",$state);
+      angular.element("#audioplayer")[0].onended = null
       if($state.current.name == 'quiz.questions'){
         $scope.nodeRibbonFlag = false;
         $scope.nodeRibbon.hide().then(function(){
@@ -1009,14 +966,10 @@
 
             $timeout(function(){
               if($stateParams.type!=='litmus'){
-                angular.element("#audioplayer")[0].pause();
-                angular.element("#audioSource")[0].src = 'sound/demo-quiz-1.mp3';
-                angular.element("#audioplayer")[0].load();
-                angular.element("#audioplayer")[0].play();
+                audio.player.play('sound/demo-quiz-1.mp3');
                 nzTour.start($scope.tour);
                 User.demo.setStep(5);
                 $timeout(function(){
-
                   if(nzTour.current.step === 0){
                     tourNextStep();
                   }
@@ -1026,11 +979,10 @@
             });
 
           }else{
-            // $log.debug("playInstruction")
             quizCtrl.playInstruction(0);
 
             $ionicPlatform.registerBackButtonAction(function(event) {
-              angular.element("#audioplayer")[0].pause();
+              audio.player.stop();
               $scope.showNodeMenu();
             }, 101);
           }
@@ -1048,15 +1000,10 @@
     }).then(function(modal){
       $scope.nodeRibbon = modal;
       $scope.nodeRibbonFlag = true;
-      // modal.show();
-      // $log.debug(quiz);
       if(quiz.node.parsed_sound){
-        angular.element("#audioplayer")[0].pause();
-        angular.element("#audioSource")[0].src = quiz.node.parsed_sound;
-        angular.element("#audioplayer")[0].load();
-        angular.element("#audioplayer")[0].play();
-        // $log.debug("Added even listener quiz");
-        angular.element("#audioplayer")[0].addEventListener('ended', intro_end_quiz, false);
+        audio.player.play(quiz.node.parsed_sound);
+        angular.element("#audioplayer")[0].onended = intro_end_quiz;
+        $log.debug("Added onended event");
       }
       else{
         $timeout(function(){
