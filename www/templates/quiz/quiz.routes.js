@@ -131,7 +131,7 @@
       })
       .state('quiz.summary', {
         url: '/summary',
-        onEnter: ['$log', 'audio', 'content', '$stateParams', 'lessonutils', 'User', function ($log, audio, content, $stateParams, lessonutils, User) {
+        onEnter: ['$log', 'audio', 'content', '$stateParams', 'lessonutils', 'User', 'ml', function ($log, audio, content, $stateParams, lessonutils, User, ml) {
 
           var report = $stateParams.report;
           var quiz = $stateParams.quiz;
@@ -165,7 +165,22 @@
 
               }
             })
+            .then(function () {
+              if(quiz.node.requiresSuggestion){
+                ml.setLessonResultMapping.then(function(){
 
+                  var suggestion = ml.getLessonSuggestion({"event":"assessment",
+                    "score":summary.score.marks,
+                    "totalScore":quiz.node.type.score,
+                    "skill": quiz.node.tag.toLowerCase() ,
+                    "sr": quiz.node.parent
+                  });
+                  // $log.debug("got sugggestion",suggestion);
+                  return User.playlist.add(User.getActiveProfileSync()._id,suggestion)
+
+                })
+              }
+            })
             .then(function (success) {
               // var report_id = success.id;
               var attempts = [];
@@ -205,7 +220,8 @@
         },
         templateUrl: CONSTANT.PATH.QUIZ + '/quiz.litmus_summary' + CONSTANT.VIEW,
 
-        controller: ['$log','User', 'audio', '$timeout','$stateParams','$scope', function ($log,User, audio,$timeout,$stateParams,$scope) {
+        controller: ['$log','User','audio', '$timeout','$stateParams','$scope', function ($log,User,audio,$timeout,$stateParams,$scope) {
+          $scope.audio = audio;
           $scope.gender = User.getActiveProfileSync().data.profile.gender == 'M'?'boy':'girl';
           $timeout(function() {
             $log.debug("Printing progressBar",$stateParams);
@@ -224,7 +240,8 @@
       .state('litmus_start', {
         url: '/litmus_start',
         templateUrl: CONSTANT.PATH.QUIZ + '/quiz.litmus_start' + CONSTANT.VIEW,
-        controller: ['$log', 'User','$scope', function ($log,User,$scope) {
+        controller: ['$log', 'User','$scope','audio', function ($log,User,$scope,audio) {
+          $scope.audio = audio;
           $scope.gender = User.getActiveProfileSync().data.profile.gender == 'M'?'boy':'girl';
           $scope.pauseAudio = pauseAudio;
           function pauseAudio(){

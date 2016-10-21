@@ -21,7 +21,8 @@
     'content',
     '$ionicSlideBoxDelegate',
     '$timeout',
-    'User'
+    'User',
+    'audio'
   ];
 
   function userController(CONSTANT,
@@ -39,7 +40,8 @@
                           content,
                           $ionicSlideBoxDelegate,
                           $timeout,
-                          User) {
+                          User,
+                          audio) {
     var userCtrl = this;
     userCtrl.calcAge = calcAge;
     userCtrl.closeKeyboard = closeKeyboard;
@@ -58,6 +60,8 @@
     userCtrl.playAudio = playAudio;
 
     userCtrl.playAudio(-1);
+    $log.debug("Hukata")
+    $scope.audio = audio;
     $timeout(function () {
       userCtrl.playAudio(0);
     }, 5000);
@@ -75,12 +79,10 @@
       if (index == 2) {
         src = 'sound/voice_class.mp3'
       }
-
-      angular.element("#audioplayer")[0].pause();
-      if (src) {
-        angular.element("#audioSource")[0].src = src;
-        angular.element("#audioplayer")[0].load();
-        angular.element("#audioplayer")[0].play();
+      if(src){
+        audio.player.play(src);
+      }else{
+        audio.player.stop();
       }
     }
 
