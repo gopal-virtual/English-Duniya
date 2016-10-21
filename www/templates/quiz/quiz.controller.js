@@ -809,9 +809,15 @@
     //
     //     }
     //   })
-    $ionicPlatform.registerBackButtonAction(function(event) {
-      event.preventDefault()
-    }, 101);
+
+
+    // YOU ARE HERE
+    // $ionicPlatform.registerBackButtonAction(function(event) {
+    //   event.preventDefault()
+    // }, 101);
+    
+
+
       // $ionicPlatform.registerBackButtonAction(function(event) {
       //     if($state.is('quiz.questions')){
       //         try {
@@ -920,10 +926,13 @@
           audio.player.play('sound/demo-quiz-3.mp3');
         }
         else if(nzTour.current.step === 2){
-          $ionicPlatform.registerBackButtonAction(function(event) {
-            audio.player.stop();
-            $scope.showNodeMenu();
-          }, 101);
+          
+          //HERE YOU ARE
+
+          // $ionicPlatform.registerBackButtonAction(function(event) {
+          //   audio.player.stop();
+          //   $scope.showNodeMenu();
+          // }, 101);
         }
         nzTour.next();
       }
@@ -985,10 +994,9 @@
           }else{
             quizCtrl.playInstruction(0);
 
-            $ionicPlatform.registerBackButtonAction(function(event) {
-              audio.player.stop();
-              $scope.showNodeMenu();
-            }, 101);
+            //YOU ARE HERE
+            // $ionicPlatform.registerBackButtonAction(function(event) {
+            // }, 101);
           }
 
         });
@@ -1020,5 +1028,13 @@
 
     // $scope.progressBar();
 
+            $scope.$on('backButton',function(){
+
+              // $log.debug("nzTour",nzTour.current.step);
+              if (nzTour == undefined) {
+                audio.player.stop();
+                $scope.showNodeMenu();
+              }
+            })
   }
 })();
