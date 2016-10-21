@@ -149,8 +149,8 @@
       ;
   }
 
-  $ionicPlatform.onHardwareBackButton(function(event) {
-      
+  // $ionicPlatform.onHardwareBackButton(function(event) {
+  $scope.$on('backButton',function(){
       try {
         if (!$scope.ribbon_modal.isShown() && !$scope.resultMenu.isShown()) {
           $log.debug("HERE")
@@ -163,6 +163,7 @@
         ;
       }
   })
+  // })
 
     function onVideoComplete() {
         contentCtrl.summary = {

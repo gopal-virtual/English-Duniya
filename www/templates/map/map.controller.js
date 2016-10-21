@@ -197,9 +197,9 @@
         return localStorage.demo_node ? JSON.parse(localStorage.demo_node).type : 0;
     }
 
-    $ionicPlatform.registerBackButtonAction(function(event) {
-      event.preventDefault();
-    }, 100);
+    // $ionicPlatform.registerBackButtonAction(function(event) {
+    //   event.preventDefault();
+    // }, 100);
 
 
     $scope.$on('removeLoader',function() {

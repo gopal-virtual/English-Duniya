@@ -57,8 +57,8 @@
         }
       },
       'STAR': {
-        'ONE': 60,
-        'TWO': 80,
+        'ONE': 70,
+        'TWO': 85,
         'THREE': 100
       },
       'WIDGETS': {

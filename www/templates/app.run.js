@@ -8,8 +8,15 @@
 
 
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
+    $ionicPlatform.registerBackButtonAction(function(event){
+      event.preventDefault();
+      // event.stopPropagation();
+      $log.warn("pressed hardware back button");
+      $rootScope.$broadcast("backButton");
+    },510)
     //$http.defaults.headers.common['Access-Control-Request-Headers'] = 'accept, auth-token, content-type, xsrfcookiename';
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+
 
         //if not authenticated, redirect to login page
       // if (!Auth.isAuthorised() && toState.name != 'auth.signin' && toState.name != 'auth.signup' && toState.name != 'auth.forgot') {
