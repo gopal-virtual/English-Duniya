@@ -815,7 +815,7 @@
     // $ionicPlatform.registerBackButtonAction(function(event) {
     //   event.preventDefault()
     // }, 101);
-    
+
 
 
       // $ionicPlatform.registerBackButtonAction(function(event) {
@@ -926,7 +926,7 @@
           audio.player.play('sound/demo-quiz-3.mp3');
         }
         else if(nzTour.current.step === 2){
-          
+
           //HERE YOU ARE
 
           // $ionicPlatform.registerBackButtonAction(function(event) {
@@ -1029,9 +1029,9 @@
     // $scope.progressBar();
 
             $scope.$on('backButton',function(){
-
+                $log.debug('back button pressed')
               // $log.debug("nzTour",nzTour.current.step);
-              if (nzTour == undefined) {
+              if (!nzTour.current) {
                 audio.player.stop();
                 $scope.showNodeMenu();
               }
