@@ -167,7 +167,7 @@
             })
             .then(function () {
               if(quiz.node.requiresSuggestion){
-                ml.setLessonResultMapping.then(function(){
+                ml.setLessonResultMapping().then(function(){
 
                   var suggestion = ml.getLessonSuggestion({"event":"assessment",
                     "score":summary.score.marks,
