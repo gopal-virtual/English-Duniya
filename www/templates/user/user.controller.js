@@ -112,9 +112,11 @@
       return ~~((Date.now() - birthday) / (31557600000));
     }
 
-    $ionicPlatform.registerBackButtonAction(function (event) {
-      event.preventDefault();
-    }, 100);
+
+    // YOU ARE HERE
+    // $ionicPlatform.registerBackButtonAction(function (event) {
+    //   event.preventDefault();
+    // }, 100);
 
     function convertDate(date) {
       function pad(s) {

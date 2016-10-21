@@ -19,7 +19,8 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
         // }
         log.debug("demoNode",demoNode);
         for (var i = 0; i < lessonNumber; i++) {
-        var content_type2 = content_type[Math.floor(Math.random() * content_type.length)]
+        // var content_type2 = content_type[Math.floor(Math.random() * content_type.length)]
+        var content_type2 = content_type[0]
         var demoNode = {
                 "node": {
                     "id": "57493ccc-b320-47c7-83ea-c2e0d9fe794f",
@@ -116,7 +117,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
     }
     var regionPathOffset = {
         "desert1" : 320,
-        "desert2" : 575,
+        "desert2" : 625,
         "ice1" : 400,
         "ice2" : 550,
         "forest1" : 250,
