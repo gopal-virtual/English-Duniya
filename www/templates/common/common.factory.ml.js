@@ -15,7 +15,7 @@
   function ml(data, $log, $q, User) {
     var ml = {
       MAX: 10,
-      passingThreshold: 0.75,
+      passingThreshold: 0.7,
       roadMapMax: 8,
       maxSuggestionCount: 3,
       runDiagnostic: runDiagnostic,
@@ -95,7 +95,7 @@
           ml.roadMapData["roadMap"][0]["currentNode"] = ml.roadMapData["roadMap"][0]["sr"];
           ml.roadMapData["roadMap"][0]["previousNode"] = null;
           return ml.roadMapData["roadMap"][0]["sr"];
-        }        
+        }
       }
     }
 
@@ -214,7 +214,7 @@
               // if not roadMap lessons fail, if not overcount suggestioncount
               var suggestions = suggestBridge(data["skill"], data["sr"], ml.roadMapData["recommendationsWithPrereqs"]);
               $log.debug('if not roadMap lessons fail, if not overcount suggestioncount', suggestions);
-              
+
               ml.roadMapData["roadMap"][0]["previousNode"] = ml.roadMapData["roadMap"][0]["currentNode"];
               ml.roadMapData["roadMap"][0]["currentNode"] = data["sr"];
               ml.roadMapData["roadMap"][0]["resultTrack"][data["sr"]] = suggestions;
@@ -284,7 +284,7 @@
             "unit": unit
           }
         }
-        
+
         $log.debug('final lessonResultMapping', lessonResultMapping);
         return lessonResultMapping;
       })
