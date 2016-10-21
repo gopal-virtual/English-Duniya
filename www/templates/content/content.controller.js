@@ -292,12 +292,16 @@
     $scope.openNodeMenu = function() {
       if (contentCtrl.API.currentState == 'pause') {
         // orientation.setPortrait()        ;
-        $scope.nodeMenu.show();
+        $scope.nodeMenu.show().then(function(){
+          audio.player.play('sound/pause_menu.mp3');
+        });
       }
       return true;
     }
     $scope.closeNodeMenu = function() {
-      $scope.nodeMenu.hide();
+      $scope.nodeMenu.hide().then(function(){
+        audio.player.stop();
+      });
       return true;
     }
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal-rope' + CONSTANT.VIEW, {
