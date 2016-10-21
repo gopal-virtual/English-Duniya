@@ -150,6 +150,7 @@
   }
 
   $ionicPlatform.onHardwareBackButton(function(event) {
+      
       try {
         if (!$scope.ribbon_modal.isShown() && !$scope.resultMenu.isShown()) {
           $log.debug("HERE")
