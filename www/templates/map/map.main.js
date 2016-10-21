@@ -1,6 +1,73 @@
 window.createGame = function(scope, stateParams, lessons, audio, injector, log, lessonutils, selected_region, first_node_index, last_node_index) {
     'use strict';
 
+    log.debug("LESSONS ARE AMAZING",lessons);
+
+    var DEBUG = false;
+
+    if(DEBUG){
+        lessons = [];
+        var lessonNumber = 250,
+        // var lesson_data = {
+            content_type = [{
+                                name: "resource",
+                                type: 19
+                            },{
+                                name: "assessment",
+                                type: 26}],
+            tag = ["Vocabulary","Listening","Grammar","Reading"];
+        // }
+        log.debug("demoNode",demoNode);
+        for (var i = 0; i < lessonNumber; i++) {
+        var content_type2 = content_type[Math.floor(Math.random() * content_type.length)]
+        var demoNode = {
+                "node": {
+                    "id": "57493ccc-b320-47c7-83ea-c2e0d9fe794f",
+                    "content_type_name": content_type2.name,
+                    "type": {
+                        "id": "1164be82-a52f-49b0-96cf-304f64024f20",
+                        "deleted": null,
+                        "created": "2016-10-13T10:36:48.410655Z",
+                        "updated": "2016-10-13T10:36:48.410685Z",
+                        "path": "/media/ell/videos/vocabulary-nouns-person-place-animal-thing_2TKFBO.mp4",
+                        "file_type": "mp4",
+                        "size": 565746,
+                        "score": 50
+                    },
+                    "tag": (function(tag){
+                        return tag[Math.floor(Math.random() * tag.length)];
+                    })(tag),
+                    "meta": {},
+                    "deleted": null,
+                    "created": "2016-10-13T11:44:48.569753Z",
+                    "updated": "2016-10-13T11:44:48.629761Z",
+                    "title": "Vocabulary  - Nouns - person, place, animal, thing.mp4",
+                    "description": "",
+                    "object_id": "1164be82-a52f-49b0-96cf-304f64024f20",
+                    "status": "PUBLISHED",
+                    "lft": 633,
+                    "rght": 634,
+                    "tree_id": 1,
+                    "level": 2,
+                    "parent": "8e23c275-09a2-40bb-870b-76ca373a2500",
+                    "content_type": content_type2.type,
+                    "account": "0429fb91-4f3c-47de-9adb-609996962188",
+                    "intro_sound": "/media/ell/intros/1-14.mp3",
+                    "playlist_index": 0
+                },
+                "objects": [],
+                "locked": false,
+                "stars": 3
+            }
+            // demoNode.node["tag"] = "";
+            lessons[i] = demoNode;
+            log.debug(Math.floor(Math.random() * content_type.length),tag[Math.floor(Math.random() * tag.length)])
+            // lessons[i].node["content_type_name"] = content_type[Math.floor(Math.random() * content_type.length)];
+            // lessons[i].node["tag"] = tag[Math.floor(Math.random() * tag.length)];
+        }
+        // lessons = 
+    }
+
     var game = new Phaser.Game("100", "100", Phaser.CANVAS, 'map_canvas', null, true, true, null);
     var gameSprites;
     var sprites = {};
@@ -41,19 +108,19 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
     var regionNodes = {
         "desert1" : 17,
         "desert2" : 24,
-        "ice1" : 24,
-        "ice2" : 24,
-        "forest1" : 26,
-        "forest2" : 26,
+        "ice1" : 22,
+        "ice2" : 19,
+        "forest1" : 20,
+        "forest2" : 18,
         "peru1" : 26
     }
     var regionPathOffset = {
         "desert1" : 320,
         "desert2" : 575,
         "ice1" : 400,
-        "ice2" : 480,
+        "ice2" : 550,
         "forest1" : 250,
-        "forest2" : 170,
+        "forest2" : 600,
         "peru1" : 350
     }
     var nodeColors = {
@@ -70,6 +137,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
         var regionPage = 0;
     }
     var renderedRegion = [regions[regionPage]];
+
 
 
     // var renderedRegion = [];
@@ -844,9 +912,13 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                     if (i==0) {
                         first_node_index = 0;
                     }else {
-                        first_node_index += regionNodes[regions[i-1]];
+                        first_node_index += regionNodes[regions[i-1]] - 1;
                     }
-                    last_node_index += regionNodes[regions[i]]-1;
+                    last_node_index += regionNodes[regions[i]] - 1;
+                }
+
+                if (regionPage != 0) {
+                    first_node_index = first_node_index+1;
                 }
                 log.debug  ("FIRST_NODE",first_node_index,"LAST_NODE",last_node_index);
                 for (var i = first_node_index, distance = 1 / (last_node_index-first_node_index), j =0; i < lessons.length; i++, j+=distance) {

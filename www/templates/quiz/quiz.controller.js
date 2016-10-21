@@ -823,10 +823,14 @@
       // }, 101);
 
     $scope.showNodeMenu = function() {
-      quizCtrl.pauseModal.show();
+      quizCtrl.pauseModal.show().then(function(){
+        audio.player.play('sound/pause_menu.mp3');
+      });
     }
     $scope.closeNodeMenu = function() {
-      quizCtrl.pauseModal.hide();
+      quizCtrl.pauseModal.hide().then(function(){
+        audio.player.stop();
+      });
     }
 
     function restartQuiz() {
