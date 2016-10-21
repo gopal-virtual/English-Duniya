@@ -41,7 +41,7 @@
       setMLDqJSON: setMLDqJSON(),
       setMLKmapsJSON: setMLKmapsJSON(),
       setMapping: setMapping(),
-      setLessonResultMapping: setLessonResultMapping(),
+      setLessonResultMapping: setLessonResultMapping,
       roadMapData: {},
       getLessonSuggestion: getLessonSuggestion,
       updateRoadMapSuggestion: updateRoadMapSuggestion,
@@ -262,7 +262,7 @@
 
     function getLessonResultMapping(){
       var student_id = User.getActiveProfileSync()._id;
-      // $log.debug('in getLessonResultMapping', student_id);
+      $log.debug('in getLessonResultMapping', student_id);
       return User.scores.getScoreList(student_id)
       .then(function(res){
         $log.debug('res lessonResultMapping', res);
@@ -295,12 +295,13 @@
 
 
     function setLessonResultMapping(){
-      // $log.debug('in setLessonResultMapping');
+      $log.debug('in setLessonResultMapping');
       return getLessonResultMapping()
       .then(function(res){
-        // $log.debug('setLessonResultMapping', res);
+        $log.debug('setLessonResultMapping', res);
         ml.lessonResultMapping = res;
         // $log.debug('ml.lessonResultMapping set', ml.lessonResultMapping);
+        return true;
       });
     }
 
