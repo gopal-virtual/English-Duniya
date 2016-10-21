@@ -517,11 +517,12 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                 var graphics = game.add.graphics(0,0);
                 // graphics.beginFill(0xFFFFFF, 0.8);
                 graphics.beginFill(0x968B7B, 1);
-                graphics.drawRoundedRect(-20,-12,185,84,10)
+                graphics.drawRoundedRect(-20,-14,starcounthaha.toString().length > 2?185:165,84,10)
                 graphics.endFill();
                 graphics.beginFill(0xF9F2E8, 1);
                 //shadow color #968B7B
-                graphics.drawRoundedRect(-20,-20,185,84,10)
+                log.debug("Hakuna Matata",starcounthaha.toString().length > 2?185:165);
+                graphics.drawRoundedRect(-20,-20,starcounthaha.toString().length > 2?185:165,84,10)
                 graphics.endFill();
                 groups.nonRegion.hud.add(graphics);
                 groups.nonRegion.hud.fixedToCamera = true;
