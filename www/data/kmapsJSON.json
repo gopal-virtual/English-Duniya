@@ -969,10 +969,7 @@
         "5fcaf027-79a2-4306-bf3d-0d4ab6da153e": {
             "topic": "upper case", 
             "name": "letter names  letter to name", 
-            "parent": [
-                "fae3e782-6ac6-4c82-bc60-7fe0d9e7f233", 
-                "633f8edc-228e-4a8d-b1be-f6bf2e0daf8b"
-            ], 
+            "parent": [], 
             "level": 0, 
             "grade": 1, 
             "sr": "5fcaf027-79a2-4306-bf3d-0d4ab6da153e", 
