@@ -156,6 +156,8 @@
       'tourFlag': localStorage.getItem('tourFlag')
     }
 
+    quizCtrl.noPauseFlag = true;
+
     $scope.tourNextStep = tourNextStep;
     $scope.lessonutils = lessonutils;
     $scope.userGender = User.getActiveProfileSync().data.profile.gender;
@@ -900,7 +902,12 @@
     // intronext
 
     $scope.tour = {
-      config: {},
+      config: {
+        onComplete: function () {
+          quizCtrl.noPauseFlag = false;
+          $log.debug('Unsetting noPauseFlag2')
+        }
+      },
       steps: [{
         target: '#step1',
         content: 'This is the first step!',
@@ -926,7 +933,7 @@
           audio.player.play('sound/demo-quiz-3.mp3');
         }
         else if(nzTour.current.step === 2){
-
+          // $log.debug("Unsetting No Pause Flag")
           //HERE YOU ARE
 
           // $ionicPlatform.registerBackButtonAction(function(event) {
@@ -976,8 +983,8 @@
         $scope.nodeRibbonFlag = false;
         $scope.nodeRibbon.hide().then(function(){
           if($state.is('quiz.questions') && User.demo.isShown(5)){
-
             $timeout(function(){
+              // quizCtrl.noPauseFlag;
               if($stateParams.type!=='litmus'){
                 audio.player.play('sound/demo-quiz-1.mp3');
                 nzTour.start($scope.tour);
@@ -986,12 +993,17 @@
                   if(nzTour.current.step === 0){
                     tourNextStep();
                   }
+                  // log.debug(nzTour.current)
                 },3500)
               }
 
             });
 
           }else{
+
+            $log.debug('Demo has ended')
+            quizCtrl.noPauseFlag = false;
+            $log.debug("Unsetting noPauseFlag");
             quizCtrl.playInstruction(0);
 
             //YOU ARE HERE
@@ -1012,6 +1024,8 @@
     }).then(function(modal){
       $scope.nodeRibbon = modal;
       $scope.nodeRibbonFlag = true;
+      quizCtrl.noPauseFlag = true;
+      $log.debug("Setting No Pause Flag");
       if(quiz.node.parsed_sound){
         audio.player.play(quiz.node.parsed_sound);
         angular.element("#audioplayer")[0].onended = intro_end_quiz;
@@ -1031,7 +1045,7 @@
             $scope.$on('backButton',function(){
                 $log.debug('back button pressed')
               // $log.debug("nzTour",nzTour.current.step);
-              if (!nzTour.current) {
+              if (!quizCtrl.noPauseFlag) {
                 audio.player.stop();
                 $scope.showNodeMenu();
               }
