@@ -1031,7 +1031,7 @@
             $scope.$on('backButton',function(){
                 $log.debug('back button pressed')
               // $log.debug("nzTour",nzTour.current.step);
-              if (!nzTour.current) {
+              if (!nzTour.current && !$scope.nodeRibbon.isShown()) {
                 audio.player.stop();
                 $scope.showNodeMenu();
               }
