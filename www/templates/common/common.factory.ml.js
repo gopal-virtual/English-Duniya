@@ -102,22 +102,23 @@
     function deleteSuccessfulNodeFromRoadmap(sr){
       var roadMap = ml.roadMapData["roadMap"];
       for(var i = 0;i<roadMap.length;i++){
-        // var resultTrack = roadMap[i]["resultTrack"];
-        // for(var node in resultTrack){
-        //   for(var j = 0;j<resultTrack[node].length;j++){
-        //     if(resultTrack[node][j] == sr){
-        //       resultTrack[node].splice(j, 1);
-        //       j--;
-        //     }
-        //   }
-        // }
-        // roadMap[i]["resultTrack"] = resultTrack;
+        var resultTrack = roadMap[i]["resultTrack"];
+        for(var node in resultTrack){
+          for(var j = 0;j<resultTrack[node].length;j++){
+            if(resultTrack[node][j] == sr){
+              resultTrack[node].splice(j, 1);
+              j--;
+            }
+          }
+        }
+        roadMap[i]["resultTrack"] = resultTrack;
         var lesson = roadMap[i];
         if(lesson["sr"] == sr){
           roadMap.splice(i, 1);
           i--;
         }
       }
+      return roadMap;
     }
 
 
@@ -149,7 +150,7 @@
             // result roadMap lesson pass
             $log.debug('result roadMap lesson pass');
             // ml.roadMapData["roadMap"].splice(0, 1);
-            deleteSuccessfulNodeFromRoadmap(data["sr"]);
+            ml.roadMapData["roadMap"] = deleteSuccessfulNodeFromRoadmap(data["sr"]);
             var lesson = ml.roadMapData["roadMap"][0];
             if (lesson != undefined){
               // returning suggestion
@@ -185,8 +186,8 @@
           if(result >= ml.passingThreshold){
             // if not roadMap lessons pass
             $log.debug('if not roadMap lessons pass');
-            ml.roadMapData["roadMap"][0]["resultTrack"][ml.roadMapData["roadMap"][0]["currentNode"]].splice(0,1);
-            deleteSuccessfulNodeFromRoadmap(data["sr"]);
+            // ml.roadMapData["roadMap"][0]["resultTrack"][ml.roadMapData["roadMap"][0]["currentNode"]].splice(0,1);
+            ml.roadMapData["roadMap"] = deleteSuccessfulNodeFromRoadmap(data["sr"]);
             return handleMultipleSuggestions();
           }else{
             // if not roadMap lessons fail
