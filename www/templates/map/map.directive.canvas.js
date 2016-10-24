@@ -12,9 +12,7 @@
             templateUrl: CONSTANT.PATH.MAP + '/map.canvas' + CONSTANT.VIEW,
             scope: {
               lessons : '=',
-              animation : '=',
-              startIndex : '=',
-              endIndex : '='
+              totalStars : '=',
             },
             link: linkFunc,
         };
@@ -22,10 +20,9 @@
         return mapCanvas;
 
         function linkFunc(scope, el, attr, ctrl) {
-            var region = ["desert","tundra","forest","peru"];
             $timeout(
               function(){
-                  createGame(scope, $stateParams, scope.lessons, audio, $injector, $log, lessonutils, region, scope.startIndex, scope.endIndex)
+                  createGame(scope, $stateParams, scope.lessons, audio, $injector, $log, lessonutils)
               }
             );
         }

@@ -1,4 +1,4 @@
-window.createGame = function(scope, stateParams, lessons, audio, injector, log, lessonutils, selected_region, first_node_index, last_node_index) {
+window.createGame = function(scope, stateParams, lessons, audio, injector, log, lessonutils) {
     'use strict';
 
     log.debug("LESSONS ARE AMAZING",lessons);
@@ -583,15 +583,29 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
             var starcounthaha = 2;
             function renderHud(){
                 log.debug("I am making HUD. Wohoooo");
+                var hudWidth = 185;
+                log.debug("Stars ",scope)
+                switch(starcounthaha.toString().length) {
+                    case 1:
+                        hudWidth = 145;
+                        break;
+                    case 2:
+                        hudWidth = 165;
+                        break;
+                    case 3:
+                        hudWidth = 185;
+                        break;
+                }
+
                 var graphics = game.add.graphics(0,0);
                 // graphics.beginFill(0xFFFFFF, 0.8);
                 graphics.beginFill(0x968B7B, 1);
-                graphics.drawRoundedRect(-20,-14,starcounthaha.toString().length > 2?185:165,84,10)
+                graphics.drawRoundedRect(-20,-14,hudWidth,84,10)
                 graphics.endFill();
                 graphics.beginFill(0xF9F2E8, 1);
                 //shadow color #968B7B
-                log.debug("Hakuna Matata",starcounthaha.toString().length > 2?185:165);
-                graphics.drawRoundedRect(-20,-20,starcounthaha.toString().length > 2?185:165,84,10)
+                log.debug("Hakuna Matata",hudWidth);
+                graphics.drawRoundedRect(-20,-20,hudWidth,84,10)
                 graphics.endFill();
                 groups.nonRegion.hud.add(graphics);
                 groups.nonRegion.hud.fixedToCamera = true;
