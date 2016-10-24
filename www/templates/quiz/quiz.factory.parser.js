@@ -18,7 +18,8 @@
       removeSoundTag: removeSoundTag,
       removeImageTag: removeImageTag,
       getLayout: getLayout,
-      getOptionsFontSize: getOptionsFontSize
+      getOptionsFontSize: getOptionsFontSize,
+      addContainerToText : addContainerToText
     }
 
     function getSoundId(string) {
@@ -43,6 +44,7 @@
     function parseToDisplay(string, index, quiz) {
       var d = $q.defer();
       var text = this.removeSoundTag(string, index);
+      text = this.addContainerToText(text)
       if (this.getImageId(text)) {
          this.replaceImageTag(text, index, quiz).then(function(text){
            d.resolve(text.trim().length > 0 ? text.trim() : CONSTANT.WIDGETS.SPEAKER_IMAGE)
@@ -54,6 +56,14 @@
       return d.promise;
     }
 
+    function addContainerToText(text) {
+        if(text.replace(imageTagRegex, "").trim().length){
+            return text.match(imageTagRegex) ? "<div>" + text.replace(imageTagRegex, "") + "</div>" + text.match(imageTagRegex)[0] : "<div>" + text.replace(imageTagRegex, "") + "</div>";
+        }
+        else{
+            return text.match(imageTagRegex) ? text.match(imageTagRegex)[0] : "";
+        }
+    }
     function removeSoundTag(string) {
       return string.replace(soundIdRegex, "");
     }

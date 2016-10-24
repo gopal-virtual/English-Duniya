@@ -15,7 +15,7 @@
   function ml(data, $log, $q, User) {
     var ml = {
       MAX: 10,
-      passingThreshold: 0.75,
+      passingThreshold: 0.7,
       roadMapMax: 8,
       maxSuggestionCount: 3,
       runDiagnostic: runDiagnostic,
@@ -41,7 +41,7 @@
       setMLDqJSON: setMLDqJSON(),
       setMLKmapsJSON: setMLKmapsJSON(),
       setMapping: setMapping(),
-      setLessonResultMapping: setLessonResultMapping(),
+      setLessonResultMapping: setLessonResultMapping,
       roadMapData: {},
       getLessonSuggestion: getLessonSuggestion,
       updateRoadMapSuggestion: updateRoadMapSuggestion,
@@ -95,7 +95,7 @@
           ml.roadMapData["roadMap"][0]["currentNode"] = ml.roadMapData["roadMap"][0]["sr"];
           ml.roadMapData["roadMap"][0]["previousNode"] = null;
           return ml.roadMapData["roadMap"][0]["sr"];
-        }        
+        }
       }
     }
 
@@ -214,7 +214,7 @@
               // if not roadMap lessons fail, if not overcount suggestioncount
               var suggestions = suggestBridge(data["skill"], data["sr"], ml.roadMapData["recommendationsWithPrereqs"]);
               $log.debug('if not roadMap lessons fail, if not overcount suggestioncount', suggestions);
-              
+
               ml.roadMapData["roadMap"][0]["previousNode"] = ml.roadMapData["roadMap"][0]["currentNode"];
               ml.roadMapData["roadMap"][0]["currentNode"] = data["sr"];
               ml.roadMapData["roadMap"][0]["resultTrack"][data["sr"]] = suggestions;
@@ -262,22 +262,30 @@
 
     function getLessonResultMapping(){
       var student_id = User.getActiveProfileSync()._id;
+      $log.debug('in getLessonResultMapping', student_id);
       return User.scores.getScoreList(student_id)
       .then(function(res){
         $log.debug('res lessonResultMapping', res);
         var lessonResultMapping = {};
-        for (var sr in res){
-          for (var type in res[sr]){
-            if(res[sr][type]["type"] == "assessment"){
-              lessonResultMapping[sr] = {
-                "result": res[sr][type]["score"]/res[sr][type]["totalScore"],
-                "unit": res[sr][type]["skill"].toLowerCase().replace(/ /g, ''),
-              };
+
+        for(var i = 0; i < res.length; i++){
+          var sr = res[i]["lesson_id"];
+          var result;
+          var unit;
+          for(var entity in res[i]){
+            if(entity != "lesson_id" && res[i][entity]["type"] == "assessment"){
+              result = res[i][entity]["score"]/res[i][entity]["totalScore"];
+              unit = res[i][entity]["skill"].toLowerCase();
               break;
             }
           }
+          lessonResultMapping[sr] = {
+            "result": result,
+            "unit": unit
+          }
         }
-        $log.debug('lessonResultMapping', lessonResultMapping);
+
+        $log.debug('final lessonResultMapping', lessonResultMapping);
         return lessonResultMapping;
       })
       .catch(function(err){
@@ -287,10 +295,13 @@
 
 
     function setLessonResultMapping(){
+      $log.debug('in setLessonResultMapping');
       return getLessonResultMapping()
       .then(function(res){
         $log.debug('setLessonResultMapping', res);
         ml.lessonResultMapping = res;
+        // $log.debug('ml.lessonResultMapping set', ml.lessonResultMapping);
+        return true;
       });
     }
 
