@@ -45,6 +45,7 @@
       roadMapData: {},
       getLessonSuggestion: getLessonSuggestion,
       updateRoadMapSuggestion: updateRoadMapSuggestion,
+      deleteSuccessfulNodeFromRoadmap: deleteSuccessfulNodeFromRoadmap,
       dqQuiz : []
       // dqQuiz: [{"0":{"sr":"99991928-a3f7-49ee-b922-7dd37eb524bb","answered":"right","skill":"vocabulary","level":0},"1":{"sr":"56a3d5ec-ad5a-4917-9d9e-79221a956e88","answered":"NA","skill":"vocabulary","level":1},"2":{"sr":"874738b1-762c-47da-ae3e-a968c6145aa5","answered":"wrong","skill":"vocabulary","level":2},"3":{"sr":"1ef9334b-9d01-4a08-83b9-44e920983a06","answered":"NA","skill":"vocabulary","level":3}},{"0":{"sr":"2651f54b-dfcc-4f37-8560-5ed32965e37b","answered":"right","skill":"reading","level":0},"1":{"sr":"00b2a501-bd8b-4ff8-970e-18b3014f009d","answered":"NA","skill":"reading","level":1},"2":{"sr":"7b5a7976-55ed-4394-8c2d-6682e0670895","answered":"wrong","skill":"reading","level":2},"-1":{"sr":"c4e76df0-e881-4a87-9aab-93779b9eb173","answered":"NA","skill":"reading","level":0}},{"0":{"sr":"da08df75-f90b-4d17-9063-9c0529d8e29e","answered":"right","skill":"grammar","level":0},"1":{"sr":"6a0d68bb-9a0d-4f94-8b7c-0b8126f1d3ee","answered":"NA","skill":"grammar","level":3},"-2":{"sr":"09164dd8-9342-4877-94c9-150b760fb6db","answered":"NA","skill":"grammar","level":0},"-1":{"sr":"48fecd1e-7131-4063-a7ed-7585da8772b0","answered":"NA","skill":"grammar","level":1}},{"0":{"sr":"20d4b188-28e3-4803-b52d-7a52a5c4f4c9","answered":"wrong","skill":"listening","level":0},"-3":{"sr":"a00689f3-055a-4be0-b891-9f949e204f4d","answered":"NA","skill":"listening","level":0},"-2":{"sr":"b7681f96-c544-448e-952f-f0dda0c33b97","answered":"right","skill":"listening","level":-2},"-1":{"sr":"8c21ca7c-b0d4-4c54-9e6c-3aa18772b9df","answered":"NA","skill":"listening","level":-1}}]
     };
@@ -86,39 +87,79 @@
             return suggestions[0];
           }else{
             $log.debug('in handleMultipleSuggestions 5');
-            ml.roadMapData["roadMap"][0]["currentNode"] = ml.roadMapData["roadMap"][0]["sr"];
-            ml.roadMapData["roadMap"][0]["previousNode"] = null;
-            return ml.roadMapData["roadMap"][0]["sr"];
+            var roadMapLesson = ml.lessonResultMapping[ml.roadMapData["roadMap"][0]["sr"]];
+            if(roadMapLesson && roadMapLesson["result"] && roadMapLesson["result"] >= ml.passingThreshold){
+              $log.debug('in handleMultipleSuggestions 5.1');
+              return updateRoadMapSuggestion({"event":"assessment",
+                                        "score": roadMapLesson["result"],
+                                        "totalScore": 1,
+                                        "skill": roadMapLesson["unit"],
+                                        "sr": ml.roadMapData["roadMap"][0]["sr"]
+                                      });
+            }else{
+              $log.debug('in handleMultipleSuggestions 5.2');
+              ml.roadMapData["roadMap"][0]["currentNode"] = ml.roadMapData["roadMap"][0]["sr"];
+              ml.roadMapData["roadMap"][0]["previousNode"] = null;
+              return ml.roadMapData["roadMap"][0]["sr"];              
+            }
           }
         }else{
           $log.debug('in handleMultipleSuggestions 6');
-          ml.roadMapData["roadMap"][0]["currentNode"] = ml.roadMapData["roadMap"][0]["sr"];
-          ml.roadMapData["roadMap"][0]["previousNode"] = null;
-          return ml.roadMapData["roadMap"][0]["sr"];
+            var roadMapLesson = ml.lessonResultMapping[ml.roadMapData["roadMap"][0]["sr"]];
+            if(roadMapLesson && roadMapLesson["result"] && roadMapLesson["result"] >= ml.passingThreshold){
+              $log.debug('in handleMultipleSuggestions 6.1');
+              return updateRoadMapSuggestion({"event":"assessment",
+                                        "score": roadMapLesson["result"],
+                                        "totalScore": 1,
+                                        "skill": roadMapLesson["unit"],
+                                        "sr": ml.roadMapData["roadMap"][0]["sr"]
+                                      });
+            }else{
+              $log.debug('in handleMultipleSuggestions 6.2');
+              ml.roadMapData["roadMap"][0]["currentNode"] = ml.roadMapData["roadMap"][0]["sr"];
+              ml.roadMapData["roadMap"][0]["previousNode"] = null;
+              return ml.roadMapData["roadMap"][0]["sr"];
+            }
         }
       }
     }
 
-    function deleteSuccessfulNodeFromRoadmap(sr){
-      var roadMap = ml.roadMapData["roadMap"];
-      for(var i = 0;i<roadMap.length;i++){
-        var resultTrack = roadMap[i]["resultTrack"];
-        for(var node in resultTrack){
-          for(var j = 0;j<resultTrack[node].length;j++){
-            if(resultTrack[node][j] == sr){
-              resultTrack[node].splice(j, 1);
-              j--;
-            }
-          }
-        }
-        roadMap[i]["resultTrack"] = resultTrack;
-        var lesson = roadMap[i];
-        if(lesson["sr"] == sr){
-          roadMap.splice(i, 1);
-          i--;
+    function deleteSuccessfulNodeFromRoadmap(sr, score){
+      if(score != undefined){
+        if(score < ml.passingThreshold){
+          return;
         }
       }
-      return roadMap;
+      $log.debug('in deleteSuccessfulNodeFromRoadmap', sr, score);
+      if(localStorage.roadMapData == undefined){
+        ml.roadMapData = {};
+      }else{
+        ml.roadMapData = JSON.parse(localStorage.roadMapData);
+      }
+      var roadMap = ml.roadMapData["roadMap"];
+      if(roadMap){
+        for(var i = 0;i<roadMap.length;i++){
+          var resultTrack = roadMap[i]["resultTrack"];
+          for(var node in resultTrack){
+            for(var j = 0;j<resultTrack[node].length;j++){
+              if(resultTrack[node][j] == sr){
+                $log.debug('here deleting');
+                resultTrack[node].splice(j, 1);
+                j--;
+              }
+            }
+          }
+          roadMap[i]["resultTrack"] = resultTrack;
+          var lesson = roadMap[i];
+          if(lesson["sr"] == sr){
+            $log.debug('here deleting 2');
+            roadMap.splice(i, 1);
+            i--;
+          }
+        }
+        ml.roadMapData["roadMap"] = roadMap;
+        localStorage.setItem("roadMapData", JSON.stringify(ml.roadMapData));
+      }
     }
 
 
@@ -150,7 +191,7 @@
             // result roadMap lesson pass
             $log.debug('result roadMap lesson pass');
             // ml.roadMapData["roadMap"].splice(0, 1);
-            ml.roadMapData["roadMap"] = deleteSuccessfulNodeFromRoadmap(data["sr"]);
+            deleteSuccessfulNodeFromRoadmap(data["sr"]);
             var lesson = ml.roadMapData["roadMap"][0];
             if (lesson != undefined){
               // returning suggestion
@@ -187,7 +228,7 @@
             // if not roadMap lessons pass
             $log.debug('if not roadMap lessons pass');
             // ml.roadMapData["roadMap"][0]["resultTrack"][ml.roadMapData["roadMap"][0]["currentNode"]].splice(0,1);
-            ml.roadMapData["roadMap"] = deleteSuccessfulNodeFromRoadmap(data["sr"]);
+            deleteSuccessfulNodeFromRoadmap(data["sr"]);
             return handleMultipleSuggestions();
           }else{
             // if not roadMap lessons fail
