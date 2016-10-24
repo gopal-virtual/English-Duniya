@@ -37,7 +37,7 @@ fs.readFile('lesson.json', 'utf8', function (err, data) {
               //Lets post the following key/values as form
               json: {lesson: json[i]}
             }, function (error, response, body) {
-                console.log('response',response)
+                // console.log('response',response)
               if (error) {
                 console.log("Error occured");
               } else {
