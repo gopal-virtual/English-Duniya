@@ -88,6 +88,7 @@
     $log.debug("Stars",mapCtrl.totalStars)
     // $state.current.data && lessonList.unshift($state.current.data.litmus);
     mapCtrl.User = User;
+    mapCtrl.demo = User.demo;
     mapCtrl.authFactory = Auth;
     mapCtrl.queue = queue;
     mapCtrl.lessons = lessonList;

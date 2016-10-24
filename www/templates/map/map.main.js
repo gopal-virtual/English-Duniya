@@ -1,6 +1,8 @@
 window.createGame = function(scope, stateParams, lessons, audio, injector, log, lessonutils) {
     'use strict';
 
+    var Demo = scope.demo;
+
     log.debug("LESSONS ARE AMAZING",lessons);
 
     var DEBUG = false;
@@ -580,12 +582,11 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
             }
 
 
-            var starcounthaha = 2;
-            function renderHud(){
+            function renderHud(totalStars){
                 log.debug("I am making HUD. Wohoooo");
                 var hudWidth = 185;
                 log.debug("Stars ",scope)
-                switch(starcounthaha.toString().length) {
+                switch(totalStars.toString().length) {
                     case 1:
                         hudWidth = 145;
                         break;
@@ -607,18 +608,23 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                 log.debug("Hakuna Matata",hudWidth);
                 graphics.drawRoundedRect(-20,-20,hudWidth,84,10)
                 graphics.endFill();
-                groups.nonRegion.hud.add(graphics);
-                groups.nonRegion.hud.fixedToCamera = true;
+                // groups.nonRegion.hud.fixedToCamera = true;
                 var starSprite = groups.nonRegion.stars.create(10,55,'star3d');
                 starSprite.anchor.setTo(0,1);
-                starSprite.fixedToCamera = true;
+                // starSprite.fixedToCamera = true;
                 var spriteX = groups.nonRegion.stars.create(62,55,'x');
                 spriteX.anchor.setTo(0,1);
-                spriteX.fixedToCamera = true;
-                var starText = game.add.text(90, 65, starcounthaha, { font: "48px kg_primary_penmanship_2Rg", fill: "#FDB724", wordWrap: false, align: "center"});
+                // spriteX.fixedToCamera = true;
+                var starText = game.add.text(90, 65, totalStars, { font: "48px kg_primary_penmanship_2Rg", fill: "#FDB724", wordWrap: false, align: "center"});
                 starText.setShadow(0, 3, 'rgba(215,151,40,1)', 0);
                 starText.anchor.setTo(0,1);
-                starText.fixedToCamera = true
+                // starText.fixedToCamera = true
+                log.debug("HRO",groups.nonRegion)
+                groups.nonRegion.hud.add(graphics);
+                groups.nonRegion.hud.add(starSprite);
+                groups.nonRegion.hud.add(spriteX);
+                groups.nonRegion.hud.add(starText);
+                groups.nonRegion.hud.fixedToCamera = true;
 
                 // groups.nonRegion.hud.fixedToCamera = true;
                 log.debug("This is my hud",graphics);
@@ -627,11 +633,13 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
 
             function renderDemoOverlay(){
                 log.debug('graphics',game.camera.y)
-                var graphics = game.add.graphics(game.camera.x,game.camera.y);
+                var graphics = game.add.graphics(0,0);
                 graphics.beginFill(0x000000, 0.8);
                 graphics.drawRect(0,0,game.camera.width,game.camera.height);
                 graphics.endFill();
                 groups.nonRegion.demoOverlay.add(graphics);
+                groups.nonRegion.demoOverlay.fixedToCamera = true;
+                audio.player.playSound('sound/voice_letstart.mp3')
             }
 
             function renderWorld(region){
@@ -959,9 +967,9 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
             }
 
             function renderNodesByML(region){
-                if (localStorage.demo_flag == 1) {
-                    return;
-                }
+                // if (localStorage.demo_flag == 1) {
+                //     return;
+                // }
                 log.debug("LESSONS",lessons);
                 log.debug("posx",points.x);
                 log.debug("posy",points.y);
@@ -1017,6 +1025,9 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                     node.events.onInputUp.add(
                         function(currentLesson, game, posy, i, temp, currentObject) {
                             return function() {
+                                if (Demo.getStep == 1) {
+                                    Demo.setStep(2);
+                                }
                                 audio.play('press');
 
                                 var displacement = game.kineticScrolling.velocityY > -30 && game.kineticScrolling.velocityY < 30;
@@ -1411,10 +1422,13 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
 
 
 
-                    scope.$emit('show_demo');
+                    // scope.$emit('show_demo');
+                    renderHud(scope.totalstars);
+                    log.debug("Stars Demo",scope.demo.getStep())
+                    if (Demo.getStep() == 1) {
+                        renderDemoOverlay();
+                    }
                     _this.init();
-                    renderHud();
-                    // renderDemoOverlay();
                     killUselessRegions(renderedRegion);
                     game.kineticScrolling.start();
                     var lessonFromQuizStars = typeof(temp.lessonFromQuizKey)!="undefined"?lessons[temp.lessonFromQuizKey].stars:false;
@@ -1465,17 +1479,17 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
 
         },
         init: function() {
-            this.game.kineticScrolling = this.game.plugins.add(Phaser.Plugin.KineticScrolling);
-            this.game.kineticScrolling.configure({
+            game.kineticScrolling = game.plugins.add(Phaser.Plugin.KineticScrolling);
+            game.kineticScrolling.configure({
                 kineticMovement: true,
                 timeConstantScroll: 325, //really mimic iOS
                 horizontalScroll: false,
-                verticalScroll: true,
+                verticalScroll: Demo.getStep()!=1,
                 horizontalWheel: false,
                 verticalWheel: true,
                 deltaWheel: 400
             });
-            this.game.camera.y = localStorage.getItem('currentPosition') ? parseInt(localStorage.getItem('currentPosition')) : parseInt(((~~this.world.height / this.game.height) - 1) * this.game.height);
+            game.camera.y = localStorage.getItem('currentPosition') ? parseInt(localStorage.getItem('currentPosition')) : parseInt(((~~this.world.height / this.game.height) - 1) * this.game.height);
 
         },
         resetSprite: function(sprite) {

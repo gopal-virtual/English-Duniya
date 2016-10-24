@@ -11,8 +11,9 @@
             restrict: 'A',
             templateUrl: CONSTANT.PATH.MAP + '/map.canvas' + CONSTANT.VIEW,
             scope: {
-              lessons : '=',
-              totalStars : '=',
+              lessons : '=mapLessons',
+              totalstars : '=mapTotalstars',
+              demo : '=mapDemo'
             },
             link: linkFunc,
         };
