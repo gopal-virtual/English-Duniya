@@ -177,7 +177,11 @@
                   });
                   // $log.debug("got sugggestion",suggestion);
                   return User.playlist.add(User.getActiveProfileSync()._id,suggestion)
-
+                })
+              }else{
+                ml.setLessonResultMapping().then(function(){
+                  $log.debug('deleteSuccessfulNodeFromRoadmap');
+                  ml.deleteSuccessfulNodeFromRoadmap(quiz.node.parent, summary.score.marks/quiz.node.type.score);
                 })
               }
             })
