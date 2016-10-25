@@ -3,12 +3,13 @@
 #bash generate-lessondb.sh
 #rsync -avzh ubuntu@cc-test.zaya.in:/home/ubuntu/prod_content/ell media/
 #rm www/bundled/*
-#export ANDROID_HOME=/home/kartik/android-sdk-linux/platform-tools
+
+export ANDROID_HOME=/opt/android-sdk-linux/
 
 
 echo $ANDROID_HOME
 BUILD_TYPE='local'
-ENV='test'
+ENV='production'
 
 BUILD_NAME="englishduniya-$ENV-non-bundled"
 BUNDLED="Non-Bundled"
@@ -20,8 +21,8 @@ jarsigner -verbose -tsa http://timestamp.comodoca.com/rfc3161 -sigalg SHA1withRS
 
 
 #VERSION="build-tools/23.0.1"
-BUILD_PATH="builds/"
+BUILD_PATH="builds"
 
 ARM_BUILD_NAME="$BUILD_PATH/$BUILD_NAME-arm.apk"
 rm $ARM_BUILD_NAME
-$ANDROID_HOME/build-tools/23.0.1/zipalign -v 4 platforms/android/build/outputs/apk/android-armv7-release-unsigned.apk $ARM_BUILD_NAME
+$ANDROID_HOME/build-tools/24.0.2/zipalign -v 4 platforms/android/build/outputs/apk/android-armv7-release-unsigned.apk $ARM_BUILD_NAME
