@@ -863,17 +863,29 @@
       // if (quizCtrl.quiz.objects[questionIndex].node.widgetHtml.indexOf(CONSTANT.WIDGETS.SPEAKER_IMAGE) >= 0) {
         // quizCtrl.quiz.objects[questionIndex].node.widgetHtml = quizCtrl.quiz.objects[questionIndex].node.widgetHtml.replace(CONSTANT.WIDGETS.SPEAKER_IMAGE, CONSTANT.WIDGETS.SPEAKER_IMAGE_SELECTED)
       // }
-      $log.debug("THIS IS THE INDEX",quizCtrl.quiz.objects[questionIndex].node.widgetSound)
-      $log.debug("dishkau",angular.element("#audioSource")[0].src)
+
+      // $log.debug("Original WidgetSound",quizCtrl.quiz.objects[questionIndex].node.widgetSound)
+      // $log.debug("SoundSource",angular.element("#audioSource")[0].src)
+      // $log.debug("Original WidgetSound - bundled","file:///android_asset/www/"+quizCtrl.quiz.objects[questionIndex].node.widgetSound)
+      // $log.debug("SoundSource - bundled",angular.element("#audioSource")[0].src)
+      // $log.debug("Sound Source not same",angular.element("#audioSource")[0].src != quizCtrl.quiz.objects[questionIndex].node.widgetSound)
+      // $log.debug("Sound source not same bunlded","file:///android_asset/www/"+ quizCtrl.quiz.objects[questionIndex].node.widgetSound != angular.element("#audioSource")[0].src )
       // $log.debug("THIS IS THE INDEX",$scope.selectedNode)
       quizCtrl.highlightSoundIconFlag = true;
-      var watchAudio = $interval(function() {
-        if (angular.element("#audioplayer")[0].paused || angular.element("#audioSource")[0].src != quizCtrl.quiz.objects[questionIndex].node.widgetSound) {
-          quizCtrl.highlightSoundIconFlag = false;
-          $interval.cancel(watchAudio)
-          // quizCtrl.quiz.objects[questionIndex].node.widgetHtml = quizCtrl.quiz.objects[questionIndex].node.widgetHtml.replace(CONSTANT.WIDGETS.SPEAKER_IMAGE_SELECTED, CONSTANT.WIDGETS.SPEAKER_IMAGE)
-        }
-      }, 100)
+      if (quizCtrl.quiz.objects[questionIndex].node.widgetSound != null) {
+        var watchAudio = $interval(function() {
+            // $log.debug("WidgetSound trimmed",quizCtrl.quiz.objects[questionIndex].node.widgetSound.split("/").pop())
+            // $log.debug("Source trimmed",angular.element("#audioSource")[0].src.split("/").pop())
+            // $log.debug("THIS WHY I HATE BUNDLED",quizCtrl.quiz.objects[questionIndex].node.widgetSound.split("/").pop() != angular.element("#audioSource")[0].src.split("/").pop())
+            if (angular.element("#audioplayer")[0].paused || quizCtrl.quiz.objects[questionIndex].node.widgetSound.split("/").pop() != angular.element("#audioSource")[0].src.split("/").pop()) {
+              quizCtrl.highlightSoundIconFlag = false;
+              $interval.cancel(watchAudio)
+              // quizCtrl.quiz.objects[questionIndex].node.widgetHtml = quizCtrl.quiz.objects[questionIndex].node.widgetHtml.replace(CONSTANT.WIDGETS.SPEAKER_IMAGE_SELECTED, CONSTANT.WIDGETS.SPEAKER_IMAGE)
+            }
+        }, 100)
+      }else{
+        $log.warn("This question doesn't have sound")
+      }
     }
 
     function next() {
