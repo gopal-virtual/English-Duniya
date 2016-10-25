@@ -561,6 +561,24 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
             var star_x = [-22, 0, 22];
             var star_y = [-27, -35, -27];
 
+            var first_node_index = 0, last_node_index = 0;
+
+            function defineIndex(){
+                for (var i = 0; i <= regionPage; i++) {
+
+                    if (i==0) {
+                        first_node_index = 0;
+                    }else {
+                        first_node_index += regionNodes[regions[i-1]] - 1;
+                    }
+                    last_node_index += regionNodes[regions[i]] - 1;
+                }
+
+                if (regionPage != 0) {
+                    first_node_index = first_node_index+1;
+                }
+                
+            }
 
             function addGroups(region){
 
@@ -639,7 +657,8 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                 graphics.endFill();
                 groups.nonRegion.demoOverlay.add(graphics);
                 groups.nonRegion.demoOverlay.fixedToCamera = true;
-                audio.player.playSound('sound/voice_letstart.mp3')
+                log.debug("SOUND",audio)
+                audio.player.play('sound/voice_letstart.mp3')
             }
 
             function renderWorld(region){
@@ -974,20 +993,6 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                 log.debug("posx",points.x);
                 log.debug("posy",points.y);
                 // var j = 0;
-                var first_node_index = 0, last_node_index = 0;
-                for (var i = 0; i <= regionPage; i++) {
-
-                    if (i==0) {
-                        first_node_index = 0;
-                    }else {
-                        first_node_index += regionNodes[regions[i-1]] - 1;
-                    }
-                    last_node_index += regionNodes[regions[i]] - 1;
-                }
-
-                if (regionPage != 0) {
-                    first_node_index = first_node_index+1;
-                }
                 log.debug  ("FIRST_NODE",first_node_index,"LAST_NODE",last_node_index);
                 for (var i = first_node_index, distance = 1 / (last_node_index-first_node_index), j =0; i < lessons.length; i++, j+=distance) {
                     log.debug("J Lo",i.j)
@@ -1405,7 +1410,7 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
             function gameStart(){
 
 
-
+                defineIndex();
                 addGroups(renderedRegion);
                 renderWorld(renderedRegion);
                 renderRegion(renderedRegion);
