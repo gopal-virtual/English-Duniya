@@ -64,8 +64,7 @@
               "tag": "Litmus",
               "locked": false
           },
-      },
-      params: {"activatedLesson" : null},
+        },
         onEnter: ['$state', 'lessons', 'audio', '$ionicLoading', 'orientation','CONSTANT','$log', function($state, lessons, audio, $ionicLoading, orientation, CONSTANT, $log) {
           orientation.setPortrait();
           $ionicLoading.show({
