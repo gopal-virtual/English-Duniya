@@ -32,7 +32,7 @@
 
           $cordovaNativeAudio.play(sound);
         } catch (error) {
-          $log.warn("Audio Factory can only play sound on phones")
+          $log.warn(sound+" can't be played. Ionic plugins only work on phone")
         }
       },
       loop: function(sound) {

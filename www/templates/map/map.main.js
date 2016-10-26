@@ -917,10 +917,10 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                             // temp["nodeWobbleTween"] = game.add.tween(node).to({ alpha: 0.5 }, 700, Phaser.Easing.Cubic.Out, true, 1000).loop(true);
                         }
 
-                        log.debug('stateParams',stateParams, currentLesson.id)
-                        if (stateParams.activatedLesson && stateParams.activatedLesson.node.id == currentLesson.id) {
-                            temp["lessonFromQuizKey"] = i;
-                        }
+                        // log.debug('stateParams',stateParams, currentLesson.id)
+                        // if (stateParams.activatedLesson && stateParams.activatedLesson.node.id == currentLesson.id) {
+                        //     temp["lessonFromQuizKey"] = i;
+                        // }
 
                         node.inputEnabled = true;
                         node.currentLesson = currentLesson;
@@ -1045,8 +1045,12 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                                     }
                                     var animateStarFlag = {
                                         isCurrentNode : temp.activeLessonKey==i,
-                                        clickedNodeStar : lessons[i].stars
+                                        clickedNodeStar : (function(){
+                                            return typeof(lessons[i].stars) == "undefined"?0:lessons[i].stars;  
+                                        })(),
+                                        clickedNode : i
                                     }
+                                    log.debug("hello animatestar",animateStarFlag)
                                     localStorage.setItem("animateStarFlag",JSON.stringify(animateStarFlag));
                                     scope.$emit('openNode', currentObject);
                                 } else if (currentLesson.locked && displacement) {
@@ -1066,11 +1070,11 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                         temp["nodeWobbleTween"] = game.add.tween(node.scale).to({ x: [0.8,1,0.8], y: [0.8,1,0.8] }, 600, Phaser.Easing.Back.Out, true, 400).loop(true);
                     }
                     // log.debug('stateParams',stateParams, currentLesson.id)
-                    if (stateParams.activatedLesson && stateParams.activatedLesson.node.id == currentLesson.id) {
-                        temp["lessonFromQuizKey"] = i;
-                        temp["lessonFromQuizPosX"] = posx;
-                        temp["lessonFromQuizPosY"] = posy;
-                    }
+                    // if (stateParams.activatedLesson && stateParams.activatedLesson.node.id == currentLesson.id) {
+                    // //     temp["lessonFromQuizKey"] = i;
+                    //     temp["lessonFromQuizPosX"] = posx;
+                    //     temp["lessonFromQuizPosY"] = posy;
+                    // }
                     // log.debug("Temp",temp);
 
                     if (!lessons[i].locked && lessons[i].stars >= 0) {
@@ -1145,9 +1149,9 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                     }
 
 
-                    if (stateParams.activatedLesson && stateParams.activatedLesson.node.id == currentLesson.id) {
-                        temp["lessonFromQuizKey"] = i;
-                    }
+                    // if (stateParams.activatedLesson && stateParams.activatedLesson.node.id == currentLesson.id) {
+                    //     temp["lessonFromQuizKey"] = i;
+                    // }
 
                     node.inputEnabled = true;
                     node.currentLesson = currentLesson;
@@ -1239,12 +1243,15 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                         log.debug("last",last_node_index,"first",first_node_index)
                         log.debug('distance2',1/(last_node_index-first_node_index))
 
+                        var posx = game.math.catmullRomInterpolation(points.x, (lessonKey)/last_node_index-first_node_index);
+                        var posy = game.math.catmullRomInterpolation(points.y, (lessonKey)/last_node_index-first_node_index);
+                        log.debug("log log log",posx,posy)
                         // log.debug("In star animation function, \nlessonFromQuizKey: ",lessonKey," activeLessonKey: ",temp.activeLessonKey,"\nactivatedLesson: ",lessons[lessonKey],"\nactiveLesson: ",lessons[temp.activeLessonKey]);
                         var starCloneTween = [];
                         for (var i = 0; i < lessons[lessonKey].stars; i++) {
                                 // log.warn("star x:",posx,star_x[i],game_scale,(posx+ star_x[i])*game_scale);
                                 // log.warn("star y:",posy,star_y[i],posy + star_y[i]);
-                                starClone[i] = groups.nonRegion.starClone.create((temp.lessonFromQuizPosX + star_x[i])*game_scale, temp.lessonFromQuizPosY + star_y[i], 'star_medium');
+                                starClone[i] = groups.nonRegion.starClone.create((posx + star_x[i])*game_scale, posy + star_y[i], 'star_medium');
 
                                 starClone[i].anchor.setTo(0.5, 0.5);
                                 starCloneTween[i] = {};
@@ -1436,30 +1443,43 @@ window.createGame = function(scope, stateParams, lessons, audio, injector, log, 
                     _this.init();
                     killUselessRegions(renderedRegion);
                     game.kineticScrolling.start();
-                    var lessonFromQuizStars = typeof(temp.lessonFromQuizKey)!="undefined"?lessons[temp.lessonFromQuizKey].stars:false;
+                    // var clickedNodeStar = typeof(animateStarFlag.clickedNodeStar == "undefined"? 0:animateStarFlag.clickedNodeStar);
+                    // var lessonFromQuizStars = typeof(temp.lessonFromQuizKey)!="undefined"?lessons[temp.lessonFromQuizKey].stars:false;
                     var animateStarFlag = JSON.parse(localStorage.getItem("animateStarFlag"));
+
+                    // log.debug('clicked node', lessons[animateStarFlag.clickedNode]);
+                    // log.debug('clicked node', lessons[animateStarFlag.clickedNode -1]);
                     // animateStar(temp.activeLessonKey-1);
+                    // log.debug("Lesson From Quiz",lessonFromQuizStars);
+                    // log.debug("Lesson From Quiz",);
+                    // log.debug("animate star flag",animateStarFlag);
+                    // log.debug("animateStarFlag.isCurrentNode && lessonFromQuizStars");
+                    // log.debug("condition 1 - for new nodes --",animateStarFlag.isCurrentNode,lessonFromQuizStars,"--total--",animateStarFlag.isCurrentNode && lessonFromQuizStars);
+                    // log.debug("lessonFromQuizStars > animateStarFlag.clickedNodeStar && lessonFromQuizStars");
+                    // log.debug("condition 2 - for old nodes --",lessonFromQuizStars,animateStarFlag.clickedNodeStar,lessonFromQuizStars,"--total--", lessonFromQuizStars > animateStarFlag.clickedNodeStar && lessonFromQuizStars);
 
                     if (animateStarFlag) {
 
-
-
-                        if (animateStarFlag.isCurrentNode && lessonFromQuizStars) {
-                            //
+                        log.debug("star in lesson", lessons[animateStarFlag.clickedNode].stars);
+                        log.debug("animateStarFlag",animateStarFlag);
+                        if (lessons[animateStarFlag.clickedNode].stars && lessons[animateStarFlag.clickedNode].stars > animateStarFlag.clickedNodeStar) {
+                            log.debug("Hey brother");
                             scope.$emit('animateStar');
                             setTimeout(function(){
-                                animateStar(temp.lessonFromQuizKey)
+                                animateStar(animateStarFlag.clickedNode).then(function(){
+                                    localStorage.removeItem("animateStarFlag");
+                                })
 
                                 // newNodeUnlock();
                             },800)
                         }
 
-                        if(lessonFromQuizStars > animateStarFlag.clickedNodeStar && lessonFromQuizStars){
-                            scope.$emit('animateStar');
-                            setTimeout(function(){
-                                animateStar(temp.lessonFromQuizKey);
-                            },800)
-                        }
+                        // if(lessonFromQuizStars > animateStarFlag.clickedNodeStar && lessonFromQuizStars){
+                        //     scope.$emit('animateStar');
+                        //     setTimeout(function(){
+                        //         animateStar(temp.lessonFromQuizKey);
+                        //     },800)
+                        // }
                     }else{
 
                     }

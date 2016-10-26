@@ -316,14 +316,14 @@
 
     ;
     $scope.$on('animateStar', function() {
-      for (var i = 0; i < mapCtrl.skillSet.length; i++) {
-        $log.info("Loop", i, "\nskillSetTag : ", mapCtrl.skillSet[i].title.toLowerCase(), "\nactivatedLessonTag : ", $stateParams.activatedLesson.node.tag.toLowerCase())
-        if (mapCtrl.skillSet[i].title.toLowerCase() == $stateParams.activatedLesson.node.tag.toLowerCase()) {
-          mapCtrl.animateStar.activeFlag = i;
-          // mapCtrl.animateStar.animateFlag = i;
-          break;
-        }
-      }
+      // for (var i = 0; i < mapCtrl.skillSet.length; i++) {
+      //   $log.info("Loop", i, "\nskillSetTag : ", mapCtrl.skillSet[i].title.toLowerCase(), "\nactivatedLessonTag : ", $stateParams.activatedLesson.node.tag.toLowerCase())
+      //   if (mapCtrl.skillSet[i].title.toLowerCase() == $stateParams.activatedLesson.node.tag.toLowerCase()) {
+      //     mapCtrl.animateStar.activeFlag = i;
+      //     // mapCtrl.animateStar.animateFlag = i;
+      //     break;
+      //   }
+      // }
     });
 
 
