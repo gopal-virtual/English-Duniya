@@ -172,6 +172,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
             this.load.image('star', 'img/assets/star.png');
             this.load.image('star3d', 'img/assets/star3d.png');
             this.load.image('x', 'img/assets/x.png');
+            this.load.image('finger', 'img/assets/finger_point.png');
 
             this.load.spritesheet('node-port', 'img/assets/port-node.png',118,187);
             this.load.spritesheet('node-blue-video', 'img/assets/button-blue-video.png',88,91);
@@ -242,6 +243,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                     groups.nonRegion["nodeTags"] = game.add.group();
                     groups.nonRegion["nodes"] = game.add.group();
                     groups.nonRegion["stars"] = game.add.group();
+                    groups.nonRegion["demoNodeOverlay"] = game.add.group();
                 }else  {
                     groups.nonRegion["demoOverlay"] = game.add.group();
                     groups.nonRegion["nodeTags"] = game.add.group();
@@ -306,7 +308,16 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                 graphics.drawRect(0,0,game.camera.width,game.camera.height);
                 graphics.endFill();
                 groups.nonRegion.demoOverlay.add(graphics);
+                temp['demoFinger'] = groups.nonRegion.demoNodeOverlay.create(0.5*game.camera.width, 0.4*game.camera.height, 'finger');
+                temp.demoFinger.anchor.setTo(0.5);
+                temp.demoFinger.scale.setTo(-0.5,0.5);
+                temp.demoFinger.angle = 180;
                 groups.nonRegion.demoOverlay.fixedToCamera = true;
+                groups.nonRegion.demoNodeOverlay.fixedToCamera = true;
+                // game.add.tween(demoFinger).from({alpha: 0}, 400, Phaser.Easing.Cubic.Out, true, 800).loop(true);
+                
+                // game.add.tween(demoFinger).to({x: [0.5*game.camera.width,0.5*game.camera.width], y: [0.6*game.camera.height,0.5*game.camera.height] }, 1000, Phaser.Easing.Back.Out, true).loop(true);
+                // game.add.tween(demoFinger).to({angle: "270", x: [0.5*game.camera.width,0.8*game.camera.width], y: [0.6*game.camera.height,0.5*game.camera.height] }, 1000, Phaser.Easing.Linear.None, true).loop(true);
                 //log.debug("SOUND",audio)
                 audio.player.play('sound/voice_letstart.mp3')
             }
@@ -505,7 +516,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                     groups.nonRegion.nodeTags.add(nodeTagText);
 
 
-                    var node = game.make.button(posx, posy, 'node-' +nodeColors[lessons[i].node.tag.toLowerCase()]+'-'+ lessonutils.resourceType(lessons[i]), false, this, 0,0,1,0);
+                    var node = game.make.button(posx, posy, 'node-' +nodeColors[lessons[i].node.tag.toLowerCase()]+'-'+ lessonutils.resourceType(lessons[i]), false, this, 1,0,1,0);
                     node.anchor.setTo(0.5);
                     node.scale.setTo(0.8);
                     node.inputEnabled = true;
@@ -514,6 +525,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                     node.events.onInputUp.add(
                         function(currentLesson, game, posy, i, temp, currentObject) {
                             return function() {
+
                                 if (Demo.getStep == 1) {
                                     Demo.setStep(2);
                                 }
@@ -548,7 +560,35 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                         temp["activeLessonKey"] = i;
                         temp["activeLessonPosY"] = posy;
                         temp["activeLessonPosX"] = posx;
-                        temp["nodeWobbleTween"] = game.add.tween(node.scale).to({ x: [0.8,1,0.8], y: [0.8,1,0.8] }, 600, Phaser.Easing.Back.Out, true, 400).loop(true);
+                        if (Demo.getStep() != 1) {
+                            temp["nodeWobbleTween"] = game.add.tween(node.scale).to({ x: [0.8,1,0.8], y: [0.8,1,0.8] }, 600, Phaser.Easing.Back.Out, true, 400).loop(true);
+                        }else{
+                            var fingerTween = game.add.tween(temp.demoFinger).to({x: [0.5*game.camera.width,0.5*game.camera.width], y: [0.55*game.camera.height,0.4*game.camera.height] }, 1000, Phaser.Easing.Back.Out, true).loop(true);
+                            log.debug("Not a demo I guess", fingerTween)
+                            fingerTween.onStart.add(pressButton,this);
+                            fingerTween.onLoop.add(pressButton,this);
+                            function pressButton(){
+                                // node.setFrames(0,1,1);
+                                // log.debug("pressed");
+                                // setTimeout(function(){
+                                //     node.setFrames(0,0,1);
+                                //     log.debug("not pressed")
+                                // },100)
+                                setTimeout(function(){
+                                    node.setFrames(0,1,1);
+                                    // log.debug("pressed");
+                                    setTimeout(function(){
+                                        node.setFrames(0,0,1);
+                                        // log.debug("not pressed")
+                                    },150)
+                                },200)
+                            }
+                            // var flag = 0;
+                                // flag++;
+                                // if(flag%2 ==0) {
+                                // }else{
+                                // }
+                        }
                     }
 
                     if (!lessons[i].locked && lessons[i].stars >= 0) {
@@ -742,6 +782,9 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                 var fetchMapRequest = fetchMapPath(renderedRegion,points);
                 fetchMapRequest.then(function(){
                     scope.$emit('removeLoader');
+                    if (Demo.getStep() == 1) {
+                        renderDemoOverlay();
+                    }
                     renderNodesByML(renderedRegion);
                     renderNodePath(renderedRegion,points);
                     if(regionPage < regions.length-1 && temp.activeLessonKey == -1){
@@ -753,9 +796,6 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                     //log.debug('graphics',game.camera)
                     renderHud(scope.totalstars);
                     //log.debug("Stars Demo",scope.demo.getStep())
-                    if (Demo.getStep() == 1) {
-                        renderDemoOverlay();
-                    }
                     var animateStarFlag = JSON.parse(localStorage.getItem("animateStarFlag"));
                     if (animateStarFlag) {
                         //log.debug("star in lesson", lessons[animateStarFlag.clickedNode].stars);
