@@ -89,6 +89,7 @@
     // $state.current.data && lessonList.unshift($state.current.data.litmus);
     mapCtrl.User = User;
     mapCtrl.demo = User.demo;
+    // mapCtrl.loading = $ionicLoading;
     mapCtrl.authFactory = Auth;
     mapCtrl.queue = queue;
     mapCtrl.lessons = lessonList;

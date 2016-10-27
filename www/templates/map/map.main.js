@@ -1,4 +1,4 @@
-window.createGame = function(scope, lessons, audio, injector, log, lessonutils) {
+window.createGame = function(scope, lessons, audio, injector, log, lessonutils, loading) {
     'use strict';
 
     var Demo = scope.demo;
@@ -83,9 +83,6 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils) 
         "nonRegion" : {},
         "regionBg" : {},
     }
-    var nonRegionGroups = {};
-    var regionGroups = {};
-    var regionBgGroups = {};
     var regionHeight = {
         "desert1" : 2201,
         "desert2" : 3165,
@@ -238,11 +235,20 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils) 
                 for (var i = renderedRegion.length - 1; i >= 0; i--) {
                     groups.region[region[i]] = game.add.group();
                 }
-                groups.nonRegion["hud"] = game.add.group()
-                groups.nonRegion["demoOverlay"] = game.add.group();
-                groups.nonRegion["nodeTags"] = game.add.group();
-                groups.nonRegion["nodes"] = game.add.group();
-                groups.nonRegion["stars"] = game.add.group();
+
+                if (Demo.getStep() == 1) {
+                    groups.nonRegion["hud"] = game.add.group();
+                    groups.nonRegion["demoOverlay"] = game.add.group();
+                    groups.nonRegion["nodeTags"] = game.add.group();
+                    groups.nonRegion["nodes"] = game.add.group();
+                    groups.nonRegion["stars"] = game.add.group();
+                }else  {
+                    groups.nonRegion["demoOverlay"] = game.add.group();
+                    groups.nonRegion["nodeTags"] = game.add.group();
+                    groups.nonRegion["nodes"] = game.add.group();
+                    groups.nonRegion["stars"] = game.add.group();
+                    groups.nonRegion["hud"] = game.add.group();
+                }
                 groups.nonRegion["unlockAnim"] = game.add.group();
                 groups.nonRegion["starClone"] = game.add.group();
 
@@ -288,8 +294,6 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils) 
                 groups.nonRegion.hud.add(spriteX);
                 groups.nonRegion.hud.add(starText);
                 groups.nonRegion.hud.fixedToCamera = true;
-
-                // groups.nonRegion.hud.fixedToCamera = true;
                 // //log.debug("This is my hud",graphics);
 
             }
@@ -565,31 +569,6 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils) 
                 }
 
                 //log.debug("show port node? ",regionPage, regions.length-1, temp["activeLessonKey"], regionPage < regions.length-1 && temp.activeLessonKey == -1);
-
-                if(regionPage < regions.length-1 && temp.activeLessonKey == -1){
-                    var port_forward = game.add.button(game.world.centerX, 150, 'node-port', function(){
-
-                            // var start_index = last_node_index + 1;
-                            // var end_index = start_index + regionNodes[region];
-                            scope.$emit('pageRegion', regionPage, "next", regions.length);
-                    }, this, 0,0,1,0);
-                    port_forward.scale.setTo(0.8)
-                    port_forward.anchor.setTo(0.5)
-                    scrollTo(0);
-                }
-
-                if(regionPage > 0){
-                    var port_back = game.add.button(game.world.centerX, game.world.height - 80, 'node-port', function(){
-
-
-                            // var end_index = first_node_index - 1;
-                            // var start_index = end_index - 5;
-                            scope.$emit('pageRegion', regionPage, "prev", regions.length);
-                    }, this, 0,0,1,0);
-                    port_back.scale.setTo(0.6)
-                    port_back.anchor.setTo(0.5)
-                }
-                
             }
 
             function animateStar(lessonKey){
@@ -639,6 +618,29 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils) 
                 });
                 return promise;
 
+            }
+                
+            function renderPortNodes(portType){
+                log.info('Rendering portal ...')
+
+                if (portType != "prev" && portType != "next") {
+                    log.warn("Not a valid port type. Taking 'prev' as default");
+                    portType = "prev";
+                }
+                var port = game.add.button(game.world.centerX, portType=="prev"?game.world.height-80:150, 'node-port', function(){
+                    loading.show();
+                    if (portType =="next" && regionPage < regions.length) {
+                        localStorage.setItem('regionPage',parseInt(regionPage)+1);
+                        localStorage.setItem('currentPosition', 4000);
+                    }else if (portType == "prev" && regionPage > 0) {
+                        localStorage.setItem('regionPage',parseInt(regionPage)-1);
+                        localStorage.setItem('currentPosition', 0);
+                    }
+                    window.location.reload();
+
+                }, this, 0,0,1,0);
+                port.scale.setTo(portType=="prev"?0.6:0.8);
+                port.anchor.setTo(0.5)
             }
 
             // function animateUnlock(lockedNode) {
@@ -726,7 +728,8 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils) 
                     verticalWheel: true,
                     deltaWheel: 400
                 });
-                game.camera.y = localStorage.getItem('currentPosition') ? parseInt(localStorage.getItem('currentPosition')) : parseInt(((~~this.world.height / this.game.height) - 1) * this.game.height);
+                game.kineticScrolling.start();
+                game.camera.y = localStorage.getItem('currentPosition') ? parseInt(localStorage.getItem('currentPosition')) : parseInt(((~~game.world.height / game.height) - 1) * game.height);
             }
 
             function gameStart(){
@@ -734,20 +737,25 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils) 
                 defineIndex();
                 addGroups(renderedRegion);
                 renderWorld(renderedRegion);
-                renderRegion(renderedRegion);
                 cameraInit();
+                renderRegion(renderedRegion);
                 var fetchMapRequest = fetchMapPath(renderedRegion,points);
                 fetchMapRequest.then(function(){
                     scope.$emit('removeLoader');
                     renderNodesByML(renderedRegion);
                     renderNodePath(renderedRegion,points);
+                    if(regionPage < regions.length-1 && temp.activeLessonKey == -1){
+                        renderPortNodes("next");
+                    }
+                    if(regionPage > 0){
+                        renderPortNodes("prev");
+                    }
                     //log.debug('graphics',game.camera)
                     renderHud(scope.totalstars);
                     //log.debug("Stars Demo",scope.demo.getStep())
                     if (Demo.getStep() == 1) {
                         renderDemoOverlay();
                     }
-                    game.kineticScrolling.start();
                     var animateStarFlag = JSON.parse(localStorage.getItem("animateStarFlag"));
                     if (animateStarFlag) {
                         //log.debug("star in lesson", lessons[animateStarFlag.clickedNode].stars);
@@ -757,6 +765,9 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils) 
                             scope.$emit('animateStar');
                             setTimeout(function(){
                                 animateStar(animateStarFlag.clickedNode).then(function(){
+                                    if (temp["activeLessonKey"] == -1) {
+                                        scrollTo(0);
+                                    }
                                     localStorage.removeItem("animateStarFlag");
                                 })
                             },800)
