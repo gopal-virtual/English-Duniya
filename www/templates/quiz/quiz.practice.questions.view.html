@@ -33,13 +33,13 @@
 
       <!-- <div ng-repeat="question in quizCtrl.quiz.objects" ng-if="$index == quizCtrl.getCurrentIndex()"> -->
       <div id="step1" style="position:relative;top:8%">
-        <div ng-class="{'sound-enlarge':question.node.widgetHtml == quizCtrl.CONSTANT.WIDGETS.SPEAKER_IMAGE}" style="text-align: left;z-index:200;position: absolute;top: 10px;width: 100%;margin-right: auto;left: 0;margin-left: auto;right: 0;">
+        <div ng-class="{'sound-enlarge':question.node.widgetHtml == quizCtrl.CONSTANT.WIDGETS.SPEAKER_IMAGE}" style="text-align: left;z-index:200;position: absolute;top: 10px;width: 70px;margin-right: auto;left: 0;right: 0;">
           <div ng-if="question.node.widgetSound" style="height:60px;width:60px;margin-left:5px;transform-origin: bottom left" ng-click="quizCtrl.playAudio(question.node.widgetSound,$index);quizCtrl.highlightSoundIcon($parent.$index);" ng-class="{'active animation-repeat-bounce':quizCtrl.highlightSoundIconFlag}" class="sbtn sbtn-sound"></div>
         </div>
         <ion-scroll scrollbar-x="false" scrollbar-y="false" ng-init="quizCtrl.isScroll($index)" style="
     height: 27vh;
 " direction="y" class="padding-0 bg-pale no-shadow">
-          <div style="min-height: 25vh;padding-top:6px !important;" ng-if="question.node.title"
+          <div ng-class="{'not-no-sound':question.node.widgetHtml == quizCtrl.CONSTANT.WIDGETS.SPEAKER_IMAGE}" style="min-height: 25vh;padding-top:6px !important;" ng-if="question.node.title"
             ng-bind-html="question.node.widgetHtml"
             class="question card card-transparent center margin-x-0 margin-y-0 padding-0">
 

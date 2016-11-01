@@ -211,9 +211,15 @@ meter::-webkit-meter-even-less-good-value {
 }
 
 .question div{
-  font-size: 2em;
+  font-size: 1.25em;
+  line-height: 1;
+  // padding-left: 45px;
 }
 
 .scroll-bar-indicator{
   display: none !important;
+}
+
+.not-no-sound>div{
+  padding-left:45px !important;
 }

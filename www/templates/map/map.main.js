@@ -104,7 +104,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
         "y" : []
     };
     var regionNodes = {
-        "desert1" : 4,
+        "desert1" : 17,
         "desert2" : 24,
         "ice1" : 22,
         "ice2" : 19,
@@ -839,10 +839,13 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                     if (animateStarFlag) {
                         //log.debug("star in lesson", lessons[animateStarFlag.clickedNode].stars);
                         //log.debug("animateStarFlag",animateStarFlag);
+                        log.debug("animateStar condition 1");
                         if (lessons[animateStarFlag.clickedNode].stars && lessons[animateStarFlag.clickedNode].stars > animateStarFlag.clickedNodeStar) {
                             //log.debug("Hey brother");
+                            log.debug("animateStar condition 2");
                             scope.$emit('animateStar');
                             setTimeout(function(){
+                                log.debug("animateStar condition timeout");
                                 animateStar(animateStarFlag.clickedNode).then(function(){
                                     if (temp["activeLessonKey"] == -1) {
                                         scrollTo(0);
