@@ -104,7 +104,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
         "y" : []
     };
     var regionNodes = {
-        "desert1" : 17,
+        "desert1" : 4,
         "desert2" : 24,
         "ice1" : 22,
         "ice2" : 19,
@@ -372,13 +372,15 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                     points.x = x.reverse();
                     points.y = y.reverse();
                     //log.debug("These are the points",points)
+                    // log.debug("original points.x",points.x)
+                    // log.debug("original points.y",points.y)
                 });
                 return fetchMapRequest;
 
             }
 
             function renderNodePath(region,points){
-                log.info("Rendring traversal path ...")
+                log.info("Rendering traversal path ...")
                 if (localStorage.demo_flag == 1) {
                     return;
                 }
@@ -509,6 +511,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                         break;
                     }
                     // log.debug ("BABUSHKA")
+                    // log.debug("node indeices",i,distance,j)
                     var posx = game.math.catmullRomInterpolation(points.x, j);
                     var posy = game.math.catmullRomInterpolation(points.y, j);
                     var currentLesson = lessons[i].node;
@@ -648,9 +651,18 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                     //log.debug('J2',1-(lessonKey)/(last_node_index-first_node_index));
                     //log.debug("last",last_node_index,"first",first_node_index)
                     //log.debug('distance2',1/(last_node_index-first_node_index))
+                    // log.debug("points.x",points.x)
+                    // log.debug("points.y",points.y)
 
-                    var posx = game.math.catmullRomInterpolation(points.x, (lessonKey)/last_node_index-first_node_index);
-                    var posy = game.math.catmullRomInterpolation(points.y, (lessonKey)/last_node_index-first_node_index);
+                    // log.debug("last_node_index",last_node_index)
+                    // log.debug("first_node_index",first_node_index)
+                    // log.debug("lessonKey",lessonKey)
+                    // log.debug("lessonKey",lessonKey-first_node_index +1)
+                    // log.debug("star index",(lessonKey-first_node_index+1),1/(last_node_index-first_node_index),(lessonKey-first_node_index+1)/(last_node_index-first_node_index))
+                    var posx = game.math.catmullRomInterpolation(points.x, (lessonKey-first_node_index)/(last_node_index-first_node_index));
+                    var posy = game.math.catmullRomInterpolation(points.y, (lessonKey-first_node_index)/(last_node_index-first_node_index));
+                    // log.debug("posx",posx)
+                    // log.debug("posy",posy)
                     //log.debug("LOG KYA KAHENGE",posx,posy)
                     var starCloneTween = [];
                     for (var i = 0; i < lessons[lessonKey].stars; i++) {
