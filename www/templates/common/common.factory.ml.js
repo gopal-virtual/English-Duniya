@@ -1,16 +1,23 @@
 (function() {
   'use strict';
 
+  // $('ion-view').find('[map-canvas]').each(function(index){
+  //    globalML = angular.element(this).scope().$parent.mapCtrl.ml;
+  // });
+
   angular
     .module('common')
     .factory('ml', ml);
 
-  ml.$inject = ['data', '$log', '$q'];
+  ml.$inject = ['data', '$log', '$q', 'User'];
 
   /* @ngInject */
-  function ml(data, $log, $q) {
+  function ml(data, $log, $q, User) {
     var ml = {
       MAX: 10,
+      passingThreshold: 0.7,
+      roadMapMax: 8,
+      maxSuggestionCount: 3,
       runDiagnostic: runDiagnostic,
       suggestBridge: suggestBridge,
       getUniqueArray: getUniqueArray,
@@ -19,7 +26,7 @@
       pushIfAbsent: pushIfAbsent,
       getRecommendationFromDiagnosticTest: getRecommendationFromDiagnosticTest,
       ifInsufficientSrs: ifInsufficientSrs,
-      findSrInStudentLessonData: findSrInStudentLessonData,
+      findSrInLessonResultMapping: findSrInLessonResultMapping,
       lastResort: lastResort,
       getNextQSr: getNextQSr,
       getChildren: getChildren,
@@ -27,49 +34,319 @@
       getRecPlaylist: getRecPlaylist,
       rankPlaylist: rankPlaylist,
       makeTree: makeTree,
+      getKmapsFiltered: getKmapsFiltered,
       getLevelRecommendation: getLevelRecommendation,
+      getNewBatchNodes: getNewBatchNodes,
+      getTempRoadMap: getTempRoadMap,
       setMLDqJSON: setMLDqJSON(),
       setMLKmapsJSON: setMLKmapsJSON(),
       setMapping: setMapping(),
-      // dqQuiz: [{"0":{"sr":"54ada475-ce87-411b-a075-60572a36a111","answered":"right","skill":"vocabulary","level":0},"1":{"sr":"4eb50a81-bbe8-49c4-8efb-e284008d5f7f","answered":"NA","skill":"vocabulary","level":1},"2":{"sr":"e7c18a27-457f-422e-975b-b28ddd62fb87","answered":"wrong","skill":"vocabulary","level":2},"3":{"sr":"6d116141-c026-408d-8320-4daf805887a9","answered":"NA","skill":"vocabulary","level":3}},{"0":{"sr":"111f3f9f-0726-4fe2-9f09-c897ba162b53","answered":"right","skill":"reading","level":0},"1":{"sr":"b06d642c-fe00-4ac0-ba05-c13617574b2b","answered":"NA","skill":"reading","level":1},"2":{"sr":"06a0fdc5-0ffd-416f-ab37-fe9fddecfda1","answered":"wrong","skill":"reading","level":2},"-1":{"sr":"b89fc070-d415-4949-854d-591bcaf4f8ab","answered":"NA","skill":"reading","level":0}},{"0":{"sr":"bf7648c4-4f20-4c91-aa7a-a412883317d7","answered":"wrong","skill":"listening","level":0},"1":{"sr":"f76a0a14-023c-4dad-a48c-580ee6e14af0","answered":"NA","skill":"listening","level":1},"2":{"sr":"b7ac6b9a-5423-41b9-8cfb-a4a9efa94ecc","answered":"NA","skill":"listening","level":2},"3":{"sr":"07fddf47-c997-478a-99ce-3a6d20c0dc04","answered":"NA","skill":"listening","level":3}}]
+      setLessonResultMapping: setLessonResultMapping,
+      roadMapData: {},
+      getLessonSuggestion: getLessonSuggestion,
+      updateRoadMapSuggestion: updateRoadMapSuggestion,
+      deleteSuccessfulNodeFromRoadmap: deleteSuccessfulNodeFromRoadmap,
       dqQuiz : []
+      // dqQuiz: [{"0":{"sr":"99991928-a3f7-49ee-b922-7dd37eb524bb","answered":"right","skill":"vocabulary","level":0},"1":{"sr":"56a3d5ec-ad5a-4917-9d9e-79221a956e88","answered":"NA","skill":"vocabulary","level":1},"2":{"sr":"874738b1-762c-47da-ae3e-a968c6145aa5","answered":"wrong","skill":"vocabulary","level":2},"3":{"sr":"1ef9334b-9d01-4a08-83b9-44e920983a06","answered":"NA","skill":"vocabulary","level":3}},{"0":{"sr":"2651f54b-dfcc-4f37-8560-5ed32965e37b","answered":"right","skill":"reading","level":0},"1":{"sr":"00b2a501-bd8b-4ff8-970e-18b3014f009d","answered":"NA","skill":"reading","level":1},"2":{"sr":"7b5a7976-55ed-4394-8c2d-6682e0670895","answered":"wrong","skill":"reading","level":2},"-1":{"sr":"c4e76df0-e881-4a87-9aab-93779b9eb173","answered":"NA","skill":"reading","level":0}},{"0":{"sr":"da08df75-f90b-4d17-9063-9c0529d8e29e","answered":"right","skill":"grammar","level":0},"1":{"sr":"6a0d68bb-9a0d-4f94-8b7c-0b8126f1d3ee","answered":"NA","skill":"grammar","level":3},"-2":{"sr":"09164dd8-9342-4877-94c9-150b760fb6db","answered":"NA","skill":"grammar","level":0},"-1":{"sr":"48fecd1e-7131-4063-a7ed-7585da8772b0","answered":"NA","skill":"grammar","level":1}},{"0":{"sr":"20d4b188-28e3-4803-b52d-7a52a5c4f4c9","answered":"wrong","skill":"listening","level":0},"-3":{"sr":"a00689f3-055a-4be0-b891-9f949e204f4d","answered":"NA","skill":"listening","level":0},"-2":{"sr":"b7681f96-c544-448e-952f-f0dda0c33b97","answered":"right","skill":"listening","level":-2},"-1":{"sr":"8c21ca7c-b0d4-4c54-9e6c-3aa18772b9df","answered":"NA","skill":"listening","level":-1}}]
     };
 
-    // function setMLDqJSON(){
-    //   return data.getDQJSON()
-    //   .then(function(res){
-    //     ml.dqJSON = res;
-    //     ;
-    //     return ml.dqJSON;
-    //   })
-    //   .catch(function(err){
-    //     ;
-    //   })
-    // }
+    function setNewRoadMap(recommendationsWithPrereqs){
+      ml.recommendationsWithPrereqs = angular.copy(recommendationsWithPrereqs);
+      var roadMap = getTempRoadMap(recommendationsWithPrereqs);
+      ml.roadMapData = {"roadMap": [], "recommendationsWithPrereqs": recommendationsWithPrereqs};
+      for(var i = 0; i< roadMap.length;i++){
+        ml.roadMapData["roadMap"].push({"sr": roadMap[i], "suggestionCount": 0, "resultTrack": {}, "previousNode": null, "currentNode": null});
+      }
+    }
 
-    // function setMLKmapsJSON(){
-    //   return data.getKmapsJSON()
-    //   .then(function(res){
-    //     ml.kmapsJSON = res;
-    //     ;
-    //     return ml.kmapsJSON;
-    //   })
-    //   .catch(function(err){
-    //     ;
-    //   })
-    // }
+    function getLessonSuggestion(data){
+      $log.debug("in getLessonSuggestion", data);
+      var suggestion = updateRoadMapSuggestion(data);
+      $log.debug('suggestion from updateRoadMapSuggestion', suggestion);
+      // save to localStorage
+      localStorage.setItem("roadMapData", JSON.stringify(ml.roadMapData));
+      return suggestion;
+    }
 
-    // function setMapping(){
-    //   return data.getDiagnosisLitmusMapping()
-    //   .then(function(res){
-    //     ml.mapping = res;
-    //     ;
-    //     return ml.mapping;
-    //   })
-    //   .catch(function(err){
-    //     ;
-    //   })
-    // }
+
+    function handleMultipleSuggestions(){
+      var suggestions = ml.roadMapData["roadMap"][0]["resultTrack"][ml.roadMapData["roadMap"][0]["currentNode"]];
+      if(suggestions && suggestions.length > 0){
+        $log.debug('in handleMultipleSuggestions 1', suggestions);
+        return suggestions[0];
+      }else{
+        // consider previousNode
+        $log.debug('in handleMultipleSuggestions 2', suggestions);
+        if(ml.roadMapData["roadMap"][0]["previousNode"]){
+          var suggestions = ml.roadMapData["roadMap"][0]["resultTrack"][ml.roadMapData["roadMap"][0]["previousNode"]];
+          $log.debug('in handleMultipleSuggestions 3', suggestions);
+          if(suggestions && suggestions.length > 0){
+            $log.debug('in handleMultipleSuggestions 4');
+            ml.roadMapData["roadMap"][0]["currentNode"] = ml.roadMapData["roadMap"][0]["previousNode"];
+            ml.roadMapData["roadMap"][0]["previousNode"] = null;
+            return suggestions[0];
+          }else{
+            $log.debug('in handleMultipleSuggestions 5');
+            var roadMapLesson = ml.lessonResultMapping[ml.roadMapData["roadMap"][0]["sr"]];
+            if(roadMapLesson && roadMapLesson["result"] && roadMapLesson["result"] >= ml.passingThreshold){
+              $log.debug('in handleMultipleSuggestions 5.1');
+              return updateRoadMapSuggestion({"event":"assessment",
+                                        "score": roadMapLesson["result"],
+                                        "totalScore": 1,
+                                        "skill": roadMapLesson["unit"],
+                                        "sr": ml.roadMapData["roadMap"][0]["sr"]
+                                      });
+            }else{
+              $log.debug('in handleMultipleSuggestions 5.2');
+              ml.roadMapData["roadMap"][0]["currentNode"] = ml.roadMapData["roadMap"][0]["sr"];
+              ml.roadMapData["roadMap"][0]["previousNode"] = null;
+              return ml.roadMapData["roadMap"][0]["sr"];              
+            }
+          }
+        }else{
+          $log.debug('in handleMultipleSuggestions 6');
+            var roadMapLesson = ml.lessonResultMapping[ml.roadMapData["roadMap"][0]["sr"]];
+            if(roadMapLesson && roadMapLesson["result"] && roadMapLesson["result"] >= ml.passingThreshold){
+              $log.debug('in handleMultipleSuggestions 6.1');
+              return updateRoadMapSuggestion({"event":"assessment",
+                                        "score": roadMapLesson["result"],
+                                        "totalScore": 1,
+                                        "skill": roadMapLesson["unit"],
+                                        "sr": ml.roadMapData["roadMap"][0]["sr"]
+                                      });
+            }else{
+              $log.debug('in handleMultipleSuggestions 6.2');
+              ml.roadMapData["roadMap"][0]["currentNode"] = ml.roadMapData["roadMap"][0]["sr"];
+              ml.roadMapData["roadMap"][0]["previousNode"] = null;
+              return ml.roadMapData["roadMap"][0]["sr"];
+            }
+        }
+      }
+    }
+
+    function deleteSuccessfulNodeFromRoadmap(sr, score){
+      if(score != undefined){
+        if(score < ml.passingThreshold){
+          return;
+        }
+      }
+      $log.debug('in deleteSuccessfulNodeFromRoadmap', sr, score);
+      if(localStorage.roadMapData == undefined){
+        ml.roadMapData = {};
+      }else{
+        ml.roadMapData = JSON.parse(localStorage.roadMapData);
+      }
+      var roadMap = ml.roadMapData["roadMap"];
+      if(roadMap){
+        for(var i = 0;i<roadMap.length;i++){
+          var resultTrack = roadMap[i]["resultTrack"];
+          for(var node in resultTrack){
+            for(var j = 0;j<resultTrack[node].length;j++){
+              if(resultTrack[node][j] == sr){
+                $log.debug('here deleting');
+                resultTrack[node].splice(j, 1);
+                j--;
+              }
+            }
+          }
+          roadMap[i]["resultTrack"] = resultTrack;
+          var lesson = roadMap[i];
+          if(lesson["sr"] == sr){
+            $log.debug('here deleting 2');
+            roadMap.splice(i, 1);
+            i--;
+          }
+        }
+        ml.roadMapData["roadMap"] = roadMap;
+        localStorage.setItem("roadMapData", JSON.stringify(ml.roadMapData));
+      }
+    }
+
+
+    function updateRoadMapSuggestion(data){
+      if(localStorage.roadMapData == undefined){
+        ml.roadMapData = {};
+      }else{
+        ml.roadMapData = JSON.parse(localStorage.roadMapData);
+      }
+      $log.debug('ml.roadMapData, data', ml.roadMapData, data);
+      if(data["event"] == "diagnosisTest"){
+        // $log.debug('in diagnosisTest', );
+        var recommendationsWithPrereqs = runDiagnostic()[0];
+        setNewRoadMap(recommendationsWithPrereqs);
+        $log.debug('ml.roadMapData 1', ml.roadMapData);
+        ml.roadMapData["roadMap"][0]["previousNode"] = null;
+        ml.roadMapData["roadMap"][0]["currentNode"] = ml.roadMapData["roadMap"][0]["sr"];
+        ml.roadMapData["roadMap"][0]["resultTrack"] = {};
+        return handleMultipleSuggestions();
+      }
+      else if(data["event"] == "assessment"){
+        var result = data["score"]/data["totalScore"];
+        $log.debug('in assessment', result);
+
+        if(data["sr"] == ml.roadMapData["roadMap"][0]["sr"]){
+          // if roadMap lessons
+          $log.debug('if roadMap lessons');
+          if(result >= ml.passingThreshold){
+            // result roadMap lesson pass
+            $log.debug('result roadMap lesson pass');
+            // ml.roadMapData["roadMap"].splice(0, 1);
+            deleteSuccessfulNodeFromRoadmap(data["sr"]);
+            var lesson = ml.roadMapData["roadMap"][0];
+            if (lesson != undefined){
+              // returning suggestion
+              $log.debug('returning suggestion', lesson["sr"]);
+              ml.roadMapData["roadMap"][0]["previousNode"] = null;
+              ml.roadMapData["roadMap"][0]["currentNode"] = lesson["sr"];
+              ml.roadMapData["roadMap"][0]["resultTrack"] = {};
+              return handleMultipleSuggestions();
+            }else{
+              // if roadMap empty
+              $log.debug('if roadMap empty');
+              var recommendationsWithPrereqs = getNewBatchNodes()[0];
+              setNewRoadMap(recommendationsWithPrereqs);
+              ml.roadMapData["roadMap"][0]["previousNode"] = null;
+              ml.roadMapData["roadMap"][0]["currentNode"] = ml.roadMapData["roadMap"][0]["sr"];
+              ml.roadMapData["roadMap"][0]["resultTrack"] = {};
+              return handleMultipleSuggestions();
+            }
+          }else{
+            // result roadMap lesson fail
+            $log.debug('result roadMap lesson fail');
+            ml.roadMapData["roadMap"][0]["suggestionCount"] += 1;
+            var suggestions = suggestBridge(data["skill"], ml.roadMapData["roadMap"][0]["sr"], ml.roadMapData["recommendationsWithPrereqs"]);
+            ml.roadMapData["roadMap"][0]["previousNode"] = null;
+            ml.roadMapData["roadMap"][0]["currentNode"] = ml.roadMapData["roadMap"][0]["sr"];
+            ml.roadMapData["roadMap"][0]["resultTrack"][ml.roadMapData["roadMap"][0]["sr"]] = suggestions;
+            return handleMultipleSuggestions();
+          }
+        }else{
+          // if not roadMap lessons
+          $log.debug('if not roadMap lessons');
+          ml.roadMapData["roadMap"][0]["suggestionCount"] += 1;
+          if(result >= ml.passingThreshold){
+            // if not roadMap lessons pass
+            $log.debug('if not roadMap lessons pass');
+            // ml.roadMapData["roadMap"][0]["resultTrack"][ml.roadMapData["roadMap"][0]["currentNode"]].splice(0,1);
+            deleteSuccessfulNodeFromRoadmap(data["sr"]);
+            return handleMultipleSuggestions();
+          }else{
+            // if not roadMap lessons fail
+            $log.debug('if not roadMap lessons fail');
+            if(ml.roadMapData["roadMap"][0]["suggestionCount"] > ml.maxSuggestionCount){
+              // if not roadMap lessons fail, if overcount suggestioncount
+              $log.debug('if not roadMap lessons fail, if overcount suggestioncount');
+              ml.roadMapData["roadMap"][0]["suggestionCount"] = 0;
+              ml.roadMapData["roadMap"][0]["resultTrack"] = {};
+              if(ml.roadMapData["roadMap"][0]["sr"] == data["sr"]){
+                $log.debug('most exceptional condition');
+                var suggestions = suggestBridge(data["skill"], data["sr"], ml.roadMapData["recommendationsWithPrereqs"]);
+                ml.roadMapData["roadMap"][0]["previousNode"] = null;
+                ml.roadMapData["roadMap"][0]["currentNode"] = ml.roadMapData["roadMap"][0]["sr"];
+                ml.roadMapData["roadMap"][0]["resultTrack"][ml.roadMapData["roadMap"][0]["sr"]] = suggestions;
+                return handleMultipleSuggestions();
+              }else{
+                $log.debug('returning suggesiton 2');
+                ml.roadMapData["roadMap"][0]["previousNode"] = null;
+                ml.roadMapData["roadMap"][0]["currentNode"] = ml.roadMapData["roadMap"][0]["sr"];
+                ml.roadMapData["roadMap"][0]["resultTrack"] = {};
+                return ml.roadMapData["roadMap"][0]["sr"];
+              }
+            }else{
+              // if not roadMap lessons fail, if not overcount suggestioncount
+              var suggestions = suggestBridge(data["skill"], data["sr"], ml.roadMapData["recommendationsWithPrereqs"]);
+              $log.debug('if not roadMap lessons fail, if not overcount suggestioncount', suggestions);
+
+              ml.roadMapData["roadMap"][0]["previousNode"] = ml.roadMapData["roadMap"][0]["currentNode"];
+              ml.roadMapData["roadMap"][0]["currentNode"] = data["sr"];
+              ml.roadMapData["roadMap"][0]["resultTrack"][data["sr"]] = suggestions;
+              return handleMultipleSuggestions();
+            }
+          }
+        }
+      }
+    }
+
+
+    function getTempRoadMap(recommendationsWithPrereqs){
+      var roadMap = [];
+      // var roadMapSkills = [];
+      var maxRecInSkill = 0;
+
+      for(var skill in recommendationsWithPrereqs){
+        // roadMapSkills.push(skill);
+        if(recommendationsWithPrereqs[skill].length > maxRecInSkill){
+          maxRecInSkill = recommendationsWithPrereqs[skill].length;
+        }
+      }
+
+      for(var i = 0; i < maxRecInSkill; i++){
+        if(roadMap.length >= ml.roadMapMax){
+          break;
+        }
+
+        // roadMapSkills = shuffleArray(roadMapSkills);
+        // for(var j=0; j<roadMapSkills.length;j++){
+        //   var skill = roadMapSkills[j];
+        for(var skill in recommendationsWithPrereqs){
+          if(recommendationsWithPrereqs[skill][i] != undefined){
+            var lesson = recommendationsWithPrereqs[skill][i];
+            if(roadMap.indexOf(lesson["sr"]) == -1 && roadMap.length < ml.roadMapMax){
+              roadMap.push(lesson["sr"]);
+            }
+          }
+        }
+      }
+      // roadMap = rankPlaylist({ 0: roadMap }, undefined, 1); // This is making the first node same for all users.
+      roadMap = shuffleArray(roadMap);
+      return roadMap;
+    }
+
+    function getLessonResultMapping(){
+      var student_id = User.getActiveProfileSync()._id;
+      $log.debug('in getLessonResultMapping', student_id);
+      return User.scores.getScoreList(student_id)
+      .then(function(res){
+        $log.debug('res lessonResultMapping', res);
+        var lessonResultMapping = {};
+
+        for(var i = 0; i < res.length; i++){
+          var sr = res[i]["lesson_id"];
+          var result;
+          var unit;
+          for(var entity in res[i]){
+            if(entity != "lesson_id" && res[i][entity]["type"] == "assessment"){
+              result = res[i][entity]["score"]/res[i][entity]["totalScore"];
+              unit = res[i][entity]["skill"].toLowerCase();
+              break;
+            }
+          }
+          lessonResultMapping[sr] = {
+            "result": result,
+            "unit": unit
+          }
+        }
+
+        $log.debug('final lessonResultMapping', lessonResultMapping);
+        return lessonResultMapping;
+      })
+      .catch(function(err){
+        $log.debug('err generating lessonResultMapping', err);
+      });
+    }
+
+
+    function setLessonResultMapping(){
+      $log.debug('in setLessonResultMapping');
+      return getLessonResultMapping()
+      .then(function(res){
+        $log.debug('setLessonResultMapping', res);
+        ml.lessonResultMapping = res;
+        // $log.debug('ml.lessonResultMapping set', ml.lessonResultMapping);
+        return true;
+      });
+    }
+
 
     function setMLDqJSON(){
       return data.createDiagQJSON
@@ -78,11 +355,10 @@
       })
       .then(function(res){
         ml.dqJSON = res;
-        ;
         return ml.dqJSON;
       })
       .catch(function(err){
-        ;
+        $log.debug('err in setMLDqJSON', setMLDqJSON);
       })
     }
 
@@ -116,156 +392,267 @@
       })
     }
 
-    // var q = $q.defer();
-    // ;
-
-    // var result = data.getKmapsJSON();
-    // result.then(function(res) {
-    //     ;
-    // })
-
-    // var result = data.getDiagnosisQuestionById(92423);
-    // result.then(function(res) {
-    //     ;
-    // })
-
-    // var result = data.getDiagnosisQuestionByLevelNSkill(0, "vocabulary");
-    // result.then(function(res) {
-    //     ;
-    // });
-
-    // var result = data.getDiagnosisLitmusMapping();
-    // result.then(function(res) {
-    //     ;
-    // });
-
-    // var result = data.getKmapsLevels();
-    // result.then(function(res) {
-    //     ;
-    // });
-
     return ml;
 
-    function runDiagnostic(quiz, studentName) {
-      var recommendations = ml.getRecommendationFromDiagnosticTest(quiz, studentName);
 
-      var insufficientSkillSrs = ml.checkIfInsufficientSrs(recommendations);
+    function runDiagnostic() {
+        var quiz = ml.dqQuiz;
+        var recommendationFromDiagnosticTest = ml.getRecommendationFromDiagnosticTest(quiz);
+        var recommendations = recommendationFromDiagnosticTest[0];
+        var skillLevels = recommendationFromDiagnosticTest[1];
+        $log.debug('diagnosticRecommendations', recommendations);
 
+        recommendations = useLastResort(recommendations);
 
-      if (insufficientSkillSrs.length > 0) {
+        var recommendationsWithPrereqs = structureRecommendations(recommendations);
 
-        for (var i = 0; i < insufficientSkillSrs.length; i++) {
-          var insufficientSkill = insufficientSkillSrs[i];
-          var lastResortRecommendations = ml.lastResort(studentName, insufficientSkill);
-
-          if (lastResortRecommendations.length > 0) {
-            // recommendations = recommendations.concat(lastResortRecommendations.slice(0, 10 - recommendations.length));
-            recommendations[insufficientSkill] = ml.pushIfAbsent(recommendations[insufficientSkill], lastResortRecommendations); // to add all the lastResortRecommendations
-          }
-        }
-      }
-
-      var rankedUniqueRecommendations = {};
-      for (var skill in recommendations) {
-        rankedUniqueRecommendations[skill] = ml.rankPlaylist({
-          0: recommendations[skill]
-        }, undefined, 1);
-      }
-
-
-      var recommendationsWithPrereqs = {};
-
-      for (var skill in rankedUniqueRecommendations) {
-
-        var srList = rankedUniqueRecommendations[skill];
-        var rankedSrList = [];
-        for (var i = 0; i < srList.length; i++) {
-          var sr = srList[i];
-          var prereqs = ml.makeTree(sr, undefined, undefined, 1);
-          var srIndex = prereqs.indexOf(sr);
-          if (srIndex > -1) {
-            prereqs.splice(srIndex, 1);
-          }
-
-          var sr_name = null;
-          var sr_data = ml.kmapsJSON[sr];
-          // var sr_data = KnowledgeMapsData.findOne({
-          //   "sr": sr
-          // });
-          if (sr_data != undefined) {
-            sr_name = sr_data["name"];
-          }
-
-          var prereqs_names = [];
-          var prereqs_skills = [];
-          for (var j = 0; j < prereqs.length; j++) {
-            var sr_data = ml.kmapsJSON[prereqs[j]];
-            // var sr_data = KnowledgeMapsData.findOne({
-            //   "sr": prereqs[j]
-            // });
-            if (sr_data != undefined) {
-              prereqs_names.push(sr_data["name"]);
-              prereqs_skills.push(sr_data["unit"]);
-            } else {
-              prereqs_names.push(null);
-              prereqs_skills.push(null);
-            }
-          }
-
-          rankedSrList.push({
-            "sr": sr,
-            "prereqs": prereqs,
-            "sr_name": sr_name,
-            "prereqs_names": prereqs_names,
-            "prereqs_skills": prereqs_skills
-          });
-        }
-        recommendationsWithPrereqs[skill] = rankedSrList;
-      }
-
-
-
-      return recommendationsWithPrereqs;
+        return [recommendationsWithPrereqs, skillLevels];
     }
 
-    function suggestBridge(skill, sr, studentName, recommendationsWithPrereqs) {
 
-      // for(var skill in recommendationsWithPrereqs){
-      for (var i = 0; i < recommendationsWithPrereqs[skill].length; i++) {
-        if (recommendationsWithPrereqs[skill][i]["sr"] == sr) { // find the sr in recommendationsWithPrereqs
-          var prereqs = recommendationsWithPrereqs[skill][i]["prereqs"]; // get prereqs of all the input sr
-          // get the student's lesson to result mapping from db
-          var studentData = StudentLessonData.findOne({
-            "studentName": studentName
-          }, {
-            "fields": {
-              "lessonScores.sr": 1,
-              "lessonScores.result": 1
-            }
-          });
-
-          // change to - find all unseccessful srs
-          var unsuccessfulPrereqs = [];
-          for (var ind = 0; ind < prereqs.length; ind++) {
-            // get the result of an input sr
-            var result = ml.findSrInStudentLessonData(prereqs[ind], studentData);
-            // if the result is not green/successful, push to unsuccessfulPrereqs
-            if (result != "#00ff00") {
-              unsuccessfulPrereqs.push(prereqs[ind]);
-            }
-          }
-
-          // rank the unsuccessfulPrereqs
-          var rankedPrereqList = ml.rankPlaylist({
-            0: unsuccessfulPrereqs
-          }, undefined, 1);
-          // return the first from unsuccessfulPrereqs
-          return rankedPrereqList[0];
-        }
+    function shuffleArray(array) {
+      var currentIndex = array.length, temporaryValue, randomIndex;
+      while (0 !== currentIndex) {
+          randomIndex = Math.floor(Math.random() * currentIndex);
+          currentIndex -= 1;
+          temporaryValue = array[currentIndex];
+          array[currentIndex] = array[randomIndex];
+          array[randomIndex] = temporaryValue;
       }
-      // }
-      return null;
+      return array;
     }
+
+
+    function useLastResort(recommendations){
+        if (recommendations == undefined){
+            recommendations = {"vocabulary": [], "reading": [], "grammar": [], "listening": []};
+        }
+
+        var insufficientSkillSrs = checkIfInsufficientSrs(recommendations);
+        // $log.debug('insufficientSkillSrs', insufficientSkillSrs);
+
+        if (insufficientSkillSrs.length > 0) {
+            $log.debug('running lastResort');
+
+            for (var i = 0; i < insufficientSkillSrs.length; i++) {
+                var insufficientSkill = insufficientSkillSrs[i];
+                var lastResortRecommendations = lastResort(insufficientSkill);
+
+                if (lastResortRecommendations.length > 0) {
+                    // recommendations = recommendations.concat(lastResortRecommendations.slice(0, 10 - recommendations.length));
+                    recommendations[insufficientSkill] = pushIfAbsent(recommendations[insufficientSkill], lastResortRecommendations); // to add all the lastResortRecommendations
+                }
+                break;// last resort should now run only once.
+            }
+            $log.debug('lastResortRecommendations', recommendations);
+        }
+        return recommendations;
+    }
+
+
+    function getNewBatchNodes(){
+        var recommendations = useLastResort();
+        var recommendationsWithPrereqs = structureRecommendations(recommendations);
+        var skillLevels = {"vocabulary": null, "reading": null, "grammar": null, "listening": null};
+        return [recommendationsWithPrereqs, skillLevels];
+    }
+
+
+    function structureRecommendations(recommendations){
+        // $log.debug('in structureRecommendations', recommendations);
+        var rankedUniqueRecommendations = {};
+        for (var skill in recommendations) {
+            rankedUniqueRecommendations[skill] = rankPlaylist({ 0: recommendations[skill] }, undefined, 1);
+        }
+        // var rankedUniqueRecommendations = rankPlaylist({0: uniqueRecommendations}, undefined, 1);
+        // $log.debug('rankedUniqueRecommendations', rankedUniqueRecommendations);
+        var recommendationsWithPrereqs = {};
+
+        var lessonResultMapping = ml.lessonResultMapping;
+
+        for (var skill in rankedUniqueRecommendations) {
+
+            var srList = rankedUniqueRecommendations[skill];
+            var rankedSrList = [];
+            for (var i = 0; i < srList.length; i++) {
+                var sr = srList[i];
+
+                var prereqs = makeTree(sr, undefined, undefined, 1);
+                var srIndex = prereqs.indexOf(sr);
+                if (srIndex > -1) {
+                    prereqs.splice(srIndex, 1);
+                }
+
+                var sr_name = null;
+                var sr_skill = null;
+                var sr_micstd = null;
+                var sr_result = null;
+                var sr_data = ml.kmapsJSON[sr];
+                if (sr_data != undefined) {
+                    sr_name = sr_data["name"];
+                    sr_skill = sr_data["unit"];
+                    sr_micstd = sr_data["microstandard"];
+                    var result = null;
+                    if(lessonResultMapping[sr] != undefined){
+                      // if(lessonResultMapping[sr]["result"] == "red"){
+                      if(lessonResultMapping[sr]["result"] < ml.passingThreshold){
+                          result = "Failed";
+                      // }else if(lessonResultMapping[sr]["result"] == "#00ff00"){
+                      }else if(lessonResultMapping[sr]["result"] >= ml.passingThreshold){
+                          result = "Passed";
+                      }else{
+                          result = "Unattempted";
+                      }
+                    }else{
+                        result = "Unattempted";
+                    }
+                    sr_result = result;
+                }
+
+                var prereqs_names = [];
+                var prereqs_skills = [];
+                var prereqs_micstd = [];
+                var prereqs_result = [];
+                for (var j = 0; j < prereqs.length; j++) {
+                    var sr_data = ml.kmapsJSON[prereqs[j]];
+                    if (sr_data != undefined) {
+                        prereqs_names.push(sr_data["name"]);
+                        prereqs_skills.push(sr_data["unit"]);
+                        prereqs_micstd.push(sr_data["microstandard"]);
+                        var result = null;
+                        if(lessonResultMapping[prereqs[j]] != undefined){
+                          if(lessonResultMapping[prereqs[j]]["result"] < ml.passingThreshold){
+                              result = "Failed";
+                          }else if(lessonResultMapping[prereqs[j]]["result"] >= ml.passingThreshold){
+                              result = "Passed";
+                          }else{
+                              result = "Unattempted";
+                          }
+                        }else{
+                            result = "Unattempted";
+                        }
+                        prereqs_result.push(result);
+                    } else {
+                        prereqs_names.push(null);
+                        prereqs_skills.push(null);
+                        prereqs_micstd.push(null);
+                        prereqs_result.push(null);
+                    }
+                }
+                // rankedSrList.push({ "sr": sr, "prereqs": prereqs, "sr_name": sr_name, "sr_skill": sr_skill, "prereqs_names": prereqs_names, "prereqs_skills": prereqs_skills, "sr_micstd": sr_micstd, "prereqs_micstd": prereqs_micstd, "sr_result": sr_result, "prereqs_result": prereqs_result });
+                rankedSrList.push({ "sr": sr, "prereqs": prereqs });
+            }
+            recommendationsWithPrereqs[skill] = rankedSrList;
+        }
+        return recommendationsWithPrereqs;
+    }
+
+
+    function suggestBridge(skill, sr, recommendationsWithPrereqs) {
+        if (recommendationsWithPrereqs && recommendationsWithPrereqs[skill]) {
+            for (var i = 0; i < recommendationsWithPrereqs[skill].length; i++) {
+                if (recommendationsWithPrereqs[skill][i]["sr"] == sr) { // find the sr in recommendationsWithPrereqs
+                    var prereqs = recommendationsWithPrereqs[skill][i]["prereqs"]; // get prereqs of all the input sr
+                    // get the student's lesson to result mapping from db
+                    var lessonResultMapping = ml.lessonResultMapping;
+                    // change to - find all unseccessful srs
+                    var unsuccessfulPrereqs = [];
+                    for (var ind = 0; ind < prereqs.length; ind++) {
+                        // get the result of an input sr
+                        var result = findSrInLessonResultMapping(prereqs[ind], lessonResultMapping);
+                        // if the result is not green/successful, push to unsuccessfulPrereqs
+                        // if (result != "#00ff00") {
+                        if (result < ml.passingThreshold) {
+                            unsuccessfulPrereqs.push(prereqs[ind]);
+                        }
+                    }
+
+                    // rank the unsuccessfulPrereqs
+                    // if(unsuccessfulPrereqs.length == 0){
+                    //     return null;
+                    // }
+                    // jugaad
+                    if (unsuccessfulPrereqs.length == 0) {
+                        break;
+                    }
+                    var rankedPrereqList = rankPlaylist({ 0: unsuccessfulPrereqs }, undefined, 1);
+                    return rankedPrereqList;
+                    // return the first from unsuccessfulPrereqs
+                    // var suggestion = ml.kmapsJSON[rankedPrereqList[0]]
+                    // return suggestion["sr"];
+
+                    // var suggestionPerSkill = {};
+                    // $log.debug('prereq suggestion', suggestion);
+
+                    // suggestionPerSkill[skill] = [suggestion["sr"]];
+
+                    // var recommendationsWithPrereqs = structureRecommendations(suggestionPerSkill);
+
+                    // return recommendationsWithPrereqs;
+                }
+            }
+        }
+
+        // if suggestion is null; marisa's jugaad
+        $log.debug('suggestBridge part 1 is null');
+        var lessonResultMapping = ml.lessonResultMapping;
+        var kmLesson = ml.kmapsJSON[sr];
+        var level = kmLesson["level"];
+        var contentSr = kmLesson["content_sr"];
+        var allLessons = ml.kmapsJSON;
+        var lessonsPerLevel = {};
+        var contentSrSuggestedLesson;
+        var contentSrSuggested = 0;
+
+        for (var i in allLessons) {
+            var lesson = allLessons[i];
+            // if (lessonResultMapping[lesson["sr"]] == undefined || lessonResultMapping[lesson["sr"]]["result"] != "#00ff00") {
+            if (lessonResultMapping[lesson["sr"]] == undefined || lessonResultMapping[lesson["sr"]]["result"] < ml.passingThreshold) {
+                if (lesson["content_sr"] < contentSr && lesson["content_sr"] > contentSrSuggested && level == lesson["level"]) {
+                    contentSrSuggested = lesson["content_sr"];
+                    contentSrSuggestedLesson = lesson["sr"];
+                }
+                if (lessonsPerLevel[lesson["level"]] == undefined) {
+                    lessonsPerLevel[lesson["level"]] = [];
+                }
+                lessonsPerLevel[lesson["level"]].push(lesson["sr"]);
+            }
+        }
+
+        if (contentSrSuggestedLesson) {
+          return [contentSrSuggestedLesson];
+            // var suggestion = ml.kmapsJSON[contentSrSuggestedLesson];
+            // return suggestion["sr"];
+            // $log.debug('contentSrSuggestedLesson suggestion', suggestion);
+            // var suggestionPerSkill = {};
+            // suggestionPerSkill[skill] = [suggestion["sr"]];
+
+            // var recommendationsWithPrereqs = structureRecommendations(suggestionPerSkill);
+
+            // return recommendationsWithPrereqs;
+        } else if (Object.keys(lessonsPerLevel).length > 0) {
+            var closestLevel = closest(Object.keys(lessonsPerLevel), level);
+            var rankedLessons = rankPlaylist({ 0: lessonsPerLevel[closestLevel] }, undefined, 1);
+            return rankedLessons;
+            // var suggestion = ml.kmapsJSON[rankedLessons[0]];
+            // return suggestion["sr"];
+            // $log.debug('lessonsPerLevel suggestion', suggestion);
+
+            // var suggestionPerSkill = {};
+            // suggestionPerSkill[skill] = [suggestion["sr"]];
+
+            // var recommendationsWithPrereqs = structureRecommendations(suggestionPerSkill);
+
+            // return recommendationsWithPrereqs;
+        }
+
+        // var suggestionPerSkill = {};
+        // suggestionPerSkill[skill] = [null];
+        // Ayush, write for worst case, if nothing found -> call lastResort
+
+        return null;
+    }
+
 
     function getUniqueArray(array) {
       var uniqueArray = []; // find unique srs
@@ -403,11 +790,12 @@
     }
 
     function getDqsByLevelNSkill(level, skill){
+      // $log.debug('in getDqsByLevelNSkill', level, skill);
       var srs = [];
       for(var q_id in ml.dqJSON){
         // if(ml.dqJSON[q_id]["node"]["level"] == level && ml.dqJSON[q_id]["node"]["skill_area"] == skill){ // Ayush -> beware, the structure of ported dqJSON changes quite often
-        if(ml.dqJSON[q_id]["node"]["type"]["level"] == level && ml.dqJSON[q_id]["node"]["tag"] == skill){
-          srs.push({"sr": ml.dqJSON[q_id]["node"]["sr"], "skill_area": skill});
+        if(ml.dqJSON[q_id]["ml"]["level"] == level && ml.dqJSON[q_id]["ml"]["skill_area"] == skill){
+          srs.push({"sr": ml.dqJSON[q_id]["ml"]["sr"], "skill_area": skill, "lesson_skill": ml.dqJSON[q_id]["ml"]["lesson_skill"]});
           // Ayush -> check <ml.dqJSON[q_id]["node"]["sr"]> is not undefined
         }
       }
@@ -431,60 +819,62 @@
     }
 
 
-    function getRecommendationFromDiagnosticTest(quiz, studentName) {
+    function getRecommendationFromDiagnosticTest(quiz) {
 
-      // for diagnostic recommendation, we will first find the suggested srs with the help of the student's performance in the test.
-      // 1. if litmus 0 is correct, find the highest positive litmus number (i.e from 2 to 1) which was answered correct and assign the next level sr to the suggestedSrs list. if not found any wrong answer, do not assign anything to the suggestedSrs.
-      // 2. if litmus 0 is wrong, find the lowest negative number (i.e starting from -2 then -1) which was answered correct  and assign the next level sr to the suggestedSrs list. if not found any wrong answer assign the 0 litmus number lesson to the suggestedSrs list.
+        // for diagnostic recommendation, we will first find the suggested srs with the help of the student's performance in the test.
+        // 1. if litmus 0 is correct, find the highest positive litmus number (i.e from 2 to 1) which was answered correct and assign the next level sr to the suggestedSrs list. if not found any wrong answer, do not assign anything to the suggestedSrs.
+        // 2. if litmus 0 is wrong, find the lowest negative number (i.e starting from -2 then -1) which was answered correct  and assign the next level sr to the suggestedSrs list. if not found any wrong answer assign the 0 litmus number lesson to the suggestedSrs list.
 
-      var suggestedRootSrs = [];
-      for (var index = 0; index < quiz.length; index++) {
-        var questionSet = quiz[index];
-        var output = ml.getSuggestedSr2(questionSet, "getSuggestedLevel")[0];
-        ;
-        if (output == undefined) {
-          continue;
+        var suggestedRootSrs = [];
+        var skillLevels = {};
+        for (var index = 0; index < quiz.length; index++) {
+            var questionSet = quiz[index];
+            var output = getSuggestedSr2(questionSet, "getSuggestedLevel")[0];
+            // $log.debug('skill level ', output);
+            if (output == undefined) {
+                continue;
+            }
+            skillLevels[output.skill] = output.level;
+            suggestedRootSrs = getSuggestedRootSrs(output.level, output.skill, suggestedRootSrs);
+            // $log.debug('returned suggestedRootSrs', suggestedRootSrs);
         }
 
-        var srs = getDqsByLevelNSkill(output.level, output.skill);
-        for (var i = 0; i < srs.length; i++) {
-          suggestedRootSrs.push({
-            "sr": srs[i].sr,
-            "skill": srs[i].skill_area
-          });
+        $log.debug('suggestedRootSrs', suggestedRootSrs);
+        $log.debug('skillLevels', skillLevels);
+
+        // var suggestedSrs = [];
+        var skillBasedSuggestedSrs = {};
+        for (var i = 0; i < suggestedRootSrs.length; i++) {
+            var prereqSrs = makeTree(suggestedRootSrs[i].sr, undefined, undefined, 1); // makeTree will return the recommendations for a given sr
+            if (skillBasedSuggestedSrs[suggestedRootSrs[i].skill] == undefined) {
+                skillBasedSuggestedSrs[suggestedRootSrs[i].skill] = [];
+            }
+            skillBasedSuggestedSrs[suggestedRootSrs[i].skill] = pushIfAbsent(skillBasedSuggestedSrs[suggestedRootSrs[i].skill], prereqSrs);
         }
-      }
 
-      // var suggestedSrs = [];
-      var skillBasedSuggestedSrs = {};
-      for (var i = 0; i < suggestedRootSrs.length; i++) {
-        var prereqSrs = ml.makeTree(suggestedRootSrs[i].sr, undefined, undefined, 1); // makeTree will return the recommendations for a given sr
-        // suggestedSrs = suggestedSrs.concat(prereqSrs);
-        if (skillBasedSuggestedSrs[suggestedRootSrs[i].skill] == undefined) {
-          skillBasedSuggestedSrs[suggestedRootSrs[i].skill] = [];
+        // $log.debug('skillBasedSuggestedSrs', skillBasedSuggestedSrs);
+
+        var insufficientSkillSrs = checkIfInsufficientSrs(skillBasedSuggestedSrs);
+
+        if (insufficientSkillSrs.length == 0) {
+            // $log.debug('insufficientSkillSrs 0');
+            return skillBasedSuggestedSrs;
         }
-        skillBasedSuggestedSrs[suggestedRootSrs[i].skill] = ml.pushIfAbsent(skillBasedSuggestedSrs[suggestedRootSrs[i].skill], prereqSrs);
-      }
 
-      var insufficientSkillSrs = ml.checkIfInsufficientSrs(skillBasedSuggestedSrs);
+        // $log.debug('insufficientSkillSrs', insufficientSkillSrs);
+        for (var i = 0; i < insufficientSkillSrs.length; i++) {
+            var rootSuggestedSrs = skillBasedSuggestedSrs[insufficientSkillSrs[i]];
+            var prereqsRecommendations = ifInsufficientSrs(rootSuggestedSrs);
+            // skillBasedSuggestedSrs[insufficientSkillSrs[i]] = rootSuggestedSrs.concat(prereqsRecommendations.slice(0, ml.MAX - rootSuggestedSrs.length));
+            skillBasedSuggestedSrs[insufficientSkillSrs[i]] = pushIfAbsent(rootSuggestedSrs, prereqsRecommendations);
+        }
 
-      if (insufficientSkillSrs.length == 0) {
-        return skillBasedSuggestedSrs;
-      }
-
-      for (var i = 0; i < insufficientSkillSrs.length; i++) {
-        var rootSuggestedSrs = skillBasedSuggestedSrs[insufficientSkillSrs[i]];
-        var prereqsRecommendations = ml.ifInsufficientSrs(rootSuggestedSrs, studentName);
-        // skillBasedSuggestedSrs[insufficientSkillSrs[i]] = rootSuggestedSrs.concat(prereqsRecommendations.slice(0, ml.MAX - rootSuggestedSrs.length));
-        skillBasedSuggestedSrs[insufficientSkillSrs[i]] = ml.pushIfAbsent(rootSuggestedSrs, prereqsRecommendations);
-      }
-
-      return skillBasedSuggestedSrs;
+        return [skillBasedSuggestedSrs, skillLevels];
 
     }
 
 
-    function ifInsufficientSrs(uniqueSuggestedSrs, studentName) {
+    function ifInsufficientSrs(uniqueSuggestedSrs) {
       if (uniqueSuggestedSrs == undefined || uniqueSuggestedSrs.length == 0) {
         return [];
       }
@@ -503,21 +893,9 @@
       }, undefined, 1);
 
       // change to - check if student exist in db
-      var studentData;
+      var lessonResultMapping = ml.lessonResultMapping;
 
-      if (studentName != undefined && studentName != ""){
-        studentData= StudentLessonData.findOne({
-          "studentName": studentName
-        }, {
-          "fields": {
-            "lessonScores.sr": 1,
-            "lessonScores.result": 1
-          }
-        });
-      }
-
-      if (studentData == undefined) {
-        var recommendations = [];
+      if (Object.keys(lessonResultMapping).length == 0) {
         // return rankedPrereqList.slice(0, ml.MAX - uniqueSuggestedSrs.length).concat(uniqueSuggestedSrs);
         return rankedPrereqList;
       }
@@ -525,9 +903,10 @@
       var recommendations = [];
       // push only the rankedPrereqList lessons in which the student is successful
       for (var i = 0; i < rankedPrereqList.length; i++) {
-        var result = ml.findSrInStudentLessonData(rankedPrereqList[i], studentData);
+        var result = ml.findSrInLessonResultMapping(rankedPrereqList[i], lessonResultMapping);
         // change to - find result of srs not in uniqueSuggestedSrs and result != "#00ff00"
-        if (result != "#00ff00" && uniqueSuggestedSrs.indexOf(rankedPrereqList[i]) == -1) {
+        // if (result != "#00ff00" && uniqueSuggestedSrs.indexOf(rankedPrereqList[i]) == -1) {
+        if (result < ml.passingThreshold && uniqueSuggestedSrs.indexOf(rankedPrereqList[i]) == -1) {
           recommendations.push(rankedPrereqList[i]);
         }
         if (recommendations.length >= 10 - uniqueSuggestedSrs.length) {
@@ -540,14 +919,13 @@
     }
 
 
-    function findSrInStudentLessonData(sr, studentData) {
-      // return the result of the input sr from studentdata
-      for (var i = 0; i < studentData["lessonScores"].length; i++) {
-        if (studentData["lessonScores"][i]["sr"] == sr) {
-          return studentData["lessonScores"][i]["result"];
-        }
+    function findSrInLessonResultMapping(sr, lessonResultMapping) {
+      // return the result of the input sr from lessonResultMapping
+      if(lessonResultMapping[sr] != undefined){
+        return lessonResultMapping[sr]["result"];
       }
-      return "red";
+      // return "red";
+      return 0;
     }
 
     function getKmapsSRNParents(){
@@ -558,99 +936,169 @@
       return srs;
     }
 
-    function lastResort(studentName, insufficientSkill) {
-      // StudentLessonData has the mapping of student to lessons result
-      var studentData;
+    function getKmapsFiltered(skill, level){
+        var srs = [];
+        for(var sr in ml.kmapsJSON){
+            if(skill){
+                if(ml.kmapsJSON[sr]["unit"] != skill){
+                    continue;
+                }
+            }
+            if(level){
+                if(ml.kmapsJSON[sr]["level"] != level){
+                    continue;
+                }
+            }
+            srs.push(ml.kmapsJSON[sr]);
+        }
+        return srs;
+    }
 
-      if (studentName != undefined && studentName != ""){
-        studentData = StudentLessonData.findOne({
-          "studentName": studentName
-        }, {
-          "fields": {
-            "lessonScores.sr": 1,
-            "lessonScores.result": 1,
-            "lessonScores.unit": 1
-          }
-        });
-      }
+    function closest(arr, closestTo){
+        var highDifference = Infinity;
+        var highClosestElement;
+        var lowDifference = Infinity;
+        var lowClosestElement;
+        for(var i = 0;i < arr.length;i++){
+            if(arr[i] <= closestTo){
+                var difference = closestTo - arr[i];
+                if(difference < lowDifference){
+                    lowDifference = difference;
+                    lowClosestElement = arr[i];
+                }
+            }else{
+                var difference = arr[i] - closestTo;
+                if(difference < highDifference){
+                    highDifference = difference;
+                    highClosestElement = arr[i];
+                }
+            }
+        }
+        if(lowClosestElement){
+            return lowClosestElement;
+        }else{
+            return highClosestElement;
+        }
+    }
 
-      var suggestedSrs = [];
-      // if we have data of the student, else return []
-      if (typeof(studentData) != "undefined") {
+
+    function getSuggestedRootSrs(level, skill, suggestedRootSrs){
+        var srs = getDqsByLevelNSkill(level, skill);
+        // $log.debug('srs', srs);
+        var suggestedRootSrsPerSkill = [];
+        for (var i = 0; i < srs.length; i++) {
+            if(srs[i]["skill_area"] == srs[i]["lesson_skill"]){
+                suggestedRootSrsPerSkill.push({ "sr": srs[i].sr, "skill": srs[i].skill_area });
+            }
+        }
+        if(suggestedRootSrsPerSkill.length > 0){
+            suggestedRootSrs = suggestedRootSrs.concat(suggestedRootSrsPerSkill);
+        }else{
+          // $log.debug('skill, level', skill, level);
+            var specificLessons = getKmapsFiltered(skill, level);
+            // $log.debug('specificLessons', specificLessons);
+            var specificSrs = [];
+            for(var i = 0; i < specificLessons.length; i++){
+                specificSrs.push(specificLessons[i]["sr"]);
+            }
+            if(specificSrs.length > 0){
+                for(var i=0;i<specificSrs.length;i++){
+                    suggestedRootSrs.push({"sr": specificSrs[i], "skill": skill});
+                }
+            }else{
+                var lessons = getKmapsFiltered(skill);
+                var avaiableLessons = [];
+                for(var i = 0;i < lessons.length; i++){
+                    avaiableLessons.push(lessons[i]["level"]);
+                }
+                level = closest(avaiableLessons, level);
+                suggestedRootSrs = getSuggestedRootSrs(level, skill, suggestedRootSrs);
+            }
+        }
+        return suggestedRootSrs;
+    }
+
+
+    function lastResort(insufficientSkill) {
+        $log.debug('in LR', insufficientSkill);
+        // StudentLessonData has the mapping of student to lessons result
+        var lessonResultMapping = ml.lessonResultMapping;
+        var suggestedSrs = [];
+
+        // if we have data of the student, else return []
+        var allSuccessfulSrs = [];
         var successfulSrs = []; // this has all the successful srs of the student
         // change to - find all srs with result "#00ff00"
-        for (var i = 0; i < studentData["lessonScores"].length; i++) {
-          if (studentData["lessonScores"][i]["unit"] != insufficientSkill) {
-            continue;
-          }
-          if (studentData["lessonScores"][i]["result"] == "#00ff00") {
-            successfulSrs.push(studentData["lessonScores"][i]["sr"]);
-          }
+        for (var i in lessonResultMapping) {
+            // if (lessonResultMapping[i]["result"] == "#00ff00") {
+            if (lessonResultMapping[i]["result"] >= ml.passingThreshold) {
+                allSuccessfulSrs.push(i);
+            }
+            if (lessonResultMapping[i]["unit"] != insufficientSkill) {
+                continue;
+            }
+            // if (lessonResultMapping[i]["result"] == "#00ff00") {
+            if (lessonResultMapping[i]["result"] >= ml.passingThreshold) {
+                successfulSrs.push(i);
+            }
         }
 
         // if there are successfulSrs, else return []
         if (successfulSrs.length > 0) {
-          // fetch all the lesson from Kmaps DB
-          var allKmaps = getKmapsSRNParents();
-          // var allKmaps = KnowledgeMapsData.find({}, {
-          //   "fields": {
-          //     "sr": 1,
-          //     "parent": 1
-          //   }
-          // }).fetch();
-          srParentCount = {};
+            // fetch all the lesson from Kmaps DB
+            var allKmaps = ml.kmapsJSON;
+            var srParentCount = {};
 
-          for (var i = 0; i < allKmaps.length; i++) {
-            // if the lesson is completed successfully, continue
-            if (successfulSrs.indexOf(allKmaps[i]["sr"]) != -1) {
-              continue;
+            for (var i in allKmaps) {
+                // if the lesson is completed successfully, continue
+                if (allSuccessfulSrs.indexOf(allKmaps[i]["sr"]) != -1) {
+                    continue;
+                }
+
+                var KmapParents = allKmaps[i]["parent"];
+
+                // find successful matching percent for the lesson and dump to srParentCount dict with key as the percent and value as the arra of all the lessons having that percent
+                var sameCount = 0;
+                var unsuccessfulPrereqs = [];
+                for (var index = 0; index < KmapParents.length; index++) {
+                    if (allSuccessfulSrs.indexOf(KmapParents[index]) != -1) {
+                        sameCount++;
+                    } else {
+                        unsuccessfulPrereqs.push(KmapParents[index]);
+                    }
+                }
+
+                // the percentage of lessons which do not have any prereq will equal to NaN, which is infinity, hence will automatically come on top
+                if (typeof(srParentCount[sameCount / KmapParents.length]) == "undefined") {
+                    unsuccessfulPrereqs.push(allKmaps[i]["sr"]);
+                    srParentCount[sameCount / KmapParents.length] = unsuccessfulPrereqs;
+                } else {
+                    unsuccessfulPrereqs.push(allKmaps[i]["sr"]);
+                    // srParentCount[sameCount / KmapParents.length] = srParentCount[sameCount / KmapParents.length].concat(unsuccessfulPrereqs);
+                    srParentCount[sameCount / KmapParents.length] = pushIfAbsent(srParentCount[sameCount / KmapParents.length], unsuccessfulPrereqs);
+                }
             }
 
-            var KmapParents = allKmaps[i]["parent"];
+            // sort the srParentCount wrt keys, most matches will be on top
+            var keysSorted = Object.keys(srParentCount).sort().reverse();
 
-            // find successful matching percent for the lesson and dump to srParentCount dict with key as the percent and value as the arra of all the lessons having that percent
-            var sameCount = 0;
-            var unsuccessfulPrereqs = [];
-            for (var index = 0; index < KmapParents.length; index++) {
-              if (successfulSrs.indexOf(KmapParents[index]) != -1) {
-                sameCount++;
-              } else {
-                unsuccessfulPrereqs.push(KmapParents[index]);
-              }
+            for (var i = 0; i < keysSorted.length; i++) {
+                // rank all the lessons which have same percentage, and push to suggestedSrs
+                var rankedLessons = rankPlaylist({ 0: srParentCount[keysSorted[i]] }, undefined, 1);
+                // suggestedSrs = suggestedSrs.concat(rankedLessons);
+                suggestedSrs = pushIfAbsent(suggestedSrs, rankedLessons);
             }
 
-            // the percentage of lessons which do not have any prereq will equal to NaN, which is infinity, hence will automatically come on top
-            if (typeof(srParentCount[sameCount / KmapParents.length]) == "undefined") {
-              unsuccessfulPrereqs.push(allKmaps[i]["sr"]);
-              srParentCount[sameCount / KmapParents.length] = unsuccessfulPrereqs;
-            } else {
-              unsuccessfulPrereqs.push(allKmaps[i]["sr"]);
-              // srParentCount[sameCount / KmapParents.length] = srParentCount[sameCount / KmapParents.length].concat(unsuccessfulPrereqs);
-              srParentCount[sameCount / KmapParents.length] = ml.pushIfAbsent(srParentCount[sameCount / KmapParents.length], unsuccessfulPrereqs);
-            }
           }
 
-          // sort the srParentCount wrt keys, most matches will be on top
-          var keysSorted = Object.keys(srParentCount).sort().reverse();
+        $log.debug('lastResort additions', suggestedSrs);
 
-          for (var i = 0; i < keysSorted.length; i++) {
-            // rank all the lessons which have same percentage, and push to suggestedSrs
-            var rankedLessons = ml.rankPlaylist({
-              0: srParentCount[keysSorted[i]]
-            }, undefined, 1);
-            // suggestedSrs = suggestedSrs.concat(rankedLessons);
-            suggestedSrs = ml.pushIfAbsent(suggestedSrs, rankedLessons);
-          }
-
-        }
-      }
-
-      return suggestedSrs;
+        return suggestedSrs;
     }
 
 
     function getNextQSr(test, diagLitmusMapping) {
-      
+
       try {
           if (test.length > 0) {
               if (test[0]["count"] >= 2) {
@@ -715,7 +1163,7 @@
               return null;
           }
       } catch (err) {
-          
+
           var newTest = test.slice(1, test.length);
           return getNextQSr(newTest, diagLitmusMapping);
       }
@@ -723,10 +1171,10 @@
 
 
     function displaySuggestedSr(level_one, test, diagLitmusMapping) {
-        
+
         var test_one = test[0];
         var oldqSet = test_one["qSet"];
-        
+
         var qSet = {};
         for (var i in oldqSet) {
             qSet[i - level_one] = { "answered": oldqSet[i]["answered"] };
@@ -736,7 +1184,7 @@
                 qSet[i - level_one]["sr"] = oldqSet[i]["qSr"];
             }
         }
-        
+
         var newQSet = {};
         // array = [];
         var last = null;
@@ -756,7 +1204,7 @@
                 newQSet[last] = { "sr": qSet[last]["sr"], "answered": qSet[last]["answered"], "skill": test[0]["skill"], "level": last }
             }
         }
-        
+
         ml.dqQuiz.push(newQSet);
         var suggestedQ = ml.getSuggestedSr2(newQSet)[0];
         if (test.length > 1) {
@@ -779,9 +1227,6 @@
           child.sr = nodeData.parent[j];
           child.parent = nodeData.sr;
           var childData = ml.kmapsJSON[child.sr];
-          // var childData = KnowledgeMapsData.findOne({
-          //   "sr": (child.sr)
-          // });
 
           if (childData == undefined) {
             // ;
@@ -817,7 +1262,6 @@
     }
 
     function genTree(nodeSr, classWiseScores, noColorRequired) {
-      // ;
 
       var node = {};
       node.sr = nodeSr;
@@ -825,10 +1269,8 @@
 
       var nodeData = ml.kmapsJSON[node.sr];
 
-      // var nodeData = KnowledgeMapsData.findOne({
-      //   "sr": (node.sr)
-      // });
       if (nodeData == undefined) {
+        $log.debug('no node.sr found', node.sr);
         return null;
       }
       node.name = nodeData.name;
@@ -855,21 +1297,16 @@
     }
 
     function getRecPlaylist(n, classWiseScores) {
-      // ;
-
       // this will determine the color of a node depending on the score of the student in that lesson node
 
       if (typeof(classWiseScores) == "undefined") {
-        // ;
         return {
-          "color": "blue"
+          "color": "Unattempted"
         };
       }
     }
 
     function rankPlaylist(playlistUnordered, playlistSrName, recommendationsOnly) {
-      // ;
-
       // this will rank all the prerequisites according to the KnowledgeMapsLevels in sucha way that the nodes which are of level smaller that the others gets added to the playlist before
 
       var rankedPlaylistLevels = {};
@@ -900,8 +1337,6 @@
     }
 
     function makeTree(node, classWiseScores, appendAll, recommendationsOnly) {
-      // ;
-      // ;
 
       var genTreeOutput = ml.genTree(node, classWiseScores);
       var tempTree = genTreeOutput[0];
@@ -914,12 +1349,14 @@
 
         for (var sr in gatheredNodeDict) {
           if (playlistUnordered[gatheredNodeDict[sr]["level"]] == undefined) {
-            if (gatheredNodeDict[sr]["color"] != "#00ff00") {
+            // if (gatheredNodeDict[sr]["color"] != "#00ff00") {
+            if (gatheredNodeDict[sr]["color"] == "Unattempted") {
               playlistUnordered[gatheredNodeDict[sr]["level"]] = [sr];
               playlistSrName[sr] = gatheredNodeDict[sr]["name"];
             }
           } else {
-            if (gatheredNodeDict[sr]["color"] != "#00ff00") {
+            // if (gatheredNodeDict[sr]["color"] != "#00ff00") {
+            if (gatheredNodeDict[sr]["color"] == "Unattempted") {
               playlistUnordered[gatheredNodeDict[sr]["level"]].push(sr);
               playlistSrName[sr] = gatheredNodeDict[sr]["name"];
             }

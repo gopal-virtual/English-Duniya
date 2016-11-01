@@ -6,7 +6,7 @@
     .constant('CONSTANT', {
       'APP':{
       'TYPE': 'na',
-      'VERSION': 'na'
+      'VERSION': '0.1.7'
       },
       'LOCK': true,
       'FAKE_LOGIN': true,
@@ -57,8 +57,8 @@
         }
       },
       'STAR': {
-        'ONE': 60,
-        'TWO': 80,
+        'ONE': 70,
+        'TWO': 85,
         'THREE': 100
       },
       'WIDGETS': {

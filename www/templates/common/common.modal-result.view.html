@@ -7,18 +7,18 @@
             <img ng-repeat="star in [1,2,3]" ng-src="img/assets_svg/star-grey.svg">
           </div>
           <div class="col stars position-absolute">
-            <img ng-repeat="star in [1,2,3]" class="animation-zoom-out-{{contentCtrl.utilities.starCount(contentCtrl.summary.stars, $index) ? star : ''}}" style="-webkit-animation-delay: {{$index+1}}s;" ng-src="{{ contentCtrl.utilities.starCount(contentCtrl.summary.stars, $index) ? 'img/assets_svg/star-yellow.svg' : 'img/assets_svg/star-grey.svg'}}">
+            <img ng-repeat="star in [1,2,3]" class="transparent" ng-class="{'animation-zoom-out-{{$index+1}} opaque':resultStarFlag[$index]}" ng-src="{{ contentCtrl.utilities.starCount(contentCtrl.summary.stars, $index) ? 'img/assets_svg/star-yellow.svg' : 'img/assets_svg/star-grey.svg'}}">
           </div>
         </div>
         <div ng-class="{'hoverme':contentCtrl.summary.stars>0}" class=" animation-zoom-in" style="padding-top:40px;text-align:center;">
-          <img height="250" style="z-index: 5;position: relative;" ng-src="img/assets_svg/{{lessonutils.getGender()=='M'?'boy':'girl'}}-{{contentCtrl.summary.stars>0?'win-job':'lose-badge'}}.svg">
+          <img height="250" style="z-index: 5;position: relative;" ng-src="img/assets_svg/{{userGender=='M'?'boy':'girl'}}-{{contentCtrl.summary.stars>0?'win-job':'lose-badge'}}.svg">
           <!-- dont remove this -->
             <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
 
         </div>
         <div class="row padding-x-30 animation-fade-in-from-bottom" style="animation-delay: 3000ms;" ng-show="contentCtrl.summary.stars >= 1">
           <center style="width: 100%;padding-top:20px;">
-            <button class="sbtn sbtn-next-yellow" on-tap="contentCtrl.next()"></button>
+            <button class="sbtn sbtn-next-yellow" on-tap="audio.play('press');contentCtrl.next()"></button>
           </center>
         </div>
       </div>

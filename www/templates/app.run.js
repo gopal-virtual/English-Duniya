@@ -4,14 +4,19 @@
     .module('zaya')
     .run(runConfig);
 
-  function runConfig($ionicPlatform, $rootScope,  $log, $state, $http, $cookies, Auth,  data, audio,  analytics, network, User, queue, content, $cordovaPushV5, CONSTANT) {
+  function runConfig($ionicPlatform, $rootScope,  $log, $state, $http, $cookies, Auth,  data, audio,  analytics, network, User, queue, content, Raven, device) {
 
 
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
-
-
+    $ionicPlatform.registerBackButtonAction(function(event){
+      event.preventDefault();
+      // event.stopPropagation();
+      $log.warn("pressed hardware back button");
+      $rootScope.$broadcast("backButton");
+    },510)
     //$http.defaults.headers.common['Access-Control-Request-Headers'] = 'accept, auth-token, content-type, xsrfcookiename';
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+
 
         //if not authenticated, redirect to login page
       // if (!Auth.isAuthorised() && toState.name != 'auth.signin' && toState.name != 'auth.signup' && toState.name != 'auth.forgot') {
@@ -47,6 +52,15 @@
       // }
       // block access to quiz summary page if there is no quiz data
 //
+
+      if(localStorage.version !== '0.1.7' && User.getActiveProfileSync() && User.getActiveProfileSync()._id){
+        localStorage.setItem('version','0.1.7');
+
+        event.preventDefault();
+        User.playlist.patch(User.getActiveProfileSync()._id).then(function(){
+          $state.go('litmus_start');
+        })
+      }
 
       if(toState.name !== 'user.personalise' && localStorage.getItem('profile') === null ){
 
@@ -129,6 +143,12 @@
 
     });
     $ionicPlatform.ready(function() {
+      if(localStorage.profile && localStorage.profile._id){
+        Raven.setUserContext({
+          device_id: device.uuid,
+          user: localStorage.profile._id
+        })
+      }
 
         analytics.log(
             {
@@ -209,8 +229,11 @@
 
     });
     $ionicPlatform.on('resume', function(){
-      $log.debug("Played")
-      angular.element("#audioplayer")[0].play();
+      $rootScope.$broadcast('appResume');
+      $log.debug("Current state",$state.current)
+      if($state.current.name === 'content.video'){
+        // angular.element("#audioplayer")[0].play();
+      }
          analytics.log(
             {
                 name : 'APP',

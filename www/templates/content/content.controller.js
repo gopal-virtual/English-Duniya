@@ -51,6 +51,7 @@
     contentCtrl.play = play;
     $scope.lessonutils = lessonutils;
     $scope.userGender = User.getActiveProfileSync().data.profile.gender;
+    $scope.resultStarFlag = [];
     // $scope.currentState = $state.current.name;
     $scope.selectedNode = $stateParams.video.resource;
     contentCtrl.toggleControls = toggleControls;
@@ -87,28 +88,50 @@
   // $log.debug("lessonutils",$scope.lessonutils.user)
   // $log.debug("lessonutils",$scope.lessonutils.getGender())
   // $log.debug("STATE",$state)
+  // function playStarAnimation(index){
+  //   var star = 0;
+  //   if (contentCtrl.summary.stars) {
+  //     star = contentCtrl.summary.stars;
+  //   }else if (contentCtrl.summary.score.percent) {
+  //     star = contentCtrl.summary.score.percent > CONSTANT.STAR.THREE ? 3 : contentCtrl.summary.score.percent > CONSTANT.STAR.TWO ? 2 : contentCtrl.summary.score.percent > CONSTANT.STAR.ONE ? 1 : 0;
+  //   }else {
+  //     star = 0;
+  //   }
+  //   for (var i = 0; i < star.length; i++) {
+
+  //   }
+  //   angular.element("#audioplayer")[0].pause();
+  //   angular.element("#audioSource")[0].src = $stateParams.video.resource.node.parsed_sound;
+  //   angular.element("#audioplayer")[0].load();
+  //   angular.element("#audioplayer")[0].play();
+  // }
 
 
   function playStarSound() {
+      var starSound = ["one_star","two_star","three_star"];
       var star = 0;
       if (contentCtrl.summary.stars) {
         star = contentCtrl.summary.stars;
-    } else if (contentCtrl.summary.score.percent) {
+      } else if (contentCtrl.summary.score.percent) {
         star = contentCtrl.summary.score.percent > CONSTANT.STAR.THREE ? 3 : contentCtrl.summary.score.percent > CONSTANT.STAR.TWO ? 2 : contentCtrl.summary.score.percent > CONSTANT.STAR.ONE ? 1 : 0;
       } else {
         star = 0;
       }
       $log.debug("playing star sound", star );
       for (var i = 0; i < star; i++) {
-        (i + 1) == 1 && $timeout(function() {
-          audio.play('one_star')
-        }, 1000);
-        (i + 1) == 2 && $timeout(function() {
-          audio.play('two_star')
-        }, 2000);
-        (i + 1) == 3 && $timeout(function() {
-          audio.play('three_star')
-        }, 3000);
+        $log.debug("sound source",starSound[i]);
+        (function(count){
+          $timeout( function() {
+              $scope.resultStarFlag[count] = true;
+              $log.debug("sound source",starSound,count,starSound[count]);
+            audio.player.play("sound/"+starSound[count]+".mp3");
+              // angular.element("#audioplayer")[0].pause();
+              // angular.element("#audioSource")[0].src = ;
+              // angular.element("#audioplayer")[0].load();
+              // angular.element("#audioplayer")[0].play();
+          },(count+1)*1000);
+        })(i)
+
       }
     }
 
@@ -126,7 +149,8 @@
       ;
   }
 
-  $ionicPlatform.onHardwareBackButton(function(event) {
+  // $ionicPlatform.onHardwareBackButton(function(event) {
+  $scope.$on('backButton',function(){
       try {
         if (!$scope.ribbon_modal.isShown() && !$scope.resultMenu.isShown()) {
           $log.debug("HERE")
@@ -139,6 +163,7 @@
         ;
       }
   })
+  // })
 
     function onVideoComplete() {
         contentCtrl.summary = {
@@ -166,13 +191,14 @@
     }
 
     function submitReport(){
+      $log.debug("video in submitReport",$stateParams.video)
       var  lesson = lessonutils.getLocalLesson();
       var promise = null;
       if(!lesson.score || !lesson.score[$stateParams.video.resource.node.id]){
 
         promise = User.skills.update({
           profileId: User.getActiveProfileSync()._id,
-          lessonId: lesson.node.id,
+          lessonId: $stateParams.video.resource.node.parent,
           score: $stateParams.video.resource.node.type.score,
           totalScore: $stateParams.video.resource.node.type.score,
           skill: lesson.node.tag
@@ -186,12 +212,13 @@
 
           return User.scores.update({
             profileId: User.getActiveProfileSync()._id,
-            lessonId: lesson.node.id,
+            lessonId: $stateParams.video.resource.node.parent,
             id: $stateParams.video.resource.node.id,
             score: $stateParams.video.resource.node.type.score,
             totalScore: $stateParams.video.resource.node.type.score,
             type: 'resource',
-            skill: lesson.node.tag
+            skill: lesson.node.tag,
+            playlist_index: $stateParams.video.resource.node.playlist_index
           })
         }).then(function(){
           return User.reports.save({
@@ -206,10 +233,11 @@
       $scope.nodeRibbonFlag = false;
       $scope.ribbon_modal.hide();
       contentCtrl.play();
-      angular.element("#audioSource")[0].src = '';
-      $log.debug("Remove even listener video");
+      audio.player.removeCallback();
+      // angular.element("#audioSource")[0].src = '';
+      // $log.debug("Remove even listener video");
 
-      angular.element("#audioplayer")[0].removeEventListener('ended',intro_end_video,false);
+      // angular.element("#audioplayer")[0].removeEventListener('ended',intro_end_video,false);
     }
     function onPlayerReady(API) {
       $log.debug("API",API)
@@ -222,25 +250,26 @@
         hardwareBackButtonClose: false
       }).then(function(modal){
         $scope.ribbon_modal = modal;
+        modal.show();
+
         if($stateParams.video.resource.node.parsed_sound){
           $scope.nodeRibbonFlag = true;
-          modal.show();
-          angular.element("#audioplayer")[0].pause();
-          $log.debug("setting",$stateParams.video.resource.node.parsed_sound);
-          angular.element("#audioSource")[0].src = $stateParams.video.resource.node.parsed_sound;
-          angular.element("#audioplayer")[0].load();
-          $log.debug($stateParams.video.resource.node.parsed_sound);
-          angular.element("#audioplayer")[0].play();
-          $log.debug(angular.element("#audioplayer")[0].duration,"duration")
-          $log.debug("Add even listener video");
-
-          angular.element("#audioplayer")[0].addEventListener('ended',intro_end_video,false);
+          audio.player.play($stateParams.video.resource.node.parsed_sound);
+          // angular.element("#audioplayer")[0].pause();
+          // $log.debug("setting",$stateParams.video.resource.node.parsed_sound);
+          // angular.element("#audioSource")[0].src = ;
+          // angular.element("#audioplayer")[0].load();
+          // $log.debug($stateParams.video.resource.node.parsed_sound);
+          // angular.element("#audioplayer")[0].play();
+          // $log.debug(angular.element("#audioplayer")[0].duration,"duration");
+          // $log.debug("Add even listener video");
+          angular.element("#audioplayer")[0].onended = intro_end_video;
         }else{
           $log.debug(contentCtrl.API,"here");
-          // contentCtrl.API.pause();
           $timeout(function () {
+            intro_end_video()
             contentCtrl.play();
-          },100)
+          },1000)
         }
       })
     }
@@ -265,12 +294,16 @@
     $scope.openNodeMenu = function() {
       if (contentCtrl.API.currentState == 'pause') {
         // orientation.setPortrait()        ;
-        $scope.nodeMenu.show();
+        $scope.nodeMenu.show().then(function(){
+          audio.player.play('sound/pause_menu.mp3');
+        });
       }
       return true;
     }
     $scope.closeNodeMenu = function() {
-      $scope.nodeMenu.hide();
+      $scope.nodeMenu.hide().then(function(){
+        audio.player.stop();
+      });
       return true;
     }
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal-rope' + CONSTANT.VIEW, {
@@ -301,7 +334,12 @@
 
     });
 
+  $scope.$on('appResume',function(){
+    if($scope.ribbon_modal.isShown()){
+      audio.player.resume();
+    }
 
+  })
     // $scope.nodeRibbon;
 
 

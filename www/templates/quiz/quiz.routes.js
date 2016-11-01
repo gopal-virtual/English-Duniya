@@ -131,7 +131,7 @@
       })
       .state('quiz.summary', {
         url: '/summary',
-        onEnter: ['$log', 'audio', 'content', '$stateParams', 'lessonutils', 'User', function ($log, audio, content, $stateParams, lessonutils, User) {
+        onEnter: ['$log', 'audio', 'content', '$stateParams', 'lessonutils', 'User', 'ml', function ($log, audio, content, $stateParams, lessonutils, User, ml) {
 
           var report = $stateParams.report;
           var quiz = $stateParams.quiz;
@@ -147,7 +147,7 @@
             skill: quiz.node.tag,
           })
             .then(function () {
-              return User.scores.getScoreOfAssessment(quiz.node.id, lesson.node.id, User.getActiveProfileSync()._id)
+              return User.scores.getScoreOfAssessment(quiz.node.id, lesson.node.id, User.getActiveProfileSync()._id, quiz.node.playlist_index)
             })
             .then(function (previousScore) {
               if ((!previousScore) || (!previousScore.hasOwnProperty('score')) || (previousScore && parseInt(previousScore.score) < summary.score.marks)) {
@@ -159,12 +159,32 @@
                   score: summary.score.marks,
                   totalScore: quiz.node.type.score,
                   type: 'assessment',
-                  skill: quiz.node.tag
+                  skill: quiz.node.tag,
+                  playlist_index: quiz.node.playlist_index
                 })
 
               }
             })
+            .then(function () {
+              if(quiz.node.requiresSuggestion){
+                ml.setLessonResultMapping().then(function(){
 
+                  var suggestion = ml.getLessonSuggestion({"event":"assessment",
+                    "score":summary.score.marks,
+                    "totalScore":quiz.node.type.score,
+                    "skill": quiz.node.tag.toLowerCase() ,
+                    "sr": quiz.node.parent
+                  });
+                  // $log.debug("got sugggestion",suggestion);
+                  return User.playlist.add(User.getActiveProfileSync()._id,suggestion)
+                })
+              }else{
+                ml.setLessonResultMapping().then(function(){
+                  $log.debug('deleteSuccessfulNodeFromRoadmap');
+                  ml.deleteSuccessfulNodeFromRoadmap(quiz.node.parent, summary.score.marks/quiz.node.type.score);
+                })
+              }
+            })
             .then(function (success) {
               // var report_id = success.id;
               var attempts = [];
@@ -204,7 +224,8 @@
         },
         templateUrl: CONSTANT.PATH.QUIZ + '/quiz.litmus_summary' + CONSTANT.VIEW,
 
-        controller: ['$log','User', 'audio', '$timeout','$stateParams','$scope', function ($log,User, audio,$timeout,$stateParams,$scope) {
+        controller: ['$log','User','audio', '$timeout','$stateParams','$scope', function ($log,User,audio,$timeout,$stateParams,$scope) {
+          $scope.audio = audio;
           $scope.gender = User.getActiveProfileSync().data.profile.gender == 'M'?'boy':'girl';
           $timeout(function() {
             $log.debug("Printing progressBar",$stateParams);
@@ -223,8 +244,17 @@
       .state('litmus_start', {
         url: '/litmus_start',
         templateUrl: CONSTANT.PATH.QUIZ + '/quiz.litmus_start' + CONSTANT.VIEW,
-        controller: ['$log', 'User','$scope', function ($log,User,$scope) {
+        controller: ['$log', 'User','$scope','audio', function ($log,User,$scope,audio) {
+          $scope.audio = audio;
           $scope.gender = User.getActiveProfileSync().data.profile.gender == 'M'?'boy':'girl';
+          $scope.pauseAudio = pauseAudio;
+          function pauseAudio(){
+            angular.element("#audioplayer")[0].pause();
+          }
+          angular.element("#audioplayer")[0].pause();
+          angular.element("#audioSource")[0].src = "sound/litmus_start.mp3"
+          angular.element("#audioplayer")[0].load();
+          angular.element("#audioplayer")[0].play();
         }]
       })
   }

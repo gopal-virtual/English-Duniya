@@ -33,26 +33,22 @@
 
       <!-- <div ng-repeat="question in quizCtrl.quiz.objects" ng-if="$index == quizCtrl.getCurrentIndex()"> -->
       <div id="step1" style="position:relative;top:8%">
-        <ion-scroll scrollbar-x="false" scrollbar-y="false" ng-init="quizCtrl.isScroll($index)" style="
+        <div ng-class="{'sound-enlarge':question.node.widgetHtml == quizCtrl.CONSTANT.WIDGETS.SPEAKER_IMAGE}" style="text-align: left;z-index:200;position: absolute;top: 10px;width: 70px;margin-right: auto;left: 0;right: 0;">
+          <div ng-if="question.node.widgetSound" style="height:60px;width:60px;margin-left:5px;transform-origin: bottom left" ng-click="quizCtrl.playAudio(question.node.widgetSound,$index);quizCtrl.highlightSoundIcon($parent.$index);" ng-class="{'active animation-repeat-bounce':quizCtrl.highlightSoundIconFlag}" class="sbtn sbtn-sound"></div>
+        </div>
+        <ion-scroll ng-init="quizCtrl.isScroll($index)" style="
     height: 27vh;
 " direction="y" class="padding-0 bg-pale no-shadow">
-          <div
-            
-            ng-if="question.node.title"
+          <div ng-class="{'not-no-sound':question.node.widgetHtml == quizCtrl.CONSTANT.WIDGETS.SPEAKER_IMAGE}" style="min-height: 25vh;padding-top:6px !important;" ng-if="question.node.title"
             ng-bind-html="question.node.widgetHtml"
             class="question card card-transparent center margin-x-0 margin-y-0 padding-0">
-          
+
           </div>
-            
-            <div style="text-align:center;padding-top:20px;">
-              <div ng-if="question.node.widgetSound" style="height:84px;width:87.5px;" ng-click="quizCtrl.playAudio(question.node.widgetSound,$index);quizCtrl.highlightSoundIcon($parent.$index);" ng-class="{'active animation-repeat-bounce':quizCtrl.highlightSoundIconFlag}" class="sbtn sbtn-sound"></div>
-            </div>
         </ion-scroll>
       </div>
 
       <ion-scroll
       class = "practice-option-scroll"
-      scrollbar-x="false" scrollbar-y="false"
       direction="y"
       style="top:8vh;"
         id="step2"
@@ -65,6 +61,7 @@
         <!-- SCQ -->
         <div
           style="min-height:40px;"
+          on-tap="audio.play('click')"
           ng-click="question.attempted=(question.attempted==option.key)?'':option.key;demo.tourNextStep();"
           ng-if="question.node.type.type=='choicequestion' && !question.node.type.content.is_multiple"
           ng-class="{'selected':option.key==question.attempted,'card-list':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'list','card-grid practice-card':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'grid'}"
@@ -81,14 +78,15 @@
         <!-- MCQ options -->
         <div
           style="min-height:40px;"
+          on-tap="audio.play('click')"
           ng-if="question.node.type.type=='choicequestion' && question.node.type.content.is_multiple"
-          ng-class="{'selected':question.attempted[option.key],'card-list':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'list','card-grid practice-card':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'grid'}"
-          class="card center bg-white card-radius"
+          ng-class="{'selected':question.attempted[option.key],'card-list':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'list','card-grid practice-card':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'grid'};"
+          class="lcard center bg-white card-radius"
           ng-repeat="option in question.node.type.content.options">
           <label ng-click="quizCtrl.playAudio(option.widgetSound,$parent.$parent.$index);demo.tourNextStep();">
             <input class="hide" type="checkbox" ng-model="question.attempted[option.key]" ng-value="option.key">
             <!-- <div class="option-container"  ng-if="option"> -->
-            <div style="min-height:30px;font-size: 24px;" class="padding-10 option" ng-bind-html="option.widgetHtml"></div>
+            <div style="min-height:30px;font-size: 24px;" class="lcard-inner padding-10 option" ng-bind-html="option.widgetHtml"></div>
             <!-- </div> -->
           </label>
         </div>
@@ -107,16 +105,17 @@
   </audio>
   <div id="step3" style="min-height: 70px;" class="bar bar-footer bar-footer-large bg-pale">
     <center style="width: 100%">
-      
-        <button ng-show="!quizCtrl.isAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex])" class="sbtn sbtn-submit" ng-click="quizCtrl.getFeedback(quizCtrl.quiz.objects[quizCtrl.currentIndex]);quizCtrl.logQuestion(quizCtrl.currentIndex,'END');demo.tourNextStep();audio['demo-quiz-3'].stop();quizCtrl.stopAudio()" ng-disabled="!quizCtrl.canSubmit()">
+
+        <button ng-show="!quizCtrl.isAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex])" ng-class="{'animation-repeat-bounce':quizCtrl.canSubmit()}" class="sbtn sbtn-submit" ng-click="quizCtrl.getFeedback(quizCtrl.quiz.objects[quizCtrl.currentIndex]);quizCtrl.logQuestion(quizCtrl.currentIndex,'END');demo.tourNextStep();audio['demo-quiz-3'].stop();quizCtrl.stopAudio();audio.play('press')" ng-disabled="!quizCtrl.canSubmit()">
         </button>
-        <button ng-show="quizCtrl.isAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex])" class="sbtn sbtn-continue" ng-click="quizCtrl.getFeedback(quizCtrl.quiz.objects[quizCtrl.currentIndex]);quizCtrl.logQuestion(quizCtrl.currentIndex,'END');demo.tourNextStep();audio['demo-quiz-3'].stop();quizCtrl.stopAudio()" ng-disabled="!quizCtrl.canSubmit()">
+
+        <button ng-show="quizCtrl.isAttempted(quizCtrl.quiz.objects[quizCtrl.currentIndex])" class="sbtn sbtn-continue" >
         </button>
         <!-- <button
           class="button button-block button-balanced margin-0 button-round font-md"
           style="height:40px;line-height:45px"
-          
-          
+
+
           > -->
           <!-- {{ ? 'CONTINUE' : 'SUBMIT'}} -->
         <!-- </button> -->

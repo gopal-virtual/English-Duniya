@@ -4,7 +4,7 @@
 			<center style="padding-top: 20px;">
 				<img height="150" ng-src="img/assets/upperbody-{{gender}}.png">
 			</center>
-			<div class="color-dblue padding-20" style="text-align:justify;font-size: 2.5em;line-height: 1.2em">
+			<div class="color-dblue padding-20" style="font-size: 2.5em;line-height: 1.2em">
 				<p style="padding-bottom: 20px">
 					Hi,
 				</p>
@@ -13,7 +13,7 @@
 				</p>
 			</div>
 			<center>
-				<button ui-sref="quiz.questions({'type':'litmus','id':'litmus_question'})" class="sbtn sbtn-next-blue"></button>
+				<button ui-sref="quiz.questions({'type':'litmus','id':'litmus_question'})" class="sbtn sbtn-next-blue" ng-click="pauseAudio();audio.play('press');"></button>
 			</center>
 		</div>
 	</div>

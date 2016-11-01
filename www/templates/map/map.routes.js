@@ -13,20 +13,27 @@
         abstract: true,
         resolve: {
           lessons: ['$log','content','User', function($log,content,User) {
-            return content.getResourceList(User.getActiveProfileSync().data.profile.grade).then(function(result){
-              return result
-            })
+            return []
+            // return content.getResourceList(User.getActiveProfileSync().data.profile.grade).then(function(result){
+            //   return result
+            // })
           }],
           lessonLocked: ['$log','content','extendLesson','User', function($log, content,extendLesson,User) {
             extendLesson.initStar();
+
             return content.getResourceList(User.getActiveProfileSync().data.profile.grade).then(function(lessons){
-              return extendLesson.getLesson(lessons).then(function(result){
-                return {
-                    lockedLesson : result,
-                    total_star : extendLesson.getTotalStar()
-                };
-              });
-            })
+               return extendLesson.getLesson(lessons).then(function(result){
+                 $log.debug("Result is ",result)
+                 return {
+                   lockedLesson : result,
+                   total_star : extendLesson.getTotalStar()
+                 };
+               });
+             })
+            // return content.getResourceList(User.getActiveProfileSync().data.profile.grade).then(function(result){
+            //   $log.debug("HERE",result);
+            //       return result;
+            // })
           }],
           scores: ['Rest', '$log', 'content', function(Rest, $log, content) {
             return [];
@@ -57,8 +64,7 @@
               "tag": "Litmus",
               "locked": false
           },
-      },
-      params: {"activatedLesson" : null},
+        },
         onEnter: ['$state', 'lessons', 'audio', '$ionicLoading', 'orientation','CONSTANT','$log', function($state, lessons, audio, $ionicLoading, orientation, CONSTANT, $log) {
           orientation.setPortrait();
           $ionicLoading.show({
@@ -68,7 +74,10 @@
           if (!lessons) {
             $state.go('map.unauthorised');
           }
-
+          if(localStorage.getItem('diagnosis_flag') == 'false'){
+            $ionicLoading.hide();
+            $state.go('litmus_start');
+          }
           // audio.play('background');
         //   if(localStorage.getItem('region')>'3409'){
         //   }

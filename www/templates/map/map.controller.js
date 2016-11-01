@@ -84,12 +84,16 @@
     $scope.progress = localStorage.getItem('progress');
     var mapCtrl = this;
     var lessonList = CONSTANT.LOCK ? lessonLocked.lockedLesson : lessons;
-    mapCtrl.total_star = CONSTANT.LOCK ? lessonLocked.total_star : 0;
+    mapCtrl.totalStars = CONSTANT.LOCK ? lessonLocked.total_star : 0;
+    $log.debug("Stars",mapCtrl.totalStars)
     // $state.current.data && lessonList.unshift($state.current.data.litmus);
     mapCtrl.User = User;
+    mapCtrl.demo = User.demo;
+    // mapCtrl.loading = $ionicLoading;
     mapCtrl.authFactory = Auth;
     mapCtrl.queue = queue;
     mapCtrl.lessons = lessonList;
+    mapCtrl.ml = ml;
     // mapCtrl.userCtrl = $controller('userCtrl');
     // mapCtrl.resetNode = resetNode;
     $scope.lessonutils = lessonutils;
@@ -114,6 +118,7 @@
     // port node
     mapCtrl.first_node_index = parseInt(localStorage.first_node_index) || 0;
     mapCtrl.last_node_index = parseInt(localStorage.last_node_index) || mapCtrl.lessons.length - 1;
+    $log.debug("LLL",parseInt(localStorage.last_node_index) || mapCtrl.lessons.length - 1)
     mapCtrl.nodeColors = {
         "vocabulary" : "blue",
         "grammar" : "green",
@@ -121,16 +126,14 @@
         "reading" : "orange"
     }
 
-    if(localStorage.getItem('diagnosis_flag') == 'false'){
-      $state.go('litmus_start');
-    }
+    
     $scope.$on('pageRegion', mapCtrl.setLessonRange )
     // $scope.$on('nextRegion', mapCtrl.setLessonRange )
-    function setLessonRange(event, regionPage, action){
+    function setLessonRange(event, regionPage, action, regionLength){
         // if (regionPage > 0 && regionPage < 3) {
           $ionicLoading.show();
           if (action=="next") {
-            if (regionPage < 3) {
+            if (regionPage < regionLength) {
               localStorage.setItem('regionPage',parseInt(regionPage)+1);
             }else{
               localStorage.setItem('regionPage',parseInt(regionPage));
@@ -146,7 +149,9 @@
           }
 
         // }
-        window.location.reload()
+        $timeout(function() {
+          window.location.reload()
+        }, 10);
         //
     }
     // end : port node
@@ -179,7 +184,7 @@
     * @returns {string} Value of the property stored in localStorage. If nothing is found value 0 is returned
     */
 
-    $log.debug("lessons HAHA",mapCtrl.lessons[lessons.length-1].node);
+    // $log.debug("lessons HAHA",mapCtrl.lessons[lessons.length-1].node);
     function getNodeProperty(prop) {
       if (prop == 'x')
         return localStorage.demo_node ? JSON.parse(localStorage.demo_node).x : 0;
@@ -195,9 +200,9 @@
         return localStorage.demo_node ? JSON.parse(localStorage.demo_node).type : 0;
     }
 
-    $ionicPlatform.registerBackButtonAction(function(event) {
-      event.preventDefault();
-    }, 100);
+    // $ionicPlatform.registerBackButtonAction(function(event) {
+    //   event.preventDefault();
+    // }, 100);
 
 
     $scope.$on('removeLoader',function() {
@@ -237,6 +242,9 @@
         $ionicPopup.alert({
           title: 'Please try again',
           template: "No internet conection found"
+        }).then(function(){
+          $ionicLoading.show()
+          location.reload()
         })
       });
 
@@ -309,14 +317,14 @@
 
     ;
     $scope.$on('animateStar', function() {
-      for (var i = 0; i < mapCtrl.skillSet.length; i++) {
-        $log.info("Loop", i, "\nskillSetTag : ", mapCtrl.skillSet[i].title.toLowerCase(), "\nactivatedLessonTag : ", $stateParams.activatedLesson.node.tag.toLowerCase())
-        if (mapCtrl.skillSet[i].title.toLowerCase() == $stateParams.activatedLesson.node.tag.toLowerCase()) {
-          mapCtrl.animateStar.activeFlag = i;
-          // mapCtrl.animateStar.animateFlag = i;
-          break;
-        }
-      }
+      // for (var i = 0; i < mapCtrl.skillSet.length; i++) {
+      //   $log.info("Loop", i, "\nskillSetTag : ", mapCtrl.skillSet[i].title.toLowerCase(), "\nactivatedLessonTag : ", $stateParams.activatedLesson.node.tag.toLowerCase())
+      //   if (mapCtrl.skillSet[i].title.toLowerCase() == $stateParams.activatedLesson.node.tag.toLowerCase()) {
+      //     mapCtrl.animateStar.activeFlag = i;
+      //     // mapCtrl.animateStar.animateFlag = i;
+      //     break;
+      //   }
+      // }
     });
 
 
@@ -400,7 +408,9 @@
     */
 
     mapCtrl.closeDemo = function() {
-      $scope.demo.hide();
+      $scope.demo.hide().then(function(){
+        location.reload();
+      });
       return true;
     };
 

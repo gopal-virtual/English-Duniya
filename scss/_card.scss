@@ -85,8 +85,8 @@
 }
 
 .question > .content-image {
-  max-height: 31vw;
-  max-width: 41vw;
+  max-height: 40vw;
+  max-width: 52vw;
 }
 .option-container {
   display: table;
@@ -104,10 +104,11 @@
   max-height: 80%;
   max-width: 95%;
 }
-.question > .sound-image {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
+.question .sound-image {
+  display: none;
+}
+.question-diag .sound-image {
+  display: none;
 }
 .option > .sound-image {
   background: url(../img/assets_svg/icon-audio.svg);
@@ -172,6 +173,7 @@ $lcard-inner-height : $lcard-min-height - ($lcard-outer-padding*2);
   font-size: 36px;
   color: $hex-dark-blue;
   overflow: hidden;
+  line-height: 1.1;
 }
 
 .lcard.selected .lcard-inner{
@@ -197,3 +199,33 @@ $lcard-inner-height : $lcard-min-height - ($lcard-outer-padding*2);
 .practice-option-scroll{
   height: calc(65% - 70px);
 }
+
+.sound-enlarge{
+  // width: 100% ;
+  text-align: center !important;
+  top: 0px !important;
+  padding-top: 20px;
+  margin-left: auto !important;
+  width: 100%;  
+  .sbtn-sound{
+    
+    width: 125px !important;
+    height: 120px !important;
+    transform-origin: center !important; 
+    position: absolute;
+    left: calc(50% - 60px);
+    margin: 0 !important;
+    // bottom: initial !important;
+  }
+}
+
+.sound-enlarge-diag{
+  .sbtn-sound{
+    height: 120px !important;
+    width: 125px !important;
+  }
+}
+
+// .sound-enlarge .sbtn-sound{
+//   width: 
+// }

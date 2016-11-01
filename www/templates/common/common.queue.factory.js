@@ -40,7 +40,7 @@
       if(!method){
         method = 'post'
       }
-      
+
       return queueDB.put({
         '_id': new Date().getTime().toString(),
         'url': url,
@@ -77,6 +77,7 @@
     // })
 
     function uploadIfRecord(records) {
+      $log.debug("Length of records"+records.length)
       if (records.length > 0) {
         return uploadAndDelete(records[0]);
       } else {
@@ -104,27 +105,27 @@
             localStorage.setItem('syncing',false);
             return true;
           }else{
-
+            $log.debug("I am here 2")
 
             startSync()
           }
         })
         .catch(function(e){
-
+              $log.debug("I am here")
         })
 
     }
 
     function uploadAndDelete(record) {
 
-      
+
       //patch
       if(!record.doc.body){
         record.doc.body = record.doc.data.data;
         record.doc.method = 'post';
         record.doc.url = 'activity-log';
       }
-      
+
 
       //patch end
 
@@ -149,6 +150,24 @@
 
         return queueDB.remove(record.doc)
       })
+          .catch(function (error) {
+
+
+            if(error.status != 0){
+              var e = {
+                "error":error,
+                "function": "queue_push"
+              };
+              Raven.captureException("Error with queue push",{
+                extra: {error:e}
+              });
+              $log.debug("ERROR with queue",error.status)
+              return queueDB.remove(record.doc)
+            }else{
+              return $q.reject();
+            }
+
+          })
     }
 
 

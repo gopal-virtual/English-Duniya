@@ -29,6 +29,7 @@
       'zaya-auth',
       'zaya-quiz',
       'zaya-content',
+      'ngRaven'
     ]);
 
 })();

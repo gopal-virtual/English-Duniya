@@ -162,6 +162,15 @@
   height: 120px;
 }
 
+.sbtn-sound-sm{
+  background: url('../img/assets_svg/button-audio.svg');
+  background-size: cover;
+  background-position: 0 0 !important;
+  background-repeat:no-repeat;
+  width: 62.5px;
+  height: 60px;
+}
+
 .sbtn-video-yellow{
   background: url('../img/assets_svg/button-video-yellow.svg');
   background-size: cover;
@@ -241,6 +250,17 @@
   background: url('../img/assets_svg/button-grey.svg');
   width: 175px;
   height: 56px;
+}
+
+
+.sicon-back{
+  border: none;
+  background: url('../img/assets_svg/back-cross.svg');
+  background-size: cover;
+  background-position: 0 0 !important;
+  background-repeat:no-repeat;
+  width: 28px;
+  height: 21px; 
 }
 
 .lbtn{

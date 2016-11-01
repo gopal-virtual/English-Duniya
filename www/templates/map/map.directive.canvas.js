@@ -6,15 +6,14 @@
         .directive('mapCanvas', mapCanvas)
 
     /* @ngInject */
-    function mapCanvas($injector, $state, $stateParams, $timeout, $log, audio, CONSTANT, lessonutils) {
+    function mapCanvas($injector, $state, $timeout, $log, audio, CONSTANT, lessonutils, $ionicLoading) {
         var mapCanvas = {
             restrict: 'A',
             templateUrl: CONSTANT.PATH.MAP + '/map.canvas' + CONSTANT.VIEW,
             scope: {
-              lessons : '=',
-              animation : '=',
-              startIndex : '=',
-              endIndex : '='
+              lessons : '=mapLessons',
+              totalstars : '=mapTotalstars',
+              demo : '=mapDemo'
             },
             link: linkFunc,
         };
@@ -22,10 +21,9 @@
         return mapCanvas;
 
         function linkFunc(scope, el, attr, ctrl) {
-            var region = ["desert","tundra","forest","peru"];
             $timeout(
               function(){
-                  createGame(scope, $stateParams, scope.lessons, audio, $injector, $log, lessonutils, region, scope.startIndex, scope.endIndex)
+                  createGame(scope, scope.lessons, audio, $injector, $log, lessonutils, $ionicLoading)
               }
             );
         }

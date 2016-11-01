@@ -28,11 +28,11 @@
 
     var lessonDB = null;
 
-    if (User.getActiveProfileSync() && User.getActiveProfileSync().data) {
-      lessonDB = pouchDB('lessonsGrade' + User.getActiveProfileSync().data.profile.grade, {
+    // if (User.getActiveProfileSync() && User.getActiveProfileSync().data) {
+      lessonDB = pouchDB('lessonsDB' , {
         adapter: 'websql'
       });
-    }
+    // }
     var contentProperties = {
       createLessonDBIfNotExists: createLessonDBIfNotExists,
       createLessonDBIfNotExistsPatch: createLessonDBIfNotExistsPatch,
@@ -109,7 +109,7 @@
     return contentProperties;
 
     function createLessonDBIfNotExists() {
-      lessonDB = pouchDB('lessonsGrade' + User.getActiveProfileSync().data.profile.grade, {
+      lessonDB = pouchDB('lessonsDB', {
         adapter: 'websql'
       });
 
@@ -122,8 +122,10 @@
         if (err.name !== 'not_found') {
           throw err;
         }
-        $log.debug("NEW DB MADE");
-        return lessonDB.load(CONSTANT.PATH.DATA + '/lessonsGrade' + User.getActiveProfileSync().data.profile.grade + '.db').then(function () {
+        $log.debug("NEW DB MADE 1");
+        return lessonDB.load(CONSTANT.PATH.DATA + '/lessons.db').then(function () {
+          $log.debug("NEW DB MADE 2");
+
           return lessonDB.put({
             _id: '_local/preloaded'
           });
@@ -133,31 +135,29 @@
     }
 
     function createLessonDBIfNotExistsPatch() {
-      lessonDB = pouchDB('lessonsGrade' + User.getActiveProfileSync().data.profile.grade, {
+      lessonDB = pouchDB('lessonsDB', {
         adapter: 'websql'
       });
 
-      return lessonDB.allDocs()
-        .then(function(result){
 
-          return Promise.all(result.rows.map(function(row){
 
-            return lessonDB.remove(row.id,row.value.rev);
-          }))
-        })
-        .then(function(){
+      return lessonDB.get('_local/preloaded').then(function (doc) {
 
-          return lessonDB.load(CONSTANT.PATH.DATA + '/lessonsGrade' + User.getActiveProfileSync().data.profile.grade + '.db')
-        })
-        .then(function () {
+
+      }).catch(function (err) {
+        if (err.name !== 'not_found') {
+          throw err;
+        }
+        $log.debug("NEW DB MADE 1");
+        return lessonDB.load(CONSTANT.PATH.DATA + '/lessons.db').then(function () {
+          $log.debug("NEW DB MADE 2");
 
           return lessonDB.put({
             _id: '_local/preloaded'
           });
         })
-        .catch(function(e){
 
-        })
+      })
 
     }
 
@@ -184,28 +184,63 @@
       return d.promise;
     }
     function getResourceList () {
+
+
       var d = $q.defer();
-      lessonDB.allDocs({
-        include_docs: true
-      }).then(function (data) {
-        $log.debug(data)
-        for (var i = 0; i < data.rows.length; i++) {
-          data.rows[i].key = data.rows[i].doc.lesson.key;
-        }
-        data.rows = _.sortBy(data.rows, 'key');
-        var lessons = [];
-        for ( i = 0; i < data.rows.length; i++) {
-          data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key;
-          for (var c = 0; c < data.rows[i].doc.lesson.objects.length; c++) {
-            if(data.rows[i].doc.lesson.node.meta && data.rows[i].doc.lesson.node.meta.intros && data.rows[i].doc.lesson.node.meta.intros.sound && data.rows[i].doc.lesson.node.meta.intros.sound[0]){
-              data.rows[i].doc.lesson.objects[c].node.intro_sound = data.rows[i].doc.lesson.node.meta.intros.sound[0];
-            }
-            data.rows[i].doc.lesson.objects[c].node.tag = data.rows[i].doc.lesson.node.tag;
-            lessons.push(data.rows[i].doc.lesson.objects[c])
+
+        User.playlist.get(User.getActiveProfileSync()._id).then(function(playlist){
+            $log.debug("Playlist "+JSON.stringify(playlist) + " END")
+          lessonDB.allDocs({
+            include_docs: true
+          }).then(function (data) {
+            $log.debug("AAAAAAAA "+data+" END");
+
+            var lessons = [];
+            var resources = [];
+          var playlist_ids = [];
+          for(var i = 0; i < playlist.length; i++){
+            playlist_ids.push(playlist[i].lesson_id);
           }
-        }
-          $log.debug("lessons",lessons)
-        d.resolve(lessons)
+          $log.debug("playlist ids " + JSON.stringify(playlist_ids) + " END");
+
+          for(var i = 0; i < data.rows.length; i++) {
+            var index = -1;
+            while ((index = playlist_ids.indexOf(data.rows[i].id, index + 1)) != -1) {
+              $log.debug("INDEX",index)
+              lessons[index] = data.rows[i]
+            }
+          }
+          $log.debug("LESSINS",lessons)
+            // if(playlist.indexOf(data.rows[i].id) >= 0){
+            //     lessons[playlist.indexOf(data.rows[i].id)] = data.rows[i]
+            //   }
+
+
+          for (var i = 0; i < lessons.length; i++) {
+            // data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key;
+            for (var c = 0; c < lessons[i].doc.lesson.objects.length; c++) {
+              $log.debug(c)
+              if(lessons[i].doc.lesson.node.meta && lessons[i].doc.lesson.node.meta.intros && lessons[i].doc.lesson.node.meta.intros.sound && lessons[i].doc.lesson.node.meta.intros.sound[0]){
+                lessons[i].doc.lesson.objects[c].node.intro_sound = lessons[i].doc.lesson.node.meta.intros.sound[0];
+              }
+              lessons[i].doc.lesson.objects[c].node.tag = lessons[i].doc.lesson.node.tag;
+              lessons[i].doc.lesson.objects[c].node.playlist_index = i;
+              resources.push(angular.copy(lessons[i].doc.lesson.objects[c]))
+            }
+          }
+          if(resources.length){
+            resources[resources.length-1].node.requiresSuggestion = true;
+          }
+            d.resolve(resources)
+
+        });
+        // $log.debug("data",data)
+        // for (var i = 0; i < data.rows.length; i++) {
+        //   data.rows[i].key = data.rows[i].doc.lesson.key;
+        // }
+        // data.rows = _.sortBy(data.rows, 'key');
+
+          // $log.debug("lessons",lessons)
       })
         .catch(function (error) {
           d.reject(error)

@@ -69,16 +69,6 @@
               setPreviousAnswerCallback(this, x);
           }
       }, {
-          "skill": "reading",
-          "qSet": {},
-          "level": parseInt(realTimeGrade),
-          "previousAnswer": null,
-          "actualLevel": 0,
-          "count": 0,
-          set setPreviousAnswer(x) {
-              setPreviousAnswerCallback(this, x);
-          }
-      }, {
           "skill": "grammar",
           "qSet": {},
           "level": parseInt(realTimeGrade),
@@ -98,6 +88,16 @@
           set setPreviousAnswer(x) {
               setPreviousAnswerCallback(this, x);
           }
+      }, {
+          "skill": "reading",
+          "qSet": {},
+          "level": parseInt(realTimeGrade),
+          "previousAnswer": null,
+          "actualLevel": 0,
+          "count": 0,
+          set setPreviousAnswer(x) {
+              setPreviousAnswerCallback(this, x);
+          }
       }];
     }
 
@@ -105,12 +105,13 @@
     function createDiagLitmusMappingDB() {
       var promise = $http.get(CONSTANT.PATH.DATA + '/diagnosticLitmusMapping.json').success(function (data) {
         return diagLitmusMappingDB.put({
-          "_id": "diagnostic_litmus_mapping",
+          "_id": "diagnostic_litmus_mapping_v2",
           "diagnostic_litmus_mapping": data[0]
         })
           .then(function () {
           })
           .catch(function (err) {
+            $log.debug("ERRRRRORED",err)
           });
       });
       return promise;
@@ -119,7 +120,7 @@
     function createKmapsJSON() {
       var promise = $http.get(CONSTANT.PATH.DATA + '/kmapsJSON.json').success(function (data) {
         return kmapsJSONDB.put({
-          "_id": "kmapsJSON",
+          "_id": "kmapsJSON_v2",
           "kmapsJSON": data[0]
         })
           .then(function () {
@@ -133,7 +134,7 @@
     function createDiagQJSON() {
       var promise = $http.get(CONSTANT.PATH.DATA + '/diagnosisQJSON.json').success(function (data) {
         return dqJSONDB.put({
-          "_id": "dqJSON",
+          "_id": "dqJSON_v2",
           "dqJSON": data[0]
         })
           .then(function () {
@@ -145,7 +146,7 @@
     }
 
     function getDQJSON() {
-      var result = dqJSONDB.get("dqJSON")
+      var result = dqJSONDB.get("dqJSON_v2")
         .then(function (doc) {
           return doc.dqJSON;
         })
@@ -153,7 +154,7 @@
     }
 
     function getKmapsJSON() {
-      var result = kmapsJSONDB.get("kmapsJSON")
+      var result = kmapsJSONDB.get("kmapsJSON_v2")
         .then(function (doc) {
           return doc.kmapsJSON;
         })
@@ -161,7 +162,7 @@
     }
 
     function getDiagnosisLitmusMapping() {
-      var result = diagLitmusMappingDB.get("diagnostic_litmus_mapping")
+      var result = diagLitmusMappingDB.get("diagnostic_litmus_mapping_v2")
         .then(function (doc) {
           return doc.diagnostic_litmus_mapping;
         });

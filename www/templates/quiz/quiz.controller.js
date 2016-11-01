@@ -156,11 +156,14 @@
       'tourFlag': localStorage.getItem('tourFlag')
     }
 
+    quizCtrl.noPauseFlag = true;
+
     $scope.tourNextStep = tourNextStep;
     $scope.lessonutils = lessonutils;
     $scope.userGender = User.getActiveProfileSync().data.profile.gender;
     $scope.selectedNode = lessonutils.getLocalLesson();
     $scope.modal = {};
+    $scope.resultStarFlag = [];
     quizCtrl.closeModalCallback = closeModalCallback;
 
 
@@ -204,7 +207,8 @@
     // }
 
     function playStarSound() {
-        var star = 0;
+      var starSound = ["one_star","two_star","three_star"];
+      var star = 0;
       if (quizCtrl.summary.stars) {
         star = quizCtrl.summary.stars;
       } else if (quizCtrl.summary.score.percent) {
@@ -212,20 +216,26 @@
       } else {
         star = 0;
       }
+      $log.debug("playing star sound", star );
       for (var i = 0; i < star; i++) {
-        (i + 1) == 1 && $timeout(function() {
-          audio.play('one_star')
-        }, 1000);
-        (i + 1) == 2 && $timeout(function() {
-          audio.play('two_star')
-        }, 2000);
-        (i + 1) == 3 && $timeout(function() {
-          audio.play('three_star')
-        }, 3000);
+        $log.debug("sound source",starSound[i]);
+        (function(count){
+          $timeout( function() {
+              $scope.resultStarFlag[count] = true;
+              $log.debug("sound source",starSound,count,starSound[count]);
+            audio.player.play("sound/"+starSound[count]+".mp3")
+              // angular.element("#audioplayer")[0].pause();
+              // angular.element("#audioSource")[0].src = ;
+              // angular.element("#audioplayer")[0].load();
+              // angular.element("#audioplayer")[0].play();
+          },(count+1)*1000);
+        })(i)
+
       }
     }
 
     function submitReport(quiz, report, summary) {
+      // $log.debug("Submit Report called");
       var lesson = lessonutils.getLocalLesson();
 
         User.skills.update({
@@ -308,19 +318,34 @@
             $scope.modal = modal;
           });
           $scope.openModal = function() {
-            $scope.modal.show();
-            $timeout(function() {
-              if ($scope.modal.isShown()) {
+            $log.debug("openModal" );
+            $scope.modal.show().then(function(){
+              $timeout(function() {
+                $log.debug("openModal timeout triggered, is modal shown",$scope.modal.isShown());
+                if(quizCtrl.currentIndex == quizCtrl.quiz.objects.length - 1){
+                  $log.debug("PRactice end");
+                }
+                quizCtrl.practiceEnd = true;
+                if ($scope.modal.isShown()) {
+                  $log.debug("openModal closing modal " );
 
-                $scope.closeModal(quizCtrl.closeModalCallback);
-              }
-            }, 2000);
+                  $scope.closeModal(quizCtrl.closeModalCallback);
+                }
+              }, 2000);
+            });
+
           };
           $scope.closeModal = function(callback) {
+            $log.debug("closeModal" );
+
             quizCtrl.canRemoveFeedback = false;
             $scope.modal.hide().then(function() {
-                if(callback){
-                    callback();
+              $log.debug("closeModal modal hidden" );
+
+              if(callback){
+                $log.debug("closeModal callback found " );
+
+                callback();
                 }
                 quizCtrl.canRemoveFeedback = true;
             });
@@ -354,10 +379,15 @@
 
     }
     function closeModalCallback () {
-        if (quizCtrl.currentIndex >= quizCtrl.quiz.objects.length - 1) {
-          quizCtrl.submitQuiz('practice');
+      $log.debug("closeModalCallback" );
+
+      if (quizCtrl.currentIndex >= quizCtrl.quiz.objects.length - 1) {
+        $log.debug("closeModalCallback quizCtrl.currentIndex >= quizCtrl.quiz.objects.length - 1" );
+
+        quizCtrl.submitQuiz('practice');
         } else {
-          $ionicSlideBoxDelegate.slide(quizCtrl.getCurrentIndex() + 1);
+        $log.debug("closeModalCallback quizCtrl.currentIndex < quizCtrl.quiz.objects.length - 1" );
+        $ionicSlideBoxDelegate.slide(quizCtrl.getCurrentIndex() + 1);
         }
     }
     function parseHtml(index) {
@@ -414,8 +444,11 @@
     }
 
     function getFeedback(question) {
+      $log.debug("get Feedback");
       quizCtrl.submitAttempt(question.node.id, question.attempted);
       if (quizCtrl.isCorrectAttempted(question)) {
+        $log.debug("get Feedback Correct" );
+
         audio.play('correct');
         quizCtrl.summary.analysis[question.node.id] = {
           title: question.node.title,
@@ -426,6 +459,8 @@
         quizCtrl.summary.score.percent = parseInt((quizCtrl.summary.score.marks / quizCtrl.quiz.node.type.score) * 100);
         quizCtrl.summary.stars = quizCtrl.calculateStars(quizCtrl.summary.score.percent);
       } else {
+        $log.debug("get Feedback Wrong" );
+
         quizCtrl.summary.analysis[question.node.id] = {
           title: question.node.title,
           status: 'incorrect',
@@ -444,6 +479,8 @@
         //   quizCtrl.quiz.objects.push(angular.copy(question));
         // }
       }
+      $log.debug("get Feedback Opening Modal" );
+
       $scope.openModal();
     }
 
@@ -492,7 +529,11 @@
           temp_quiz.objects.push(ml.dqJSON[temp_quiz.suggestion.qSr]);
           content.getAssessment(temp_quiz).then(function(response){
             response.suggestion = temp_quiz.suggestion;
-            quizCtrl.quiz = response;
+            $log.debug(response.objects.length, response.objects[response.objects.length-1], response, "RESPONSE")
+            quizCtrl.quiz.objects.push(angular.copy(response.objects[response.objects.length-1]))
+            quizCtrl.quiz.suggestion = (response.suggestion);
+            $log.debug(quizCtrl.quiz,response,"Check diff")
+            // quizCtrl.quiz = response;
 
 
             // quizCtrl.nextQuestion()
@@ -594,17 +635,14 @@
     }
 
     function playAudio(key, index) {
-      angular.element("#audioplayer")[0].pause();
-      if (key) {
-        var src = key;
-        angular.element("#audioSource")[0].src = src;
-        angular.element("#audioplayer")[0].load();
-        angular.element("#audioplayer")[0].play();
+      if(key){
+        audio.player.play(key)
       }
+
     }
     function stopAudio() {
-      angular.element("#audioSource")[0].src = '';
-      angular.element("#audioplayer")[0].pause();
+      audio.player.stop()
+
     }
 
     function generateSummary(report, quiz) {
@@ -669,25 +707,29 @@
         if(quizCtrl.report.attempts[CONSTANT.QUESTION.DEMO])
             delete quizCtrl.report.attempts[CONSTANT.QUESTION.DEMO];
       if (quizType === 'practice') {
-        $log.debug("END PRACTICE",quizCtrl.quiz)
-        $scope.modal.hide().then(function() {
+
+
+          $scope.modal.hide().then(function() {
             analytics.log(
-                {
-                    name : 'PRACTICE',
-                    type : 'END',
-                    id : quizCtrl.quiz.node.type.id
-                },
-                {
-                    time : new Date()
-                },
+              {
+                name : 'PRACTICE',
+                type : 'END',
+                id : quizCtrl.quiz.node.type.id
+              },
+              {
+                time : new Date()
+              },
               User.getActiveProfileSync()._id
             ) &&
-          $state.go('quiz.summary', {
-            report: (quizCtrl.report),
-            summary: (quizCtrl.summary),
-            type: 'practice'
+            $state.go('quiz.summary', {
+              report: (quizCtrl.report),
+              summary: (quizCtrl.summary),
+              type: 'practice'
+            })
           });
-        });
+
+
+
       } else if (quizType === 'assessment') {
         $ionicPopup.confirm({
           title: 'Submit Quiz?',
@@ -732,6 +774,7 @@
     }
 
     function endQuiz() {
+      // $log.debug("End quiz called");
       $ionicLoading.show({
         noBackdrop: false,
         hideOnStateChange: true
@@ -739,7 +782,16 @@
       if($stateParams.type == 'litmus'){
         var levelRec = ml.getLevelRecommendation();
         $log.debug('levelRec', levelRec);
-        $state.go('litmus_result',{'average_level':levelRec.avgLevel})
+        ml.setLessonResultMapping().then(function() {
+          var suggestion = ml.getLessonSuggestion({
+            "event": "diagnosisTest"
+          });
+          $log.debug(suggestion,"Suggestion");
+          User.playlist.add(User.getActiveProfileSync()._id,suggestion).then(function(){
+            $state.go('litmus_result',{'average_level':levelRec.avgLevel});
+          })
+        });
+
         localStorage.setItem('diagnosis_flag',true);
       }else{
         $state.go('map.navigate', {});
@@ -759,9 +811,15 @@
     //
     //     }
     //   })
-    $ionicPlatform.registerBackButtonAction(function(event) {
-      event.preventDefault()
-    }, 101);
+
+
+    // YOU ARE HERE
+    // $ionicPlatform.registerBackButtonAction(function(event) {
+    //   event.preventDefault()
+    // }, 101);
+
+
+
       // $ionicPlatform.registerBackButtonAction(function(event) {
       //     if($state.is('quiz.questions')){
       //         try {
@@ -773,10 +831,14 @@
       // }, 101);
 
     $scope.showNodeMenu = function() {
-      quizCtrl.pauseModal.show();
+      quizCtrl.pauseModal.show().then(function(){
+        audio.player.play('sound/pause_menu.mp3');
+      });
     }
     $scope.closeNodeMenu = function() {
-      quizCtrl.pauseModal.hide();
+      quizCtrl.pauseModal.hide().then(function(){
+        audio.player.stop();
+      });
     }
 
     function restartQuiz() {
@@ -801,18 +863,33 @@
       // if (quizCtrl.quiz.objects[questionIndex].node.widgetHtml.indexOf(CONSTANT.WIDGETS.SPEAKER_IMAGE) >= 0) {
         // quizCtrl.quiz.objects[questionIndex].node.widgetHtml = quizCtrl.quiz.objects[questionIndex].node.widgetHtml.replace(CONSTANT.WIDGETS.SPEAKER_IMAGE, CONSTANT.WIDGETS.SPEAKER_IMAGE_SELECTED)
       // }
+
+      // $log.debug("Original WidgetSound",quizCtrl.quiz.objects[questionIndex].node.widgetSound)
+      // $log.debug("SoundSource",angular.element("#audioSource")[0].src)
+      // $log.debug("Original WidgetSound - bundled","file:///android_asset/www/"+quizCtrl.quiz.objects[questionIndex].node.widgetSound)
+      // $log.debug("SoundSource - bundled",angular.element("#audioSource")[0].src)
+      // $log.debug("Sound Source not same",angular.element("#audioSource")[0].src != quizCtrl.quiz.objects[questionIndex].node.widgetSound)
+      // $log.debug("Sound source not same bunlded","file:///android_asset/www/"+ quizCtrl.quiz.objects[questionIndex].node.widgetSound != angular.element("#audioSource")[0].src )
+      // $log.debug("THIS IS THE INDEX",$scope.selectedNode)
       quizCtrl.highlightSoundIconFlag = true;
-      var watchAudio = $interval(function() {
-        if (angular.element("#audioplayer")[0].paused) {
-          quizCtrl.highlightSoundIconFlag = false;
-          $interval.cancel(watchAudio)
-          // quizCtrl.quiz.objects[questionIndex].node.widgetHtml = quizCtrl.quiz.objects[questionIndex].node.widgetHtml.replace(CONSTANT.WIDGETS.SPEAKER_IMAGE_SELECTED, CONSTANT.WIDGETS.SPEAKER_IMAGE)
-        }
-      }, 100)
+      if (quizCtrl.quiz.objects[questionIndex].node.widgetSound != null) {
+        var watchAudio = $interval(function() {
+            // $log.debug("WidgetSound trimmed",quizCtrl.quiz.objects[questionIndex].node.widgetSound.split("/").pop())
+            // $log.debug("Source trimmed",angular.element("#audioSource")[0].src.split("/").pop())
+            // $log.debug("THIS WHY I HATE BUNDLED",quizCtrl.quiz.objects[questionIndex].node.widgetSound.split("/").pop() != angular.element("#audioSource")[0].src.split("/").pop())
+            if (angular.element("#audioplayer")[0].paused || quizCtrl.quiz.objects[questionIndex].node.widgetSound.split("/").pop() != angular.element("#audioSource")[0].src.split("/").pop()) {
+              quizCtrl.highlightSoundIconFlag = false;
+              $interval.cancel(watchAudio)
+              // quizCtrl.quiz.objects[questionIndex].node.widgetHtml = quizCtrl.quiz.objects[questionIndex].node.widgetHtml.replace(CONSTANT.WIDGETS.SPEAKER_IMAGE_SELECTED, CONSTANT.WIDGETS.SPEAKER_IMAGE)
+            }
+        }, 100)
+      }else{
+        $log.warn("This question doesn't have sound")
+      }
     }
 
     function next() {
-      if (quizCtrl.summary.stars >= 1) {
+      // if (quizCtrl.summary.stars >= 1) {
         $ionicLoading.show({
           hideOnStateChange: true
         });
@@ -828,15 +905,21 @@
           User.getActiveProfileSync()._id
         )
         $state.go('map.navigate', {"activatedLesson" : quizCtrl.quiz});
-      } else {
-        $scope.showNodeMenu();
-      }
+      // }
+      // else {
+      //   $scope.showNodeMenu();
+      // }
     }
 
     // intronext
 
     $scope.tour = {
-      config: {},
+      config: {
+        onComplete: function () {
+          quizCtrl.noPauseFlag = false;
+          $log.debug('Unsetting noPauseFlag2')
+        }
+      },
       steps: [{
         target: '#step1',
         content: 'This is the first step!',
@@ -857,20 +940,18 @@
 
       if (nzTour.current) {
         if(nzTour.current.step === 0){
-          angular.element("#audioplayer")[0].pause();
-          angular.element("#audioSource")[0].src = 'sound/demo-quiz-2.mp3';
-          angular.element("#audioplayer")[0].load();
-          angular.element("#audioplayer")[0].play();
+          audio.player.play('sound/demo-quiz-2.mp3');
         }else if(nzTour.current.step === 1){
-          angular.element("#audioplayer")[0].pause();
-          angular.element("#audioSource")[0].src = 'sound/demo-quiz-3.mp3';
-          angular.element("#audioplayer")[0].load();
-          angular.element("#audioplayer")[0].play();
+          audio.player.play('sound/demo-quiz-3.mp3');
         }
         else if(nzTour.current.step === 2){
-          $ionicPlatform.registerBackButtonAction(function(event) {
-            $scope.showNodeMenu();
-          }, 101);
+          // $log.debug("Unsetting No Pause Flag")
+          //HERE YOU ARE
+
+          // $ionicPlatform.registerBackButtonAction(function(event) {
+          //   audio.player.stop();
+          //   $scope.showNodeMenu();
+          // }, 101);
         }
         nzTour.next();
       }
@@ -878,16 +959,18 @@
     function playInstruction(index){
 
       if(quizCtrl.quiz.objects[index].node.instructionSound){
+        audio.player.play(quizCtrl.quiz.objects[index].node.instructionSound)
+        angular.element("#audioplayer")[0].onended = instructionEndCallback
 
-        angular.element("#audioplayer")[0].pause();
-        angular.element("#audioSource")[0].src = quizCtrl.quiz.objects[index].node.instructionSound;
-        angular.element("#audioplayer")[0].load();
-        angular.element("#audioplayer")[0].play();
       }else if(quizCtrl.quiz.objects[index].node){
-
-        quizCtrl.playAudio(quizCtrl.quiz.objects[index].node.widgetSound,index);
+        audio.player.play(quizCtrl.quiz.objects[index].node.widgetSound);
         quizCtrl.highlightSoundIcon(index);
       }
+    }
+    function instructionEndCallback(){
+      var index = quizCtrl.currentIndex;
+      audio.player.play(quizCtrl.quiz.objects[index].node.widgetSound);
+      quizCtrl.highlightSoundIcon(index);
     }
 
     function logQuestion(index, type){
@@ -904,39 +987,40 @@
         )
     }
     function intro_end_quiz(){
-      $log.debug("removed event listener quiz",$state);
-      angular.element("#audioplayer")[0].removeEventListener('ended',intro_end_quiz, false);
+      $log.debug("Inside onended event");
 
+      // $log.debug("removed event listener quiz",$state);
+      angular.element("#audioplayer")[0].onended = null
       if($state.current.name == 'quiz.questions'){
         $scope.nodeRibbonFlag = false;
         $scope.nodeRibbon.hide().then(function(){
           if($state.is('quiz.questions') && User.demo.isShown(5)){
-
             $timeout(function(){
+              // quizCtrl.noPauseFlag;
               if($stateParams.type!=='litmus'){
-                angular.element("#audioplayer")[0].pause();
-                angular.element("#audioSource")[0].src = 'sound/demo-quiz-1.mp3';
-                angular.element("#audioplayer")[0].load();
-                angular.element("#audioplayer")[0].play();
+                audio.player.play('sound/demo-quiz-1.mp3');
                 nzTour.start($scope.tour);
                 User.demo.setStep(5);
                 $timeout(function(){
-
                   if(nzTour.current.step === 0){
                     tourNextStep();
                   }
+                  // log.debug(nzTour.current)
                 },3500)
               }
 
             });
 
           }else{
-            $log.debug("playInstruction")
+
+            $log.debug('Demo has ended')
+            quizCtrl.noPauseFlag = false;
+            $log.debug("Unsetting noPauseFlag");
             quizCtrl.playInstruction(0);
 
-            $ionicPlatform.registerBackButtonAction(function(event) {
-              $scope.showNodeMenu();
-            }, 101);
+            //YOU ARE HERE
+            // $ionicPlatform.registerBackButtonAction(function(event) {
+            // }, 101);
           }
 
         });
@@ -952,19 +1036,31 @@
     }).then(function(modal){
       $scope.nodeRibbon = modal;
       $scope.nodeRibbonFlag = true;
-      // modal.show();
-      $log.debug(quiz)
-      angular.element("#audioplayer")[0].pause();
-      angular.element("#audioSource")[0].src = quiz.node.parsed_sound;
-      angular.element("#audioplayer")[0].load();
-      angular.element("#audioplayer")[0].play();
-      $log.debug("Added even listener quiz");
-      angular.element("#audioplayer")[0].addEventListener('ended', intro_end_quiz, false);
+      quizCtrl.noPauseFlag = true;
+      $log.debug("Setting No Pause Flag");
+      if(quiz.node.parsed_sound){
+        audio.player.play(quiz.node.parsed_sound);
+        angular.element("#audioplayer")[0].onended = intro_end_quiz;
+        $log.debug("Added onended event");
+      }
+      else{
+        $timeout(function(){
+          intro_end_quiz();
+        },1000)
+      }
 
-    })
+    });
 
 
     // $scope.progressBar();
 
+            $scope.$on('backButton',function(){
+                $log.debug('back button pressed')
+              // $log.debug("nzTour",nzTour.current.step);
+              if (!quizCtrl.noPauseFlag) {
+                audio.player.stop();
+                $scope.showNodeMenu();
+              }
+            })
   }
 })();

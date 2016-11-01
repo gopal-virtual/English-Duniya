@@ -21,7 +21,8 @@
     'content',
     '$ionicSlideBoxDelegate',
     '$timeout',
-    'User'
+    'User',
+    'audio'
   ];
 
   function userController(CONSTANT,
@@ -39,7 +40,8 @@
                           content,
                           $ionicSlideBoxDelegate,
                           $timeout,
-                          User) {
+                          User,
+                          audio) {
     var userCtrl = this;
     userCtrl.calcAge = calcAge;
     userCtrl.closeKeyboard = closeKeyboard;
@@ -58,13 +60,15 @@
     userCtrl.playAudio = playAudio;
 
     userCtrl.playAudio(-1);
-    $timeout(function () {
-      userCtrl.playAudio(0);
-    }, 5000);
+    $log.debug("Hukata")
+    $scope.audio = audio;
+    // $timeout(function () {
+    //   userCtrl.playAudio(0);
+    // }, 5000);
     function playAudio(index) {
       var src;
       if (index == -1) {
-        src = 'sound/voice_welcome.mp3'
+        src = 'sound/voice_welcome_name.mp3'
       }
       if (index == 0) {
         src = 'sound/voice_name.mp3'
@@ -75,12 +79,10 @@
       if (index == 2) {
         src = 'sound/voice_class.mp3'
       }
-
-      angular.element("#audioplayer")[0].pause();
-      if (src) {
-        angular.element("#audioSource")[0].src = src;
-        angular.element("#audioplayer")[0].load();
-        angular.element("#audioplayer")[0].play();
+      if(src){
+        audio.player.play(src);
+      }else{
+        audio.player.stop();
       }
     }
 
@@ -110,9 +112,11 @@
       return ~~((Date.now() - birthday) / (31557600000));
     }
 
-    $ionicPlatform.registerBackButtonAction(function (event) {
-      event.preventDefault();
-    }, 100);
+
+    // YOU ARE HERE
+    // $ionicPlatform.registerBackButtonAction(function (event) {
+    //   event.preventDefault();
+    // }, 100);
 
     function convertDate(date) {
       function pad(s) {
@@ -151,7 +155,7 @@
         .then(function () {
           localStorage.setItem('demo_flag', 1);
           localStorage.setItem('diagnosis_flag', false);
-          
+
           $state.go('litmus_start');
           // $state.go('quiz.questions', {'type':'litmus','id':'litmus_question'});
         })

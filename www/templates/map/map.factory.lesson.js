@@ -21,7 +21,7 @@
     function initStar() {
         total_star = 0
     }
-    
+
     function setLock(key, lesson, bool) {
       lesson.locked = bool;
     }
@@ -37,34 +37,40 @@
     }
 
     function getLesson(lessons) {
+      $log.debug("getLessons",lessons)
       var d = $q.defer();
       var promises = []
       angular.forEach(lessons, function(value, key) {
-        setLock(key, value, true);
-      })
+        setLock(key, value, false);
+      });
 
+
+      // Locked
       angular.forEach(lessons, function(value, key) {
         var total_score = 0;
         var obtained_score = 0;
-
+        $log.debug("Iterating",value)
         promises.push(
-        User.scores.getScoreOfResource(value.node.parent, value.node.id,User.getActiveProfileSync()._id).then(function(score) {
-
+        User.scores.getScoreOfResource(value.node.parent, value.node.id,User.getActiveProfileSync()._id, value.node.playlist_index).then(function(score) {
+          $log.debug("SCORE",score)
+          // setLock(key, lessons[key], false);
           if (score) {
               // need score for both video and assessment
               total_score = total_score + score.totalScore;
               obtained_score = obtained_score + score.score;
 
-              
 
+              $log.debug("Lesson to check",lessons[key])
               if (total_score > 0) {
                 var percent = (obtained_score / total_score) * 100;
 
                 // if score is >  80%, unlock the next lessons
-                if (percent >= CONSTANT.STAR.ONE) {
-                  if (lessons[key + 1])
-                    setLock(key, lessons[key + 1], false);
-                }
+                // if (percent >= CONSTANT.STAR.ONE) {
+                //   if (lessons[key] && lessons[key + 1]){
+                //       setLock(key, lessons[key], false);
+                //       setLock(key, lessons[key + 1], false);
+                //   }
+                // }
 
                 // give stars
                 if (obtained_score == 0) {
@@ -80,11 +86,33 @@
                 } else {}
 
               }
+            $log.debug("Came here")
+
             }
-            // unlock first lessons
-            if (key == 0) {
-              setLock(key, value, false);
+
+            if(key == lessons.length -1  && lessons[key-1].stars === undefined){
+                setLock(key, lessons[key], true);
+
             }
+// else{
+//   $log.debug("No score",lessons[key]);
+//
+//             // $log.debug(lessons[key].node.content_type_name )
+//             if (lessons[key].node.type.type === 'practice') {
+//               $log.debug("Pracice found without score",key);
+//               $log.debug("lessons[key-1].stars ",lessons[key-1].stars )
+//
+//               if(!lessons[key-1].stars){
+//                 $log.debug("lessons[key-1].stars not found")
+//                 setLock(key, lessons[key], true);
+//
+//               }
+//               $log.debug(lessons[key-1]);
+//
+//               // if( )
+//             }
+//           }
+
             return lessons[key];
           }))
       })

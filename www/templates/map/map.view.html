@@ -1,13 +1,13 @@
-<div ng-class="{'animation-fade-out-from-top':!mapCtrl.showResult}" class="bg-pale text-3d result result-left animation-fade-in-from-top" style="-webkit-animation-delay : 800ms;">
+<!-- <div ng-class="{'animation-fade-out-from-top':!mapCtrl.showResult}" class="bg-pale text-3d result result-left animation-fade-in-from-top" style="-webkit-animation-delay : 800ms;">
     <img height="30px" src="img/assets_svg/star-yellow.svg" alt=""><p style="margin:0px;padding-top:10px">&nbsp;x {{mapCtrl.total_star}}</p>
-</div>
-<div ng-class="{'animation-fade-out-from-top':!mapCtrl.showResult}" class="bg-pale result result-right animation-fade-in-from-top" style="-webkit-animation-delay : 800ms;">
+</div> -->
+<!-- <div ng-class="{'animation-fade-out-from-top':!mapCtrl.showResult}" class="bg-pale result result-right animation-fade-in-from-top" style="-webkit-animation-delay : 800ms;">
     <a class="icon-settings icon-contain" ng-click="settingsModal.show()"></a>
-</div>
+</div> -->
 <div class="result-backdrop modal-dark" ng-show="mapCtrl.backdrop" ng-click="mapCtrl.backdrop=false;mapCtrl.showScore=-1"></div>
 <ion-view>
   <ion-content>
-    <div ng-if="mapCtrl.lessons" map-canvas lessons="mapCtrl.lessons" start-index="mapCtrl.first_node_index" end-index="mapCtrl.last_node_index" animation="mapCtrl.animationExpand" width="mapCtrl.width" height="mapCtrl.height">
+    <div ng-if="mapCtrl.lessons" map-canvas map-lessons="mapCtrl.lessons" map-totalstars="mapCtrl.totalStars" width="mapCtrl.width" height="mapCtrl.height" map-demo="mapCtrl.demo">
     </div>
 
   </ion-content>
