@@ -36,6 +36,9 @@
       },
       'VIEW': '.view.html',
       'CONFIG': {
+        'NOTIFICATION' : {
+          'SENDERID' : 8255413708
+        },
         'AUTH': {
           'GOOGLEPLUS': {
             'scopes': 'email profile',
