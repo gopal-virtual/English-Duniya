@@ -264,7 +264,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
 
             function renderHud(totalStars){
                 log.info("Rendering HUD ...");
-                totalStars=108;
+                // totalStars=108;
                 // //log.debug("I am making HUD. Wohoooo");
                 var hudWidth = 185;
                 // //log.debug("Stars ",scope)
