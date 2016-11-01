@@ -6,10 +6,11 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
     //log.debug("LESSONS ARE AMAZING",lessons);
 
     var DEBUG = false;
+    var DEBUG2 = false;
 
     if(DEBUG){
         lessons = [];
-        var lessonNumber = 250,
+        var lessonNumber = 200,
         // var lesson_data = {
             content_type = [{
                                 name: "resource",
@@ -94,9 +95,6 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
         // "region5" : 392,
     }
     var totalRegionHeight = 0;
-    for (var key in regionHeight) {
-        totalRegionHeight += regionHeight[key];
-    }
     var svgPathHeight = 10000;
     var regionOffset = {};
     var tresholdOffset = 200;
@@ -130,13 +128,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
         "reading" : "orange"
     }
     var totalLesson = lessons.length;
-    if (localStorage.getItem("regionPage")) {
-        var regionPage = localStorage.getItem("regionPage");
-    }else{
-        localStorage.setItem("regionPage",0);
-        var regionPage = 0;
-    }
-    var renderedRegion = [regions[regionPage]];
+    var renderedRegion = [];
 
 
 
@@ -174,6 +166,8 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
             this.load.image('x', 'img/assets/x.png');
             this.load.image('finger', 'img/assets/finger_point.png');
 
+            this.load.spritesheet('correct', 'img/assets/button-correct.png',88,90);
+            this.load.spritesheet('wrong', 'img/assets/button-wrong.png',88,90);
             this.load.spritesheet('node-port', 'img/assets/port-node.png',118,187);
             this.load.spritesheet('node-blue-video', 'img/assets/button-blue-video.png',88,91);
             this.load.spritesheet('node-orange-video', 'img/assets/button-orange-video.png',88,91);
@@ -201,7 +195,18 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
             //         "key" : "shake"
             //     }
             // }]
+            for (var key in regionHeight) {
+                totalRegionHeight += regionHeight[key];
+            }
 
+            if (localStorage.getItem("regionPage")) {
+                var regionPage = localStorage.getItem("regionPage");
+            }else{
+                localStorage.setItem("regionPage",0);
+                var regionPage = 0;
+            }
+            renderedRegion[0] = regions[regionPage];
+            
             var star = [];
             var starClone = [];
             var star_x = [-22, 0, 22];
@@ -258,7 +263,8 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
 
 
             function renderHud(totalStars){
-                log.info("Rendering HUD ...")
+                log.info("Rendering HUD ...");
+                totalStars=108;
                 // //log.debug("I am making HUD. Wohoooo");
                 var hudWidth = 185;
                 // //log.debug("Stars ",scope)
@@ -516,6 +522,9 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                     groups.nonRegion.nodeTags.add(nodeTagText);
 
 
+
+
+
                     var node = game.make.button(posx, posy, 'node-' +nodeColors[lessons[i].node.tag.toLowerCase()]+'-'+ lessonutils.resourceType(lessons[i]), false, this, 1,0,1,0);
                     node.anchor.setTo(0.5);
                     node.scale.setTo(0.8);
@@ -560,6 +569,20 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                         temp["activeLessonKey"] = i;
                         temp["activeLessonPosY"] = posy;
                         temp["activeLessonPosX"] = posx;
+                        
+                        if (DEBUG2 == true){
+                            log.debug()
+                            var nodeCorrect = game.make.button(posx+60,posy,'correct',stateRedraw,this,0,0,1,0);
+                            nodeCorrect.anchor.setTo(0.5);
+                            nodeCorrect.scale.setTo(0.4);
+                            groups.nonRegion.nodeTags.add(nodeCorrect);
+                            var nodeWrong = game.make.button(posx+100,posy,'wrong',stateRedraw,this,0,0,1,0);
+                            nodeWrong.anchor.setTo(0.5);
+                            nodeWrong.scale.setTo(0.4);
+                            groups.nonRegion.nodeTags.add(nodeWrong);
+                            log.debug("Hello ya ya") 
+                        }
+
                         if (Demo.getStep() != 1) {
                             temp["nodeWobbleTween"] = game.add.tween(node.scale).to({ x: [0.8,1,0.8], y: [0.8,1,0.8] }, 600, Phaser.Easing.Back.Out, true, 400).loop(true);
                         }else{
@@ -676,7 +699,8 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                         localStorage.setItem('regionPage',parseInt(regionPage)-1);
                         localStorage.setItem('currentPosition', 0);
                     }
-                    window.location.reload();
+                    // window.location.reload();
+                    stateRedraw();
 
                 }, this, 0,0,1,0);
                 port.scale.setTo(portType=="prev"?0.6:0.8);
@@ -778,6 +802,9 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                 addGroups(renderedRegion);
                 renderWorld(renderedRegion);
                 cameraInit();
+                // setTimeout(function() {
+                    // gameRestart();
+                // }, 10000);
                 renderRegion(renderedRegion);
                 var fetchMapRequest = fetchMapPath(renderedRegion,points);
                 fetchMapRequest.then(function(){
@@ -821,9 +848,14 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
 
 
 
+            function stateRedraw(){
+                game.state.restart(true,true);
+                log.debug("state restarted")
+            }
 
 
         },
+
         // init: function() {
         //     game.kineticScrolling = game.plugins.add(Phaser.Plugin.KineticScrolling);
         //     game.kineticScrolling.configure({
@@ -967,6 +999,10 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
             // this.interactiveAnimate();
             // game.camera.y-= 4;
 
+        },
+        shutdown: function() {
+            log.debug("The world is going down down down down")
+            game.world.removeAll();
         }
 
     }
