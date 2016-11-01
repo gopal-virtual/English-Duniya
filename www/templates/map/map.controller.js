@@ -84,9 +84,12 @@
     $scope.progress = localStorage.getItem('progress');
     var mapCtrl = this;
     var lessonList = CONSTANT.LOCK ? lessonLocked.lockedLesson : lessons;
-    mapCtrl.total_star = CONSTANT.LOCK ? lessonLocked.total_star : 0;
+    mapCtrl.totalStars = CONSTANT.LOCK ? lessonLocked.total_star : 0;
+    $log.debug("Stars",mapCtrl.totalStars)
     // $state.current.data && lessonList.unshift($state.current.data.litmus);
     mapCtrl.User = User;
+    mapCtrl.demo = User.demo;
+    // mapCtrl.loading = $ionicLoading;
     mapCtrl.authFactory = Auth;
     mapCtrl.queue = queue;
     mapCtrl.lessons = lessonList;
@@ -314,14 +317,14 @@
 
     ;
     $scope.$on('animateStar', function() {
-      for (var i = 0; i < mapCtrl.skillSet.length; i++) {
-        $log.info("Loop", i, "\nskillSetTag : ", mapCtrl.skillSet[i].title.toLowerCase(), "\nactivatedLessonTag : ", $stateParams.activatedLesson.node.tag.toLowerCase())
-        if (mapCtrl.skillSet[i].title.toLowerCase() == $stateParams.activatedLesson.node.tag.toLowerCase()) {
-          mapCtrl.animateStar.activeFlag = i;
-          // mapCtrl.animateStar.animateFlag = i;
-          break;
-        }
-      }
+      // for (var i = 0; i < mapCtrl.skillSet.length; i++) {
+      //   $log.info("Loop", i, "\nskillSetTag : ", mapCtrl.skillSet[i].title.toLowerCase(), "\nactivatedLessonTag : ", $stateParams.activatedLesson.node.tag.toLowerCase())
+      //   if (mapCtrl.skillSet[i].title.toLowerCase() == $stateParams.activatedLesson.node.tag.toLowerCase()) {
+      //     mapCtrl.animateStar.activeFlag = i;
+      //     // mapCtrl.animateStar.animateFlag = i;
+      //     break;
+      //   }
+      // }
     });
 
 

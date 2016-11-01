@@ -82,12 +82,12 @@
           on-tap="audio.play('click')"
           ng-if="question.node.type.type=='choicequestion' && question.node.type.content.is_multiple"
           ng-class="{'selected':question.attempted[option.key],'card-list':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'list','card-grid practice-card':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'grid'};"
-          class="card center bg-white card-radius"
+          class="lcard center bg-white card-radius"
           ng-repeat="option in question.node.type.content.options">
           <label ng-click="quizCtrl.playAudio(option.widgetSound,$parent.$parent.$index);demo.tourNextStep();">
             <input class="hide" type="checkbox" ng-model="question.attempted[option.key]" ng-value="option.key">
             <!-- <div class="option-container"  ng-if="option"> -->
-            <div style="min-height:30px;font-size: 24px;" class="padding-10 option" ng-bind-html="option.widgetHtml"></div>
+            <div style="min-height:30px;font-size: 24px;" class="lcard-inner padding-10 option" ng-bind-html="option.widgetHtml"></div>
             <!-- </div> -->
           </label>
         </div>

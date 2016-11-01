@@ -62,13 +62,13 @@
     userCtrl.playAudio(-1);
     $log.debug("Hukata")
     $scope.audio = audio;
-    $timeout(function () {
-      userCtrl.playAudio(0);
-    }, 5000);
+    // $timeout(function () {
+    //   userCtrl.playAudio(0);
+    // }, 5000);
     function playAudio(index) {
       var src;
       if (index == -1) {
-        src = 'sound/voice_welcome.mp3'
+        src = 'sound/voice_welcome_name.mp3'
       }
       if (index == 0) {
         src = 'sound/voice_name.mp3'
