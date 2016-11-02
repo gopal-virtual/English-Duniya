@@ -104,7 +104,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
         "y" : []
     };
     var regionNodes = {
-        "desert1" : 2,
+        "desert1" : 17,
         "desert2" : 24,
         "ice1" : 22,
         "ice2" : 19,
