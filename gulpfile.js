@@ -27,7 +27,7 @@ var paths = {
     './scss/*.scss'
   ],
   script: [
-    './app_modules/templates.js',
+    './www/templates/templates.js',
     './app_modules/common/common.module.js',
     './app_modules/map/map.module.js',
     './app_modules/content/content.module.js',

@@ -5,15 +5,15 @@
     .module('common')
     .constant('CONSTANT', {
       'APP':{
-      'TYPE': 'Non-Bundled',
+      'TYPE': 'na',
       'VERSION': '0.1.7'
       },
       'LOCK': true,
-      'FAKE_LOGIN': false,
-      'FAKE_DEVICE': false,
-      'DEBUG' : false,
-      'BACKEND_SERVICE_DOMAIN': 'https://eg-api.zaya.in/',
-      'RESOURCE_SERVER': 'https://eg-api.zaya.in/',
+      'FAKE_LOGIN': true,
+      'FAKE_DEVICE': true,
+      'DEBUG' : true,
+      'BACKEND_SERVICE_DOMAIN': 'https://cc-test.zaya.in/',
+      'RESOURCE_SERVER': 'https://cc-test.zaya.in/',
       'ANALYTICS' : true,
       'QUESTION' : {
         'DEMO' : '5ecf8ad5-4c3a-4a67-9758-dd7e3993c4d8'
