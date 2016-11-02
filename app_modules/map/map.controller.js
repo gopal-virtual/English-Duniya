@@ -211,9 +211,7 @@
 
     $scope.$on('openNode', function(event, node) {
       // audio.stop('demo-1')
-      $ionicLoading.show({
-        hideOnStateChange: true
-      });
+      $ionicLoading.show();
        $scope.demo.isShown() && $scope.demo.hide();
        $scope.selectedNode = node;
       //   $scope.demo.isShown() && $scope.demo.hide();

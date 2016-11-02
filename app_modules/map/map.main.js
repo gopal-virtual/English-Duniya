@@ -158,7 +158,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
             this.load.image('forest1', 'img/assets/region/rainforest1.png');
             this.load.image('forest2', 'img/assets/region/rainforest2.png');
             this.load.image('peru1', 'img/assets/region/peru1.png');
-            this.load.image('region5', 'img/assets/region5.png');
+            // this.load.image('region5', 'img/assets/region5.png');
 
             this.load.image('ribbon-tag', 'img/assets/ribbon-tag.png');
             this.load.image('star', 'img/assets/star.png');
@@ -386,6 +386,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                 }
                 var increment = 1 / game.world.height;
                 var bmd = game.add.bitmapData(game.width, game.world.height);
+                log.debug(temp.activeLessonPosY)
                 for (var j = 0; j < 1; j += increment) {
                     var posx = game.math.catmullRomInterpolation(points.x, j);
                     var posy = game.math.catmullRomInterpolation(points.y, j);
@@ -507,7 +508,15 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                     //log.debug("BREAK DANCE FLAG MAHN",i, last_node_index+1)
 
 
-                    if (i == last_node_index +1) {
+                    if (i > last_node_index) {
+                        if(lessons[lessons.length - 1].locked) {
+                            temp["activeLessonKey"] = lessons.length - 2;
+                        }else{
+                            temp["activeLessonKey"] = lessons.length -1;
+                        }
+                        temp["activeLessonPosY"] = -1;
+                        temp["activeLessonPosX"] = -1;
+                        log.debug("Active node is out of bounds. It has been set to the las lesson in the array i.e. ",temp.activeLessonKey);
                         break;
                     }
                     // log.debug ("BABUSHKA")
@@ -630,9 +639,9 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                     }
                 }
 
-                if(temp.activeLessonKey == undefined){
-                    temp["activeLessonKey"] = -1;
-                }
+                // if(temp.activeLessonKey == undefined){
+                //     temp["activeLessonKey"] = -1;
+                // }
 
                 //log.debug("show port node? ",regionPage, regions.length-1, temp["activeLessonKey"], regionPage < regions.length-1 && temp.activeLessonKey == -1);
             }
@@ -826,7 +835,8 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                     }
                     renderNodesByML(renderedRegion);
                     renderNodePath(renderedRegion,points);
-                    if(regionPage < regions.length-1 && temp.activeLessonKey == -1){
+                    log.debug("Port Node Flag",regionPage,regions.length-1,temp.activeLessonKey,regionPage < regions.length-1,regionPage < regions.length-1 && temp.activeLessonKey == -1)
+                    if(regionPage < regions.length-1 && temp.activeLessonKey > last_node_index){
                         renderPortNodes("next");
                     }
                     if(regionPage > 0){
