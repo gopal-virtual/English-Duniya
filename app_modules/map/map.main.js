@@ -158,7 +158,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
             this.load.image('forest1', 'img/assets/region/rainforest1.png');
             this.load.image('forest2', 'img/assets/region/rainforest2.png');
             this.load.image('peru1', 'img/assets/region/peru1.png');
-            this.load.image('region5', 'img/assets/region5.png');
+            // this.load.image('region5', 'img/assets/region5.png');
 
             this.load.image('ribbon-tag', 'img/assets/ribbon-tag.png');
             this.load.image('star', 'img/assets/star.png');
