@@ -28,21 +28,21 @@ var paths = {
   ],
   script: [
     './www/templates/templates.js',
-    './www/templates/common/common.module.js',
-    './www/templates/map/map.module.js',
-    './www/templates/content/content.module.js',
-    './www/templates/intro/intro.module.js',
-    './www/templates/search/search.module.js',
-    './www/templates/auth/auth.module.js',
-    './www/templates/user/user.module.js',
-    './www/templates/profile/profile.module.js',
-    './www/templates/quiz/quiz.module.js',
-    './www/templates/group/group.module.js',
-    './www/templates/app.module.js',
-    './www/templates/**/*.js'
+    './app_modules/common/common.module.js',
+    './app_modules/map/map.module.js',
+    './app_modules/content/content.module.js',
+    './app_modules/intro/intro.module.js',
+    './app_modules/search/search.module.js',
+    './app_modules/auth/auth.module.js',
+    './app_modules/user/user.module.js',
+    './app_modules/profile/profile.module.js',
+    './app_modules/quiz/quiz.module.js',
+    './app_modules/group/group.module.js',
+    './app_modules/app.module.js',
+    './app_modules/**/*.js'
   ],
   html: [
-    './www/templates/**/*.html'
+    './app_modules/**/*.html'
   ],
   image: [
     './www/img/**/*.png',
@@ -55,7 +55,7 @@ var paths = {
   constants : {
     environment : './www/constant.json',
     template : './constant.template.txt',
-    destination : './www/templates/common/',
+    destination : './app_modules/common/',
     destination_filename : 'common.constant.js'
   }
 
@@ -184,7 +184,7 @@ gulp.task('html', function () {
             standalone: true,
             moduleSystem: 'IIFE'
           }))
-          .pipe(gulp.dest('./www/templates/'))
+          .pipe(gulp.dest('./www/build/'))
 
 
 

@@ -133,7 +133,7 @@
 
         if(record.doc.body.client_uid === undefined && record.doc.body.actor_object_id === undefined){
 
-        record.doc.body.actor_object_id = JSON.parse(localStorage.getItem('user_details')).id;
+        record.doc.body.actor_object_id = localStorage.user_details ? JSON.parse(localStorage.getItem('user_details')).id : null;
         }
       }
       var promise;
