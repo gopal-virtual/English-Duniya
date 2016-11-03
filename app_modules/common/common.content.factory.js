@@ -169,9 +169,22 @@
 
 
         var lessons = [];
+        var currentLesson = {}
         for (var i = 0; i < data.rows.length; i++) {
           data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key;
-          lessons.push(data.rows[i].doc.lesson.node);
+          currentLesson = data.rows[i].doc.lesson
+          for (var c = 0; c < currentLesson.objects.length; c++) {
+              if(currentLesson.node.meta && currentLesson.node.meta.intros && currentLesson.node.meta.intros.sound && currentLesson.node.meta.intros.sound[0]){
+                currentLesson.objects[c].node.intro_sound = currentLesson.node.meta.intros.sound[0];
+                // $log.debug('meta',currentLesson.node.meta,currentLesson.objects[c].node)
+              }
+          }
+          $log.debug('modified lesson', currentLesson)
+          lessons.push(currentLesson);
+        }
+        for (var i = 0; i < lessons.length; i++) {
+          // data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key;
+
         }
         lessons = _.sortBy(lessons, 'key');
 

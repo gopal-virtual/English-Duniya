@@ -64,7 +64,8 @@ var environments = {
   default: 'PRODUCTION',
   production: 'PRODUCTION',
   dev: 'DEVELOPMENT',
-  test: 'TESTING'
+  test: 'TESTING',
+  content : 'CONTENT'
 };
 var env = argument.argv.env ? environments[argument.argv.env] : environments.default;
 var app_type = argument.argv.app_type ? argument.argv.app_type : 'na';
@@ -118,6 +119,9 @@ gulp.task('generate-constants', function () {
       }, {
         match: 'DEBUG',
         replacement: constants[env]['DEBUG']
+      }, {
+        match: 'CONTENT_TEST',
+        replacement: constants[env]['CONTENT_TEST']
         }
       ]
     }))
@@ -143,7 +147,7 @@ gulp.task('scripts', function () {
     .pipe(stripDebug())
     .pipe(strip())
     .pipe(concate('mobile.app.js'))
-    .pipe(gulpif(env !== environments.dev,uglify()))
+    .pipe(gulpif(env !== environments.dev && env !== environments.content,uglify()))
     .pipe(gulp.dest('www/build'))
     // .on('end',cb)
   // .pipe(broswerSync.stream())
@@ -184,7 +188,7 @@ gulp.task('html', function () {
             standalone: true,
             moduleSystem: 'IIFE'
           }))
-          .pipe(gulp.dest('./www/build/'))
+          .pipe(gulp.dest('./www/templates/'))
 
 
 

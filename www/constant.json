@@ -1,5 +1,6 @@
 {
   "PRODUCTION": {
+    "CONTENT_TEST":false,
     "LOCK": true,
     "FAKE_LOGIN": false,
     "FAKE_DEVICE": false,
@@ -9,6 +10,7 @@
     "DEBUG" : false
   },
   "TESTING": {
+    "CONTENT_TEST":false,
     "LOCK": true,
     "FAKE_LOGIN": false,
     "FAKE_DEVICE": false,
@@ -18,11 +20,22 @@
     "DEBUG" : true
   },
   "DEVELOPMENT": {
+    "CONTENT_TEST":false,
     "LOCK": true,
     "FAKE_LOGIN": true,
     "FAKE_DEVICE": true,
     "BACKEND_SERVICE_DOMAIN": "https://cc-test.zaya.in/",
     "RESOURCE_SERVER": "https://cc-test.zaya.in/",
+    "ANALYTICS": true,
+    "DEBUG" : true
+  },
+  "CONTENT": {
+    "CONTENT_TEST":true,
+    "LOCK": true,
+    "FAKE_LOGIN": false,
+    "FAKE_DEVICE": false,
+    "BACKEND_SERVICE_DOMAIN": "https://eg-api.zaya.in/",
+    "RESOURCE_SERVER": "https://eg-api.zaya.in/",
     "ANALYTICS": true,
     "DEBUG" : true
   }

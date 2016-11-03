@@ -1,7 +1,12 @@
 <ion-view>
   <ion-content>
-    <ion-item ng-click="mapCtrl.emitNode(lesson)" collection-repeat="lesson in mapCtrl.lessons">
-      {{$index+1}} - {{lesson.title}}
+    <ion-item  collection-repeat="lesson in mapCtrl.lessons">
+        {{$index + 1}} - {{lesson.node.title}}
+        <ul>
+            <li ng-repeat="resource in lesson.objects">
+                <a ng-click="mapCtrl.emitNode(resource)">{{resource.node.title}}</a>
+            </li>
+        </ul>
     </ion-item>
   </ion-content>
 </ion-view>

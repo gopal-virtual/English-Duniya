@@ -20,16 +20,27 @@
           }],
           lessonLocked: ['$log','content','extendLesson','User', function($log, content,extendLesson,User) {
             extendLesson.initStar();
+            if(CONSTANT.CONTENT_TEST){
+                return content.getLessonsList().then(function(lessons){
+                    $log.debug('modified lesson list',lessons)
+                    return {
+                        lockedLesson : lessons,
+                        total_star : 999
+                    };
+                })
 
-            return content.getResourceList(User.getActiveProfileSync().data.profile.grade).then(function(lessons){
-               return extendLesson.getLesson(lessons).then(function(result){
-                 $log.debug("Result is ",result)
-                 return {
-                   lockedLesson : result,
-                   total_star : extendLesson.getTotalStar()
-                 };
-               });
-             })
+            }
+            else{
+                return content.getResourceList(User.getActiveProfileSync().data.profile.grade).then(function(lessons){
+                   return extendLesson.getLesson(lessons).then(function(result){
+                     $log.debug("Result is ",result)
+                     return {
+                       lockedLesson : result,
+                       total_star : extendLesson.getTotalStar()
+                     };
+                   });
+                 })
+             }
             // return content.getResourceList(User.getActiveProfileSync().data.profile.grade).then(function(result){
             //   $log.debug("HERE",result);
             //       return result;
@@ -92,7 +103,10 @@
         }],
         views: {
           'state-map': {
-            templateUrl: CONSTANT.PATH.MAP + '/map' + CONSTANT.VIEW,
+            // templateUrl: CONSTANT.PATH.MAP + '/map' + CONSTANT.VIEW,
+            templateUrl: function ($stateParams) {
+              return CONSTANT.CONTENT_TEST ? CONSTANT.PATH.MAP + '/map.list' + CONSTANT.VIEW : CONSTANT.PATH.MAP + '/map' + CONSTANT.VIEW;
+            },
             controller: 'mapController as mapCtrl'
           }
         }
