@@ -4,7 +4,7 @@
     .module('zaya')
     .run(runConfig);
 
-  function runConfig($ionicPlatform, $rootScope,  $log, $state, $http, $cookies, Auth,  data, audio,  analytics, network, User, queue, content, Raven, device,$cordovaPushV5, CONSTANT) {
+  function runConfig($ionicPlatform, $rootScope,  $log, $state, $http, $cookies, Auth,  data, audio,  analytics, network, User, queue, content, Raven, device,$cordovaPushV5,$cordovaLocalNotification, CONSTANT) {
 
 
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
@@ -229,6 +229,26 @@
         $log.warn("Need to run app on mobile to enable push notifications")
       }
 
+
+
+      //Local Notfication
+      try{
+        // (function () {
+          var user = User.getActiveProfileSync().data.profile;
+          var ntfnText = "Hey "+user.first_name+", we are missing you. \nLet's do a lesson together.";
+          $cordovaLocalNotification.schedule({
+            id: 1,
+            text: ntfnText,
+            title: 'Let\'s play',
+            every: 'minute'
+          }).then(function () {
+            $log.debug("Notification was placed");
+            // alert("Instant Notification set");
+          });
+        // })();
+      }catch(err){
+        $log.warn(err)
+      }
 
 
     });

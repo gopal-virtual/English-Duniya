@@ -41,7 +41,8 @@
     'analytics',
     '$q',
     'queue',
-    'content'
+    'content',
+    '$cordovaLocalNotification'
 ];
 
   function mapController(
@@ -71,13 +72,15 @@
         analytics,
         $q,
         queue,
-        content
+        content,
+        $cordovaLocalNotification
     ) {
 
     $scope.audio = audio;
     $scope.settings = settings;
     var temp = JSON.parse(localStorage.getItem('profile')).data.profile;
     temp.name = temp.first_name + ' ' + temp.last_name;
+    
     $scope.settings.user = temp
     $scope.orientation = orientation;
     $scope.activatedLesson = $stateParams.activatedLesson;
@@ -155,6 +158,8 @@
         //
     }
     // end : port node
+
+
 
 
     /**
