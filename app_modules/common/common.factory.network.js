@@ -17,17 +17,18 @@
     return network;
 
     function isOnline() {
+        return true;
       if (window.Connection) {
         if (navigator.connection.type == Connection.NONE) {
-          
+
           return false;
         } else {
-          
+
 
           return true;
         }
       } else {
-        
+
 
         return true;
       }

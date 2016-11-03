@@ -5,12 +5,12 @@
     .module('common')
     .constant('CONSTANT', {
       'APP':{
-      'TYPE': 'Non-Bundled',
+      'TYPE': 'na',
       'VERSION': '0.1.7'
       },
       'LOCK': true,
-      'FAKE_LOGIN': false,
-      'FAKE_DEVICE': false,
+      'FAKE_LOGIN': true,
+      'FAKE_DEVICE': true,
       'CONTENT_TEST':true,
       'DEBUG' : true,
       'BACKEND_SERVICE_DOMAIN': 'https://eg-api.zaya.in/',

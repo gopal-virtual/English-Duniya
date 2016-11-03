@@ -184,7 +184,7 @@
     //     return;
     //   }
 
-      
+
       // to do
       $ionicLoading.show({
         // noBackdrop: false
@@ -220,7 +220,9 @@
           })
 
       } else if (utils.resourceType(resource) == 'practice') {
+          $log.debug("Assessment found")
         content.downloadAssessment(resource).then(function() {
+            $log.debug("Downloaded assessment")
 
           $timeout(function() {
               !($stateParams.type == 'practice' && $state.current.name == 'quiz.questions') &&

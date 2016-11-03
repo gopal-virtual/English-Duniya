@@ -192,16 +192,16 @@
                           } else {
 
 
-
+$log.debug("downloading file",url,target)
 
                             $cordovaFileTransfer.download(url, target)
                               .then(function (result) {
-
+                                  $log.debug("FILE DOWNLOADED",url,target)
 
                                 d.resolve(target);
                               }, function (err) {
 
-
+$log.debug("Error downloading",url,target,err)
                                 d.reject("Error Downlaoding " + target);
                               }, function (progress) {
                                 localStorage.setItem('progress', parseInt((progress.loaded / progress.total) * 100))

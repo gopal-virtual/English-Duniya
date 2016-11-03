@@ -360,6 +360,7 @@
         d.resolve(success);
       })
         .catch(function (err) {
+            $log.debug("ERRORR FOUND IN Download Assessment",err)
           d.reject(err)
         });
       return d.promise;
