@@ -7,7 +7,7 @@ var request = require('request');
 var json = [];
 
 // var couch_server = 'http://zaya-couch:zayaayaz1234@ci-couch.zaya.in/lessonsdb/'
-var couch_server = 'http://anna:secret@127.0.0.1:5984/lessonsdb/'
+var couch_server = 'http://zaya-couch:zayaayaz1234@52.187.70.243:5984/lessonsdb/'
 
 var i;
 fs.readFile('lesson.json', 'utf8', function (err, data) {
@@ -40,7 +40,7 @@ fs.readFile('lesson.json', 'utf8', function (err, data) {
             }, function (error, response, body) {
                 // console.log('response',response)
               if (error) {
-                console.log("Error occured");
+                console.log("Error occured",error);
               } else {
               }
             });
@@ -50,7 +50,7 @@ fs.readFile('lesson.json', 'utf8', function (err, data) {
 
     }
     else {
-      console.log(error)
+      console.log("ERROR")
     }
   });
 
