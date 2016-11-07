@@ -180,7 +180,9 @@
       // });
 
         document.addEventListener("pause", function(){
+          $log.debug("The app is paused");
           audio.stop('background');
+          audio.player.stop();
         }, false);
 
 
