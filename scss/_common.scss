@@ -3,6 +3,13 @@
   border: 0;
   box-shadow: none;
 }
+.transparent{
+  opacity: 0;
+}
+.opaque{
+  opacity: 1;
+}
+
 .dropzone {
   min-height: 100px;
 }
@@ -168,7 +175,7 @@ meter::-webkit-meter-even-less-good-value {
 }
 
 .personalize-title{
-  font-size: 6vh !important;
+  font-size: 5vh !important;
   color: $hex-dark-blue;
   line-height: 1.8em;
   // @include xs-screen-height{
@@ -201,4 +208,12 @@ meter::-webkit-meter-even-less-good-value {
     position: relative;
     width: auto;
   }
+}
+
+.question div{
+  font-size: 2em;
+}
+
+.scroll-bar-indicator{
+  display: none !important;
 }

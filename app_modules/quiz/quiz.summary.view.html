@@ -1,0 +1,86 @@
+<ion-view class="modal-dark">
+  <ion-content overflow-scroll="false">
+  <div style="height:100%" class="vertical-center">
+    <div>
+      <div class="center position-relative" style="height:100px">
+        <div class="col stars position-absolute">
+          <img ng-repeat="star in [1,2,3]" ng-src="img/assets_svg/star-grey.svg">
+        </div>
+        <div class="col stars position-absolute">
+          <img ng-repeat="star in [1,2,3]" class="transparent" ng-class="{'animation-zoom-out-{{$index+1}} opaque':resultStarFlag[$index]}" ng-src="{{ quizCtrl.utilities.starCount(quizCtrl.summary.stars, $index) ? 'img/assets_svg/star-yellow.svg' : 'img/assets_svg/star-grey.svg'}}">
+        </div>
+      </div>
+      <div ng-class="hoverme" style="padding-top:40px;text-align:center;">
+        <img height="250" style="z-index: 5;position: relative;" ng-src="img/assets_svg/{{userGender=='M'?'boy':'girl'}}-{{quizCtrl.summary.stars>0?'win':'lose'}}-badge.svg">
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+      </div>
+      <!--<div class="row padding-x-30" ng-show="!quizCtrl.summary.stars">-->
+        <!--<center style="width: 100%;padding-top:20px;">-->
+          <!--<button class="sbtn sbtn-video-yellow animation-fade-in-from-bottom" on-tap="lessonutils.getVideo() ? lessonutils.playResource(lessonutils.getVideo()) : quizCtrl.redo()"></button>-->
+        <!--</center>-->
+      <!--</div>-->
+      <div class="row padding-x-30 animation-fade-in-from-bottom" style="animation-delay: 3000ms;" >
+        <center style="width: 100%;padding-top:20px;">
+          <button class="sbtn sbtn-next-yellow" on-tap="audio.play('press');quizCtrl.next()"></button>
+          <!-- <button class="button bg-brand-yellow button-round button-block animation-repeat-bounce" ng-click="quizCtrl.next()"><i class="ed-icon icon-contain icon-next"></i></button> -->
+        </center>
+      </div>
+    </div>
+  </div>
+<!--     <div class="row">
+      <div class="col font-lg text-white text-center">
+        LESSON COMPLETE!
+      </div>
+    </div>
+    <div class="row">
+     <div style="line-height:1.8em" class="col text-center font-sxl text-white"><strong>{{quizCtrl.summary.score.marks}}/{{quizCtrl.quiz.node.type.score}}</strong></div>
+    </div>
+    <div class="row center position-relative" style="height:100px">
+      <div class="col stars position-absolute">
+          <img ng-repeat="star in [1,2,3]" ng-src="img/icons/icon-nostar.png">
+      </div>
+      <div class="col stars position-absolute">
+          <img ng-repeat="star in [1,2,3]" class="animation-zoom-out-{{quizCtrl.starCount($index) ? star : ''}}" style="-webkit-animation-delay: {{$index+1}}s;" ng-src="{{ quizCtrl.starCount($index) ? 'img/icons/icon-star.png' : 'img/icons/icon-nostar.png'}}">
+      </div>
+    </div>
+    <div class="padding-y-40"></div>
+    <div class="row padding-x-30" ng-show="!quizCtrl.summary.stars">
+      <div class="col">
+        <button class="button bg-pale button-round button-block animation-repeat-bounce font-lg" ng-click="lessonutils.getVideo() ? lessonutils.playResource(lessonutils.getVideo()) : quizCtrl.redo()"><i ng-show="!lessonutils.getVideo()" class="ed-icon icon-contain icon-redo"></i>{{lessonutils.getVideo() ? 'Watch Video' : ''}}</button>
+      </div>
+    </div>
+    <div class="row padding-x-30 animation-fade-in-from-bottom" style="animation-delay: 2500ms;" ng-show="quizCtrl.summary.stars >= 1">
+        <div class="col">
+            <button class="button bg-brand-yellow button-round button-block animation-repeat-bounce" ng-click="quizCtrl.next()"><i class="ed-icon icon-contain icon-next"></i></button>
+        </div>
+    </div>
+    <div ng-class="{'display-none':!quizCtrl.isAssessment}">
+      <div class="row bg-pale padding-y-20">
+          <div class="col text-center">
+              <u class="font-lg">QUESTIONS</u>
+          </div>
+      </div>
+      <div  class="row bg-pale padding-x-30">
+        <div class="col">
+
+          <ion-list class="list-accordion">
+            <div class="itemgroup-accordion" ng-repeat="item in quizCtrl.summary.analysis" ng-init="showAccordian=-1">
+              <div class="item-stable padding-20" ng-class="{'bg-balanced-light':item.status=='correct','bg-assertive-light' : item.status=='incorrect', 'bg-grey-light' : item.status=='unattempted',active: isGroupShown(item)}" ng-click="$parent.showAccordian=$index" >
+                <i class="icon" ng-class="isGroupShown(item) ? 'ion-minus' : 'ion-plus'"></i>
+                &nbsp;
+                Question {{$index + 1}}
+              </div>
+              <div class="item-accordion padding-y-20 padding-x-40" ng-show="$parent.showAccordian==$index">
+                <div class="fit-width" ng-bind-html="item.title">
+                  {{item.title}}
+                </div>
+                {{item.status}}
+              </div>
+            </div>
+          </ion-list>
+
+        </div>
+      </div>
+    </div> -->
+  </ion-content>
+</ion-view>
