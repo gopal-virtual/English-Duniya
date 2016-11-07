@@ -19,16 +19,17 @@
     function isOnline() {
       if (window.Connection) {
         if (navigator.connection.type == Connection.NONE) {
-          
+
           return false;
         } else {
-          
+
+          $log.debug("Network manager returning true 1");
 
           return true;
         }
       } else {
-        
 
+        $log.debug("Network manager returning true");
         return true;
       }
     }

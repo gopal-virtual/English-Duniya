@@ -23,7 +23,7 @@
 
             return content.getResourceList(User.getActiveProfileSync().data.profile.grade).then(function(lessons){
                return extendLesson.getLesson(lessons).then(function(result){
-                 $log.debug("Result is ",result)
+                 // $log.debug("Result is ",result,extendLesson.getTotalStar())
                  return {
                    lockedLesson : result,
                    total_star : extendLesson.getTotalStar()

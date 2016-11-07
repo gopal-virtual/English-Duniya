@@ -24,7 +24,7 @@
                  Auth,
                  network) {
 
-    var queueDB = pouchDB('queueDB');
+    var queueDB = pouchDB('queueDB',{revs_limit: 1});
     var queueProperties = {
       push: push,
       startSync: startSync,
@@ -89,6 +89,9 @@
 
       localStorage.setItem('syncing',true)
       Auth.loginIfNotAuthorised()
+        .then(function(){
+          return Auth.createCouchIfNot()
+        })
         .then(function () {
           return queueDB.allDocs({
             include_docs: true

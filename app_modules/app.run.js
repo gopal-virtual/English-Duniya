@@ -4,7 +4,7 @@
     .module('zaya')
     .run(runConfig);
 
-  function runConfig($ionicPlatform, $rootScope,  $log, $state, $http, $cookies, Auth,  data, audio,  analytics, network, User, queue, content, Raven, device) {
+  function runConfig($ionicPlatform, $rootScope,  $log, $state, $http, $cookies, Auth,  data, audio,  analytics, network, User, queue, content, Raven, device,pouchDB, $ionicLoading, CONSTANT) {
 
 
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
@@ -52,63 +52,58 @@
       // }
       // block access to quiz summary page if there is no quiz data
 //
+      $log.debug("State change",toState.name)
 
-      if(localStorage.version !== '0.1.7' && User.getActiveProfileSync() && User.getActiveProfileSync()._id){
-        localStorage.setItem('version','0.1.7');
+      if(localStorage.version !== '0.1.8') {
+        $log.debug("Local storage !== 0.1.8")
 
-        event.preventDefault();
-        User.playlist.patch(User.getActiveProfileSync()._id).then(function(){
-          $state.go('litmus_start');
-        })
+        new PouchDB('lessonsDB').erase();
+        localStorage.setItem('version', '0.1.8');
+
       }
+        if(network.isOnline() && !User.getActiveProfileSync()){
+          $ionicLoading.show({
+          });
+          $log.debug("Ionic loading show")
 
-      if(toState.name !== 'user.personalise' && localStorage.getItem('profile') === null ){
+          event.preventDefault();
+          content.createOrUpdateLessonDB().then(function () {
+            User.checkIfProfileOnline().then(function(){
+              $ionicLoading.hide();
+              $log.debug("Ionic loading hide, go to map navigate")
 
-        event.preventDefault();
-        $state.go('user.personalise');
-      }
-      if(toState.name !== 'user.personalise' && localStorage.getItem('profile') !== null && JSON.parse(localStorage.getItem(('profile')))._id === undefined){
-        event.preventDefault();
+              $state.go('map.navigate');
+            })
+          });
+        }
+      else{
+        if(toState.name !== 'user.personalise' && localStorage.getItem('profile') === null ){
+          $log.debug("toState.name !== 'user.personalise' && localStorage.getItem('profile') === null ")
+
+          event.preventDefault();
+
+          $state.go('user.personalise');
+        }
+        if(toState.name !== 'user.personalise' && localStorage.getItem('profile') !== null && JSON.parse(localStorage.getItem(('profile')))._id === undefined){
+          $log.debug("toState.name !== 'user.personalise' && localStorage.getItem('profile') !== null && JSON.parse(localStorage.getItem(('profile')))._id === undefined");
+          event.preventDefault();
 
           var user = {
             name : JSON.parse(localStorage.getItem(('profile'))).first_name,
             grade : JSON.parse(localStorage.getItem(('profile'))).grade,
             gender :JSON.parse(localStorage.getItem(('profile'))).gender
           };
+          $log.debug("patching profile");
+          User.profile.patch(user,JSON.parse(localStorage.getItem(('profile'))).id).then(function(response){
+            $log.debug("patched profile");
 
-        User.profile.patch(user,JSON.parse(localStorage.getItem(('profile'))).id).then(function(response){
-
-          $state.go('map.navigate');
-
-          // User.profile.patch(user,JSON.parse(localStorage.getItem(('profile'))).id).then(function(response){
-          //   User.setActiveProfileSync(response);
-          //
-          //
-          //   var lessonDB = pouchDB('lessonsGrade' + User.getActiveProfileSync().data.profile.grade, {
-          //     adapter: 'websql'
-          //   });
-          //
-          //   lessonDB.destroy()
-          //     .then(function(){
-          //       $log.debug("Here1",CONSTANT.PATH.DATA + '/lessonsGrade' + User.getActiveProfileSync().data.profile.grade + '.db');
-          //       return lessonDB.load(CONSTANT.PATH.DATA + '/lessonsGrade' + User.getActiveProfileSync().data.profile.grade + '.db')
-          //     })
-          //     .then(function () {
-          //
-          //       return lessonDB.put({
-          //         _id: '_local/preloaded'
-          //       });
-          //     }).then(function(){
-          //
-          //
-          //     $state.go('map.navigate');
-          //
-          //   })
-          //     .catch(function(e){
-          //
-          //     })
-        });
+            $state.go('map.navigate');
+          });
+        }
       }
+
+
+
 
       if (toState.name == 'quiz.questions' && toParams.type=='practice' && !toParams.quiz) {
         event.preventDefault();
@@ -143,6 +138,7 @@
 
     });
     $ionicPlatform.ready(function() {
+      // $ionicLoading.show()
       if(localStorage.profile && localStorage.profile._id){
         Raven.setUserContext({
           device_id: device.uuid,
@@ -161,6 +157,7 @@
             }
         );
       network.isOnline() && queue.startSync();
+      // User.checkIfProfileOnline();
 
       $rootScope.$on('$cordovaNetwork:online', function(event, networkState) {
           // data.queueSync()
@@ -168,10 +165,31 @@
         queue.startSync()
 
       });
-
       // if (Auth.isAuthorised() && Auth.hasProfile()) {
       //   data.createLessonDBIfNotExists()
       // }
+      PouchDB.replicate(CONSTANT.LESSONS_DB_SERVER,'lessonsDB',{live: true,
+        retry: true}).on('change', function (info) {
+        $log.debug("Change in pouch",info);
+        // $ionicLoading.show({template:'Change in pouch'})
+      }).on('paused', function (err) {
+        $log.debug("paused",err)
+        $ionicLoading.hide();
+        // replication paused (e.g. replication up to date, user went offline)
+      }).on('active', function (a) {
+        $log.debug("Active",a)
+        // $ionicLoading.show({template:'Change in pouch'});
+        // replicate resumed (e.g. new changes replicating, user went back online)
+      }).on('denied', function (err) {
+        $ionicLoading.hide();
+        // a document failed to replicate (e.g. due to permissions)
+      }).on('complete', function (info) {
+        $ionicLoading.hide();
+        // handle complete
+      }).on('error', function (err) {
+        $ionicLoading.hide();
+        // handle error
+      });
       if (navigator.splashscreen) {
         navigator.splashscreen.hide();
       }

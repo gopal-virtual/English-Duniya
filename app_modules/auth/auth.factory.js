@@ -10,7 +10,9 @@
             'Rest',
             '$q',
             '$state',
-            'device'
+            'device',
+            '$http',
+            'pouchDB'
     ];
 
   function Auth(
@@ -20,7 +22,9 @@
             Rest,
             $q,
             $state,
-            device
+            device,
+            $http,
+            pouchDB
         ) {
     var rest_auth = Restangular.withConfig(function(RestangularConfigurer) {
       RestangularConfigurer.setBaseUrl(CONSTANT.BACKEND_SERVICE_DOMAIN + '/rest-auth');
@@ -55,22 +59,36 @@
     Auth.autoLogin = autoLogin;
     Auth.updateProfile = updateProfile;
     Auth.loginIfNotAuthorised = loginIfNotAuthorised;
+    Auth.createCouchIfNot = createCouchIfNot;
 
     return Auth;
 
+
+
+    function createCouchIfNot() {
+      $log.debug("Inside curateCouchIfNot");
+
+      // return $http.get().then(function () {
+      //   $log.debug("Db exists")
+      // }).catch(function () {
+      //   $log.debug("Db does not exists")
+      //   // return $http.put('http://zaya-couch:zayaayaz1234@ci-couch.zaya.in/device'+device.uuid,{username:'zaya-couch',password:'zayaayaz1234'});
+      // });
+    }
+
     function autoLogin(user_credentials){
-      
+
 
       return rest_auth.all('no-login')
         .post($.param(user_credentials))
         .then(function(response){
-          
+
 
           localStorage.setItem('Authorization', response.key || response.token);
           return Auth.getUser()
         })
         .then(function(response){
-          
+
 
           return $q.resolve(response);
         })
@@ -78,8 +96,8 @@
     }
 
     function loginIfNotAuthorised(){
-      
-      
+
+
       var user_credentials = {
           username: device.uuid,
           password1: device.uuid,
@@ -87,11 +105,11 @@
           device_id: device.uuid
         };
       if(Auth.isAuthorised()){
-        
+
 
         return $q.resolve()
       }else{
-        
+
 
         return Auth.autoLogin(user_credentials);
       }

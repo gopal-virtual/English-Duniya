@@ -21,6 +21,7 @@
         return mapCanvas;
 
         function linkFunc(scope, el, attr, ctrl) {
+          $log.debug("Scoe Directive",scope);
             $timeout(
               function(){
                   createGame(scope, scope.lessons, audio, $injector, $log, lessonutils, $ionicLoading)

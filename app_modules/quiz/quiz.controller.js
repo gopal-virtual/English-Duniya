@@ -787,9 +787,12 @@
             "event": "diagnosisTest"
           });
           $log.debug(suggestion,"Suggestion");
-          User.playlist.add(User.getActiveProfileSync()._id,suggestion).then(function(){
-            $state.go('litmus_result',{'average_level':levelRec.avgLevel});
+          User.profile.updateRoadMapData(ml.roadMapData,User.getActiveProfileSync()._id).then(function(){
+            User.playlist.add(User.getActiveProfileSync()._id,suggestion).then(function(){
+              $state.go('litmus_result',{'average_level':levelRec.avgLevel});
+            })
           })
+
         });
 
         localStorage.setItem('diagnosis_flag',true);

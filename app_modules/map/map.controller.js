@@ -93,6 +93,7 @@
     mapCtrl.authFactory = Auth;
     mapCtrl.queue = queue;
     mapCtrl.lessons = lessonList;
+    $log.debug("mapCtrl lessons",lessonList);
     mapCtrl.ml = ml;
     // mapCtrl.userCtrl = $controller('userCtrl');
     // mapCtrl.resetNode = resetNode;
@@ -126,7 +127,7 @@
         "reading" : "orange"
     }
 
-    
+
     $scope.$on('pageRegion', mapCtrl.setLessonRange )
     // $scope.$on('nextRegion', mapCtrl.setLessonRange )
     function setLessonRange(event, regionPage, action, regionLength){

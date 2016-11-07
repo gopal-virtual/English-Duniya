@@ -15,7 +15,11 @@
       return {
         request: function(config) {
           if (localStorage.Authorization)
+          {
             config.headers.Authorization = 'Token ' + localStorage.Authorization;
+
+          }
+          // config.headers.withCredentials = false;
           config.headers.xsrfCookieName = 'csrftoken';
           config.headers.xsrfHeaderName = 'X-CSRFToken';
           return config;
@@ -67,5 +71,6 @@
       load: 'qify'
     };
     pouchDBProvider.methods = angular.extend({}, POUCHDB_METHODS, loadMethods);
+    PouchDB.plugin(Erase);
   }
 })();

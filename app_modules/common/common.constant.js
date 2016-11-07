@@ -9,11 +9,14 @@
       'VERSION': '0.1.7'
       },
       'LOCK': true,
-      'FAKE_LOGIN': true,
-      'FAKE_DEVICE': true,
+      'FAKE_LOGIN': false,
+      'FAKE_DEVICE': false,
       'DEBUG' : true,
       'BACKEND_SERVICE_DOMAIN': 'https://cc-test.zaya.in/',
       'RESOURCE_SERVER': 'https://cc-test.zaya.in/',
+      'LESSONS_DB_SERVER': 'http://52.187.70.243:5984/lessonsdb',
+      'PROFILES_DB_SERVER': 'http://zaya-couch:zayaayaz1234@52.187.70.243:5984/device',
+      'LESSON_DB_VERSION': 'na',
       'ANALYTICS' : true,
       'QUESTION' : {
         'DEMO' : '5ecf8ad5-4c3a-4a67-9758-dd7e3993c4d8'
