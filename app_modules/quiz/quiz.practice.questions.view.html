@@ -39,7 +39,9 @@
         <ion-scroll ng-init="quizCtrl.isScroll($index)" style="
     height: 27vh;
 " direction="y" class="padding-0 bg-pale no-shadow">
-          <div ng-class="{'not-no-sound':question.node.widgetHtml == quizCtrl.CONSTANT.WIDGETS.SPEAKER_IMAGE}" style="min-height: 25vh;padding-top:6px !important;" ng-if="question.node.title"
+<!--   {{question.node.widgetHtml}}
+  {{widgetSound}} -->
+          <div ng-class="{'not-no-sound':question.node.widgetHtml!=quizCtrl.CONSTANT.WIDGETS.SPEAKER_IMAGE && question.node.widgetSound!=null}" style="min-height: 25vh;padding-top:6px !important;" ng-if="question.node.title"
             ng-bind-html="question.node.widgetHtml"
             class="question card card-transparent center margin-x-0 margin-y-0 padding-0">
 
