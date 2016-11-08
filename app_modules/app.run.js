@@ -4,7 +4,25 @@
     .module('zaya')
     .run(runConfig);
 
-  function runConfig($ionicPlatform, $rootScope,  $log, $state, $http, $cookies, Auth,  data, audio,  analytics, network, User, queue, content, Raven, device,$cordovaPushV5,$cordovaLocalNotification, CONSTANT) {
+  function runConfig( $ionicPlatform,
+                      $rootScope,  
+                      $log, 
+                      $state, 
+                      $http, 
+                      $cookies, 
+                      Auth,  
+                      data, 
+                      audio,  
+                      analytics, 
+                      network, 
+                      User, 
+                      queue, 
+                      content, 
+                      Raven, 
+                      device,
+                      $cordovaPushV5,
+                      $cordovaLocalNotification, 
+                      CONSTANT) {
 
 
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
@@ -218,12 +236,37 @@
             $cordovaPushV5.onError();
             $cordovaPushV5.register().then(function (resultreg) {
                 localStorage.myPush = resultreg;
+                $log.debug("this is supposed to go to server");
+                $log.debug({
+                  dev_id: device.uuid,
+                  reg_id: resultreg
+                });
+                $http({
+                  method: 'POST',
+                  url: 'https://cc-test.zaya.in/gcm/v1/device/register/',
+                  data: {dev_id: device.uuid, reg_id: resultreg}
+                }).then(function successCallback(response) {
+                  $log.debug("successfully posted", response)
+                }, function errorCallback(response) {
+                  $log.debug("not successfully posted", response)
+                });
+
                 $log.debug('Sending to server',resultreg)
                 // SEND THE TOKEN TO THE SERVER, best associated with your device id and user
             }, function (err) {
                 $log.debug("Some error occured")
                 // handle error
             });
+        });
+
+        $rootScope.$on('$cordovaPushV5:notificationReceived', function(event, data){
+            $log.debug(data);
+            // data.message,
+            // data.title,
+            // data.count,
+            // data.sound,
+            // data.image,
+            // data.additionalData
         });
       }catch(err){
         $log.warn("Need to run app on mobile to enable push notifications")
