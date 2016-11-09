@@ -42,7 +42,8 @@
     '$q',
     'queue',
     'content',
-    '$cordovaLocalNotification'
+    '$cordovaLocalNotification',
+    'notification'
 ];
 
   function mapController(
@@ -73,7 +74,8 @@
         $q,
         queue,
         content,
-        $cordovaLocalNotification
+        $cordovaLocalNotification,
+        notification
     ) {
 
     $scope.audio = audio;
@@ -129,7 +131,7 @@
         "reading" : "orange"
     }
 
-    
+    // notification.init();
     $scope.$on('pageRegion', mapCtrl.setLessonRange )
     // $scope.$on('nextRegion', mapCtrl.setLessonRange )
     function setLessonRange(event, regionPage, action, regionLength){

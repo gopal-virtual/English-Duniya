@@ -12,8 +12,8 @@
       'FAKE_LOGIN': true,
       'FAKE_DEVICE': true,
       'DEBUG' : true,
-      'BACKEND_SERVICE_DOMAIN': 'https://cc-test.zaya.in/',
-      'RESOURCE_SERVER': 'https://cc-test.zaya.in/',
+      'BACKEND_SERVICE_DOMAIN': 'http://192.168.10.159:8000/',
+      'RESOURCE_SERVER': 'http://192.168.10.159:8000/',
       'ANALYTICS' : true,
       'QUESTION' : {
         'DEMO' : '5ecf8ad5-4c3a-4a67-9758-dd7e3993c4d8'
@@ -37,7 +37,7 @@
       'VIEW': '.view.html',
       'CONFIG': {
         'NOTIFICATION' : {
-          'SENDERID' : 8255413708
+          'SENDERID' : 150596025418
         },
         'AUTH': {
           'GOOGLEPLUS': {

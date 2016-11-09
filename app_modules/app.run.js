@@ -220,7 +220,8 @@
       // a much nicer keyboard experience.
       // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
       // for form inputs)
-
+      // notification.log();
+      // notification.init();
       $log.debug('Yahoo');
 
       try{
@@ -243,7 +244,7 @@
                 });
                 $http({
                   method: 'POST',
-                  url: 'https://cc-test.zaya.in/gcm/v1/device/register/',
+                  url: 'http://192.168.10.159:8000/api/v1/devices/',
                   data: {dev_id: device.uuid, reg_id: resultreg}
                 }).then(function successCallback(response) {
                   $log.debug("successfully posted", response)
@@ -260,7 +261,15 @@
         });
 
         $rootScope.$on('$cordovaPushV5:notificationReceived', function(event, data){
-            $log.debug(data);
+            $log.warn("ROCK YOU",data);
+            $cordovaLocalNotification.schedule({
+              id: 3,
+              text: data.text,
+              title: data.title
+            }).then(function () {
+              $log.debug("Notification was placed");
+              // alert("Instant Notification set");
+            });
             // data.message,
             // data.title,
             // data.count,
