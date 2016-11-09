@@ -131,7 +131,9 @@
         "reading" : "orange"
     }
 
+    // notification.createDb();
     // notification.init();
+    notification.defineTypes();
     $scope.$on('pageRegion', mapCtrl.setLessonRange )
     // $scope.$on('nextRegion', mapCtrl.setLessonRange )
     function setLessonRange(event, regionPage, action, regionLength){

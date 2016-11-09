@@ -244,7 +244,7 @@
                 });
                 $http({
                   method: 'POST',
-                  url: 'http://192.168.10.159:8000/api/v1/devices/',
+                  url: 'https://cc-test.zaya.in/api/v1/devices/',
                   data: {dev_id: device.uuid, reg_id: resultreg}
                 }).then(function successCallback(response) {
                   $log.debug("successfully posted", response)

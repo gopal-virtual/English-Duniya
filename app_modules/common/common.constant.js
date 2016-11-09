@@ -12,8 +12,8 @@
       'FAKE_LOGIN': true,
       'FAKE_DEVICE': true,
       'DEBUG' : true,
-      'BACKEND_SERVICE_DOMAIN': 'http://192.168.10.159:8000/',
-      'RESOURCE_SERVER': 'http://192.168.10.159:8000/',
+      'BACKEND_SERVICE_DOMAIN': 'https://cc-test.zaya.in/',
+      'RESOURCE_SERVER': 'https://cc-test.zaya.in/',
       'ANALYTICS' : true,
       'QUESTION' : {
         'DEMO' : '5ecf8ad5-4c3a-4a67-9758-dd7e3993c4d8'

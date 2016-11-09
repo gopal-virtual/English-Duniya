@@ -37,7 +37,7 @@
       'VIEW': '.view.html',
       'CONFIG': {
         'NOTIFICATION' : {
-          'SENDERID' : 8255413708
+          'SENDERID' : 150596025418
         },
         'AUTH': {
           'GOOGLEPLUS': {

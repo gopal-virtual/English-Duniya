@@ -7,10 +7,12 @@
   notification.$inject = [
     '$log',
     '$cordovaLocalNotification',
-    'content'
+    'content',
+    '$q',
+    'User'
   ];
 
-  function notification($log, $cordovaLocalNotification,content) {
+  function notification($log, $cordovaLocalNotification,content,$q,User) {
     // types of notification
     // Undiscovered - content - 24hrs
     // Discovered - generic - 5hrs
@@ -19,7 +21,8 @@
     return {
       log : log,
       init: init,
-      createDb : createDb
+      createDb : createDb,
+      defineTypes : defineTypes
     }
 
     function log(){
@@ -33,21 +36,24 @@
             return new Date().getTime().toString();
           })(),
           title : 'Lesson 1',
-          text : 'Kids learn when to use the words “less than” and “fewer than”, e.g. “I have fewer pencils” vs “he drinks less water”'
+          text : 'Kids learn when to use the words “less than” and “fewer than”, e.g. “I have fewer pencils” vs “he drinks less water”',
+          type : "content"
         },
         '0234146d-f0ae-49d4-9d4f-c74fe4fef312' : {
           id : (function(){
             return new Date().getTime().toString();
           })(),
           title : 'Lesson 2',
-          text : '2Kids learn when to use the words “less than” and “fewer than”, e.g. “I have fewer pencils” vs “he drinks less water”'
+          text : '2Kids learn when to use the words “less than” and “fewer than”, e.g. “I have fewer pencils” vs “he drinks less water”',
+          type : "content"
         },
         '02c46cce-74d9-4fbc-877d-d993eb9427f5' : {
           id : (function(){
             return new Date().getTime().toString();
           })(),
           title : 'Lesson 3',
-          text : '3Kids learn when to use the words “less than” and “fewer than”, e.g. “I have fewer pencils” vs “he drinks less water”'
+          text : '3Kids learn when to use the words “less than” and “fewer than”, e.g. “I have fewer pencils” vs “he drinks less water”',
+          type : "content"
         }
       }
     }
@@ -55,14 +61,18 @@
     function createDummy(db){
       $log.debug("adding new documents")
       var notifData = dummyData();
-      db.put({
-        _id: 'notifLessons',
-        data: notifData
-      }).then(function(response){
-        $log.debug("Notification has been created and is populated. Response is ",response)
-      }).catch(function (err) {
-        $log.debug("Error occured in pouchdb, ",err)
-      });
+      for(var key in notifData){
+        db.put({
+          _id: (function(){
+            return "notif-"+notifData[key].type+"-"+key
+          })(),
+          data: notifData[key]
+        }).then(function(response){
+          $log.debug("Notification has been created and is populated. Response is ",response)
+        }).catch(function (err) {
+          $log.error("Error with creating dummy data, ",err)
+        });
+      }
 
       // config = typeof(config) != 'undefined' ? config:{};
       // $cordovaLocalNotification.schedule({
@@ -80,34 +90,56 @@
     function createDb() {
       $log.debug("creating db")
       var notificationDB = new PouchDB('notificationDB');
-      notificationDB.get('notifLessons').then(function(response){
-        $log.debug("Found the db. Doing nothing")
-      }).catch(function(err){
-        $log.debug("Error with pouch",err);
-        if (err.status == 404) {
-          $log.debug("DB missing creating anew")
-          createDummy(notificationDB);
-        }
-        else{
-          $log.debug("Not a missing db error, ",err)
-        }
-      })
+      createDummy(notificationDB);
+      // notificationDB.get('notifLessons').then(function(response){
+      //   $log.debug("Found the db. Doing nothing")
+      // }).catch(function(err){
+      //   $log.debug("Error with pouch",err);
+      //   if (err.status == 404) {
+      //     $log.debug("DB missing creating anew")
+      //     createDummy(notificationDB);
+      //   }
+      //   else{
+      //     $log.debug("Not a missing db error, ",err)
+      //   }
+      // })
+    }
+
+    function fetchDocs(){
     }
 
     function defineTypes(){
-      var resources;
-      content.getResourceList().then(function(data){
-        resources = data;
-      });
-      return {
-        'contentDiscovered' : {
-          loops: 1,
-          interval: 24,
-          title: (function(){
-            $log.debug("");
-          })()
-        }
-      }
+      $log.debug("DEFINING TYPES")
+      var db = new PouchDB('notificationDB');
+      $q.all({
+        content : content.getActiveResource(),
+        notif : db.get('notifLessons')
+      }).then(function(data){
+        // content.node.id 
+        $log.debug("DEFINE TYPES",data)
+        // var activeLesson = data.content[data.content.length - 1].locked ==
+      },function(err){
+        $log.error("TYPES ERROR happened",err)
+      })
+      // return {
+      //   'discovered' : {
+      //     type: "generic",
+      //     loops: 1,
+      //     interval: 5,
+      //     title: "Let's play",
+      //     text: "Hey, let's resume your learning"
+      //   },
+      //   'undiscovered' : {
+      //     type: "content",
+      //     loops: 1,
+      //     interval: 24,
+      //     title: (function(){
+
+      //     })()
+      //   }
+      // }
+        // })
+      // });
     }
 
     function init() {

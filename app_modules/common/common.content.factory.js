@@ -13,7 +13,8 @@
     'mediaManager',
     '$interval',
     'User',
-    'widgetParser'
+    'widgetParser',
+    'extendLesson'
   ];
 
   /* @ngInject */
@@ -24,7 +25,8 @@
                    mediaManager,
                    $interval,
                    User,
-                   widgetParser) {
+                   widgetParser,
+                   extendLesson) {
 
     var lessonDB = null;
 
@@ -42,6 +44,7 @@
       getLesson: getLesson,
       downloadAssessment: downloadAssessment,
       downloadVideo: downloadVideo,
+      getActiveResource: getActiveResource,
       demo_question: {
         "node": {
           "id": CONSTANT.QUESTION.DEMO,
@@ -351,6 +354,19 @@
         });
       return d.promise;
 
+    }
+
+    function getActiveResource() {
+        return getResourceList(User.getActiveProfileSync().data.profile.grade).then(function(lessons){
+          return extendLesson.getLesson(lessons).then(function(extLessons){
+            $log.debug("This is the active lesson",extLessons[extLessons.length - 1].locked?extLessons[extLessons.length - 2]:extLessons[extLessons.length - 1])
+            return extLessons[extLessons.length - 1].locked?extLessons[extLessons.length - 2]:extLessons[extLessons.length - 1];
+            // $log.debug("This  is the playlist ",result)
+          });
+        })
+      // }).catch(function(err){
+      //   $log.error("Error occured while fetching active playlist",err);
+      // });
     }
 
   }
