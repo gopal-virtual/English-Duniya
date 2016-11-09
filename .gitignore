@@ -12,6 +12,7 @@ platforms/
 /www/build/*
 /www/css/
 /www/templates/templates.js
+/app_modules/templates.js
 .DS_Store
 _replicator
 _replicator/*

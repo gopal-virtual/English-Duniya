@@ -1,0 +1,54 @@
+<ion-view class="bg-pink">
+  <ion-content class="animation-delay animation-fade-in-from-top">
+
+    <div >
+
+      <div style="padding-bottom:0px;" class="row">
+        <div style="padding-bottom:0px;" class="col text-center"><img src="img/assets/logo.png" alt="" height="121px" width="auto"></div>
+      </div>
+
+      <div class="row padding-x-20 padding-y-0">
+        <div class="col padding-y-0">
+        </div>
+        <div class="col padding-y-0">
+        </div>
+      </div>
+
+      <div class="row no-margin no-padding">
+        <div class="col no-margin no-padding">
+        </div>
+      </div>
+
+      <div class="row center">
+
+        <form autocomplete="on" novalidate name="signUpForm" class="col padding-x-20" ng-submit="authCtrl.closeKeyboard();authCtrl.signup(signUpForm)" ng-init="show_password = false">
+
+          <div class="input-group input-group-social">
+            <button type="button" class="icon icon-phone icon-fit-width input-group-item input-group-addon input-group-addon-light font-md">
+            </button>
+            <input class="input-control input-group-item input-default input-block font-sm input-sm padding-x-0" tabindex="1" name="phoneNumber" type="text" ng-trim="false" valid-number placeholder="Phone" ng-model="authCtrl.user.phoneNumber" autocomplete="off" ng-change="authCtrl.user.password=authCtrl.user.phoneNumber">
+          </div>
+
+
+          <div class="input-group input-group-social" ng-hide="true">
+            <button type="button" class="icon icon-password icon-fit-width input-group-item input-group-addon input-group-addon-light font-md">
+            </button>
+            <input class="input-control input-group-item input-group-item input-default input-block font-sm input-sm padding-x-0" tabindex="3" onPaste="return false" autocomplete="off" name="password" type="{{show_password==false?'password':'text'}}" placeholder="Password"
+                ng-model="authCtrl.user.password">
+          </div>
+          <div style="padding:5px;"></div>
+          <div>
+            <button tabindex="4" ng-disabled="!authCtrl.user.phoneNumber" class="button button-round padding-x-60 button-balanced button-no-shadow" style="padding: 0;line-height:20px !important">PLAY</button>
+          </div>
+
+        </form>
+
+      </div>
+
+
+    </div>
+
+
+
+  </ion-content>
+</ion-view>

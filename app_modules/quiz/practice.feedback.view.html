@@ -1,0 +1,15 @@
+<ion-modal-view class="modal-transparent" on-touch="quizCtrl.currentIndex != (quizCtrl.quiz.objects.length -1) && quizCtrl.canRemoveFeedback && closeModal(quizCtrl.closeModalCallback)">
+  <ion-content overflow-scroll="true">
+    <div class="row padding-0">
+
+      <div class="col padding-0 center" style="width: 100%;
+height: auto;">
+        <img style="
+    max-height: 80%;
+    max-width: 80%;
+" ng-src="{{quizCtrl.isCorrectAttempted(quizCtrl.quiz.objects[quizCtrl.getCurrentIndex()])?'img/feedback-correct.png':'img/feedback-incorrect.png'}}">
+      </div>
+
+    </div>
+  </ion-content>
+</ion-modal-view>

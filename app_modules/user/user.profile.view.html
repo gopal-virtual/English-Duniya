@@ -1,0 +1,43 @@
+<ion-header-bar align-title="left" class="bg-pale">
+  <div class="buttons">
+    <button class="button button-clear icon ion-android-arrow-back" ng-click="userCtrl.goToMap()"></button>
+  </div>
+  <h1 class="title"></h1>
+  <div class="buttons">
+    <button class="button button-clear icon ion-android-settings" ng-click="userCtrl.openSettings()"></button>
+  </div>
+</ion-header-bar>
+<ion-view>
+  <ion-content class="bg-pale">
+    <!-- <div class="row">
+      <div class="col center">
+        <i class="font-xl icon ion-clipboard"></i>
+      </div>
+    </div> -->
+    <div class="row">
+      <div class="col">
+        <ion-list>
+          <ion-item class="bg-transparent border-0 padding-y-15" ng-repeat="skill in userCtrl.skills">
+            <ul>
+                <li class="font-md capitalize style-{{skill.title.toLowerCase()}}">{{skill.title}}</li>
+            </ul>
+            <div class="flex space-around padding-y-5">
+                <meter class="width-24" value="0.39" min="0" max="1" low="0.4" high="0.8" optimum="1">60%</meter>
+                <meter class="width-24" value="0.5" min="0" max="1" low="0.4" high="0.8" optimum="1">90%</meter>
+                <meter class="width-24" value="0.8" min="0" max="1" low="0.4" high="0.8" optimum="1">10%</meter>
+                <meter class="width-24" value="1" min="0" max="1" low="0.4" high="0.8" optimum="1">10%</meter>
+            </div>
+            <span class="font-md">Score : {{skill.lesson_scores}}</span>
+          </ion-item>
+        </ion-list>
+      </div>
+    </div>
+  </ion-content>
+</ion-view>
+<!-- no share -->
+<!-- <ion-footer-bar align-title="left" class="bar-assertive">
+  <h1 class="title"></h1>
+  <div class="buttons">
+    <button class="button button-clear icon icon-right ion-android-share-alt"> Share</button>
+  </div>
+</ion-footer-bar> -->

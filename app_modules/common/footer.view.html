@@ -1,0 +1,12 @@
+<div class="tabs-striped tabs-background-stable tab-color-light">
+  <div class="tabs" ng-init="UserMain.active='home'">
+    <a ng-click="UserMain.active='profile'" ui-sref="user.main.profile.badges" class="tab-item" ng-class="{'active':UserMain.active=='profile'}"><i class="icon ion-person"></i></a>
+    <a ng-click="UserMain.active='playlist'" ui-sref="user.main.playlist" class="tab-item" ng-class="{'active':UserMain.active=='playlist'}"><i class="icon ion-ios-list-outline"></i></a>
+    <a ng-click="UserMain.active='home'" ui-sref="user.main.home" class="tab-item" ng-class="{'active':UserMain.active=='home'}"><i class="icon ion-ios-home-outline"></i></a>
+    <a ng-click="UserMain.active='result'" ui-sref="user.main.result" class="tab-item" ng-class="{'active':UserMain.active=='result'}"><i class="icon ion-stats-bars"></i></a>
+    <a ng-click="UserMain.active='search'" ui-sref="user.main.search" class="tab-item" ng-class="{'active':UserMain.active=='search'}"><i class="icon ion-ios-search"></i></a>
+  </div>
+</div>
+
+<!-- <div class="bar bar-footer bar-light">
+</div> -->

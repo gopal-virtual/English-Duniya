@@ -1,0 +1,24 @@
+<ion-view class="bg-pale">
+  <ion-content>
+      <form name="personaliseForm" class="row" novalidate ng-submit="userCtrl.closeKeyboard();userCtrl.createProfile(personaliseForm)">
+          <div class="col no-padding">
+              <div class="row">
+                  <div class="col" ng-init="userCtrl.grades = [{id : 0, name : 'KG'},{id : 1, name : 'Grade 1'}, {id : 2, name : 'Grade 2'}, { id : 3, name : 'Grade 3'}]">
+                      <label for="" class="item item-input item-select select-group-sm">
+                          <div class="input-label font-sm"><i class="ed-icon icon-contain icon-grade"></i>&nbsp;Grade</div>
+                          <select name="grade" class="font-sm" ng-model="userCtrl.user.grade"
+                          ng-options="option.id as option.name for option in userCtrl.grades track by option.id" required>
+                          <option value="" selected hidden />
+                          </select>
+                      </label>
+                  </div>
+              </div>
+              <div class="row">
+                  <div class="col text-center padding-30">
+                      <button type="submit"  class="button button-balanced button-round padding-x-40 padding-y-0 no-shadow">DONE</button>
+                  </div>
+              </div>
+          </div>
+      </form>
+  </ion-content>
+</ion-view>
