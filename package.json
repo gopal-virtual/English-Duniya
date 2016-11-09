@@ -3,7 +3,8 @@
   "version": "1.1.1",
   "description": "zaya-mobile: An Ionic project",
   "scripts": {
-    "deploy": "bash deploy.sh"
+    "deploy": "bash deploy.sh",
+    "build:content" : "./node_modules/.bin/gulp watch --env=content"
   },
   "dependencies": {
     "gulp": "^3.5.6",
