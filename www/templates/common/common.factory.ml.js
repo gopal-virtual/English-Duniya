@@ -53,7 +53,11 @@
     function setNewRoadMap(recommendationsWithPrereqs){
       ml.recommendationsWithPrereqs = angular.copy(recommendationsWithPrereqs);
       var roadMap = getTempRoadMap(recommendationsWithPrereqs);
-      ml.roadMapData = {"roadMap": [], "recommendationsWithPrereqs": recommendationsWithPrereqs};
+      var batch = 1;
+      if(ml.roadMapData != undefined && ml.roadMapData["batch"] != undefined){
+        batch = ml.roadMapData["batch"] + 1;
+      }
+      ml.roadMapData = {"roadMap": [], "recommendationsWithPrereqs": recommendationsWithPrereqs, "batch": batch};
       for(var i = 0; i< roadMap.length;i++){
         ml.roadMapData["roadMap"].push({"sr": roadMap[i], "suggestionCount": 0, "resultTrack": {}, "previousNode": null, "currentNode": null});
       }
@@ -73,6 +77,8 @@
       var suggestions = ml.roadMapData["roadMap"][0]["resultTrack"][ml.roadMapData["roadMap"][0]["currentNode"]];
       if(suggestions && suggestions.length > 0){
         $log.debug('in handleMultipleSuggestions 1', suggestions);
+        var dependencyData = {"dependency": "prereq", "relative": ml.roadMapData["roadMap"][0]["currentNode"], "batch": ml.roadMapData["batch"]};
+        $log.debug('dependencyData 1', dependencyData);
         return suggestions[0];
       }else{
         // consider previousNode
@@ -82,6 +88,8 @@
           $log.debug('in handleMultipleSuggestions 3', suggestions);
           if(suggestions && suggestions.length > 0){
             $log.debug('in handleMultipleSuggestions 4');
+            var dependencyData = {"dependency": "prereq", "relative": ml.roadMapData["roadMap"][0]["previousNode"], "batch": ml.roadMapData["batch"]};
+            $log.debug('dependencyData 2', dependencyData);
             ml.roadMapData["roadMap"][0]["currentNode"] = ml.roadMapData["roadMap"][0]["previousNode"];
             ml.roadMapData["roadMap"][0]["previousNode"] = null;
             return suggestions[0];
@@ -90,6 +98,7 @@
             var roadMapLesson = ml.lessonResultMapping[ml.roadMapData["roadMap"][0]["sr"]];
             if(roadMapLesson && roadMapLesson["result"] && roadMapLesson["result"] >= ml.passingThreshold){
               $log.debug('in handleMultipleSuggestions 5.1');
+              $log.debug('dependencyData 3, going in updateRoadMapSuggestion again');
               return updateRoadMapSuggestion({"event":"assessment",
                                         "score": roadMapLesson["result"],
                                         "totalScore": 1,
@@ -100,6 +109,8 @@
               $log.debug('in handleMultipleSuggestions 5.2');
               ml.roadMapData["roadMap"][0]["currentNode"] = ml.roadMapData["roadMap"][0]["sr"];
               ml.roadMapData["roadMap"][0]["previousNode"] = null;
+              var dependencyData = {"dependency": "root", "batch": ml.roadMapData["batch"]};
+              $log.debug('dependencyData 4', dependencyData);
               return ml.roadMapData["roadMap"][0]["sr"];              
             }
           }
@@ -108,6 +119,7 @@
             var roadMapLesson = ml.lessonResultMapping[ml.roadMapData["roadMap"][0]["sr"]];
             if(roadMapLesson && roadMapLesson["result"] && roadMapLesson["result"] >= ml.passingThreshold){
               $log.debug('in handleMultipleSuggestions 6.1');
+              $log.debug('dependencyData 5, going in updateRoadMapSuggestion again');
               return updateRoadMapSuggestion({"event":"assessment",
                                         "score": roadMapLesson["result"],
                                         "totalScore": 1,
@@ -118,6 +130,8 @@
               $log.debug('in handleMultipleSuggestions 6.2');
               ml.roadMapData["roadMap"][0]["currentNode"] = ml.roadMapData["roadMap"][0]["sr"];
               ml.roadMapData["roadMap"][0]["previousNode"] = null;
+              dependencyData = {"dependency": "root", "batch": ml.roadMapData["batch"]};
+              $log.debug('dependencyData 6', dependencyData);
               return ml.roadMapData["roadMap"][0]["sr"];
             }
         }
@@ -178,6 +192,8 @@
         ml.roadMapData["roadMap"][0]["previousNode"] = null;
         ml.roadMapData["roadMap"][0]["currentNode"] = ml.roadMapData["roadMap"][0]["sr"];
         ml.roadMapData["roadMap"][0]["resultTrack"] = {};
+        var dependencyData = {"dependency": "root", "batch": ml.roadMapData["batch"]};
+        $log.debug('dependencyData root 1', dependencyData);
         return handleMultipleSuggestions();
       }
       else if(data["event"] == "assessment"){
@@ -199,6 +215,8 @@
               ml.roadMapData["roadMap"][0]["previousNode"] = null;
               ml.roadMapData["roadMap"][0]["currentNode"] = lesson["sr"];
               ml.roadMapData["roadMap"][0]["resultTrack"] = {};
+              var dependencyData = {"dependency": "root", "batch": ml.roadMapData["batch"]};
+              $log.debug('dependencyData root 2', dependencyData);
               return handleMultipleSuggestions();
             }else{
               // if roadMap empty
@@ -208,6 +226,8 @@
               ml.roadMapData["roadMap"][0]["previousNode"] = null;
               ml.roadMapData["roadMap"][0]["currentNode"] = ml.roadMapData["roadMap"][0]["sr"];
               ml.roadMapData["roadMap"][0]["resultTrack"] = {};
+              var dependencyData = {"dependency": "root", "batch": ml.roadMapData["batch"]};
+              $log.debug('dependencyData root 3', dependencyData);
               return handleMultipleSuggestions();
             }
           }else{
@@ -250,6 +270,8 @@
                 ml.roadMapData["roadMap"][0]["previousNode"] = null;
                 ml.roadMapData["roadMap"][0]["currentNode"] = ml.roadMapData["roadMap"][0]["sr"];
                 ml.roadMapData["roadMap"][0]["resultTrack"] = {};
+                var dependencyData = {"dependency": "root", "batch": ml.roadMapData["batch"]};
+                $log.debug('dependencyData root 4', dependencyData);
                 return ml.roadMapData["roadMap"][0]["sr"];
               }
             }else{
