@@ -111,6 +111,9 @@ gulp.task('generate-constants', function () {
         match: 'FAKE_LOGIN',
         replacement: constants[env]['FAKE_LOGIN']
       }, {
+        match: 'FAKE_DEVICE_ID',
+        replacement: constants[env]['FAKE_DEVICE_ID']
+      },{
         match: 'FAKE_DEVICE',
         replacement: constants[env]['FAKE_DEVICE']
       }, {

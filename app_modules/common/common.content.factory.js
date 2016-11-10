@@ -13,7 +13,10 @@
     'mediaManager',
     '$interval',
     'User',
-    'widgetParser'
+    'widgetParser',
+    'extendLesson',
+    '$http',
+    '$rootScope'
   ];
 
   /* @ngInject */
@@ -24,7 +27,10 @@
                    mediaManager,
                    $interval,
                    User,
-                   widgetParser) {
+                   widgetParser,
+                   extendLesson,
+                   $http,
+                   $rootScope) {
 
     var lessonDB = null;
 
@@ -42,6 +48,8 @@
       getLesson: getLesson,
       downloadAssessment: downloadAssessment,
       downloadVideo: downloadVideo,
+      findNewMediaToDownload: findNewMediaToDownload,
+      downloadNewMedia: downloadNewMedia,
       demo_question: {
         "node": {
           "id": CONSTANT.QUESTION.DEMO,
@@ -107,6 +115,125 @@
     };
 
     return contentProperties;
+
+
+    function findNewMediaToDownload() {
+      $rootScope.mediaSyncStatus.checkingMedia = true;
+      $log.debug("findNewMediaToDownload");
+      var promises = [];
+      var promises2 = [];
+      var mediaToDownload = []
+      return getResourceList().then(function(lessons){
+        return extendLesson.getLesson(lessons).then(function(result){
+        $log.debug("lessons extended",result);
+
+          var lessonlist = [];
+          angular.forEach(result,function (lesson) {
+            $log.debug("lesson",lesson)
+            if(lesson.stars == -1 || lesson.stars > 0){
+              lessonlist.push(lesson)
+            }
+          });
+
+          var media = getMediaListfromResourceList(lessonlist);
+          angular.forEach(media,function (url) {
+            promises.push(mediaManager.getPath(url));
+          });
+          $log.debug("All paths get")
+          return $q.all(promises).then(function (r) {
+            $log.debug("Result",r);
+            var size = 0;
+            angular.forEach(r,function(url){
+              if(url.split(":")[0] === 'https'){
+                 mediaToDownload.push(url)
+              }
+            });
+            angular.forEach(mediaToDownload,function(url){
+              if(url.split(":")[0] === 'https'){
+                promises2.push($http.head(url))
+              }
+            });
+            return $q.all(promises2).then(function (response) {
+              angular.forEach(response,function(data){
+                size = size + parseInt(data.headers("Content-Length"));
+              })
+              $log.debug("Size is ",size,parseFloat(size/(1024*1024)).toFixed(1));
+              $rootScope.mediaSyncStatus.checkingMedia = false;
+              return {size:parseFloat(size/(1024*1024)).toFixed(1),mediaToDownload:mediaToDownload}
+            });
+          })
+        });
+      })
+    }
+
+    function downloadNewMedia() {
+      $rootScope.mediaSyncStatus.downloadingMedia = true;
+
+      var promises = [];
+      return findNewMediaToDownload().then(function (mediaSyncStatus) {
+        $rootScope.mediaSyncStatus = mediaSyncStatus;
+        angular.forEach($rootScope.mediaSyncStatus.mediaToDownload,function (url) {
+          promises.push(mediaManager.downloadIfNotExists(url));
+        });
+        return $q.all(promises);
+      }).then(function () {
+        $rootScope.mediaSyncStatus.downloadingMedia = false;
+
+      })
+    }
+
+    function getMediaListfromResourceList(resourceList) {
+      $log.debug("getMediaListfromResourceList");
+      var media = [];
+      angular.forEach(resourceList,function (resource) {
+        $log.debug(resource.node.content_type_name);
+        if(resource.node.content_type_name === 'resource'){
+          if(resource.node.intro_sound && media.indexOf(resource.node.intro_sound) < 0){
+            media.push(resource.node.intro_sound);
+          }
+          if(resource.node.type.path && media.indexOf(resource.node.type.path) < 0){
+            media.push(resource.node.type.path);
+          }
+        }
+        if(resource.node.content_type_name === 'assessment'){
+          if(resource.node.intro_sound && media.indexOf(resource.node.intro_sound) < 0){
+            media.push(resource.node.intro_sound);
+          }
+          angular.forEach(resource.objects,function(question){
+            if(question.node.meta.instructions.sounds && media.indexOf(question.node.meta.instructions.sounds[0]) < 0){
+              media.push(question.node.meta.instructions.sounds[0]);
+            }
+            var url_index,url;
+            if(question.node.type.content.widgets.images ){
+              for (url_index in question.node.type.content.widgets.images ) {
+                if(question.node.type.content.widgets.images.hasOwnProperty(url_index)){
+                  url = question.node.type.content.widgets.images[url_index];
+                  // $log.debug("images found",url,question.node.type.content.widgets.images.hasOwnProperty(url),media.indexOf(url));
+                  if (media.indexOf(url) < 0) {
+                    media.push(url);
+                  }
+                }
+              }
+            }
+            if(question.node.type.content.widgets.sounds ){
+              for (url_index in question.node.type.content.widgets.sounds) {
+                if(question.node.type.content.widgets.sounds.hasOwnProperty(url_index)){
+                  url = question.node.type.content.widgets.sounds[url_index];
+                  // $log.debug("images found",url,question.node.type.content.widgets.images.hasOwnProperty(url),media.indexOf(url));
+                  if (media.indexOf(url) < 0) {
+                    media.push(url);
+                  }
+                }
+
+              }
+            }
+          })
+        }
+
+
+      });
+      return media;
+    }
 
     function createLessonDBIfNotExists() {
       lessonDB = pouchDB('lessonsDB',{revs_limit: 1});
@@ -232,6 +359,8 @@
 
           for (var i = 0; i < lessons.length; i++) {
             // data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key;
+              $log.debug(lessons[i].doc.lesson.objects[0].node.content_type_name)
+              $log.debug(lessons[i].doc.lesson.objects[1].node.content_type_name)
             for (var c = 0; c < lessons[i].doc.lesson.objects.length; c++) {
               $log.debug(c)
               if(lessons[i].doc.lesson.node.meta && lessons[i].doc.lesson.node.meta.intros && lessons[i].doc.lesson.node.meta.intros.sound && lessons[i].doc.lesson.node.meta.intros.sound[0]){
@@ -239,10 +368,24 @@
               }
               lessons[i].doc.lesson.objects[c].node.tag = lessons[i].doc.lesson.node.tag;
               lessons[i].doc.lesson.objects[c].node.playlist_index = i;
-              resources.push(angular.copy(lessons[i].doc.lesson.objects[c]))
             }
+            $log.debug("----------");
+            angular.forEach(['resource','assessment'],function (content_type) {
+              $log.debug(content_type,i)
+              for (var c = 0; c < lessons[i].doc.lesson.objects.length; c++) {
+                $log.debug(content_type,i,c,lessons[i].doc.lesson.objects[c].node.content_type_name )
+                if(lessons[i].doc.lesson.objects[c].node.content_type_name === content_type){
+                  $log.debug(c)
+                 resources.push(lessons[i].doc.lesson.objects[c])
+                  break;
+                }
+
+              }
+            })
           }
-          if(resources.length){
+            $log.debug("Final ", resources);
+
+            if(resources.length){
             resources[resources.length-1].node.requiresSuggestion = true;
           }
             d.resolve(resources)

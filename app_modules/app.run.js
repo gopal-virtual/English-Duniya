@@ -140,6 +140,7 @@
 
     });
     $ionicPlatform.ready(function () {
+      $rootScope.mediaSyncStatus = {size: null, mediaToDownload : []};
       // $ionicLoading.show()
       if (localStorage.profile && localStorage.profile._id) {
         Raven.setUserContext({
@@ -178,20 +179,26 @@
         // $ionicLoading.show({template:'Change in pouch'})
       }).on('paused', function (err) {
         $log.debug("paused", err)
-        $ionicLoading.hide();
+        if(!err){
+          $log.debug("Changes done, paused");
+          if(User.getActiveProfileSync()){
+            content.findNewMediaToDownload(User.getActiveProfileSync()._id).then(function (mediaSyncStatus) {
+              $rootScope.mediaSyncStatus = mediaSyncStatus;
+              $log.debug("findNewMediaToDownload Done",mediaSyncStatus)
+            });
+          }
+
+        }
         // replication paused (e.g. replication up to date, user went offline)
       }).on('active', function (a) {
         $log.debug("Active", a)
         // $ionicLoading.show({template:'Change in pouch'});
         // replicate resumed (e.g. new changes replicating, user went back online)
       }).on('denied', function (err) {
-        $ionicLoading.hide();
         // a document failed to replicate (e.g. due to permissions)
       }).on('complete', function (info) {
-        $ionicLoading.hide();
         // handle complete
       }).on('error', function (err) {
-        $ionicLoading.hide();
         // handle error
       });
       if (navigator.splashscreen) {

@@ -6,7 +6,18 @@
 </div> -->
 <div class="result-backdrop modal-dark" ng-show="mapCtrl.backdrop" ng-click="mapCtrl.backdrop=false;mapCtrl.showScore=-1"></div>
 <ion-view>
+  <div class="bar bar-header bar-transparent item-input-inset">
+
+    <button ng-if="mapCtrl.rootScope.mediaSyncStatus.mediaToDownload.length > 0" ng-click="mapCtrl.content.downloadNewMedia()" class="button" style="right: 0; position:absolute;">
+      {{mapCtrl.rootScope.mediaSyncStatus.size || 0.1}} Mb update<br>
+      {{mapCtrl.rootScope.mediaSyncStatus.mediaToDownload.length}} files to download
+    </button>
+    <span ng-if="mapCtrl.rootScope.mediaSyncStatus.checkingMedia">Checking media</span>
+    <span ng-if="mapCtrl.rootScope.mediaSyncStatus.downloadingMedia">Downloading media</span>
+
+  </div>
   <ion-content>
+
     <div ng-if="mapCtrl.lessons" map-canvas map-lessons="mapCtrl.lessons" map-totalstars="mapCtrl.totalStars" width="mapCtrl.width" height="mapCtrl.height" map-demo="mapCtrl.demo">
     </div>
 
