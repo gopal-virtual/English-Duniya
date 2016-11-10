@@ -22,7 +22,12 @@
       log : log,
       init: init,
       createDb : createDb,
-      defineTypes : defineTypes
+      defineTypes : defineTypes,
+      db: {
+        load : dbLoad,
+        destroy : dbDestroy
+        
+      }
     }
 
     function log(){
@@ -127,9 +132,10 @@
         db.get('notif'+'-content-'+lesson.node.id).then(function(doc){
           $log.debug("DOC",doc)
         }).catch(function(err){
-          $log.error("Can't fetch notification from pouch\n",err);
           if(err.status == 404){
-            $log.warn('Notification was not set as "notif'+'-content-'+lesson.node.id+'" could not be found. Check the database perhaps')
+            $log.warn('Notification was not set. The doc named "notif'+'-content-'+lesson.node.id+'" was not found. Check the database perhaps')
+          }else{
+            $log.error("Can't fetch notification from pouch\n",err);
           }
         })
       })
@@ -152,6 +158,29 @@
       // }
         // })
       // });
+    }
+
+    function dbCreate(){
+      return new PouchDB('notificationDB');
+    }
+
+    function dbLoad(){
+      var db = new PouchDB('notificationDB');
+      return db.load('data/notifications.db')
+      .then(function(){
+        $log.debug("Database loaded from file");
+      }).catch(function(err){
+        $log.error("Database couldn't be created",err);
+      });
+    }
+
+    function dbDestroy(){
+      var db = new PouchDB('notificationDB');
+      db.destroy().then(function(response){
+        $log.debug('database destroyed',response)
+      }).catch(function(err){
+        $log.error('Error occured while destroying db',err);
+      })
     }
 
     function init() {

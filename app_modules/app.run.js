@@ -22,7 +22,8 @@
                       device,
                       $cordovaPushV5,
                       $cordovaLocalNotification, 
-                      CONSTANT) {
+                      CONSTANT,
+                      notification) {
 
 
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
@@ -73,7 +74,8 @@
 
       if(localStorage.version !== '0.1.7' && User.getActiveProfileSync() && User.getActiveProfileSync()._id){
         localStorage.setItem('version','0.1.7');
-
+        notification.db.load();
+        $log.debug("APP STARTING FIRST TIME")
         event.preventDefault();
         User.playlist.patch(User.getActiveProfileSync()._id).then(function(){
           $state.go('litmus_start');
