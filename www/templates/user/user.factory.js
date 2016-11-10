@@ -445,9 +445,9 @@
       })
       return d.promise;
     }
-    function addNodeToPlaylist(profileId,nodeId) {
+    function addNodeToPlaylist(profileId,nodeData) {
       return profilesDB.get(profileId).then(function (response) {
-        response.data.playlist.push({'lesson_id':nodeId});
+        response.data.playlist.push({'lesson_id':nodeData.suggestedLesson,'dependencyData':nodeData.dependencyData});
         $log.debug("Response",response);
         return profilesDB.put({
           '_id': profileId,
