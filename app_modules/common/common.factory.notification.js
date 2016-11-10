@@ -111,15 +111,27 @@
     function defineTypes(){
       $log.debug("DEFINING TYPES")
       var db = new PouchDB('notificationDB');
-      $q.all({
-        content : content.getActiveResource(),
-        notif : db.get('notifLessons')
-      }).then(function(data){
-        // content.node.id 
-        $log.debug("DEFINE TYPES",data)
-        // var activeLesson = data.content[data.content.length - 1].locked ==
-      },function(err){
-        $log.error("TYPES ERROR happened",err)
+      // $q.all({
+      //   content : content.getActiveResource(),
+      //   notif : db.get('notifLessons')
+      // }).then(function(data){
+      //   // content.node.id 
+      //   $log.debug("DEFINE TYPES",data)
+      //   // var activeLesson = data.content[data.content.length - 1].locked ==
+      // },function(err){
+      //   $log.error("TYPES ERROR happened",err)
+      // })
+
+      content.getActiveResource().then(function(lesson){
+        $log.debug('Fetching doc named "notif'+'-content-'+lesson.node.id+'"')
+        db.get('notif'+'-content-'+lesson.node.id).then(function(doc){
+          $log.debug("DOC",doc)
+        }).catch(function(err){
+          $log.error("Can't fetch notification from pouch\n",err);
+          if(err.status == 404){
+            $log.warn('Notification was not set as "notif'+'-content-'+lesson.node.id+'" could not be found. Check the database perhaps')
+          }
+        })
       })
       // return {
       //   'discovered' : {
