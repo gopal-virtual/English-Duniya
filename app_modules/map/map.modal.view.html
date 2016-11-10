@@ -1,0 +1,44 @@
+<ion-modal-view class="modal-dark" ng-click="quizCtrl.interval && quizCtrl.startTimer();closeNodeMenu();mapCtrl.resetNode()">
+  <ion-content ng-init="mapCtrl.selected=false" overflow-scroll="true">
+      <div class="row row-15 padding-30 modal-gradient animation-delay-more animation-fade-in-from-top" ng-if="!orientation.isLandscape()" >
+          <div class="col text-center text-white font-xl ellipses">
+              {{selectedNode.node.title}}
+          </div>
+      </div>
+    <div class="row row-25" ng-repeat="resource in selectedNode.objects" ng-if="orientation.isPortrait()">
+      <div class="col text-center height-100 position-relative" ng-init="selected=false">
+          <img
+          ng-src="{{lessonutils.getIcon(resource)}}"
+          width="auto" height="100%" alt="resource icon"
+          ng-click="audio.play('press');selected=true;$event.stopPropagation();closeNodeMenu();lessonutils.playResource(resource,contentCtrl.API);"
+          ng-class="{'fade' : lessonutils.currentState(resource)}"
+          class="animation-zoom-in"
+          style="-webkit-animation-delay : {{($index+1)*100}}ms;"/>
+          <button
+          ng-show="lessonutils.currentState(resource)"
+          ng-click="audio.play('press');quizCtrl.interval && quizCtrl.startTimer();contentCtrl.API && contentCtrl.API.play();"
+          class="button button-balanced button-round font-xl button-resume animation-zoom-in"
+          style="line-height: 30px !important;-webkit-animation-delay : {{($index+1)*100}}ms;">resume</button>
+          <!-- <h3 class="color-pale">{{lessonutils.resourceType(resource)}}</h3> -->
+      </div>
+    </div>
+    <div class="row row-60"  ng-if="orientation.isLandscape()">
+      <div class="col text-center height-100 position-relative" ng-init="selected=false" ng-repeat="resource in selectedNode.objects">
+          <img
+          ng-src="{{lessonutils.getIcon(resource)}}"
+          width="auto" height="100%" alt="resource icon"
+          ng-click="audio.play('press');selected=true;$event.stopPropagation();closeNodeMenu();lessonutils.playResource(resource,contentCtrl.API);"
+          ng-class="{'fade' : lessonutils.currentState(resource)}"
+          class="animation-zoom-in"
+          style="-webkit-animation-delay : {{($index+1)*100}}ms;"/>
+          <button ng-show="lessonutils.currentState(resource)" ng-click="audio.play('press');quizCtrl.interval && quizCtrl.startTimer();contentCtrl.API && contentCtrl.API.play();" class="button button-balanced button-round font-xl button-resume animation-zoom-in" style="line-height: 30px !important;-webkit-animation-delay : {{($index+1)*100}}ms;">resume</button>
+          <!-- <h3 class="color-pale">{{lessonutils.resourceType(resource)}}</h3> -->
+      </div>
+    </div>
+    <div class="row row-10">
+        <div class="col text-center">
+            <a class="button button-balanced button-round padding-x-30 font-xl animation-delay-more animation-fade-in-from-bottom" ng-click="audio.play('press');closeNodeMenu();lessonutils.leaveLesson();mapCtrl && mapCtrl.resetNode()">Leave Lesson</a>
+        </div>
+    </div>
+  </ion-content>
+</ion-modal-view>

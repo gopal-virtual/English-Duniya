@@ -1,0 +1,80 @@
+<ion-view class="bg-pink">
+  <ion-content class="animation-delay animation-fade-in-from-top">
+
+    <div >
+
+      <div style="padding-bottom:0px;" class="row">
+        <div style="padding-bottom:0px;" class="col text-center"><img src="img/assets/logo.png" alt="" height="121px" width="auto"></div>
+      </div>
+
+      <div class="row padding-x-20 padding-y-0">
+        <div class="col padding-y-0">
+          <!-- <div class="button-bar button-group">
+                  <button type="button" ng-click="authCtrl.googleSignIn()" class="button button-no-shadow button-round button-block button-assertive icon-left ion-social-googleplus"></button>
+              </div> -->
+          <button tabindex="4" type="button" ng-click="authCtrl.signin('google')" class="button button-no-shadow button-round button-block font-lg button-assertive icon-middle ion-social-googleplus" style="padding: 0;line-height:10px !important"></button>
+        </div>
+        <div class="col padding-y-0">
+          <!-- <div class="button-bar button-group">
+              <button type="button" ng-click="authCtrl.facebookSignIn()" class="button button-no-shadow button-round button-block button-positive icon-left ion-social-facebook"></button>
+          </div> -->
+          <button tabindex="5" type="button" ng-click="authCtrl.signin('facebook')" class="button button-no-shadow button-round button-block font-lg button-positive icon-middle ion-social-facebook" style="padding: 0;line-height:10px !important"></button>
+        </div>
+      </div>
+
+      <div class="row no-margin no-padding">
+        <div class="col no-margin no-padding">
+            <div class="margin-x-30 divider">
+            </div>
+            <h4 class="text-center no-margin no-padding">
+              <span class="bg-pink">&nbsp;&nbsp;or&nbsp;&nbsp;</span>
+            </h4>
+        </div>
+
+      </div>
+
+      <div class="row center">
+
+        <form autocomplete="on" novalidate name="signUpForm" class="col padding-x-20" ng-submit="authCtrl.closeKeyboard();authCtrl.signup(signUpForm)" ng-init="show_password = false">
+
+          <div class="input-group input-group-social">
+            <button type="button" class="icon icon-phone icon-fit-width input-group-item input-group-addon input-group-addon-light font-md">
+            </button>
+            <input class="input-control input-group-item input-default input-block font-sm input-sm padding-x-0" tabindex="1" name="phoneNumber" type="text" ng-trim="false" valid-number placeholder="Phone" ng-model="authCtrl.user.phoneNumber" autocomplete="off">
+          </div>
+
+          <div class="input-group input-group-social">
+            <button type="button" class="icon icon-mail icon-fit-width input-group-item input-group-addon input-group-addon-light font-md">
+            </button>
+            <input class="input-control input-group-item input-default input-block font-sm input-sm padding-x-0" tabindex="2" ng-trim="false" valid-input name="emailAddress" type="text" placeholder="Email" ng-model="authCtrl.user.emailAddress" autocomplete="off">
+          </div>
+
+          <div class="input-group input-group-social">
+            <button type="button" class="icon icon-password icon-fit-width input-group-item input-group-addon input-group-addon-light font-md">
+            </button>
+            <input class="input-control input-group-item input-group-item input-default input-block font-sm input-sm padding-x-0" tabindex="3" onPaste="return false" autocomplete="off" name="password" type="{{show_password==false?'password':'text'}}" placeholder="Password"
+                ng-model="authCtrl.user.password">
+          </div>
+          <div style="padding:5px;"></div>
+          <div>
+            <button tabindex="4" class="button button-round padding-x-60 button-balanced button-no-shadow" style="padding: 0;line-height:20px !important">SIGN UP</button>
+          </div>
+
+        </form>
+
+      </div>
+
+      <hr>
+
+      <div class="row no-padding">
+        <div class="col text-center no-padding">
+          <h4 class="no-margin"><span class="color-dark-light">Already a member? </span><span class="color-positive" ui-sref="auth.signin">Sign In</span></h4>
+        </div>
+      </div>
+
+    </div>
+
+
+
+  </ion-content>
+</ion-view>

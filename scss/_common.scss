@@ -175,7 +175,7 @@ meter::-webkit-meter-even-less-good-value {
 }
 
 .personalize-title{
-  font-size: 6vh !important;
+  font-size: 5vh !important;
   color: $hex-dark-blue;
   line-height: 1.8em;
   // @include xs-screen-height{
@@ -208,4 +208,23 @@ meter::-webkit-meter-even-less-good-value {
     position: relative;
     width: auto;
   }
+}
+
+.question div{
+  font-size: 1.25em;
+  line-height: 1;
+  // text-align: left;
+  // padding-left: 45px;
+}
+
+.scroll-bar-indicator{
+  display: none !important;
+}
+
+.not-no-sound>div{
+  padding-left:50px !important;
+}
+
+.overflow-scroll{
+  overflow-y:auto !important;
 }

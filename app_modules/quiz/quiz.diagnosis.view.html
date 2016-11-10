@@ -1,0 +1,46 @@
+<ion-pane class="bg-green">
+<!--   <div class="bar bar-header bg-pale practice-header padding-0">
+  </div>
+  <ion-slide-box on-slide-changed="quizCtrl.setCurrentIndex(index);quizCtrl.quiz.objects[index].isVisited = true;" show-pager="false">
+    <ion-slide ng-repeat="question in quizCtrl.quiz.objects" ng-init="(quizCtrl.disableSwipe())" ng-class="{'animation-question-slide':quizCtrl.isCurrentIndex($index)}" on-finish="quizCtrl.updateSlide()">
+      <div class="bar bar-subheader padding-0 question-subheader bg-pale no-shadow">
+        <div ng-if="question.node.title" ng-bind-html="question.node.widgetHtml" class="question practice-question card card-transparent center margin-x-0 margin-y-0 padding-0" ng-click="quizCtrl.playAudio(question.node.widgetSound,$index)"></div>
+      </div>
+      <ion-content in-view-container overflow-scroll="false" has-bouncing="true" class="has-practice-header has-question-subheader has-footer-large center bg-pale">
+      
+
+        <div ng-click="question.attempted=(question.attempted==option.key)?'':option.key" ng-if="question.node.type.type=='choicequestion' && !question.node.type.content.is_multiple" ng-class="{'selected':option.key==question.attempted,'card-list':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'list','card-grid practice-card':quizCtrl.widgetParser.getLayout(question,$parent.$parent.$index,quizCtrl.quiz) == 'grid'}"
+            class="card center bg-white card-radius" ng-repeat="option in question.node.type.content.options">
+          <label ng-click="quizCtrl.playAudio(quizCtrl.widgetParser.getSoundId(option.option),$parent.$parent.$index)">
+            <input class="hide">
+            <div class="padding-10 option" ng-class="{'font-sl':option.widgetHtml.length < 7,'font-md':option.widgetHtml.length >= 7}" ng-bind-html="::option.widgetHtml"></div>
+          </label>
+        </div>
+
+        <div ng-if="question.node.type.type=='choicequestion' && question.node.type.content.is_multiple" ng-class="{'selected':question.attempted[option.key],'card-list':quizCtrl.getLayout(question) == 'list','card-grid':quizCtrl.getLayout(question) == 'grid'}"
+            class="card center bg-white card-radius" ng-repeat="option in question.node.type.content.options">
+          <label ng-click="quizCtrl.playAudio(option.widgetSound,$parent.$parent.$index)">
+            <input class="hide" type="checkbox" ng-model="question.attempted[option.key]" ng-value="option.key">
+            <div class="padding-10 option" ng-class="{'font-sl':option.widgetHtml.length < 7,'font-md':option.widgetHtml.length >= 7}" ng-bind-html="::option.widgetHtml"></div>
+          </label>
+        </div>
+      </ion-content>
+    </ion-slide>
+  </ion-slide-box>
+
+  <audio id="audioplayer">
+    <source id="audioSource" type="audio/mpeg">
+  </audio>
+  <div class="bar bar-footer bar-footer-large bg-pale">
+    <div class="row padding-0">
+      <div class="col">
+        <button class="animation-fade-in-from-bottom button button-block button-balanced margin-0 button-round" style="height:40px;line-height:45px" ng-click="quizCtrl.submitAttempt(quizCtrl.quiz.objects[quizCtrl.currentIndex].node.id, quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted, 'litmus') &&  quizCtrl.setSuggestion() && quizCtrl.nextQuestion()" ng-disabled="!quizCtrl.canSubmit()">
+          SUBMIT
+        </button>
+
+      </div>
+    </div>
+
+  </div> -->
+<h1>Hello World</h1>
+</ion-pane>
