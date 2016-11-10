@@ -10,7 +10,7 @@
   </div>
   <ion-content class="has-header">
     <ion-item collection-repeat="lesson in mapCtrl.lessons | filter:search track by lesson.node.id">
-      {{ ::lesson.key + 1}} - {{ ::lesson.node.title}}
+      {{$index + 1}} - {{ ::lesson.node.title}}
       <ul>
         <li ng-repeat="resource in lesson.objects">
           <a ng-click="mapCtrl.emitNode(resource)">{{ ::resource.node.title}}</a>
