@@ -133,7 +133,7 @@
 
     // notification.createDb();
     // notification.init();
-    notification.defineTypes();
+    // notification.defineTypes();
     // notification.dbDestroy();
     // $log.debug("DB LOADING",notification.db.load());
     $scope.$on('pageRegion', mapCtrl.setLessonRange )

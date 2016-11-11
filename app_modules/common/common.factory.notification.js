@@ -22,7 +22,9 @@
       log : log,
       init: init,
       createDb : createDb,
-      defineTypes : defineTypes,
+      defineType : defineType,
+      schedule : schedule,
+      set : set,
       db: {
         load : dbLoad,
         destroy : dbDestroy
@@ -110,12 +112,11 @@
       // })
     }
 
-    function fetchDocs(){
-    }
 
-    function defineTypes(){
-      $log.debug("DEFINING TYPES")
+    function fetchDocs(){
+      $log.debug("DEFINING TYPES");
       var db = new PouchDB('notificationDB');
+      var defer = $q.defer();
       // $q.all({
       //   content : content.getActiveResource(),
       //   notif : db.get('notifLessons')
@@ -128,17 +129,114 @@
       // })
 
       content.getActiveResource().then(function(lesson){
-        $log.debug('Fetching doc named "notif'+'-content-'+lesson.node.id+'"')
-        db.get('notif'+'-content-'+lesson.node.id).then(function(doc){
-          $log.debug("DOC",doc)
+        $log.debug('Fetching doc named "notif'+'-content-'+lesson.node.parent+'"')
+        return db.get('notif'+'-content-'+lesson.node.parent).then(function(doc){
+          $log.debug("DOC",doc);
+          defer.resolve(doc);
         }).catch(function(err){
           if(err.status == 404){
-            $log.warn('Notification was not set. The doc named "notif'+'-content-'+lesson.node.id+'" was not found. Check the database perhaps')
+            $log.warn('Notification was not set. The doc named "notif'+'-content-'+lesson.node.parent+'" was not found. Check the database perhaps')
           }else{
             $log.error("Can't fetch notification from pouch\n",err);
           }
+          defer.reject(err);
         })
       })
+      return defer.promise;
+    }
+
+    // function defineTypes(){
+    //   $log.debug("IN DEFINE")
+    //   return fetchDocs().then(function(data){
+    //     // $log.debug('THIS IS DATA',data)
+    //     var now = new Date().getTime();
+    //     return {
+    //       'discovered' : {
+    //         id: data._id,
+    //         title: data.title,
+    //         text: data.text,
+    //         at: (function(){
+    //           new Date(now + 10 * 1000)
+    //         })()
+    //       },
+    //       'undiscovered' : {
+    //         type: "content",
+    //         loops: 1,
+    //         interval: 24,
+    //         title: "Hey"
+    //       }
+    //     }
+    //   },function(err){
+    //     $log.warn('Can\'t define types. Error ',err)
+    //   })
+    // }
+
+    function set(type){
+      $log.debug("setting notification",type)
+      fetchDocs().then(function(data){
+        $log.debug("SCHEDULE",defineType(data,type));
+        schedule(defineType(data,type));
+      },function(err){
+        $log.warn('Can\'t schedule notification',err)
+      })
+
+      // $log.debug('RETURN',defineTypes().discovered);
+      // try{
+      //   $cordovaLocalNotification.schedule({
+      //     id: defineTypes().discovered.id,
+      //     text: defineTypes().discovered.text,
+      //     title: defineTypes().discovered.title,
+      //     at: defineTypes().discovered.at
+      //   }).then(function () {
+      //     $log.debug("Notification was placed. HEHEHEHE");
+      //     // alert("Instant Notification set");
+      //   });
+      // }catch(err){
+      //   $log.debug("notification threw error ",err)
+      // }
+    }
+
+    function schedule(data){
+      try{
+        $cordovaLocalNotification.schedule({
+          id: data._id,
+          text: data.text,
+          title: data.title,
+          at: data.at
+        }).then(function () {
+          $log.debug("Notification was placed. HEHEHEHE");
+          // alert("Instant Notification set");
+        });
+      }catch(err){
+        $log.debug("notification threw error ",err)
+      }
+    }
+
+    function defineType(data,type){
+      var now = new Date();
+      var returnType;
+      switch(type){
+        case 'discovered': 
+          returnType = {
+            id: data._id,
+            at: 1,
+            title: "Let's play",
+            text: "Hey, let's resume your learning"
+          };
+          break;
+        case 'undiscovered':
+          returnType = {
+            id: data._id,
+            at: 5,
+            title: data.title,
+            text: data.text
+          };
+          break;
+        default:
+          returnType = false;
+      }
+      return returnType;
+    } 
       // return {
       //   'discovered' : {
       //     type: "generic",
@@ -158,7 +256,6 @@
       // }
         // })
       // });
-    }
 
     function dbCreate(){
       return new PouchDB('notificationDB');
@@ -195,16 +292,5 @@
       })
     }
 
-    function schedule(type,data){
-      $cordovaLocalNotification.schedule({
-        id: type,
-        text: data,
-        title: 'Let\'s play',
-        every: 'minute'
-      }).then(function () {
-        $log.debug("Notification was placed");
-        // alert("Instant Notification set");
-      });
-    }
   }
 })();

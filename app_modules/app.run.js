@@ -286,23 +286,23 @@
 
 
       //Local Notfication
-      try{
-        // (function () {
-          var user = User.getActiveProfileSync().data.profile;
-          var ntfnText = "Hey "+user.first_name+", we are missing you. \nLet's do a lesson together.";
-          $cordovaLocalNotification.schedule({
-            id: 1,
-            text: ntfnText,
-            title: 'Let\'s play',
-            every: 'minute'
-          }).then(function () {
-            $log.debug("Notification was placed");
-            // alert("Instant Notification set");
-          });
-        // })();
-      }catch(err){
-        $log.warn(err)
-      }
+      // try{
+      //   // (function () {
+      //     var user = User.getActiveProfileSync().data.profile;
+      //     var ntfnText = "Hey "+user.first_name+", we are missing you. \nLet's do a lesson together.";
+      //     $cordovaLocalNotification.schedule({
+      //       id: 1,
+      //       text: ntfnText,
+      //       title: 'Let\'s play',
+      //       every: 'minute'
+      //     }).then(function () {
+      //       $log.debug("Notification was placed");
+      //       // alert("Instant Notification set");
+      //     });
+      //   // })();
+      // }catch(err){
+      //   $log.warn(err)
+      // }
 
 
     });
@@ -324,6 +324,10 @@
          )
     });
     $ionicPlatform.on('pause', function(){
+      if (User.getActiveProfileSync()) {
+        notification.set('undiscovered');
+        $log.debug("Paused after reg")
+      }
       $log.debug("paused")
         angular.element("#audioplayer")[0].pause();
          analytics.log(
