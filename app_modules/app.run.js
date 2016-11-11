@@ -64,13 +64,14 @@
 
       if (toState.name !== 'user.personalise' && !User.getActiveProfileSync()) {
         event.preventDefault();
+        $log.debug("Ionic loading show with hide on state change");
 
+        $ionicLoading.show({hideOnStateChange:true});
         if (network.isOnline()) {
           User.checkIfProfileOnline().then(function () {
-            $ionicLoading.hide();
             $log.debug("HERE")
 
-            $log.debug("Ionic loading hide, go to map navigate");
+            $log.debug("Ionic loading hide should happen");
             if (localStorage.getItem('profile') === null) {
               $state.go('user.personalise');
             } else {
