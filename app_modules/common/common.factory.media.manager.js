@@ -202,7 +202,10 @@
                               }, function (err) {
 
 
-                                d.reject("Error Downlaoding " + target);
+                                d.reject({
+                                  "error": true,
+                                  "message": "no-media"
+                                });
                               }, function (progress) {
                                 localStorage.setItem('progress', parseInt((progress.loaded / progress.total) * 100))
                               });

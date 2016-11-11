@@ -73,6 +73,7 @@ var app_type = argument.argv.app_type ? argument.argv.app_type : 'na';
 var app_version = 'na';
 var constants = JSON.parse(file.readFileSync(paths.constants.environment, 'utf8'));
 var lock = argument.argv.lock ? argument.argv.lock : constants[env]['LOCK'];
+var fake_id_device = constants[env]['FAKE_ID_DEVICE'] || 'na';
 var lesson_db_version = 'na';
 gulp.task('default', function(callback){
   runSequence(/*'generate-lessondb','get-lessondb-version',*/'get-version','generate-constants', 'sass', 'html', 'scripts',callback);
@@ -98,7 +99,8 @@ gulp.task('preen', function (cb) {
 
 gulp.task('generate-constants', function () {
 
-
+console.log();
+  console.log(env == environments.dev);
   gulp.src(paths.constants.template)
     .pipe(replace_task({
       patterns: [{
@@ -137,13 +139,13 @@ gulp.task('generate-constants', function () {
       }, {
           match: 'PROFILES_DB_SERVER',
           replacement: constants[env]['PROFILES_DB_SERVER']
+        },
+        {
+          match: 'FAKE_ID_DEVICE',
+          replacement: fake_id_device
         }
       ]
     }))
-    .pipe(gulpif(env == environments.dev,replace_task( {
-      match: 'FAKE_DEVICE_ID',
-      replacement: constants[env]['FAKE_DEVICE_ID']
-    })))
     .pipe(rename(paths.constants.destination_filename))
     .pipe(gulp.dest(paths.constants.destination))
 

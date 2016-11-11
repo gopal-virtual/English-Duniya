@@ -359,8 +359,6 @@
 
           for (var i = 0; i < lessons.length; i++) {
             // data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key;
-              $log.debug(lessons[i].doc.lesson.objects[0].node.content_type_name)
-              $log.debug(lessons[i].doc.lesson.objects[1].node.content_type_name)
             for (var c = 0; c < lessons[i].doc.lesson.objects.length; c++) {
               $log.debug(c)
               if(lessons[i].doc.lesson.node.meta && lessons[i].doc.lesson.node.meta.intros && lessons[i].doc.lesson.node.meta.intros.sound && lessons[i].doc.lesson.node.meta.intros.sound[0]){

@@ -56,13 +56,12 @@
 
       if (localStorage.version !== '0.1.8') {
         $log.debug("Local storage !== 0.1.8")
-
         new PouchDB('lessonsDB').erase();
         localStorage.setItem('version', '0.1.8');
         content.createOrUpdateLessonDB()
       }
-
-      if (toState.name !== 'user.personalise' && !User.getActiveProfileSync()) {
+        $log.debug(toState.name !== 'user.personalise',!User.getActiveProfileSync());
+      if (toState.name == 'user.personalise' && !User.getActiveProfileSync() && localStorage.getItem('first_time') == undefined) {
         event.preventDefault();
         $log.debug("Ionic loading show with hide on state change");
 
@@ -70,7 +69,7 @@
         if (network.isOnline()) {
           User.checkIfProfileOnline().then(function () {
             $log.debug("HERE")
-
+            localStorage.setItem('first_time','no');
             $log.debug("Ionic loading hide should happen");
             if (localStorage.getItem('profile') === null) {
               $state.go('user.personalise');
@@ -106,7 +105,10 @@
           $state.go('map.navigate');
         });
       }
-
+    if(toState.name == 'map.navigate' && !User.getActiveProfileSync()){
+      event.preventDefault();
+      $state.go('user.personalise')
+    }
 
       if (toState.name == 'quiz.questions' && toParams.type == 'practice' && !toParams.quiz) {
         event.preventDefault();

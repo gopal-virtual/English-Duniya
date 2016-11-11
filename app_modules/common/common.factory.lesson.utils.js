@@ -190,6 +190,8 @@
         // noBackdrop: false
         hideOnStateChange: true
       });
+      $log.debug("")
+
       if (utils.resourceType(resource) == 'assessment') {
         content.downloadAssessment(resource)
           .then(function() {
@@ -244,9 +246,14 @@
               $stateParams.type == 'practice' && $ionicLoading.hide();
             });
           }).catch(function(e) {
+            $log.debug("We need to check",e)
+          var message = "No internet conection found";
+          if(e.message === 'no-media'){
+            message = "Missing media file";
+          }
             $ionicPopup.alert({
                 title: 'Please try again',
-                template: "No internet conection found"
+                template: message
               }).then(function() {
                 if (callback) {
 
@@ -293,9 +300,14 @@
               });
           })
           .catch(function(e) {
+            $log.debug("We need to check",e)
+            var message = "No internet conection found";
+            if(e.message === 'no-media'){
+              message = "Missing media file";
+            }
             $ionicPopup.alert({
                 title: 'Please try again',
-                template: "No internet conection found"
+                template: message
               }).then(function() {
                 if (callback) {
 
