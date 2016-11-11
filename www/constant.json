@@ -7,6 +7,8 @@
     "BACKEND_SERVICE_DOMAIN": "https://eg-api.zaya.in/",
     "RESOURCE_SERVER": "https://eg-api.zaya.in/",
     "ANALYTICS": true,
+    "PROFILES_DB_SERVER": "http://zaya-couch:zayaayaz1234@52.187.70.243:5984/device",
+    "LESSONS_DB_SERVER":"http://52.187.70.243:5984/lessonsdb",
     "DEBUG" : false
   },
   "TESTING": {
@@ -17,6 +19,8 @@
     "BACKEND_SERVICE_DOMAIN": "https://cc-test.zaya.in/",
     "RESOURCE_SERVER": "https://cc-test.zaya.in/",
     "ANALYTICS": true,
+    "PROFILES_DB_SERVER": "http://zaya-couch:zayaayaz1234@52.187.70.243:5984/device",
+    "LESSONS_DB_SERVER":"http://52.187.70.243:5984/lessonsdb",
     "DEBUG" : true
   },
   "DEVELOPMENT": {
@@ -37,6 +41,8 @@
     "BACKEND_SERVICE_DOMAIN": "https://cc-test.zaya.in/",
     "RESOURCE_SERVER": "https://cc-test.zaya.in/",
     "ANALYTICS": true,
+    "PROFILES_DB_SERVER": "http://zaya-couch:zayaayaz1234@52.187.70.243:5984/device",
+    "LESSONS_DB_SERVER":"http://52.187.70.243:5984/lessonsdb",
     "DEBUG" : true
   }
 }

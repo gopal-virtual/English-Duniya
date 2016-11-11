@@ -6,14 +6,15 @@ var fs = require('fs');
 var request = require('request');
 var json = [];
 
-var couch_server = 'http://zaya-couch:zayaayaz1234@ci-couch.zaya.in/lessonsdb/'
+// var couch_server = 'http://zaya-couch:zayaayaz1234@ci-couch.zaya.in/lessonsdb/'
+var couch_server = 'http://zaya-couch:zayaayaz1234@52.187.70.243:5984/lessonsdb/'
 
 var i;
 fs.readFile('lesson.json', 'utf8', function (err, data) {
   if (err) {
     return console.log(err);
   }
-  console.log(data)
+  // console.log(data)
   json = JSON.parse(data);
 
   request({
@@ -29,8 +30,8 @@ fs.readFile('lesson.json', 'utf8', function (err, data) {
       }, function (error, response, body) {
         if (!error) {
           for (i = 0; i < json.length; i++) {
-            json[i].scores = {};
-            json[i].key = i;
+            // json[i].scores = {};
+            // json[i].key = i;
             request({
               url: couch_server+ json[i].node.id, //URL to hit
               method: 'PUT',
@@ -39,7 +40,7 @@ fs.readFile('lesson.json', 'utf8', function (err, data) {
             }, function (error, response, body) {
                 // console.log('response',response)
               if (error) {
-                console.log("Error occured");
+                console.log("Error occured",error);
               } else {
               }
             });
@@ -49,7 +50,7 @@ fs.readFile('lesson.json', 'utf8', function (err, data) {
 
     }
     else {
-      console.log(error)
+      console.log("ERROR")
     }
   });
 

@@ -21,6 +21,8 @@ var replace_task = require('gulp-replace-task');
 var gulpif = require('gulp-if');
 var cheerio = require('cheerio');
 var runSequence = require('run-sequence');
+var shell = require('gulp-shell');
+var request = require('sync-request');
 var paths = {
   sass: [
     './scss/**/*.scss',
@@ -72,11 +74,19 @@ var app_type = argument.argv.app_type ? argument.argv.app_type : 'na';
 var app_version = 'na';
 var constants = JSON.parse(file.readFileSync(paths.constants.environment, 'utf8'));
 var lock = argument.argv.lock ? argument.argv.lock : constants[env]['LOCK'];
-
+var lesson_db_version = 'na';
 gulp.task('default', function(callback){
-  runSequence('get-version','generate-constants', 'sass', 'html', 'scripts',callback);
+  runSequence(/*'generate-lessondb','get-lessondb-version',*/'get-version','generate-constants', 'sass', 'html', 'scripts',callback);
 });
 
+gulp.task('generate-lessondb',shell.task([
+  'rm www/data/lessons.db',
+  'pouchdb-dump http://127.0.0.1:5984/lessonsdb > www/data/lessons.db'
+]));
+gulp.task('get-lessondb-version',function(){
+  var res = request('GET', 'http://ci-couch.zaya.in/lessonsdb/version');
+  lesson_db_version = JSON.parse(res.getBody().toString()).version;
+});
 // gulp.task('optimize', function(cb) {
 //   gulp.src(paths.image)
 //     .pipe(optimization())
@@ -120,6 +130,16 @@ gulp.task('generate-constants', function () {
         match: 'DEBUG',
         replacement: constants[env]['DEBUG']
       }, {
+        match: 'LESSON_DB_VERSION',
+        replacement: lesson_db_version
+      }, {
+          match: 'LESSONS_DB_SERVER',
+          replacement: constants[env]['LESSONS_DB_SERVER']
+      }, {
+          match: 'PROFILES_DB_SERVER',
+          replacement: constants[env]['PROFILES_DB_SERVER']
+        },
+         {
         match: 'CONTENT_TEST',
         replacement: constants[env]['CONTENT_TEST']
         }

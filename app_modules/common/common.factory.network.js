@@ -29,7 +29,7 @@
         }
       } else {
 
-
+        $log.debug("Network manager returning true");
         return true;
       }
     }

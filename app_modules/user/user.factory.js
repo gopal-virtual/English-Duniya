@@ -23,7 +23,82 @@
                 $injector) {
 
     var User = {};
-    var profilesDB = pouchDB('profilesDB');
+    var profilesDB = pouchDB('profilesDB',{revs_limit: 1});
+    // var remoteProfilesDb = pouchDB('http://anna:secret@127.0.0.1:5984/device'+device.uuid);
+    PouchDB.replicate('profilesDB', CONSTANT.PROFILES_DB_SERVER+device.uuid, {
+      live: true,
+      retry: true
+    }).on('change', function (info) {
+          $log.debug("Change in pouch");
+        // $ionicLoading.show({template:'Change in pouch'})
+      }).on('paused', function (err) {
+      $log.debug("puased in pouch");
+
+
+      // $ionicLoading.hide();
+        // replication paused (e.g. replication up to date, user went offline)
+      }).on('active', function () {
+        // $ionicLoading.show({template:'Change in pouch'});
+        // replicate resumed (e.g. new changes replicating, user went back online)
+      }).on('denied', function (err) {
+        // $ionicLoading.hide();
+        // a document failed to replicate (e.g. due to permissions)
+      }).on('complete', function (info) {
+        // $ionicLoading.hide();
+        // handle complete
+      }).on('error', function (err) {
+        // $ionicLoading.hide();
+        // handle error
+      });
+    // var myIndex = {
+    //   _id: '_design/profile',
+    //   "filters": {
+    //     "by_profile": function(doc, req) {
+    //       if(doc._id === '_design/profile'){
+    //         return true;
+    //       }
+    //       if(doc.data){
+    //         return (doc.data.device_id === req.query.device_id);
+    //       }
+    //       return false;
+    //     }.toString()
+    //   }
+    // };
+
+
+    // profilesDB.put(myIndex).finally(function(){
+    //   $log.debug("Device uuid",device.uuid);
+    //   if(device.uuid){
+        // PouchDB.replicate( 'http://ci-couch.zaya.in/profilesdb','profilesDB',{live: true,
+        //   retry: true,
+        //   filter: 'profile/by_profile',
+        //   query_params: { "device_id": device.uuid}
+        // }).on('change', function (info) {
+        //   $log.debug("change")
+        //   // handle change
+        // }).on('paused', function (err) {
+        //   $log.debug("paused")
+        //
+        //   // replication paused (e.g. replication up to date, user went offline)
+        // }).on('active', function () {
+        //   $log.debug("active")
+        //
+        //   // replicate resumed (e.g. new changes replicating, user went back online)
+        // }).on('denied', function (err) {
+        //   $log.debug("denied")
+        //
+        //   // a document failed to replicate (e.g. due to permissions)
+        // }).on('complete', function (info) {
+        //   // handle complete
+        //   $log.debug("completed")
+        //
+        // }).on('error', function (err) {
+        //   // handle error
+        //   $log.debug("error")
+        //
+        // });
+    //   }
+    // });
     var appDB = pouchDB('appDB');
     var initial_skills = [
       {
@@ -67,14 +142,15 @@
     User.updateActiveProfileSync = updateActiveProfileSync;
     User.user = {
       getIdSync: getUserIdSync
-    }
+    };
     User.profile = {
       add: addNewProfile,
       update: updateProfile,
       // set: setActiveProfile,
       get: get,
       getAll: getAllProfiles,
-      patch: patchProfile
+      patch: patchProfile,
+      updateRoadMapData: updateRoadMapData
     };
     User.skills = {
       get: getSkills,
@@ -100,6 +176,52 @@
         add: addNodeToPlaylist,
       patch: patchUserPlaylist
     }
+    User.checkIfProfileOnline = checkIfProfileOnline;
+
+    function updateRoadMapData(roadMapData,profileId) {
+      $log.debug("updateRoadMapData",roadMapData,profileId)
+      return profilesDB.get(profileId).then(function (response) {
+        $log.debug("profile",response)
+        var doc = response.data;
+        doc.roadMapData = roadMapData;
+        updateActiveProfileSync({'_id': profileId, 'data': doc});
+        return profilesDB.put({
+          '_id': profileId,
+          '_rev': response._rev,
+          'data': doc
+        })
+      })
+    }
+    function checkIfProfileOnline() {
+      $log.debug("UUID",device.uuid)
+      return PouchDB.replicate( CONSTANT.PROFILES_DB_SERVER+device.uuid, 'profilesDB').then(function () {
+        return profilesDB.allDocs({
+          include_docs: true
+        })
+      })
+        .then(function (docs) {
+          // $log.debug("ALLdocs",docs.rows[0].doc);
+          $log.debug("docs is this",docs)
+
+          if(docs.rows.length ){
+            setActiveProfileSync(docs.rows[0].doc);
+            if(docs.rows[0].doc.data.playlist.length){
+              localStorage.setItem('diagnosis_flag',true);
+              localStorage.setItem('demo_flag',5);
+            }else{
+              localStorage.setItem('diagnosis_flag',false);
+              localStorage.setItem('demo_flag',1);
+            }
+            if(docs.rows[0].doc.data.roadMapData){
+              $log.debug("Setting roadmap data")
+              localStorage.setItem('roadMapData',JSON.stringify(docs.rows[0].doc.data.roadMapData));
+
+            }
+
+          }
+        })
+
+    }
 
     function getUserIdSync() {
       return JSON.parse(localStorage.getItem('user_details')).id
@@ -117,7 +239,9 @@
 
       var record = {
         "_id": generateProfileID(),
+
         "data": {
+          "device_id": device.uuid,
           "scores": {},
           "reports": [],
           "skills": initial_skills,
@@ -127,11 +251,14 @@
       };
       profile.client_uid = record._id;
 
-
+      $log.debug("Adding new profile",record);
       return profilesDB.put(record)
         .then(function () {
 
-
+          // PouchDB.sync('profilesDB', 'http://ci-couch.zaya.in/profilesdb',{live: true,
+          //   retry: true,
+          //   filter: 'app/by_profile',
+          //   query_params: { "profile_id": profile.client_uid }});
           return queue.push('profiles', profile);
         }).then(function () {
           return record;

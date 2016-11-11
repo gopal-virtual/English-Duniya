@@ -29,12 +29,12 @@
     var lessonDB = null;
 
     // if (User.getActiveProfileSync() && User.getActiveProfileSync().data) {
-      lessonDB = pouchDB('lessonsDB' , {
-        adapter: 'websql'
-      });
+      lessonDB = pouchDB('lessonsDB',{revs_limit: 1} );
     // }
+
     var contentProperties = {
       createLessonDBIfNotExists: createLessonDBIfNotExists,
+      createOrUpdateLessonDB: createOrUpdateLessonDB,
       createLessonDBIfNotExistsPatch: createLessonDBIfNotExistsPatch,
       getLessonsList: getLessonsList,
       getResourceList: getResourceList,
@@ -109,11 +109,7 @@
     return contentProperties;
 
     function createLessonDBIfNotExists() {
-      lessonDB = pouchDB('lessonsDB', {
-        adapter: 'websql'
-      });
-
-
+      lessonDB = pouchDB('lessonsDB',{revs_limit: 1});
 
       return lessonDB.get('_local/preloaded').then(function (doc) {
 
@@ -133,11 +129,29 @@
 
       })
     }
+    function createOrUpdateLessonDB() {
+      lessonDB = pouchDB('lessonsDB',{revs_limit: 1});
 
+      return lessonDB.get('version').then(function (doc) {
+        if(doc.version < CONSTANT.LESSON_DB_VERSION){
+          $log.debug("FOUND Greater VERSION")
+          return lessonDB.load(CONSTANT.PATH.DATA + '/lessons.db',{
+            proxy: CONSTANT.LESSONS_DB_SERVER
+          })
+        }
+      }).catch(function (err) {
+        if (err.name !== 'not_found') {
+          throw err;
+        }
+        $log.debug("NEW DB MADE 1");
+        return lessonDB.load(CONSTANT.PATH.DATA + '/lessons.db',{
+          proxy: CONSTANT.LESSONS_DB_SERVER
+        })
+
+      })
+    }
     function createLessonDBIfNotExistsPatch() {
-      lessonDB = pouchDB('lessonsDB', {
-        adapter: 'websql'
-      });
+      lessonDB = pouchDB('lessonsDB',{revs_limit: 1});
 
 
 

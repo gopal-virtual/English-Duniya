@@ -55,8 +55,6 @@
               return $q.all(all_promises).then(function () {
 
 
-
-
                 var suggestion = ml.getNextQSr(data.getTestParams(User.getActiveProfileSync().data.profile.grade), ml.mapping);
 
 
@@ -72,22 +70,22 @@
             else {
 
 
-                // ;
-                // $stateParams.quiz.objects[0].node.id == 'demo' ? $stateParams.quiz.objects.shift(data.demo_question) :false;
-                var currentIndex = $stateParams.quiz.objects.length;
-                var temporaryValue, randomIndex;
-                // shuffling of questions
-                // while (0 !== currentIndex) {
-                //   randomIndex = Math.floor(Math.random() * currentIndex);
-                //   currentIndex -= 1;
-                //   temporaryValue = $stateParams.quiz.objects[currentIndex];
-                //   $stateParams.quiz.objects[currentIndex] = $stateParams.quiz.objects[randomIndex];
-                //   $stateParams.quiz.objects[randomIndex] = temporaryValue;
-                // }
-                User.demo.isShown(5) && $stateParams.quiz.objects.unshift(content.demo_question);
-                return content.getAssessment($stateParams.quiz).then(function (response) {
-                  return response;
-                });
+              // ;
+              // $stateParams.quiz.objects[0].node.id == 'demo' ? $stateParams.quiz.objects.shift(data.demo_question) :false;
+              var currentIndex = $stateParams.quiz.objects.length;
+              var temporaryValue, randomIndex;
+              // shuffling of questions
+              // while (0 !== currentIndex) {
+              //   randomIndex = Math.floor(Math.random() * currentIndex);
+              //   currentIndex -= 1;
+              //   temporaryValue = $stateParams.quiz.objects[currentIndex];
+              //   $stateParams.quiz.objects[currentIndex] = $stateParams.quiz.objects[randomIndex];
+              //   $stateParams.quiz.objects[randomIndex] = temporaryValue;
+              // }
+              User.demo.isShown(5) && $stateParams.quiz.objects.unshift(content.demo_question);
+              return content.getAssessment($stateParams.quiz).then(function (response) {
+                return response;
+              });
 
 
               // return $stateParams.quiz;
@@ -111,7 +109,7 @@
         url: '/questions',
         onEnter: ['$log', '$state', '$stateParams', function ($log, $state, $stateParams) {
           // if (!$stateParams.quiz.objects.length) {
-            // $state.go('state.missing');
+          // $state.go('state.missing');
           // }
         }],
         // nativeTransitions: null,
@@ -166,22 +164,27 @@
               }
             })
             .then(function () {
-              if(quiz.node.requiresSuggestion){
-                ml.setLessonResultMapping().then(function(){
+              if (quiz.node.requiresSuggestion) {
+                ml.setLessonResultMapping().then(function () {
 
-                  var suggestion = ml.getLessonSuggestion({"event":"assessment",
-                    "score":summary.score.marks,
-                    "totalScore":quiz.node.type.score,
-                    "skill": quiz.node.tag.toLowerCase() ,
+                  var suggestion = ml.getLessonSuggestion({
+                    "event": "assessment",
+                    "score": summary.score.marks,
+                    "totalScore": quiz.node.type.score,
+                    "skill": quiz.node.tag.toLowerCase(),
                     "sr": quiz.node.parent
                   });
+
                   // $log.debug("got sugggestion",suggestion);
-                  return User.playlist.add(User.getActiveProfileSync()._id,suggestion)
+
+                  return User.profile.updateRoadMapData(ml.roadMapData,User.getActiveProfileSync()._id).then(function () {
+                    return User.playlist.add(User.getActiveProfileSync()._id, suggestion)
+                  })
                 })
-              }else{
-                ml.setLessonResultMapping().then(function(){
+              } else {
+                ml.setLessonResultMapping().then(function () {
                   $log.debug('deleteSuccessfulNodeFromRoadmap');
-                  ml.deleteSuccessfulNodeFromRoadmap(quiz.node.parent, summary.score.marks/quiz.node.type.score);
+                  ml.deleteSuccessfulNodeFromRoadmap(quiz.node.parent, summary.score.marks / quiz.node.type.score);
                 })
               }
             })
@@ -219,23 +222,23 @@
       })
       .state('litmus_result', {
         url: '/litmus_result',
-        params:{
-          average_level:null
+        params: {
+          average_level: null
         },
         templateUrl: CONSTANT.PATH.QUIZ + '/quiz.litmus_summary' + CONSTANT.VIEW,
 
-        controller: ['$log','User','audio', '$timeout','$stateParams','$scope', function ($log,User,audio,$timeout,$stateParams,$scope) {
+        controller: ['$log', 'User', 'audio', '$timeout', '$stateParams', '$scope', function ($log, User, audio, $timeout, $stateParams, $scope) {
           $scope.audio = audio;
-          $scope.gender = User.getActiveProfileSync().data.profile.gender == 'M'?'boy':'girl';
-          $timeout(function() {
-            $log.debug("Printing progressBar",$stateParams);
+          $scope.gender = User.getActiveProfileSync().data.profile.gender == 'M' ? 'boy' : 'girl';
+          $timeout(function () {
+            $log.debug("Printing progressBar", $stateParams);
             var svgPath = document.getElementById('arc-progress');
             var progress = new ProgressBar.Path(svgPath, {
-                duration: 800,
-                easing: 'easeInOut'
+              duration: 800,
+              easing: 'easeInOut'
             });
             progress.set(0);
-            $scope.average_level = $stateParams.average_level ? $stateParams.average_level : 1 ;
+            $scope.average_level = $stateParams.average_level ? $stateParams.average_level : 1;
 
             progress.animate($scope.average_level / 3)
           }, 10);
@@ -244,13 +247,14 @@
       .state('litmus_start', {
         url: '/litmus_start',
         templateUrl: CONSTANT.PATH.QUIZ + '/quiz.litmus_start' + CONSTANT.VIEW,
-        controller: ['$log', 'User','$scope','audio', function ($log,User,$scope,audio) {
+        controller: ['$log', 'User', '$scope', 'audio', function ($log, User, $scope, audio) {
           $scope.audio = audio;
-          $scope.gender = User.getActiveProfileSync().data.profile.gender == 'M'?'boy':'girl';
+          $scope.gender = User.getActiveProfileSync().data.profile.gender == 'M' ? 'boy' : 'girl';
           $scope.pauseAudio = pauseAudio;
-          function pauseAudio(){
+          function pauseAudio() {
             angular.element("#audioplayer")[0].pause();
           }
+
           angular.element("#audioplayer")[0].pause();
           angular.element("#audioSource")[0].src = "sound/litmus_start.mp3"
           angular.element("#audioplayer")[0].load();
