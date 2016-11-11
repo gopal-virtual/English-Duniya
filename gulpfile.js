@@ -110,9 +110,6 @@ gulp.task('generate-constants', function () {
       }, {
         match: 'FAKE_LOGIN',
         replacement: constants[env]['FAKE_LOGIN']
-      }, {
-        match: 'FAKE_DEVICE_ID',
-        replacement: constants[env]['FAKE_DEVICE_ID']
       },{
         match: 'FAKE_DEVICE',
         replacement: constants[env]['FAKE_DEVICE']
@@ -143,6 +140,10 @@ gulp.task('generate-constants', function () {
         }
       ]
     }))
+    .pipe(gulpif(env == environments.dev,replace_task( {
+      match: 'FAKE_DEVICE_ID',
+      replacement: constants[env]['FAKE_DEVICE_ID']
+    })))
     .pipe(rename(paths.constants.destination_filename))
     .pipe(gulp.dest(paths.constants.destination))
 
