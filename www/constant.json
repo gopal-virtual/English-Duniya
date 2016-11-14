@@ -6,8 +6,8 @@
     "BACKEND_SERVICE_DOMAIN": "https://eg-api.zaya.in/",
     "RESOURCE_SERVER": "https://eg-api.zaya.in/",
     "ANALYTICS": true,
-    "PROFILES_DB_SERVER": "http://zaya-couch:zayaayaz1234@52.187.70.243:5984/device",
-    "LESSONS_DB_SERVER":"http://52.187.70.243:5984/lessonsdb",
+    "PROFILES_DB_SERVER": "http://ed-couch.zaya.in/device",
+    "LESSONS_DB_SERVER":"http://ed-couch.zaya.in/device",
     "DEBUG" : false
   },
   "TESTING": {
@@ -17,15 +17,15 @@
     "BACKEND_SERVICE_DOMAIN": "https://cc-test.zaya.in/",
     "RESOURCE_SERVER": "https://cc-test.zaya.in/",
     "ANALYTICS": true,
-    "PROFILES_DB_SERVER": "http://zaya-couch:zayaayaz1234@52.187.70.243:5984/device",
-    "LESSONS_DB_SERVER":"http://52.187.70.243:5984/lessonsdb",
+    "PROFILES_DB_SERVER": "http://ci-couch.zaya.in/device",
+    "LESSONS_DB_SERVER":"http://ci-couch.zaya.in/device",
     "DEBUG" : true
   },
   "DEVELOPMENT": {
     "LOCK": true,
-    "FAKE_LOGIN": false,
-    "FAKE_ID_DEVICE": "cchrome123",
-    "FAKE_DEVICE": false,
+    "FAKE_LOGIN": true,
+    "FAKE_ID_DEVICE": "micromaxtest3",
+    "FAKE_DEVICE": true,
     "BACKEND_SERVICE_DOMAIN": "https://cc-test.zaya.in/",
     "RESOURCE_SERVER": "https://cc-test.zaya.in",
     "ANALYTICS": true,

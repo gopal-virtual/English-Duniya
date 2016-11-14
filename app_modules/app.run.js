@@ -74,6 +74,7 @@
             if (localStorage.getItem('profile') === null) {
               $state.go('user.personalise');
             } else {
+              User.startProfileSync();
               $state.go('map.navigate');
             }
           })

@@ -83,6 +83,7 @@
     $scope.progress = localStorage.getItem('progress');
     var mapCtrl = this;
     mapCtrl.rootScope = $rootScope;
+    $log.debug("map ctrl scope",$scope.mediaSyncStatus)
     var lessonList = CONSTANT.LOCK ? lessonLocked.lockedLesson : lessons;
     mapCtrl.totalStars = CONSTANT.LOCK ? lessonLocked.total_star : 0;
     $log.debug("Stars",mapCtrl.totalStars)
@@ -247,9 +248,6 @@
         $ionicPopup.alert({
           title: 'Please try again',
           template: message
-        }).then(function(){
-          $ionicLoading.show()
-          location.reload()
         })
       });
 

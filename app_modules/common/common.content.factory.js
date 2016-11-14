@@ -159,6 +159,13 @@
               })
               $log.debug("Size is ",size,parseFloat(size/(1024*1024)).toFixed(1));
               $rootScope.mediaSyncStatus.checkingMedia = false;
+              if(mediaToDownload.length){
+                $log.debug("mediaToDownload.length",mediaToDownload.length)
+                // $rootScope.$broadcast('showInfoIcon',true)
+              }else{
+                // $rootScope.$broadcast('showInfoIcon',false)
+
+              }
               return {size:parseFloat(size/(1024*1024)).toFixed(1),mediaToDownload:mediaToDownload}
             });
           })
@@ -178,6 +185,9 @@
         return $q.all(promises);
       }).then(function () {
         $rootScope.mediaSyncStatus.downloadingMedia = false;
+        $rootScope.mediaSyncStatus.size= 0;
+        $rootScope.mediaSyncStatus.mediaToDownload= [];
+        // $rootScope.$broadcast('showInfoIcon',false)
 
       })
     }

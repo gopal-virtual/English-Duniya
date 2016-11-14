@@ -15,7 +15,10 @@
     mediaManager.getFileNameFromURl = getFileNameFromURl;
     mediaManager.getFileNameFromURlPatched = getFileNameFromURlPatched;
     function getFileNameFromURl(url){
-      return url.split('/')[url.split('/').length-2]+'-'+url.split('/')[url.split('/').length-1];
+      var a = url.split('/');
+      a.splice(0,3);
+      return a.join('-');
+      // return url.split('/')[url.split('/').length-2]+'-'+url.split('/')[url.split('/').length-1];
     }
     function getFileNameFromURlPatched(url){
       return url.split('/')[url.split('/').length-1];
@@ -197,6 +200,7 @@
                             $cordovaFileTransfer.download(url, target)
                               .then(function (result) {
 
+                                $log.debug("Downloaded",result)
 
                                 d.resolve(target);
                               }, function (err) {
@@ -207,14 +211,18 @@
                                   "message": "no-media"
                                 });
                               }, function (progress) {
-                                localStorage.setItem('progress', parseInt((progress.loaded / progress.total) * 100))
+                                $log.debug("Progress",progress)
+                                // localStorage.setItem('progress', parseInt((progress.loaded / progress.total) * 100))
                               });
                           }
 
                         } else {
 
 
-                          d.reject("Error Downlaoding " + target);
+                          d.reject({
+                            "error": true,
+                            "message": "no-media"
+                          });
                         }
                       })
 
