@@ -73,7 +73,6 @@
         queue,
         content
     ) {
-
     $scope.audio = audio;
     $scope.settings = settings;
     var temp = JSON.parse(localStorage.getItem('profile')).data.profile;
@@ -83,6 +82,7 @@
     $scope.activatedLesson = $stateParams.activatedLesson;
     $scope.progress = localStorage.getItem('progress');
     var mapCtrl = this;
+    mapCtrl.rootScope = $rootScope;
     var lessonList = CONSTANT.LOCK ? lessonLocked.lockedLesson : lessons;
     mapCtrl.totalStars = CONSTANT.LOCK ? lessonLocked.total_star : 0;
     $log.debug("Stars",mapCtrl.totalStars)
@@ -93,6 +93,7 @@
     mapCtrl.authFactory = Auth;
     mapCtrl.queue = queue;
     mapCtrl.lessons = lessonList;
+    mapCtrl.content = content;
     $log.debug("mapCtrl lessons",lessonList);
     mapCtrl.ml = ml;
     // mapCtrl.userCtrl = $controller('userCtrl');

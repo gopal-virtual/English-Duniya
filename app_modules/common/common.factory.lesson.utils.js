@@ -143,7 +143,7 @@
         return 'assessment';
       } else if (resource.node.content_type_name == 'assessment' && resource.node.type.type == 'practice') {
         return 'practice';
-      } else if (resource.node.content_type_name == 'resource' && resource.node.type.file_type == 'mp4') {
+      } else if (resource.node.content_type_name == 'resource' && (resource.node.type.file_type == 'mp4' || resource.node.type.file_type == 'video/mp4')) {
         return 'video';
       } else {}
     }

@@ -10,6 +10,7 @@
       },
       'LOCK': @@LOCK,
       'FAKE_LOGIN': @@FAKE_LOGIN,
+      'FAKE_DEVICE_ID': '@@FAKE_DEVICE_ID',
       'FAKE_DEVICE': @@FAKE_DEVICE,
       'CONTENT_TEST':@@CONTENT_TEST,
       'DEBUG' : @@DEBUG,

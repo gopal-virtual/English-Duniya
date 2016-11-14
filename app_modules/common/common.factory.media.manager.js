@@ -120,7 +120,7 @@
 
       } catch (e) {
 
-
+        $log.debug("resolving here")
         d.resolve(CONSTANT.RESOURCE_SERVER + url);
       }
       return d.promise;
