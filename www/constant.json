@@ -7,7 +7,7 @@
     "RESOURCE_SERVER": "https://eg-api.zaya.in/",
     "ANALYTICS": true,
     "PROFILES_DB_SERVER": "http://ed-couch.zaya.in/device",
-    "LESSONS_DB_SERVER":"http://ed-couch.zaya.in/device",
+    "LESSONS_DB_SERVER":"http://ed-couch.zaya.in/lessonsdb",
     "DEBUG" : false
   },
   "TESTING": {
@@ -18,7 +18,7 @@
     "RESOURCE_SERVER": "https://cc-test.zaya.in/",
     "ANALYTICS": true,
     "PROFILES_DB_SERVER": "http://ci-couch.zaya.in/device",
-    "LESSONS_DB_SERVER":"http://ci-couch.zaya.in/device",
+    "LESSONS_DB_SERVER":"http://ci-couch.zaya.in/lessonsdb",
     "DEBUG" : true
   },
   "DEVELOPMENT": {
