@@ -9,9 +9,9 @@
       'VERSION': '0.1.8'
       },
       'LOCK': true,
-      'FAKE_LOGIN': false,
+      'FAKE_LOGIN': true,
       'FAKE_ID_DEVICE': 'cchrome123',
-      'FAKE_DEVICE': false,
+      'FAKE_DEVICE': true,
       'DEBUG' : true,
       'BACKEND_SERVICE_DOMAIN': 'https://cc-test.zaya.in/',
       'RESOURCE_SERVER': 'https://cc-test.zaya.in',
@@ -58,7 +58,9 @@
       'ASSETS': {
         'IMG': {
           'ICON': 'img/icons',
-        }
+          'TEMP' : 'img/temp'
+        },
+        'SOUND' : 'sound/'
       },
       'STAR': {
         'ONE': 70,

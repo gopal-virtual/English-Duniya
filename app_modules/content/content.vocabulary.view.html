@@ -1,0 +1,48 @@
+<style>
+    .flash-card{
+        padding : 20px;
+        border-radius : 45px;
+        box-shadow : 0 2px 5px rgba(0,0,0,0.5);
+        border: 10px solid white;
+    }
+    .flash-card-yellow{
+        background-color : rgb(255, 205, 78)
+    }
+    .bg-blue{
+        background-color : rgb(56, 208, 203);
+    }
+    .flash-text{
+        font-size: 90px;
+        text-align: center;
+        text-transform: capitalize !important;
+        /* text-shadow: 0 1px 0 #ccc, 0 2px 0 #c9c9c9, 0 3px 0 #bbb, 0 4px 0 #b9b9b9, 0 5px 0 #aaa, 0 6px 1px rgba(0,0,0,.1), 0 0 5px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.3), 0 3px 5px rgba(0,0,0,.2), 0 5px 10px rgba(0,0,0,.25), 0 10px 10px rgba(0,0,0,.2), 0 20px 20px rgba(0,0,0,.15); */
+        position: absolute;
+        bottom: 50%;
+        left: 10px;
+        -webkit-text-stroke: 1px white;
+        color: coral;
+        text-shadow: 0 3px 5px black;
+        font-weight: bolder;
+    }
+</style>
+<ion-view class="bg-blue">
+    <ion-content>
+        <div class="row">
+            <div class="col col-10">
+                <button class="button button-default" ng-click="vocabCtrl.prev()">Prev</button>
+            </div>
+            <div class="col col-60 col-offset-10">
+                <div class="flash-card flash-card-yellow" ng-repeat="card in vocabCtrl.vocab_data.objects" ng-show="vocabCtrl.currentIndex == $index">
+                    <div class="flash-text">
+                        {{card.title}}
+                    </div>
+                    <img src="" alt="" ng-src="{{card.image}}" width="100%">
+                </div>
+
+            </div>
+            <div class="col col-10">
+                <button class="button button-default" ng-click="vocabCtrl.next()">Next</button>
+            </div>
+        </div>
+    </ion-content>
+</ion-view>
