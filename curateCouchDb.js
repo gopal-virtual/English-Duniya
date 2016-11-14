@@ -7,7 +7,7 @@ var request = require('request');
 var json = [];
 
 // var couch_server = 'http://zaya-couch:zayaayaz1234@ci-couch.zaya.in/lessonsdb/'
-var couch_server = 'http://zaya-couch:zayaayaz1234@ed-couch.zaya.in/lessonsdb/'
+var couch_server = 'http://zaya-couch:zayaayaz1234@ci-couch.zaya.in/lessonsdb/'
 
 var i;
 fs.readFile('lesson.json', 'utf8', function (err, data) {
