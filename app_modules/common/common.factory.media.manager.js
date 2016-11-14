@@ -15,10 +15,10 @@
     mediaManager.getFileNameFromURl = getFileNameFromURl;
     mediaManager.getFileNameFromURlPatched = getFileNameFromURlPatched;
     function getFileNameFromURl(url){
-      var a = url.split('/');
-      a.splice(0,3);
-      return a.join('-');
-      // return url.split('/')[url.split('/').length-2]+'-'+url.split('/')[url.split('/').length-1];
+      // var a = url.split('/');
+      // a.splice(0,3);
+      // return a.join('-');
+      return url.split('/')[url.split('/').length-2]+'-'+url.split('/')[url.split('/').length-1];
     }
     function getFileNameFromURlPatched(url){
       return url.split('/')[url.split('/').length-1];
@@ -133,8 +133,8 @@
       var d = $q.defer();
 
 
-      var filename = mediaManager.getFileNameFromURl(url)
-      var filename_patch = mediaManager.getFileNameFromURlPatched(url)
+      var filename = mediaManager.getFileNameFromURl(url);
+      var filename_patch = mediaManager.getFileNameFromURlPatched(url);
       try {
         var target = cordova.file.dataDirectory + 'media/' + filename;
         var target_patch = cordova.file.dataDirectory + 'media/' + filename_patch;
