@@ -45,6 +45,7 @@
       downloadAssessment: downloadAssessment,
       downloadVideo: downloadVideo,
       getActiveResource: getActiveResource,
+      getActiveLessonId : getActiveLessonId,
       demo_question: {
         "node": {
           "id": CONSTANT.QUESTION.DEMO,
@@ -367,6 +368,13 @@
       // }).catch(function(err){
       //   $log.error("Error occured while fetching active playlist",err);
       // });
+    }
+
+    function getActiveLessonId() {
+      // $log.debug("ACTIVE PROFILE",User.getActiveProfileSync())
+      return getResourceList().then(function(lessons){
+        return lessons[lessons.length-1].node.parent;
+      });
     }
 
   }
