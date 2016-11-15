@@ -58,7 +58,9 @@
       'ASSETS': {
         'IMG': {
           'ICON': 'img/icons',
-        }
+          'TEMP' : 'img/temp'
+        },
+        'SOUND' : 'sound/temp'
       },
       'STAR': {
         'ONE': 70,

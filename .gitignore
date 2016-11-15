@@ -30,3 +30,5 @@ www/bundled/*
 bundled.zip
 media/*
 .fuse*
+www/img/temp
+www/sound/temp

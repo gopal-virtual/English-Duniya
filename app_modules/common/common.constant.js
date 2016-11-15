@@ -60,7 +60,7 @@
           'ICON': 'img/icons',
           'TEMP' : 'img/temp'
         },
-        'SOUND' : 'sound/'
+        'SOUND' : 'sound/temp'
       },
       'STAR': {
         'ONE': 70,

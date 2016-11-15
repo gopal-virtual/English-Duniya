@@ -28,8 +28,6 @@
 
       play: function(sound) {
         try {
-
-
           $cordovaNativeAudio.play(sound);
         } catch (error) {
           $log.warn(sound+" can't be played. Ionic plugins only work on phone")
