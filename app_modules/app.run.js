@@ -66,10 +66,12 @@
         $log.debug("Ionic loading show with hide on state change");
 
         $ionicLoading.show({hideOnStateChange:true});
+        localStorage.setItem('first_time','no');
+
         if (network.isOnline()) {
+
           User.checkIfProfileOnline().then(function () {
             $log.debug("HERE")
-            localStorage.setItem('first_time','no');
             $log.debug("Ionic loading hide should happen");
             if (localStorage.getItem('profile') === null) {
               $state.go('user.personalise');
