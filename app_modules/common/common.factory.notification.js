@@ -114,9 +114,9 @@
 
     function set(type){
       $log.info("Setting Notification ...")
-      content.getActiveLessonId().then(function(lessonId){
-        $log.warn("Lesson ID", lessonId);
-      });
+      // content.getActiveLessonId().then(function(lessonId){
+      //   $log.warn("Lesson ID", lessonId);
+      // });
       $log.debug("setting notification",type);
       fetchDocs().then(function(data){
         // $log.debug("SCHEDULE",defineType(data,type));
@@ -128,9 +128,11 @@
 
     function schedule(data){
       $log.info("Scheduling ...")
-      data['icon'] = 'img/assets/icon-ed.png';
-      data['smallIcon'] = 'img/assets/icon-ed.png';
-      $log.debug("DATA",data)
+      data['icon'] = 'res://ic_stat_english_duniya';
+      data['smallIcon'] = 'res://icon';
+      // data['icon'] = "http://www.company-name-generator.com/blog/wp-content/uploads/2010/10/BMW_logo_small.png"
+      // data['smallIcon'] = "http://www.company-name-generator.com/blog/wp-content/uploads/2010/10/BMW_logo_small.png"
+      $log.debug("THIS IS DATA",data)
       try{
         $cordovaLocalNotification.schedule(data).then(function () {
           $log.debug("Notification was placed. HEHEHEHE");

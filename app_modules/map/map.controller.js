@@ -135,7 +135,7 @@
     // notification.init();
     // notification.defineTypes();
     // notification.dbDestroy();
-    // notification.set('discovered')
+    notification.set('discovered')
     // $log.debug("DB LOADING",notification.db.load());
     $scope.$on('pageRegion', mapCtrl.setLessonRange )
     // $scope.$on('nextRegion', mapCtrl.setLessonRange )
