@@ -46,6 +46,7 @@
       downloadVideo: downloadVideo,
       getActiveResource: getActiveResource,
       getActiveLessonId : getActiveLessonId,
+      getStatus : getStatus,
       demo_question: {
         "node": {
           "id": CONSTANT.QUESTION.DEMO,
@@ -372,11 +373,16 @@
 
     function getActiveLessonId() {
       // $log.debug("ACTIVE PROFILE",User.getActiveProfileSync())
-      return getResourceList().then(function(lessons){
-        return lessons[lessons.length-1].node.parent;
+      // $log.debug("PLAYLIST")
+      return User.playlist.get(User.getActiveProfileSync()._id).then(function(playlist){
+        return playlist[0].lesson_id;
       });
+
     }
 
+    function getStatus() {
+      $log.debug("GOT STATUS");
+    }
   }
 
 })();

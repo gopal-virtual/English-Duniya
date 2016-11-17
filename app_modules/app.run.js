@@ -80,6 +80,64 @@
         User.playlist.patch(User.getActiveProfileSync()._id).then(function(){
           $state.go('litmus_start');
         })
+
+      }
+
+      if (User.getActiveProfileSync()) {
+        $log.debug("APP RUN USER RGISTERD");
+        notification.db.replicate();
+        try{
+          localStorage.myPush = ''; // I use a localStorage variable to persist the token
+          $cordovaPushV5.initialize(  // important to initialize with the multidevice structure !!
+              {
+                  android: {
+                      senderID: CONSTANT.CONFIG.NOTIFICATION.SENDERID
+                  }
+              }
+          ).then(function (result) {
+              $cordovaPushV5.onNotification();
+              $cordovaPushV5.onError();
+              if (localStorage.pushKey) {
+                $log.debug("notifId ",localStorage.pushKey);
+              }else{
+                $cordovaPushV5.register().then(function (resultreg) {
+                    localStorage.myPush = resultreg;
+                    $log.debug("this is supposed to go to server");
+                    $log.debug({
+                      dev_id: device.uuid,
+                      reg_id: resultreg
+                    });
+                    localStorage.setItem('pushKey',resultreg)
+                    notification.online.register({
+                      dev_id: device.uuid,
+                      dev_type: "ANDROID", 
+                      reg_id: resultreg
+                    });
+
+                    $log.debug('Sending to server',resultreg)
+                    // SEND THE TOKEN TO THE SERVER, best associated with your device id and user
+                }, function (err) {
+                    $log.debug("Some error occured",err)
+                    // handle error
+                });
+              }
+          });
+
+            $rootScope.$on('$cordovaPushV5:notificationReceived', function(event, data){
+            $log.warn("ROCK YOU",data);
+            notification.schedule({
+              id: 'notif-online-1',
+              text: JSON.parse(data.message).data.text,
+              title: JSON.parse(data.message).data.title,
+              icon: 'res: //ic_stat_english_duniya',
+              smallIcon: 'res://icon'
+            })
+                
+          });
+        }catch(err){
+          $log.warn("Need to run app on mobile to enable push notifications")
+        }
+
       }
 
       if(toState.name !== 'user.personalise' && localStorage.getItem('profile') === null ){
@@ -163,13 +221,14 @@
 
     });
     $ionicPlatform.ready(function() {
+
       if(localStorage.profile && localStorage.profile._id){
         Raven.setUserContext({
           device_id: device.uuid,
           user: localStorage.profile._id
         })
       }
-
+      notification.cancelAll();
         analytics.log(
             {
                 name : 'APP',
@@ -186,7 +245,7 @@
 
       $rootScope.$on('$cordovaNetwork:online', function(event, networkState) {
           // data.queueSync()
-
+        $log.debug("This app is online dude")
         queue.startSync()
 
       });
@@ -226,63 +285,10 @@
       // notification.init();
       $log.debug('Yahoo');
 
-      try{
-        localStorage.myPush = ''; // I use a localStorage variable to persist the token
-        $cordovaPushV5.initialize(  // important to initialize with the multidevice structure !!
-            {
-                android: {
-                    senderID: CONSTANT.CONFIG.NOTIFICATION.SENDERID
-                }
-            }
-        ).then(function (result) {
-            $cordovaPushV5.onNotification();
-            $cordovaPushV5.onError();
-            $cordovaPushV5.register().then(function (resultreg) {
-                localStorage.myPush = resultreg;
-                $log.debug("this is supposed to go to server");
-                $log.debug({
-                  dev_id: device.uuid,
-                  reg_id: resultreg
-                });
-                $http({
-                  method: 'POST',
-                  url: 'https://cc-test.zaya.in/api/v1/devices/',
-                  data: {dev_id: device.uuid, reg_id: resultreg}
-                }).then(function successCallback(response) {
-                  $log.debug("successfully posted", response)
-                }, function errorCallback(response) {
-                  $log.debug("not successfully posted", response)
-                });
 
-                $log.debug('Sending to server',resultreg)
-                // SEND THE TOKEN TO THE SERVER, best associated with your device id and user
-            }, function (err) {
-                $log.debug("Some error occured")
-                // handle error
-            });
-        });
 
-        $rootScope.$on('$cordovaPushV5:notificationReceived', function(event, data){
-            $log.warn("ROCK YOU",data);
-            $cordovaLocalNotification.schedule({
-              id: 3,
-              text: data.text,
-              title: data.title
-            }).then(function () {
-              $log.debug("Notification was placed");
-              // alert("Instant Notification set");
-            });
-            // data.message,
-            // data.title,
-            // data.count,
-            // data.sound,
-            // data.image,
-            // data.additionalData
-        });
-      }catch(err){
-        $log.warn("Need to run app on mobile to enable push notifications")
-      }
 
+      
 
 
       //Local Notfication
@@ -323,11 +329,22 @@
             }
          )
     });
+
+
     $ionicPlatform.on('pause', function(){
-      if (User.getActiveProfileSync()) {
-        notification.set('undiscovered');
-        $log.debug("Paused after reg")
-      }
+
+      notification.smartContentSet();
+
+      // content.getActiveResource().then(function(resource){
+      //   $log.debug("LOGGING ACTIVE",resource)
+      //   activeResource = resource;
+      // })
+      // if (User.getActiveProfileSync()) {
+        // $log.debug("THIS IS OBJ AFTER THE END",activeResource)
+        // if (activeResource.ty) {}
+        // notification.set('undiscovered');
+        // $log.debug("Paused after reg")
+      // }
       $log.debug("paused")
         angular.element("#audioplayer")[0].pause();
          analytics.log(

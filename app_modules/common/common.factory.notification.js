@@ -9,10 +9,12 @@
     '$cordovaLocalNotification',
     'content',
     '$q',
-    'User'
+    'User',
+    '$http',
+    'lessonutils'
   ];
 
-  function notification($log, $cordovaLocalNotification,content,$q,User) {
+  function notification($log, $cordovaLocalNotification,content,$q,User,$http,lessonutils) {
     // types of notification
     // Undiscovered - content - 24hrs
     // Discovered - generic - 5hrs
@@ -25,10 +27,15 @@
       defineType : defineType,
       schedule : schedule,
       set : set,
+      smartContentSet : smartContentSet,
+      cancelAll : cancelAll,
       db: {
         load : dbLoad,
-        destroy : dbDestroy
-        
+        destroy : dbDestroy,
+        replicate : replicate
+      },
+      online: {
+        register: onlineRegister,
       }
     }
 
@@ -95,14 +102,15 @@
       $log.info("Fetching Docs ...");
       var db = new PouchDB('notificationDB');
       var defer = $q.defer();
-      content.getActiveLessonId().then(function(lessonId){
-        $log.debug('Fetching doc named "notif'+'-content-'+lessonId+'"')
-        return db.get('notif'+'-content-'+lessonId).then(function(doc){
-          $log.debug("DOC",doc);
-          defer.resolve(doc);
+      content.getActiveResource().then(function(lesson){
+        $log.debug("This is sparta",lesson)
+        $log.debug('Fetching doc named "notif'+'-content-'+lesson.node.parent+'"')
+        return db.get('notif'+'-content-'+lesson.node.parent).then(function(doc){
+          $log.debug("DOC",{'doc':doc,'lesson':lesson});
+          defer.resolve({'doc':doc,'lesson':lesson});
         }).catch(function(err){
           if(err.status == 404){
-            $log.warn('Notification was not set. The doc named "notif'+'-content-'+lessonId+'" was not found. Check the database perhaps')
+            $log.warn('Notification was not set. The doc named "notif'+'-content-'+lesson.node.parent+'" was not found. Check the database perhaps')
           }else{
             $log.error("Can't fetch notification from pouch\n",err);
           }
@@ -120,7 +128,27 @@
       $log.debug("setting notification",type);
       fetchDocs().then(function(data){
         // $log.debug("SCHEDULE",defineType(data,type));
-        schedule(defineType(data,type));
+        schedule(defineType(data.doc,type));
+      },function(err){
+        $log.warn('Can\'t schedule notification',err)
+      })
+    }
+
+    function smartContentSet(){
+      $log.info("Setting Notification smartly ...")
+      fetchDocs().then(function(data){
+        $log.debug("this is the data that determines",data)
+        $log.debug('resource type huhu', lessonutils.resourceType(data.lesson))
+        if (lessonutils.resourceType(data.lesson) != "practice") {
+          $log.debug("Notification undiscovered");
+          schedule(defineType(data.doc,'undiscovered'));
+          // set('undiscovered');
+        }else{
+          $log.debug("Notification discovered")
+          schedule(defineType(data.doc,'discovered'));
+          // set('discovered');
+        }
+        $log.debug('HOMAMAM',data.lesson)
       },function(err){
         $log.warn('Can\'t schedule notification',err)
       })
@@ -210,5 +238,42 @@
       })
     }
 
+    function replicate() {
+      var localDb = new PouchDB('notificationDB');
+      var remoteDb = new PouchDB('http://ci-couch.zaya.in/notifications');
+      remoteDb.replicate.to(localDb, {
+        live: true,
+        retry: true
+      }).on('change', function (change) {
+        $log.debug("NOTIFICATION DATABASE CHANGE",change);
+      }).on('paused', function (info) {
+        $log.warn('notificationDB replication paused',info)
+      }).on('active', function (info) {
+        $log.debug('notificationDB replication active',info)
+      }).on('error', function (err) {
+        $log.error('error occured while syncing couch',err)
+      });
+    }
+
+    function onlineRegister(data){
+      $http({
+        method: 'POST',
+        url: 'http://cc-test.zaya.in/api/v1/devices/',
+        data: {dev_id: data.dev_id, dev_type: data.dev_type, reg_id: data.reg_id}
+      }).then(function successCallback(response) {
+        $log.debug("successfully posted", response)
+      }, function errorCallback(response) {
+        $log.debug("not successfully posted", response)
+      });
+    }
+
+
+    function cancelAll(){
+      try{
+        return $cordovaLocalNotification.cancelAll()
+      }catch(err){
+        $log.warn('Don\'t worry. This is not an error. Notifications are not supposed to work on fake devices\n',err)
+      }
+    }
   }
 })();
