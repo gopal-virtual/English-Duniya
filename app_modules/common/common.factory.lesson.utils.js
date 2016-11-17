@@ -50,11 +50,15 @@
       playDemoAudio: playDemoAudio,
       canClickDemo: canClickDemo,
       getVideo: getVideo,
-      user : User
+      user : User,
+      demoShown : demoShown
     };
-    utils.demoShown = User.demo.isShown();
+    // utils. = User.demo.isShown();
     return utils;
 
+    function  demoShown(){
+        User.demo.isShown();
+    }
 
     function getGender() {
       return localStorage.profile ? JSON.parse(localStorage.profile).gender : false;

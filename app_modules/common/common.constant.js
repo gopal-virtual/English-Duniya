@@ -40,6 +40,9 @@
       },
       'VIEW': '.view.html',
       'CONFIG': {
+        'NOTIFICATION' : {
+          'SENDERID' : 150596025418
+        },
         'AUTH': {
           'GOOGLEPLUS': {
             'scopes': 'email profile',

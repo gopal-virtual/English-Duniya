@@ -209,7 +209,7 @@ gulp.task('html', function () {
             standalone: true,
             moduleSystem: 'IIFE'
           }))
-          .pipe(gulp.dest('./www/templates/'))
+          .pipe(gulp.dest('./www/build/'))
 
 
 
