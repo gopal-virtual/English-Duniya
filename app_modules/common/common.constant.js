@@ -8,6 +8,7 @@
       'TYPE': 'na',
       'VERSION': '0.1.8'
       },
+      'BUNDLED': false,
       'LOCK': true,
       'FAKE_LOGIN': true,
       'FAKE_ID_DEVICE': 'micromaxtest3',
@@ -15,8 +16,8 @@
       'DEBUG' : true,
       'BACKEND_SERVICE_DOMAIN': 'https://cc-test.zaya.in/',
       'RESOURCE_SERVER': 'https://cc-test.zaya.in',
-      'LESSONS_DB_SERVER': 'http://ci-couch.zaya.in/lessonsdb',
-      'PROFILES_DB_SERVER': 'http://ci-couch.zaya.in/device',
+      'LESSONS_DB_SERVER': 'https://ci-couch.zaya.in/lessonsdb',
+      'PROFILES_DB_SERVER': 'https://ci-couch.zaya.in/device',
       'LESSON_DB_VERSION': 'na',
       'ANALYTICS' : true,
       'QUESTION' : {

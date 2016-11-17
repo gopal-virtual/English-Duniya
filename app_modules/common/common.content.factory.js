@@ -493,7 +493,7 @@
 
     function downloadVideo(video) {
 
-      return mediaManager.downloadIfNotExists(CONSTANT.RESOURCE_SERVER + video.node.type.path)
+      return mediaManager.downloadIfNotExists(video.node.type.path)
     }
 
     function downloadAssessment(assessment) {
@@ -505,7 +505,7 @@
       angular.forEach(assessment.objects, function (object) {
         if (object.node.meta.instructions && object.node.meta.instructions.sounds) {
           promises.push(
-            mediaManager.downloadIfNotExists(CONSTANT.RESOURCE_SERVER + object.node.meta.instructions.sounds[0])
+            mediaManager.downloadIfNotExists(object.node.meta.instructions.sounds[0])
           );
         }
         angular.forEach(object.node.type.content.widgets, function (widget) {
@@ -513,7 +513,7 @@
             if (mediaArray.indexOf(file) < 0) {
               mediaArray.push(file);
               promises.push(
-                mediaManager.downloadIfNotExists(CONSTANT.RESOURCE_SERVER + file)
+                mediaManager.downloadIfNotExists(file)
               );
             }
           })

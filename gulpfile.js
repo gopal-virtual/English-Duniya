@@ -54,11 +54,11 @@ var paths = {
     './www/img/*.jpg',
     './www/img/*.jpeg'
   ],
-  constants : {
-    environment : './www/constant.json',
-    template : './constant.template.txt',
-    destination : './app_modules/common/',
-    destination_filename : 'common.constant.js'
+  constants: {
+    environment: './www/constant.json',
+    template: './constant.template.txt',
+    destination: './app_modules/common/',
+    destination_filename: 'common.constant.js'
   }
 
 };
@@ -70,20 +70,21 @@ var environments = {
 };
 var env = argument.argv.env ? environments[argument.argv.env] : environments.default;
 var app_type = argument.argv.app_type ? argument.argv.app_type : 'na';
+var is_bundled = argument.argv.is_bundled ? argument.argv.is_bundled : 'na';
 var app_version = 'na';
 var constants = JSON.parse(file.readFileSync(paths.constants.environment, 'utf8'));
 var lock = argument.argv.lock ? argument.argv.lock : constants[env]['LOCK'];
 var fake_id_device = constants[env]['FAKE_ID_DEVICE'] || 'na';
 var lesson_db_version = 'na';
-gulp.task('default', function(callback){
-  runSequence(/*'generate-lessondb','get-lessondb-version',*/'get-version','generate-constants', 'sass', 'html', 'scripts',callback);
+gulp.task('default', function (callback) {
+  runSequence(/*'generate-lessondb','get-lessondb-version',*/'get-version', 'generate-constants', 'sass', 'html', 'scripts', callback);
 });
 
-gulp.task('generate-lessondb',shell.task([
+gulp.task('generate-lessondb', shell.task([
   'rm www/data/lessons.db',
   'pouchdb-dump http://127.0.0.1:5984/lessonsdb > www/data/lessons.db'
 ]));
-gulp.task('get-lessondb-version',function(){
+gulp.task('get-lessondb-version', function () {
   var res = request('GET', 'http://ci-couch.zaya.in/lessonsdb/version');
   lesson_db_version = JSON.parse(res.getBody().toString()).version;
 });
@@ -99,7 +100,7 @@ gulp.task('preen', function (cb) {
 
 gulp.task('generate-constants', function () {
 
-console.log();
+  console.log();
   console.log(env == environments.dev);
   gulp.src(paths.constants.template)
     .pipe(replace_task({
@@ -112,7 +113,7 @@ console.log();
       }, {
         match: 'FAKE_LOGIN',
         replacement: constants[env]['FAKE_LOGIN']
-      },{
+      }, {
         match: 'FAKE_DEVICE',
         replacement: constants[env]['FAKE_DEVICE']
       }, {
@@ -134,15 +135,17 @@ console.log();
         match: 'LESSON_DB_VERSION',
         replacement: lesson_db_version
       }, {
-          match: 'LESSONS_DB_SERVER',
-          replacement: constants[env]['LESSONS_DB_SERVER']
+        match: 'LESSONS_DB_SERVER',
+        replacement: constants[env]['LESSONS_DB_SERVER']
       }, {
-          match: 'PROFILES_DB_SERVER',
-          replacement: constants[env]['PROFILES_DB_SERVER']
-        },
-        {
-          match: 'FAKE_ID_DEVICE',
-          replacement: fake_id_device
+        match: 'PROFILES_DB_SERVER',
+        replacement: constants[env]['PROFILES_DB_SERVER']
+      }, {
+        match: 'FAKE_ID_DEVICE',
+        replacement: fake_id_device
+      }, {
+        match: 'BUNDLED',
+        replacement: is_bundled
         }
       ]
     }))
@@ -151,10 +154,10 @@ console.log();
 
 });
 
-gulp.task('get-version',function(){
-  var xml       = file.readFileSync('./config.xml');
-  var content         = cheerio.load(xml, { xmlMode: true });
-  app_version   = content('widget')[0].attribs.version;
+gulp.task('get-version', function () {
+  var xml = file.readFileSync('./config.xml');
+  var content = cheerio.load(xml, {xmlMode: true});
+  app_version = content('widget')[0].attribs.version;
 
 });
 
@@ -168,9 +171,9 @@ gulp.task('scripts', function () {
     .pipe(stripDebug())
     .pipe(strip())
     .pipe(concate('mobile.app.js'))
-    .pipe(gulpif(env !== environments.dev,uglify()))
+    .pipe(gulpif(env !== environments.dev, uglify()))
     .pipe(gulp.dest('www/build'))
-    // .on('end',cb)
+  // .on('end',cb)
   // .pipe(broswerSync.stream())
 });
 
@@ -192,30 +195,29 @@ gulp.task('sass', function () {
       extname: '.min.css'
     }))
     .pipe(gulp.dest('./www/css/'))
-    // .on('end', done);
+  // .on('end', done);
 });
 
 gulp.task('html', function () {
-        return gulp.src(paths.html)
-          .pipe(print(function (filepath) {
-            return filepath;
-          }))
-          .pipe(strip())
-          .pipe(templateCache({
-            base: function (file) {
-              var filename = file.relative.replace('www/', '');
-              return 'templates/' + filename;
-            },
-            standalone: true,
-            moduleSystem: 'IIFE'
-          }))
-          .pipe(gulp.dest('./www/templates/'))
-
+  return gulp.src(paths.html)
+    .pipe(print(function (filepath) {
+      return filepath;
+    }))
+    .pipe(strip())
+    .pipe(templateCache({
+      base: function (file) {
+        var filename = file.relative.replace('www/', '');
+        return 'templates/' + filename;
+      },
+      standalone: true,
+      moduleSystem: 'IIFE'
+    }))
+    .pipe(gulp.dest('./www/templates/'))
 
 
 });
 
-gulp.task('watch',['default'], function () {
+gulp.task('watch', ['default'], function () {
   gulp.watch(paths.sass, ['sass']);
   gulp.watch(paths.script, ['scripts']);
   gulp.watch(paths.html, ['html']);

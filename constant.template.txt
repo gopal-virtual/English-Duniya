@@ -8,6 +8,7 @@
       'TYPE': '@@APP_TYPE',
       'VERSION': '@@APP_VERSION'
       },
+      'BUNDLED': @@BUNDLED,
       'LOCK': @@LOCK,
       'FAKE_LOGIN': @@FAKE_LOGIN,
       'FAKE_ID_DEVICE': '@@FAKE_ID_DEVICE',

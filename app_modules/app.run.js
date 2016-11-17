@@ -18,40 +18,6 @@
     $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
 
 
-      //if not authenticated, redirect to login page
-      // if (!Auth.isAuthorised() && toState.name != 'auth.signin' && toState.name != 'auth.signup' && toState.name != 'auth.forgot') {
-      //   ;
-      //   event.preventDefault();
-      //   $state.go('auth.signup');
-      // }
-      //   if (!Auth.isAuthorised() && network.isOnline() && toState.name != 'auth.autologin') {
-      //     event.preventDefault();
-      //     $state.go('auth.autologin');
-      //   }
-      //   if (!Auth.isAuthorised() && !network.isOnline() && toState.name != 'user.nointernet') {
-      //     event.preventDefault();
-      //     $state.go('user.nointernet');
-      //   }
-      // if authenticated but not verified clear localstorage and redirect to login
-      //   if (Auth.isAuthorised() && !Auth.isVerified() && toState.name != 'auth.verify.phone' && toState.name != 'auth.forgot_verify_otp' && toState.name != 'auth.change_password') {
-      //     ;
-      //     event.preventDefault();
-      //     Auth.cleanLocalStorage();
-      //     $state.go('auth.signup');
-      //   }
-      //if authenticated and verified but has no profile, redirect to user.personalise
-      // if (Auth.isAuthorised() && !Auth.hasProfile() && (toState.name != 'user.personalise')) {
-      //   event.preventDefault();
-      //   $state.go('user.personalise');
-      // }
-      //if authenticated, verified and has profile, redirect to userpage
-
-      // if (Auth.isAuthorised() && Auth.hasProfile() && (toState.name == 'auth.signin' || toState.name == 'auth.signup' || toState.name == 'intro' || toState.name == 'auth.verify.phone' || toState.name == 'auth.forgot' || toState.name == 'auth.change_password' || toState.name == 'auth.forgot_verify_otp' || toState.name == 'user.personalise')) {
-      //   event.preventDefault();
-      //   $state.go('map.navigate');
-      // }
-      // block access to quiz summary page if there is no quiz data
-//
       $log.debug("State change", toState.name)
 
       if (localStorage.version !== '0.1.8') {
@@ -135,15 +101,6 @@
         $state.go('map.navigate');
       }
 
-      // if (toState.name == 'auth.verify.phone') {
-      // $ionicPlatform.ready(function() {
-      //   if (SMS) SMS.startWatch(function() {
-      //   }, function() {
-      //   });
-      // })
-
-      // }
-
     });
     $ionicPlatform.ready(function () {
       $rootScope.mediaSyncStatus = {size: null, mediaToDownload : []};
@@ -166,17 +123,12 @@
         }
       );
       network.isOnline() && queue.startSync();
-      // User.checkIfProfileOnline();
 
       $rootScope.$on('$cordovaNetwork:online', function (event, networkState) {
-        // data.queueSync()
 
         queue.startSync()
 
       });
-      // if (Auth.isAuthorised() && Auth.hasProfile()) {
-      //   data.createLessonDBIfNotExists()
-      // }
       PouchDB.replicate(CONSTANT.LESSONS_DB_SERVER, 'lessonsDB', {
         live: true,
         retry: true
@@ -187,33 +139,18 @@
         $log.debug("paused", err)
         if(!err){
           $log.debug("Changes done, paused");
-          if(User.getActiveProfileSync()){
-            content.findNewMediaToDownload(User.getActiveProfileSync()._id).then(function (mediaSyncStatus) {
-              $rootScope.mediaSyncStatus = mediaSyncStatus;
-              $log.debug("findNewMediaToDownload Done",mediaSyncStatus)
-            });
-          }
+          // if(User.getActiveProfileSync()){
+          //   content.findNewMediaToDownload(User.getActiveProfileSync()._id).then(function (mediaSyncStatus) {
+          //     $rootScope.mediaSyncStatus = mediaSyncStatus;
+          //     $log.debug("findNewMediaToDownload Done",mediaSyncStatus)
+          //   });
+          // }
 
         }
-        // replication paused (e.g. replication up to date, user went offline)
-      }).on('active', function (a) {
-        $log.debug("Active", a)
-        // $ionicLoading.show({template:'Change in pouch'});
-        // replicate resumed (e.g. new changes replicating, user went back online)
-      }).on('denied', function (err) {
-        // a document failed to replicate (e.g. due to permissions)
-      }).on('complete', function (info) {
-        // handle complete
-      }).on('error', function (err) {
-        // handle error
-      });
+      })
       if (navigator.splashscreen) {
         navigator.splashscreen.hide();
       }
-      // document.addEventListener('onSMSArrive', function(e){
-      //   $rootScope.$broadcast('smsArrived', e);
-      // });
-
       document.addEventListener("pause", function () {
         $log.debug("The app is paused");
         audio.stop('background');
@@ -237,10 +174,6 @@
     });
     $ionicPlatform.on('resume', function () {
       $rootScope.$broadcast('appResume');
-      $log.debug("Current state", $state.current)
-      if ($state.current.name === 'content.video') {
-        // angular.element("#audioplayer")[0].play();
-      }
       analytics.log(
         {
           name: 'APP',
