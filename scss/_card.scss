@@ -204,13 +204,25 @@ $lcard-inner-height : $lcard-min-height - ($lcard-outer-padding*2);
   // width: 100% ;
   text-align: center !important;
   top: 0px !important;
-  padding-top: 30px; 
+  padding-top: 20px;
+  margin-left: auto !important;
+  width: 100%;  
   .sbtn-sound{
     
     width: 125px !important;
     height: 120px !important;
     transform-origin: center !important; 
+    position: absolute;
+    left: calc(50% - 60px);
+    margin: 0 !important;
     // bottom: initial !important;
+  }
+}
+
+.sound-enlarge-diag{
+  .sbtn-sound{
+    height: 120px !important;
+    width: 125px !important;
   }
 }
 

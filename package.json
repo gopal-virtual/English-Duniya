@@ -29,10 +29,12 @@
     "gulp-print": "^2.0.1",
     "gulp-replace": "^0.5.4",
     "gulp-replace-task": "^0.11.0",
+    "gulp-shell": "^0.5.2",
     "gulp-strip-comments": "^2.4.3",
     "gulp-strip-debug": "^1.1.0",
     "gulp-uglify": "^1.5.3",
     "gulp-util": "^2.2.14",
+    "jsonfile": "^2.4.0",
     "node-bourbon": "^4.2.8",
     "pouchdb": "^5.4.5",
     "pouchdb-server": "^1.2.0",
@@ -41,9 +43,16 @@
     "request-promise": "^4.1.1",
     "run-sequence": "^1.2.2",
     "shelljs": "^0.3.0",
+    "sync-request": "^3.0.1",
     "yargs": "^4.8.1"
   },
   "cordovaPlugins": [
+    {
+      "variables": {
+        "SENDER_ID": "8255413708"
+      },
+      "locator": "phonegap-plugin-push"
+    },
     "cordova-plugin-device",
     "cordova-plugin-console",
     "cordova-plugin-whitelist",
