@@ -166,60 +166,10 @@
     });
     $ionicPlatform.ready(function() {
 //Rudra's notification
+      notification.db.replicate();
+
       if (User.getActiveProfileSync()) {
-        $log.debug("APP RUN USER RGISTERD");
-        notification.db.replicate();
-        try{
-          localStorage.myPush = ''; // I use a localStorage variable to persist the token
-          $cordovaPushV5.initialize(  // important to initialize with the multidevice structure !!
-            {
-              android: {
-                senderID: CONSTANT.CONFIG.NOTIFICATION.SENDERID
-              }
-            }
-          ).then(function (result) {
-            $cordovaPushV5.onNotification();
-            $cordovaPushV5.onError();
-            if (localStorage.pushKey) {
-              $log.debug("notifId ",localStorage.pushKey);
-            }else{
-              $cordovaPushV5.register().then(function (resultreg) {
-                localStorage.myPush = resultreg;
-                $log.debug("this is supposed to go to server");
-                $log.debug({
-                  dev_id: device.uuid,
-                  reg_id: resultreg
-                });
-                localStorage.setItem('pushKey',resultreg)
-                notification.online.register({
-                  dev_id: device.uuid,
-                  dev_type: "ANDROID",
-                  reg_id: resultreg
-                });
 
-                $log.debug('Sending to server',resultreg)
-                // SEND THE TOKEN TO THE SERVER, best associated with your device id and user
-              }, function (err) {
-                $log.debug("Some error occured",err)
-                // handle error
-              });
-            }
-          });
-
-          $rootScope.$on('$cordovaPushV5:notificationReceived', function(event, data){
-            $log.warn("ROCK YOU",data);
-            notification.schedule({
-              id: 'notif-online-1',
-              text: JSON.parse(data.message).data.text,
-              title: JSON.parse(data.message).data.title,
-              icon: 'res: //ic_stat_english_duniya',
-              smallIcon: 'res://icon'
-            })
-
-          });
-        }catch(err){
-          $log.warn("Need to run app on mobile to enable push notifications")
-        }
 
       }
 
