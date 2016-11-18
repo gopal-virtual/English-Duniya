@@ -14,7 +14,7 @@
     mediaManager.isBundled = isBundled;
     mediaManager.getFileNameFromURl = getFileNameFromURl;
     mediaManager.getFileNameFromURlPatched = getFileNameFromURlPatched;
-    mediaManager.bundledMedia = [];
+    mediaManager.bundledMedia = CONSTANT.DIAGNOSIS_MEDIA;
     function getFileNameFromURl(url) {
       var a = url.split('/');
       // a.splice(0,3);
@@ -31,7 +31,8 @@
     function isBundled(filename) {
 
       var d = $q.defer();
-      d.resolve(CONSTANT.BUNDLED || mediaManager.bundledMedia.indexOf(filename) >= 0)
+      $log.debug("Is Bundled",filename,CONSTANT.BUNDLED ,mediaManager.bundledMedia.indexOf('/'+filename))
+      d.resolve(CONSTANT.BUNDLED || mediaManager.bundledMedia.indexOf('/'+filename) >= 0)
       //
       // if(){
       //   d.resolve(true);

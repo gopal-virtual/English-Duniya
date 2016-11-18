@@ -89,6 +89,7 @@
           'SKIPPED': 2,
           'NOT_ATTEMPTED': 3
         }
-      }
+      },
+      'DIAGNOSIS_MEDIA' : @@DIAGNOSIS_MEDIA
     })
 })();

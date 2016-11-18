@@ -76,8 +76,9 @@ var constants = JSON.parse(file.readFileSync(paths.constants.environment, 'utf8'
 var lock = argument.argv.lock ? argument.argv.lock : constants[env]['LOCK'];
 var fake_id_device = constants[env]['FAKE_ID_DEVICE'] || 'na';
 var lesson_db_version = 'na';
+var diagnosis_media = [];
 gulp.task('default', function (callback) {
-  runSequence(/*'generate-lessondb','get-lessondb-version',*/'get-version', 'generate-constants', 'sass', 'html', 'scripts', callback);
+  runSequence(/*'generate-lessondb','get-lessondb-version',*/'get-diagnosis-files','get-version', 'generate-constants', 'sass', 'html', 'scripts', callback);
 });
 
 gulp.task('generate-lessondb', shell.task([
@@ -146,6 +147,9 @@ gulp.task('generate-constants', function () {
       }, {
         match: 'BUNDLED',
         replacement: is_bundled
+      }, {
+        match: 'DIAGNOSIS_MEDIA',
+        replacement: JSON.stringify(diagnosis_media)
         }
       ]
     }))
@@ -214,6 +218,23 @@ gulp.task('html', function () {
     }))
     .pipe(gulp.dest('./www/templates/'))
 
+
+});
+
+gulp.task('get-diagnosis-files',function () {
+  var diagnosis_json = JSON.parse(file.readFileSync('diagnosisQJSON.json', 'utf8'));
+  for(var prop in diagnosis_json[0]){
+    for(var media_type in diagnosis_json[0][prop].node.type.content.widgets){
+      if(diagnosis_json[0][prop].node.type.content.widgets.hasOwnProperty(media_type)){
+
+        for(var media_file in diagnosis_json[0][prop].node.type.content.widgets[media_type]){
+          console.log(diagnosis_json[0][prop].node.type.content.widgets[media_type][media_file])
+          diagnosis_media.push(diagnosis_json[0][prop].node.type.content.widgets[media_type][media_file]);
+        }
+      }
+    }
+
+  }
 
 });
 
