@@ -76,8 +76,17 @@ var constants = JSON.parse(file.readFileSync(paths.constants.environment, 'utf8'
 var lock = argument.argv.lock ? argument.argv.lock : constants[env]['LOCK'];
 var fake_id_device = constants[env]['FAKE_ID_DEVICE'] || 'na';
 var lesson_db_version = 'na';
+
+
+//Get app version
+var xml       = file.readFileSync('./config.xml');
+var content         = cheerio.load(xml, { xmlMode: true });
+app_version   = content('widget')[0].attribs.version;
+console.log("VERSION",app_version);
+
+
 gulp.task('default', function(callback){
-  runSequence(/*'generate-lessondb','get-lessondb-version',*/'get-version','generate-constants', 'sass', 'html', 'scripts',callback);
+  runSequence(/*'generate-lessondb','get-lessondb-version',*/'make-main','generate-constants', 'sass', 'html', 'scripts',callback);
 });
 
 gulp.task('generate-lessondb',shell.task([
@@ -99,17 +108,16 @@ gulp.task('preen', function (cb) {
 });
 
 gulp.task('make-main',function(){
-  console.log("VERISON",app_version)
   gulp.src(paths.main)
     .pipe(replace_task({
       patterns:[
         {
-          match : 'APP_VERSION',
-          replacement: app_version
+          match : /\/\*raven_release_start\*\/[\'\'\.0-9a-z]+\/\*raven_release_end\*\//g,
+          replacement: '/*raven_release_start*/\''+app_version+'\'/*raven_release_end*/'
         },
         {
-          match : 'APP_ENVIRONMENT',
-          replacement: env
+          match : /\/\*raven_environment_start\*\/[\'\'\.0-9a-zA-Z]+\/\*raven_environment_end\*\//g,
+          replacement: '/*raven_environment_start*/\''+env+'\'/*raven_environment_end*/'
         }
       ]
 
@@ -173,10 +181,7 @@ console.log();
 });
 
 gulp.task('get-version',function(){
-  var xml       = file.readFileSync('./config.xml');
-  var content         = cheerio.load(xml, { xmlMode: true });
-  app_version   = content('widget')[0].attribs.version;
-  console.log("VERSION",app_version)
+
 });
 
 gulp.task('scripts', function () {
