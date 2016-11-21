@@ -13,10 +13,11 @@
     '$http',
     'lessonutils',
     '$cordovaPushV5',
-    'CONSTANT'
+    'CONSTANT',
+    'device'
   ];
 
-  function notification($log, $cordovaLocalNotification,content,$q,User,$http,lessonutils,$cordovaPushV5,CONSTANT) {
+  function notification($log, $cordovaLocalNotification,content,$q,User,$http,lessonutils,$cordovaPushV5,CONSTANT,device) {
     // types of notification
     // Undiscovered - content - 24hrs
     // Discovered - generic - 5hrs
@@ -46,7 +47,7 @@
       $log.debug("notification factory is now working");
     }
 
-  
+
     function createDb() {
       $log.debug("creating db")
       var notificationDB = new PouchDB('notificationDB');
@@ -196,7 +197,7 @@
 
     function replicate() {
       var localDb = new PouchDB('notificationDB');
-      var remoteDb = new PouchDB('http://ci-couch.zaya.in/notifications');
+      var remoteDb = new PouchDB('https://ci-couch.zaya.in/notifications');
       remoteDb.replicate.to(localDb, {
         live: true,
         retry: true
@@ -215,7 +216,7 @@
       $log.debug("Inside online Register")
       $http({
         method: 'POST',
-        url: 'http://cc-test.zaya.in/api/v1/devices/',
+        url: 'https://cc-test.zaya.in/api/v1/devices/',
         data: {dev_id: data.dev_id, dev_type: data.dev_type, reg_id: data.reg_id}
       }).then(function successCallback(response) {
         $log.debug("successfully posted", response)
@@ -257,7 +258,8 @@
                 reg_id: resultreg
               });
               localStorage.setItem('pushKey',resultreg);
-              notification.online.register({
+              $log.debug(device,"Check this please");
+              onlineRegister({
                 dev_id: device.uuid,
                 dev_type: "ANDROID",
                 reg_id: resultreg
@@ -272,7 +274,7 @@
           }
         });
 
-        
+
       }catch(err){
         $log.warn("Need to run app on mobile to enable push notifications",err)
       }
