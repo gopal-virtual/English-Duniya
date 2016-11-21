@@ -11,10 +11,12 @@
     '$q',
     'User',
     '$http',
-    'lessonutils'
+    'lessonutils',
+    '$cordovaPushV5',
+    'CONSTANT'
   ];
 
-  function notification($log, $cordovaLocalNotification,content,$q,User,$http,lessonutils,$cordovaPushV5) {
+  function notification($log, $cordovaLocalNotification,content,$q,User,$http,lessonutils,$cordovaPushV5,CONSTANT) {
     // types of notification
     // Undiscovered - content - 24hrs
     // Discovered - generic - 5hrs
@@ -44,54 +46,7 @@
       $log.debug("notification factory is now working");
     }
 
-    // function dummyData() {
-    //   return {
-    //     '0092ac4b-1da2-41e3-81e1-2700274c78f0' : {
-    //       id : (function(){
-    //         return new Date().getTime().toString();
-    //       })(),
-    //       title : 'Lesson 1',
-    //       text : 'Kids learn when to use the words “less than” and “fewer than”, e.g. “I have fewer pencils” vs “he drinks less water”',
-    //       type : "content"
-    //     },
-    //     '0234146d-f0ae-49d4-9d4f-c74fe4fef312' : {
-    //       id : (function(){
-    //         return new Date().getTime().toString();
-    //       })(),
-    //       title : 'Lesson 2',
-    //       text : '2Kids learn when to use the words “less than” and “fewer than”, e.g. “I have fewer pencils” vs “he drinks less water”',
-    //       type : "content"
-    //     },
-    //     '02c46cce-74d9-4fbc-877d-d993eb9427f5' : {
-    //       id : (function(){
-    //         return new Date().getTime().toString();
-    //       })(),
-    //       title : 'Lesson 3',
-    //       text : '3Kids learn when to use the words “less than” and “fewer than”, e.g. “I have fewer pencils” vs “he drinks less water”',
-    //       type : "content"
-    //     }
-    //   }
-    // }
-
-    // function createDummy(db){
-    //   $log.debug("adding new documents")
-    //   var notifData = dummyData();
-    //   for(var key in notifData){
-    //     db.put({
-    //       _id: (function(){
-    //         return "notif-"+notifData[key].type+"-"+key
-    //       })(),
-    //       data: notifData[key]
-    //     }).then(function(response){
-    //       $log.debug("Notification has been created and is populated. Response is ",response)
-    //     }).catch(function (err) {
-    //       $log.error("Error with creating dummy data, ",err)
-    //     });
-    //   }
-    // }
-
-
-
+  
     function createDb() {
       $log.debug("creating db")
       var notificationDB = new PouchDB('notificationDB');
@@ -317,19 +272,9 @@
           }
         });
 
-        $rootScope.$on('$cordovaPushV5:notificationReceived', function(event, data){
-          $log.warn("ROCK YOU",data);
-          notification.schedule({
-            id: 'notif-online-1',
-            text: JSON.parse(data.message).data.text,
-            title: JSON.parse(data.message).data.title,
-            icon: 'res: //ic_stat_english_duniya',
-            smallIcon: 'res://icon'
-          })
-
-        });
+        
       }catch(err){
-        $log.warn("Need to run app on mobile to enable push notifications")
+        $log.warn("Need to run app on mobile to enable push notifications",err)
       }
     }
   }

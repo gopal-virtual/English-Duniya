@@ -155,9 +155,21 @@
           return content.createLessonDBIfNotExists()
         })
         .then(function () {
+          $log.debug("CREATING USER")
           localStorage.setItem('demo_flag', 1);
           localStorage.setItem('diagnosis_flag', false);
-          notification.online.set()
+          notification.online.set();
+          $scope.$on('$cordovaPushV5:notificationReceived', function(event, data){
+            $log.warn("ROCK YOU",data);
+            notification.schedule({
+              id: 'notif-online-1',
+              text: JSON.parse(data.message).data.text,
+              title: JSON.parse(data.message).data.title,
+              icon: 'res: //ic_stat_english_duniya',
+              smallIcon: 'res://icon'
+            })
+
+          });
           $state.go('litmus_start');
           // $state.go('quiz.questions', {'type':'litmus','id':'litmus_question'});
         })
