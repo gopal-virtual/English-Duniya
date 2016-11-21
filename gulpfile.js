@@ -54,13 +54,14 @@ var paths = {
     './www/img/*.jpg',
     './www/img/*.jpeg'
   ],
-  constants: {
-    environment: './www/constant.json',
-    template: './constant.template.txt',
-    destination: './app_modules/common/',
-    destination_filename: 'common.constant.js'
-  }
 
+  constants : {
+    environment : './www/constant.json',
+    template : './constant.template.txt',
+    destination : './app_modules/common/',
+    destination_filename : 'common.constant.js'
+  },
+  main : './www/main.html'
 };
 var environments = {
   default: 'PRODUCTION',
@@ -70,15 +71,23 @@ var environments = {
 };
 var env = argument.argv.env ? environments[argument.argv.env] : environments.default;
 var app_type = argument.argv.app_type ? argument.argv.app_type : 'na';
-var is_bundled = argument.argv.is_bundled ? argument.argv.is_bundled : 'na';
+var is_bundled = argument.argv.is_bundled ? argument.argv.is_bundled : false;
 var app_version = 'na';
 var constants = JSON.parse(file.readFileSync(paths.constants.environment, 'utf8'));
 var lock = argument.argv.lock ? argument.argv.lock : constants[env]['LOCK'];
 var fake_id_device = constants[env]['FAKE_ID_DEVICE'] || 'na';
 var lesson_db_version = 'na';
 var diagnosis_media = [];
-gulp.task('default', function (callback) {
-  runSequence(/*'generate-lessondb','get-lessondb-version',*/'get-diagnosis-files','get-version', 'generate-constants', 'sass', 'html', 'scripts', callback);
+
+//Get app version
+var xml       = file.readFileSync('./config.xml');
+var content         = cheerio.load(xml, { xmlMode: true });
+app_version   = content('widget')[0].attribs.version;
+console.log("VERSION",app_version);
+
+
+gulp.task('default', function(callback){
+  runSequence(/*'generate-lessondb','get-lessondb-version',*/'get-diagnosis-media','make-main','generate-constants', 'sass', 'html', 'scripts',callback);
 });
 
 gulp.task('generate-lessondb', shell.task([
@@ -97,6 +106,25 @@ gulp.task('get-lessondb-version', function () {
 
 gulp.task('preen', function (cb) {
   preen.preen({}, cb);
+});
+
+gulp.task('make-main',function(){
+  gulp.src(paths.main)
+    .pipe(replace_task({
+      patterns:[
+        {
+          match : /\/\*raven_release_start\*\/[\'\'\.0-9a-z]+\/\*raven_release_end\*\//g,
+          replacement: '/*raven_release_start*/\''+app_version+'\'/*raven_release_end*/'
+        },
+        {
+          match : /\/\*raven_environment_start\*\/[\'\'\.0-9a-zA-Z]+\/\*raven_environment_end\*\//g,
+          replacement: '/*raven_environment_start*/\''+env+'\'/*raven_environment_end*/'
+        }
+      ]
+
+    }))
+    .pipe(rename('main.html'))
+    .pipe(gulp.dest('./www/',{overwrite:true}))
 });
 
 gulp.task('generate-constants', function () {
@@ -158,12 +186,7 @@ gulp.task('generate-constants', function () {
 
 });
 
-gulp.task('get-version', function () {
-  var xml = file.readFileSync('./config.xml');
-  var content = cheerio.load(xml, {xmlMode: true});
-  app_version = content('widget')[0].attribs.version;
 
-});
 
 gulp.task('scripts', function () {
 
@@ -221,7 +244,8 @@ gulp.task('html', function () {
 
 });
 
-gulp.task('get-diagnosis-files',function () {
+
+gulp.task('get-diagnosis-media',function () {
   var diagnosis_json = JSON.parse(file.readFileSync('diagnosisQJSON.json', 'utf8'));
   for(var prop in diagnosis_json[0]){
     for(var media_type in diagnosis_json[0][prop].node.type.content.widgets){

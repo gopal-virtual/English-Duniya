@@ -50,6 +50,9 @@
       downloadVideo: downloadVideo,
       findNewMediaToDownload: findNewMediaToDownload,
       downloadNewMedia: downloadNewMedia,
+      getActiveResource: getActiveResource,
+      getActiveLessonId : getActiveLessonId,
+      getStatus : getStatus,
       demo_question: {
         "node": {
           "id": CONSTANT.QUESTION.DEMO,
@@ -529,6 +532,31 @@
 
     }
 
+    function getActiveResource() {
+        return getResourceList(User.getActiveProfileSync().data.profile.grade).then(function(lessons){
+          return extendLesson.getLesson(lessons).then(function(extLessons){
+            $log.debug("This is the active lesson",extLessons[extLessons.length - 1].locked?extLessons[extLessons.length - 2]:extLessons[extLessons.length - 1])
+            return extLessons[extLessons.length - 1].locked?extLessons[extLessons.length - 2]:extLessons[extLessons.length - 1];
+            // $log.debug("This  is the playlist ",result)
+          });
+        })
+      // }).catch(function(err){
+      //   $log.error("Error occured while fetching active playlist",err);
+      // });
+    }
+
+    function getActiveLessonId() {
+      // $log.debug("ACTIVE PROFILE",User.getActiveProfileSync())
+      // $log.debug("PLAYLIST")
+      return User.playlist.get(User.getActiveProfileSync()._id).then(function(playlist){
+        return playlist[0].lesson_id;
+      });
+
+    }
+
+    function getStatus() {
+      $log.debug("GOT STATUS");
+    }
   }
 
 })();

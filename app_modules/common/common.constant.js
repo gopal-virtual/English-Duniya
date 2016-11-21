@@ -8,7 +8,7 @@
       'TYPE': 'na',
       'VERSION': '0.1.8'
       },
-      'BUNDLED': false,
+      'BUNDLED': na,
       'LOCK': true,
       'FAKE_LOGIN': true,
       'FAKE_ID_DEVICE': 'micromaxtest3',
@@ -41,6 +41,9 @@
       },
       'VIEW': '.view.html',
       'CONFIG': {
+        'NOTIFICATION' : {
+          'SENDERID' : 150596025418
+        },
         'AUTH': {
           'GOOGLEPLUS': {
             'scopes': 'email profile',

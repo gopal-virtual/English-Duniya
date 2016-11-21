@@ -22,7 +22,8 @@
     '$ionicSlideBoxDelegate',
     '$timeout',
     'User',
-    'audio'
+    'audio',
+    'notification'
   ];
 
   function userController(CONSTANT,
@@ -41,7 +42,8 @@
                           $ionicSlideBoxDelegate,
                           $timeout,
                           User,
-                          audio) {
+                          audio,
+                            notification) {
     var userCtrl = this;
     userCtrl.calcAge = calcAge;
     userCtrl.closeKeyboard = closeKeyboard;
@@ -155,7 +157,7 @@
         .then(function () {
           localStorage.setItem('demo_flag', 1);
           localStorage.setItem('diagnosis_flag', false);
-
+          notification.online.set()
           $state.go('litmus_start');
           // $state.go('quiz.questions', {'type':'litmus','id':'litmus_question'});
         })
