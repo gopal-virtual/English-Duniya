@@ -45,7 +45,7 @@
                   },
                   objects : [
                       {
-                          title : "AMBULANCE",
+                          title : "Ambulance",
                           image : CONSTANT.ASSETS.IMG.TEMP + '/ambulance.png',
                           sound : CONSTANT.ASSETS.SOUND + '/ambulance.mp3',
                           color : "rgb(42, 151, 213)"

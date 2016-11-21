@@ -3,8 +3,8 @@
         padding : 20px;
         border-radius : 45px;
         box-shadow : 0 2px 5px rgba(0,0,0,0.5);
-        border: 10px solid white;
-        height : 60vh
+        border: 6px solid white;
+        height : 80vh
     }
     .flash-card > img {
         width: auto;
@@ -12,21 +12,27 @@
         max-height: 100%;
         max-width: 100%;
     }
-    .flash-text{
-        font-size: 10vw;
+    .flash-text-offset,
+    .flash-text {
+        font-size: 9vw;
         text-align: center;
         text-transform: capitalize !important;
-        /* text-shadow: 0 1px 0 #ccc, 0 2px 0 #c9c9c9, 0 3px 0 #bbb, 0 4px 0 #b9b9b9, 0 5px 0 #aaa, 0 6px 1px rgba(0,0,0,.1), 0 0 5px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.3), 0 3px 5px rgba(0,0,0,.2), 0 5px 10px rgba(0,0,0,.25), 0 10px 10px rgba(0,0,0,.2), 0 20px 20px rgba(0,0,0,.15); */
-        -webkit-text-stroke: 1px white;
-        color: coral;
-        text-shadow: 0 3px 5px black;
-        font-weight: bolder;
         position: absolute;
         left: 0;
         right: 0;
         margin-left: auto;
         margin-right: auto;
-        top: 20vh;
+        top: 10vh;
+        letter-spacing: -0.4vw;
+    }
+    .flash-text-offset{
+        -webkit-text-stroke: 6px white;
+        text-shadow: 0 3px 5px black;
+        color : white;
+    }
+    .flash-text {
+        color: #C82733;
+        font-weight: 500;
     }
     .flash-card-thumbnail{
         border-radius : 20px;
@@ -50,41 +56,109 @@
         -webkit-transform : translateY(5px)
     }
     .flash-body{
-        padding-top : 5vh !important;
+        /*padding-top : 5vh !important;*/
     }
     .flash-body-card{
-        padding-left : 5vw;
-        padding-right : 5vw;
+        /*padding-left : 5vw;*/
+        /*padding-right : 5vw;*/
     }
     .align-middle{
         display : flex;
         align-items: center;
+        justify-content : center;
+    }
+    .bounceIn.ng-hide-add,
+    .bounceIn.ng-hide-remove{
+        -webkit-animation-duration: .75s;
+        animation-duration: .75s;
+        display:block!important;
+    }
+    .bounceIn.ng-hide-add {
+      -webkit-animation-name: bounceIn;
+      animation-name: bounceIn;
+    }
+    @keyframes bounceIn {
+      from, 20%, 40%, 60%, 80%, to {
+        -webkit-animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+        animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+      }
+
+      0% {
+        opacity: 0;
+        -webkit-transform: scale3d(.3, .3, .3);
+        transform: scale3d(.3, .3, .3);
+      }
+
+      20% {
+        -webkit-transform: scale3d(1.1, 1.1, 1.1);
+        transform: scale3d(1.1, 1.1, 1.1);
+      }
+
+      40% {
+        -webkit-transform: scale3d(.9, .9, .9);
+        transform: scale3d(.9, .9, .9);
+      }
+
+      60% {
+        opacity: 1;
+        -webkit-transform: scale3d(1.03, 1.03, 1.03);
+        transform: scale3d(1.03, 1.03, 1.03);
+      }
+
+      80% {
+        -webkit-transform: scale3d(.97, .97, .97);
+        transform: scale3d(.97, .97, .97);
+      }
+
+      to {
+        opacity: 1;
+        -webkit-transform: scale3d(1, 1, 1);
+        transform: scale3d(1, 1, 1);
+      }
+    }
+    .vh-100 {
+        height : 100vh;
     }
 </style>
 <ion-view style="background-color:{{vocabCtrl.vocab_data.node.background}}">
     <ion-content>
-        <div class="row" style="padding: 2vh">
+        <!-- <div class="row" style="padding: 2vh">
             <div class="col center">
                 <div ng-repeat="card in vocabCtrl.vocab_data.objects" style="background-color: {{card.color}}" class="flash-card-thumbnail" ng-class="{'active' : vocabCtrl.currentIndex == $index}">
                     <div class="imgContainer" style="background-image : url({{card.image}})"></div>
                 </div>
             </div>
-        </div>
-        <div class="row" style="padding:5vh">
-            <div class="col col-10 center align-middle">
-                <button ng-disabled="!vocabCtrl.audio.player.isPaused()" ng-show="vocabCtrl.currentIndex" class="button button-default" ng-click="vocabCtrl.prev();vocabCtrl.playDelayed(vocabCtrl.vocab_data.objects[vocabCtrl.currentIndex].sound)">Prev</button>
+        </div> -->
+        <div class="row vh-100">
+            <div class="col col-20 center align-middle">
+                <button ng-disabled="!vocabCtrl.audio.player.isPaused()" ng-show="vocabCtrl.currentIndex" class="sbtn sbtn-arrow" ng-click="vocabCtrl.prev();vocabCtrl.playDelayed(vocabCtrl.vocab_data.objects[vocabCtrl.currentIndex].sound)"></button>
             </div>
-            <div class="col col-80 center flash-body-card">
-                <div class="flash-card" ng-click="vocabCtrl.audio.player.play(card.sound)" ng-repeat="card in vocabCtrl.vocab_data.objects" ng-show="vocabCtrl.currentIndex == $index" style="background-color : {{card.color}}">
+            <div class="col col-60 align-middle flash-body-card">
+                <div class="flash-card align-middle" ng-click="vocabCtrl.audio.player.play(card.sound)" ng-repeat="card in vocabCtrl.vocab_data.objects" ng-show="vocabCtrl.currentIndex == $index" style="background-color : {{card.color}}">
                     <img src="" alt="" ng-src="{{card.image}}" ng-class="{'animation-repeat-bounce':!vocabCtrl.audio.player.isPaused()}">
+                </div>
+                <div ng-repeat="card in vocabCtrl.vocab_data.objects" ng-show="vocabCtrl.currentIndex == $index">
+                    <div class="flash-text-offset">
+                        {{card.title}}
+                    </div>
+                    <div class="flash-text">
+                        {{card.title}}
+                    </div>
+                </div>
+            </div>
+            <div class="col col-20 center align-middle">
+                <button ng-disabled="!vocabCtrl.audio.player.isPaused()" ng-hide="vocabCtrl.currentIndex==vocabCtrl.vocab_data.objects.length-1" class="sbtn sbtn-arrow sbtn-flipped" ng-click="vocabCtrl.next();vocabCtrl.playDelayed(vocabCtrl.vocab_data.objects[vocabCtrl.currentIndex].sound)"></button>
+            </div>
+        </div>
+        <!-- <div class="row">
+            <div class="col center flash-body-card">
+                <div class="flash-card bounceIn" ng-click="vocabCtrl.audio.player.play(card.sound)" ng-repeat="card in vocabCtrl.vocab_data.objects" ng-show="vocabCtrl.currentIndex == $index" style="background-color : {{card.color}}">
+                    <img src="" alt="" ng-src="{{card.image}}">
                 </div>
                 <div class="flash-text" ng-repeat="card in vocabCtrl.vocab_data.objects" ng-show="vocabCtrl.currentIndex == $index">
                     {{card.title}}
                 </div>
             </div>
-            <div class="col col-10 center align-middle">
-                <button ng-disabled="!vocabCtrl.audio.player.isPaused()" ng-hide="vocabCtrl.currentIndex==vocabCtrl.vocab_data.objects.length-1" class="button button-default" ng-click="vocabCtrl.next();vocabCtrl.playDelayed(vocabCtrl.vocab_data.objects[vocabCtrl.currentIndex].sound)">Next</button>
-            </div>
-        </div>
+        </div> -->
     </ion-content>
 </ion-view>

@@ -25,6 +25,7 @@
       "serial": CONSTANT.FAKE_DEVICE ? 'fake_serial' : window.device.serial,
       "manufacturer": CONSTANT.FAKE_DEVICE ? 'fake_manufacturer' : window.device.manufacturer
     };
+    $log.debug("THIS IS THE DEVICE ID",devicePropeties.uuid);
     return devicePropeties;
 
   }

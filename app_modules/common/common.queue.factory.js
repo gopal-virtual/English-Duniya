@@ -32,7 +32,7 @@
         return queueDB.allDocs({include_docs:true});
       }
     };
-
+    Raven.captureException("Test Exception");
     return queueProperties;
 
 

@@ -25,31 +25,7 @@
     var User = {};
     var profilesDB = pouchDB('profilesDB',{revs_limit: 1});
     // var remoteProfilesDb = pouchDB('http://anna:secret@127.0.0.1:5984/device'+device.uuid);
-    PouchDB.replicate('profilesDB', CONSTANT.PROFILES_DB_SERVER+device.uuid, {
-      live: true,
-      retry: true
-    }).on('change', function (info) {
-          $log.debug("Change in pouch");
-        // $ionicLoading.show({template:'Change in pouch'})
-      }).on('paused', function (err) {
-      $log.debug("puased in pouch");
 
-
-      // $ionicLoading.hide();
-        // replication paused (e.g. replication up to date, user went offline)
-      }).on('active', function () {
-        // $ionicLoading.show({template:'Change in pouch'});
-        // replicate resumed (e.g. new changes replicating, user went back online)
-      }).on('denied', function (err) {
-        // $ionicLoading.hide();
-        // a document failed to replicate (e.g. due to permissions)
-      }).on('complete', function (info) {
-        // $ionicLoading.hide();
-        // handle complete
-      }).on('error', function (err) {
-        // $ionicLoading.hide();
-        // handle error
-      });
     // var myIndex = {
     //   _id: '_design/profile',
     //   "filters": {
@@ -177,7 +153,34 @@
       patch: patchUserPlaylist
     }
     User.checkIfProfileOnline = checkIfProfileOnline;
+    User.startProfileSync = startProfileSync;
+    function startProfileSync() {
+      PouchDB.replicate('profilesDB', CONSTANT.PROFILES_DB_SERVER+device.uuid, {
+        live: true,
+        retry: true
+      }).on('change', function (info) {
+        $log.debug("Change in pouch");
+        // $ionicLoading.show({template:'Change in pouch'})
+      }).on('paused', function (err) {
+        $log.debug("puased in pouch");
 
+
+        // $ionicLoading.hide();
+        // replication paused (e.g. replication up to date, user went offline)
+      }).on('active', function () {
+        // $ionicLoading.show({template:'Change in pouch'});
+        // replicate resumed (e.g. new changes replicating, user went back online)
+      }).on('denied', function (err) {
+        // $ionicLoading.hide();
+        // a document failed to replicate (e.g. due to permissions)
+      }).on('complete', function (info) {
+        // $ionicLoading.hide();
+        // handle complete
+      }).on('error', function (err) {
+        // $ionicLoading.hide();
+        // handle error
+      });
+    }
     function updateRoadMapData(roadMapData,profileId) {
       $log.debug("updateRoadMapData",roadMapData,profileId)
       return profilesDB.get(profileId).then(function (response) {
@@ -259,6 +262,7 @@
           //   retry: true,
           //   filter: 'app/by_profile',
           //   query_params: { "profile_id": profile.client_uid }});
+          startProfileSync();
           return queue.push('profiles', profile);
         }).then(function () {
           return record;
