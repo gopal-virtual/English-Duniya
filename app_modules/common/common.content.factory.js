@@ -327,7 +327,8 @@
         var currentLesson = {}
         for (var i = 0; i < data.rows.length; i++) {
         //   data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key;
-            if(data.rows[i].doc){
+          $log.debug("====",data.rows[i])
+            if(data.rows[i].doc && data.rows[i]._id){
                 currentLesson = data.rows[i].doc.lesson
                 $log.debug('modified lesson', data.rows[i])
                 for (var c = 0; c < currentLesson.objects.length; c++) {
