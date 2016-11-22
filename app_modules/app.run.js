@@ -101,6 +101,7 @@
               $log.debug("profile fetched online")
               User.startProfileSync();
               $state.go('map.navigate');
+              $log.debug("CHECK 3")
               notification.online.set();
               $log.debug("profile fetched online 2")
 
@@ -175,13 +176,16 @@
       notification.db.replicate();
 
       if (User.getActiveProfileSync()) {
+        $log.debug("CHECK 2")
         notification.online.set();
       }
 
 
 
       $rootScope.$on('$cordovaPushV5:notificationReceived', function(event, data){
+        event.preventDefault();
         $log.warn("ROCK YOU",data);
+        $log.warn("ROCK YOU2 event",event);
         notification.schedule({
           id: 'notif-online-1',
           text: JSON.parse(data.message).data.text,
@@ -224,6 +228,7 @@
         $log.debug("This app is online dude")
         queue.startSync();
         if (User.getActiveProfileSync()) {
+          $log.debug("CHECK 1")
           notification.online.set();
         }
       });
@@ -343,7 +348,7 @@
 
     $ionicPlatform.on('pause', function(){
 
-      notification.smartContentSet();
+      notification.schedule(JSON.parse(localStorage.scheduleNotification),1);
 
       // content.getActiveResource().then(function(resource){
       //   $log.debug("LOGGING ACTIVE",resource)

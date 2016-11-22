@@ -43,7 +43,8 @@
     'queue',
     'content',
     '$cordovaLocalNotification',
-    'notification'
+    'notification',
+    'device'
 ];
 
   function mapController(
@@ -75,7 +76,8 @@
         queue,
         content,
         $cordovaLocalNotification,
-        notification
+        notification,
+        device
     ) {
     $scope.audio = audio;
     $scope.settings = settings;
@@ -134,6 +136,8 @@
         "reading" : "orange"
     }
 
+    // mapCtrl.notification = notification;
+
     // notification.createDb();
     // notification.init();
     // notification.defineTypes();
@@ -141,6 +145,32 @@
     // notification.smartContentSet();
     // $log.debug("DB LOADING",notification.db.load());
     $scope.$on('pageRegion', mapCtrl.setLessonRange )
+
+    notification.getFromServer({
+      dev_id: device.uuid
+    }).then(function(response) {
+      $log.debug("We got this", response)
+    }, function(response) {
+      $log.error("We couldn't get", response)
+      if (response.status == 404) {
+        $log.warn("No worries, we kust register your device")
+      }else{
+      }
+    });
+
+    $log.debug("This is the lesson list",lessonList)
+    // $log.debug("FETCHINGDOCBYID",notification.fetchDocById())
+    notification.fetchDocById(lessonList[lessonList.length-1].node.parent).then(function(doc){
+      $log.debug("FETCHING DOC complete",doc)
+      if (lessonutils.resourceType(lessonList[lessonList.length-1]) != 'practice') {
+        $log.debug('discovered',notification.defineType(doc,'discovered'))
+      }else{
+        $log.debug('undiscovered',notification.defineType(doc,'undiscovered'))
+      }
+      localStorage.setItem('scheduleNotification',JSON.stringify(notification.defineType(doc,lessonutils.resourceType(lessonList[lessonList.length-1]) != 'practice'?'discovered':'undiscovered')))
+      // localStorage.setItem('offlineNotif',JSON.stringify(doc));
+    })
+    // $log.debug("Defining types in map",notification.defineTypes());
     // $scope.$on('nextRegion', mapCtrl.setLessonRange )
     function setLessonRange(event, regionPage, action, regionLength){
         // if (regionPage > 0 && regionPage < 3) {
