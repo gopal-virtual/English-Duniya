@@ -8,7 +8,7 @@
       'TYPE': 'na',
       'VERSION': '0.1.8'
       },
-      'BUNDLED': na,
+      'BUNDLED': false,
       'LOCK': true,
       'FAKE_LOGIN': true,
       'FAKE_ID_DEVICE': 'micromaxtest3',

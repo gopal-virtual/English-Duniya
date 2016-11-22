@@ -52,6 +52,7 @@
       downloadNewMedia: downloadNewMedia,
       getActiveResource: getActiveResource,
       getActiveLessonId : getActiveLessonId,
+      replicateLessonDB : replicateLessonDB,
       getStatus : getStatus,
       demo_question: {
         "node": {
@@ -119,6 +120,18 @@
 
     return contentProperties;
 
+  function replicateLessonDB() {
+    $log.debug("replicating lessondb",CONSTANT.LESSONS_DB_SERVER)
+    return lessonDB.replicate.from(CONSTANT.LESSONS_DB_SERVER,{
+      live: true,
+      retry: true
+    }).on('paused',function (err) {
+      $log.debug("Paused in lessondb replicate",err)
+    }).on('change',function (a) {
+      $log.debug("change in lessondb replicate",a)
+
+    });
+  }
 
     function findNewMediaToDownload() {
       $rootScope.mediaSyncStatus.checkingMedia = true;
@@ -249,6 +262,8 @@
     }
 
     function createLessonDBIfNotExists() {
+      $log.debug("createLessonDBIfNotExists")
+
       lessonDB = pouchDB('lessonsDB', {revs_limit: 1});
 
       return lessonDB.get('_local/preloaded').then(function (doc) {
@@ -271,25 +286,15 @@
     }
 
     function createOrUpdateLessonDB() {
+      $log.debug("create or update lessondb")
       lessonDB = pouchDB('lessonsDB', {revs_limit: 1});
-
-      return lessonDB.get('version').then(function (doc) {
-        if (doc.version < CONSTANT.LESSON_DB_VERSION) {
-          $log.debug("FOUND Greater VERSION")
-          return lessonDB.load(CONSTANT.PATH.DATA + '/lessons.db', {
-            proxy: CONSTANT.LESSONS_DB_SERVER
-          })
-        }
-      }).catch(function (err) {
-        if (err.name !== 'not_found') {
-          throw err;
-        }
         $log.debug("NEW DB MADE 1");
         return lessonDB.load(CONSTANT.PATH.DATA + '/lessons.db', {
           proxy: CONSTANT.LESSONS_DB_SERVER
         })
-
-      })
+          .then(function () {
+            return replicateLessonDB()
+          })
     }
 
     function createLessonDBIfNotExistsPatch() {
