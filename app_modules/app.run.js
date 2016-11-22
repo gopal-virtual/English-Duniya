@@ -83,12 +83,48 @@
       }
       $log.debug(toState.name !== 'user.personalise', !User.getActiveProfileSync());
 
-      if (toState.name !== 'user.personalise' && localStorage.getItem('profile') === null) {
-
-        event.preventDefault();
-        $state.go('user.personalise');
       }
+      $log.debug(toState.name !== 'user.personalise',!User.getActiveProfileSync());
+
+
+      $log.debug(toState.name !== 'user.personalise',!User.getActiveProfileSync());
+      if (toState.name == 'user.personalise' && !User.getActiveProfileSync() && localStorage.getItem('first_time') == undefined) {
+        event.preventDefault();
+        $log.debug("Ionic loading show with hide on state change");
+
+        $ionicLoading.show({hideOnStateChange:true});
+        localStorage.setItem('first_time','no');
+
+        if (network.isOnline()) {
+
+          User.checkIfProfileOnline().then(function () {
+            $log.debug("HERE")
+            $log.debug("Ionic loading hide should happen");
+            if (localStorage.getItem('profile') === null) {
+              $state.go('user.personalise');
+            } else {
+              $log.debug("profile fetched online")
+              User.startProfileSync();
+              $state.go('map.navigate');
+              notification.online.set();
+              $log.debug("profile fetched online 2")
+
+            }
+          })
+
+        } else {
+          $state.go('user.personalise');
+        }
+
+      }
+
+      if (toState.name === 'user.personalise' && User.getActiveProfileSync()) {
+        event.preventDefault();
+        $state.go('map.navigate');
+      }
+
       if (toState.name !== 'user.personalise' && localStorage.getItem('profile') !== null && JSON.parse(localStorage.getItem(('profile')))._id === undefined) {
+        $log.debug("toState.name !== 'user.personalise' && localStorage.getItem('profile') !== null && JSON.parse(localStorage.getItem(('profile')))._id === undefined");
         event.preventDefault();
 
         var user = {
@@ -96,39 +132,16 @@
           grade: JSON.parse(localStorage.getItem(('profile'))).grade,
           gender: JSON.parse(localStorage.getItem(('profile'))).gender
         };
-
+        $log.debug("patching profile");
         User.profile.patch(user, JSON.parse(localStorage.getItem(('profile'))).id).then(function (response) {
+          $log.debug("patched profile");
 
           $state.go('map.navigate');
-
-          // User.profile.patch(user,JSON.parse(localStorage.getItem(('profile'))).id).then(function(response){
-          //   User.setActiveProfileSync(response);
-          //
-          //
-          //   var lessonDB = pouchDB('lessonsGrade' + User.getActiveProfileSync().data.profile.grade, {
-          //     adapter: 'websql'
-          //   });
-          //
-          //   lessonDB.destroy()
-          //     .then(function(){
-          //       $log.debug("Here1",CONSTANT.PATH.DATA + '/lessonsGrade' + User.getActiveProfileSync().data.profile.grade + '.db');
-          //       return lessonDB.load(CONSTANT.PATH.DATA + '/lessonsGrade' + User.getActiveProfileSync().data.profile.grade + '.db')
-          //     })
-          //     .then(function () {
-          //
-          //       return lessonDB.put({
-          //         _id: '_local/preloaded'
-          //       });
-          //     }).then(function(){
-          //
-          //
-          //     $state.go('map.navigate');
-          //
-          //   })
-          //     .catch(function(e){
-          //
-          //     })
         });
+      }
+      if(toState.name == 'map.navigate' && !User.getActiveProfileSync()){
+        event.preventDefault();
+        $state.go('user.personalise')
       }
 
       if (toState.name == 'quiz.questions' && toParams.type == 'practice' && !toParams.quiz) {
@@ -153,16 +166,36 @@
         $state.go('map.navigate');
       }
 
+      // if (toState.name == 'auth.verify.phone') {
+      // $ionicPlatform.ready(function() {
+      //   if (SMS) SMS.startWatch(function() {
+      //   }, function() {
+      //   });
+      // })
+
+      // }
     });
     $ionicPlatform.ready(function () {
 //Rudra's notification
 //       notification.db.replicate();
 
       if (User.getActiveProfileSync()) {
-
-
+        notification.online.set();
       }
 
+
+
+      $rootScope.$on('$cordovaPushV5:notificationReceived', function(event, data){
+        $log.warn("ROCK YOU",data);
+        notification.schedule({
+          id: 'notif-online-1',
+          text: JSON.parse(data.message).data.text,
+          title: JSON.parse(data.message).data.title,
+          icon: 'res: //ic_stat_english_duniya',
+          smallIcon: 'res://icon'
+        })
+
+      });
       //
 
 
@@ -193,8 +226,10 @@
       $rootScope.$on('$cordovaNetwork:online', function (event, networkState) {
         // data.queueSync()
         $log.debug("This app is online dude")
-        queue.startSync()
-
+        queue.startSync();
+        if (User.getActiveProfileSync()) {
+          notification.online.set();
+        }
       });
 
       if (navigator.splashscreen) {
