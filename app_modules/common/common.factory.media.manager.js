@@ -15,6 +15,9 @@
     mediaManager.getFileNameFromURl = getFileNameFromURl;
     mediaManager.getFileNameFromURlPatched = getFileNameFromURlPatched;
     function getFileNameFromURl(url){
+      // var a = url.split('/');
+      // a.splice(0,3);
+      // return a.join('-');
       return url.split('/')[url.split('/').length-2]+'-'+url.split('/')[url.split('/').length-1];
     }
     function getFileNameFromURlPatched(url){
@@ -130,8 +133,8 @@
       var d = $q.defer();
 
 
-      var filename = mediaManager.getFileNameFromURl(url)
-      var filename_patch = mediaManager.getFileNameFromURlPatched(url)
+      var filename = mediaManager.getFileNameFromURl(url);
+      var filename_patch = mediaManager.getFileNameFromURlPatched(url);
       try {
         var target = cordova.file.dataDirectory + 'media/' + filename;
         var target_patch = cordova.file.dataDirectory + 'media/' + filename_patch;
@@ -196,22 +199,30 @@ $log.debug("downloading file",url,target)
 
                             $cordovaFileTransfer.download(url, target)
                               .then(function (result) {
-                                  $log.debug("FILE DOWNLOADED",url,target)
+
+                                $log.debug("Downloaded",result)
 
                                 d.resolve(target);
                               }, function (err) {
 
-$log.debug("Error downloading",url,target,err)
-                                d.reject("Error Downlaoding " + target);
+
+                                d.reject({
+                                  "error": true,
+                                  "message": "no-media"
+                                });
                               }, function (progress) {
-                                localStorage.setItem('progress', parseInt((progress.loaded / progress.total) * 100))
+                                $log.debug("Progress",progress)
+                                // localStorage.setItem('progress', parseInt((progress.loaded / progress.total) * 100))
                               });
                           }
 
                         } else {
 
 
-                          d.reject("Error Downlaoding " + target);
+                          d.reject({
+                            "error": true,
+                            "message": "no-media"
+                          });
                         }
                       })
 

@@ -22,7 +22,8 @@
     '$ionicSlideBoxDelegate',
     '$timeout',
     'User',
-    'audio'
+    'audio',
+    'notification'
   ];
 
   function userController(CONSTANT,
@@ -41,7 +42,8 @@
                           $ionicSlideBoxDelegate,
                           $timeout,
                           User,
-                          audio) {
+                          audio,
+                            notification) {
     var userCtrl = this;
     userCtrl.calcAge = calcAge;
     userCtrl.closeKeyboard = closeKeyboard;
@@ -153,11 +155,13 @@
           return content.createLessonDBIfNotExists()
         })
         .then(function () {
+          $log.debug("CREATING USER")
           localStorage.setItem('demo_flag', 1);
           localStorage.setItem('diagnosis_flag', false);
-
           $state.go('litmus_start');
+
           // $state.go('quiz.questions', {'type':'litmus','id':'litmus_question'});
+          notification.online.set();
         })
         .catch(function (error) {
           userCtrl.showError('Could not make your profile', error || 'Please try again');

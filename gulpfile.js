@@ -59,7 +59,8 @@ var paths = {
     template : './constant.template.txt',
     destination : './app_modules/common/',
     destination_filename : 'common.constant.js'
-  }
+  },
+  main : './www/main.html'
 
 };
 var environments = {
@@ -74,9 +75,19 @@ var app_type = argument.argv.app_type ? argument.argv.app_type : 'na';
 var app_version = 'na';
 var constants = JSON.parse(file.readFileSync(paths.constants.environment, 'utf8'));
 var lock = argument.argv.lock ? argument.argv.lock : constants[env]['LOCK'];
+var fake_id_device = constants[env]['FAKE_ID_DEVICE'] || 'na';
 var lesson_db_version = 'na';
+
+
+//Get app version
+var xml       = file.readFileSync('./config.xml');
+var content         = cheerio.load(xml, { xmlMode: true });
+app_version   = content('widget')[0].attribs.version;
+console.log("VERSION",app_version);
+
+
 gulp.task('default', function(callback){
-  runSequence(/*'generate-lessondb','get-lessondb-version',*/'get-version','generate-constants', 'sass', 'html', 'scripts',callback);
+  runSequence(/*'generate-lessondb','get-lessondb-version',*/'make-main','generate-constants', 'sass', 'html', 'scripts',callback);
 });
 
 gulp.task('generate-lessondb',shell.task([
@@ -97,9 +108,29 @@ gulp.task('preen', function (cb) {
   preen.preen({}, cb);
 });
 
+gulp.task('make-main',function(){
+  gulp.src(paths.main)
+    .pipe(replace_task({
+      patterns:[
+        {
+          match : /\/\*raven_release_start\*\/[\'\'\.0-9a-z]+\/\*raven_release_end\*\//g,
+          replacement: '/*raven_release_start*/\''+app_version+'\'/*raven_release_end*/'
+        },
+        {
+          match : /\/\*raven_environment_start\*\/[\'\'\.0-9a-zA-Z]+\/\*raven_environment_end\*\//g,
+          replacement: '/*raven_environment_start*/\''+env+'\'/*raven_environment_end*/'
+        }
+      ]
+
+    }))
+    .pipe(rename('main.html'))
+    .pipe(gulp.dest('./www/',{overwrite:true}))
+});
+
 gulp.task('generate-constants', function () {
 
-
+console.log();
+  console.log(env == environments.dev);
   gulp.src(paths.constants.template)
     .pipe(replace_task({
       patterns: [{
@@ -111,9 +142,6 @@ gulp.task('generate-constants', function () {
       }, {
         match: 'FAKE_LOGIN',
         replacement: constants[env]['FAKE_LOGIN']
-      }, {
-        match: 'FAKE_DEVICE_ID',
-        replacement: constants[env]['FAKE_DEVICE_ID']
       },{
         match: 'FAKE_DEVICE',
         replacement: constants[env]['FAKE_DEVICE']
@@ -142,6 +170,10 @@ gulp.task('generate-constants', function () {
           match: 'PROFILES_DB_SERVER',
           replacement: constants[env]['PROFILES_DB_SERVER']
         },
+        {
+          match: 'FAKE_ID_DEVICE',
+          replacement: fake_id_device
+        },
          {
         match: 'CONTENT_TEST',
         replacement: constants[env]['CONTENT_TEST']
@@ -154,9 +186,6 @@ gulp.task('generate-constants', function () {
 });
 
 gulp.task('get-version',function(){
-  var xml       = file.readFileSync('./config.xml');
-  var content         = cheerio.load(xml, { xmlMode: true });
-  app_version   = content('widget')[0].attribs.version;
 
 });
 
@@ -211,7 +240,7 @@ gulp.task('html', function () {
             standalone: true,
             moduleSystem: 'IIFE'
           }))
-          .pipe(gulp.dest('./www/templates/'))
+          .pipe(gulp.dest('./www/build/'))
 
 
 

@@ -41,7 +41,9 @@
     'analytics',
     '$q',
     'queue',
-    'content'
+    'content',
+    '$cordovaLocalNotification',
+    'notification'
 ];
 
   function mapController(
@@ -71,18 +73,22 @@
         analytics,
         $q,
         queue,
-        content
+        content,
+        $cordovaLocalNotification,
+        notification
     ) {
     $scope.audio = audio;
     $scope.settings = settings;
     var temp = JSON.parse(localStorage.getItem('profile')).data.profile;
     temp.name = temp.first_name + ' ' + temp.last_name;
+    
     $scope.settings.user = temp
     $scope.orientation = orientation;
     $scope.activatedLesson = $stateParams.activatedLesson;
     $scope.progress = localStorage.getItem('progress');
     var mapCtrl = this;
     mapCtrl.rootScope = $rootScope;
+    $log.debug("map ctrl scope",$scope.mediaSyncStatus)
     var lessonList = CONSTANT.LOCK ? lessonLocked.lockedLesson : lessons;
     mapCtrl.totalStars = CONSTANT.LOCK ? lessonLocked.total_star : 0;
     $log.debug("Stars",mapCtrl.totalStars)
@@ -129,7 +135,12 @@
         "reading" : "orange"
     }
 
-
+    // notification.createDb();
+    // notification.init();
+    // notification.defineTypes();
+    // notification.dbDestroy();
+    // notification.smartContentSet();
+    // $log.debug("DB LOADING",notification.db.load());
     $scope.$on('pageRegion', mapCtrl.setLessonRange )
     // $scope.$on('nextRegion', mapCtrl.setLessonRange )
     function setLessonRange(event, regionPage, action, regionLength){
@@ -158,6 +169,8 @@
         //
     }
     // end : port node
+
+
 
 
     /**
@@ -245,15 +258,16 @@
       })
       .then(function(lesson){
           lessonutils.setLocalLesson(JSON.stringify(lesson))
-      }).catch(function (error) {
-          $log.debug('hutiya',error)
+      }).catch(function (e) {
         $ionicLoading.hide()
+        $log.debug("We need to check",e)
+        var message = "No internet conection found";
+        if(e.message === 'no-media'){
+          message = "Missing media file";
+        }
         $ionicPopup.alert({
           title: 'Please try again',
-          template: "No internet conection found"
-        }).then(function(){
-          $ionicLoading.show()
-          location.reload()
+          template: message
         })
       });
 

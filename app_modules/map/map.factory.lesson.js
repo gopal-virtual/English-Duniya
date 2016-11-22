@@ -49,10 +49,10 @@
       angular.forEach(lessons, function(value, key) {
         var total_score = 0;
         var obtained_score = 0;
-        $log.debug("Iterating",value)
+        $log.debug("Iterating",value,value.node.playlist_index,value.node.id)
         promises.push(
         User.scores.getScoreOfResource(value.node.parent, value.node.id,User.getActiveProfileSync()._id, value.node.playlist_index).then(function(score) {
-          $log.debug("SCORE",score)
+          $log.debug("Iterating SCORE",score)
           // setLock(key, lessons[key], false);
           if (score) {
               // need score for both video and assessment

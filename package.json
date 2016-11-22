@@ -35,6 +35,7 @@
     "gulp-strip-debug": "^1.1.0",
     "gulp-uglify": "^1.5.3",
     "gulp-util": "^2.2.14",
+    "jsonfile": "^2.4.0",
     "node-bourbon": "^4.2.8",
     "pouchdb": "^5.4.5",
     "pouchdb-server": "^1.2.0",
@@ -47,6 +48,12 @@
     "yargs": "^4.8.1"
   },
   "cordovaPlugins": [
+    {
+      "variables": {
+        "SENDER_ID": "8255413708"
+      },
+      "locator": "phonegap-plugin-push"
+    },
     "cordova-plugin-device",
     "cordova-plugin-console",
     "cordova-plugin-whitelist",

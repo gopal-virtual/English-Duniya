@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+  <meta http-equiv="Content-Security-Policy">
+  <title>English Dunyia</title>
+
+  <!-- <link href="lib/ionic/css/ionic.css" rel="stylesheet"> -->
+  <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
+    -->
+
+  <!-- <link href="css/style.css" rel="stylesheet"> -->
+  <link href="css/ionic.app.min.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+  <link href="lib/owl-carousel/assets/owl.carousel.css" rel="stylesheet">
+  <link href="lib/nz-tour/dist/nz-tour.css" rel="stylesheet">
+
+  <!-- cordova script (this will be a 404 during development) -->
+  <script src="cordova.js"></script>
+
+  <!-- libraries -->
+  <script src="lib/jquery/dist/jquery.min.js"></script>
+  <script src="lib/jquery-ui/jquery-ui.js"></script>
+  <script src="lib/jquery-touch-punch/touch-punch.min.js"></script>
+  <script src="lib/underscore/underscore.js"></script>
+  <script src="lib/owl-carousel/owl.carousel.min.js"></script>
+  <script src="lib/ionic/js/ionic.bundle.js"></script>
+  <script src="lib/angular-ui-sortable/sortable.js"></script>
+  <script src="lib/angular-message/angular-message.min.js"></script>
+  <script src="lib/angular-cookies/angular.cookies.min.js"></script>
+  <script src="lib/phaser/phaser.js"></script>
+  <script src="lib/phaser-kinetic-scrolling-plugin/dist/phaser-kinetic-scrolling-plugin.min.js"></script>
+  <script src="lib/ngCordova/dist/ng-cordova.js"></script>
+  <script src="lib/ng-cordova-oauth/dist/ng-cordova-oauth.min.js"></script>
+  <script src="lib/restangular/dist/restangular.js"></script>
+  <script src="lib/videogular/videogular.js"></script>
+  <script src="lib/videogular-controls/vg-controls.js"></script>
+  <script src="lib/videogular-buffering/vg-buffering.js"></script>
+  <script src="lib/videogular-overlay-play/vg-overlay-play.js"></script>
+  <script src="lib/ionic-native-transitions/dist/ionic-native-transitions.js"></script>
+  <script src="lib/angular-inview/angular-inview.js"></script>
+  <script src="lib/angular-scroll/angular-scroll.min.js"></script>
+  <script src="lib/pouchdb/dist/pouchdb.js"></script>
+  <script src="lib/angular-pouchdb/angular-pouchdb.js"></script>
+  <script src="lib/pouchdb-load/dist/pouchdb.load.js"></script>
+  <script src="lib/ionic-ion-imageCacheFactory/ionic.ion.imagecachefactory.js"></script>
+  <script src="lib/angular-resource/angular-resource.min.js"></script>
+  <script src="lib/angular-cached-resource/angular-cached-resource.min.js"></script>
+  <script src="lib/nz-tour/dist/nz-tour.js"></script>
+  <script src="lib/angular-audio/app/angular.audio.js"></script>
+  <script src="lib/progressbar.js/dist/progressbar.min.js"></script>
+  <script src="lib/raven-js/dist/raven.min.js"></script>
+  <script src="lib/raven-js/dist/plugins/angular.min.js"></script>
+  <script>
+
+    Raven
+      .config('http://d52f1916c41a41e9b6506dddf7e805fa@zsentry.zaya.in/4',{
+        release: '@@APP_VERSION',
+        environment: '@@APP_ENVIRONMENT'
+      })
+      .addPlugin(Raven.Plugins.Angular)
+      .install();
+  </script>
+  <!-- your app's js -->
+  <script src="build/mobile.app.js"></script>
+
+
+</head>
+
+<body ng-app="zaya">
+  <ion-nav-view></ion-nav-view>
+  <audio id="audioplayer">
+    <source id="audioSource" type="audio/mpeg">
+  </audio>
+</body>
+
+</html>

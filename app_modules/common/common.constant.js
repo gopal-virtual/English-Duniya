@@ -9,15 +9,21 @@
       'VERSION': '0.1.8'
       },
       'LOCK': true,
+<<<<<<< HEAD
       'FAKE_LOGIN': true,
       'FAKE_DEVICE_ID': 'a123chrome',
       'FAKE_DEVICE': true,
       'CONTENT_TEST':true,
+=======
+      'FAKE_LOGIN': false,
+      'FAKE_ID_DEVICE': 'micromaxtest3',
+      'FAKE_DEVICE': false,
+>>>>>>> 30645b66210364db2aafb7d2df31c388a46f6bdf
       'DEBUG' : true,
       'BACKEND_SERVICE_DOMAIN': 'https://cc-test.zaya.in/',
       'RESOURCE_SERVER': 'https://cc-test.zaya.in',
-      'LESSONS_DB_SERVER': 'http://52.187.70.243:5984/lessonsdb',
-      'PROFILES_DB_SERVER': 'http://zaya-couch:zayaayaz1234@52.187.70.243:5984/device',
+      'LESSONS_DB_SERVER': 'https://ci-couch.zaya.in/lessonsdb',
+      'PROFILES_DB_SERVER': 'https://ci-couch.zaya.in/device',
       'LESSON_DB_VERSION': 'na',
       'ANALYTICS' : true,
       'QUESTION' : {
@@ -41,6 +47,9 @@
       },
       'VIEW': '.view.html',
       'CONFIG': {
+        'NOTIFICATION' : {
+          'SENDERID' : 150596025418
+        },
         'AUTH': {
           'GOOGLEPLUS': {
             'scopes': 'email profile',

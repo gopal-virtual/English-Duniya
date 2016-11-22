@@ -10,7 +10,7 @@
       },
       'LOCK': @@LOCK,
       'FAKE_LOGIN': @@FAKE_LOGIN,
-      'FAKE_DEVICE_ID': '@@FAKE_DEVICE_ID',
+      'FAKE_ID_DEVICE': '@@FAKE_ID_DEVICE',
       'FAKE_DEVICE': @@FAKE_DEVICE,
       'CONTENT_TEST':@@CONTENT_TEST,
       'DEBUG' : @@DEBUG,
@@ -41,6 +41,9 @@
       },
       'VIEW': '.view.html',
       'CONFIG': {
+        'NOTIFICATION' : {
+          'SENDERID' : 150596025418
+        },
         'AUTH': {
           'GOOGLEPLUS': {
             'scopes': 'email profile',
