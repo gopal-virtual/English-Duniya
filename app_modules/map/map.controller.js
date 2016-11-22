@@ -81,7 +81,7 @@
     $scope.settings = settings;
     var temp = JSON.parse(localStorage.getItem('profile')).data.profile;
     temp.name = temp.first_name + ' ' + temp.last_name;
-    
+
     $scope.settings.user = temp
     $scope.orientation = orientation;
     $scope.activatedLesson = $stateParams.activatedLesson;
@@ -230,6 +230,7 @@
         $log.debug("content test lessons",mapCtrl.lessons)
     }
     function emitNode(resource) {
+      $log.debug("Opening node",resource)
         $scope.$emit('openNode', resource)
     }
     $scope.$on('openNode', function(event, node) {
