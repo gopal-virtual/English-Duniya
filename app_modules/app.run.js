@@ -36,44 +36,8 @@
     }, 510)
     //$http.defaults.headers.common['Access-Control-Request-Headers'] = 'accept, auth-token, content-type, xsrfcookiename';
     $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
-
-
-      //if not authenticated, redirect to login page
-      // if (!Auth.isAuthorised() && toState.name != 'auth.signin' && toState.name != 'auth.signup' && toState.name != 'auth.forgot') {
-      //   ;
-      //   event.preventDefault();
-      //   $state.go('auth.signup');
-      // }
-      //   if (!Auth.isAuthorised() && network.isOnline() && toState.name != 'auth.autologin') {
-      //     event.preventDefault();
-      //     $state.go('auth.autologin');
-      //   }
-      //   if (!Auth.isAuthorised() && !network.isOnline() && toState.name != 'user.nointernet') {
-      //     event.preventDefault();
-      //     $state.go('user.nointernet');
-      //   }
-      // if authenticated but not verified clear localstorage and redirect to login
-      //   if (Auth.isAuthorised() && !Auth.isVerified() && toState.name != 'auth.verify.phone' && toState.name != 'auth.forgot_verify_otp' && toState.name != 'auth.change_password') {
-      //     ;
-      //     event.preventDefault();
-      //     Auth.cleanLocalStorage();
-      //     $state.go('auth.signup');
-      //   }
-      //if authenticated and verified but has no profile, redirect to user.personalise
-      // if (Auth.isAuthorised() && !Auth.hasProfile() && (toState.name != 'user.personalise')) {
-      //   event.preventDefault();
-      //   $state.go('user.personalise');
-      // }
-      //if authenticated, verified and has profile, redirect to userpage
-
-      // if (Auth.isAuthorised() && Auth.hasProfile() && (toState.name == 'auth.signin' || toState.name == 'auth.signup' || toState.name == 'intro' || toState.name == 'auth.verify.phone' || toState.name == 'auth.forgot' || toState.name == 'auth.change_password' || toState.name == 'auth.forgot_verify_otp' || toState.name == 'user.personalise')) {
-      //   event.preventDefault();
-      //   $state.go('map.navigate');
-      // }
-      // block access to quiz summary page if there is no quiz data
-//
       if (localStorage.version !== '0.1.8') {
-        $log.debug("Local storage !== 0.1.8")
+        $log.debug("Local storage !== 0.1.8");
         notification.db.load();
         new PouchDB('lessonsDB').erase();
         localStorage.setItem('version', '0.1.8');
@@ -83,11 +47,8 @@
       }
       $log.debug(toState.name !== 'user.personalise', !User.getActiveProfileSync());
 
-      }
-      $log.debug(toState.name !== 'user.personalise',!User.getActiveProfileSync());
 
 
-      $log.debug(toState.name !== 'user.personalise',!User.getActiveProfileSync());
       if (toState.name == 'user.personalise' && !User.getActiveProfileSync() && localStorage.getItem('first_time') == undefined) {
         event.preventDefault();
         $log.debug("Ionic loading show with hide on state change");
@@ -167,19 +128,8 @@
         $state.go('map.navigate');
       }
 
-      // if (toState.name == 'auth.verify.phone') {
-      // $ionicPlatform.ready(function() {
-      //   if (SMS) SMS.startWatch(function() {
-      //   }, function() {
-      //   });
-      // })
-
-      // }
     });
     $ionicPlatform.ready(function () {
-//Rudra's notification
-//       notification.db.replicate();
-
       if (User.getActiveProfileSync()) {
         $log.debug("CHECK 2")
         notification.online.set();

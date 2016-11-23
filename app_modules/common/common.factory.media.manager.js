@@ -102,53 +102,59 @@
     function downloadIfNotExists(url) {
       var d = $q.defer();
       $log.debug("URL downloadIfNotExists",url)
-      var filename = mediaManager.getFileNameFromURl(url);
-      var target = cordova.file.dataDirectory  + filename;
-      mediaManager.isBundled(filename).then(function (result) {
-        if (result) {
-          d.resolve('bundled/' + filename);
-        } else if (window.cordova) {
-          $log.debug("checking",filename);
-          $cordovaFile.checkFile(cordova.file.dataDirectory,   filename)
-            .then(function (result) {
-              $log.debug("downloaded file found",+ filename,target);
-              d.resolve(target);
-            })
-            .catch(function (e) {
-              if (e.message === 'NOT_FOUND_ERR') {
-                if (!network.isOnline()) {
+      if(typeof cordova != 'undefined') {
+
+        var filename = mediaManager.getFileNameFromURl(url);
+        var target = cordova.file.dataDirectory + filename;
+        mediaManager.isBundled(filename).then(function (result) {
+          if (result) {
+            d.resolve('bundled/' + filename);
+          } else if (window.cordova) {
+            $log.debug("checking", filename);
+            $cordovaFile.checkFile(cordova.file.dataDirectory, filename)
+              .then(function (result) {
+                $log.debug("downloaded file found", +filename, target);
+                d.resolve(target);
+              })
+              .catch(function (e) {
+                if (e.message === 'NOT_FOUND_ERR') {
+                  if (!network.isOnline()) {
+                    d.reject({
+                      "error": true,
+                      "message": "offline"
+                    });
+                  } else {
+                    $cordovaFileTransfer.download(CONSTANT.RESOURCE_SERVER + url, target)
+                      .then(function (result) {
+                        d.resolve(target);
+                      }, function (err) {
+                        $log.debug("E1", err);
+                        d.reject({
+                          "error": true,
+                          "message": "no-media"
+                        });
+                      }, function (progress) {
+                      });
+                  }
+                } else {
+                  $log.debug("E2", e);
+
                   d.reject({
                     "error": true,
-                    "message": "offline"
+                    "message": "no-media"
                   });
-                } else {
-                  $cordovaFileTransfer.download(CONSTANT.RESOURCE_SERVER+url, target)
-                    .then(function (result) {
-                      d.resolve(target);
-                    }, function (err) {
-                      $log.debug("E1",err);
-                      d.reject({
-                        "error": true,
-                        "message": "no-media"
-                      });
-                    }, function (progress) {
-                    });
                 }
-              } else {
-                $log.debug("E2",e);
+              })
+          } else {
+            $log.debug("Resolving url 3");
+            d.resolve(url);
+          }
+        });
+      }else{
+        $log.debug("Resolving url 3",CONSTANT.RESOURCE_SERVER +url);
+        d.resolve(CONSTANT.RESOURCE_SERVER +url);
 
-                d.reject({
-                  "error": true,
-                  "message": "no-media"
-                });
-              }
-            })
-        } else {
-          $log.debug("Resolving url 3");
-          d.resolve(url);
-        }
-      });
-
+      }
       return d.promise;
 
     }
