@@ -10,15 +10,9 @@
       },
       'BUNDLED': false,
       'LOCK': true,
-<<<<<<< HEAD
       'FAKE_LOGIN': true,
       'FAKE_ID_DEVICE': 'micromaxtest3',
       'FAKE_DEVICE': true,
-=======
-      'FAKE_LOGIN': false,
-      'FAKE_ID_DEVICE': 'micromaxtest3',
-      'FAKE_DEVICE': false,
->>>>>>> 30645b66210364db2aafb7d2df31c388a46f6bdf
       'DEBUG' : true,
       'BACKEND_SERVICE_DOMAIN': 'https://cc-test.zaya.in/',
       'RESOURCE_SERVER': 'https://cc-test.zaya.in',
