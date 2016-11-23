@@ -3,51 +3,34 @@
 
     angular
         .module('zaya-content')
-        .controller('vocabularyController', vocabularyController);
+        .controller('vocabularyCardController', vocabularyCardController);
 
-    vocabularyController.$inject = ['$state','audio','$timeout','$interval','$scope'];
+    vocabularyCardController.$inject = ['$state','audio','$timeout','$interval','$scope','vocab_data'];
 
     /* @ngInject */
-    function vocabularyController($state, audio, $timeout, $interval, $scope) {
-        var vocabCtrl = this;
-        vocabCtrl.prev = prev;
-        vocabCtrl.next = next;
-        vocabCtrl.submit = submit;
-        vocabCtrl.currentIndex = 0;
-        vocabCtrl.vocab_data = $state.current.data.vocab_data;
-        vocabCtrl.audio = audio;
-        vocabCtrl.playDelayed = playDelayed;
-        vocabCtrl.automateCard = automateCard
+    function vocabularyCardController($state, audio, $timeout, $interval, $scope, vocab_data) {
+        var vocabCardCtrl = this;
+        vocabCardCtrl.prev = prev;
+        vocabCardCtrl.next = next;
+        vocabCardCtrl.submit = submit;
+        vocabCardCtrl.currentIndex = 0;
+        vocabCardCtrl.playDelayed = playDelayed;
+        vocabCardCtrl.vocab_data = vocab_data;
+        vocabCardCtrl.audio = audio;
 
         function prev () {
-            vocabCtrl.currentIndex = (vocabCtrl.currentIndex > 0) ? --vocabCtrl.currentIndex : vocabCtrl.currentIndex;
+            vocabCardCtrl.currentIndex = (vocabCardCtrl.currentIndex > 0) ? --vocabCardCtrl.currentIndex : vocabCardCtrl.currentIndex;
         }
 
         function next () {
-            vocabCtrl.currentIndex = (vocabCtrl.currentIndex < vocabCtrl.vocab_data.objects.length - 1 ) ? ++vocabCtrl.currentIndex : vocabCtrl.currentIndex;
+            vocabCardCtrl.currentIndex = (vocabCardCtrl.currentIndex < vocabCardCtrl.vocab_data.objects.length - 1 ) ? ++vocabCardCtrl.currentIndex : vocabCardCtrl.currentIndex;
         }
 
         function playDelayed (url) {
             $timeout(function(){
-                vocabCtrl.audio.player.play(url)
+                vocabCardCtrl.audio.player.play(url)
             },100)
         }
-
-        function automateCard(index) {
-            $interval(function(){
-                ++vocabCtrl.currentIndex;
-                $scope.$emit('changeCard')
-            },2000,vocabCtrl.vocab_data.objects.length - 1 - vocabCtrl.currentIndex)
-        }
-
-        $scope.$on('changeCard', function(){
-            $timeout(function(){
-                // vocabCtrl.audio.player.play(vocabCtrl.vocab_data.objects[vocabCtrl.currentIndex].sound)
-            },200)
-        })
-
-
-        // automateCard(vocabCtrl.currentIndex);
 
         function submit () {}
 
