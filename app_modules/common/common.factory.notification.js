@@ -32,6 +32,8 @@
       set : set,
       smartContentSet : smartContentSet,
       cancelAll : cancelAll,
+      fetchDocById : fetchDocById,
+      getFromServer : getFromServer,
       db: {
         load : dbLoad,
         destroy : dbDestroy,
@@ -77,6 +79,25 @@
       return defer.promise;
     }
 
+    function fetchDocById(notifId){
+      $log.info("Fetching Doc By Id ...");
+      var db = new PouchDB('notificationDB');
+      var defer = $q.defer();
+      db.get('notif'+'-content-'+notifId).then(function(doc){
+        $log.debug("DOC",doc);
+        defer.resolve(doc);
+      }).catch(function(err){
+        if(err.status == 404){
+          $log.warn('Notification was not set. The doc named "notif'+'-content-'+notifId+'" was not found. Check the database perhaps')
+        }else{
+          $log.error("Can't fetch notification from pouch\n",err);
+        }
+        defer.reject(err);
+      })
+      return defer.promise;
+
+    }
+
     function set(type){
       $log.info("Setting Notification ...")
       // content.getActiveLessonId().then(function(lessonId){
@@ -111,8 +132,12 @@
       })
     }
 
-    function schedule(data){
+    function schedule(data,time){
       $log.info("Scheduling ...")
+      if(time){
+        var now = new Date().getTime();
+        data['at'] = new Date(now + time * 60000);
+      }
       data['icon'] = 'res://ic_stat_english_duniya';
       data['smallIcon'] = 'res://icon';
       // data['icon'] = "http://www.company-name-generator.com/blog/wp-content/uploads/2010/10/BMW_logo_small.png"
@@ -212,6 +237,32 @@
       });
     }
 
+    function getFromServer(data){
+      $log.debug("Inside online get")
+      // var defer = $q.defer();
+
+      return $http({
+        method: 'GET',
+        url: 'https://cc-test.zaya.in/api/v1/devices/?dev_id='+data.dev_id
+        // data: {dev_id: data.dev_id}
+      });
+
+      // .then(function successCallback(response) {
+      //   $log.debug("We got this", response)
+      //   defer.resolve(response);
+      // }, function errorCallback(response) {
+      //   $log.error("We couldn't get", response)
+      //   if (response.status == 404) {
+      //     defer.resolve(false);
+      //     $log.warn("No worries, we kust register your device")
+      //   }else{
+      //     defer.reject(response);
+      //   }
+      // });
+
+      // return defer.promise;
+    }
+
     function onlineRegister(data){
       $log.debug("Inside online Register")
       $http({
@@ -219,9 +270,12 @@
         url: 'https://cc-test.zaya.in/api/v1/devices/',
         data: {dev_id: data.dev_id, dev_type: data.dev_type, reg_id: data.reg_id}
       }).then(function successCallback(response) {
-        $log.debug("successfully posted", response)
+        $log.debug("successfully posted", response.data[0])
       }, function errorCallback(response) {
-        $log.debug("not successfully posted", response)
+        $log.error("Not successfully posted", response)
+        if (response.status == 400) {
+          $log.warn("This is totally okay. The user is already registered for notification.")
+        }
       });
     }
 
@@ -237,7 +291,7 @@
     function onlineSet() {
       $log.debug("APP RUN USER RGISTERD");
       try{
-        localStorage.myPush = ''; // I use a localStorage variable to persist the token
+        // localStorage.myPush = ''; // I use a localStorage variable to persist the token
         $cordovaPushV5.initialize(  // important to initialize with the multidevice structure !!
           {
             android: {
@@ -247,31 +301,76 @@
         ).then(function (result) {
           $cordovaPushV5.onNotification();
           $cordovaPushV5.onError();
-          if (localStorage.pushKey) {
-            $log.debug("notifId ",localStorage.pushKey);
-          }else{
-            $cordovaPushV5.register().then(function (resultreg) {
-              localStorage.myPush = resultreg;
-              $log.debug("this is supposed to go to server");
-              $log.debug({
-                dev_id: device.uuid,
-                reg_id: resultreg
-              });
-              localStorage.setItem('pushKey',resultreg);
-              $log.debug(device,"Check this please");
-              onlineRegister({
-                dev_id: device.uuid,
-                dev_type: "ANDROID",
-                reg_id: resultreg
-              });
+          // if (localStorage.pushKey) {
+            // $log.debug("notifId ",localStorage.pushKey);
+            // onlineRegister({
+            //     dev_id: device.uuid,
+            //     dev_type: "ANDROID",
+            //     reg_id: resultreg
+            // });
+          // }else{
 
-              $log.debug('Sending to server',resultreg);
-              // SEND THE TOKEN TO THE SERVER, best associated with your device id and user
-            }, function (err) {
-              $log.debug("Some error occured",err);
-              // handle error
+            getFromServer({
+              dev_id: device.uuid
+            }).then(function(response) {
+              if (!response.data[0]) {
+                $log.warn("You aren\'t registered with the server")
+                $log.debug("we will register you soon. But first let\'s get your token from FCM server")
+                if(localStorage.pushKey){
+                  $log.debug("Looks like your app already has a FCM token in the localstorage. Let\'s register you on the server with it")
+                  onlineRegister({
+                    dev_id: device.uuid,
+                    dev_type: "ANDROID",
+                    reg_id: localStorage.pushKey
+                  });
+                }else{
+                  $cordovaPushV5.register().then(function (resultreg) {
+                    $log.debug("We got your token from FCM server. \nToken: "+resultreg+"\n Registering you with the server now")
+                    onlineRegister({
+                      dev_id: device.uuid,
+                      dev_type: "ANDROID",
+                      reg_id: resultreg
+                    });   
+                    localStorage.setItem('pushKey',resultreg);
+                  });
+                }
+                // onlineRegister({
+                //   dev_id: device.uuid,
+                //   dev_type: "ANDROID",
+                //   reg_id: resultreg
+                // });
+              }else{
+                $log.warn("You are already registered with notificaton server\n", response)
+              }
+            }, function(response) {
+              $log.error("We couldn't get", response)
             });
-          }
+
+            // $cordovaPushV5.register().then(function (resultreg) {
+            //   // localStorage.myPush = resultreg;
+            //   // $log.debug("this is supposed to go to server");
+            //   // $log.debug({
+            //   //   dev_id: device.uuid,
+            //   //   reg_id: resultreg
+            //   // });
+            //   localStorage.setItem('pushKey',resultreg);
+            //   // $log.debug(device,"Check this please");
+            //   onlineRegister({
+            //     dev_id: device.uuid,
+            //     dev_type: "ANDROID",
+            //     reg_id: resultreg
+            //   });
+
+            //   $log.debug('Sending to server',resultreg);
+            //   // SEND THE TOKEN TO THE SERVER, best associated with your device id and user
+            // }, function (err) {
+            //   $log.debug("Some error occured",err);
+            //   // handle error
+            // });
+
+
+
+          // }
         });
 
 
