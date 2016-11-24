@@ -124,7 +124,8 @@
     $log.debug("replicating lessondb",CONSTANT.LESSONS_DB_SERVER)
     return lessonDB.replicate.from(CONSTANT.LESSONS_DB_SERVER,{
       live: true,
-      retry: true
+      retry: true,
+      heartbeat: false
     }).on('paused',function (err) {
       $log.debug("Paused in lessondb replicate",err)
     }).on('change',function (a) {
