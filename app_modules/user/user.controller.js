@@ -155,11 +155,14 @@
           return content.createLessonDBIfNotExists()
         })
         .then(function () {
+          $log.debug("CREATING USER")
           localStorage.setItem('demo_flag', 1);
           localStorage.setItem('diagnosis_flag', false);
-          notification.online.set()
           $state.go('litmus_start');
+
           // $state.go('quiz.questions', {'type':'litmus','id':'litmus_question'});
+          $log.debug("CHECK 4")
+          notification.online.set();
         })
         .catch(function (error) {
           userCtrl.showError('Could not make your profile', error || 'Please try again');

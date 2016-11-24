@@ -72,8 +72,8 @@
 
               // ;
               // $stateParams.quiz.objects[0].node.id == 'demo' ? $stateParams.quiz.objects.shift(data.demo_question) :false;
-              var currentIndex = $stateParams.quiz.objects.length;
-              var temporaryValue, randomIndex;
+            //   var currentIndex = $stateParams.quiz.objects.length;
+            //   var temporaryValue, randomIndex;
               // shuffling of questions
               // while (0 !== currentIndex) {
               //   randomIndex = Math.floor(Math.random() * currentIndex);
@@ -82,7 +82,7 @@
               //   $stateParams.quiz.objects[currentIndex] = $stateParams.quiz.objects[randomIndex];
               //   $stateParams.quiz.objects[randomIndex] = temporaryValue;
               // }
-              User.demo.isShown(5) && $stateParams.quiz.objects.unshift(content.demo_question);
+              User.demo.isShown(5) && CONSTANT.QUESTION_DEMO && $stateParams.quiz.objects.unshift(content.demo_question);
               return content.getAssessment($stateParams.quiz).then(function (response) {
                 return response;
               });
