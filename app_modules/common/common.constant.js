@@ -20,6 +20,8 @@
       'PROFILES_DB_SERVER': 'https://ci-couch.zaya.in/device',
       'LESSON_DB_VERSION': 'na',
       'ANALYTICS' : true,
+      'GRADE' : [1,2,3],
+      'QUESTION_DEMO' : false,
       'QUESTION' : {
         'DEMO' : '5ecf8ad5-4c3a-4a67-9758-dd7e3993c4d8'
       },

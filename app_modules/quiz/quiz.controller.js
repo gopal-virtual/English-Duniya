@@ -997,18 +997,18 @@
       if($state.current.name == 'quiz.questions'){
         $scope.nodeRibbonFlag = false;
         $scope.nodeRibbon.hide().then(function(){
-          if($state.is('quiz.questions') && User.demo.isShown(5)){
+
+          if($state.is('quiz.questions') && User.demo.isShown(5) && CONSTANT.QUESTION_DEMO){
             $timeout(function(){
-              // quizCtrl.noPauseFlag;
+              quizCtrl.noPauseFlag = true;
               if($stateParams.type!=='litmus'){
                 audio.player.play('sound/demo-quiz-1.mp3');
-                nzTour.start($scope.tour);
+                nzTour.start($scope.tour); // commenting nztour
                 User.demo.setStep(5);
                 $timeout(function(){
                   if(nzTour.current.step === 0){
                     tourNextStep();
                   }
-                  // log.debug(nzTour.current)
                 },3500)
               }
 
@@ -1021,9 +1021,6 @@
             $log.debug("Unsetting noPauseFlag");
             quizCtrl.playInstruction(0);
 
-            //YOU ARE HERE
-            // $ionicPlatform.registerBackButtonAction(function(event) {
-            // }, 101);
           }
 
         });

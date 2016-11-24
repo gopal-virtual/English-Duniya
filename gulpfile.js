@@ -23,11 +23,13 @@ var cheerio = require('cheerio');
 var runSequence = require('run-sequence');
 var shell = require('gulp-shell');
 var request = require('sync-request');
+var grades = require('./grades');
 var paths = {
   sass: [
     './scss/**/*.scss',
     './scss/*.scss'
   ],
+  diagnosis : 'www/data/diagnosisQJSON.json',
   script: [
     './www/templates/templates.js',
     './app_modules/common/common.module.js',
@@ -128,9 +130,6 @@ gulp.task('make-main',function(){
 });
 
 gulp.task('generate-constants', function () {
-
-  console.log();
-  console.log(env == environments.dev);
   gulp.src(paths.constants.template)
     .pipe(replace_task({
       patterns: [{
@@ -178,6 +177,12 @@ gulp.task('generate-constants', function () {
       }, {
         match: 'DIAGNOSIS_MEDIA',
         replacement: JSON.stringify(diagnosis_media)
+      },{
+        match: 'GRADE',
+        replacement: grades.getGrades(paths.diagnosis)
+      },{
+        match: 'QUESTION_DEMO',
+        replacement: constants[env]['QUESTION_DEMO']
         }
       ]
     }))
