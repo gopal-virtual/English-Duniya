@@ -22,7 +22,7 @@
         right: 0;
         margin-left: auto;
         margin-right: auto;
-        top: 10vh;
+        top: 7vh;
         letter-spacing: -0.4vw;
     }
     .flash-text-offset{
@@ -116,16 +116,16 @@
         transform: scale3d(1, 1, 1);
       }
     }
-    .vh-100 {
-        height : 100vh;
+    .vh-95 {
+        height : 95vh;
     }
 </style>
 <ion-view style="background-color:{{vocabCardCtrl.vocab_data[vocabCardCtrl.currentIndex].node.type.background_color}}">
     <ion-content>
-        <div class="row vh-100">
+        <div class="row vh-95">
             <div class="col col-20 center align-middle">
                 <!-- ng-disabled="!vocabCardCtrl.audio.player.isPaused()" -->
-                <button ng-show="vocabCardCtrl.currentIndex" class="sbtn sbtn-arrow" ng-click="vocabCardCtrl.prev();vocabCardCtrl.playDelayed(vocabCardCtrl.vocab_data[vocabCardCtrl.currentIndex].node.type.sound)"></button>
+                <button ng-disabled="!vocabCardCtrl.audio.player.isPaused()" ng-show="vocabCardCtrl.currentIndex" class="sbtn sbtn-arrow" ng-click="vocabCardCtrl.prev();vocabCardCtrl.playDelayed(vocabCardCtrl.vocab_data[vocabCardCtrl.currentIndex].node.type.sound)"></button>
             </div>
             <div class="col col-60 align-middle flash-body-card">
                 <div class="flash-card align-middle" ng-click="vocabCardCtrl.playDelayed(card.node.type.sound)" ng-repeat="card in vocabCardCtrl.vocab_data" ng-show="vocabCardCtrl.currentIndex == $index" style="background-color : {{card.node.type.foreground_color}}">
@@ -142,8 +142,11 @@
             </div>
             <div class="col col-20 center align-middle">
                 <!-- ng-disabled="!vocabCardCtrl.audio.player.isPaused()" -->
-                <button ng-hide="vocabCardCtrl.currentIndex==vocabCardCtrl.vocab_data.length-1" class="sbtn sbtn-arrow sbtn-flipped" ng-click="vocabCardCtrl.next();vocabCardCtrl.playDelayed(vocabCardCtrl.vocab_data[vocabCardCtrl.currentIndex].node.type.sound)"></button>
+                <button ng-disabled="!vocabCardCtrl.audio.player.isPaused()" ng-hide="vocabCardCtrl.currentIndex==vocabCardCtrl.vocab_data.length-1" class="sbtn sbtn-arrow sbtn-flipped" ng-click="vocabCardCtrl.next();vocabCardCtrl.playDelayed(vocabCardCtrl.vocab_data[vocabCardCtrl.currentIndex].node.type.sound)"></button>
             </div>
+        </div>
+        <div class="row align-middle" ng-show="vocabCardCtrl.currentIndex==vocabCardCtrl.vocab_data.length-1">
+            <button class="button button-default" ui-sref="map.navigate">Next</button>
         </div>
 
     </ion-content>
