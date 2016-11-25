@@ -20,6 +20,8 @@
       'PROFILES_DB_SERVER': '@@PROFILES_DB_SERVER',
       'LESSON_DB_VERSION': '@@LESSON_DB_VERSION',
       'ANALYTICS' : @@ANALYTICS,
+      'GRADE' : @@GRADE,
+      'QUESTION_DEMO' : @@QUESTION_DEMO,
       'QUESTION' : {
         'DEMO' : '5ecf8ad5-4c3a-4a67-9758-dd7e3993c4d8'
       },

@@ -8,7 +8,8 @@
     "ANALYTICS": true,
     "PROFILES_DB_SERVER": "http://ed-couch.zaya.in/device",
     "LESSONS_DB_SERVER":"http://ed-couch.zaya.in/lessonsdb",
-    "DEBUG" : false
+    "DEBUG" : false,
+    "QUESTION_DEMO" : false
   },
   "TESTING": {
     "LOCK": true,
@@ -19,7 +20,8 @@
     "ANALYTICS": true,
     "PROFILES_DB_SERVER": "http://ci-couch.zaya.in/device",
     "LESSONS_DB_SERVER":"http://ci-couch.zaya.in/lessonsdb",
-    "DEBUG" : true
+    "DEBUG" : true,
+    "QUESTION_DEMO" : false
   },
   "DEVELOPMENT": {
     "LOCK": true,
@@ -29,8 +31,9 @@
     "BACKEND_SERVICE_DOMAIN": "https://cc-test.zaya.in/",
     "RESOURCE_SERVER": "https://cc-test.zaya.in",
     "ANALYTICS": true,
-    "PROFILES_DB_SERVER": "http://ci-couch.zaya.in/device",
-    "LESSONS_DB_SERVER":"http://ci-couch.zaya.in/lessonsdb",
-    "DEBUG" : true
+    "PROFILES_DB_SERVER": "https://ci-couch.zaya.in/device",
+    "LESSONS_DB_SERVER":"https://ci-couch.zaya.in/lessonsdb",
+    "DEBUG" : true,
+    "QUESTION_DEMO" : false
   }
 }

@@ -241,6 +241,7 @@
 
     });
     $ionicPlatform.on('resume', function () {
+      notification.cancelAll();
       $rootScope.$broadcast('appResume');
       $log.debug("Current state", $state.current)
       if ($state.current.name === 'content.video') {

@@ -31,3 +31,4 @@ bundled.zip
 media/*
 .fuse*
 app_modules/common/common.constant.js
+www/sound/temp/
