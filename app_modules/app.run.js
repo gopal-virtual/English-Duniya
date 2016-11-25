@@ -159,7 +159,7 @@
       // if (localStorage.profile && localStorage.profile._id) {
         Raven.setTagsContext({
           device_id: device.uuid,
-          profile: User.getActiveProfileSync()._id ?User.getActiveProfileSync()._id : 'na'
+          profile: User.getActiveProfileSync() && User.getActiveProfileSync()._id  ?User.getActiveProfileSync()._id : 'na'
         });
       // }
       Raven.captureException("Test Exception");
