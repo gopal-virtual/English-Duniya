@@ -104,7 +104,7 @@
 
     };
 
-    function playSound(url){
+    function playSound(url, callback){
       angular.element("#audioplayer")[0].onended = null;
       angular.element("#audioplayer")[0].pause();
       if(url){
@@ -112,11 +112,25 @@
         angular.element("#audioplayer")[0].load();
         angular.element("#audioplayer")[0].play();
       }
+      if(url && callback){
+          angular.element("#audioplayer")[0].onended = callback;
+      }
+
     }
-    function chain(sound1, sound2){
-        playSound(sound1)
-        angular.element("#audioplayer")[0].onended = function(){
-            playSound(sound2);
+    function chain(count, soundArr, callback){
+        angular.element("#audioplayer")[0].onended = null;
+        angular.element("#audioplayer")[0].pause();
+        angular.element("#audioSource")[0].src = soundArr[count];
+        angular.element("#audioplayer")[0].load();
+        angular.element("#audioplayer")[0].play();
+        if(soundArr[count + 1]){
+            angular.element("#audioplayer")[0].onended = function(){
+                chain(++count, soundArr, callback);
+            }
+        }
+        else{
+            if(callback)
+                angular.element("#audioplayer")[0].onended = callback;
         }
     }
     function resume(){

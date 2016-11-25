@@ -16,6 +16,7 @@
         vocabOverviewCtrl.playDelayed = playDelayed;
         vocabOverviewCtrl.automateCard = automateCard;
         vocabOverviewCtrl.CONSTANT = CONSTANT;
+        vocabOverviewCtrl.getSoundArr = getSoundArr;
 
         $log.debug('vocab state params',$stateParams)
 
@@ -25,36 +26,33 @@
             },100)
         }
 
-        function automateCard(index, sequence) {
-            if(vocabOverviewCtrl.currentIndex == -1){
-                ++vocabOverviewCtrl.currentIndex;
-                $scope.$emit('changeCard', vocabOverviewCtrl.vocab_data[vocabOverviewCtrl.currentIndex].node.type.sound)
-                $timeout(function(){
-                    automateCard(vocabOverviewCtrl.currentIndex);
-                },3000)
+        function getSoundArr (soundArr) {
+            var soundArrPath = [];
+            for (var i = 0; i < soundArr.length; i++) {
+                soundArrPath.push(CONSTANT.BACKEND_SERVICE_DOMAIN + soundArr[i].path)
             }
-            else{
-                $interval(function(){
-                    ++vocabOverviewCtrl.currentIndex;
-                    $scope.$emit('changeCard', vocabOverviewCtrl.vocab_data[vocabOverviewCtrl.currentIndex].node.type.sound)
-                    if(vocabOverviewCtrl.currentIndex == vocabOverviewCtrl.vocab_data.length - 1 ){
-                        $timeout(function(){
-                            $state.go('content.vocabulary.instruction',{})
-                        },2500)
-                    }
-                },5000,vocabOverviewCtrl.vocab_data.length - 1 - vocabOverviewCtrl.currentIndex)
-            }
+            return soundArrPath;
         }
 
-        $scope.$on('changeCard', function(event, sound){
-            $log.debug('sound',sound)
-            $timeout(function(){
-                vocabOverviewCtrl.audio.player.chain(CONSTANT.BACKEND_SERVICE_DOMAIN + sound[0].path,CONSTANT.BACKEND_SERVICE_DOMAIN + sound[1].path)
-            },200)
-        })
+        function automateCard() {
+            var sound = vocabOverviewCtrl.vocab_data[vocabOverviewCtrl.currentIndex].node.type.sound;
+            vocabOverviewCtrl.audio.player.chain(
+                0, getSoundArr(sound),
+                function(){
+                    if(vocabOverviewCtrl.currentIndex < vocabOverviewCtrl.vocab_data.length - 1){
+                        $timeout(function(){
+                            ++vocabOverviewCtrl.currentIndex;
+                            vocabOverviewCtrl.automateCard()
+                        },1000)
+                    }
+                    else{
+                        $state.go('content.vocabulary.instruction',{})
+                    }
+            })
+        }
 
-
-        automateCard(vocabOverviewCtrl.currentIndex);
+        ++vocabOverviewCtrl.currentIndex;
+        automateCard();
 
 
     }

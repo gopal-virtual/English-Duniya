@@ -36,17 +36,6 @@
           params : {
               vocab_data : null
           },
-        //   resolve : {
-        //       vocab_data : ['$log', 'Rest',function($log, Rest){
-        //         //   https://cc-test.zaya.in/api/v1/accounts/0429fb91-4f3c-47de-9adb-609996962188/lessons/a5be805c-8b2c-48dd-8efa-ad2588b03c99/
-        //           return Rest.one('accounts','0429fb91-4f3c-47de-9adb-609996962188').one('lessons','924d2945-2805-4361-8533-5162523d6780')
-        //           .get().then(function(response){
-        //               $log.debug('card', response.plain())
-        //               return response.plain().objects[1].objects;
-        //           })
-          //
-        //       }]
-        //   },
           views : {
               'state-content' : {
                   template : '<ion-nav-view name="state-vocab"></ion-nav-view>'
@@ -69,13 +58,12 @@
 
                       function playDelayed (url) {
                           $timeout(function(){
-                              audio.player.play(url)
+                              audio.player.play(url, function(){
+                                  $state.go('content.vocabulary.overview',{})
+                              })
                           },100)
                       }
                       vocabIntroCtrl.playDelayed(vocabIntroCtrl.vocab_data.node.parsed_sound)
-                      $timeout(function(){
-                          $state.go('content.vocabulary.overview',{})
-                      },10000)
                   }],
                   controllerAs : 'vocabIntroCtrl'
               }
@@ -120,13 +108,12 @@
 
                       function playDelayed (url) {
                           $timeout(function(){
-                              audio.player.play(url)
+                              audio.player.play(url, function(){
+                                  $state.go('content.vocabulary.card',{})
+                              })
                           },100)
                       }
                       vocabInstructionCtrl.playDelayed('sound/temp/now-its-your-turn.mp3')
-                      $timeout(function(){
-                          $state.go('content.vocabulary.card',{})
-                      },2500)
                   }],
                   controllerAs : 'vocabInstructionCtrl'
               }

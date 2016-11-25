@@ -18,6 +18,7 @@
         vocabCardCtrl.vocab_data = $stateParams.vocab_data.objects;
         vocabCardCtrl.audio = audio;
         vocabCardCtrl.CONSTANT = CONSTANT;
+        vocabCardCtrl.getSoundArr = getSoundArr;
 
         $log.debug('vocab lesson',vocabCardCtrl.vocab_data);
 
@@ -31,11 +32,20 @@
             vocabCardCtrl.currentIndex = (vocabCardCtrl.currentIndex < vocabCardCtrl.vocab_data.length - 1 ) ? ++vocabCardCtrl.currentIndex : vocabCardCtrl.currentIndex;
         }
 
+        function getSoundArr (soundArr) {
+            var soundArrPath = [];
+            for (var i = 0; i < soundArr.length; i++) {
+                soundArrPath.push(CONSTANT.BACKEND_SERVICE_DOMAIN + soundArr[i].path)
+            }
+            return soundArrPath;
+        }
         function playDelayed (sound) {
             $timeout(function(){
-                vocabCardCtrl.audio.player.chain(CONSTANT.BACKEND_SERVICE_DOMAIN + sound[0].path,CONSTANT.BACKEND_SERVICE_DOMAIN + sound[1].path)
+                vocabCardCtrl.audio.player.chain( 0, getSoundArr(sound) )
             },100)
         }
+
+        playDelayed(vocabCardCtrl.vocab_data[vocabCardCtrl.currentIndex].node.type.sound);
 
         function submit () {}
 
