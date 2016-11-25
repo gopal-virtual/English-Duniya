@@ -75,7 +75,7 @@
 
     function getPath(url) {
       var filename = mediaManager.getFileNameFromURl(url);
-      $log.debug("URL get path",url)
+      $log.debug("URL get path",url);
       var d = $q.defer();
       mediaManager.isBundled(filename).then(function (result) {
         if (result) {

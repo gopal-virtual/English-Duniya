@@ -11,7 +11,7 @@
       'BUNDLED': false,
       'LOCK': true,
       'FAKE_LOGIN': true,
-      'FAKE_ID_DEVICE': 'micromaxtest3',
+      'FAKE_ID_DEVICE': 'micromaxtest4',
       'FAKE_DEVICE': true,
       'DEBUG' : true,
       'BACKEND_SERVICE_DOMAIN': 'https://cc-test.zaya.in/',

@@ -5,9 +5,12 @@ var fs = require('fs');
 var source_folder = 'media/ell/';
 var target_folder = 'www/bundled/';
 var ncp = require('ncp').ncp;
-var getFileNameFromURl = function(url){
-  return url.split('/')[url.split('/').length-2]+'-'+url.split('/')[url.split('/').length-1];
-};
+function getFileNameFromURl(url) {
+  var a = url.split('/');
+  // a.splice(0,3);
+  return a.join('/').substr(1);
+  // return url.split('/')[url.split('/').length - 2] + '-' + url.split('/')[url.split('/').length - 1];
+}
 var json = [];
 var lessons = process.argv[2];
 var media = [];
@@ -150,7 +153,7 @@ fs.readFile('lesson.json', 'utf8', function(err, data) {
     var filename = getFileNameFromURl(media[i]);
     ncp(source_folder + media[i].split('/')[media[i].split('/').length-2] +'/'+  media[i].split('/').pop(), target_folder+filename,function(error){
       if(error){
-        // console.log("Error Occured",error)
+        console.log("Error Occured",error)
       }
     });
   }
