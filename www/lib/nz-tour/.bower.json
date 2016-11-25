@@ -1,10 +1,10 @@
 {
   "name": "nz-tour",
-  "version": "1.1.0",
+  "version": "1.2.1",
   "description": "Touring and on-boarding made simple for AngularJS",
   "main": [
-    "dist/nz-tour.min.js",
-    "dist/nz-tour.min.css"
+    "dist/nz-tour.js",
+    "dist/nz-tour.css"
   ],
   "license": "MIT",
   "ignore": [
@@ -20,7 +20,7 @@
     "bower_components"
   ],
   "dependencies": {
-    "angular": "~1.2.8"
+    "angular": "^1.2.8"
   },
   "homepage": "https://github.com/nozzle/nzTour",
   "authors": [
@@ -33,14 +33,13 @@
     "onboard",
     "intro"
   ],
-  "_release": "1.1.0",
+  "_release": "1.2.1",
   "_resolution": {
     "type": "version",
-    "tag": "v1.1.0",
-    "commit": "883df6af0987f4dc3f4c51e48c93c20cf7f02a7c"
+    "tag": "v1.2.1",
+    "commit": "3d904c3bf19f013d4653a5311fe5d8436c18de61"
   },
   "_source": "https://github.com/nozzle/nzTour.git",
   "_target": "^1.1.0",
-  "_originalSource": "nz-tour",
-  "_direct": true
+  "_originalSource": "nz-tour"
 }

@@ -263,7 +263,7 @@
               var promise;
       $log.debug(node.node.intro_sound,node)
               if(node.node.intro_sound){
-                promise = mediaManager.downloadIfNotExists(CONSTANT.RESOURCE_SERVER + node.node.intro_sound)
+                promise = mediaManager.downloadIfNotExists(node.node.intro_sound)
               } else {
                 promise = $q.resolve();
               }
