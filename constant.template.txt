@@ -1,6 +1,7 @@
 (function() {
   var ROOT = 'templates';
-
+  var DEFAULT_ERROR_MESSAGE = 'Some error occurred';
+  var DEFAULT_ERROR_TITLE = 'Please try again';
   angular
     .module('common')
     .constant('CONSTANT', {
@@ -95,6 +96,34 @@
           'NOT_ATTEMPTED': 3
         }
       },
-      'DIAGNOSIS_MEDIA' : @@DIAGNOSIS_MEDIA
+      'DIAGNOSIS_MEDIA' : @@DIAGNOSIS_MEDIA,
+      'ERROR_MESSAGES': {
+        'DEFAULT' : DEFAULT_ERROR_MESSAGE,
+        'DEFAULT_TITLE' : DEFAULT_ERROR_TITLE,
+        'OFFLINE' : {
+          'DEFAULT' : 'No internet connection found'
+        },
+        'CORDOVA_FILE_TRANSFER' : {
+          '1' : 'File not found',
+          '2' : DEFAULT_ERROR_MESSAGE,
+          '3' : DEFAULT_ERROR_MESSAGE,
+          '4' : DEFAULT_ERROR_MESSAGE,
+          '5' : DEFAULT_ERROR_MESSAGE
+        },
+        'CORDOVA_FILE_SYSTEM' : {
+          '1' : DEFAULT_ERROR_MESSAGE,
+          '2' :	DEFAULT_ERROR_MESSAGE,
+          '3' :	DEFAULT_ERROR_MESSAGE,
+          '4' :	DEFAULT_ERROR_MESSAGE,
+          '5' :	DEFAULT_ERROR_MESSAGE,
+          '6' :	DEFAULT_ERROR_MESSAGE,
+          '7'	: DEFAULT_ERROR_MESSAGE,
+          '8'	: DEFAULT_ERROR_MESSAGE,
+          '9'	: DEFAULT_ERROR_MESSAGE,
+          '10': DEFAULT_ERROR_MESSAGE,
+          '11': DEFAULT_ERROR_MESSAGE,
+          '12': DEFAULT_ERROR_MESSAGE
+        }
+        }
     })
 })();

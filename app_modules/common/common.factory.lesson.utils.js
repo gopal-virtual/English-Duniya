@@ -124,12 +124,12 @@
           // $ionicLoading.hide();
           // callback && callback(lesson);
         })
-        .catch(function(error) {
+        .catch(function(e) {
           // $ionicLoading.hide();
 
           $ionicPopup.alert({
-            title: 'Sorry',
-            template: 'You need to be online!'
+            title: CONSTANT.ERROR_MESSAGES.DEFAULT_TITLE,
+            template: e.message ? e.message : CONSTANT.ERROR_MESSAGES.DEFAULT
           });
         })
     }
@@ -251,13 +251,10 @@
             });
           }).catch(function(e) {
             $log.debug("We need to check",e)
-          var message = "No internet conection found";
-          if(e.message === 'no-media'){
-            message = "Missing media file";
-          }
+
             $ionicPopup.alert({
-                title: 'Please try again',
-                template: message
+                title: CONSTANT.ERROR_MESSAGES.DEFAULT_TITLE,
+                template: e.message ? e.message : CONSTANT.ERROR_MESSAGES.DEFAULT
               }).then(function() {
                 if (callback) {
 
@@ -304,14 +301,10 @@
               });
           })
           .catch(function(e) {
-            $log.debug("We need to check",e)
-            var message = "No internet conection found";
-            if(e.message === 'no-media'){
-              message = "Missing media file";
-            }
+
             $ionicPopup.alert({
-                title: 'Please try again',
-                template: message
+              title: CONSTANT.ERROR_MESSAGES.DEFAULT_TITLE,
+              template: e.message ? e.message : CONSTANT.ERROR_MESSAGES.DEFAULT
               }).then(function() {
                 if (callback) {
 

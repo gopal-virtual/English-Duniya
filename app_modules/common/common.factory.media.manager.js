@@ -121,7 +121,7 @@
                   if (!network.isOnline()) {
                     d.reject({
                       "error": true,
-                      "message": "offline"
+                      "message": CONSTANT.ERROR_MESSAGES['OFFLINE']['DEFAULT']
                     });
                   } else {
                     $cordovaFileTransfer.download(CONSTANT.RESOURCE_SERVER + url, target)
@@ -131,17 +131,16 @@
                         $log.debug("E1", err);
                         d.reject({
                           "error": true,
-                          "message": "no-media"
+                          "message": err.code? CONSTANT.ERROR_MESSAGES['CORDOVA_FILE_TRANSFER'][err.code]: CONSTANT.ERROR_MESSAGES['DEFAULT_FILE_ERROR']
                         });
                       }, function (progress) {
                       });
                   }
                 } else {
                   $log.debug("E2", e);
-
                   d.reject({
                     "error": true,
-                    "message": "no-media"
+                    "message": e.code? CONSTANT.ERROR_MESSAGES['CORDOVA_FILE_SYSTEM'][e.code]: CONSTANT.ERROR_MESSAGES['DEFAULT_FILE_ERROR']
                   });
                 }
               })
