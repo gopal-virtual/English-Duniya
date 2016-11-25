@@ -45,6 +45,7 @@
     "run-sequence": "^1.2.2",
     "shelljs": "^0.3.0",
     "sync-request": "^3.0.1",
+    "underscore": "^1.8.3",
     "yargs": "^4.8.1"
   },
   "cordovaPlugins": [
@@ -67,7 +68,11 @@
     "cordova-plugin-network-information",
     "cordova-plugin-screen-orientation",
     "cordova-plugin-compat",
-    "cordova-plugin-crosswalk-webview"
+    "cordova-plugin-crosswalk-webview",
+    {
+      "locator": "https://github.com/katzer/cordova-plugin-local-notifications",
+      "id": "phonegap-plugin-push"
+    }
   ],
   "cordovaPlatforms": [
     "android"

@@ -23,11 +23,13 @@ var cheerio = require('cheerio');
 var runSequence = require('run-sequence');
 var shell = require('gulp-shell');
 var request = require('sync-request');
+var grades = require('./grades');
 var paths = {
   sass: [
     './scss/**/*.scss',
     './scss/*.scss'
   ],
+  diagnosis : 'www/data/diagnosisQJSON.json',
   script: [
     './www/templates/templates.js',
     './app_modules/common/common.module.js',
@@ -54,6 +56,7 @@ var paths = {
     './www/img/*.jpg',
     './www/img/*.jpeg'
   ],
+
   constants : {
     environment : './www/constant.json',
     template : './constant.template.txt',
@@ -61,7 +64,6 @@ var paths = {
     destination_filename : 'common.constant.js'
   },
   main : './www/main.html'
-
 };
 var environments = {
   default: 'PRODUCTION',
@@ -72,12 +74,13 @@ var environments = {
 };
 var env = argument.argv.env ? environments[argument.argv.env] : environments.default;
 var app_type = argument.argv.app_type ? argument.argv.app_type : 'na';
+var is_bundled = argument.argv.is_bundled ? argument.argv.is_bundled : false;
 var app_version = 'na';
 var constants = JSON.parse(file.readFileSync(paths.constants.environment, 'utf8'));
 var lock = argument.argv.lock ? argument.argv.lock : constants[env]['LOCK'];
 var fake_id_device = constants[env]['FAKE_ID_DEVICE'] || 'na';
 var lesson_db_version = 'na';
-
+var diagnosis_media = [];
 
 //Get app version
 var xml       = file.readFileSync('./config.xml');
@@ -87,14 +90,14 @@ console.log("VERSION",app_version);
 
 
 gulp.task('default', function(callback){
-  runSequence(/*'generate-lessondb','get-lessondb-version',*/'make-main','generate-constants', 'sass', 'html', 'scripts',callback);
+  runSequence(/*'generate-lessondb','get-lessondb-version',*/'get-diagnosis-media','make-main','generate-constants', 'sass', 'html', 'scripts',callback);
 });
 
-gulp.task('generate-lessondb',shell.task([
+gulp.task('generate-lessondb', shell.task([
   'rm www/data/lessons.db',
   'pouchdb-dump http://127.0.0.1:5984/lessonsdb > www/data/lessons.db'
 ]));
-gulp.task('get-lessondb-version',function(){
+gulp.task('get-lessondb-version', function () {
   var res = request('GET', 'http://ci-couch.zaya.in/lessonsdb/version');
   lesson_db_version = JSON.parse(res.getBody().toString()).version;
 });
@@ -128,9 +131,6 @@ gulp.task('make-main',function(){
 });
 
 gulp.task('generate-constants', function () {
-
-console.log();
-  console.log(env == environments.dev);
   gulp.src(paths.constants.template)
     .pipe(replace_task({
       patterns: [{
@@ -142,7 +142,7 @@ console.log();
       }, {
         match: 'FAKE_LOGIN',
         replacement: constants[env]['FAKE_LOGIN']
-      },{
+      }, {
         match: 'FAKE_DEVICE',
         replacement: constants[env]['FAKE_DEVICE']
       }, {
@@ -164,15 +164,26 @@ console.log();
         match: 'LESSON_DB_VERSION',
         replacement: lesson_db_version
       }, {
-          match: 'LESSONS_DB_SERVER',
-          replacement: constants[env]['LESSONS_DB_SERVER']
+        match: 'LESSONS_DB_SERVER',
+        replacement: constants[env]['LESSONS_DB_SERVER']
       }, {
-          match: 'PROFILES_DB_SERVER',
-          replacement: constants[env]['PROFILES_DB_SERVER']
-        },
-        {
-          match: 'FAKE_ID_DEVICE',
-          replacement: fake_id_device
+        match: 'PROFILES_DB_SERVER',
+        replacement: constants[env]['PROFILES_DB_SERVER']
+      }, {
+        match: 'FAKE_ID_DEVICE',
+        replacement: fake_id_device
+      }, {
+        match: 'BUNDLED',
+        replacement: is_bundled
+      }, {
+        match: 'DIAGNOSIS_MEDIA',
+        replacement: JSON.stringify(diagnosis_media)
+      },{
+        match: 'GRADE',
+        replacement: grades.getGrades(paths.diagnosis)
+      },{
+        match: 'QUESTION_DEMO',
+        replacement: constants[env]['QUESTION_DEMO']
         },
          {
         match: 'CONTENT_TEST',
@@ -185,9 +196,7 @@ console.log();
 
 });
 
-gulp.task('get-version',function(){
 
-});
 
 gulp.task('scripts', function () {
 
@@ -201,7 +210,7 @@ gulp.task('scripts', function () {
     .pipe(concate('mobile.app.js'))
     .pipe(gulpif(env !== environments.dev && env !== environments.content,uglify()))
     .pipe(gulp.dest('www/build'))
-    // .on('end',cb)
+  // .on('end',cb)
   // .pipe(broswerSync.stream())
 });
 
@@ -223,7 +232,7 @@ gulp.task('sass', function () {
       extname: '.min.css'
     }))
     .pipe(gulp.dest('./www/css/'))
-    // .on('end', done);
+  // .on('end', done);
 });
 
 gulp.task('html', function () {
@@ -246,7 +255,25 @@ gulp.task('html', function () {
 
 });
 
-gulp.task('watch',['default'], function () {
+
+gulp.task('get-diagnosis-media',function () {
+  var diagnosis_json = JSON.parse(file.readFileSync('diagnosisQJSON.json', 'utf8'));
+  for(var prop in diagnosis_json[0]){
+    for(var media_type in diagnosis_json[0][prop].node.type.content.widgets){
+      if(diagnosis_json[0][prop].node.type.content.widgets.hasOwnProperty(media_type)){
+
+        for(var media_file in diagnosis_json[0][prop].node.type.content.widgets[media_type]){
+          console.log(diagnosis_json[0][prop].node.type.content.widgets[media_type][media_file])
+          diagnosis_media.push(diagnosis_json[0][prop].node.type.content.widgets[media_type][media_file]);
+        }
+      }
+    }
+
+  }
+
+});
+
+gulp.task('watch', ['default'], function () {
   gulp.watch(paths.sass, ['sass']);
   gulp.watch(paths.script, ['scripts']);
   gulp.watch(paths.html, ['html']);

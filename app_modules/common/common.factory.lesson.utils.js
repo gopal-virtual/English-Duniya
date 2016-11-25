@@ -149,6 +149,8 @@
         return 'practice';
       } else if (resource.node.content_type_name == 'resource' && (resource.node.type.file_type == 'mp4' || resource.node.type.file_type == 'video/mp4')) {
         return 'video';
+      } else if (resource.node.content_type_name == 'vocabulary'){
+        return 'vocabulary';
       } else {}
     }
 
@@ -195,8 +197,12 @@
         hideOnStateChange: true
       });
       $log.debug("")
-
-      if (utils.resourceType(resource) == 'assessment') {
+      if(utils.resourceType(resource) == 'vocabulary'){
+          $state.go('content.vocabulary.intro', {
+            vocab_data: resource
+          });
+      }
+      else if (utils.resourceType(resource) == 'assessment') {
         content.downloadAssessment(resource)
           .then(function() {
             $timeout(function() {

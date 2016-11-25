@@ -1,0 +1,24 @@
+<style>
+    .align-middle{
+        display : flex;
+        align-items: center;
+        justify-content : center;
+    }
+    .vh-100{
+        height : 100vh
+    }
+    .align-vertical-middle{
+        position : absolute;
+        top : 52vh;
+    }
+</style>
+<ion-view>
+    <ion-content style="background-color:{{vocabIntroCtrl.vocab_data.objects[0].node.type.background_color}}">
+        <div class="row vh-100 align-middle">
+            <div class="col align-middle">
+                <h5 class="color-white align-vertical-middle font-md">{{vocabIntroCtrl.vocab_data.node.title}}</h5>
+                <img src="img/assets_svg/girl-ribbon.svg" alt="">
+            </div>
+        </div>
+    </ion-content>
+</ion-view>

@@ -52,6 +52,7 @@
       downloadNewMedia: downloadNewMedia,
       getActiveResource: getActiveResource,
       getActiveLessonId : getActiveLessonId,
+      replicateLessonDB : replicateLessonDB,
       getStatus : getStatus,
       demo_question: {
         "node": {
@@ -119,6 +120,19 @@
 
     return contentProperties;
 
+  function replicateLessonDB() {
+    $log.debug("replicating lessondb",CONSTANT.LESSONS_DB_SERVER)
+    return lessonDB.replicate.from(CONSTANT.LESSONS_DB_SERVER,{
+      live: true,
+      retry: true,
+      heartbeat: false
+    }).on('paused',function (err) {
+      $log.debug("Paused in lessondb replicate",err)
+    }).on('change',function (a) {
+      $log.debug("change in lessondb replicate",a)
+
+    });
+  }
 
     function findNewMediaToDownload() {
       $rootScope.mediaSyncStatus.checkingMedia = true;
@@ -249,6 +263,8 @@
     }
 
     function createLessonDBIfNotExists() {
+      $log.debug("createLessonDBIfNotExists")
+
       lessonDB = pouchDB('lessonsDB', {revs_limit: 1});
 
       return lessonDB.get('_local/preloaded').then(function (doc) {
@@ -271,25 +287,15 @@
     }
 
     function createOrUpdateLessonDB() {
+      $log.debug("create or update lessondb")
       lessonDB = pouchDB('lessonsDB', {revs_limit: 1});
-
-      return lessonDB.get('version').then(function (doc) {
-        if (doc.version < CONSTANT.LESSON_DB_VERSION) {
-          $log.debug("FOUND Greater VERSION")
-          return lessonDB.load(CONSTANT.PATH.DATA + '/lessons.db', {
-            proxy: CONSTANT.LESSONS_DB_SERVER
-          })
-        }
-      }).catch(function (err) {
-        if (err.name !== 'not_found') {
-          throw err;
-        }
         $log.debug("NEW DB MADE 1");
         return lessonDB.load(CONSTANT.PATH.DATA + '/lessons.db', {
           proxy: CONSTANT.LESSONS_DB_SERVER
         })
-
-      })
+          .then(function () {
+            return replicateLessonDB()
+          })
     }
 
     function createLessonDBIfNotExistsPatch() {
@@ -512,7 +518,7 @@
 
     function downloadVideo(video) {
 
-      return mediaManager.downloadIfNotExists(CONSTANT.RESOURCE_SERVER + video.node.type.path)
+      return mediaManager.downloadIfNotExists(video.node.type.path)
     }
 
     function downloadAssessment(assessment) {
@@ -524,7 +530,7 @@
       angular.forEach(assessment.objects, function (object) {
         if (object.node.meta.instructions && object.node.meta.instructions.sounds) {
           promises.push(
-            mediaManager.downloadIfNotExists(CONSTANT.RESOURCE_SERVER + object.node.meta.instructions.sounds[0])
+            mediaManager.downloadIfNotExists(object.node.meta.instructions.sounds[0])
           );
         }
         angular.forEach(object.node.type.content.widgets, function (widget) {
@@ -532,7 +538,7 @@
             if (mediaArray.indexOf(file) < 0) {
               mediaArray.push(file);
               promises.push(
-                mediaManager.downloadIfNotExists(CONSTANT.RESOURCE_SERVER + file)
+                mediaManager.downloadIfNotExists(file)
               );
             }
           })

@@ -28,8 +28,6 @@
 
       play: function(sound) {
         try {
-
-
           $cordovaNativeAudio.play(sound);
         } catch (error) {
           $log.warn(sound+" can't be played. Ionic plugins only work on phone")
@@ -98,7 +96,8 @@
         stop: stopSound,
         isPaused: isPaused,
         removeCallback: removeCallback,
-        resume: resume
+        resume: resume,
+        chain : chain
       }
 
 
@@ -112,8 +111,13 @@
         angular.element("#audioSource")[0].src = url;
         angular.element("#audioplayer")[0].load();
         angular.element("#audioplayer")[0].play();
-
       }
+    }
+    function chain(sound1, sound2){
+        playSound(sound1)
+        angular.element("#audioplayer")[0].onended = function(){
+            playSound(sound2);
+        }
     }
     function resume(){
       angular.element("#audioplayer")[0].play();

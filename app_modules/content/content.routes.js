@@ -30,5 +30,107 @@
               }
           }
       })
+      .state('content.vocabulary',{
+          url : '/vocabulary',
+          abstract : true,
+          params : {
+              vocab_data : null
+          },
+        //   resolve : {
+        //       vocab_data : ['$log', 'Rest',function($log, Rest){
+        //         //   https://cc-test.zaya.in/api/v1/accounts/0429fb91-4f3c-47de-9adb-609996962188/lessons/a5be805c-8b2c-48dd-8efa-ad2588b03c99/
+        //           return Rest.one('accounts','0429fb91-4f3c-47de-9adb-609996962188').one('lessons','924d2945-2805-4361-8533-5162523d6780')
+        //           .get().then(function(response){
+        //               $log.debug('card', response.plain())
+        //               return response.plain().objects[1].objects;
+        //           })
+          //
+        //       }]
+        //   },
+          views : {
+              'state-content' : {
+                  template : '<ion-nav-view name="state-vocab"></ion-nav-view>'
+              }
+          }
+      })
+      .state('content.vocabulary.intro', {
+          url : '/intro',
+          nativeTransitions : null,
+          onEnter : ['orientation',function(orientation){
+              orientation.setLandscape();
+          }],
+          views : {
+              'state-vocab' : {
+                  templateUrl : CONSTANT.PATH.CONTENT + '/content.vocabulary.intro' + CONSTANT.VIEW,
+                  controller : ['$stateParams','audio','$timeout','$state',function($stateParams,audio,$timeout,$state){
+                      var vocabIntroCtrl = this;
+                      vocabIntroCtrl.vocab_data = $stateParams.vocab_data;
+                      vocabIntroCtrl.playDelayed = playDelayed;
+
+                      function playDelayed (url) {
+                          $timeout(function(){
+                              audio.player.play(url)
+                          },100)
+                      }
+                      vocabIntroCtrl.playDelayed(vocabIntroCtrl.vocab_data.node.parsed_sound)
+                      $timeout(function(){
+                          $state.go('content.vocabulary.overview',{})
+                      },10000)
+                  }],
+                  controllerAs : 'vocabIntroCtrl'
+              }
+          }
+      })
+      .state('content.vocabulary.overview', {
+          url : '/overview',
+          nativeTransitions : null,
+          onEnter : ['orientation',function(orientation){
+              orientation.setLandscape();
+          }],
+          views : {
+              'state-vocab' : {
+                  templateUrl : CONSTANT.PATH.CONTENT + '/content.vocabulary.overview' + CONSTANT.VIEW,
+                  controller : 'vocabularyOverviewController as vocabOverviewCtrl'
+              }
+          }
+      })
+      .state('content.vocabulary.card', {
+          url : '/card',
+          nativeTransitions : null,
+          onEnter : ['orientation',function(orientation){
+              orientation.setLandscape();
+          }],
+          views : {
+              'state-vocab' : {
+                  templateUrl : CONSTANT.PATH.CONTENT + '/content.vocabulary' + CONSTANT.VIEW,
+                  controller : 'vocabularyCardController as vocabCardCtrl'
+              }
+          }
+      })
+      .state('content.vocabulary.instruction', {
+          url : '/instruction',
+          nativeTransitions : null,
+          views : {
+              'state-vocab' : {
+                  templateUrl : CONSTANT.PATH.CONTENT + '/content.vocabulary.instruction' + CONSTANT.VIEW,
+                  controller : ['$stateParams','audio','$timeout','$state',function($stateParams,audio,$timeout,$state){
+                      var vocabInstructionCtrl = this;
+                      vocabInstructionCtrl.vocab_data = $stateParams.vocab_data.objects;
+                      vocabInstructionCtrl.playDelayed = playDelayed;
+
+                      function playDelayed (url) {
+                          $timeout(function(){
+                              audio.player.play(url)
+                          },100)
+                      }
+                      vocabInstructionCtrl.playDelayed('sound/temp/now-its-your-turn.mp3')
+                      $timeout(function(){
+                          $state.go('content.vocabulary.card',{})
+                      },2500)
+                  }],
+                  controllerAs : 'vocabInstructionCtrl'
+              }
+          }
+      })
   }
 })();

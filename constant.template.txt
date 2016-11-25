@@ -8,6 +8,7 @@
       'TYPE': '@@APP_TYPE',
       'VERSION': '@@APP_VERSION'
       },
+      'BUNDLED': @@BUNDLED,
       'LOCK': @@LOCK,
       'FAKE_LOGIN': @@FAKE_LOGIN,
       'FAKE_ID_DEVICE': '@@FAKE_ID_DEVICE',
@@ -20,6 +21,8 @@
       'PROFILES_DB_SERVER': '@@PROFILES_DB_SERVER',
       'LESSON_DB_VERSION': '@@LESSON_DB_VERSION',
       'ANALYTICS' : @@ANALYTICS,
+      'GRADE' : @@GRADE,
+      'QUESTION_DEMO' : @@QUESTION_DEMO,
       'QUESTION' : {
         'DEMO' : '5ecf8ad5-4c3a-4a67-9758-dd7e3993c4d8'
       },
@@ -62,7 +65,9 @@
       'ASSETS': {
         'IMG': {
           'ICON': 'img/icons',
-        }
+          'TEMP' : 'img/temp'
+        },
+        'SOUND' : 'sound/temp'
       },
       'STAR': {
         'ONE': 70,
@@ -92,6 +97,7 @@
           'SKIPPED': 2,
           'NOT_ATTEMPTED': 3
         }
-      }
+      },
+      'DIAGNOSIS_MEDIA' : @@DIAGNOSIS_MEDIA
     })
 })();

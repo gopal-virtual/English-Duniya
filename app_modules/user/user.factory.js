@@ -158,28 +158,9 @@
       PouchDB.replicate('profilesDB', CONSTANT.PROFILES_DB_SERVER+device.uuid, {
         live: true,
         retry: true
-      }).on('change', function (info) {
-        $log.debug("Change in pouch");
-        // $ionicLoading.show({template:'Change in pouch'})
       }).on('paused', function (err) {
-        $log.debug("puased in pouch");
-
-
-        // $ionicLoading.hide();
-        // replication paused (e.g. replication up to date, user went offline)
-      }).on('active', function () {
-        // $ionicLoading.show({template:'Change in pouch'});
-        // replicate resumed (e.g. new changes replicating, user went back online)
-      }).on('denied', function (err) {
-        // $ionicLoading.hide();
-        // a document failed to replicate (e.g. due to permissions)
-      }).on('complete', function (info) {
-        // $ionicLoading.hide();
-        // handle complete
-      }).on('error', function (err) {
-        // $ionicLoading.hide();
-        // handle error
-      });
+        $log.debug("Paused in profile db sync",err);
+      })
     }
     function updateRoadMapData(roadMapData,profileId) {
       $log.debug("updateRoadMapData",roadMapData,profileId)

@@ -161,6 +161,7 @@
           $state.go('litmus_start');
 
           // $state.go('quiz.questions', {'type':'litmus','id':'litmus_question'});
+          $log.debug("CHECK 4")
           notification.online.set();
         })
         .catch(function (error) {
