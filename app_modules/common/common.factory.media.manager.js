@@ -137,6 +137,9 @@
                       });
                   }
                 } else {
+                  Raven.captureException("Media manager Error in Cordova file system",{
+                    extra: {error:e,filename:url}
+                  });
                   $log.debug("E2", e);
                   d.reject({
                     "error": true,
