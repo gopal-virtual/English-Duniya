@@ -75,7 +75,7 @@
                 .then(function() {
                     var func = service.current.tour.config.onClose;
                     service.current = false;
-                    if(func) {     
+                    if(func) {
                         return func();
                     } else {
                         return true;
@@ -217,7 +217,7 @@
                 .then(function() {
                     var func = service.current.tour.config.onComplete;
                     service.current = false;
-                    if(func) {     
+                    if(func) {
                         return func();
                     } else {
                         return true;
@@ -259,7 +259,7 @@
         }
     });
 
-    module.directive('nzTour', function($q) {
+    module.directive('nzTour', function($q, $compile) {
         return {
             template: [
                 '<div id="nzTour-box-wrap">',
@@ -497,8 +497,13 @@
                         showNext: steps[step].showNext === undefined ? config.showNext : steps[step].showNext,
                         showPrevious: steps[step].showPrevious === undefined ? config.showPrevious : steps[step].showPrevious
                     };
-                    //Don't mess around with angular sanitize for now. Add compile and sanitize later...
-                    els.innerContent.html(steps[step].content);
+                    // Wrap the content in a div so that $compile does not
+                    // confuse punctuation with HTML syntax
+                    var stepHtml = '<div>' + steps[step].content + '</div>';
+                    // Compile the step definition html so ng-click works as expected.
+                    var compiledHtml = $compile(stepHtml)($scope);
+                    els.innerContent.html(compiledHtml);
+
                     // Scroll Back to the top
                     els.content.scrollTop(0);
 
@@ -941,7 +946,7 @@
                     }
 
                     var margin = config.highlightMargin ? config.highlightMargin : 0;
-                    
+
                     els.masks_top.css({
                         height: dims.target.offset.top - margin + 'px',
                         top: dims.target.offset.top < 0 ? dims.target.offset.top + 'px' : 0
@@ -968,9 +973,8 @@
                             left: dims.target.offset.left - margin + 'px',
                             right: dims.target.offset.fromRight - margin + 'px',
                             backgroundColor: 'transparent'
-                        });    
+                        });
                     }
-                    
 
                     return $q.when(null);
                 }
