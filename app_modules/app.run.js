@@ -347,7 +347,7 @@
 
 
     $ionicPlatform.on('pause', function(){
-
+      notification.cancelAll();
       notification.schedule(JSON.parse(localStorage.scheduleNotification),1);
 
       // content.getActiveResource().then(function(resource){
