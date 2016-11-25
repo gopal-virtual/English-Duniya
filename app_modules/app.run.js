@@ -155,14 +155,14 @@
 
       $rootScope.mediaSyncStatus = {size: null, mediaToDownload: []};
       // $ionicLoading.show()
-      if (localStorage.profile && localStorage.profile._id) {
-        Raven.setUserContext({
+
+      // if (localStorage.profile && localStorage.profile._id) {
+        Raven.setTagsContext({
           device_id: device.uuid,
-          user: localStorage.profile._id
-        })
-      }
-
-
+          profile: User.getActiveProfileSync()._id ?User.getActiveProfileSync()._id : 'na'
+        });
+      // }
+      Raven.captureException("Test Exception");
       notification.cancelAll();
       analytics.log(
         {
