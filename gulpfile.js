@@ -203,7 +203,7 @@ gulp.task('scripts', function () {
     .pipe(stripDebug())
     .pipe(strip())
     .pipe(concate('mobile.app.js'))
-    .pipe(gulpif(env !== environments.dev, uglify()))
+    .pipe(gulpif(env == environments.production, uglify()))
     .pipe(gulp.dest('www/build'))
   // .on('end',cb)
   // .pipe(broswerSync.stream())
