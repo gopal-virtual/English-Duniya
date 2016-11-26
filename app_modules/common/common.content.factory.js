@@ -139,7 +139,7 @@
       $log.debug("findNewMediaToDownload");
       var promises = [];
       var promises2 = [];
-      var mediaToDownload = []
+      var mediaToDownload = [];
       return getResourceList().then(function (lessons) {
         return extendLesson.getLesson(lessons).then(function (result) {
           $log.debug("lessons extended", result);

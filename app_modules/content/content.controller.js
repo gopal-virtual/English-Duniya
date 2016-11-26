@@ -335,9 +335,10 @@
   $scope.$on('appResume',function(){
     if($scope.ribbon_modal.isShown()){
       audio.player.resume();
+      angular.element("#audioplayer")[0].onended = intro_end_video;
     }
 
-  })
+  });
     // $scope.nodeRibbon;
 
 

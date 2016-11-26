@@ -291,14 +291,10 @@
           lessonutils.setLocalLesson(JSON.stringify(lesson))
       }).catch(function (e) {
         $ionicLoading.hide()
-        $log.debug("We need to check",e)
-        var message = "No internet conection found";
-        if(e.message === 'no-media'){
-          message = "Missing media file";
-        }
+
         $ionicPopup.alert({
-          title: 'Please try again',
-          template: message
+          title: CONSTANT.ERROR_MESSAGES.DEFAULT_TITLE,
+          template: e.message ? e.message : CONSTANT.ERROR_MESSAGES.DEFAULT
         })
       });
 

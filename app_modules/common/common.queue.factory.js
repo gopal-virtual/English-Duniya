@@ -23,7 +23,6 @@
                  $q,
                  Auth,
                  network) {
-
     var queueDB = pouchDB('queueDB',{revs_limit: 1});
     var queueProperties = {
       push: push,
@@ -32,7 +31,6 @@
         return queueDB.allDocs({include_docs:true});
       }
     };
-    Raven.captureException("Test Exception");
     return queueProperties;
 
 

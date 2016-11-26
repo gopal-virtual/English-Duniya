@@ -124,12 +124,12 @@
           // $ionicLoading.hide();
           // callback && callback(lesson);
         })
-        .catch(function(error) {
+        .catch(function(e) {
           // $ionicLoading.hide();
 
           $ionicPopup.alert({
-            title: 'Sorry',
-            template: 'You need to be online!'
+            title: CONSTANT.ERROR_MESSAGES.DEFAULT_TITLE,
+            template: e.message ? e.message : CONSTANT.ERROR_MESSAGES.DEFAULT
           });
         })
     }
@@ -263,16 +263,13 @@
               $stateParams.type == 'practice' && $ionicLoading.hide();
             });
           }).catch(function(e) {
-            $log.debug("We need to check", e)
-            var message = "No internet conection found";
-            if (e.message === 'no-media') {
-              message = "Missing media file";
-            }
+            $log.debug("We need to check",e)
+
             $ionicPopup.alert({
-              title: 'Please try again',
-              template: message
-            }).then(function() {
-              if (callback) {
+                title: CONSTANT.ERROR_MESSAGES.DEFAULT_TITLE,
+                template: e.message ? e.message : CONSTANT.ERROR_MESSAGES.DEFAULT
+              }).then(function() {
+                if (callback) {
 
                 callback();
               }
@@ -315,16 +312,12 @@
             });
           })
           .catch(function(e) {
-            $log.debug("We need to check", e)
-            var message = "No internet conection found";
-            if (e.message === 'no-media') {
-              message = "Missing media file";
-            }
+
             $ionicPopup.alert({
-              title: 'Please try again',
-              template: message
-            }).then(function() {
-              if (callback) {
+              title: CONSTANT.ERROR_MESSAGES.DEFAULT_TITLE,
+              template: e.message ? e.message : CONSTANT.ERROR_MESSAGES.DEFAULT
+              }).then(function() {
+                if (callback) {
 
                 callback();
               }
