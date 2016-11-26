@@ -174,6 +174,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
             this.load.spritesheet('node-green-video', 'img/assets/button-green-video.png',88,91);
             this.load.spritesheet('node-darkblue-video', 'img/assets/button-darkblue-video.png',88,91);
             this.load.spritesheet('node-blue-practice', 'img/assets/button-blue-practice.png',88,91);
+            this.load.spritesheet('node-blue-vocabulary', 'img/assets/button-blue-vocabulary.png',88,91);
             this.load.spritesheet('node-orange-practice', 'img/assets/button-orange-practice.png',88,91);
             this.load.spritesheet('node-green-practice', 'img/assets/button-green-practice.png',88,91);
             this.load.spritesheet('node-darkblue-practice', 'img/assets/button-darkblue-practice.png',88,91);

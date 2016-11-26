@@ -423,7 +423,7 @@
               // $log.debug("Iter ",lessons[i].doc.lesson.objects[c].node.playlist_index )
               // }
               $log.debug("Iter lessons", lessons);
-              angular.forEach(['resource', 'assessment'], function(content_type) {
+              angular.forEach(['vocabulary','resource', 'assessment'], function(content_type) {
                 $log.debug("Iter content_type, i", content_type, i);
                 for (var c = 0; c < lessons[i].doc.lesson.objects.length; c++) {
                   $log.debug(content_type, i, c, lessons[i].doc.lesson.objects[c].node.content_type_name);
