@@ -59,7 +59,7 @@
                       function playDelayed (url) {
                           $timeout(function(){
                               audio.player.play(url, function(){
-                                  $state.go('content.vocabulary.overview',{})
+                                //   $state.go('content.vocabulary.overview',{})
                               })
                           },100)
                       }

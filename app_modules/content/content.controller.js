@@ -56,10 +56,10 @@
     $scope.selectedNode = $stateParams.video.resource;
     contentCtrl.toggleControls = toggleControls;
     contentCtrl.onVideoComplete = onVideoComplete;
-    contentCtrl.utilities = Utilities;
-    contentCtrl.next = next;
+    $scope.utilities = Utilities;
+    $scope.goToMap = goToMap;
     contentCtrl.playStarSound = playStarSound;
-
+    $log.debug('$stateParams',$stateParams)
     contentCtrl.config = {
       sources: [$stateParams.video],
       autoplay: false,
@@ -90,10 +90,10 @@
   // $log.debug("STATE",$state)
   // function playStarAnimation(index){
   //   var star = 0;
-  //   if (contentCtrl.summary.stars) {
-  //     star = contentCtrl.summary.stars;
-  //   }else if (contentCtrl.summary.score.percent) {
-  //     star = contentCtrl.summary.score.percent > CONSTANT.STAR.THREE ? 3 : contentCtrl.summary.score.percent > CONSTANT.STAR.TWO ? 2 : contentCtrl.summary.score.percent > CONSTANT.STAR.ONE ? 1 : 0;
+  //   if ($scope.summary.stars) {
+  //     star = $scope.summary.stars;
+  //   }else if ($scope.summary.score.percent) {
+  //     star = $scope.summary.score.percent > CONSTANT.STAR.THREE ? 3 : $scope.summary.score.percent > CONSTANT.STAR.TWO ? 2 : $scope.summary.score.percent > CONSTANT.STAR.ONE ? 1 : 0;
   //   }else {
   //     star = 0;
   //   }
@@ -110,10 +110,10 @@
   function playStarSound() {
       var starSound = ["one_star","two_star","three_star"];
       var star = 0;
-      if (contentCtrl.summary.stars) {
-        star = contentCtrl.summary.stars;
-      } else if (contentCtrl.summary.score.percent) {
-        star = contentCtrl.summary.score.percent > CONSTANT.STAR.THREE ? 3 : contentCtrl.summary.score.percent > CONSTANT.STAR.TWO ? 2 : contentCtrl.summary.score.percent > CONSTANT.STAR.ONE ? 1 : 0;
+      if ($scope.summary.stars) {
+        star = $scope.summary.stars;
+    } else if ($scope.summary.score.percent) {
+        star = $scope.summary.score.percent > CONSTANT.STAR.THREE ? 3 : $scope.summary.score.percent > CONSTANT.STAR.TWO ? 2 : $scope.summary.score.percent > CONSTANT.STAR.ONE ? 1 : 0;
       } else {
         star = 0;
       }
@@ -136,7 +136,7 @@
     }
 
   $log.debug('video object',$stateParams.video.resource)
-  function next() {
+  function goToMap() {
       $ionicLoading.show({
           hideOnStateChange: true
       });
@@ -166,7 +166,7 @@
   // })
 
     function onVideoComplete() {
-        contentCtrl.summary = {
+        $scope.summary = {
             stars : 3
         }
         contentCtrl.playStarSound();
@@ -312,7 +312,6 @@
       hardwareBackButtonClose: false
     }).then(function(modal) {
       $scope.nodeMenu = modal;
-
     });
     $scope.openResult = function() {
         if (contentCtrl.API.currentState == 'pause') {
@@ -331,7 +330,6 @@
       hardwareBackButtonClose: false
     }).then(function(modal) {
       $scope.resultMenu = modal;
-
     });
 
   $scope.$on('appResume',function(){

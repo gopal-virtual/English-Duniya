@@ -6,35 +6,35 @@
     .factory('lessonutils', lessonutils);
 
   lessonutils.$inject = [
-                '$ionicLoading',
-                '$state',
-                '$stateParams',
-                '$log',
-                'CONSTANT',
-                '$timeout',
-                '$sce',
-                '$ionicPopup',
-                'content',
-                'mediaManager',
-                'analytics',
-                'User'
-          ];
+    '$ionicLoading',
+    '$state',
+    '$stateParams',
+    '$log',
+    'CONSTANT',
+    '$timeout',
+    '$sce',
+    '$ionicPopup',
+    'content',
+    'mediaManager',
+    'analytics',
+    'User'
+  ];
 
   /* @ngInject */
   function lessonutils(
-                $ionicLoading,
-                $state,
-                $stateParams,
-                $log,
-                CONSTANT,
-                $timeout,
-                $sce,
-                $ionicPopup,
-                content,
-                mediaManager,
-                analytics,
-                User
-               ) {
+    $ionicLoading,
+    $state,
+    $stateParams,
+    $log,
+    CONSTANT,
+    $timeout,
+    $sce,
+    $ionicPopup,
+    content,
+    mediaManager,
+    analytics,
+    User
+  ) {
     var utils = {
       leaveLesson: leaveLesson,
       getLesson: getLesson,
@@ -50,14 +50,14 @@
       playDemoAudio: playDemoAudio,
       canClickDemo: canClickDemo,
       getVideo: getVideo,
-      user : User,
-      demoShown : demoShown
+      user: User,
+      demoShown: demoShown
     };
     // utils. = User.demo.isShown();
     return utils;
 
-    function  demoShown(){
-        User.demo.isShown();
+    function demoShown() {
+      User.demo.isShown();
     }
 
     function getGender() {
@@ -71,7 +71,7 @@
     function canClickDemo(resource) {
       if (
         (utils.resourceType(resource) == 'video') &&
-        (User.demo.getStep() == 2 || User.demo.getStep()  == 3)
+        (User.demo.getStep() == 2 || User.demo.getStep() == 3)
       ) {
         return true;
       }
@@ -115,9 +115,9 @@
 
           lesson = response;
 
-          return User.scores.getScoreOfLesson(id,User.getActiveProfileSync()._id);
+          return User.scores.getScoreOfLesson(id, User.getActiveProfileSync()._id);
         })
-        .then(function(score){
+        .then(function(score) {
           lesson.score = score;
           utils.setLocalLesson(JSON.stringify(lesson));
           return lesson;
@@ -149,20 +149,20 @@
         return 'practice';
       } else if (resource.node.content_type_name == 'resource' && (resource.node.type.file_type == 'mp4' || resource.node.type.file_type == 'video/mp4')) {
         return 'video';
-      } else if (resource.node.content_type_name == 'vocabulary'){
+      } else if (resource.node.content_type_name == 'vocabulary') {
         return 'vocabulary';
       } else {}
     }
 
-    function getVideo(){
-        var lesson = utils.getLocalLesson();
-        var resources = lesson.objects;
-        for (var i = 0, count = resources.length; i < count; i++) {
-            if(resourceType(resources[i]) == 'video'){
-                return resources[i];
-            }
+    function getVideo() {
+      var lesson = utils.getLocalLesson();
+      var resources = lesson.objects;
+      for (var i = 0, count = resources.length; i < count; i++) {
+        if (resourceType(resources[i]) == 'video') {
+          return resources[i];
         }
-        return null ;
+      }
+      return null;
     }
 
     function getIcon(resource) {
@@ -179,16 +179,16 @@
 
     function playResource(resource, video, callback) {
       angular.element("#audioplayer")[0].pause();
-      $log.debug(resource,"r")
-      // playDemoAudio(resource);
+      $log.debug(resource, "r")
+        // playDemoAudio(resource);
 
-    //   if (utils.resourceType(resource) == 'practice' && (User.demo.isShown() && [2, 3].indexOf(User.demo.getStep()) >= 0)) {
-    //     return;
-    //   }
+      //   if (utils.resourceType(resource) == 'practice' && (User.demo.isShown() && [2, 3].indexOf(User.demo.getStep()) >= 0)) {
+      //     return;
+      //   }
       //
-    //   if (utils.resourceType(resource) == 'video' && (User.demo.isShown() && [4].indexOf(User.demo.getStep() ) >= 0)) {
-    //     return;
-    //   }
+      //   if (utils.resourceType(resource) == 'video' && (User.demo.isShown() && [4].indexOf(User.demo.getStep() ) >= 0)) {
+      //     return;
+      //   }
 
 
       // to do
@@ -197,28 +197,35 @@
         hideOnStateChange: true
       });
       $log.debug("")
-      if(utils.resourceType(resource) == 'vocabulary'){
+      if (utils.resourceType(resource) == 'vocabulary') {
+        analytics.log({
+              name: 'VOCABULARY',
+              type: 'START',
+              id: resource.node.id
+            }, {
+              time: new Date()
+            },
+            User.getActiveProfileSync()._id
+
+          ) &&
           $state.go('content.vocabulary.intro', {
             vocab_data: resource
           });
-      }
-      else if (utils.resourceType(resource) == 'assessment') {
+      } else if (utils.resourceType(resource) == 'assessment') {
         content.downloadAssessment(resource)
           .then(function() {
             $timeout(function() {
               $stateParams.type != 'assessment' &&
-              analytics.log(
-                  {
-                      name : 'QUIZ',
-                      type : 'START',
-                      id : resource.node.id
+                analytics.log({
+                    name: 'QUIZ',
+                    type: 'START',
+                    id: resource.node.id
+                  }, {
+                    time: new Date()
                   },
-                  {
-                      time : new Date()
-                  },
-                User.getActiveProfileSync()._id
+                  User.getActiveProfileSync()._id
 
-              ) &&
+                ) &&
                 $state.go('quiz.questions', {
                   id: resource.node.id,
                   type: 'assessment',
@@ -232,24 +239,22 @@
           })
 
       } else if (utils.resourceType(resource) == 'practice') {
-          $log.debug("Assessment found")
+        $log.debug("Assessment found")
         content.downloadAssessment(resource).then(function() {
             $log.debug("Downloaded assessment")
 
-          $timeout(function() {
+            $timeout(function() {
               !($stateParams.type == 'practice' && $state.current.name == 'quiz.questions') &&
-              analytics.log(
-                  {
-                      name : 'PRACTICE',
-                      type : 'START',
-                      id : resource.node.id
+              analytics.log({
+                    name: 'PRACTICE',
+                    type: 'START',
+                    id: resource.node.id
+                  }, {
+                    time: new Date()
                   },
-                  {
-                      time : new Date()
-                  },
-                User.getActiveProfileSync()._id
+                  User.getActiveProfileSync()._id
 
-              ) &&
+                ) &&
                 $state.go('quiz.questions', {
                   id: resource.node.id,
                   type: 'practice',
@@ -258,20 +263,20 @@
               $stateParams.type == 'practice' && $ionicLoading.hide();
             });
           }).catch(function(e) {
-            $log.debug("We need to check",e)
-          var message = "No internet conection found";
-          if(e.message === 'no-media'){
-            message = "Missing media file";
-          }
+            $log.debug("We need to check", e)
+            var message = "No internet conection found";
+            if (e.message === 'no-media') {
+              message = "Missing media file";
+            }
             $ionicPopup.alert({
-                title: 'Please try again',
-                template: message
-              }).then(function() {
-                if (callback) {
+              title: 'Please try again',
+              template: message
+            }).then(function() {
+              if (callback) {
 
-                  callback();
-                }
-              });
+                callback();
+              }
+            });
           })
           .finally(function() {
 
@@ -281,51 +286,49 @@
       } else if (utils.resourceType(resource) == 'video') {
         content.downloadVideo(resource).then(function() {
             mediaManager.getPath(resource.node.type.path).then(function(path) {
-                $timeout(function() {
-                  !$state.is('content.video') &&
-                  analytics.log(
-                      {
-                          name : 'VIDEO',
-                          type : 'START',
-                          id : resource.node.id
-                      },
-                      {
-                          time : new Date()
-                      },
+              $timeout(function() {
+                !$state.is('content.video') &&
+                  analytics.log({
+                      name: 'VIDEO',
+                      type: 'START',
+                      id: resource.node.id
+                    }, {
+                      time: new Date()
+                    },
                     User.getActiveProfileSync()._id
 
                   ) &&
-                    $state.go('content.video', {
-                      video: {
-                        src: utils.getSrc(path),
-                        type: 'video/mp4',
-                        id : resource.node.id,
-                        "resource" : resource
-                      }
-                    });
-                  if ($state.is('content.video')) {
-                    video.play();
-                    $ionicLoading.hide();
-                  }
-                  User.demo.getStep() != 5 && User.demo.setStep(3);
-                });
+                  $state.go('content.video', {
+                    video: {
+                      src: utils.getSrc(path),
+                      type: 'video/mp4',
+                      id: resource.node.id,
+                      "resource": resource
+                    }
+                  });
+                if ($state.is('content.video')) {
+                  video.play();
+                  $ionicLoading.hide();
+                }
+                User.demo.getStep() != 5 && User.demo.setStep(3);
               });
+            });
           })
           .catch(function(e) {
-            $log.debug("We need to check",e)
+            $log.debug("We need to check", e)
             var message = "No internet conection found";
-            if(e.message === 'no-media'){
+            if (e.message === 'no-media') {
               message = "Missing media file";
             }
             $ionicPopup.alert({
-                title: 'Please try again',
-                template: message
-              }).then(function() {
-                if (callback) {
+              title: 'Please try again',
+              template: message
+            }).then(function() {
+              if (callback) {
 
-                  callback();
-                }
-              });
+                callback();
+              }
+            });
           })
           .finally(function() {
             $ionicLoading.hide();
@@ -362,12 +365,12 @@
       //   }
       // } else {
 
-        if (node.node && node.node.parsed_sound) {
+      if (node.node && node.node.parsed_sound) {
 
-          angular.element("#audioSource")[0].src = node.node.parsed_sound;
-          angular.element("#audioplayer")[0].load();
-          angular.element("#audioplayer")[0].play();
-        }
+        angular.element("#audioSource")[0].src = node.node.parsed_sound;
+        angular.element("#audioplayer")[0].load();
+        angular.element("#audioplayer")[0].play();
+      }
       // }
     }
   }

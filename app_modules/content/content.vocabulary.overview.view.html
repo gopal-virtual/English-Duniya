@@ -125,7 +125,7 @@
         <div class="row vh-100">
             <div class="col col-60 col-offset-20 align-middle flash-body-card">
                 <div class="flash-card align-middle" ng-repeat="card in vocabOverviewCtrl.vocab_data" ng-show="vocabOverviewCtrl.currentIndex == $index" style="background-color : {{card.node.type.foreground_color}}">
-                    <img src="" alt="" ng-src="{{vocabOverviewCtrl.CONSTANT.BACKEND_SERVICE_DOMAIN + card.node.type.image.path}}" ng-class="{'animation-repeat-bounce':!vocabOverviewCtrl.audio.player.isPaused()}">
+                    <img src="" alt="" ng-src="{{vocabOverviewCtrl.CONSTANT.BACKEND_SERVICE_DOMAIN + card.node.type.image.path}}" ng-class="{'animation-repeat-bounce-in':!vocabOverviewCtrl.audio.player.isPaused()}">
                 </div>
                 <div ng-repeat="card in vocabOverviewCtrl.vocab_data" ng-show="vocabOverviewCtrl.currentIndex == $index">
                     <div class="flash-text-offset">
