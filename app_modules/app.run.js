@@ -162,7 +162,6 @@
           profile: User.getActiveProfileSync() && User.getActiveProfileSync()._id  ?User.getActiveProfileSync()._id : 'na'
         });
       // }
-      Raven.captureException("Test Exception");
       notification.cancelAll();
       analytics.log(
         {
