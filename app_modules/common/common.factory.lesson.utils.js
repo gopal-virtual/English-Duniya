@@ -198,19 +198,24 @@
       });
       $log.debug("")
       if (utils.resourceType(resource) == 'vocabulary') {
-        analytics.log({
-              name: 'VOCABULARY',
-              type: 'START',
-              id: resource.node.id
-            }, {
-              time: new Date()
-            },
-            User.getActiveProfileSync()._id
+        content.downloadVocabulary(resource)
+        .then(function() {
+          analytics.log({
+                name: 'VOCABULARY',
+                type: 'START',
+                id: resource.node.id
+              }, {
+                time: new Date()
+              },
+              User.getActiveProfileSync()._id
 
-          ) &&
-          $state.go('content.vocabulary.intro', {
-            vocab_data: resource
-          });
+            ) &&
+            content.getVocabulary(resource).then(function(resource){
+                $state.go('content.vocabulary.intro', {
+                    vocab_data: resource
+                });
+            })
+        })
       } else if (utils.resourceType(resource) == 'assessment') {
         content.downloadAssessment(resource)
           .then(function() {
@@ -263,13 +268,13 @@
               $stateParams.type == 'practice' && $ionicLoading.hide();
             });
           }).catch(function(e) {
-            $log.debug("We need to check",e)
+            $log.debug("We need to check", e)
 
             $ionicPopup.alert({
-                title: CONSTANT.ERROR_MESSAGES.DEFAULT_TITLE,
-                template: e.message ? e.message : CONSTANT.ERROR_MESSAGES.DEFAULT
-              }).then(function() {
-                if (callback) {
+              title: CONSTANT.ERROR_MESSAGES.DEFAULT_TITLE,
+              template: e.message ? e.message : CONSTANT.ERROR_MESSAGES.DEFAULT
+            }).then(function() {
+              if (callback) {
 
                 callback();
               }
@@ -316,8 +321,8 @@
             $ionicPopup.alert({
               title: CONSTANT.ERROR_MESSAGES.DEFAULT_TITLE,
               template: e.message ? e.message : CONSTANT.ERROR_MESSAGES.DEFAULT
-              }).then(function() {
-                if (callback) {
+            }).then(function() {
+              if (callback) {
 
                 callback();
               }

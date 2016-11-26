@@ -93,7 +93,7 @@
     function getSoundArr(soundArr) {
       var soundArrPath = [];
       for (var i = 0; i < soundArr.length; i++) {
-        soundArrPath.push(CONSTANT.BACKEND_SERVICE_DOMAIN + soundArr[i].path)
+        soundArrPath.push(soundArr[i].path)
       }
       return soundArrPath;
     }
