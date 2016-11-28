@@ -127,13 +127,13 @@
         -webkit-filter: grayscale(1);
     }
 </style>
-<ion-view ng-init="vocabCardCtrl.finish=false" style="background-color:{{vocabCardCtrl.vocab_data[vocabCardCtrl.currentIndex].node.type.background_color}};background-image: url(img/assets/transparent_star.png);
+<ion-view style="background-color:{{vocabCardCtrl.vocab_data[vocabCardCtrl.currentIndex].node.type.background_color}};background-image: url(img/assets/transparent_star.png);
     background-size: 33%;">
     <ion-content>
-        <div class="row vh-100" ng-class="{'blur' : vocabCardCtrl.finish}">
+        <div class="row vh-100">
             <div class="col col-20 center align-middle">
                 <!-- ng-disabled="!vocabCardCtrl.audio.player.isPaused()" -->
-                <button ng-disabled="!vocabCardCtrl.audio.player.isPaused()" ng-class="{'greyed' : !vocabCardCtrl.audio.player.isPaused()}" ng-show="vocabCardCtrl.currentIndex" class="sbtn sbtn-arrow-back" ng-click="vocabCardCtrl.prev();vocabCardCtrl.playDelayed(vocabCardCtrl.vocab_data[vocabCardCtrl.currentIndex].node.type.sound)"></button>
+                <button ng-disabled="!vocabCardCtrl.audio.player.isPaused()" ng-class="{'greyed' : !vocabCardCtrl.audio.player.isPaused()}" ng-show="vocabCardCtrl.currentIndex" class="sbtn sbtn-arrow-back" ng-click="vocabCardCtrl.prev();vocabCardCtrl.playDelayed(vocabCardCtrl.vocab_data[vocabCardCtrl.currentIndex].node.type.sound);audio.play('press')"></button>
             </div>
             <div class="col col-60 align-middle flash-body-card">
                 <div class="flash-card align-middle" ng-click="vocabCardCtrl.playDelayed(card.node.type.sound)" ng-repeat="card in vocabCardCtrl.vocab_data" ng-show="vocabCardCtrl.currentIndex == $index" style="background-color : {{card.node.type.foreground_color}}">
@@ -150,8 +150,8 @@
             </div>
             <div class="col col-20 center align-middle">
                 <!-- ng-disabled="!vocabCardCtrl.audio.player.isPaused()" -->
-                <button ng-disabled="!vocabCardCtrl.audio.player.isPaused()" ng-hide="vocabCardCtrl.currentIndex==vocabCardCtrl.vocab_data.length-1" ng-class="{'greyed' : !vocabCardCtrl.audio.player.isPaused()}" class="sbtn sbtn-arrow-forward" ng-click="vocabCardCtrl.next();vocabCardCtrl.playDelayed(vocabCardCtrl.vocab_data[vocabCardCtrl.currentIndex].node.type.sound)"></button>
-                <button ng-disabled="!vocabCardCtrl.audio.player.isPaused()" ng-show="vocabCardCtrl.currentIndex==vocabCardCtrl.vocab_data.length-1" ng-class="{'greyed' : !vocabCardCtrl.audio.player.isPaused()}" class="sbtn sbtn-arrow-finish" ng-click="vocabCardCtrl.onVocabComplete();vocabCardCtrl.finish=true"></button>
+                <button ng-disabled="!vocabCardCtrl.audio.player.isPaused()" ng-hide="vocabCardCtrl.currentIndex==vocabCardCtrl.vocab_data.length-1" ng-class="{'greyed' : !vocabCardCtrl.audio.player.isPaused()}" class="sbtn sbtn-arrow-forward" ng-click="vocabCardCtrl.next();vocabCardCtrl.playDelayed(vocabCardCtrl.vocab_data[vocabCardCtrl.currentIndex].node.type.sound);audio.play('press')"></button>
+                <button ng-disabled="!vocabCardCtrl.audio.player.isPaused()" ng-show="vocabCardCtrl.currentIndex==vocabCardCtrl.vocab_data.length-1" ng-class="{'greyed' : !vocabCardCtrl.audio.player.isPaused()}" class="sbtn sbtn-arrow-finish" ng-click="vocabCardCtrl.onVocabComplete();audio.play('press')"></button>
             </div>
         </div>
     </ion-content>
