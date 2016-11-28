@@ -4,7 +4,8 @@
         border-radius : 45px;
         box-shadow : 0 2px 5px rgba(0,0,0,0.5);
         border: 6px solid white;
-        height : 80vh
+        height : 70vh;
+        width : 100%;
     }
     .flash-card > img {
         width: auto;
@@ -14,7 +15,7 @@
     }
     .flash-text-offset,
     .flash-text {
-        font-size: 9vw;
+        font-size: 15vw;
         text-align: center;
         text-transform: capitalize !important;
         position: absolute;
@@ -22,12 +23,12 @@
         right: 0;
         margin-left: auto;
         margin-right: auto;
-        top: 10vh;
+        top: 13vh;
         letter-spacing: -0.4vw;
     }
     .flash-text-offset{
-        -webkit-text-stroke: 6px white;
-        text-shadow: 0 3px 5px black;
+        -webkit-text-stroke: 8px white;
+        text-shadow: 0 6px 10px black;
         color : white;
     }
     .flash-text {
@@ -120,7 +121,8 @@
         height : 100vh;
     }
 </style>
-<ion-view style="background-color:{{vocabOverviewCtrl.vocab_data[vocabOverviewCtrl.currentIndex].node.type.background_color}}">
+<ion-view style="background-color:{{vocabOverviewCtrl.vocab_data[vocabOverviewCtrl.currentIndex].node.type.background_color}};background-image: url(img/assets/transparent_star.png);
+    background-size: 33%;">
     <ion-content>
         <div class="row vh-100">
             <div class="col col-60 col-offset-20 align-middle flash-body-card">

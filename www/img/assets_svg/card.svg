@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="408.96" height="273.12" viewBox="0 0 408.96 273.12">
+  <defs>
+    <style>
+      .cls-1 {
+        isolation: isolate;
+      }
+      .cls-2 {
+        opacity: 0.75;
+        mix-blend-mode: multiply;
+      }
+      .cls-3 {
+        fill: #feffff;
+      }
+      .cls-3,
+      .cls-4 {
+        fill-rule: evenodd;
+      }
+      .cls-4 {
+        fill: #3e71b7;
+      }
+    </style>
+  </defs>
+  <title>Asset 25</title>
+  <g class="cls-1">
+    <g id="Layer_2" data-name="Layer 2">
+      <g id="Layer_1-2" data-name="Layer 1"><path
+        class="cls-4"
+        d="M18.2,189.35c3.19,24.4,3,38.15,20,53.09,16.48,14.34,32.43,17.3,63.79,16.71,55.28-.89,110-1.77,166.21-1.18,40.75.3,101,11.68,116.24-41.26C396,176,394,129.17,389.77,86.73,384.81,36,369.22,14.42,307.91,15c-56.17.44-111.63.3-167.8,0-22.86-.15-58.47-4-77.79,2.37s-33.49,18.78-40,37.71C14.12,78.74,14.66,162,18.2,189.35Z"/></g>
+    </g>
+  </g>
+</svg>

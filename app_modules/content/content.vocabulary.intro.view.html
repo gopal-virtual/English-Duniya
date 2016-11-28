@@ -17,7 +17,8 @@
     }
 </style>
 <ion-view>
-    <ion-content style="background-color:{{vocabIntroCtrl.vocab_data.objects[0].node.type.background_color}}">
+    <ion-content style="background-color:{{vocabIntroCtrl.vocab_data.objects[0].node.type.background_color}};background-image: url(img/assets/transparent_star.png);
+        background-size: 33%;">
         <div class="row vh-100 align-middle">
             <div class="col align-middle">
                 <h5 class="color-white align-vertical-middle font-md">{{ vocabIntroCtrl.vocab_data.node.title.split('-')[0].trim() + " " + vocabIntroCtrl.vocab_data.node.title.split('-')[1].trim() }}</h5>

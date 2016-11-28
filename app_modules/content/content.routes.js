@@ -113,7 +113,7 @@
                               })
                           },100)
                       }
-                      vocabInstructionCtrl.playDelayed('sound/temp/now-its-your-turn.mp3')
+                      vocabInstructionCtrl.playDelayed('sound/now_its_your_turn.mp3')
                   }],
                   controllerAs : 'vocabInstructionCtrl'
               }

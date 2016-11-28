@@ -70,7 +70,7 @@
     function playAudio(index) {
       var src;
       if (index == -1) {
-        src = 'sound/voice_welcome_name.mp3'
+        src = 'sound/welcome_to_ed_write_your_name.mp3'
       }
       if (index == 0) {
         src = 'sound/voice_name.mp3'

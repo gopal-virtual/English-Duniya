@@ -12,7 +12,7 @@
       'BUNDLED': false,
       'LOCK': true,
       'FAKE_LOGIN': true,
-      'FAKE_ID_DEVICE': 'cchrome123',
+      'FAKE_ID_DEVICE': 'cchrome1234',
       'FAKE_DEVICE': true,
       'CONTENT_TEST':false,
       'DEBUG' : true,

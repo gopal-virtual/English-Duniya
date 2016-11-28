@@ -105,7 +105,10 @@
         event.preventDefault();
         $state.go('user.personalise')
       }
-
+      if(toState.name == 'litmus_result' && !toParams.average_level){
+        event.preventDefault();
+        $state.go('user.personalise')
+      }
       if (toState.name == 'content.vocabulary.intro' && !toParams.vocab_data) {
         event.preventDefault();
         $state.go('map.navigate');

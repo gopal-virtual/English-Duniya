@@ -4,7 +4,11 @@
         border-radius : 45px;
         box-shadow : 0 2px 5px rgba(0,0,0,0.5);
         border: 6px solid white;
-        height : 80vh
+        height : 70vh;
+        width : 100%;
+    }
+    .blur{
+        -webkit-filter: blur(20px);
     }
     .flash-card > img {
         width: auto;
@@ -14,7 +18,7 @@
     }
     .flash-text-offset,
     .flash-text {
-        font-size: 9vw;
+        font-size: 15vw;
         text-align: center;
         text-transform: capitalize !important;
         position: absolute;
@@ -22,12 +26,12 @@
         right: 0;
         margin-left: auto;
         margin-right: auto;
-        top: 10vh;
+        top: 13vh;
         letter-spacing: -0.4vw;
     }
     .flash-text-offset{
-        -webkit-text-stroke: 6px white;
-        text-shadow: 0 3px 5px black;
+        -webkit-text-stroke: 8px white;
+        text-shadow: 0 6px 10px black;
         color : white;
     }
     .flash-text {
@@ -119,13 +123,17 @@
     .vh-100{
         height : 100vh;
     }
+    .greyed{
+        -webkit-filter: grayscale(1);
+    }
 </style>
-<ion-view style="background-color:{{vocabCardCtrl.vocab_data[vocabCardCtrl.currentIndex].node.type.background_color}}">
+<ion-view ng-init="vocabCardCtrl.finish=false" style="background-color:{{vocabCardCtrl.vocab_data[vocabCardCtrl.currentIndex].node.type.background_color}};background-image: url(img/assets/transparent_star.png);
+    background-size: 33%;">
     <ion-content>
-        <div class="row vh-100">
+        <div class="row vh-100" ng-class="{'blur' : vocabCardCtrl.finish}">
             <div class="col col-20 center align-middle">
                 <!-- ng-disabled="!vocabCardCtrl.audio.player.isPaused()" -->
-                <button ng-disabled="!vocabCardCtrl.audio.player.isPaused()" ng-show="vocabCardCtrl.currentIndex" class="sbtn sbtn-arrow" ng-click="vocabCardCtrl.prev();vocabCardCtrl.playDelayed(vocabCardCtrl.vocab_data[vocabCardCtrl.currentIndex].node.type.sound)"></button>
+                <button ng-disabled="!vocabCardCtrl.audio.player.isPaused()" ng-class="{'greyed' : !vocabCardCtrl.audio.player.isPaused()}" ng-show="vocabCardCtrl.currentIndex" class="sbtn sbtn-arrow-back" ng-click="vocabCardCtrl.prev();vocabCardCtrl.playDelayed(vocabCardCtrl.vocab_data[vocabCardCtrl.currentIndex].node.type.sound)"></button>
             </div>
             <div class="col col-60 align-middle flash-body-card">
                 <div class="flash-card align-middle" ng-click="vocabCardCtrl.playDelayed(card.node.type.sound)" ng-repeat="card in vocabCardCtrl.vocab_data" ng-show="vocabCardCtrl.currentIndex == $index" style="background-color : {{card.node.type.foreground_color}}">
@@ -142,8 +150,8 @@
             </div>
             <div class="col col-20 center align-middle">
                 <!-- ng-disabled="!vocabCardCtrl.audio.player.isPaused()" -->
-                <button ng-disabled="!vocabCardCtrl.audio.player.isPaused()" ng-hide="vocabCardCtrl.currentIndex==vocabCardCtrl.vocab_data.length-1" class="sbtn sbtn-arrow sbtn-flipped" ng-click="vocabCardCtrl.next();vocabCardCtrl.playDelayed(vocabCardCtrl.vocab_data[vocabCardCtrl.currentIndex].node.type.sound)"></button>
-                <button ng-show="vocabCardCtrl.currentIndex==vocabCardCtrl.vocab_data.length-1" class="sbtn sbtn-arrow sbtn-flipped" style="filter: hue-rotate(90deg);" ng-click="vocabCardCtrl.onVocabComplete()"></button>
+                <button ng-disabled="!vocabCardCtrl.audio.player.isPaused()" ng-hide="vocabCardCtrl.currentIndex==vocabCardCtrl.vocab_data.length-1" ng-class="{'greyed' : !vocabCardCtrl.audio.player.isPaused()}" class="sbtn sbtn-arrow-forward" ng-click="vocabCardCtrl.next();vocabCardCtrl.playDelayed(vocabCardCtrl.vocab_data[vocabCardCtrl.currentIndex].node.type.sound)"></button>
+                <button ng-disabled="!vocabCardCtrl.audio.player.isPaused()" ng-show="vocabCardCtrl.currentIndex==vocabCardCtrl.vocab_data.length-1" ng-class="{'greyed' : !vocabCardCtrl.audio.player.isPaused()}" class="sbtn sbtn-arrow-finish" ng-click="vocabCardCtrl.onVocabComplete();vocabCardCtrl.finish=true"></button>
             </div>
         </div>
     </ion-content>
