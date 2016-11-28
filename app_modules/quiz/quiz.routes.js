@@ -237,7 +237,6 @@
             });
             progress.set(0);
             $scope.average_level = $stateParams.average_level ? $stateParams.average_level : 1;
-
             if ($stateParams.average_level <= 1) {
                 audio.player.play('sound/not_bad_you_are_at_level_1.mp3')
             } else if ($stateParams.average_level <= 2) {
@@ -257,16 +256,7 @@
         controller: ['$log', 'User', '$scope', 'audio', function($log, User, $scope, audio) {
           $scope.audio = audio;
           $scope.gender = User.getActiveProfileSync().data.profile.gender == 'M' ? 'boy' : 'girl';
-          $scope.pauseAudio = pauseAudio;
-
-          function pauseAudio() {
-            angular.element("#audioplayer")[0].pause();
-          }
-
-          angular.element("#audioplayer")[0].pause();
-          angular.element("#audioSource")[0].src = "sound/lets_start_a_small_practice.mp3"
-          angular.element("#audioplayer")[0].load();
-          angular.element("#audioplayer")[0].play();
+          audio.player.play('sound/lets_start_a_small_practice.mp3')
         }]
       })
   }
