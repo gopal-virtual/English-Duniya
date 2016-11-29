@@ -624,9 +624,9 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                         }
 
                         if (Demo.getStep() != 1) {
-                            temp["nodeWobbleTween"] = game.add.tween(node.scale).to({ x: [0.8,1,0.8], y: [0.8,1,0.8] }, 600, Phaser.Easing.Back.Out, true, 400).loop(true);
+                            temp["nodeWobbleTween"] = game.add.tween(node.scale).to({ x: [0.8,1,0.8], y: [0.8,1,0.8] }, 1500, Phaser.Easing.Back.Out, true, 400).loop(true);
                         }else{
-                            var fingerTween = game.add.tween(temp.demoFinger).to({x: [0.5*game.camera.width,0.5*game.camera.width], y: [0.55*game.camera.height,0.4*game.camera.height] }, 1000, Phaser.Easing.Back.Out, true).loop(true);
+                            var fingerTween = game.add.tween(temp.demoFinger).to({x: [0.5*game.camera.width,0.5*game.camera.width], y: [0.55*game.camera.height,0.4*game.camera.height] }, 2000, Phaser.Easing.Back.Out, true).loop(true);
                             log.debug("Not a demo I guess", fingerTween)
                             fingerTween.onStart.add(pressButton,this);
                             fingerTween.onLoop.add(pressButton,this);
