@@ -156,14 +156,14 @@
     function defineType(data,type){
       $log.info("Defining types ...")
       var now = new Date().getTime();
-      $log.debug("This is the time",new Date(now + 10 * 60000))
+      // $log.debug("This is the time",new Date(now + 10 * 60000))
       var returnType;
       switch(type){
         case 'discovered':
           returnType = {
             id: data._id,
             at: (function(){
-              return new Date(now + 1 * 60000);
+              return new Date(now + CONSTANT.NOTIFICATION.DISCOVERED * 60000);
             })(),
             title: "Let's play",
             text: "Hey, let's resume your learning"
@@ -173,7 +173,7 @@
           returnType = {
             id: data._id,
             at: (function(){
-              return new Date(now + 1 * 60000);
+              return new Date(now + CONSTANT.NOTIFICATION.UNDISCOVERED * 60000);
             })(),
             title: data.title,
             text: data.text
@@ -222,18 +222,18 @@
 
     function replicate() {
       var localDb = new PouchDB('notificationDB');
-      var remoteDb = new PouchDB('https://ci-couch.zaya.in/notifications');
+      var remoteDb = new PouchDB(CONSTANT.NOTIFICATION_DB_SERVER);
       remoteDb.replicate.to(localDb, {
         live: true,
         retry: true
       }).on('change', function (change) {
         $log.debug("NOTIFICATION DATABASE CHANGE",change);
       }).on('paused', function (info) {
-        $log.warn('notificationDB replication paused',info)
+        $log.warn('notificationDB replication paused',info);
       }).on('active', function (info) {
-        $log.debug('notificationDB replication active',info)
+        $log.debug('notificationDB replication active',info);
       }).on('error', function (err) {
-        $log.error('error occured while syncing couch',err)
+        $log.error('error occured while syncing couch',err);
       });
     }
 
@@ -243,7 +243,7 @@
 
       return $http({
         method: 'GET',
-        url: 'https://cc-test.zaya.in/api/v1/devices/?dev_id='+data.dev_id
+        url: CONSTANT.BACKEND_SERVICE_DOMAIN+'/api/v1/devices/?dev_id='+data.dev_id
         // data: {dev_id: data.dev_id}
       });
 
@@ -267,7 +267,7 @@
       $log.debug("Inside online Register")
       $http({
         method: 'POST',
-        url: 'https://cc-test.zaya.in/api/v1/devices/',
+        url: CONSTANT.BACKEND_SERVICE_DOMAIN+'/api/v1/devices/',
         data: {dev_id: data.dev_id, dev_type: data.dev_type, reg_id: data.reg_id}
       }).then(function successCallback(response) {
         $log.debug("successfully posted", response.data[0])

@@ -7,7 +7,7 @@
     .constant('CONSTANT', {
       'APP':{
       'TYPE': 'na',
-      'VERSION': '0.1.8'
+      'VERSION': '0.1.9'
       },
       'BUNDLED': false,
       'LOCK': true,
@@ -20,6 +20,7 @@
       'LESSONS_DB_SERVER': 'https://ci-couch.zaya.in/lessonsdb',
       'PROFILES_DB_SERVER': 'https://ci-couch.zaya.in/device',
       'LESSON_DB_VERSION': 'na',
+      'NOTIFICATION_DB_SERVER': '@@NOTIFICATION_DB_SERVER',
       'ANALYTICS' : true,
       'GRADE' : [1,2,3],
       'QUESTION_DEMO' : false,
@@ -124,6 +125,12 @@
           '11': DEFAULT_ERROR_MESSAGE,
           '12': DEFAULT_ERROR_MESSAGE
         }
+        },
+        'NOTIFICATION': {
+          'DURATION': {
+            'DISCOVERED': 1,
+            'UNDISCOVERED' : 1 
+          }
         }
     })
 })();
