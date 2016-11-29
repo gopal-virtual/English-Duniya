@@ -575,7 +575,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                         function(currentLesson, game, posy, i, temp, currentObject) {
                             return function() {
 
-                                if (Demo.getStep == 1) {
+                                if (Demo.getStep() == 1) {
                                     Demo.setStep(2);
                                 }
                                 audio.play('press');

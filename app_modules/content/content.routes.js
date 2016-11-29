@@ -51,10 +51,11 @@
           views : {
               'state-vocab' : {
                   templateUrl : CONSTANT.PATH.CONTENT + '/content.vocabulary.intro' + CONSTANT.VIEW,
-                  controller : ['$stateParams','audio','$timeout','$state',function($stateParams,audio,$timeout,$state){
+                  controller : ['$stateParams','audio','$timeout','$state', '$scope', 'User',function($stateParams,audio,$timeout,$state, $scope, User){
                       var vocabIntroCtrl = this;
                       vocabIntroCtrl.vocab_data = $stateParams.vocab_data;
                       vocabIntroCtrl.playDelayed = playDelayed;
+                      $scope.userGender = User.getActiveProfileSync().data.profile.gender;
 
                       function playDelayed (url) {
                           $timeout(function(){
@@ -101,11 +102,12 @@
           views : {
               'state-vocab' : {
                   templateUrl : CONSTANT.PATH.CONTENT + '/content.vocabulary.instruction' + CONSTANT.VIEW,
-                  controller : ['$stateParams','audio','$timeout','$state',function($stateParams,audio,$timeout,$state){
+                  controller : ['$stateParams','audio','$timeout','$state', '$scope', 'User',function($stateParams,audio,$timeout,$state, $scope, User){
                       var vocabInstructionCtrl = this;
                       vocabInstructionCtrl.vocab_data = $stateParams.vocab_data.objects;
+                      vocabInstructionCtrl.params = $stateParams;
                       vocabInstructionCtrl.playDelayed = playDelayed;
-
+                      $scope.userGender = User.getActiveProfileSync().data.profile.gender;
                       function playDelayed (url) {
                           $timeout(function(){
                               audio.player.play(url, function(){

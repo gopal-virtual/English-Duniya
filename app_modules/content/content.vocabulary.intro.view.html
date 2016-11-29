@@ -11,7 +11,7 @@
     }
     .align-vertical-middle{
         position : absolute;
-        top : 55vh;
+        margin-top: 40px;
         width: 100%;
         text-align: center;
     }
@@ -22,7 +22,7 @@
         <div class="row vh-100 align-middle">
             <div class="col align-middle">
                 <h5 class="color-white align-vertical-middle font-md">{{ vocabIntroCtrl.vocab_data.node.title.split('-')[0].trim() + " " + vocabIntroCtrl.vocab_data.node.title.split('-')[1].trim() }}</h5>
-                <img src="img/assets_svg/girl-ribbon.svg" alt="">
+                <img ng-src="img/assets_svg/{{userGender=='M'? 'boy' : 'girl'}}-ribbon.svg">
             </div>
         </div>
     </ion-content>

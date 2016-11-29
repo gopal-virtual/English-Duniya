@@ -237,6 +237,9 @@
             });
             progress.set(0);
             $scope.average_level = $stateParams.average_level ? $stateParams.average_level : 1;
+            progress.animate($scope.average_level / 3)
+        }, 100);
+        $timeout(function(){
             if ($stateParams.average_level <= 1) {
                 audio.player.play('sound/not_bad_you_are_at_level_1.mp3')
             } else if ($stateParams.average_level <= 2) {
@@ -246,8 +249,7 @@
             } else if ($stateParams.average_level <= 4) {
                 audio.player.play('sound/nice_you_reached_level_4.mp3')
             } else {}
-            progress.animate($scope.average_level / 3)
-        }, 100);
+        },2000)
         }]
       })
       .state('litmus_start', {
@@ -256,6 +258,7 @@
         controller: ['$log', 'User', '$scope', 'audio', function($log, User, $scope, audio) {
           $scope.audio = audio;
           $scope.gender = User.getActiveProfileSync().data.profile.gender == 'M' ? 'boy' : 'girl';
+          $log.debug('litmus start')
           audio.player.play('sound/lets_start_a_small_practice.mp3')
         }]
       })
