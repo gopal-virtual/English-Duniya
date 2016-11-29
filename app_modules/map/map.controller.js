@@ -135,6 +135,7 @@
         "listening" : "darkblue",
         "reading" : "orange"
     }
+    mapCtrl.goToChooseProfile = goToChooseProfile;
 
     // mapCtrl.notification = notification;
 
@@ -593,5 +594,8 @@
       // $state.reload()
     }
 
+    function goToChooseProfile() {
+      $state.go('user.chooseProfile');
+    }
   }
 })();

@@ -7,7 +7,7 @@
     .constant('CONSTANT', {
       'APP':{
       'TYPE': 'na',
-      'VERSION': '0.1.8'
+      'VERSION': '0.1.9'
       },
       'BUNDLED': false,
       'LOCK': true,

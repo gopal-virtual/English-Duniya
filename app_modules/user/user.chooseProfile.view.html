@@ -1,0 +1,34 @@
+<ion-header-bar class="bg-pale">
+  <div class="buttons">
+    <button class="button button-clear icon ion-android-arrow-back" ng-click="userCtrl.goToMap()"></button>
+  </div>
+  <h1 class="title">Choose Profile</h1>
+</ion-header-bar>
+<ion-view>
+  <ion-content class="bg-pale">
+    <!-- <div class="row">
+      <div class="col center">
+        <i class="font-xl icon ion-clipboard"></i>
+      </div>
+    </div> -->
+    <div class="row">
+      <div class="col">
+        <ion-list>
+          <ion-item class="bg-transparent border-0 padding-y-15" ng-repeat="profile in userCtrl.profiles">
+            <div class="flex space-around padding-y-5">
+            Profile name {{profile.doc.data.profile.first_name}}
+            </div>
+            <button ng-click="userCtrl.selectProfile(profile)">Select</button>
+          </ion-item>
+        </ion-list>
+      </div>
+    </div>
+  </ion-content>
+</ion-view>
+<!-- no share -->
+<!-- <ion-footer-bar align-title="left" class="bar-assertive">
+  <h1 class="title"></h1>
+  <div class="buttons">
+    <button class="button button-clear icon icon-right ion-android-share-alt"> Share</button>
+  </div>
+</ion-footer-bar> -->

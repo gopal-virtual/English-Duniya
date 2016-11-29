@@ -1,68 +1,68 @@
 //To do : handle native back button
 (function() {
   angular
-    .module('zaya-quiz')
-    .controller('QuizController', QuizController)
+  .module('zaya-quiz')
+  .controller('QuizController', QuizController)
 
   QuizController.$inject = [
-                            'quiz',
-                            'widgetParser',
-                            '$stateParams',
-                            '$state',
-                            '$scope',
-                            'audio',
-                            '$log',
-                            '$ionicModal',
-                            'CONSTANT',
-                            '$ionicSlideBoxDelegate',
-                            'Utilities',
-                            'Auth',
-                            '$ionicLoading',
-                            '$ionicPopup',
-                            'lessonutils',
-                            'orientation',
-                            '$ionicScrollDelegate',
-                            '$timeout',
-                            '$interval',
-                            '$q',
-                            'ml',
-                            'data',
-                            '$ionicPlatform',
-                            'nzTour',
-                            'analytics',
-                            'User',
-                            'content'
-                                ];
+  'quiz',
+  'widgetParser',
+  '$stateParams',
+  '$state',
+  '$scope',
+  'audio',
+  '$log',
+  '$ionicModal',
+  'CONSTANT',
+  '$ionicSlideBoxDelegate',
+  'Utilities',
+  'Auth',
+  '$ionicLoading',
+  '$ionicPopup',
+  'lessonutils',
+  'orientation',
+  '$ionicScrollDelegate',
+  '$timeout',
+  '$interval',
+  '$q',
+  'ml',
+  'data',
+  '$ionicPlatform',
+  'nzTour',
+  'analytics',
+  'User',
+  'content'
+  ];
 
   function QuizController(
-                            quiz,
-                            widgetParser,
-                            $stateParams,
-                            $state,
-                            $scope,
-                            audio,
-                            $log,
-                            $ionicModal,
-                            CONSTANT,
-                            $ionicSlideBoxDelegate,
-                            Utilities,
-                            Auth,
-                            $ionicLoading,
-                            $ionicPopup,
-                            lessonutils,
-                            orientation,
-                            $ionicScrollDelegate,
-                            $timeout,
-                            $interval,
-                            $q,
-                            ml,
-                            data,
-                            $ionicPlatform,
-                            nzTour,
-                            analytics,
-                            User,
-                            content
-                                    ) {
+    quiz,
+    widgetParser,
+    $stateParams,
+    $state,
+    $scope,
+    audio,
+    $log,
+    $ionicModal,
+    CONSTANT,
+    $ionicSlideBoxDelegate,
+    Utilities,
+    Auth,
+    $ionicLoading,
+    $ionicPopup,
+    lessonutils,
+    orientation,
+    $ionicScrollDelegate,
+    $timeout,
+    $interval,
+    $q,
+    ml,
+    data,
+    $ionicPlatform,
+    nzTour,
+    analytics,
+    User,
+    content
+    ) {
 
     var quizCtrl = this;
     //bind quiz resolved to controller
@@ -102,7 +102,7 @@
     quizCtrl.getCurrentIndex = getCurrentIndex;
     quizCtrl.prevQuestion = prevQuestion;
     quizCtrl.nextQuestion = nextQuestion;
-    quizCtrl.inViewData = {}
+    quizCtrl.inViewData = {};
     quizCtrl.inViewTrigger = inViewTrigger;
     quizCtrl.inViewFlag = true;
     //log attempts & feedback
@@ -187,19 +187,19 @@
      if(quizCtrl.quiz.objects[0].node.id === CONSTANT.QUESTION.DEMO){
        quizCtrl.quiz.objects.shift()
      }
-       lessonutils.playResource(quizCtrl.quiz)
+     lessonutils.playResource(quizCtrl.quiz)
    }
 
-    function stopTimer() {
-      $interval.cancel(quizCtrl.interval);
-    }
+   function stopTimer() {
+    $interval.cancel(quizCtrl.interval);
+  }
 
-    function startTimer() {
-      quizCtrl.interval = $interval(function() {
-        quizCtrl.counter++;
-        quizCtrl.timer += 1000;
-      }, 1000);
-    }
+  function startTimer() {
+    quizCtrl.interval = $interval(function() {
+      quizCtrl.counter++;
+      quizCtrl.timer += 1000;
+    }, 1000);
+  }
 
     // function starCount(index) {
     //   var count = quizCtrl.summary.stars - index;
@@ -213,22 +213,22 @@
         star = quizCtrl.summary.stars;
       } else if (quizCtrl.summary.score.percent) {
         star = quizCtrl.summary.score.percent > CONSTANT.STAR.THREE ? 3 : quizCtrl.summary.score.percent > CONSTANT.STAR.TWO ? 2 : quizCtrl.summary.score.percent > CONSTANT.STAR.ONE ? 1 : 0;
-      } else {
-        star = 0;
+      } else  {
+              star = 0;
       }
       $log.debug("playing star sound", star );
       for (var i = 0; i < star; i++) {
         $log.debug("sound source",starSound[i]);
         (function(count){
           $timeout( function() {
-              $scope.resultStarFlag[count] = true;
-              $log.debug("sound source",starSound,count,starSound[count]);
+            $scope.resultStarFlag[count] = true;
+            $log.debug("sound source",starSound,count,starSound[count]);
             audio.player.play("sound/"+starSound[count]+".mp3")
               // angular.element("#audioplayer")[0].pause();
               // angular.element("#audioSource")[0].src = ;
               // angular.element("#audioplayer")[0].load();
               // angular.element("#audioplayer")[0].play();
-          },(count+1)*1000);
+            },(count+1)*1000);
         })(i)
 
       }
@@ -238,55 +238,55 @@
       // $log.debug("Submit Report called");
       var lesson = lessonutils.getLocalLesson();
 
-        User.skills.update({
-          profileId: User.getActiveProfileSync()._id,
-          lessonId: quiz.parent,
-          id: quiz.node.id,
-          score: summary.score.marks,
-          totalScore: quizCtrl.quiz.node.type.score,
-          skill: quiz.node.tag
-        })
-        .then(function() {
-          return data.getQuizScore({
-              'profileId': User.getActiveProfileSync()._id,
-              'lessonId': lesson.node.id,
-              'id': quizCtrl.quiz.node.id
-            });
-        })
-        .then(function(previousScore) {
-          if ((!previousScore) || (!previousScore.hasOwnProperty('score')) || (previousScore && parseInt(previousScore.score) < summary.score.marks)) {
+      User.skills.update({
+        profileId: User.getActiveProfileSync()._id,
+        lessonId: quiz.parent,
+        id: quiz.node.id,
+        score: summary.score.marks,
+        totalScore: quizCtrl.quiz.node.type.score,
+        skill: quiz.node.tag
+      })
+      .then(function() {
+        return data.getQuizScore({
+          'profileId': User.getActiveProfileSync()._id,
+          'lessonId': lesson.node.id,
+          'id': quizCtrl.quiz.node.id
+        });
+      })
+      .then(function(previousScore) {
+        if ((!previousScore) || (!previousScore.hasOwnProperty('score')) || (previousScore && parseInt(previousScore.score) < summary.score.marks)) {
 
-            return User.scores.update({
-              profileId: User.getActiveProfileSync()._id,
-              lessonId: lesson.node.id,
-              id: quiz.node.id,
-              score: summary.score.marks,
-              totalScore: quizCtrl.quiz.node.type.score,
-              type: 'assessment',
-              skill: quiz.node.tag
-            })
-
-          }
-        })
-
-        .then(function() {
-          var attempts = [];
-          angular.forEach(report.attempts, function(value, key) {
-            attempts.push({
-              answer: value.length > 0 ? value : null,
-              score: summary.analysis[key].score,
-              status: value.length > 0 ? CONSTANT.ATTEMPT.STATUS.ATTEMPTED : CONSTANT.ATTEMPT.STATUS.SKIPPED,
-              node: key
-            });
-          });
-          return User.reports.save({
-            'score': summary.score.marks,
-            'attempts': attempts,
-            'profileId': User.getActiveProfileSync()._id,
-            'node': quizCtrl.quiz.node.id
+          return User.scores.update({
+            profileId: User.getActiveProfileSync()._id,
+            lessonId: lesson.node.id,
+            id: quiz.node.id,
+            score: summary.score.marks,
+            totalScore: quizCtrl.quiz.node.type.score,
+            type: 'assessment',
+            skill: quiz.node.tag
           })
 
+        }
+      })
+
+      .then(function() {
+        var attempts = [];
+        angular.forEach(report.attempts, function(value, key) {
+          attempts.push({
+            answer: value.length > 0 ? value : null,
+            score: summary.analysis[key].score,
+            status: value.length > 0 ? CONSTANT.ATTEMPT.STATUS.ATTEMPTED : CONSTANT.ATTEMPT.STATUS.SKIPPED,
+            node: key
+          });
+        });
+        return User.reports.save({
+          'score': summary.score.marks,
+          'attempts': attempts,
+          'profileId': User.getActiveProfileSync()._id,
+          'node': quizCtrl.quiz.node.id
         })
+
+      })
 
     }
 
@@ -346,8 +346,8 @@
                 $log.debug("closeModal callback found " );
 
                 callback();
-                }
-                quizCtrl.canRemoveFeedback = true;
+              }
+              quizCtrl.canRemoveFeedback = true;
             });
           };
         }
@@ -385,10 +385,10 @@
         $log.debug("closeModalCallback quizCtrl.currentIndex >= quizCtrl.quiz.objects.length - 1" );
 
         quizCtrl.submitQuiz('practice');
-        } else {
+      } else {
         $log.debug("closeModalCallback quizCtrl.currentIndex < quizCtrl.quiz.objects.length - 1" );
         $ionicSlideBoxDelegate.slide(quizCtrl.getCurrentIndex() + 1);
-        }
+      }
     }
     function parseHtml(index) {
       quizCtrl.quiz.objects[index].node.widgetHtml = quizCtrl.widgetParser.parseToDisplay(quizCtrl.quiz.objects[index].node.title, index, quizCtrl.quiz);
@@ -573,14 +573,14 @@
       if (quizCtrl.getQuestionType(question) == CONSTANT.WIDGETS.QUESTION_TYPES.MCQ) {
         for (var i = 0; i < quizCtrl.report.attempts[question.node.id].length; i++) {
           if (_.chain(quizCtrl.report.attempts[question.node.id][i]).map(function(num, key) {
-              return num ? parseInt(key) : false;
-            }).reject(function(num) {
-              return !num;
-            }).value().length > 0)
+            return num ? parseInt(key) : false;
+          }).reject(function(num) {
+            return !num;
+          }).value().length > 0)
             return true;
+          }
+          return false;
         }
-        return false;
-      }
       // single choice
       if (quizCtrl.getQuestionType(question) == CONSTANT.WIDGETS.QUESTION_TYPES.SCQ) {
         return quizCtrl.report.attempts[question.node.id].length > 0;
@@ -607,14 +607,14 @@
       if (quizCtrl.getQuestionType(question) == CONSTANT.WIDGETS.QUESTION_TYPES.MCQ) {
         for (var i = 0; i < quizCtrl.report.attempts[question.node.id].length; i++) {
           if (_.chain(quizCtrl.report.attempts[question.node.id][i]).map(function(num, key) {
-              return num ? parseInt(key) : false;
-            }).reject(function(num) {
-              return !num;
-            }).sort().isEqual(question.node.type.answer.sort()).value())
+            return num ? parseInt(key) : false;
+          }).reject(function(num) {
+            return !num;
+          }).sort().isEqual(question.node.type.answer.sort()).value())
             return true;
+          }
+          return false;
         }
-        return false;
-      }
       // single choice
       if (quizCtrl.getQuestionType(question) == CONSTANT.WIDGETS.QUESTION_TYPES.SCQ) {
         return quizCtrl.report.attempts[question.node.id].indexOf(question.node.type.answer[0]) != -1 ? (true) : false;
@@ -702,31 +702,31 @@
     }
 
     function submitQuiz(quizType) {
-        if(quizCtrl.summary.analysis[CONSTANT.QUESTION.DEMO])
-            delete quizCtrl.summary.analysis[CONSTANT.QUESTION.DEMO];
-        if(quizCtrl.report.attempts[CONSTANT.QUESTION.DEMO])
-            delete quizCtrl.report.attempts[CONSTANT.QUESTION.DEMO];
+      if(quizCtrl.summary.analysis[CONSTANT.QUESTION.DEMO])
+        delete quizCtrl.summary.analysis[CONSTANT.QUESTION.DEMO];
+      if(quizCtrl.report.attempts[CONSTANT.QUESTION.DEMO])
+        delete quizCtrl.report.attempts[CONSTANT.QUESTION.DEMO];
       if (quizType === 'practice') {
 
 
-          $scope.modal.hide().then(function() {
-            analytics.log(
-              {
-                name : 'PRACTICE',
-                type : 'END',
-                id : quizCtrl.quiz.node.type.id
-              },
-              {
-                time : new Date()
-              },
-              User.getActiveProfileSync()._id
-            ) &&
-            $state.go('quiz.summary', {
-              report: (quizCtrl.report),
-              summary: (quizCtrl.summary),
-              type: 'practice'
-            })
-          });
+        $scope.modal.hide().then(function() {
+          analytics.log(
+          {
+            name : 'PRACTICE',
+            type : 'END',
+            id : quizCtrl.quiz.node.type.id
+          },
+          {
+            time : new Date()
+          },
+          User.getActiveProfileSync()._id
+          ) &&
+          $state.go('quiz.summary', {
+            report: (quizCtrl.report),
+            summary: (quizCtrl.summary),
+            type: 'practice'
+          })
+        });
 
 
 
@@ -739,15 +739,15 @@
             quizCtrl.generateReport(quizCtrl.quiz);
             quizCtrl.summary = quizCtrl.generateSummary(quizCtrl.report, quizCtrl.quiz);
             analytics.log(
-                {
-                    name : 'QUIZ',
-                    type : 'END',
-                    id : quizCtrl.quiz.id
-                },
-                {
-                    time : new Date()
-                },
-              User.getActiveProfileSync()._id
+            {
+              name : 'QUIZ',
+              type : 'END',
+              id : quizCtrl.quiz.id
+            },
+            {
+              time : new Date()
+            },
+            User.getActiveProfileSync()._id
             ) &&
             $state.go('quiz.summary', {
               report: angular.copy(quizCtrl.report),
@@ -833,36 +833,36 @@
       //     }
       // }, 101);
 
-    $scope.showNodeMenu = function() {
-      quizCtrl.pauseModal.show().then(function(){
-        audio.player.play('sound/pause_menu.mp3');
-      });
-    }
-    $scope.closeNodeMenu = function() {
-      quizCtrl.pauseModal.hide().then(function(){
-        audio.player.stop();
-      });
-    }
-
-    function restartQuiz() {
-      $state.go($state.current, {}, {
-        reload: true
-      });
-    }
-
-
-
-    function inViewTrigger(index, viewPart) {
-      quizCtrl.inViewData[index] = viewPart;
-      if (quizCtrl.inViewFlag) {
-        if (viewPart == 'bottom' || viewPart == 'both' || viewPart == 'neither' || (viewPart == 'top' && quizCtrl.inViewData[index - 1] === undefined)) {
-          quizCtrl.setCurrentIndex(index);
-        }
-
+      $scope.showNodeMenu = function() {
+        quizCtrl.pauseModal.show().then(function(){
+          audio.player.play('sound/pause_menu.mp3');
+        });
       }
-    }
+      $scope.closeNodeMenu = function() {
+        quizCtrl.pauseModal.hide().then(function(){
+          audio.player.stop();
+        });
+      }
 
-    function highlightSoundIcon(questionIndex) {
+      function restartQuiz() {
+        $state.go($state.current, {}, {
+          reload: true
+        });
+      }
+
+
+
+      function inViewTrigger(index, viewPart) {
+        quizCtrl.inViewData[index] = viewPart;
+        if (quizCtrl.inViewFlag) {
+          if (viewPart == 'bottom' || viewPart == 'both' || viewPart == 'neither' || (viewPart == 'top' && quizCtrl.inViewData[index - 1] === undefined)) {
+            quizCtrl.setCurrentIndex(index);
+          }
+
+        }
+      }
+
+      function highlightSoundIcon(questionIndex) {
       // if (quizCtrl.quiz.objects[questionIndex].node.widgetHtml.indexOf(CONSTANT.WIDGETS.SPEAKER_IMAGE) >= 0) {
         // quizCtrl.quiz.objects[questionIndex].node.widgetHtml = quizCtrl.quiz.objects[questionIndex].node.widgetHtml.replace(CONSTANT.WIDGETS.SPEAKER_IMAGE, CONSTANT.WIDGETS.SPEAKER_IMAGE_SELECTED)
       // }
@@ -885,7 +885,7 @@
               $interval.cancel(watchAudio)
               // quizCtrl.quiz.objects[questionIndex].node.widgetHtml = quizCtrl.quiz.objects[questionIndex].node.widgetHtml.replace(CONSTANT.WIDGETS.SPEAKER_IMAGE_SELECTED, CONSTANT.WIDGETS.SPEAKER_IMAGE)
             }
-        }, 100)
+          }, 100)
       }else{
         $log.warn("This question doesn't have sound")
       }
@@ -897,15 +897,15 @@
           hideOnStateChange: true
         });
         analytics.log(
-            {
-                name : 'LESSON',
-                type : 'END',
-                id : $scope.selectedNode.node.id
-            },
-            {
-                time : new Date()
-            },
-          User.getActiveProfileSync()._id
+        {
+          name : 'LESSON',
+          type : 'END',
+          id : $scope.selectedNode.node.id
+        },
+        {
+          time : new Date()
+        },
+        User.getActiveProfileSync()._id
         )
         $state.go('map.navigate', {"activatedLesson" : quizCtrl.quiz});
       // }
@@ -977,17 +977,17 @@
     }
 
     function logQuestion(index, type){
-        analytics.log(
-            {
-                name : 'QUESTION',
-                type : type,
-                id : quizCtrl.quiz.objects[index].node.id
-            },
-            {
-                time : new Date()
-            },
-          User.getActiveProfileSync()._id
-        )
+      analytics.log(
+      {
+        name : 'QUESTION',
+        type : type,
+        id : quizCtrl.quiz.objects[index].node.id
+      },
+      {
+        time : new Date()
+      },
+      User.getActiveProfileSync()._id
+      )
     }
     function intro_end_quiz(){
       $log.debug("Inside onended event");
@@ -1054,8 +1054,8 @@
 
     // $scope.progressBar();
 
-            $scope.$on('backButton',function(){
-                $log.debug('back button pressed')
+    $scope.$on('backButton',function(){
+      $log.debug('back button pressed')
               // $log.debug("nzTour",nzTour.current.step);
               if (!quizCtrl.noPauseFlag) {
                 audio.player.stop();

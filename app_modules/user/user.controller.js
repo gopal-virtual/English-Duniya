@@ -23,7 +23,8 @@
     '$timeout',
     'User',
     'audio',
-    'notification'
+    'notification',
+    '$stateParams'
   ];
 
   function userController(CONSTANT,
@@ -43,7 +44,8 @@
                           $timeout,
                           User,
                           audio,
-                            notification) {
+                          notification,
+                          $stateParams) {
     var userCtrl = this;
     userCtrl.calcAge = calcAge;
     userCtrl.closeKeyboard = closeKeyboard;
@@ -52,21 +54,56 @@
     userCtrl.showError = showError;
     userCtrl.convertDate = convertDate;
     userCtrl.tabIndex = 0;
-    userCtrl.personaliseFormValidations = $state.current.data.personaliseFormValidations || {};
-    userCtrl.skills = $state.current.data.skills;
+    userCtrl.personaliseFormValidations =  {
+      // 'gender': ['required'],
+      // 'firstName': ['required'],
+      'grade': ['required'],
+      // 'motherTongue': ['required']
+    };
+    userCtrl.skills = [{
+      "id": "6ef60d7e-64a2-4779-8aba-eae1d2de9246",
+      "title": "Vocabulary",
+      "lesson_scores": 220,
+      "question_scores": 0
+    }, {
+      "id": "d711986f-0451-46d3-b68b-2d2500a1bb1e",
+      "title": "Reading",
+      "lesson_scores": 180,
+      "question_scores": 0
+    }, {
+      "id": "152df66c-0f88-4932-86f2-592fa9d58b0e",
+      "title": "Grammar",
+      "lesson_scores": 200,
+      "question_scores": 0
+    }, {
+      "id": "a28050a4-adb8-4b0c-8505-3b79d0db8128",
+      "title": "Listening",
+      "lesson_scores": 100,
+      "question_scores": 0
+    }];
     userCtrl.network = network;
     userCtrl.goToMap = goToMap;
     userCtrl.splitName = splitName;
     userCtrl.nextSlide = nextSlide;
     userCtrl.disableSwipe = disableSwipe;
     userCtrl.playAudio = playAudio;
-
+    userCtrl.selectProfile = selectProfile;
     userCtrl.playAudio(-1);
     $log.debug("Hukata")
     $scope.audio = audio;
     // $timeout(function () {
     //   userCtrl.playAudio(0);
     // }, 5000);
+
+    $log.debug("StateParams",$stateParams)
+    if($stateParams.profiles){
+      userCtrl.profiles = $stateParams.profiles;
+      $log.debug("Profiles",userCtrl.profiles)
+    }else{
+      User.profile.getAll().then(function (data) {
+        userCtrl.profiles = data;
+      })
+    }
     function playAudio(index) {
       var src;
       if (index == -1) {
@@ -155,7 +192,7 @@
           return content.createLessonDBIfNotExists()
         })
         .then(function () {
-          $log.debug("CREATING USER")
+          $log.debug("CREATING USER");
           localStorage.setItem('demo_flag', 1);
           localStorage.setItem('diagnosis_flag', false);
           $state.go('litmus_start');
@@ -239,6 +276,12 @@
         cordova.plugins.Keyboard.close();
       } catch (e) {
       }
+    }
+
+    function selectProfile(profile) {
+          User.profile.select(profile)
+      $state.go('map.navigate')
+
     }
 
     $scope.$watch("userCtrl.user.name", function () {
