@@ -399,7 +399,7 @@
             for (i = 0; i < data.rows.length; i++) {
               var index = -1;
               while ((index = playlist_ids.indexOf(data.rows[i].id, index + 1)) != -1) {
-                lessons[index] = data.rows[i]
+                lessons[index] = data.rows[i];
               }
             }
               // if(playlist.indexOf(data.rows[i].id) >= 0){
@@ -421,12 +421,26 @@
               // $log.debug("Iter ",lessons[i].doc.lesson.objects[c].node.playlist_index )
               // }
                 var include_video_flag = true;
-
+                var include_vocab_flag = true;
+                $log.debug("pre",playlist.length);
                 angular.forEach(CONSTANT.NODE_TYPE_LIST,function(node_type){
                 for (var c = 0; c < lessons[i].doc.lesson.objects.length; c++) {
+                  $log.debug("pre playlist",playlist[i])
                   if (node_type == 'vocabulary' && lessons[i].doc.lesson.objects[c].node.content_type_name === 'vocabulary') {
+                    $log.debug("pre vocab found")
+                   for (var key in playlist[i]) {
+                       if (playlist[i].hasOwnProperty(key)) {
+                            $log.debug("Previously attempted ",playlist[i][key].type,key)
+                           if(playlist[i][key].type === 'resource'){
+                            $log.debug("previusly attempted Video found ");
+                            include_vocab_flag = false;
+                           }   
+                      }
+                    }
+                    if(include_vocab_flag){
                     resources.push(angular.copy(lessons[i].doc.lesson.objects[c]));
                     include_video_flag = false;
+                    }
                   }
                   if (node_type == 'resource' && lessons[i].doc.lesson.objects[c].node.content_type_name  === 'resource' && include_video_flag === true) {
                     resources.push(angular.copy(lessons[i].doc.lesson.objects[c]));
