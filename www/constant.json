@@ -10,7 +10,10 @@
     "PROFILES_DB_SERVER": "http://ed-couch.zaya.in/device",
     "LESSONS_DB_SERVER":"http://ed-couch.zaya.in/lessonsdb",
     "DEBUG" : false,
-    "QUESTION_DEMO" : false
+    "QUESTION_DEMO" : false,
+    "NOTIFICATION_DURATION_DISCOVERED" : 300,
+    "NOTIFICATION_DURATION_UNDISCOVERED" : 1440,
+    "NOTIFICATION_DB_SERVER": "https://ed-couch.zaya.in/notifications"
   },
   "TESTING": {
     "CONTENT_TEST":false,
@@ -23,7 +26,11 @@
     "PROFILES_DB_SERVER": "http://ci-couch.zaya.in/device",
     "LESSONS_DB_SERVER":"http://ci-couch.zaya.in/lessonsdb",
     "DEBUG" : true,
-    "QUESTION_DEMO" : false
+    "QUESTION_DEMO" : false,
+    "NOTIFICATION_DURATION_DISCOVERED" : 1,
+    "NOTIFICATION_DURATION_UNDISCOVERED" : 1,
+    "NOTIFICATION_DB_SERVER": "https://ci-couch.zaya.in/notifications"
+
   },
   "DEVELOPMENT": {
     "CONTENT_TEST":false,
@@ -37,7 +44,10 @@
     "PROFILES_DB_SERVER": "https://ci-couch.zaya.in/device",
     "LESSONS_DB_SERVER":"https://ci-couch.zaya.in/lessonsdb",
     "DEBUG" : true,
-    "QUESTION_DEMO" : false
+    "QUESTION_DEMO" : false,
+    "NOTIFICATION_DURATION_DISCOVERED" : 1,
+    "NOTIFICATION_DURATION_UNDISCOVERED" : 1,
+    "NOTIFICATION_DB_SERVER": "https://ci-couch.zaya.in/notifications"
   },
   "CONTENT": {
     "CONTENT_TEST":true,
@@ -51,6 +61,10 @@
     "PROFILES_DB_SERVER": "https://ci-couch.zaya.in/device",
     "LESSONS_DB_SERVER":"https://ci-couch.zaya.in/lessonsdb",
     "DEBUG" : true,
-    "QUESTION_DEMO" : false
+    "QUESTION_DEMO" : false,
+    "NOTIFICATION_DURATION_DISCOVERED" : 1,
+    "NOTIFICATION_DURATION_UNDISCOVERED" : 1,
+    "NOTIFICATION_DB_SERVER": "https://ci-couch.zaya.in/notifications"
+
   }
 }

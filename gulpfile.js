@@ -184,11 +184,20 @@ gulp.task('generate-constants', function () {
       },{
         match: 'QUESTION_DEMO',
         replacement: constants[env]['QUESTION_DEMO']
-        },
-         {
+      },{
         match: 'CONTENT_TEST',
         replacement: constants[env]['CONTENT_TEST']
-        }
+      },{
+        match: 'NOTIFICATION_DURATION_DISCOVERED',
+        replacement: constants[env]['NOTIFICATION_DURATION_DISCOVERED']
+      },{
+        match: 'NOTIFICATION_DURATION_UNDISCOVERED',
+        replacement: constants[env]['NOTIFICATION_DURATION_UNDISCOVERED']
+      },{
+        match: 'NOTIFICATION_DB_SERVER',
+        replacement: constants[env]['NOTIFICATION_DB_SERVER']
+      }
+
       ]
     }))
     .pipe(rename(paths.constants.destination_filename))

@@ -21,6 +21,7 @@
       'LESSONS_DB_SERVER': '@@LESSONS_DB_SERVER',
       'PROFILES_DB_SERVER': '@@PROFILES_DB_SERVER',
       'LESSON_DB_VERSION': '@@LESSON_DB_VERSION',
+      'NOTIFICATION_DB_SERVER': '@@NOTIFICATION_DB_SERVER',
       'ANALYTICS' : @@ANALYTICS,
       'GRADE' : @@GRADE,
       'QUESTION_DEMO' : @@QUESTION_DEMO,
@@ -128,6 +129,12 @@
           '12': DEFAULT_ERROR_MESSAGE
         }
         },
-        'NODE_TYPE_LIST' : ['vocabulary','resource','assessment']
+        'NODE_TYPE_LIST' : ['vocabulary','resource','assessment'],
+        'NOTIFICATION': {
+          'DURATION': {
+            'DISCOVERED': @@NOTIFICATION_DURATION_DISCOVERED,
+            'UNDISCOVERED' : @@NOTIFICATION_DURATION_UNDISCOVERED 
+          }
+        }
     })
 })();
