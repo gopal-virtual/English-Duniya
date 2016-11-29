@@ -380,7 +380,6 @@
       var d = $q.defer();
 
       User.playlist.get(User.getActiveProfileSync()._id).then(function(playlist) {
-          $log.debug("Iter Playlist ", playlist)
           lessonDB.allDocs({
             include_docs: true
           }).then(function(data) {
@@ -392,55 +391,49 @@
             for (i = 0; i < playlist.length; i++) {
               playlist_ids.push(playlist[i].lesson_id);
             }
-            $log.debug("Iter playlist ids ", playlist_ids);
 
             for (i = 0; i < data.rows.length; i++) {
               var index = -1;
               while ((index = playlist_ids.indexOf(data.rows[i].id, index + 1)) != -1) {
-                $log.debug("iter INDEX", index)
                 lessons[index] = data.rows[i]
               }
             }
-            $log.debug("Iter LESSINS", lessons)
               // if(playlist.indexOf(data.rows[i].id) >= 0){
               //     lessons[playlist.indexOf(data.rows[i].id)] = data.rows[i]
               //   }
 
 
             for (i = 0; i < lessons.length; i++) {
+
               // data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key;
-              $log.debug("iter i", i)
               for (var c = 0; c < lessons[i].doc.lesson.objects.length; c++) {
-                $log.debug(c)
                 if (lessons[i].doc.lesson.node.meta && lessons[i].doc.lesson.node.meta.intros && lessons[i].doc.lesson.node.meta.intros.sound && lessons[i].doc.lesson.node.meta.intros.sound[0]) {
                   lessons[i].doc.lesson.objects[c].node.intro_sound = lessons[i].doc.lesson.node.meta.intros.sound[0];
                 }
                 lessons[i].doc.lesson.objects[c].node.tag = lessons[i].doc.lesson.node.tag;
                 lessons[i].doc.lesson.objects[c].node.playlist_index = i;
-                $log.debug("Iter ", lessons[i].doc.lesson.objects[c].node.playlist_index)
               }
               // for(var c = 0; c < lessons[i].doc.lesson.objects.length; c++){
               // $log.debug("Iter ",lessons[i].doc.lesson.objects[c].node.playlist_index )
               // }
-              $log.debug("Iter lessons", lessons);
-              angular.forEach(['vocabulary','resource', 'assessment'], function(content_type) {
-                $log.debug("Iter content_type, i", content_type, i);
+                var include_video_flag = true;
+
+                angular.forEach(CONSTANT.NODE_TYPE_LIST,function(node_type){
                 for (var c = 0; c < lessons[i].doc.lesson.objects.length; c++) {
-                  $log.debug(content_type, i, c, lessons[i].doc.lesson.objects[c].node.content_type_name);
-                  if (lessons[i].doc.lesson.objects[c].node.content_type_name === content_type) {
-                    $log.debug("iter c", c);
-                    $log.debug("Iter playlist_index", lessons[i].doc.lesson.objects[c].node.playlist_index);
+                  if (node_type == 'vocabulary' && lessons[i].doc.lesson.objects[c].node.content_type_name === 'vocabulary') {
                     resources.push(angular.copy(lessons[i].doc.lesson.objects[c]));
-                    $log.debug("iTER BREAKING");
-                    break;
+                    include_video_flag = false;
+                  }
+                  if (node_type == 'resource' && lessons[i].doc.lesson.objects[c].node.content_type_name  === 'resource' && include_video_flag === true) {
+                    resources.push(angular.copy(lessons[i].doc.lesson.objects[c]));
+                  }
+                  if (node_type == 'assessment' && lessons[i].doc.lesson.objects[c].node.content_type_name  === 'assessment') {
+                    resources.push(angular.copy(lessons[i].doc.lesson.objects[c]));
                   }
                 }
-              })
-              for (c = 0; c < resources.length; c++) {
-                $log.debug("Iter a", resources[c].node.playlist_index);
-              }
+                })  
+
             }
-            $log.debug("Iter Final ", resources);
 
             if (resources.length) {
               resources[resources.length - 1].node.requiresSuggestion = true;

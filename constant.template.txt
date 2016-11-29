@@ -127,6 +127,7 @@
           '11': DEFAULT_ERROR_MESSAGE,
           '12': DEFAULT_ERROR_MESSAGE
         }
-        }
+        },
+        'NODE_TYPE_LIST' : ['vocabulary','resource','assessment']
     })
 })();
