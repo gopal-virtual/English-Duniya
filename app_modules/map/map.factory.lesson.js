@@ -90,7 +90,7 @@
 
             }
 
-            if(key == lessons.length -1  && lessons[key-1].stars === undefined){
+            if(key > 0 && key == lessons.length -1  && lessons[key-1].stars === undefined){
                 setLock(key, lessons[key], true);
 
             }
