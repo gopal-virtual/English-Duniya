@@ -155,9 +155,11 @@
     User.checkIfProfileOnline = checkIfProfileOnline;
     User.startProfileSync = startProfileSync;
     function startProfileSync() {
+
       PouchDB.replicate('profilesDB', CONSTANT.PROFILES_DB_SERVER+device.uuid, {
         live: true,
-        retry: true
+        retry: true,
+        heartbeat: false
       }).on('paused', function (err) {
         $log.debug("Paused in profile db sync",err);
       })
