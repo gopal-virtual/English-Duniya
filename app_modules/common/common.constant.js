@@ -20,7 +20,7 @@
       'LESSONS_DB_SERVER': 'https://ci-couch.zaya.in/lessonsdb',
       'PROFILES_DB_SERVER': 'https://ci-couch.zaya.in/device',
       'LESSON_DB_VERSION': 'na',
-      'NOTIFICATION_DB_SERVER': '@@NOTIFICATION_DB_SERVER',
+      'NOTIFICATION_DB_SERVER': 'https://ci-couch.zaya.in/notifications',
       'ANALYTICS' : true,
       'GRADE' : [1,2,3],
       'QUESTION_DEMO' : false,

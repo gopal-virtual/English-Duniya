@@ -189,7 +189,10 @@ gulp.task('generate-constants', function () {
       },{
         match: 'NOTIFICATION_DURATION_UNDISCOVERED',
         replacement: constants[env]['NOTIFICATION_DURATION_UNDISCOVERED']
-        }
+      },{
+        match: 'NOTIFICATION_DB_SERVER',
+        replacement: constants[env]['NOTIFICATION_DB_SERVER']
+      }
 
       ]
     }))

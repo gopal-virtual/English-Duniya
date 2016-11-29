@@ -11,7 +11,8 @@
     "DEBUG" : false,
     "QUESTION_DEMO" : false,
     "NOTIFICATION_DURATION_DISCOVERED" : 300,
-    "NOTIFICATION_DURATION_UNDISCOVERED" : 1440
+    "NOTIFICATION_DURATION_UNDISCOVERED" : 1440,
+    "NOTIFICATION_DB_SERVER": "https://ed-couch.zaya.in/notifications"
   },
   "TESTING": {
     "LOCK": true,
@@ -25,7 +26,9 @@
     "DEBUG" : true,
     "QUESTION_DEMO" : false,
     "NOTIFICATION_DURATION_DISCOVERED" : 1,
-    "NOTIFICATION_DURATION_UNDISCOVERED" : 1
+    "NOTIFICATION_DURATION_UNDISCOVERED" : 1,
+    "NOTIFICATION_DB_SERVER": "https://ci-couch.zaya.in/notifications"
+
   },
   "DEVELOPMENT": {
     "LOCK": true,
@@ -40,6 +43,8 @@
     "DEBUG" : true,
     "QUESTION_DEMO" : false,
     "NOTIFICATION_DURATION_DISCOVERED" : 1,
-    "NOTIFICATION_DURATION_UNDISCOVERED" : 1
+    "NOTIFICATION_DURATION_UNDISCOVERED" : 1,
+    "NOTIFICATION_DB_SERVER": "https://ci-couch.zaya.in/notifications"
+    
   }
 }
