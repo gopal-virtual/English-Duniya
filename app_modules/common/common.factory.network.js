@@ -17,13 +17,13 @@
     return network;
 
     function isOnline() {
+        return true;
       if (window.Connection) {
         if (navigator.connection.type == Connection.NONE) {
 
           return false;
         } else {
 
-          $log.debug("Network manager returning true 1");
 
           return true;
         }

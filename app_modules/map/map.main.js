@@ -174,6 +174,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
             this.load.spritesheet('node-green-video', 'img/assets/button-green-video.png',88,91);
             this.load.spritesheet('node-darkblue-video', 'img/assets/button-darkblue-video.png',88,91);
             this.load.spritesheet('node-blue-practice', 'img/assets/button-blue-practice.png',88,91);
+            this.load.spritesheet('node-blue-vocabulary', 'img/assets/button-blue-vocabulary.png',88,91);
             this.load.spritesheet('node-orange-practice', 'img/assets/button-orange-practice.png',88,91);
             this.load.spritesheet('node-green-practice', 'img/assets/button-green-practice.png',88,91);
             this.load.spritesheet('node-darkblue-practice', 'img/assets/button-darkblue-practice.png',88,91);
@@ -574,7 +575,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                         function(currentLesson, game, posy, i, temp, currentObject) {
                             return function() {
 
-                                if (Demo.getStep == 1) {
+                                if (Demo.getStep() == 1) {
                                     Demo.setStep(2);
                                 }
                                 audio.play('press');
@@ -623,9 +624,9 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                         }
 
                         if (Demo.getStep() != 1) {
-                            temp["nodeWobbleTween"] = game.add.tween(node.scale).to({ x: [0.8,1,0.8], y: [0.8,1,0.8] }, 600, Phaser.Easing.Back.Out, true, 400).loop(true);
+                            temp["nodeWobbleTween"] = game.add.tween(node.scale).to({ x: [0.8,1,0.8], y: [0.8,1,0.8] }, 1500, Phaser.Easing.Back.Out, true, 400).loop(true);
                         }else{
-                            var fingerTween = game.add.tween(temp.demoFinger).to({x: [0.5*game.camera.width,0.5*game.camera.width], y: [0.55*game.camera.height,0.4*game.camera.height] }, 1000, Phaser.Easing.Back.Out, true).loop(true);
+                            var fingerTween = game.add.tween(temp.demoFinger).to({x: [0.5*game.camera.width,0.5*game.camera.width], y: [0.55*game.camera.height,0.4*game.camera.height] }, 2000, Phaser.Easing.Back.Out, true).loop(true);
                             log.debug("Not a demo I guess", fingerTween)
                             fingerTween.onStart.add(pressButton,this);
                             fingerTween.onLoop.add(pressButton,this);

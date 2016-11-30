@@ -30,35 +30,40 @@
 
     var ACTIVITY_TYPE = {
       "LESSON": {
-          "CONTENT" : "lesson",
+        "CONTENT": "lesson",
         "START": "start lesson",
         "END": "end lesson",
         "AVAILABLE": "available lessons",
         "UNLOCKED": "unlocked lessons"
       },
       "VIDEO": {
-          "CONTENT" : "resource",
+        "CONTENT": "resource",
         "START": "start video",
         "END": "end video",
         "SEEK": "seek video"
       },
+      "VOCABULARY": {
+        "CONTENT": "vocabulary",
+        "START": "start vocabulary",
+        "END": "end vocabulary",
+      },
       "PRACTICE": {
-          "CONTENT" : "assessment",
+        "CONTENT": "assessment",
         "START": "start practice",
         "END": "end practice"
       },
       "QUIZ": {
-          "CONTENT" : "assessment",
+        "CONTENT": "assessment",
         "START": "start quiz",
         "END": "end quiz"
       },
       "QUESTION": {
-          "CONTENT" : "jsonquestion",
+        "CONTENT": "jsonquestion",
         "START": "start question",
         "END": "end question"
       },
       "APP": {
-          "CONTENT" : null,
+        "CONTENT": null,
         "START": "start app",
         "END": "end app"
       }
@@ -71,6 +76,7 @@
     };
 
     return analytics;
+
     function getPostParam(
       actor_object_id,
       verb,
@@ -95,16 +101,16 @@
       };
 
       return $q.resolve(post_param);
-    //   if (verb == "end app") {
-    //     return $q.resolve(post_param);
-    //   } else {
-    //     return analytics.getLocation()
-    //       .then(function(position) {
-    //         post_param.data.location["lat"] = position.coords.latitude;
-    //         post_param.data.location["long"] = position.coords.longitude;
-    //         return $q.resolve(post_param);
-    //       })
-    //   }
+      //   if (verb == "end app") {
+      //     return $q.resolve(post_param);
+      //   } else {
+      //     return analytics.getLocation()
+      //       .then(function(position) {
+      //         post_param.data.location["lat"] = position.coords.latitude;
+      //         post_param.data.location["long"] = position.coords.longitude;
+      //         return $q.resolve(post_param);
+      //       })
+      //   }
     }
 
 
@@ -117,7 +123,7 @@
     }
 
     function log(action, data, profile_id, user_id) {
-        $log.debug("Analytics",action,data);
+      $log.debug("Analytics", action, data);
       data["network"] = network.getConnectionType();
       data["device"] = device;
       data["app_version"] = CONSTANT.APP.VERSION;
@@ -132,28 +138,28 @@
         "target_content_type": "account",
         "data": data
       };
-      if(profile_id){
+      if (profile_id) {
         post_param.client_uid = profile_id;
-      }else{
+      } else {
         post_param.actor_object_id = user_id;
       }
 
-      if(CONSTANT.ANALYTICS){
+      if (CONSTANT.ANALYTICS) {
 
 
         queue.push('activity-log', post_param);
       }
       // ionic.Platform.device().available &&
 
-        // .then(function() {
-        //   if (network.isOnline()) {
-        //     return Rest
-        //       .all('activity-log')
-        //       .post(post_param);
-        //   } else {
-        //    ;
-        //   }
-        // });
+      // .then(function() {
+      //   if (network.isOnline()) {
+      //     return Rest
+      //       .all('activity-log')
+      //       .post(post_param);
+      //   } else {
+      //    ;
+      //   }
+      // });
       //
 
 

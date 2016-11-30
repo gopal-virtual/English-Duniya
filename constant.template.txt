@@ -14,12 +14,14 @@
       'FAKE_LOGIN': @@FAKE_LOGIN,
       'FAKE_ID_DEVICE': '@@FAKE_ID_DEVICE',
       'FAKE_DEVICE': @@FAKE_DEVICE,
+      'CONTENT_TEST':@@CONTENT_TEST,
       'DEBUG' : @@DEBUG,
       'BACKEND_SERVICE_DOMAIN': '@@BACKEND_SERVICE_DOMAIN',
       'RESOURCE_SERVER': '@@RESOURCE_SERVER',
       'LESSONS_DB_SERVER': '@@LESSONS_DB_SERVER',
       'PROFILES_DB_SERVER': '@@PROFILES_DB_SERVER',
       'LESSON_DB_VERSION': '@@LESSON_DB_VERSION',
+      'NOTIFICATION_DB_SERVER': '@@NOTIFICATION_DB_SERVER',
       'ANALYTICS' : @@ANALYTICS,
       'GRADE' : @@GRADE,
       'QUESTION_DEMO' : @@QUESTION_DEMO,
@@ -65,7 +67,9 @@
       'ASSETS': {
         'IMG': {
           'ICON': 'img/icons',
-        }
+          'TEMP' : 'img/temp'
+        },
+        'SOUND' : 'sound/temp'
       },
       'STAR': {
         'ONE': 70,
@@ -124,6 +128,13 @@
           '11': DEFAULT_ERROR_MESSAGE,
           '12': DEFAULT_ERROR_MESSAGE
         }
+        },
+        'NODE_TYPE_LIST' : ['vocabulary','resource','assessment'],
+        'NOTIFICATION': {
+          'DURATION': {
+            'DISCOVERED': @@NOTIFICATION_DURATION_DISCOVERED,
+            'UNDISCOVERED' : @@NOTIFICATION_DURATION_UNDISCOVERED 
+          }
         }
     })
 })();
