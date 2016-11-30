@@ -1,4 +1,4 @@
-(function () {
+(function() {
   'use strict';
 
   angular
@@ -21,21 +21,23 @@
 
   /* @ngInject */
   function content(pouchDB,
-                   $log,
-                   CONSTANT,
-                   $q,
-                   mediaManager,
-                   $interval,
-                   User,
-                   widgetParser,
-                   extendLesson,
-                   $http,
-                   $rootScope) {
+    $log,
+    CONSTANT,
+    $q,
+    mediaManager,
+    $interval,
+    User,
+    widgetParser,
+    extendLesson,
+    $http,
+    $rootScope) {
 
     var lessonDB = null;
 
     // if (User.getActiveProfileSync() && User.getActiveProfileSync().data) {
-    lessonDB = pouchDB('lessonsDB', {revs_limit: 1});
+    lessonDB = pouchDB('lessonsDB', {
+      revs_limit: 1
+    });
     // }
 
     var contentProperties = {
@@ -46,14 +48,16 @@
       getResourceList: getResourceList,
       getAssessment: getAssessment,
       getLesson: getLesson,
+      getVocabulary : getVocabulary,
+      downloadVocabulary: downloadVocabulary,
       downloadAssessment: downloadAssessment,
       downloadVideo: downloadVideo,
       findNewMediaToDownload: findNewMediaToDownload,
       downloadNewMedia: downloadNewMedia,
       getActiveResource: getActiveResource,
-      getActiveLessonId : getActiveLessonId,
-      replicateLessonDB : replicateLessonDB,
-      getStatus : getStatus,
+      getActiveLessonId: getActiveLessonId,
+      replicateLessonDB: replicateLessonDB,
+      getStatus: getStatus,
       demo_question: {
         "node": {
           "id": CONSTANT.QUESTION.DEMO,
@@ -121,17 +125,21 @@
     return contentProperties;
 
   function replicateLessonDB() {
-    $log.debug("replicating lessondb",CONSTANT.LESSONS_DB_SERVER)
+
+   $log.debug("replicating lessondb",CONSTANT.LESSONS_DB_SERVER)
     return lessonDB.replicate.from(CONSTANT.LESSONS_DB_SERVER,{
       live: true,
       retry: true,
       heartbeat: false
     }).on('paused',function (err) {
+
       $log.debug("Paused in lessondb replicate",err)
     }).on('change',function (a) {
       $log.debug("change in lessondb replicate",a)
 
     });
+
+ 
   }
 
     function findNewMediaToDownload() {
@@ -140,12 +148,12 @@
       var promises = [];
       var promises2 = [];
       var mediaToDownload = [];
-      return getResourceList().then(function (lessons) {
-        return extendLesson.getLesson(lessons).then(function (result) {
+      return getResourceList().then(function(lessons) {
+        return extendLesson.getLesson(lessons).then(function(result) {
           $log.debug("lessons extended", result);
 
           var lessonlist = [];
-          angular.forEach(result, function (lesson) {
+          angular.forEach(result, function(lesson) {
             $log.debug("lesson", lesson)
             if (lesson.stars == -1 || lesson.stars > 0) {
               lessonlist.push(lesson)
@@ -153,37 +161,40 @@
           });
 
           var media = getMediaListfromResourceList(lessonlist);
-          angular.forEach(media, function (url) {
+          angular.forEach(media, function(url) {
             promises.push(mediaManager.getPath(url));
           });
           $log.debug("All paths get")
-          return $q.all(promises).then(function (r) {
+          return $q.all(promises).then(function(r) {
             $log.debug("Result", r);
             var size = 0;
-            angular.forEach(r, function (url) {
+            angular.forEach(r, function(url) {
               if (url.split(":")[0] === 'https') {
                 mediaToDownload.push(url)
               }
             });
-            angular.forEach(mediaToDownload, function (url) {
+            angular.forEach(mediaToDownload, function(url) {
               if (url.split(":")[0] === 'https') {
                 promises2.push($http.head(url))
               }
             });
-            return $q.all(promises2).then(function (response) {
-              angular.forEach(response, function (data) {
+            return $q.all(promises2).then(function(response) {
+              angular.forEach(response, function(data) {
                 size = size + parseInt(data.headers("Content-Length"));
               })
               $log.debug("Size is ", size, parseFloat(size / (1024 * 1024)).toFixed(1));
               $rootScope.mediaSyncStatus.checkingMedia = false;
               if (mediaToDownload.length) {
                 $log.debug("mediaToDownload.length", mediaToDownload.length)
-                // $rootScope.$broadcast('showInfoIcon',true)
+                  // $rootScope.$broadcast('showInfoIcon',true)
               } else {
                 // $rootScope.$broadcast('showInfoIcon',false)
 
               }
-              return {size: parseFloat(size / (1024 * 1024)).toFixed(1), mediaToDownload: mediaToDownload}
+              return {
+                size: parseFloat(size / (1024 * 1024)).toFixed(1),
+                mediaToDownload: mediaToDownload
+              }
             });
           })
         });
@@ -194,13 +205,13 @@
       $rootScope.mediaSyncStatus.downloadingMedia = true;
 
       var promises = [];
-      return findNewMediaToDownload().then(function (mediaSyncStatus) {
+      return findNewMediaToDownload().then(function(mediaSyncStatus) {
         $rootScope.mediaSyncStatus = mediaSyncStatus;
-        angular.forEach($rootScope.mediaSyncStatus.mediaToDownload, function (url) {
+        angular.forEach($rootScope.mediaSyncStatus.mediaToDownload, function(url) {
           promises.push(mediaManager.downloadIfNotExists(url));
         });
         return $q.all(promises);
-      }).then(function () {
+      }).then(function() {
         $rootScope.mediaSyncStatus.downloadingMedia = false;
         $rootScope.mediaSyncStatus.size = 0;
         $rootScope.mediaSyncStatus.mediaToDownload = [];
@@ -212,7 +223,7 @@
     function getMediaListfromResourceList(resourceList) {
       $log.debug("getMediaListfromResourceList");
       var media = [];
-      angular.forEach(resourceList, function (resource) {
+      angular.forEach(resourceList, function(resource) {
         $log.debug(resource.node.content_type_name);
         if (resource.node.content_type_name === 'resource') {
           if (resource.node.intro_sound && media.indexOf(resource.node.intro_sound) < 0) {
@@ -226,7 +237,7 @@
           if (resource.node.intro_sound && media.indexOf(resource.node.intro_sound) < 0) {
             media.push(resource.node.intro_sound);
           }
-          angular.forEach(resource.objects, function (question) {
+          angular.forEach(resource.objects, function(question) {
             if (question.node.meta.instructions.sounds && media.indexOf(question.node.meta.instructions.sounds[0]) < 0) {
               media.push(question.node.meta.instructions.sounds[0]);
             }
@@ -265,17 +276,19 @@
     function createLessonDBIfNotExists() {
       $log.debug("createLessonDBIfNotExists")
 
-      lessonDB = pouchDB('lessonsDB', {revs_limit: 1});
+      lessonDB = pouchDB('lessonsDB', {
+        revs_limit: 1
+      });
 
-      return lessonDB.get('_local/preloaded').then(function (doc) {
+      return lessonDB.get('_local/preloaded').then(function(doc) {
 
 
-      }).catch(function (err) {
+      }).catch(function(err) {
         if (err.name !== 'not_found') {
           throw err;
         }
         $log.debug("NEW DB MADE 1");
-        return lessonDB.load(CONSTANT.PATH.DATA + '/lessons.db').then(function () {
+        return lessonDB.load(CONSTANT.PATH.DATA + '/lessons.db').then(function() {
           $log.debug("NEW DB MADE 2");
 
           return lessonDB.put({
@@ -288,29 +301,33 @@
 
     function createOrUpdateLessonDB() {
       $log.debug("create or update lessondb")
-      lessonDB = pouchDB('lessonsDB', {revs_limit: 1});
-        $log.debug("NEW DB MADE 1");
-        return lessonDB.load(CONSTANT.PATH.DATA + '/lessons.db', {
+      lessonDB = pouchDB('lessonsDB', {
+        revs_limit: 1
+      });
+      $log.debug("NEW DB MADE 1");
+      return lessonDB.load(CONSTANT.PATH.DATA + '/lessons.db', {
           proxy: CONSTANT.LESSONS_DB_SERVER
         })
-          .then(function () {
-            return replicateLessonDB()
-          })
+        .then(function() {
+          return replicateLessonDB()
+        })
     }
 
     function createLessonDBIfNotExistsPatch() {
-      lessonDB = pouchDB('lessonsDB', {revs_limit: 1});
+      lessonDB = pouchDB('lessonsDB', {
+        revs_limit: 1
+      });
 
 
-      return lessonDB.get('_local/preloaded').then(function (doc) {
+      return lessonDB.get('_local/preloaded').then(function(doc) {
 
 
-      }).catch(function (err) {
+      }).catch(function(err) {
         if (err.name !== 'not_found') {
           throw err;
         }
         $log.debug("NEW DB MADE 1");
-        return lessonDB.load(CONSTANT.PATH.DATA + '/lessons.db').then(function () {
+        return lessonDB.load(CONSTANT.PATH.DATA + '/lessons.db').then(function() {
           $log.debug("NEW DB MADE 2");
 
           return lessonDB.put({
@@ -325,20 +342,36 @@
     function getLessonsList() {
       var d = $q.defer();
       lessonDB.allDocs({
-        include_docs: true
-      }).then(function (data) {
+          include_docs: true
+        }).then(function(data) {
 
 
-        var lessons = [];
-        for (var i = 0; i < data.rows.length; i++) {
-          data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key;
-          lessons.push(data.rows[i].doc.lesson.node);
-        }
-        lessons = _.sortBy(lessons, 'key');
+          var lessons = [];
+          var currentLesson = {}
+          for (var i = 0; i < data.rows.length; i++) {
+            //   data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key;
+            $log.debug("====", data.rows[i].id)
+            if (data.rows[i].doc && data.rows[i].id !== '_design/_auth') {
+              currentLesson = data.rows[i].doc.lesson
+              $log.debug('modified lesson', data.rows[i])
+              for (var c = 0; c < currentLesson.objects.length; c++) {
+                if (currentLesson.node.meta && currentLesson.node.meta.intros && currentLesson.node.meta.intros.sound && currentLesson.node.meta.intros.sound[0]) {
+                  currentLesson.objects[c].node.intro_sound = currentLesson.node.meta.intros.sound[0];
+                  // $log.debug('meta',currentLesson.node.meta,currentLesson.objects[c].node)
+                }
+              }
+              lessons.push(currentLesson);
+            }
+          }
+          // for (var i = 0; i < lessons.length; i++) {
+          // data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key;
 
-        d.resolve(lessons)
-      })
-        .catch(function (error) {
+          // }
+          // lessons = _.sortBy(lessons, 'key');
+
+          d.resolve(lessons)
+        })
+        .catch(function(error) {
           d.reject(error)
         });
 
@@ -350,84 +383,91 @@
 
       var d = $q.defer();
 
-      User.playlist.get(User.getActiveProfileSync()._id).then(function (playlist) {
-        $log.debug("Iter Playlist ", playlist)
-        lessonDB.allDocs({
-          include_docs: true
-        }).then(function (data) {
-          // $log.debug("AAAAAAAA "+data+" END");
+      User.playlist.get(User.getActiveProfileSync()._id).then(function(playlist) {
+          lessonDB.allDocs({
+            include_docs: true
+          }).then(function(data) {
+            // $log.debug("AAAAAAAA "+data+" END");
 
-          var lessons = [];
-          var resources = [];
-          var playlist_ids = [];
-          for (i = 0; i < playlist.length; i++) {
-            playlist_ids.push(playlist[i].lesson_id);
-          }
-          $log.debug("Iter playlist ids ", playlist_ids);
-
-          for (i = 0; i < data.rows.length; i++) {
-            var index = -1;
-            while ((index = playlist_ids.indexOf(data.rows[i].id, index + 1)) != -1) {
-              $log.debug("iter INDEX", index)
-              lessons[index] = data.rows[i]
+            var lessons = [];
+            var resources = [];
+            var playlist_ids = [];
+            for (i = 0; i < playlist.length; i++) {
+              playlist_ids.push(playlist[i].lesson_id);
             }
-          }
-          $log.debug("Iter LESSINS", lessons)
-          // if(playlist.indexOf(data.rows[i].id) >= 0){
-          //     lessons[playlist.indexOf(data.rows[i].id)] = data.rows[i]
-          //   }
 
-
-          for (i = 0; i < lessons.length; i++) {
-            // data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key;
-            $log.debug("iter i",i)
-            for (var c = 0; c < lessons[i].doc.lesson.objects.length; c++) {
-              $log.debug(c)
-              if (lessons[i].doc.lesson.node.meta && lessons[i].doc.lesson.node.meta.intros && lessons[i].doc.lesson.node.meta.intros.sound && lessons[i].doc.lesson.node.meta.intros.sound[0]) {
-                lessons[i].doc.lesson.objects[c].node.intro_sound = lessons[i].doc.lesson.node.meta.intros.sound[0];
+            for (i = 0; i < data.rows.length; i++) {
+              var index = -1;
+              while ((index = playlist_ids.indexOf(data.rows[i].id, index + 1)) != -1) {
+                lessons[index] = data.rows[i];
               }
-              lessons[i].doc.lesson.objects[c].node.tag = lessons[i].doc.lesson.node.tag;
-              lessons[i].doc.lesson.objects[c].node.playlist_index = i;
-              $log.debug("Iter ",lessons[i].doc.lesson.objects[c].node.playlist_index )
             }
-            // for(var c = 0; c < lessons[i].doc.lesson.objects.length; c++){
-              // $log.debug("Iter ",lessons[i].doc.lesson.objects[c].node.playlist_index )
-            // }
-            $log.debug("Iter lessons", lessons);
-            angular.forEach(['resource', 'assessment'], function (content_type) {
-              $log.debug("Iter content_type, i",content_type, i);
+              // if(playlist.indexOf(data.rows[i].id) >= 0){
+              //     lessons[playlist.indexOf(data.rows[i].id)] = data.rows[i]
+              //   }
+
+
+            for (i = 0; i < lessons.length; i++) {
+
+              // data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key;
               for (var c = 0; c < lessons[i].doc.lesson.objects.length; c++) {
-                $log.debug(content_type, i, c, lessons[i].doc.lesson.objects[c].node.content_type_name);
-                if (lessons[i].doc.lesson.objects[c].node.content_type_name === content_type) {
-                  $log.debug("iter c",c);
-                  $log.debug("Iter playlist_index",lessons[i].doc.lesson.objects[c].node.playlist_index );
-                  resources.push(angular.copy(lessons[i].doc.lesson.objects[c]));
-                  $log.debug("iTER BREAKING");
-                  break;
+                if (lessons[i].doc.lesson.node.meta && lessons[i].doc.lesson.node.meta.intros && lessons[i].doc.lesson.node.meta.intros.sound && lessons[i].doc.lesson.node.meta.intros.sound[0]) {
+                  lessons[i].doc.lesson.objects[c].node.intro_sound = lessons[i].doc.lesson.node.meta.intros.sound[0];
                 }
+                lessons[i].doc.lesson.objects[c].node.tag = lessons[i].doc.lesson.node.tag;
+                lessons[i].doc.lesson.objects[c].node.playlist_index = i;
               }
-            })
-            for(c = 0 ; c < resources.length; c++){
-              $log.debug("Iter a",resources[c].node.playlist_index);
+              // for(var c = 0; c < lessons[i].doc.lesson.objects.length; c++){
+              // $log.debug("Iter ",lessons[i].doc.lesson.objects[c].node.playlist_index )
+              // }
+                var include_video_flag = true;
+                var include_vocab_flag = true;
+                $log.debug("pre",playlist.length);
+                angular.forEach(CONSTANT.NODE_TYPE_LIST,function(node_type){
+                for (var c = 0; c < lessons[i].doc.lesson.objects.length; c++) {
+                  $log.debug("pre playlist",playlist[i])
+                  if (node_type == 'vocabulary' && lessons[i].doc.lesson.objects[c].node.content_type_name === 'vocabulary') {
+                    $log.debug("pre vocab found")
+                   for (var key in playlist[i]) {
+                       if (playlist[i].hasOwnProperty(key)) {
+                            $log.debug("Previously attempted ",playlist[i][key].type,key)
+                           if(playlist[i][key].type === 'resource'){
+                            $log.debug("previusly attempted Video found ");
+                            include_vocab_flag = false;
+                           }   
+                      }
+                    }
+                    if(include_vocab_flag){
+                    resources.push(angular.copy(lessons[i].doc.lesson.objects[c]));
+                    include_video_flag = false;
+                    }
+                  }
+                  if (node_type == 'resource' && lessons[i].doc.lesson.objects[c].node.content_type_name  === 'resource' && include_video_flag === true) {
+                    resources.push(angular.copy(lessons[i].doc.lesson.objects[c]));
+                  }
+                  if (node_type == 'assessment' && lessons[i].doc.lesson.objects[c].node.content_type_name  === 'assessment') {
+                    resources.push(angular.copy(lessons[i].doc.lesson.objects[c]));
+                  }
+                }
+                })  
+
             }
-          }
-          $log.debug("Iter Final ", resources);
 
-          if (resources.length) {
-            resources[resources.length - 1].node.requiresSuggestion = true;
-          }
-          d.resolve(resources)
+            if (resources.length) {
+              resources[resources.length - 1].node.requiresSuggestion = true;
+            }
+            d.resolve(resources)
 
-        });
-        // $log.debug("data",data)
-        // for (var i = 0; i < data.rows.length; i++) {
-        //   data.rows[i].key = data.rows[i].doc.lesson.key;
-        // }
-        // data.rows = _.sortBy(data.rows, 'key');
+          });
+          // $log.debug("data",data)
+          // for (var i = 0; i < data.rows.length; i++) {
+          //   data.rows[i].key = data.rows[i].doc.lesson.key;
+          // }
+          // data.rows = _.sortBy(data.rows, 'key');
 
-        // $log.debug("lessons",lessons)
-      })
-        .catch(function (error) {
+          // $log.debug("lessons",lessons)
+        })
+        .catch(function(error) {
           d.reject(error)
         });
 
@@ -441,8 +481,8 @@
         if (quiz.objects[index].node.meta && quiz.objects[index].node.meta.instructions && quiz.objects[index].node.meta.instructions.sounds[0] && localStorage.getItem(quiz.objects[index].node.meta.instructions.sounds[0]) != 'played') {
           localStorage.setItem(quiz.objects[index].node.meta.instructions.sounds[0], 'played');
           promises.push(mediaManager.getPath(quiz.objects[index].node.meta.instructions.sounds[0]).then(
-            function (index) {
-              return function (path) {
+            function(index) {
+              return function(path) {
                 quiz.objects[index].node.instructionSound = path
               }
             }(index)
@@ -450,8 +490,8 @@
         }
 
         promises.push(widgetParser.parseToDisplay(quiz.objects[index].node.title, index, quiz).then(
-          function (index) {
-            return function (result) {
+          function(index) {
+            return function(result) {
               quiz.objects[index].node.widgetHtml = result;
             }
           }(index)
@@ -459,8 +499,8 @@
         quiz.objects[index].node.widgetSound = null;
         if (widgetParser.getSoundId(quiz.objects[index].node.title)) {
           promises.push(widgetParser.getSoundSrc(widgetParser.getSoundId(quiz.objects[index].node.title), index, quiz).then(
-            function (index) {
-              return function (result) {
+            function(index) {
+              return function(result) {
                 quiz.objects[index].node.widgetSound = result;
               }
             }(index)
@@ -469,8 +509,8 @@
 
         for (var j = 0; j < quiz.objects[index].node.type.content.options.length; j++) {
           promises.push(widgetParser.parseToDisplay(quiz.objects[index].node.type.content.options[j].option, index, quiz).then(
-            function (index, j) {
-              return function (result) {
+            function(index, j) {
+              return function(result) {
                 quiz.objects[index].node.type.content.options[j].widgetHtml = result;
               }
             }(index, j)
@@ -479,8 +519,8 @@
 
           if (widgetParser.getSoundId(quiz.objects[index].node.type.content.options[j].option)) {
             promises.push(widgetParser.getSoundSrc(widgetParser.getSoundId(quiz.objects[index].node.type.content.options[j].option), index, quiz).then(
-              function (index, j) {
-                return function (result) {
+              function(index, j) {
+                return function(result) {
                   quiz.objects[index].node.type.content.options[j].widgetSound = result;
                 }
               }(index, j)
@@ -488,14 +528,14 @@
           }
         }
       }
-      $q.all(promises).then(function () {
+      $q.all(promises).then(function() {
         d.resolve(quiz)
       });
       return d.promise;
     }
 
     function getLesson(id) {
-      return lessonDB.get(id).then(function (data) {
+      return lessonDB.get(id).then(function(data) {
         return data.lesson;
       });
     }
@@ -511,14 +551,14 @@
       var promises = [];
       var mediaArray = [];
 
-      angular.forEach(assessment.objects, function (object) {
+      angular.forEach(assessment.objects, function(object) {
         if (object.node.meta.instructions && object.node.meta.instructions.sounds) {
           promises.push(
             mediaManager.downloadIfNotExists(object.node.meta.instructions.sounds[0])
           );
         }
-        angular.forEach(object.node.type.content.widgets, function (widget) {
-          angular.forEach(widget, function (file) {
+        angular.forEach(object.node.type.content.widgets, function(widget) {
+          angular.forEach(widget, function(file) {
             if (mediaArray.indexOf(file) < 0) {
               mediaArray.push(file);
               promises.push(
@@ -528,10 +568,74 @@
           })
         })
       });
-      $q.all(promises).then(function (success) {
-        d.resolve(success);
-      })
-        .catch(function (err) {
+      $q.all(promises).then(function(success) {
+          d.resolve(success);
+        })
+        .catch(function(err) {
+          $log.debug("ERRORR FOUND IN Download Assessment", err)
+          d.reject(err)
+        });
+      return d.promise;
+
+    }
+
+    function getVocabulary(vocabulary) {
+      var d = $q.defer();
+      var promises = [];
+      var mediaArray = [];
+      $log.debug('Starting download of vocabulary', vocabulary);
+      angular.forEach(vocabulary.objects, function(object) {
+        promises.push(
+          mediaManager.getPath(object.node.type.image.path).then(
+            function(path) {
+              object.node.type.image.path = path
+            }
+          )
+        );
+        angular.forEach(object.node.type.sound, function(sound) {
+            promises.push(
+                mediaManager.getPath(sound.path).then(
+                    function(path) {
+                        sound.path = path
+                    }
+                )
+            )
+        })
+      });
+      $q.all(promises).then(function(success) {
+          d.resolve(vocabulary);
+        })
+        .catch(function(err) {
+          $log.debug("Error getting Vocabulary module : ", err)
+          d.reject(err)
+        });
+      return d.promise;
+    }
+
+    function downloadVocabulary(vocabulary) {
+
+      var d = $q.defer();
+      var promises = [];
+      var mediaArray = [];
+      $log.debug('Starting download of vocabulary', vocabulary);
+      angular.forEach(vocabulary.objects, function(object) {
+        promises.push(
+          mediaManager.downloadIfNotExists(object.node.type.image.path)
+        );
+        angular.forEach(object.node.type.sound, function(sound) {
+          if (mediaArray.indexOf(sound.path) < 0) {
+            mediaArray.push(sound.path);
+            promises.push(
+              mediaManager.downloadIfNotExists(sound.path)
+            );
+          }
+        })
+      });
+      $q.all(promises).then(function(success) {
+          d.resolve(success);
+        })
+        .catch(function(err) {
+          $log.debug("Error downloading Vocabulary module : ", err)
           d.reject(err)
         });
       return d.promise;
@@ -539,22 +643,22 @@
     }
 
     function getActiveResource() {
-        return getResourceList(User.getActiveProfileSync().data.profile.grade).then(function(lessons){
-          return extendLesson.getLesson(lessons).then(function(extLessons){
-            $log.debug("This is the active lesson",extLessons[extLessons.length - 1].locked?extLessons[extLessons.length - 2]:extLessons[extLessons.length - 1])
-            return extLessons[extLessons.length - 1].locked?extLessons[extLessons.length - 2]:extLessons[extLessons.length - 1];
+      return getResourceList(User.getActiveProfileSync().data.profile.grade).then(function(lessons) {
+          return extendLesson.getLesson(lessons).then(function(extLessons) {
+            $log.debug("This is the active lesson", extLessons[extLessons.length - 1].locked ? extLessons[extLessons.length - 2] : extLessons[extLessons.length - 1])
+            return extLessons[extLessons.length - 1].locked ? extLessons[extLessons.length - 2] : extLessons[extLessons.length - 1];
             // $log.debug("This  is the playlist ",result)
           });
         })
-      // }).catch(function(err){
-      //   $log.error("Error occured while fetching active playlist",err);
-      // });
+        // }).catch(function(err){
+        //   $log.error("Error occured while fetching active playlist",err);
+        // });
     }
 
     function getActiveLessonId() {
       // $log.debug("ACTIVE PROFILE",User.getActiveProfileSync())
       // $log.debug("PLAYLIST")
-      return User.playlist.get(User.getActiveProfileSync()._id).then(function(playlist){
+      return User.playlist.get(User.getActiveProfileSync()._id).then(function(playlist) {
         return playlist[0].lesson_id;
       });
 

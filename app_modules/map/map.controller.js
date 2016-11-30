@@ -124,6 +124,7 @@
     // ;
     mapCtrl.setAnimateStarFlag = setAnimateStarFlag;
     mapCtrl.setLessonRange = setLessonRange;
+    mapCtrl.emitNode = emitNode;
 
     // port node
     mapCtrl.first_node_index = parseInt(localStorage.first_node_index) || 0;
@@ -255,6 +256,14 @@
       $ionicLoading.hide();
     });
 
+    if(CONSTANT.CONTENT_TEST){
+        $scope.$emit('removeLoader');
+        $log.debug("content test lessons",mapCtrl.lessons)
+    }
+    function emitNode(resource) {
+      $log.debug("Opening node",resource)
+        $scope.$emit('openNode', resource)
+    }
     $scope.$on('openNode', function(event, node) {
       // audio.stop('demo-1')
       $ionicLoading.show();
@@ -262,7 +271,7 @@
        $scope.selectedNode = node;
       //   $scope.demo.isShown() && $scope.demo.hide();
               var promise;
-      $log.debug(node.node.intro_sound,node)
+      $log.debug('intro sound',node.node.intro_sound,node)
               if(node.node.intro_sound){
                 promise = mediaManager.downloadIfNotExists(node.node.intro_sound)
               } else {
@@ -289,6 +298,7 @@
           template: e.message ? e.message : CONSTANT.ERROR_MESSAGES.DEFAULT
         })
       });
+
 
     //   if (currentPos)
     //     currentPos.lessonType = node.tag;

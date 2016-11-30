@@ -140,6 +140,7 @@
     //helper functions
     quizCtrl.getQuestionType = getQuestionType;
     quizCtrl.redo = redo;
+    quizCtrl.playQuizIntro = playQuizIntro;
 
 
     // initialisation call
@@ -1037,19 +1038,28 @@
       $scope.nodeRibbon = modal;
       $scope.nodeRibbonFlag = true;
       quizCtrl.noPauseFlag = true;
-      $log.debug("Setting No Pause Flag");
-      if(quiz.node.parsed_sound){
-        audio.player.play(quiz.node.parsed_sound);
-        angular.element("#audioplayer")[0].onended = intro_end_quiz;
-        $log.debug("Added onended event");
-      }
-      else{
-        $timeout(function(){
-          intro_end_quiz();
-        },1000)
-      }
+    //   $log.debug("Setting No Pause Flag");
+    //   if(quiz.node.parsed_sound){
+    //     audio.player.play(quiz.node.parsed_sound);
+    //     angular.element("#audioplayer")[0].onended = intro_end_quiz;
+    //     $log.debug("Added onended event");
+    //   }
+    //   else{
+    //     $timeout(function(){
+    //       intro_end_quiz();
+    //     },1000)
+    //   }
 
     });
+
+    function playQuizIntro(){
+        $scope.nodeRibbon.show().then(function(){
+              if(quiz.node.parsed_sound){
+                    audio.player.play(quiz.node.parsed_sound);
+                    angular.element("#audioplayer")[0].onended = intro_end_quiz;
+                }
+        })
+    }
 
 
     // $scope.progressBar();

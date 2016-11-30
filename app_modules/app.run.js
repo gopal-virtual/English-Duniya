@@ -109,7 +109,22 @@
         event.preventDefault();
         $state.go('user.personalise')
       }
-
+      if(toState.name == 'litmus_result' && !toParams.average_level){
+        event.preventDefault();
+        $state.go('user.personalise')
+      }
+      if (toState.name == 'content.vocabulary.intro' && !toParams.vocab_data) {
+        event.preventDefault();
+        $state.go('map.navigate');
+      }
+      if (toState.name == 'content.vocabulary.overview' && !toParams.vocab_data) {
+        event.preventDefault();
+        $state.go('map.navigate');
+      }
+      if (toState.name == 'content.vocabulary.card' && !toParams.vocab_data) {
+        event.preventDefault();
+        $state.go('map.navigate');
+      }
       if (toState.name == 'quiz.questions' && toParams.type == 'practice' && !toParams.quiz) {
         event.preventDefault();
         $state.go('map.navigate');

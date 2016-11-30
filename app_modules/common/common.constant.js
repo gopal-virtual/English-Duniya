@@ -12,14 +12,16 @@
       'BUNDLED': false,
       'LOCK': true,
       'FAKE_LOGIN': true,
-      'FAKE_ID_DEVICE': 'micromaxtest4',
+      'FAKE_ID_DEVICE': '6e5ae3c89a683440',
       'FAKE_DEVICE': true,
+      'CONTENT_TEST':false,
       'DEBUG' : true,
       'BACKEND_SERVICE_DOMAIN': 'https://cc-test.zaya.in/',
       'RESOURCE_SERVER': 'https://cc-test.zaya.in',
       'LESSONS_DB_SERVER': 'https://ci-couch.zaya.in/lessonsdb',
       'PROFILES_DB_SERVER': 'https://ci-couch.zaya.in/device',
       'LESSON_DB_VERSION': 'na',
+      'NOTIFICATION_DB_SERVER': 'https://ci-couch.zaya.in/notifications',
       'ANALYTICS' : true,
       'GRADE' : [1,2,3],
       'QUESTION_DEMO' : false,
@@ -65,7 +67,9 @@
       'ASSETS': {
         'IMG': {
           'ICON': 'img/icons',
-        }
+          'TEMP' : 'img/temp'
+        },
+        'SOUND' : 'sound/temp'
       },
       'STAR': {
         'ONE': 70,
@@ -124,6 +128,13 @@
           '11': DEFAULT_ERROR_MESSAGE,
           '12': DEFAULT_ERROR_MESSAGE
         }
+        },
+        'NODE_TYPE_LIST' : ['vocabulary','resource','assessment'],
+        'NOTIFICATION': {
+          'DURATION': {
+            'DISCOVERED': 1,
+            'UNDISCOVERED' : 1 
+          }
         }
     })
 })();

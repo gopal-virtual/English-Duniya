@@ -69,7 +69,8 @@ var environments = {
   default: 'PRODUCTION',
   production: 'PRODUCTION',
   dev: 'DEVELOPMENT',
-  test: 'TESTING'
+  test: 'TESTING',
+  content : 'CONTENT'
 };
 var env = argument.argv.env ? environments[argument.argv.env] : environments.default;
 var app_type = argument.argv.app_type ? argument.argv.app_type : 'na';
@@ -183,7 +184,20 @@ gulp.task('generate-constants', function () {
       },{
         match: 'QUESTION_DEMO',
         replacement: constants[env]['QUESTION_DEMO']
-        }
+      },{
+        match: 'CONTENT_TEST',
+        replacement: constants[env]['CONTENT_TEST']
+      },{
+        match: 'NOTIFICATION_DURATION_DISCOVERED',
+        replacement: constants[env]['NOTIFICATION_DURATION_DISCOVERED']
+      },{
+        match: 'NOTIFICATION_DURATION_UNDISCOVERED',
+        replacement: constants[env]['NOTIFICATION_DURATION_UNDISCOVERED']
+      },{
+        match: 'NOTIFICATION_DB_SERVER',
+        replacement: constants[env]['NOTIFICATION_DB_SERVER']
+      }
+
       ]
     }))
     .pipe(rename(paths.constants.destination_filename))
@@ -203,7 +217,7 @@ gulp.task('scripts', function () {
     .pipe(stripDebug())
     .pipe(strip())
     .pipe(concate('mobile.app.js'))
-    .pipe(gulpif(env == environments.production, uglify()))
+    .pipe(gulpif(env !== environments.dev && env !== environments.content,uglify()))
     .pipe(gulp.dest('www/build'))
   // .on('end',cb)
   // .pipe(broswerSync.stream())
@@ -231,20 +245,21 @@ gulp.task('sass', function () {
 });
 
 gulp.task('html', function () {
-  return gulp.src(paths.html)
-    .pipe(print(function (filepath) {
-      return filepath;
-    }))
-    .pipe(strip())
-    .pipe(templateCache({
-      base: function (file) {
-        var filename = file.relative.replace('www/', '');
-        return 'templates/' + filename;
-      },
-      standalone: true,
-      moduleSystem: 'IIFE'
-    }))
-    .pipe(gulp.dest('./www/templates/'))
+        return gulp.src(paths.html)
+          .pipe(print(function (filepath) {
+            return filepath;
+          }))
+          .pipe(strip())
+          .pipe(templateCache({
+            base: function (file) {
+              var filename = file.relative.replace('www/', '');
+              return 'templates/' + filename;
+            },
+            standalone: true,
+            moduleSystem: 'IIFE'
+          }))
+          .pipe(gulp.dest('./www/templates/'))
+
 
 
 });

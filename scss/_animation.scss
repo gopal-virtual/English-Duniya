@@ -18,13 +18,16 @@
   -webkit-animation-duration: 300ms;
 }
 .animation-repeat-bounce {
-  
+
   -webkit-animation: repeat-bounce 500ms ease-in-out 0s infinite;
   // -webkit-animation-name: repeat-bounce 500ms ease-in-out 0s infinite;
   // -webkit-animation-duration: 500ms;
   // animation-iteration-count: infinite;
   // animation-timing-function: ease-in-out;
   // -webkit-transform-origin: 50% 50%;
+}
+.animation-repeat-bounce-in {
+  -webkit-animation: repeat-bounce-in 500ms ease-in-out 0s infinite;
 }
 @keyframes pointit{
   0% {
@@ -38,7 +41,7 @@
   }
 }
 .animation-repeat-point{
-  -webkit-animation: pointit 500ms ease-in-out 0s infinite; 
+  -webkit-animation: pointit 500ms ease-in-out 0s infinite;
   // -webkit-animation-duration: 500ms;
   // -webkit-animation-iteration-count: infinite;
   // -webkit-animation-timing-function: ease-in-out;
@@ -57,6 +60,17 @@
   }
   50% {
     -webkit-transform: scale(1.1);
+  }
+  100% {
+    -webkit-transform: scale(1);
+  }
+}
+@keyframes repeat-bounce-in {
+  0% {
+    -webkit-transform: scale(1);
+  }
+  50% {
+    -webkit-transform: scale(0.9);
   }
   100% {
     -webkit-transform: scale(1);
