@@ -1,4 +1,4 @@
-<ion-header-bar class="bg-pale">
+<!-- <ion-header-bar class="bg-pale">
   <div class="buttons">
     <button class="button button-clear icon ion-android-arrow-back" ng-click="userCtrl.goToMap()"></button>
   </div>
@@ -6,11 +6,6 @@
 </ion-header-bar>
 <ion-view>
   <ion-content class="bg-pale">
-    <!-- <div class="row">
-      <div class="col center">
-        <i class="font-xl icon ion-clipboard"></i>
-      </div>
-    </div> -->
     <div class="row">
       <div class="col">
         <ion-list>
@@ -24,11 +19,132 @@
       </div>
     </div>
   </ion-content>
+</ion-view> -->
+<style>
+    .profile-box-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        width : 90vw;
+        margin : 0 auto;
+    }
+    .profile-box {
+        width: 42vw;
+        border-radius: 20px;
+        display: flex;
+        flex-direction : column;
+        justify-content: center;
+        align-items: center;
+        margin: 2vw 1.5vw;
+        padding : 3vw;
+    }
+    .profile-box-blue{
+        background-color: #A6CEEE;
+        box-shadow: 0 6px #1C81C5;
+    }
+    .profile-box-darkblue{
+        background-color: #223F97;
+        box-shadow: 0 6px #1A2B51;
+    }
+    .profile-box-add{
+        background-color: #FCBA1B;
+        box-shadow: 0 6px #C58F2B;
+    }
+    .absolute-right{
+        position : absolute;
+        top : 10px;
+        right : 6.5vw;
+    }
+    .profile-avatar {
+        width: 25vw;
+        height: 25vw;
+        background-color: #F9E9D0;
+        border-radius: 50%;
+        border: 3px solid white;
+    }
+    .profile-star {
+        height : 30px;
+    }
+    .profile-star > img {
+        width : 4vw;
+        margin: 0 1vw;
+    }
+    .font-pale{
+        color : #F9E7CD;
+    }
+    .font-blue{
+        color : #1C81C5;
+    }
+    .font-off-gold{
+        color : #D99828;
+    }
+    .font-bright-gold{
+        color : #FDB725;
+    }
+    .profile-level{
+        text-align: center;
+        background-color: #CE202F;
+        padding-top: 12px;
+        margin-top: -15px;
+        width: 40px;
+        margin-left: auto;
+        margin-right: auto;
+        color: white;
+    }
+    .profile-level-ribbon-tail{
+        width: 0px;
+        margin-left: auto;
+        margin-right: auto;
+        border-left: 20px solid #CE202F;
+        border-right: 20px solid #CE202F;
+        border-bottom: 5px solid transparent;
+        border-top: 0;
+    }
+</style>
+<ion-view class="bg-pale">
+    <ion-slide-box show-pager="false">
+    <ion-slide>
+      <div class="box">
+          <div class="row">
+              <div class="col center">
+                  <img class="absolute-right" src="img/assets_svg/cross.svg" ng-click="profileCtrl.goToMap()" alt="">
+                  <img src="img/assets_svg/profile_ribbon.svg" alt="">
+              </div>
+          </div>
+          <div class="profile-box-container">
+              <div ng-click="profileCtrl.selectProfile(profile)" class="profile-box" ng-class="{true : 'profile-box-darkblue', false : 'profile-box-blue'}[profileCtrl.getCurrentProfile() == profile.doc._id]" ng-repeat="profile in profileCtrl.profiles">
+                  <div class="font-lg" ng-class="{true : 'font-pale' , false : 'font-blue'}[profileCtrl.getCurrentProfile() == profile.doc._id]">
+                      {{profile.doc.data.profile.first_name}}
+                  </div>
+                  <div>
+                      <img class="profile-avatar" ng-src="img/assets_svg/profile-{{profile.doc.data.profile.gender == 'M' ? 'boy' : 'girl'}}.svg">
+                      <div class="profile-level">
+                          <strong>{{profile.levels}}</strong>
+                      </div>
+                      <div class="profile-level-ribbon-tail">
+                      </div>
+                  </div>
+                  <div class="profile-star">
+                      <img src="img/assets_svg/star-yellow.svg" alt="">
+                      <span class="font-xl" ng-class="{true : 'font-bright-gold', false : 'font-off-gold'}[profileCtrl.getCurrentProfile() == profile.doc._id]">
+                          {{profile.stars}}
+                      </span>
+                  </div>
+              </div>
+              <div ng-hide="profileCtrl.profiles.length >= 4" class="profile-box profile-box-add">
+                  <img src="img/assets_svg/add_sign.svg" alt="">
+              </div>
+          </div>
+      </div>
+    </ion-slide>
+    <ion-slide>
+      <div class="box">
+        <div class="row">
+            <div class="col">
+
+            </div>
+        </div>
+      </div>
+    </ion-slide>
+  </ion-slide-box>
 </ion-view>
-<!-- no share -->
-<!-- <ion-footer-bar align-title="left" class="bar-assertive">
-  <h1 class="title"></h1>
-  <div class="buttons">
-    <button class="button button-clear icon icon-right ion-android-share-alt"> Share</button>
-  </div>
-</ion-footer-bar> -->
