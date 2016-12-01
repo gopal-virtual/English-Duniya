@@ -54,6 +54,7 @@
                   controller : ['$stateParams','audio','$timeout','$state', '$scope', 'User',function($stateParams,audio,$timeout,$state, $scope, User){
                       var vocabIntroCtrl = this;
                       vocabIntroCtrl.vocab_data = $stateParams.vocab_data;
+                      $scope.vocab_data = $stateParams.vocab_data;
                       vocabIntroCtrl.playDelayed = playDelayed;
                       $scope.userGender = User.getActiveProfileSync().data.profile.gender;
 
@@ -102,8 +103,9 @@
           views : {
               'state-vocab' : {
                   templateUrl : CONSTANT.PATH.CONTENT + '/content.vocabulary.instruction' + CONSTANT.VIEW,
-                  controller : ['$stateParams','audio','$timeout','$state', '$scope', 'User',function($stateParams,audio,$timeout,$state, $scope, User){
+                  controller : ['$stateParams','audio','$timeout','$state', '$scope', 'User','$log',function($stateParams,audio,$timeout,$state, $scope, User, $log){
                       var vocabInstructionCtrl = this;
+                      $log.debug("vocab instruction stateparams",$stateParams);
                       vocabInstructionCtrl.vocab_data = $stateParams.vocab_data.objects;
                       vocabInstructionCtrl.params = $stateParams;
                       vocabInstructionCtrl.playDelayed = playDelayed;

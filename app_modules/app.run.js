@@ -113,6 +113,10 @@
         event.preventDefault();
         $state.go('map.navigate');
       }
+      if (toState.name == 'content.vocabulary.instruction' && !toParams.vocab_data) {
+        event.preventDefault();
+        $state.go('map.navigate');
+      }
       if (toState.name == 'content.vocabulary.overview' && !toParams.vocab_data) {
         event.preventDefault();
         $state.go('map.navigate');
