@@ -64,7 +64,7 @@
                 profileCtrl.getProfileMeta = getProfileMeta;
                 profileCtrl.selectProfile = selectProfile;
                 profileCtrl.goToCreateNewProfile = goToCreateNewProfile;
-
+                profileCtrl.canAdd = canAdd;
 
                 User.profile.getAll().then(function (profiles) {
                     $log.debug('Profile list :', profiles)
@@ -81,6 +81,10 @@
                         profileCtrl.profiles = profiles;
                     })
                 })
+
+                function canAdd (){
+                    return profileCtrl.profiles && profileCtrl.profiles.length < 4;
+                }
 
                 function goToCreateNewProfile (){
                         localStorage.removeItem('profile');

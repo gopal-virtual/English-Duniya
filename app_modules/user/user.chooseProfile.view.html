@@ -116,14 +116,14 @@
     </div>
     <ion-content class="has-headers" overflow-scroll="false" has-bouncing="true">
         <div class="profile-box-container">
-            <div ng-tap="profileCtrl.selectProfile(profile)" ng-click="profileCtrl.selectProfile(profile)" class="profile-box animation-fade-in-from-top" style="-webkit-animation-delay: {{$index*100}}ms;" ng-class="{true : 'profile-box-darkblue', false : 'profile-box-blue'}[profileCtrl.getCurrentProfile() == profile.doc._id]" ng-repeat="profile in profileCtrl.profiles">
+            <div ng-tap="profileCtrl.selectProfile(profile)" ng-click="profileCtrl.selectProfile(profile)" class="profile-box animation-fade-in-from-top" style="-webkit-animation-delay: {{$index*100}}ms;" ng-class="{true : 'profile-box-darkblue', false : 'profile-box-blue'}[profileCtrl.getCurrentProfile() == profile.doc._id]" ng-repeat="profile in profileCtrl.profiles | limitTo: 4">
                 <div class="font-lg" ng-class="{true : 'font-pale' , false : 'font-blue'}[profileCtrl.getCurrentProfile() == profile.doc._id]">
-                    {{profile.doc.data.profile.first_name}}
+                    {{::profile.doc.data.profile.first_name}}
                 </div>
                 <div>
                     <img class="profile-avatar" ng-src="img/assets_svg/profile-{{profile.doc.data.profile.gender == 'M' ? 'boy' : 'girl'}}.svg">
                     <div class="profile-level">
-                        <strong>{{profile.levels}}</strong>
+                        <strong>{{::profile.levels}}</strong>
                     </div>
                     <div class="profile-level-ribbon-tail">
                     </div>
@@ -131,11 +131,11 @@
                 <div class="profile-star-small">
                     <img src="img/assets_svg/star-yellow.svg" alt="">
                     <span class="font-xl" ng-class="{true : 'font-bright-gold', false : 'font-off-gold'}[profileCtrl.getCurrentProfile() == profile.doc._id]">
-                        {{profile.stars}}
+                        {{::profile.stars}}
                     </span>
                 </div>
             </div>
-            <div ng-hide="profileCtrl.profiles && profileCtrl.profiles.length >= 4" class="profile-box profile-box-add animation-fade-in-from-top" style="-webkit-animation-delay: 500ms;" ng-tap="profileCtrl.goToCreateNewProfile()" ng-click="profileCtrl.goToCreateNewProfile()">
+            <div ng-show="profileCtrl.canAdd()" class="profile-box profile-box-add animation-fade-in-from-top" style="-webkit-animation-delay: 500ms;" ng-tap="profileCtrl.goToCreateNewProfile()" ng-click="profileCtrl.goToCreateNewProfile()">
                 <img src="img/assets_svg/add_sign.svg" alt="">
             </div>
         </div>
