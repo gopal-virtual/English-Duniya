@@ -56,21 +56,24 @@
         views: {
           'state-user' : {
             templateUrl: CONSTANT.PATH.USER + '/user.chooseProfile' + CONSTANT.VIEW,
-            controller: ['User','$log','$state', 'CONSTANT', '$q',function(User, $log, $state, CONSTANT, $q){
+            controller: ['User','$log','$state', 'CONSTANT', '$q', '$ionicLoading',function(User, $log, $state, CONSTANT, $q, $ionicLoading){
                 var profileCtrl = this;
                 var promises = [];
                 profileCtrl.getCurrentProfile = getCurrentProfile;
                 profileCtrl.goToMap = goToMap;
                 profileCtrl.getProfileMeta = getProfileMeta;
                 profileCtrl.selectProfile = selectProfile;
+                profileCtrl.goToCreateNewProfile = goToCreateNewProfile;
+
 
                 User.profile.getAll().then(function (profiles) {
+                    $log.debug('Profile list :', profiles)
                     for (var i = 0; i < profiles.length; i++) {
                         if(profiles[i].doc._id == getCurrentProfile()){
                             var currentProfile = profiles.splice(i,1)
                         }
                     }
-                    profiles.unshift(currentProfile[0]);
+                    currentProfile && profiles.unshift(currentProfile[0]);
                     angular.forEach(profiles, function(profile, index){
                         promises.push(getProfileMeta(profile, profile.doc._id))
                     })
@@ -79,7 +82,16 @@
                     })
                 })
 
+                function goToCreateNewProfile (){
+                        localStorage.removeItem('profile');
+                        $state.go('user.personalise', {})
+                }
+
                 function selectProfile(profile) {
+                    $ionicLoading.show({
+                      noBackdrop: false,
+                      hideOnStateChange: true
+                    });
                     User.profile.select(profile);
                     $state.go('map.navigate');
                 }
@@ -107,10 +119,15 @@
                     })
                 }
                 function goToMap () {
+                    $log.debug("Clicked : exit")
+                    $ionicLoading.show({
+                      noBackdrop: false,
+                      hideOnStateChange: true
+                    });
                     $state.go('map.navigate',{})
                 }
                 function getCurrentProfile (){
-                    return User.getActiveProfileSync()._id;
+                    return User.getActiveProfileSync() ? User.getActiveProfileSync()._id : false;
                 }
             }],
             controllerAs : 'profileCtrl'

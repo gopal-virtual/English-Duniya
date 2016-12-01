@@ -871,7 +871,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                         renderPortNodes("prev");
                     }
                     //log.debug('graphics',game.camera)
-                    renderHud(scope.totalstars);
+                    // renderHud(scope.totalstars);
                     //log.debug("Stars Demo",scope.demo.getStep())
                     var animateStarFlag = JSON.parse(localStorage.getItem("animateStarFlag"));
                     if (animateStarFlag) {
