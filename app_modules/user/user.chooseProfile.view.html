@@ -135,7 +135,7 @@
                     </span>
                 </div>
             </div>
-            <div ng-hide="profileCtrl.profiles.length >= 4" class="profile-box profile-box-add animation-fade-in-from-top" style="-webkit-animation-delay: 500ms;" ng-tap="profileCtrl.goToCreateNewProfile()" ng-click="profileCtrl.goToCreateNewProfile()">
+            <div ng-hide="profileCtrl.profiles && profileCtrl.profiles.length >= 4" class="profile-box profile-box-add animation-fade-in-from-top" style="-webkit-animation-delay: 500ms;" ng-tap="profileCtrl.goToCreateNewProfile()" ng-click="profileCtrl.goToCreateNewProfile()">
                 <img src="img/assets_svg/add_sign.svg" alt="">
             </div>
         </div>
