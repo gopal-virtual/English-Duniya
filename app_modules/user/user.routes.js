@@ -65,6 +65,7 @@
                 profileCtrl.selectProfile = selectProfile;
                 profileCtrl.goToCreateNewProfile = goToCreateNewProfile;
                 profileCtrl.canAdd = canAdd;
+                profileCtrl.hasCurrentUser = hasCurrentUser;
 
                 User.profile.getAll().then(function (profiles) {
                     $log.debug('Profile list :', profiles)
@@ -81,6 +82,10 @@
                         profileCtrl.profiles = profiles;
                     })
                 })
+
+                function hasCurrentUser (){
+                    return User.getActiveProfileSync() ? true : false;
+                }
 
                 function canAdd (){
                     return profileCtrl.profiles && profileCtrl.profiles.length < 4;

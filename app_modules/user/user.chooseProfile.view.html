@@ -111,7 +111,9 @@
     <div class="row header-fixed animation-fade-in">
         <div class="col center">
             <a ng-tap="profileCtrl.goToMap()" ng-click="profileCtrl.goToMap()"><img class="absolute-right" src="img/assets_svg/cross.svg" alt=""></a>
-            <img src="img/assets_svg/profile_ribbon.svg" alt="">
+            <!-- <img src="img/assets_svg/profile_ribbon.svg" alt=""> -->
+            <img src="img/assets_svg/profile_ribbon.svg" alt="" ng-show="profileCtrl.hasCurrentUser()">
+            <img src="img/assets_svg/chooseyourname_ribbon.svg" alt="" ng-show="!profileCtrl.hasCurrentUser()">
         </div>
     </div>
     <ion-content class="has-headers" overflow-scroll="false" has-bouncing="true">
@@ -135,7 +137,7 @@
                     </span>
                 </div>
             </div>
-            <div ng-show="profileCtrl.canAdd()" class="profile-box profile-box-add animation-fade-in-from-top" style="-webkit-animation-delay: 500ms;" ng-tap="profileCtrl.goToCreateNewProfile()" ng-click="profileCtrl.goToCreateNewProfile()">
+            <div ng-show="profileCtrl.canAdd()" class="profile-box profile-box-add" ng-tap="profileCtrl.goToCreateNewProfile()" ng-click="profileCtrl.goToCreateNewProfile()">
                 <img src="img/assets_svg/add_sign.svg" alt="">
             </div>
         </div>
