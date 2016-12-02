@@ -1,3 +1,7 @@
+
+
+
+
 (function () {
   'use strict';
   angular
@@ -36,11 +40,11 @@
     }, 510)
     //$http.defaults.headers.common['Access-Control-Request-Headers'] = 'accept, auth-token, content-type, xsrfcookiename';
     $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
-      if (localStorage.version !== '0.1.8') {
-        $log.debug("Local storage !== 0.1.8");
+      if (localStorage.version !== CONSTANT.APP.VERSION) {
+        $log.debug("Local storage !== ",CONSTANT.APP.VERSION);
         notification.db.load();
         new PouchDB('lessonsDB').erase();
-        localStorage.setItem('version', '0.1.8');
+        localStorage.setItem('version', CONSTANT.APP.VERSION);
         content.createOrUpdateLessonDB()
       } else {
         content.replicateLessonDB();
