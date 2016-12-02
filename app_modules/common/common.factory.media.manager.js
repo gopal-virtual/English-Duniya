@@ -108,7 +108,7 @@
         return $q.when(response)  
       })
       .catch(function(){
-        return $q.reject(CONSTANT.RESOURCE_SERVER + url);
+        return $q.when(CONSTANT.RESOURCE_SERVER + url);
       });
 
     }
@@ -124,6 +124,7 @@
           $log.debug("cordovafiletransfer returns ",target)
           return $q.when(target);        
       }, function(err){
+          $log.debug("HEREE",err)
           return $q.reject({ 
                 "error": true,
                 "message": err.code? CONSTANT.ERROR_MESSAGES['CORDOVA_FILE_TRANSFER'][err.code]: CONSTANT.ERROR_MESSAGES['DEFAULT_FILE_ERROR']
@@ -131,7 +132,7 @@
       });
       }
       catch(err){
-        return $q.reject();
+        return $q.when(CONSTANT.RESOURCE_SERVER+url);
       }
     }
    
