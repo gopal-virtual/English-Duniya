@@ -54,6 +54,7 @@
     userCtrl.showError = showError;
     userCtrl.convertDate = convertDate;
     userCtrl.tabIndex = 0;
+    userCtrl.CONSTANT = CONSTANT;
     userCtrl.personaliseFormValidations =  {
       // 'gender': ['required'],
       // 'firstName': ['required'],
