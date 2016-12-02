@@ -494,7 +494,6 @@
     function getUserPlaylist(profileId) {
       $log.debug("In user playlist")
       return profilesDB.get(profileId).then(function (response) {
-        $log.debug("Length of playlist "+JSON.stringify(response.data)+ " END")
         if(response.data.playlist)
           return response.data.playlist;
         else

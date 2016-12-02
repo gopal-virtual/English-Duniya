@@ -264,8 +264,11 @@
         $scope.$emit('openNode', resource)
     }
     $scope.$on('openNode', function(event, node) {
-      // audio.stop('demo-1')
-      $ionicLoading.show();
+      $log.debug("Opennode Triggered");
+          $ionicLoading.show({
+        // noBackdrop: false
+        hideOnStateChange: true
+      });
        $scope.demo.isShown() && $scope.demo.hide();
        $scope.selectedNode = node;
       //   $scope.demo.isShown() && $scope.demo.hide();
@@ -277,21 +280,21 @@
                 promise = $q.resolve();
               }
       promise.then(function(s){
-        $log.debug("S",s)
+        $log.debug("Intro sound downloaded if not exist",s);
         if(s){
 
             node.node.parsed_sound = s;
           }
         $log.debug(node);
         lessonutils.playResource(node);
-        return content.getLesson(node.node.parent)
+        return content.getLesson(node.node.parent);
 
       })
       .then(function(lesson){
           lessonutils.setLocalLesson(JSON.stringify(lesson))
       }).catch(function (e) {
         $ionicLoading.hide()
-
+          $log.debug("error is here");
         $ionicPopup.alert({
           title: CONSTANT.ERROR_MESSAGES.DEFAULT_TITLE,
           template: e.message ? e.message : CONSTANT.ERROR_MESSAGES.DEFAULT

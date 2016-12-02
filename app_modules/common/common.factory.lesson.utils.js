@@ -179,7 +179,6 @@
 
     function playResource(resource, video, callback) {
       angular.element("#audioplayer")[0].pause();
-      $log.debug(resource, "r")
         // playDemoAudio(resource);
 
       //   if (utils.resourceType(resource) == 'practice' && (User.demo.isShown() && [2, 3].indexOf(User.demo.getStep()) >= 0)) {
@@ -192,11 +191,8 @@
 
 
       // to do
-      $ionicLoading.show({
-        // noBackdrop: false
-        hideOnStateChange: true
-      });
-      $log.debug("")
+  
+      $log.debug("Play Resource");
       if (utils.resourceType(resource) == 'vocabulary') {
         content.downloadVocabulary(resource)
         .then(function() {
@@ -214,7 +210,24 @@
                 $state.go('content.vocabulary.intro', {
                     vocab_data: resource
                 });
-            })
+            }).catch(function(e) {
+            $log.debug("We need to check", e)
+
+            $ionicPopup.alert({
+              title: CONSTANT.ERROR_MESSAGES.DEFAULT_TITLE,
+              template: e.message ? e.message : CONSTANT.ERROR_MESSAGES.DEFAULT
+            }).then(function() {
+              if (callback) {
+
+                callback();
+              }
+            });
+          })
+          .finally(function() {
+
+
+            $ionicLoading.hide();
+          })
         })
       } else if (utils.resourceType(resource) == 'assessment') {
         content.downloadAssessment(resource)

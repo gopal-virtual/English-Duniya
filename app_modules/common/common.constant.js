@@ -12,7 +12,7 @@
       'BUNDLED': false,
       'LOCK': true,
       'FAKE_LOGIN': true,
-      'FAKE_ID_DEVICE': '6e5ae3c89a683440',
+      'FAKE_ID_DEVICE': 'chrome123',
       'FAKE_DEVICE': true,
       'CONTENT_TEST':false,
       'DEBUG' : true,

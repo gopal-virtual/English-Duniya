@@ -26,6 +26,7 @@
     function isBundled(filename) {
 
       if(CONSTANT.BUNDLED || mediaManager.bundledMedia.indexOf('/'+filename) >= 0){
+        $log.debug("file is bundled",CONSTANT.BUNDLED,mediaManager.bundledMedia.indexOf('/'+filename) >= 0);
       return $q.when('bundled/'+filename);
       }
       else{
@@ -83,6 +84,7 @@
     }
 
     function isAvailableOffline(url){
+        $log.debug("downlaodifnotexists",url)
 
       var filename = getFileNameFromURl(url);
       var filenamePatch = getFileNameFromURlPatch(url);
@@ -117,7 +119,7 @@
       var target = cordova.file.dataDirectory + filename;
       
         $log.debug("source is",CONSTANT.RESOURCE_SERVER+url,"target is",target);
-      $cordovaFileTransfer.download(CONSTANT.RESOURCE_SERVER+url,target).then(
+      return $cordovaFileTransfer.download(CONSTANT.RESOURCE_SERVER+url,target).then(
         function(){
           $log.debug("cordovafiletransfer returns ",target)
           return $q.when(target);        
@@ -134,10 +136,13 @@
     }
    
     function downloadIfNotExists(url) {
-
+        $log.debug("downlaodifnotexists",url)
       return isAvailableOffline(url)
       .catch(function(){
         return network.isOnline()?downloadFile(url):$q.reject({"error": true,"message": CONSTANT.ERROR_MESSAGES['OFFLINE']['DEFAULT']});
+      }).then(function(result){
+        $log.debug("downloadifnotexists success",result)
+        return $q.when(result);
       })
 
       
