@@ -110,6 +110,14 @@
 												audio.player.play(quiz.node.parsed_sound, function(){
 																	$state.go('quiz.questions');
 															})
+												 $scope.$on('appResume',function(){
+            	$log.debug("Appresume in quiz start controller",angular.element("#audioplayer")[0].onended);
+            	audio.player.resume();
+
+            	audio.player.addCallback( function(){
+																	$state.go('quiz.questions');
+															})
+            })
 											// playDelayed()
 									}]
 							}

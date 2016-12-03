@@ -97,7 +97,8 @@
         isPaused: isPaused,
         removeCallback: removeCallback,
         resume: resume,
-        chain : chain
+        chain: chain,
+        addCallback : addCallback
       }
 
 
@@ -146,6 +147,10 @@
     function removeCallback() {
       angular.element("#audioplayer")[0].onended = null;
     }
+    function addCallback(callBack) {
+      angular.element("#audioplayer")[0].onended = callBack;
+    }
+
 
   }
 })();

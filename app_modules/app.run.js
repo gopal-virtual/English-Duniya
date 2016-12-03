@@ -283,7 +283,7 @@
 
 
     $ionicPlatform.on('pause', function () {
-
+      $rootScope.$broadcast('appPause');
       notification.schedule(JSON.parse(localStorage.scheduleNotification),1);
 
       // content.getActiveResource().then(function(resource){

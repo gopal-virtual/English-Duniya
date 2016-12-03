@@ -65,6 +65,12 @@
                               })
                           },100)
                       }
+                      $scope.$on('appResume',function(){
+                        audio.player.resume();
+                        audio.player.addCallback(function(){
+                                  $state.go('content.vocabulary.overview',{})
+                              })
+                      })
                       vocabIntroCtrl.playDelayed(vocabIntroCtrl.vocab_data.node.parsed_sound)
                   }],
                   controllerAs : 'vocabIntroCtrl'
