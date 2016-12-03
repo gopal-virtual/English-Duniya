@@ -284,7 +284,7 @@
 
     $ionicPlatform.on('pause', function () {
 
-      notification.schedule(JSON.parse(localStorage.scheduleNotification),1);
+      notification.schedule(JSON.parse(localStorage.scheduleNotification),JSON.parse(localStorage.scheduleNotification).at);
 
       // content.getActiveResource().then(function(resource){
       //   $log.debug("LOGGING ACTIVE",resource)
