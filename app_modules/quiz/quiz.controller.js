@@ -230,7 +230,7 @@
               // angular.element("#audioplayer")[0].load();
               // angular.element("#audioplayer")[0].play();
           },(count+1)*1000);
-        })(i)
+        })(i);
 
       }
     }
@@ -1075,6 +1075,10 @@
                 audio.player.stop();
                 $scope.showNodeMenu();
               }
+            });
+            $scope.$on('appResume',function(){
+            	$log.debug("Appresume in quiz controller");
+            	audio.player.resume();
             })
   }
 })();

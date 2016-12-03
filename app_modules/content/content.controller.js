@@ -59,6 +59,7 @@
     $scope.utilities = Utilities;
     $scope.goToMap = goToMap;
     contentCtrl.playStarSound = playStarSound;
+    contentCtrl.videoCompleted = false;
     $log.debug('$stateParams', $stateParams)
     contentCtrl.config = {
       sources: [$stateParams.video],
@@ -118,13 +119,25 @@
         star = 0;
       }
       $log.debug("playing star sound", star);
+      audio.player.play('sound/yay_we_learned_a_lot_from_video.mp3',function(){
       for (var i = 0; i < star; i++) {
         $log.debug("sound source", starSound[i]);
         (function(count) {
           $timeout(function() {
             $scope.resultStarFlag[count] = true;
             $log.debug("sound source", starSound, count, starSound[count]);
+            $log.debug("count,star,count==star-1",count,star,count == star-1);
+            if(count == star-1){
+              $log.debug("HEREEE");
+            audio.player.play("sound/" + starSound[count] + ".mp3",function(){
+              $log.debug("Setting resultPageNextShow");
+              $scope.resultPageNextShow = true;
+            });
+            }else{
+              $log.debug("HEREEE 1");
+
             audio.player.play("sound/" + starSound[count] + ".mp3");
+            }
             // angular.element("#audioplayer")[0].pause();
             // angular.element("#audioSource")[0].src = ;
             // angular.element("#audioplayer")[0].load();
@@ -133,6 +146,8 @@
         })(i)
 
       }
+      })
+
     }
 
     $log.debug('video object', $stateParams.video.resource)
@@ -167,14 +182,20 @@
       // })
 
     function onVideoComplete() {
+      $log.debug("onvideocompleted");
+      contentCtrl.config.plugins.controls.showControl = false;
+      contentCtrl.videoCompleted = true;
       $scope.summary = {
         stars: 3
       }
       orientation.setPortrait();
       submitReport()
-      audio.player.play('sound/yay_we_learned_a_lot_from_video.mp3',function(){
+      
+          $log.debug("onvideocompleted sound played");
+
           contentCtrl.playStarSound();
           $timeout(function() {
+            $scope.resultPageNextShow = false;
               $scope.ribbon_modal.hide();
               $scope.resultMenu.show();
               analytics.log({
@@ -187,7 +208,6 @@
                   User.getActiveProfileSync()._id
               )
           })
-      })
     }
 
     function submitReport() {
@@ -338,6 +358,15 @@
       if ($scope.ribbon_modal.isShown()) {
         audio.player.resume();
         angular.element("#audioplayer")[0].onended = intro_end_video;
+      }
+      if( contentCtrl.videoCompleted == true){
+        $log.debug("app resume and video completed")
+        $timeout(function() {
+          $log.debug("timeout done");
+              $scope.ribbon_modal.hide();
+              $scope.resultMenu.show();
+              
+          })
       }
 
     });

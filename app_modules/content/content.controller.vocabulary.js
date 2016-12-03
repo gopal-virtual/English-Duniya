@@ -159,10 +159,25 @@
       for (var i = 0; i < star; i++) {
         // $log.debug("sound source", starSound[i]);
         (function(count) {
-          $timeout(function() {
+             $timeout(function() {
             $scope.resultStarFlag[count] = true;
             $log.debug("sound source", starSound, count, starSound[count]);
+            $log.debug("count,star,count==star-1",count,star,count == star-1);
+            if(count == star-1){
+              $log.debug("HEREEE");
+            audio.player.play("sound/" + starSound[count] + ".mp3",function(){
+              $log.debug("Setting resultPageNextShow");
+              $scope.resultPageNextShow = true;
+            });
+            }else{
+              $log.debug("HEREEE 1");
+
             audio.player.play("sound/" + starSound[count] + ".mp3");
+            }
+            // angular.element("#audioplayer")[0].pause();
+            // angular.element("#audioSource")[0].src = ;
+            // angular.element("#audioplayer")[0].load();
+            // angular.element("#audioplayer")[0].play();
           }, (count + 1) * 1000);
         })(i)
       }
@@ -177,6 +192,7 @@
       $timeout(function() {
         orientation.setPortrait();
         //   $scope.ribbon_modal.hide();
+        $scope.resultPageNextShow = false;
         $scope.resultMenu.show();
         analytics.log({
             name: 'VOCABULARY',
