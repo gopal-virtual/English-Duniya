@@ -273,7 +273,7 @@
                   User.getActiveProfileSync()._id
 
                 ) &&
-                $state.go('quiz.questions', {
+                $state.go('quiz.start', {
                   id: resource.node.id,
                   type: 'practice',
                   quiz: resource

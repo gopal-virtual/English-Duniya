@@ -141,7 +141,7 @@
     quizCtrl.getQuestionType = getQuestionType;
     quizCtrl.redo = redo;
     quizCtrl.playQuizIntro = playQuizIntro;
-
+    quizCtrl.intro_end_quiz = intro_end_quiz;
 
     // initialisation call
     quizCtrl.init(quizCtrl.quiz);
@@ -997,7 +997,7 @@
       angular.element("#audioplayer")[0].onended = null
       if($state.current.name == 'quiz.questions'){
         $scope.nodeRibbonFlag = false;
-        $scope.nodeRibbon.hide().then(function(){
+        // $scope.nodeRibbon.hide().then(function(){
 
           if($state.is('quiz.questions') && User.demo.isShown(5) && CONSTANT.QUESTION_DEMO){
             $timeout(function(){
@@ -1024,7 +1024,7 @@
 
           }
 
-        });
+        // });
       }
 
     }
@@ -1038,6 +1038,7 @@
       $scope.nodeRibbon = modal;
       $scope.nodeRibbonFlag = true;
       quizCtrl.noPauseFlag = true;
+
     //   $log.debug("Setting No Pause Flag");
     //   if(quiz.node.parsed_sound){
     //     audio.player.play(quiz.node.parsed_sound);
@@ -1052,15 +1053,18 @@
 
     });
 
-    function playQuizIntro(){
-        $scope.nodeRibbon.show().then(function(){
-              if(quiz.node.parsed_sound){
-                    audio.player.play(quiz.node.parsed_sound);
-                    angular.element("#audioplayer")[0].onended = intro_end_quiz;
-                }
-        })
-    }
+// quizCtrl.playQuizIntro()
 
+    function playQuizIntro(){
+
+      intro_end_quiz()
+        // $scope.nodeRibbon.show().then(function(){
+        //       if(quiz.node.parsed_sound){
+        //             audio.player.play(quiz.node.parsed_sound);
+        //             angular.element("#audioplayer")[0].onended = ;
+        //         }
+        // })
+    }
 
     // $scope.progressBar();
 
