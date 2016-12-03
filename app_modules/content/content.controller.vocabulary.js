@@ -157,7 +157,7 @@
       }
       $log.debug("playing star sound", star);
       for (var i = 0; i < star; i++) {
-        $log.debug("sound source", starSound[i]);
+        // $log.debug("sound source", starSound[i]);
         (function(count) {
           $timeout(function() {
             $scope.resultStarFlag[count] = true;

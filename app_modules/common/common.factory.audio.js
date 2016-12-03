@@ -5,7 +5,7 @@
     .module('common')
     .factory('audio', audio)
 
-  function audio($cordovaNativeAudio, $log, ngAudio) {
+  function audio($cordovaNativeAudio, $log, ngAudio, $rootScope) {
 
     return {
       // 'background' : ngAudio.load("sound/background.wav"),
@@ -28,7 +28,10 @@
 
       play: function(sound) {
         try {
-          $cordovaNativeAudio.play(sound);
+          $log.debug("nativeaudio play background check $rootScope.inBackground",$rootScope.inBackground);
+          if(!$rootScope.inBackground){
+          $cordovaNativeAudio.play(sound);            
+          }
         } catch (error) {
           $log.warn(sound+" can't be played. Ionic plugins only work on phone")
         }
@@ -111,7 +114,9 @@
       if(url){
         angular.element("#audioSource")[0].src = url;
         angular.element("#audioplayer")[0].load();
+          if(!$rootScope.inBackground){
         angular.element("#audioplayer")[0].play();
+      }
       }
       if(url && callback){
           angular.element("#audioplayer")[0].onended = callback;

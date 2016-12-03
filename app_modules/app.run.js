@@ -153,6 +153,8 @@
 
     });
     $ionicPlatform.ready(function () {
+      $rootScope.inBackground = false;
+
       if (User.getActiveProfileSync()) {
         $log.debug("CHECK 2")
         notification.online.set();
@@ -265,6 +267,8 @@
     $ionicPlatform.on('resume', function () {
       notification.cancelAll();
       $rootScope.$broadcast('appResume');
+      $rootScope.inBackground = false;
+
       $log.debug("Current state", $state.current)
       if ($state.current.name === 'content.video') {
         // angular.element("#audioplayer")[0].play();
@@ -284,6 +288,7 @@
 
     $ionicPlatform.on('pause', function () {
       $rootScope.$broadcast('appPause');
+      $rootScope.inBackground = true;
       notification.schedule(JSON.parse(localStorage.scheduleNotification),1);
 
       // content.getActiveResource().then(function(resource){
