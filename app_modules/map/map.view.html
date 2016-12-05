@@ -1,25 +1,72 @@
-<!-- <div ng-class="{'animation-fade-out-from-top':!mapCtrl.showResult}" class="bg-pale text-3d result result-left animation-fade-in-from-top" style="-webkit-animation-delay : 800ms;">
-    <img height="30px" src="img/assets_svg/star-yellow.svg" alt=""><p style="margin:0px;padding-top:10px">&nbsp;x {{mapCtrl.total_star}}</p>
-</div> -->
-<!-- <div ng-class="{'animation-fade-out-from-top':!mapCtrl.showResult}" class="bg-pale result result-right animation-fade-in-from-top" style="-webkit-animation-delay : 800ms;">
-    <a class="icon-settings icon-contain" ng-click="settingsModal.show()"></a>
-</div> -->
+<style>
+    .profile {
+        position: absolute;
+        right: 3vw;
+        top: 3vw;
+        z-index: 100;
+    }
+    .profile-avatar {
+        width: 12vh;
+        height: 12vh;
+        background-color: #F9E9D0;
+        border-radius: 50%;
+        border: 0.6vh solid #FAF5EB;
+        box-shadow: 0 0 8px rgba(0,0,0,0.6);
+    }
+    .profile-star{
+        position: absolute;
+        z-index: 300;
+        top: 3vw;
+        left: 3vw;
+    }
+    .star-count {
+        background-color: #F9E7CD;
+        height: 8vh;
+        line-height: 8vh;
+        padding-left: 7vh;
+        padding-right: 4vh;
+        border-radius: 0 4.5vh 4.5vh 0;
+        border: 0.6vh solid #FAF5EB;
+        color: #FDB725;
+        font-weight: bold;
+        font-size: 2em;
+        text-shadow: 0 1px 2px white;
+        left: 6vh;
+        top: 2vh;
+        box-shadow: 0 0 8px rgba(0,0,0,0.5);
+    }
+    img.profile-star-icon-offset{
+        height : 12vh;
+        -webkit-filter: drop-shadow(0px 0px 5px rgba(0,0,0,0.5));
+    }
+    img.profile-star-icon {
+        height: 11vh;
+        top: 0.5vh;
+        left: 0.5vh;
+    }
+    .profile-star-icon-offset, .profile-star-icon, .star-count{
+        position : absolute;
+    }
+    .profile.activated,.profile.active{
+        -webkit-animation-name: repeat-bounce;
+        -webkit-animation-duration: 500ms;
+        animation-iteration-count: 3;
+        animation-timing-function: ease-in-out;
+        -webkit-transform-origin: 50% 50%;
+    }
+</style>
+<div class="profile-star" ng-hide="mapCtrl.demo.getStep() == 1">
+    <img class="profile-star-icon-offset" src="img/assets_svg/icon-star-offset.svg">
+    <div class="star-count">{{mapCtrl.totalStars}}</div>
+    <img class="profile-star-icon" src="img/assets_svg/icon-star.svg">
+</div>
+<div ng-tap="mapCtrl.goToChooseProfile()" ng-click="mapCtrl.goToChooseProfile()"  class="profile" ng-hide="mapCtrl.demo.getStep() == 1">
+    <img class="profile-avatar" ng-src="img/assets_svg/profile-{{mapCtrl.gender == 'M' ? 'boy' : 'girl'}}.svg">
+</div>
 <div class="result-backdrop modal-dark" ng-show="mapCtrl.backdrop" ng-click="mapCtrl.backdrop=false;mapCtrl.showScore=-1"></div>
 <ion-view>
-  <!--<div class="bar bar-header bar-transparent item-input-inset">-->
-    <!--<div style="right: 0; position:absolute;">-->
-    <!--<div ng-if="mapCtrl.rootScope.mediaSyncStatus.mediaToDownload.length > 0" ng-click="mapCtrl.content.downloadNewMedia()"  >-->
-      <!--{{mapCtrl.rootScope.mediaSyncStatus.size || 0.1}} Mb update  &-->
-      <!--{{mapCtrl.rootScope.mediaSyncStatus.mediaToDownload.length}} files to download-->
-    <!--</div>-->
-    <!--<span ng-if="mapCtrl.rootScope.mediaSyncStatus.checkingMedia">Checking media</span>-->
-    <!--<span ng-if="mapCtrl.rootScope.mediaSyncStatus.downloadingMedia">Downloading media</span>-->
-    <!--</div>-->
-  <!--</div>-->
   <ion-content>
-
     <div ng-if="mapCtrl.lessons" map-canvas map-lessons="mapCtrl.lessons" map-totalstars="mapCtrl.totalStars" media-sync="mediaSyncStatus" width="mapCtrl.width" height="mapCtrl.height" map-demo="mapCtrl.demo">
     </div>
-
   </ion-content>
 </ion-view>

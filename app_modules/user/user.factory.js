@@ -126,7 +126,8 @@
       get: get,
       getAll: getAllProfiles,
       patch: patchProfile,
-      updateRoadMapData: updateRoadMapData
+      updateRoadMapData: updateRoadMapData,
+      select : selectProfile
     };
     User.skills = {
       get: getSkills,
@@ -185,28 +186,30 @@
           include_docs: true
         })
       })
-        .then(function (docs) {
-          // $log.debug("ALLdocs",docs.rows[0].doc);
-          $log.debug("docs is this",docs)
 
-          if(docs.rows.length ){
-            setActiveProfileSync(docs.rows[0].doc);
-            if(docs.rows[0].doc.data.playlist.length){
-              localStorage.setItem('diagnosis_flag',true);
-              localStorage.setItem('demo_flag',5);
-            }else{
-              localStorage.setItem('diagnosis_flag',false);
-              localStorage.setItem('demo_flag',1);
-            }
-            if(docs.rows[0].doc.data.roadMapData){
-              $log.debug("Setting roadmap data")
-              localStorage.setItem('roadMapData',JSON.stringify(docs.rows[0].doc.data.roadMapData));
 
-            }
+    }
+
+    function selectProfile(profile) {
+        // $log.debug("ALLdocs",docs.rows[0].doc);
+        $log.debug("selectProfile",profile)
+
+        if(profile ){
+          setActiveProfileSync(profile.doc);
+          if(profile.doc.data.playlist.length){
+            localStorage.setItem('diagnosis_flag',true);
+            localStorage.setItem('demo_flag',5);
+          }else{
+            localStorage.setItem('diagnosis_flag',false);
+            localStorage.setItem('demo_flag',1);
+          }
+          if(profile.doc.data.roadMapData){
+            $log.debug("Setting roadmap data")
+            localStorage.setItem('roadMapData',JSON.stringify(profile.doc.data.roadMapData));
 
           }
-        })
 
+        }
     }
 
     function getUserIdSync() {

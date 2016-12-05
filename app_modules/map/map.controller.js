@@ -89,6 +89,7 @@
     $scope.activatedLesson = $stateParams.activatedLesson;
     $scope.progress = localStorage.getItem('progress');
     var mapCtrl = this;
+    mapCtrl.gender = JSON.parse(localStorage.getItem('profile')).data.profile.gender;
     mapCtrl.rootScope = $rootScope;
     $log.debug("map ctrl scope",$scope.mediaSyncStatus)
     var lessonList = CONSTANT.LOCK ? lessonLocked.lockedLesson : lessons;
@@ -136,6 +137,7 @@
         "listening" : "darkblue",
         "reading" : "orange"
     }
+    mapCtrl.goToChooseProfile = goToChooseProfile;
 
     // mapCtrl.notification = notification;
 
@@ -606,5 +608,8 @@
       // $state.reload()
     }
 
+    function goToChooseProfile() {
+      $state.go('user.chooseProfile');
+    }
   }
 })();

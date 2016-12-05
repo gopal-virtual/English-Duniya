@@ -7,7 +7,7 @@ var getGrades = function(file){
 		var data = JSON.parse(data)[0];
 		var grades = [];
 		for (var property in data) {
-			if (data.hasOwnProperty(property) && data[property]["ml"]["level"]) {
+			if (data.hasOwnProperty(property) && data[property]["ml"]["level"]>1) {
 				grades.push(data[property]["ml"]["level"]);
 			}
 		}

@@ -37,7 +37,7 @@
       // event.stopPropagation();
       $log.warn("pressed hardware back button");
       $rootScope.$broadcast("backButton");
-    }, 510)
+    }, 510);
     //$http.defaults.headers.common['Access-Control-Request-Headers'] = 'accept, auth-token, content-type, xsrfcookiename';
     $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
       if (localStorage.version !== CONSTANT.APP.VERSION) {
@@ -62,19 +62,23 @@
 
         if (network.isOnline()) {
 
-          User.checkIfProfileOnline().then(function () {
-            $log.debug("HERE")
-            $log.debug("Ionic loading hide should happen");
-            if (localStorage.getItem('profile') === null) {
+          User.checkIfProfileOnline().then(function (profiles) {
+            $log.debug("HERE");
+            $log.debug("Ionic loading hide should happen",profiles,profiles.total_rows > 0);
+            if (profiles.total_rows == 0) {
               $state.go('user.personalise');
             } else {
-              $log.debug("profile fetched online")
+              $log.debug("profile fetched online");
               User.startProfileSync();
-              $state.go('map.navigate');
-              $log.debug("CHECK 3")
+              User.profile.getAll().then(function(profiles) {
+                $log.debug("Got profiles",profiles)
+                $state.go('user.chooseProfile',{'profiles':profiles});
+              })
+              $log.debug("Check if user has multiple profiles, if yes allow user to choose one");
+              // $state.go('map.navigate');
+              $log.debug("CHECK 3");
               notification.online.set();
               $log.debug("profile fetched online 2")
-
             }
           })
 
