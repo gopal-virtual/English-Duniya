@@ -1,0 +1,13 @@
+<div>
+<ion-modal-view style="height:100%;background-color:{{vocabInstructionCtrl.params.vocab_data.objects[0].node.type.background_color}};background-image: url(img/assets/transparent_star.png);
+        background-size: 33%;">
+    <div style="height:100%;" class="vertical-center">
+        <div style="text-align: center;position: relative;width: 100%;">
+            <img height="180" ng-src="img/assets_svg/{{userGender=='M'? 'boy' : 'girl'}}-ribbon.svg">
+            <!-- {{lessonutils.getGender()}} -->
+            <h5 style="position: absolute;top: 105px;width: 100%;" class="margin-0 padding-y-10 padding-x-20 text-center color-white font-md">It's your turn</h5>
+            <!-- <h5 style="position: absolute;top: 105px;width: 100%;" class="margin-0 padding-y-10 padding-x-20 text-center color-white font-md">{{userGender}}</h5> -->
+        </div>
+    </div>
+</ion-modal-view>
+</div>

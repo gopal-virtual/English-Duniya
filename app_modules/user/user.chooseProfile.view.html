@@ -1,0 +1,149 @@
+<!-- <ion-header-bar class="bg-pale">
+  <div class="buttons">
+    <button class="button button-clear icon ion-android-arrow-back" ng-tap="userCtrl.goToMap()"></button>
+  </div>
+  <h1 class="title">Choose Profile</h1>
+</ion-header-bar>
+<ion-view>
+  <ion-content class="bg-pale">
+    <div class="row">
+      <div class="col">
+        <ion-list>
+          <ion-item class="bg-transparent border-0 padding-y-15" ng-repeat="profile in userCtrl.profiles">
+            <div class="flex space-around padding-y-5">
+            Profile name {{profile.doc.data.profile.first_name}}
+            </div>
+            <button ng-tap="userCtrl.selectProfile(profile)">Select</button>
+          </ion-item>
+        </ion-list>
+      </div>
+    </div>
+  </ion-content>
+</ion-view> -->
+<style>
+    .profile-box-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        width : 90vw;
+        margin : 0 auto;
+    }
+    .profile-box {
+        width: 42vw;
+        border-radius: 20px;
+        display: flex;
+        flex-direction : column;
+        justify-content: center;
+        align-items: center;
+        margin: 2vw 1.5vw;
+        padding : 3vw;
+        min-height: 55vw;
+    }
+    .profile-box-blue{
+        background-color: #A6CEEE;
+        box-shadow: 0 6px #1C81C5;
+    }
+    .profile-box-darkblue{
+        background-color: #223F97;
+        box-shadow: 0 6px #1A2B51;
+    }
+    .profile-box-add{
+        background-color: #FCBA1B;
+        box-shadow: 0 6px #C58F2B;
+    }
+    .absolute-right{
+        position : absolute;
+        top : 10px;
+        right : 6.5vw;
+    }
+    .profile-avatar {
+        width: 25vw;
+        height: 25vw;
+        background-color: #F9E9D0;
+        border-radius: 50%;
+        border: 3px solid #FAF5EB;
+    }
+    .profile-star-small {
+        height : 30px;
+    }
+    .profile-star-small > img {
+        width : 4vw;
+        margin: 0 1vw;
+    }
+    .font-pale{
+        color : #F9E7CD;
+    }
+    .font-blue{
+        color : #1C81C5;
+    }
+    .font-off-gold{
+        color : #D99828;
+    }
+    .font-bright-gold{
+        color : #FDB725;
+    }
+    .profile-level{
+        text-align: center;
+        background-color: #CE202F;
+        padding-top: 12px;
+        margin-top: -15px;
+        width: 40px;
+        margin-left: auto;
+        margin-right: auto;
+        color: white;
+    }
+    .profile-level-ribbon-tail{
+        width: 0px;
+        margin-left: auto;
+        margin-right: auto;
+        border-left: 20px solid #CE202F;
+        border-right: 20px solid #CE202F;
+        border-bottom: 5px solid transparent;
+        border-top: 0;
+    }
+    .header-fixed{
+        position: fixed;;
+    }
+    .has-headers{
+        top: 70px;
+    }
+    .choose{
+        width : 60vw;
+    }
+</style>
+<ion-view class="bg-pale">
+    <div class="row header-fixed animation-fade-in">
+        <div class="col center">
+            <a ng-tap="profileCtrl.goToMap()" ng-click="profileCtrl.goToMap()" ng-show="profileCtrl.hasCurrentUser()"><img class="absolute-right" src="img/assets_svg/cross.svg" alt=""></a>
+            <!-- <img src="img/assets_svg/profile_ribbon.svg" alt=""> -->
+            <img src="img/assets_svg/profile_ribbon.svg" alt="" ng-show="profileCtrl.hasCurrentUser()">
+            <img class="choose" src="img/assets_svg/chooseyourname_ribbon.svg" alt="" ng-show="!profileCtrl.hasCurrentUser()">
+        </div>
+    </div>
+    <ion-content class="has-headers">
+        <div class="profile-box-container">
+            <div ng-tap="profileCtrl.selectProfile(profile)" ng-click="profileCtrl.selectProfile(profile)" class="profile-box animation-fade-in-from-top" style="-webkit-animation-delay: {{$index*100}}ms;" ng-class="{true : 'profile-box-darkblue', false : 'profile-box-blue'}[profileCtrl.getCurrentProfile() == profile.doc._id]" ng-repeat="profile in profileCtrl.profiles | limitTo : 4">
+                <div class="font-lg" ng-class="{true : 'font-pale' , false : 'font-blue'}[profileCtrl.getCurrentProfile() == profile.doc._id]">
+                    {{::profile.doc.data.profile.first_name}}
+                </div>
+                <div>
+                    <img class="profile-avatar" ng-src="img/assets_svg/profile-{{profile.doc.data.profile.gender == 'M' ? 'boy' : 'girl'}}.svg">
+                    <div class="profile-level">
+                        <strong>{{::profile.levels}}</strong>
+                    </div>
+                    <div class="profile-level-ribbon-tail">
+                    </div>
+                </div>
+                <div class="profile-star-small">
+                    <img src="img/assets_svg/star-yellow.svg" alt="">
+                    <span class="font-xl" ng-class="{true : 'font-bright-gold', false : 'font-off-gold'}[profileCtrl.getCurrentProfile() == profile.doc._id]">
+                        {{::profile.stars}}
+                    </span>
+                </div>
+            </div>
+            <div ng-show="profileCtrl.canAdd()" class="profile-box profile-box-add" ng-tap="profileCtrl.goToCreateNewProfile()" ng-click="profileCtrl.goToCreateNewProfile()">
+                <img src="img/assets_svg/add_sign.svg" alt="">
+            </div>
+        </div>
+    </ion-content>
+</ion-view>

@@ -1,3 +1,31 @@
+<style>
+    .grade-box-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .grade-box {
+        width: 20vw;
+        height: 20vw;
+        margin: 2vw;
+        border-radius: 15px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 40px;
+        border: 5px solid white;
+        color: #1D81C4;
+    }
+    .radio-selected {
+        background-color: #FCBA1E;
+        box-shadow: inset 0px -4px 0px 0px #C48D2B;
+    }
+    .radio-not-selected {
+        background-color: #A6CEEE;
+        box-shadow: inset 0px -4px 0px 0px #1D81C4;
+    }
+</style>
+
 <ion-view class="bg-pale">
     <ion-content>
         <ion-slide-box delegate-handle="slide" show-pager="false" ng-init="userCtrl.disableSwipe()" on-slide-changed="userCtrl.playAudio($index)">
@@ -28,12 +56,12 @@
                         <virtual-keyboard reference="userCtrl.user.name" limit="userCtrl.user.limit"></virtual-keyboard>
                     </div>
                     <div style="top:83vh; text-align: center;" class="full-width absolute">
-                        <button ng-disabled="userCtrl.user.name.trim().length < 3" class="sbtn sbtn-next-blue" ng-click="audio.play('press');userCtrl.nextSlide();"></button>
+                        <button ng-disabled="userCtrl.user.name.trim().length < 3" class="sbtn sbtn-next-blue" ng-class="{'animation-repeat-bounce': userCtrl.user.name.trim().length > 3}" ng-click="audio.play('press');userCtrl.nextSlide();"></button>
                     </div>
-                    
+
                 </div>
             </ion-slide>
-            
+
 
             <ion-slide>
                 <div>
@@ -57,7 +85,7 @@
                         </div>
                     </div>
                     <div style="top:83vh; text-align: center;" class="full-width absolute">
-                        <button ng-disabled="!userCtrl.user.gender" class="sbtn sbtn-next-blue" ng-click="audio.play('press');userCtrl.nextSlide();"></button>
+                        <button ng-disabled="!userCtrl.user.gender" class="sbtn sbtn-next-blue" ng-class="{'animation-repeat-bounce': userCtrl.user.gender}" ng-click="audio.play('press');userCtrl.nextSlide();"></button>
                     </div>
                 </div>
 
@@ -90,7 +118,7 @@
                     </center>
                 </div> -->
             </ion-slide>
-            
+
             <ion-slide>
                 <div>
                     <div style="top:4vh" class="full-width absolute center">
@@ -100,7 +128,7 @@
                         <h2 style="margin-top:0px;line-height: 1;margin:0px;" class="center personalize-title">आप कौन सी कक्षा मे हो?</h2>
                     </div>
                     <div style="top:40vh" class="full-width absolute padding-x-10">
-                        <div class="radio-box-container-inner clearfix">
+                        <!-- <div class="radio-box-container-inner clearfix">
                             <div class="lcard radio-con block" style="margin-left: auto;margin-right: auto;" ng-class="{'selected':userCtrl.user.grade == 1}">
                                 <label on-tap="audio.play('click');"  class="lcard-inner radio radio-box center">1
                                     <input type="radio" name="grade" value="1" ng-model="userCtrl.user.grade">
@@ -122,10 +150,16 @@
                                     </div>
                                 </div>
                             </div>
+                        </div> -->
+                        <div class="grade-box-container">
+                            <label class="grade-box radio" ng-repeat="grade in userCtrl.CONSTANT.GRADE" ng-class="{true : 'radio-selected', false : 'radio-not-selected'}[userCtrl.user.grade == grade]">
+                                {{grade}}
+                                <input type="radio" name="grade" value="{{grade}}" ng-model="userCtrl.user.grade">
+                            </label>
                         </div>
                     </div>
                     <div style="top:83vh; text-align: center;" class="full-width absolute">
-                        <button ng-disabled="!userCtrl.user.grade" class="sbtn sbtn-next-blue" ng-click="audio.play('press');userCtrl.createProfile(userCtrl.user);"></button>
+                        <button ng-disabled="!userCtrl.user.grade" class="sbtn sbtn-next-blue" ng-class="{'animation-repeat-bounce': userCtrl.user.grade}" ng-click="audio.play('press');userCtrl.createProfile(userCtrl.user);"></button>
                     </div>
                 </div>
                 <!-- <div class="box">

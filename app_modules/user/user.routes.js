@@ -25,17 +25,9 @@
       },
         onEnter: ['Auth', '$state', '$log', 'User', 'device', function (Auth, $state, $log, User, device) {
 
-          
-       
-        }],
-      data : {
-          personaliseFormValidations: {
-            // 'gender': ['required'],
-            // 'firstName': ['required'],
-            'grade': ['required'],
-            // 'motherTongue': ['required']
-          }
-      }
+
+
+        }]
       })
       .state('user.nointernet',{
           url : '/nointernet',
@@ -57,29 +49,102 @@
             templateUrl: CONSTANT.PATH.USER + '/user.profile' + CONSTANT.VIEW,
             controller: 'userController as userCtrl'
           }
+        }
+      })
+      .state('user.chooseProfile', {
+        url: '/chooseProfile',
+        views: {
+          'state-user' : {
+            templateUrl: CONSTANT.PATH.USER + '/user.chooseProfile' + CONSTANT.VIEW,
+            controller: ['User','$log','$state', 'CONSTANT', '$q', '$ionicLoading',function(User, $log, $state, CONSTANT, $q, $ionicLoading){
+                var profileCtrl = this;
+                var promises = [];
+                profileCtrl.getCurrentProfile = getCurrentProfile;
+                profileCtrl.goToMap = goToMap;
+                profileCtrl.getProfileMeta = getProfileMeta;
+                profileCtrl.selectProfile = selectProfile;
+                profileCtrl.goToCreateNewProfile = goToCreateNewProfile;
+                profileCtrl.canAdd = canAdd;
+                profileCtrl.hasCurrentUser = hasCurrentUser;
+
+                User.profile.getAll().then(function (profiles) {
+                    $log.debug('Profile list :', profiles)
+                    for (var i = 0; i < profiles.length; i++) {
+                        if(profiles[i].doc._id == getCurrentProfile()){
+                            var currentProfile = profiles.splice(i,1)
+                        }
+                    }
+                    currentProfile && profiles.unshift(currentProfile[0]);
+                    angular.forEach(profiles, function(profile, index){
+                        promises.push(getProfileMeta(profile, profile.doc._id))
+                    })
+                    $q.all(promises).then(function(profiles){
+                        profileCtrl.profiles = profiles;
+                    })
+                })
+
+                function hasCurrentUser (){
+                    return User.getActiveProfileSync() ? true : false;
+                }
+
+                function canAdd (){
+                    return profileCtrl.profiles && profileCtrl.profiles.length < 4;
+                }
+
+                function goToCreateNewProfile (){
+                        localStorage.removeItem('profile');
+                        $state.go('user.personalise', {})
+                }
+
+                function selectProfile(profile) {
+                    localStorage.removeItem('currentPosition');
+                    $ionicLoading.show({
+                      noBackdrop: false,
+                      hideOnStateChange: true
+                    });
+                    User.profile.select(profile);
+                    $state.go('map.navigate');
+                }
+
+                function getProfileMeta (profile, profile_id) {
+                    var stars = 0;
+                    var levels = 0;
+                    return User.playlist.get(profile_id).then(function(playlist){
+                        angular.forEach(playlist,function(playlist_item,index){
+                            $log.debug('Playlist item : ', playlist_item)
+                            angular.forEach(playlist_item, function(resource, resource_id){
+                                $log.debug('Resource id : ', resource_id)
+                                if(['dependencyData','lesson_id'].indexOf(resource_id) == -1){
+                                    var percent = (resource.score / resource.totalScore) * 100;
+                                    stars += (percent >= CONSTANT.STAR.THREE) ? 3 :
+                                             (percent >= CONSTANT.STAR.TWO && percent < CONSTANT.STAR.THREE) ? 2 :
+                                             (percent >= CONSTANT.STAR.ONE && percent < CONSTANT.STAR.TWO) ? 1 : 0;
+                                    levels += 1;
+                                }
+                            })
+                        })
+                        profile["stars"] = stars;
+                        profile["levels"] = levels + 1;
+                        return profile;
+                    })
+                }
+                function goToMap () {
+                    $log.debug("Clicked : exit")
+                    $ionicLoading.show({
+                      noBackdrop: false,
+                      hideOnStateChange: true
+                    });
+                    $state.go('map.navigate',{})
+                }
+                function getCurrentProfile (){
+                    return User.getActiveProfileSync() ? User.getActiveProfileSync()._id : false;
+                }
+            }],
+            controllerAs : 'profileCtrl'
+          }
         },
-        data: {
-          skills: [{
-            "id": "6ef60d7e-64a2-4779-8aba-eae1d2de9246",
-            "title": "Vocabulary",
-            "lesson_scores": 220,
-            "question_scores": 0
-          }, {
-            "id": "d711986f-0451-46d3-b68b-2d2500a1bb1e",
-            "title": "Reading",
-            "lesson_scores": 180,
-            "question_scores": 0
-          }, {
-            "id": "152df66c-0f88-4932-86f2-592fa9d58b0e",
-            "title": "Grammar",
-            "lesson_scores": 200,
-            "question_scores": 0
-          }, {
-            "id": "a28050a4-adb8-4b0c-8505-3b79d0db8128",
-            "title": "Listening",
-            "lesson_scores": 100,
-            "question_scores": 0
-          }]
+        params: {
+          profiles: null
         }
       })
   }

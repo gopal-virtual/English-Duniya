@@ -41,7 +41,10 @@
     'analytics',
     '$q',
     'queue',
-    'content'
+    'content',
+    '$cordovaLocalNotification',
+    'notification',
+    'device'
 ];
 
   function mapController(
@@ -71,18 +74,24 @@
         analytics,
         $q,
         queue,
-        content
+        content,
+        $cordovaLocalNotification,
+        notification,
+        device
     ) {
-
     $scope.audio = audio;
     $scope.settings = settings;
     var temp = JSON.parse(localStorage.getItem('profile')).data.profile;
     temp.name = temp.first_name + ' ' + temp.last_name;
+
     $scope.settings.user = temp
     $scope.orientation = orientation;
     $scope.activatedLesson = $stateParams.activatedLesson;
     $scope.progress = localStorage.getItem('progress');
     var mapCtrl = this;
+    mapCtrl.gender = JSON.parse(localStorage.getItem('profile')).data.profile.gender;
+    mapCtrl.rootScope = $rootScope;
+    $log.debug("map ctrl scope",$scope.mediaSyncStatus)
     var lessonList = CONSTANT.LOCK ? lessonLocked.lockedLesson : lessons;
     mapCtrl.totalStars = CONSTANT.LOCK ? lessonLocked.total_star : 0;
     $log.debug("Stars",mapCtrl.totalStars)
@@ -93,6 +102,7 @@
     mapCtrl.authFactory = Auth;
     mapCtrl.queue = queue;
     mapCtrl.lessons = lessonList;
+    mapCtrl.content = content;
     $log.debug("mapCtrl lessons",lessonList);
     mapCtrl.ml = ml;
     // mapCtrl.userCtrl = $controller('userCtrl');
@@ -115,6 +125,7 @@
     // ;
     mapCtrl.setAnimateStarFlag = setAnimateStarFlag;
     mapCtrl.setLessonRange = setLessonRange;
+    mapCtrl.emitNode = emitNode;
 
     // port node
     mapCtrl.first_node_index = parseInt(localStorage.first_node_index) || 0;
@@ -126,9 +137,61 @@
         "listening" : "darkblue",
         "reading" : "orange"
     }
+    mapCtrl.goToChooseProfile = goToChooseProfile;
+    mapCtrl.onBackButtonPress = onBackButtonPress;
 
+    // mapCtrl.notification = notification;
 
+    // notification.createDb();
+    // notification.init();
+    // notification.defineTypes();
+    // notification.dbDestroy();
+    // notification.smartContentSet();
+    // $log.debug("DB LOADING",notification.db.load());
     $scope.$on('pageRegion', mapCtrl.setLessonRange )
+    $scope.$on('backButton', mapCtrl.onBackButtonPress)
+
+    function onBackButtonPress() {
+        $log.debug('Do you want to exit?')
+        var confirmExit = $ionicPopup.confirm({
+         title: 'Exit',
+         template: 'Do you want to exit?'
+       });
+
+       confirmExit.then(function(res) {
+         if(res) {
+           ionic.Platform.exitApp();
+         } else {
+           console.log('You are not sure');
+         }
+       });
+    }
+
+    notification.getFromServer({
+      dev_id: device.uuid
+    }).then(function(response) {
+      $log.debug("We got this", response)
+    }, function(response) {
+      $log.error("We couldn't get", response)
+      if (response.status == 404) {
+        $log.warn("No worries, we kust register your device")
+      }else{
+      }
+    });
+
+    $log.debug("This is the lesson list",lessonList)
+    // $log.debug("FETCHINGDOCBYID",notification.fetchDocById())
+    notification.fetchDocById(lessonList[lessonList.length-1].node.parent).then(function(doc){
+      $log.debug("FETCHING DOC complete",doc)
+      if (lessonutils.resourceType(lessonList[lessonList.length-1]) != 'practice') {
+        $log.debug('discovered',notification.defineType(doc,'discovered'))
+      }else{
+        $log.debug('undiscovered',notification.defineType(doc,'undiscovered'))
+      }
+      localStorage.setItem('scheduleNotification',JSON.stringify(notification.defineType(doc,lessonutils.resourceType(lessonList[lessonList.length-1]) != 'practice'?'discovered':'undiscovered')))
+      // localStorage.setItem('offlineNotif',JSON.stringify(doc));
+    })
+    // $log.debug("Defining types in map",notification.defineTypes());
     // $scope.$on('nextRegion', mapCtrl.setLessonRange )
     function setLessonRange(event, regionPage, action, regionLength){
         // if (regionPage > 0 && regionPage < 3) {
@@ -156,6 +219,8 @@
         //
     }
     // end : port node
+
+
 
 
     /**
@@ -210,42 +275,52 @@
       $ionicLoading.hide();
     });
 
+    if(CONSTANT.CONTENT_TEST){
+        $scope.$emit('removeLoader');
+        $log.debug("content test lessons",mapCtrl.lessons)
+    }
+    function emitNode(resource) {
+      $log.debug("Opening node",resource)
+        $scope.$emit('openNode', resource)
+    }
     $scope.$on('openNode', function(event, node) {
-      // audio.stop('demo-1')
-      $ionicLoading.show();
+      $log.debug("Opennode Triggered");
+          $ionicLoading.show({
+        // noBackdrop: false
+        hideOnStateChange: true
+      });
        $scope.demo.isShown() && $scope.demo.hide();
        $scope.selectedNode = node;
       //   $scope.demo.isShown() && $scope.demo.hide();
               var promise;
-      $log.debug(node.node.intro_sound,node)
+      $log.debug('intro sound',node.node.intro_sound,node)
               if(node.node.intro_sound){
-                promise = mediaManager.downloadIfNotExists(CONSTANT.RESOURCE_SERVER + node.node.intro_sound)
+                promise = mediaManager.downloadIfNotExists(node.node.intro_sound)
               } else {
                 promise = $q.resolve();
               }
       promise.then(function(s){
-        $log.debug("S",s)
+        $log.debug("Intro sound downloaded if not exist",s);
         if(s){
 
             node.node.parsed_sound = s;
           }
         $log.debug(node);
         lessonutils.playResource(node);
-        return content.getLesson(node.node.parent)
+        return content.getLesson(node.node.parent);
 
       })
       .then(function(lesson){
           lessonutils.setLocalLesson(JSON.stringify(lesson))
-      }).catch(function () {
+      }).catch(function (e) {
         $ionicLoading.hide()
+          $log.debug("error is here");
         $ionicPopup.alert({
-          title: 'Please try again',
-          template: "No internet conection found"
-        }).then(function(){
-          $ionicLoading.show()
-          location.reload()
+          title: CONSTANT.ERROR_MESSAGES.DEFAULT_TITLE,
+          template: e.message ? e.message : CONSTANT.ERROR_MESSAGES.DEFAULT
         })
       });
+
 
     //   if (currentPos)
     //     currentPos.lessonType = node.tag;
@@ -551,5 +626,8 @@
       // $state.reload()
     }
 
+    function goToChooseProfile() {
+      $state.go('user.chooseProfile');
+    }
   }
 })();

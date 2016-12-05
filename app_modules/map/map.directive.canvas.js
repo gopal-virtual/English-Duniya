@@ -13,7 +13,8 @@
             scope: {
               lessons : '=mapLessons',
               totalstars : '=mapTotalstars',
-              demo : '=mapDemo'
+              demo : '=mapDemo',
+              mediaSyncStatus : '=mediaSync',
             },
             link: linkFunc,
         };

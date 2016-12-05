@@ -1,35 +1,70 @@
 {
   "PRODUCTION": {
+    "CONTENT_TEST":false,
     "LOCK": true,
     "FAKE_LOGIN": false,
     "FAKE_DEVICE": false,
     "BACKEND_SERVICE_DOMAIN": "https://eg-api.zaya.in/",
     "RESOURCE_SERVER": "https://eg-api.zaya.in/",
     "ANALYTICS": true,
-    "PROFILES_DB_SERVER": "http://zaya-couch:zayaayaz1234@52.187.70.243:5984/device",
-    "LESSONS_DB_SERVER":"http://52.187.70.243:5984/lessonsdb",
-    "DEBUG" : false
+    "PROFILES_DB_SERVER": "https://ed-couch.zaya.in/device",
+    "LESSONS_DB_SERVER":"https://ed-couch.zaya.in/lessonsdb",
+    "DEBUG" : false,
+    "QUESTION_DEMO" : false,
+    "NOTIFICATION_DURATION_DISCOVERED" : 300,
+    "NOTIFICATION_DURATION_UNDISCOVERED" : 1440,
+    "NOTIFICATION_DB_SERVER": "https://ed-couch.zaya.in/notifications"
   },
   "TESTING": {
+    "CONTENT_TEST":false,
     "LOCK": true,
     "FAKE_LOGIN": false,
     "FAKE_DEVICE": false,
     "BACKEND_SERVICE_DOMAIN": "https://cc-test.zaya.in/",
     "RESOURCE_SERVER": "https://cc-test.zaya.in/",
     "ANALYTICS": true,
-    "PROFILES_DB_SERVER": "http://zaya-couch:zayaayaz1234@52.187.70.243:5984/device",
-    "LESSONS_DB_SERVER":"http://52.187.70.243:5984/lessonsdb",
-    "DEBUG" : true
+    "PROFILES_DB_SERVER": "https://ci-couch.zaya.in/device",
+    "LESSONS_DB_SERVER":"https://ci-couch.zaya.in/lessonsdb",
+    "DEBUG" : true,
+    "QUESTION_DEMO" : false,
+    "NOTIFICATION_DURATION_DISCOVERED" : 1,
+    "NOTIFICATION_DURATION_UNDISCOVERED" : 1,
+    "NOTIFICATION_DB_SERVER": "https://ci-couch.zaya.in/notifications"
+
   },
   "DEVELOPMENT": {
+    "CONTENT_TEST":false,
     "LOCK": true,
     "FAKE_LOGIN": true,
+    "FAKE_ID_DEVICE": "micromaxtest4",
     "FAKE_DEVICE": true,
     "BACKEND_SERVICE_DOMAIN": "https://cc-test.zaya.in/",
-    "RESOURCE_SERVER": "https://cc-test.zaya.in/",
+    "RESOURCE_SERVER": "https://cc-test.zaya.in",
     "ANALYTICS": true,
-    "PROFILES_DB_SERVER": "http://zaya-couch:zayaayaz1234@52.187.70.243:5984/device",
-    "LESSONS_DB_SERVER":"http://52.187.70.243:5984/lessonsdb",
-    "DEBUG" : true
+    "PROFILES_DB_SERVER": "https://ci-couch.zaya.in/device",
+    "LESSONS_DB_SERVER":"https://ci-couch.zaya.in/lessonsdb",
+    "DEBUG" : true,
+    "QUESTION_DEMO" : false,
+    "NOTIFICATION_DURATION_DISCOVERED" : 1,
+    "NOTIFICATION_DURATION_UNDISCOVERED" : 1,
+    "NOTIFICATION_DB_SERVER": "https://ci-couch.zaya.in/notifications"
+  },
+  "CONTENT": {
+    "CONTENT_TEST":true,
+    "LOCK": true,
+    "FAKE_LOGIN": true,
+    "FAKE_ID_DEVICE": "micromaxtest4",
+    "FAKE_DEVICE": true,
+    "BACKEND_SERVICE_DOMAIN": "https://cc-test.zaya.in/",
+    "RESOURCE_SERVER": "https://cc-test.zaya.in",
+    "ANALYTICS": true,
+    "PROFILES_DB_SERVER": "https://ci-couch.zaya.in/device",
+    "LESSONS_DB_SERVER":"https://ci-couch.zaya.in/lessonsdb",
+    "DEBUG" : true,
+    "QUESTION_DEMO" : false,
+    "NOTIFICATION_DURATION_DISCOVERED" : 1,
+    "NOTIFICATION_DURATION_UNDISCOVERED" : 1,
+    "NOTIFICATION_DB_SERVER": "https://ci-couch.zaya.in/notifications"
+
   }
 }

@@ -1,23 +1,30 @@
 (function() {
   var ROOT = 'templates';
-
+  var DEFAULT_ERROR_MESSAGE = 'Some error occurred';
+  var DEFAULT_ERROR_TITLE = 'Please try again';
   angular
     .module('common')
     .constant('CONSTANT', {
       'APP':{
       'TYPE': 'na',
-      'VERSION': '0.1.7'
+      'VERSION': '0.1.9'
       },
+      'BUNDLED': false,
       'LOCK': true,
-      'FAKE_LOGIN': false,
-      'FAKE_DEVICE': false,
+      'FAKE_LOGIN': true,
+      'FAKE_ID_DEVICE': 'micromaxtest4',
+      'FAKE_DEVICE': true,
+      'CONTENT_TEST':false,
       'DEBUG' : true,
       'BACKEND_SERVICE_DOMAIN': 'https://cc-test.zaya.in/',
-      'RESOURCE_SERVER': 'https://cc-test.zaya.in/',
-      'LESSONS_DB_SERVER': 'http://52.187.70.243:5984/lessonsdb',
-      'PROFILES_DB_SERVER': 'http://zaya-couch:zayaayaz1234@52.187.70.243:5984/device',
+      'RESOURCE_SERVER': 'https://cc-test.zaya.in',
+      'LESSONS_DB_SERVER': 'https://ci-couch.zaya.in/lessonsdb',
+      'PROFILES_DB_SERVER': 'https://ci-couch.zaya.in/device',
       'LESSON_DB_VERSION': 'na',
+      'NOTIFICATION_DB_SERVER': 'https://ci-couch.zaya.in/notifications',
       'ANALYTICS' : true,
+      'GRADE' : [2,3],
+      'QUESTION_DEMO' : false,
       'QUESTION' : {
         'DEMO' : '5ecf8ad5-4c3a-4a67-9758-dd7e3993c4d8'
       },
@@ -39,6 +46,9 @@
       },
       'VIEW': '.view.html',
       'CONFIG': {
+        'NOTIFICATION' : {
+          'SENDERID' : 150596025418
+        },
         'AUTH': {
           'GOOGLEPLUS': {
             'scopes': 'email profile',
@@ -57,7 +67,9 @@
       'ASSETS': {
         'IMG': {
           'ICON': 'img/icons',
-        }
+          'TEMP' : 'img/temp'
+        },
+        'SOUND' : 'sound/temp'
       },
       'STAR': {
         'ONE': 70,
@@ -87,6 +99,47 @@
           'SKIPPED': 2,
           'NOT_ATTEMPTED': 3
         }
-      }
+      },
+      'DIAGNOSIS_MEDIA' : ["/media/ell/images/train_I22SVA.png","/media/ell/images/she-got-a-good-grade_G2W46Q.png","/media/ell/sounds/why-is-the-girl-happy_6N4EU5.mp3","/media/ell/images/t-shirt_E5B2T4.png","/media/ell/images/pencil_PT9T9L.png","/media/ell/images/how-are-you_FUTRW7.png","/media/ell/images/i-am-finethankyou_1B2M2M.png","/media/ell/sounds/how-are-you-aap-kaise-ho_WPHQ9H.mp3","/media/ell/images/orange_B3P0RA.png","/media/ell/images/sing_K6PD5E.png","/media/ell/images/girl-with-umbrella_5LR7P6.png","/media/ell/sounds/why-does-the-girl-have-an-umbrella_8VETBE.mp3","/media/ell/images/boy-has-a-green-book_A6CHBM.png","/media/ell/sounds/who-has-a-green-book_CB7LAP.mp3","/media/ell/images/dress-b_3IRUON.png","/media/ell/sounds/which-dress-is-blue_15UQWO.mp3","/media/ell/images/pen_E6O5ND.png","/media/ell/images/behind_7SMX9O.png","/media/ell/images/cat_07LDWL.png","/media/ell/images/student_2Z18AN.png","/media/ell/images/teacher-1_JTETOS.png","/media/ell/sounds/student_HXEEAT.mp3","/media/ell/images/ankur-has-less-hair_4GK96O.png","/media/ell/images/policeman_055JHM.png","/media/ell/images/dog-behind-the-box_GXMV8O.png","/media/ell/sounds/where-is-the-cat_0E1M5W.mp3","/media/ell/images/write-1_WZ7GI9.png","/media/ell/images/vijay-is-taller_ERCR7X.png","/media/ell/sounds/who-is-taller_VVTPB6.mp3","/media/ell/images/red-bird_THDY5I.png","/media/ell/images/elephant_Y706D3.png","/media/ell/images/d_JWKHIB.png","/media/ell/images/q_Q090I9.png","/media/ell/sounds/name-of-d_41T384.mp3","/media/ell/images/night_XESRY7.png","/media/ell/images/what-is-your-name-2_ESZ1RM.png","/media/ell/images/how-are-you_FUTRW7.png","/media/ell/sounds/what-is-your-name-aapka-naam-kya-hai_7T3AX6.mp3","/media/ell/images/book_D7ISM9.png","/media/ell/images/4-bananas_9IYY2R.png","/media/ell/sounds/how-many-bananas-are-there_U5F0QB.mp3","/media/ell/images/ankur-is-faster_VHB4P6.png","/media/ell/images/car_IVE2DQ.png","/media/ell/sounds/which-car-is-red_30TB9C.mp3","/media/ell/images/box-with-book_KOA7Y5.png","/media/ell/sounds/what-is-on-the-box_12F6V7.mp3","/media/ell/images/c_3JZI69.png","/media/ell/images/n_X8OY7Z.png","/media/ell/sounds/name-of-c_IBTJHG.mp3","/media/ell/images/apple_8WP22E.png","/media/ell/images/f_82WG2F.png","/media/ell/images/h_PBGDWV.png","/media/ell/sounds/name-of-h_VCWKOO.mp3","/media/ell/images/green_68Y6BQ.png"],
+      'ERROR_MESSAGES': {
+
+        'DEFAULT' : DEFAULT_ERROR_MESSAGE,
+        'DEFAULT_TITLE' : DEFAULT_ERROR_TITLE,
+        'LOW_DISK_SPACE' : {
+          'TITLE': 'Low memory on phone',
+          'MESSAGE' : 'Please clear some memory and try again',
+        } ,
+        'OFFLINE' : {
+          'DEFAULT' : 'No internet connection found'
+        },
+        'CORDOVA_FILE_TRANSFER' : {
+          '1' : 'File not found',
+          '2' : DEFAULT_ERROR_MESSAGE,
+          '3' : DEFAULT_ERROR_MESSAGE,
+          '4' : DEFAULT_ERROR_MESSAGE,
+          '5' : DEFAULT_ERROR_MESSAGE
+        },
+        'CORDOVA_FILE_SYSTEM' : {
+          '1' : DEFAULT_ERROR_MESSAGE,
+          '2' :	DEFAULT_ERROR_MESSAGE,
+          '3' :	DEFAULT_ERROR_MESSAGE,
+          '4' :	DEFAULT_ERROR_MESSAGE,
+          '5' :	DEFAULT_ERROR_MESSAGE,
+          '6' :	DEFAULT_ERROR_MESSAGE,
+          '7'	: DEFAULT_ERROR_MESSAGE,
+          '8'	: DEFAULT_ERROR_MESSAGE,
+          '9'	: DEFAULT_ERROR_MESSAGE,
+          '10': DEFAULT_ERROR_MESSAGE,
+          '11': DEFAULT_ERROR_MESSAGE,
+          '12': DEFAULT_ERROR_MESSAGE
+        }
+        },
+        'NODE_TYPE_LIST' : ['vocabulary','resource','assessment'],
+        'NOTIFICATION': {
+          'DURATION': {
+            'DISCOVERED': 1,
+            'UNDISCOVERED' : 1 
+          }
+        }
     })
 })();

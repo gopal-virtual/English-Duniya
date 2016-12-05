@@ -14,7 +14,7 @@
     var fake_device_uuid;
     if (CONSTANT.FAKE_LOGIN) {
       // fake_device_uuid = '73243248840563244324236708826';
-      fake_device_uuid = parseInt(Math.random(1, 9) * 10000000).toString();
+      fake_device_uuid = CONSTANT.FAKE_ID_DEVICE;
     }
 
     var devicePropeties = {
@@ -25,6 +25,7 @@
       "serial": CONSTANT.FAKE_DEVICE ? 'fake_serial' : window.device.serial,
       "manufacturer": CONSTANT.FAKE_DEVICE ? 'fake_manufacturer' : window.device.manufacturer
     };
+    $log.debug("THIS IS THE DEVICE ID",devicePropeties.uuid);
     return devicePropeties;
 
   }

@@ -1,7 +1,18 @@
 <ion-view>
-  <ion-content>
-    <ion-item ng-click="mapCtrl.emitNode(lesson)" collection-repeat="lesson in mapCtrl.lessons">
-      {{$index+1}} - {{lesson.title}}
+  <div class="bar bar-header item-input-inset">
+    <label class="item-input-wrapper">
+      <i class="icon ion-ios-search placeholder-icon"></i>
+      <input type="search" placeholder="Search" ng-model="search.node.title"  ng-model-options="{ debounce: 500 }">
+    </label>
+  </div>
+  <ion-content class="has-header">
+    <ion-item collection-repeat="lesson in mapCtrl.lessons | filter:search track by lesson.node.id">
+      {{$index + 1}} -  {{ ::lesson.node.title}}
+      <ul>
+        <li ng-repeat="resource in lesson.objects">
+          <a ng-click="mapCtrl.emitNode(resource)">{{ ::resource.node.title}}</a>
+        </li>
+      </ul>
     </ion-item>
   </ion-content>
 </ion-view>

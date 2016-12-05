@@ -25,31 +25,7 @@
     var User = {};
     var profilesDB = pouchDB('profilesDB',{revs_limit: 1});
     // var remoteProfilesDb = pouchDB('http://anna:secret@127.0.0.1:5984/device'+device.uuid);
-    PouchDB.replicate('profilesDB', CONSTANT.PROFILES_DB_SERVER+device.uuid, {
-      live: true,
-      retry: true
-    }).on('change', function (info) {
-          $log.debug("Change in pouch");
-        // $ionicLoading.show({template:'Change in pouch'})
-      }).on('paused', function (err) {
-      $log.debug("puased in pouch");
 
-
-      // $ionicLoading.hide();
-        // replication paused (e.g. replication up to date, user went offline)
-      }).on('active', function () {
-        // $ionicLoading.show({template:'Change in pouch'});
-        // replicate resumed (e.g. new changes replicating, user went back online)
-      }).on('denied', function (err) {
-        // $ionicLoading.hide();
-        // a document failed to replicate (e.g. due to permissions)
-      }).on('complete', function (info) {
-        // $ionicLoading.hide();
-        // handle complete
-      }).on('error', function (err) {
-        // $ionicLoading.hide();
-        // handle error
-      });
     // var myIndex = {
     //   _id: '_design/profile',
     //   "filters": {
@@ -150,7 +126,8 @@
       get: get,
       getAll: getAllProfiles,
       patch: patchProfile,
-      updateRoadMapData: updateRoadMapData
+      updateRoadMapData: updateRoadMapData,
+      select : selectProfile
     };
     User.skills = {
       get: getSkills,
@@ -177,7 +154,17 @@
       patch: patchUserPlaylist
     }
     User.checkIfProfileOnline = checkIfProfileOnline;
+    User.startProfileSync = startProfileSync;
+    function startProfileSync() {
 
+      PouchDB.replicate('profilesDB', CONSTANT.PROFILES_DB_SERVER+device.uuid, {
+        live: true,
+        retry: true,
+        heartbeat: false
+      }).on('paused', function (err) {
+        $log.debug("Paused in profile db sync",err);
+      })
+    }
     function updateRoadMapData(roadMapData,profileId) {
       $log.debug("updateRoadMapData",roadMapData,profileId)
       return profilesDB.get(profileId).then(function (response) {
@@ -194,33 +181,35 @@
     }
     function checkIfProfileOnline() {
       $log.debug("UUID",device.uuid)
-      return PouchDB.replicate( CONSTANT.PROFILES_DB_SERVER+device.uuid, 'profilesDB').then(function () {
+      return PouchDB.replicate( CONSTANT.PROFILES_DB_SERVER+device.uuid, 'profilesDB',{retry:true}).then(function () {
         return profilesDB.allDocs({
           include_docs: true
         })
       })
-        .then(function (docs) {
-          // $log.debug("ALLdocs",docs.rows[0].doc);
-          $log.debug("docs is this",docs)
 
-          if(docs.rows.length ){
-            setActiveProfileSync(docs.rows[0].doc);
-            if(docs.rows[0].doc.data.playlist.length){
-              localStorage.setItem('diagnosis_flag',true);
-              localStorage.setItem('demo_flag',5);
-            }else{
-              localStorage.setItem('diagnosis_flag',false);
-              localStorage.setItem('demo_flag',1);
-            }
-            if(docs.rows[0].doc.data.roadMapData){
-              $log.debug("Setting roadmap data")
-              localStorage.setItem('roadMapData',JSON.stringify(docs.rows[0].doc.data.roadMapData));
 
-            }
+    }
+
+    function selectProfile(profile) {
+        // $log.debug("ALLdocs",docs.rows[0].doc);
+        $log.debug("selectProfile",profile)
+
+        if(profile ){
+          setActiveProfileSync(profile.doc);
+          if(profile.doc.data.playlist.length){
+            localStorage.setItem('diagnosis_flag',true);
+            localStorage.setItem('demo_flag',5);
+          }else{
+            localStorage.setItem('diagnosis_flag',false);
+            localStorage.setItem('demo_flag',1);
+          }
+          if(profile.doc.data.roadMapData){
+            $log.debug("Setting roadmap data")
+            localStorage.setItem('roadMapData',JSON.stringify(profile.doc.data.roadMapData));
 
           }
-        })
 
+        }
     }
 
     function getUserIdSync() {
@@ -259,6 +248,7 @@
           //   retry: true,
           //   filter: 'app/by_profile',
           //   query_params: { "profile_id": profile.client_uid }});
+          startProfileSync();
           return queue.push('profiles', profile);
         }).then(function () {
           return record;
@@ -507,7 +497,6 @@
     function getUserPlaylist(profileId) {
       $log.debug("In user playlist")
       return profilesDB.get(profileId).then(function (response) {
-        $log.debug("Length of playlist "+JSON.stringify(response.data)+ " END")
         if(response.data.playlist)
           return response.data.playlist;
         else
@@ -572,9 +561,9 @@
       })
       return d.promise;
     }
-    function addNodeToPlaylist(profileId,nodeId) {
+    function addNodeToPlaylist(profileId,nodeData) {
       return profilesDB.get(profileId).then(function (response) {
-        response.data.playlist.push({'lesson_id':nodeId});
+        response.data.playlist.push({'lesson_id':nodeData.suggestedLesson,'dependencyData':nodeData.dependencyData});
         $log.debug("Response",response);
         return profilesDB.put({
           '_id': profileId,

@@ -1,235 +1,152 @@
-(function() {
+(function () {
   'use strict';
 
   angular
     .module('common')
-    .factory('mediaManager', mediaManager)
+    .factory('mediaManager', mediaManager);
 
-  function mediaManager($cordovaNativeAudio, $log, $cordovaFile, $cordovaFileTransfer, $q, CONSTANT, network) {
+  function mediaManager( $log, $cordovaFile, $cordovaFileTransfer, $q, CONSTANT, network) {
 
     var mediaManager = {};
 
     mediaManager.getPath = getPath;
     mediaManager.downloadIfNotExists = downloadIfNotExists;
-    mediaManager.isBundled = isBundled;
-    mediaManager.getFileNameFromURl = getFileNameFromURl;
-    mediaManager.getFileNameFromURlPatched = getFileNameFromURlPatched;
-    function getFileNameFromURl(url){
+    mediaManager.bundledMedia = CONSTANT.DIAGNOSIS_MEDIA;
+
+
+    function getFileNameFromURl(url) {
+      var a = url.split('/');
+      return a.join('/').substr(1);
+    }
+
+    function getFileNameFromURlPatch(url) {
       return url.split('/')[url.split('/').length-2]+'-'+url.split('/')[url.split('/').length-1];
     }
-    function getFileNameFromURlPatched(url){
-      return url.split('/')[url.split('/').length-1];
-    }
+
     function isBundled(filename) {
 
+      if(CONSTANT.BUNDLED || mediaManager.bundledMedia.indexOf('/'+filename) >= 0){
+        $log.debug("file is bundled",CONSTANT.BUNDLED,mediaManager.bundledMedia.indexOf('/'+filename) >= 0);
+      return $q.when('bundled/'+filename);
+      }
+      else{
+      return $q.reject();
+      }
+    }
 
+    function isBundledPatch(filenamePatch){
       var d = $q.defer();
-      var url = 'bundled/' + filename;
+      var url = 'bundled/' + filenamePatch;
       var request = new XMLHttpRequest();
       request.open('HEAD', url, true);
       request.onload = function(e) {
-
         if (request.readyState === 4) {
           if (request.status === 200) {
-
-
-            d.resolve(true);
+            d.resolve('bundled/'+filenamePatch);
           } else {
-
-
-            d.resolve(false);
+            d.reject(false);
           }
         }
       };
       request.onerror = function(e) {
-
-
-        d.resolve(false);
+        d.reject(false);
       };
       request.send(null);
 
       return d.promise;
     }
 
-    function getPath(url) {
-
-      var filename = mediaManager.getFileNameFromURl(url)
-      var filename_patch = mediaManager.getFileNameFromURlPatched(url)
-
-      var target = null;
-
-      var d = $q.defer();
-      try {
-
-          var target_patch = cordova.file.dataDirectory + 'media/' + filename_patch;
-        mediaManager.isBundled(filename).then(function(result) {
-
-
-          if (result) {
-
-            d.resolve('bundled/' + filename);
-          } else {
-            try{
-
-
-              mediaManager.isBundled(filename_patch).then(function(result){
-               if(result){
-
-
-                 d.resolve('bundled/'+filename_patch);
-               }
-                else{
-
-
-                 $cordovaFile.checkFile(cordova.file.dataDirectory, 'media/' + filename)
-                   .then(function(success) {
-
-
-
-                     d.resolve(cordova.file.dataDirectory + 'media/' + filename)
-                   })
-                   .catch(function(error) {
-
-
-                     $cordovaFile.checkFile(cordova.file.dataDirectory, 'media/' + filename_patch)
-                       .then(function(){
-
-
-                         d.resolve(cordova.file.dataDirectory+ 'media/' + filename_patch);
-                       })
-                       .catch(function(){
-
-
-                         d.resolve(CONSTANT.RESOURCE_SERVER + url)
-                       })
-                   });
-               }
-              })
-              ;
-
-
-            }
-            catch (e) {
-
-
-              d.resolve(CONSTANT.RESOURCE_SERVER + url);
-            }
-
-          }
-        })
-
-      } catch (e) {
-
-
-        d.resolve(CONSTANT.RESOURCE_SERVER + url);
+    function isDownloaded(filename){
+      try{
+      return $cordovaFile.checkFile(cordova.file.dataDirectory,filename).then(function (success) {
+        return $q.when(success.nativeURL);
+      }, function (error) {
+          return $q.reject()
+      });
+       
       }
-      return d.promise;
+      catch(e){
+        return $q.reject();
+      }
     }
 
-    function downloadIfNotExists(url) {
-      var d = $q.defer();
-
-
-      var filename = mediaManager.getFileNameFromURl(url)
-      var filename_patch = mediaManager.getFileNameFromURlPatched(url)
-      try {
-        var target = cordova.file.dataDirectory + 'media/' + filename;
-        var target_patch = cordova.file.dataDirectory + 'media/' + filename_patch;
-
-
-        mediaManager.isBundled(filename).then(function(result) {
-
-
-          if (result) {
-
-
-            d.resolve('bundled/' + filename);
-
-          } else {
-
-
-            mediaManager.isBundled(filename_patch).then(function(result) {
-              if (result) {
-
-
-                d.resolve('bundled/' + filename_patch);
-              }
-              else {
-
-
-                $log.debug("downloadIfnot exists called 4", url, cordova.file.dataDirectory, 'media/' + filename);
-
-                $cordovaFile.checkFile(cordova.file.dataDirectory, 'media/' + filename)
-
-                  .then(function (result) {
-                    $log.debug("downloadIfnot exists called 5", url, cordova.file.dataDirectory, 'media/' + filename);
-
-
-                    d.resolve(target);
-                  })
-                  .catch(function (e) {
-                    $log.debug("downloadIfnot exists called 5 fsil", url, cordova.file.dataDirectory, 'media/' + filename);
-                    $log.debug("downloadIfnot exists called 5 patch init", url, cordova.file.dataDirectory, 'media/' + filename_patch);
-
-                    $cordovaFile.checkFile(cordova.file.dataDirectory, 'media/' + filename_patch)
-                      .then(function () {
-                        $log.debug("downloadIfnot exists called 5 patch", url, cordova.file.dataDirectory, 'media/' + filename_patch);
-                        d.resolve(target_patch);
-                      })
-                      .catch(function (e) {
-                        $log.debug("downloadIfnot exists called 5 patch fail", url, cordova.file.dataDirectory, 'media/' + filename_patch);
-
-                        if (e.message === 'NOT_FOUND_ERR') {
-                          if (!network.isOnline()) {
-
-
-
-
-                            d.reject({
-                              "error": true,
-                              "message": "offline"
-                            });
-                          } else {
-
-
-
-
-                            $cordovaFileTransfer.download(url, target)
-                              .then(function (result) {
-
-
-                                d.resolve(target);
-                              }, function (err) {
-
-
-                                d.reject("Error Downlaoding " + target);
-                              }, function (progress) {
-                                localStorage.setItem('progress', parseInt((progress.loaded / progress.total) * 100))
-                              });
-                          }
-
-                        } else {
-
-
-                          d.reject("Error Downlaoding " + target);
-                        }
-                      })
-
-
-                  })
-              }
-            })
-          }
-        })
-
-
-      } catch (e) {
-
-
-        d.resolve(url);
+    function isDownloadedPatch(filenamePatch) {
+      try{
+      return $cordovaFile.checkFile(cordova.file.dataDirectory,'media/'+filenamePatch).then(function (success) {
+        return $q.when(success.nativeURL);
+      }, function (error) {
+          return $q.reject()
+      });
       }
+      catch(e){
+        return $q.reject();
+      }
+    }
 
-      return d.promise;
+    function isAvailableOffline(url){
+        $log.debug("downlaodifnotexists",url)
+
+      var filename = getFileNameFromURl(url);
+      var filenamePatch = getFileNameFromURlPatch(url);
+      return isBundled(filename)
+      .catch(function(){
+        return isBundledPatch(filenamePatch);
+      })
+      .catch(function(){
+        return isDownloaded(filename);
+      })
+      .catch(function(){
+        return isDownloadedPatch(filenamePatch);
+      });
+
+    }
+
+
+    function getPath(url) {
+        return isAvailableOffline(url)
+      .then(function(response){
+        return $q.when(response)  
+      })
+      .catch(function(){
+        return $q.when(CONSTANT.RESOURCE_SERVER + url);
+      });
+
+    }
+
+    function downloadFile(url){
+      try{
+        var filename = getFileNameFromURl(url);
+      var target = cordova.file.dataDirectory + filename;
+      
+        $log.debug("source is",CONSTANT.RESOURCE_SERVER+url,"target is",target);
+      return $cordovaFileTransfer.download(CONSTANT.RESOURCE_SERVER+url,target).then(
+        function(){
+          $log.debug("cordovafiletransfer returns ",target)
+          return $q.when(target);        
+      }, function(err){
+          $log.debug("HEREE",err)
+          return $q.reject({ 
+                "error": true,
+                "message": err.code? CONSTANT.ERROR_MESSAGES['CORDOVA_FILE_TRANSFER'][err.code]: CONSTANT.ERROR_MESSAGES['DEFAULT_FILE_ERROR']
+          });
+      });
+      }
+      catch(err){
+        return $q.when(CONSTANT.RESOURCE_SERVER+url);
+      }
+    }
+   
+    function downloadIfNotExists(url) {
+        $log.debug("downlaodifnotexists",url)
+      return isAvailableOffline(url)
+      .catch(function(){
+        return network.isOnline()?downloadFile(url):$q.reject({"error": true,"message": CONSTANT.ERROR_MESSAGES['OFFLINE']['DEFAULT']});
+      }).then(function(result){
+        $log.debug("downloadifnotexists success",result)
+        return $q.when(result);
+      })
+
+      
 
     }
 

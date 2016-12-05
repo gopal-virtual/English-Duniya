@@ -24,8 +24,8 @@
     "raven-js": "^3.7.0"
   },
   "resolutions": {
-    "angular": "~1.2.8",
-    "pouchdb": "5.1.0"
+    "angular": "1.4.3",
+    "pouchdb": "~5.3.2"
   },
   "preen": {
     "jquery": [

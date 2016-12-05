@@ -1,7 +1,7 @@
 <ion-view>
     <ion-content scroll="false">
         <videogular vg-theme="contentCtrl.config.theme" vg-player-ready="contentCtrl.onPlayerReady($API)" vg-auto-play="contentCtrl.config.autoplay" vg-update-state="contentCtrl.onStateChange($state)" vg-complete="lessonutils.user.demo.getStep() == 3 && lessonutils.user.demo.setStep(4);contentCtrl.onVideoComplete()">
-            <vg-media vg-src="contentCtrl.config.sources" ng-click="contentCtrl.toggleControls()">
+            <vg-media vg-src="contentCtrl.config.sources" ng-click="!contentCtrl.videoCompleted && contentCtrl.toggleControls()">
             </vg-media>
             <vg-buffering></vg-buffering>
             <vg-controls vg-show-control="contentCtrl.config.plugins.controls.showControl" ng-class="{true:'animation-fade-in', false:'animation-fade-out'}[contentCtrl.config.plugins.controls.showControl]" ng-show="contentCtrl.config.plugins.controls.showControl">

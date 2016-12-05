@@ -2,7 +2,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
     'use strict';
 
     var Demo = scope.demo;
-
+    var showInfoIcon = false;
     //log.debug("LESSONS ARE AMAZING",lessons);
 
     var DEBUG = false;
@@ -69,7 +69,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
             // lessons[i].node["content_type_name"] = content_type[Math.floor(Math.random() * content_type.length)];
             // lessons[i].node["tag"] = tag[Math.floor(Math.random() * tag.length)];
         }
-        // lessons = 
+        // lessons =
     }
 
     var game = new Phaser.Game("100", "100", Phaser.CANVAS, 'map_canvas', null, true, true, null);
@@ -174,9 +174,12 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
             this.load.spritesheet('node-green-video', 'img/assets/button-green-video.png',88,91);
             this.load.spritesheet('node-darkblue-video', 'img/assets/button-darkblue-video.png',88,91);
             this.load.spritesheet('node-blue-practice', 'img/assets/button-blue-practice.png',88,91);
+            this.load.spritesheet('node-blue-vocabulary', 'img/assets/button-blue-vocabulary.png',88,91);
             this.load.spritesheet('node-orange-practice', 'img/assets/button-orange-practice.png',88,91);
             this.load.spritesheet('node-green-practice', 'img/assets/button-green-practice.png',88,91);
             this.load.spritesheet('node-darkblue-practice', 'img/assets/button-darkblue-practice.png',88,91);
+            this.load.spritesheet('icon-message', 'img/assets/message_icon.png',48,35);
+            this.load.spritesheet('icon-info', 'img/assets/info_icon.png',26,26);
 
             audio.loop('background');
         },
@@ -206,7 +209,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                 var regionPage = 0;
             }
             renderedRegion[0] = regions[regionPage];
-            
+
             var star = [];
             var starClone = [];
             var star_x = [-22, 0, 22];
@@ -229,7 +232,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                 if (regionPage != 0) {
                     first_node_index = first_node_index+1;
                 }
-                
+
             }
 
             function addGroups(region){
@@ -263,7 +266,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
 
 
             function renderHud(totalStars){
-                log.info("Rendering HUD ...");
+                log.info("Rendering HUD ...",scope.mediaSyncStatus);
                 // totalStars=108;
                 // //log.debug("I am making HUD. Wohoooo");
                 var hudWidth = 185;
@@ -287,8 +290,22 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                 graphics.beginFill(0xF9F2E8, 1);
                 //shadow color #968B7B
                 // //log.debug("Hakuna Matata",hudWidth);
-                graphics.drawRoundedRect(-20,-20,hudWidth,84,10)
+
+
+
+
+                graphics.drawRoundedRect(-20,-20,hudWidth,84,10);
                 graphics.endFill();
+                // graphics.beginFill(0x968B7B, 1);
+                // graphics.drawRoundedRect(game.camera.width - 86,-14,100,84,10);
+                // graphics.endFill();
+                // graphics.beginFill(0xF9F2E8, 1);
+                // graphics.drawRoundedRect(game.camera.width - 86,-20,100,84,10);
+                // graphics.endFill();
+
+
+
+
                 var starSprite = groups.nonRegion.stars.create(10,55,'star3d');
                 starSprite.anchor.setTo(0,1);
                 var spriteX = groups.nonRegion.stars.create(62,55,'x');
@@ -296,13 +313,24 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                 var starText = game.add.text(90, 65, totalStars, { font: "48px kg_primary_penmanship_2Rg", fill: "#FDB724", wordWrap: false, align: "center"});
                 starText.setShadow(0, 3, 'rgba(215,151,40,1)', 0);
                 starText.anchor.setTo(0,1);
-                // //log.debug("HRO",groups.nonRegion)
+                // var messageIcon = groups.nonRegion.stars.create(game.camera.width - 18,55,'icon-message');
+                // messageIcon.anchor.setTo(1,1);
+                // var infoIcon = groups.nonRegion.stars.create(game.camera.width - 86,64,'icon-info');
+                // infoIcon.anchor.setTo(0.5,0.5);
+              // //log.debug("HRO",groups.nonRegion)
                 groups.nonRegion.hud.add(graphics);
                 groups.nonRegion.hud.add(starSprite);
                 groups.nonRegion.hud.add(spriteX);
                 groups.nonRegion.hud.add(starText);
+                // groups.nonRegion.hud.add(messageIcon);
+                // if(showInfoIcon){
+                //   groups.nonRegion.hud.add(infoIcon);
+                // }
                 groups.nonRegion.hud.fixedToCamera = true;
                 // //log.debug("This is my hud",graphics);
+
+
+              //Render messages
 
             }
 
@@ -314,14 +342,14 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                 graphics.drawRect(0,0,game.camera.width,game.camera.height);
                 graphics.endFill();
                 groups.nonRegion.demoOverlay.add(graphics);
-                temp['demoFinger'] = groups.nonRegion.demoNodeOverlay.create(0.5*game.camera.width, 0.4*game.camera.height, 'finger');
+                temp['demoFinger'] = groups.nonRegion.demoNodeOverlay.create(0.5*game.camera.width, 0.5*game.camera.height, 'finger');
                 temp.demoFinger.anchor.setTo(0.5);
                 temp.demoFinger.scale.setTo(-0.5,0.5);
                 temp.demoFinger.angle = 180;
                 groups.nonRegion.demoOverlay.fixedToCamera = true;
                 groups.nonRegion.demoNodeOverlay.fixedToCamera = true;
                 // game.add.tween(demoFinger).from({alpha: 0}, 400, Phaser.Easing.Cubic.Out, true, 800).loop(true);
-                
+
                 // game.add.tween(demoFinger).to({x: [0.5*game.camera.width,0.5*game.camera.width], y: [0.6*game.camera.height,0.5*game.camera.height] }, 1000, Phaser.Easing.Back.Out, true).loop(true);
                 // game.add.tween(demoFinger).to({angle: "270", x: [0.5*game.camera.width,0.8*game.camera.width], y: [0.6*game.camera.height,0.5*game.camera.height] }, 1000, Phaser.Easing.Linear.None, true).loop(true);
                 //log.debug("SOUND",audio)
@@ -547,7 +575,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                         function(currentLesson, game, posy, i, temp, currentObject) {
                             return function() {
 
-                                if (Demo.getStep == 1) {
+                                if (Demo.getStep() == 1) {
                                     Demo.setStep(2);
                                 }
                                 audio.play('press');
@@ -562,7 +590,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                                     var animateStarFlag = {
                                         isCurrentNode : temp.activeLessonKey==i,
                                         clickedNodeStar : (function(){
-                                            return typeof(lessons[i].stars) == "undefined"?0:lessons[i].stars;  
+                                            return typeof(lessons[i].stars) == "undefined"?0:lessons[i].stars;
                                         })(),
                                         clickedNode : i
                                     }
@@ -581,7 +609,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                         temp["activeLessonKey"] = i;
                         temp["activeLessonPosY"] = posy;
                         temp["activeLessonPosX"] = posx;
-                        
+
                         if (DEBUG2 == true){
                             log.debug()
                             var nodeCorrect = game.make.button(posx+60,posy,'correct',stateRedraw,this,0,0,1,0);
@@ -592,13 +620,13 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                             nodeWrong.anchor.setTo(0.5);
                             nodeWrong.scale.setTo(0.4);
                             groups.nonRegion.nodeTags.add(nodeWrong);
-                            log.debug("Hello ya ya") 
+                            log.debug("Hello ya ya")
                         }
 
                         if (Demo.getStep() != 1) {
-                            temp["nodeWobbleTween"] = game.add.tween(node.scale).to({ x: [0.8,1,0.8], y: [0.8,1,0.8] }, 600, Phaser.Easing.Back.Out, true, 400).loop(true);
+                            temp["nodeWobbleTween"] = game.add.tween(node.scale).to({ x: [0.8,1,0.8], y: [0.8,1,0.8] }, 1500, Phaser.Easing.Back.Out, true, 400).loop(true);
                         }else{
-                            var fingerTween = game.add.tween(temp.demoFinger).to({x: [0.5*game.camera.width,0.5*game.camera.width], y: [0.55*game.camera.height,0.4*game.camera.height] }, 1000, Phaser.Easing.Back.Out, true).loop(true);
+                            var fingerTween = game.add.tween(temp.demoFinger).to({x: [0.5*game.camera.width,0.5*game.camera.width], y: [0.58*game.camera.height,0.5*game.camera.height] }, 2000, Phaser.Easing.Back.Out, true).loop(true);
                             log.debug("Not a demo I guess", fingerTween)
                             fingerTween.onStart.add(pressButton,this);
                             fingerTween.onLoop.add(pressButton,this);
@@ -639,6 +667,14 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                     }
                 }
 
+
+                if(!localStorage.currentPosition){
+                    localStorage.setItem('currentPosition', (posy - game.height / 2));
+                    var currentPosition = {
+                        "x": game.input._x,
+                        "y": game.input._y,
+                    }
+                }
                 // if(temp.activeLessonKey == undefined){
                 //     temp["activeLessonKey"] = -1;
                 // }
@@ -703,7 +739,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                 return promise;
 
             }
-                
+
             function renderPortNodes(portType){
                 log.info('Rendering portal ...')
 
@@ -814,6 +850,9 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                     deltaWheel: 400
                 });
                 game.kineticScrolling.start();
+            }
+
+            function scrollTo() {
                 game.camera.y = localStorage.getItem('currentPosition') ? parseInt(localStorage.getItem('currentPosition')) : parseInt(((~~game.world.height / game.height) - 1) * game.height);
             }
 
@@ -824,6 +863,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                 renderWorld(renderedRegion);
                 cameraInit();
                 // setTimeout(function() {
+                // cameraInit();
                     // gameRestart();
                 // }, 10000);
                 renderRegion(renderedRegion);
@@ -835,6 +875,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                     }
                     renderNodesByML(renderedRegion);
                     renderNodePath(renderedRegion,points);
+                    scrollTo();
                     log.debug("Port Node Flag",regionPage,regions.length-1,temp.activeLessonKey,regionPage < regions.length-1,regionPage < regions.length-1 && temp.activeLessonKey == -1)
                     if(regionPage < regions.length-1 && temp.activeLessonKey > last_node_index){
                         renderPortNodes("next");
@@ -843,14 +884,14 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                         renderPortNodes("prev");
                     }
                     //log.debug('graphics',game.camera)
-                    renderHud(scope.totalstars);
+                    // renderHud(scope.totalstars);
                     //log.debug("Stars Demo",scope.demo.getStep())
                     var animateStarFlag = JSON.parse(localStorage.getItem("animateStarFlag"));
                     if (animateStarFlag) {
                         //log.debug("star in lesson", lessons[animateStarFlag.clickedNode].stars);
                         //log.debug("animateStarFlag",animateStarFlag);
                         log.debug("animateStar condition 1");
-                        if (lessons[animateStarFlag.clickedNode].stars && lessons[animateStarFlag.clickedNode].stars > animateStarFlag.clickedNodeStar) {
+                        if (lessons[animateStarFlag.clickedNode] && lessons[animateStarFlag.clickedNode].stars && lessons[animateStarFlag.clickedNode].stars > animateStarFlag.clickedNodeStar) {
                             //log.debug("Hey brother");
                             log.debug("animateStar condition 2");
                             scope.$emit('animateStar');
@@ -1046,6 +1087,11 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
       // game.destroy();
       // location.reload();
     })
+  // scope.$on('showInfoIcon',function (flag) {
+  //   log.debug("showInfoIcon event recieved",flag);
+  //   showInfoIcon = flag;
+  //   game.state.restart(true,true);
+  // })
 
 
 };

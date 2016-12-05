@@ -23,7 +23,6 @@
           return false;
         } else {
 
-          $log.debug("Network manager returning true 1");
 
           return true;
         }

@@ -1,6 +1,5 @@
 # Specifies intentionally untracked files to ignore when using Git
 # http://git-scm.com/docs/gitignore
-
 node_modules/
 platforms/
 /plugins/
@@ -20,7 +19,7 @@ _users
 _users/*
 pouch__all_dbs__
 pouch__all_dbs__/*
-#lesson.json
+lesson.json
 log.txt
 config.json
 verifyPortLog*
@@ -30,3 +29,6 @@ www/bundled/*
 bundled.zip
 media/*
 .fuse*
+app_modules/common/common.constant.js
+www/sound/temp/
+www/img/temp

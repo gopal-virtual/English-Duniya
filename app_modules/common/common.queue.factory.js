@@ -23,7 +23,6 @@
                  $q,
                  Auth,
                  network) {
-
     var queueDB = pouchDB('queueDB',{revs_limit: 1});
     var queueProperties = {
       push: push,
@@ -32,7 +31,6 @@
         return queueDB.allDocs({include_docs:true});
       }
     };
-
     return queueProperties;
 
 
@@ -156,16 +154,16 @@
           .catch(function (error) {
 
 
-            if(error.status != 0){
+            if(error.status !== 0){
               var e = {
                 "error":error,
                 "function": "queue_push"
               };
-              Raven.captureException("Error with queue push",{
-                extra: {error:e}
-              });
-              $log.debug("ERROR with queue",error.status)
-              return queueDB.remove(record.doc)
+              // Raven.captureException("Error with queue push",{
+              //   extra: {error:e}
+              // });
+              // $log.debug("ERROR with queue",error.status)
+              return queueDB.remove(record.doc);
             }else{
               return $q.reject();
             }

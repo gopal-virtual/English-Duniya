@@ -1,6 +1,7 @@
 (function() {
   var ROOT = 'templates';
-
+  var DEFAULT_ERROR_MESSAGE = 'Some error occurred';
+  var DEFAULT_ERROR_TITLE = 'Please try again';
   angular
     .module('common')
     .constant('CONSTANT', {
@@ -8,16 +9,22 @@
       'TYPE': '@@APP_TYPE',
       'VERSION': '@@APP_VERSION'
       },
+      'BUNDLED': @@BUNDLED,
       'LOCK': @@LOCK,
       'FAKE_LOGIN': @@FAKE_LOGIN,
+      'FAKE_ID_DEVICE': '@@FAKE_ID_DEVICE',
       'FAKE_DEVICE': @@FAKE_DEVICE,
+      'CONTENT_TEST':@@CONTENT_TEST,
       'DEBUG' : @@DEBUG,
       'BACKEND_SERVICE_DOMAIN': '@@BACKEND_SERVICE_DOMAIN',
       'RESOURCE_SERVER': '@@RESOURCE_SERVER',
       'LESSONS_DB_SERVER': '@@LESSONS_DB_SERVER',
       'PROFILES_DB_SERVER': '@@PROFILES_DB_SERVER',
       'LESSON_DB_VERSION': '@@LESSON_DB_VERSION',
+      'NOTIFICATION_DB_SERVER': '@@NOTIFICATION_DB_SERVER',
       'ANALYTICS' : @@ANALYTICS,
+      'GRADE' : @@GRADE,
+      'QUESTION_DEMO' : @@QUESTION_DEMO,
       'QUESTION' : {
         'DEMO' : '5ecf8ad5-4c3a-4a67-9758-dd7e3993c4d8'
       },
@@ -39,6 +46,9 @@
       },
       'VIEW': '.view.html',
       'CONFIG': {
+        'NOTIFICATION' : {
+          'SENDERID' : 150596025418
+        },
         'AUTH': {
           'GOOGLEPLUS': {
             'scopes': 'email profile',
@@ -57,7 +67,9 @@
       'ASSETS': {
         'IMG': {
           'ICON': 'img/icons',
-        }
+          'TEMP' : 'img/temp'
+        },
+        'SOUND' : 'sound/temp'
       },
       'STAR': {
         'ONE': 70,
@@ -87,6 +99,47 @@
           'SKIPPED': 2,
           'NOT_ATTEMPTED': 3
         }
-      }
+      },
+      'DIAGNOSIS_MEDIA' : @@DIAGNOSIS_MEDIA,
+      'ERROR_MESSAGES': {
+
+        'DEFAULT' : DEFAULT_ERROR_MESSAGE,
+        'DEFAULT_TITLE' : DEFAULT_ERROR_TITLE,
+        'LOW_DISK_SPACE' : {
+          'TITLE': 'Low memory on phone',
+          'MESSAGE' : 'Please clear some memory and try again',
+        } ,
+        'OFFLINE' : {
+          'DEFAULT' : 'No internet connection found'
+        },
+        'CORDOVA_FILE_TRANSFER' : {
+          '1' : 'File not found',
+          '2' : DEFAULT_ERROR_MESSAGE,
+          '3' : DEFAULT_ERROR_MESSAGE,
+          '4' : DEFAULT_ERROR_MESSAGE,
+          '5' : DEFAULT_ERROR_MESSAGE
+        },
+        'CORDOVA_FILE_SYSTEM' : {
+          '1' : DEFAULT_ERROR_MESSAGE,
+          '2' :	DEFAULT_ERROR_MESSAGE,
+          '3' :	DEFAULT_ERROR_MESSAGE,
+          '4' :	DEFAULT_ERROR_MESSAGE,
+          '5' :	DEFAULT_ERROR_MESSAGE,
+          '6' :	DEFAULT_ERROR_MESSAGE,
+          '7'	: DEFAULT_ERROR_MESSAGE,
+          '8'	: DEFAULT_ERROR_MESSAGE,
+          '9'	: DEFAULT_ERROR_MESSAGE,
+          '10': DEFAULT_ERROR_MESSAGE,
+          '11': DEFAULT_ERROR_MESSAGE,
+          '12': DEFAULT_ERROR_MESSAGE
+        }
+        },
+        'NODE_TYPE_LIST' : ['vocabulary','resource','assessment'],
+        'NOTIFICATION': {
+          'DURATION': {
+            'DISCOVERED': @@NOTIFICATION_DURATION_DISCOVERED,
+            'UNDISCOVERED' : @@NOTIFICATION_DURATION_UNDISCOVERED 
+          }
+        }
     })
 })();
