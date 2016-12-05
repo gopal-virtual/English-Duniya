@@ -138,6 +138,7 @@
         "reading" : "orange"
     }
     mapCtrl.goToChooseProfile = goToChooseProfile;
+    mapCtrl.onBackButtonPress = onBackButtonPress;
 
     // mapCtrl.notification = notification;
 
@@ -148,6 +149,23 @@
     // notification.smartContentSet();
     // $log.debug("DB LOADING",notification.db.load());
     $scope.$on('pageRegion', mapCtrl.setLessonRange )
+    $scope.$on('backButton', mapCtrl.onBackButtonPress)
+
+    function onBackButtonPress() {
+        $log.debug('Do you want to exit?')
+        var confirmExit = $ionicPopup.confirm({
+         title: 'Exit',
+         template: 'Do you want to exit?'
+       });
+
+       confirmExit.then(function(res) {
+         if(res) {
+           ionic.Platform.exitApp();
+         } else {
+           console.log('You are not sure');
+         }
+       });
+    }
 
     notification.getFromServer({
       dev_id: device.uuid

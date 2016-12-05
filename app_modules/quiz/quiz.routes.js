@@ -257,6 +257,7 @@
         templateUrl: CONSTANT.PATH.QUIZ + '/quiz.litmus_start' + CONSTANT.VIEW,
         controller: ['$log', 'User', '$scope', 'audio', function($log, User, $scope, audio) {
           $scope.audio = audio;
+          $scope.name = User.getActiveProfileSync().data.profile.first_name;
           $scope.gender = User.getActiveProfileSync().data.profile.gender == 'M' ? 'boy' : 'girl';
           $log.debug('litmus start')
           audio.player.play('sound/lets_start_a_small_practice.mp3')

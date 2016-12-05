@@ -30,16 +30,16 @@
             timelinePlaneWrapper.fromTo(planeWrapper, 1, {y : 30}, {y : -30})
             timelinePlaneWrapper.play();
             TweenLite.set(propeler, {transformOrigin:"50% 50%"})
-            timelinePropeler.to(propeler, 1, {rotationX:720, rotationZ : 720})
+            timelinePropeler.to(propeler, 1, {rotationX:-720})
             timelinePropeler.play();
             TweenLite.set(plane, {transformOrigin:"50% 50%"})
             timelinePlane.fromTo(plane, 1.2, {rotationZ:5, ease: Circ.easeOut},{rotationZ:-5})
             timelinePlane.fromTo(plane, 1.2, {rotationZ:-5, ease: Circ.easeIn},{rotationZ:5})
             timelinePlane.play();
-            timelineCloud1.from(cloud2, 0.8, {scaleX:1.5, scaleY:1.5, x : -250, opacity : 0, ease: Circ.easeOut})
-            timelineCloud1.to(cloud2, 0.8, {scaleX:1.5, scaleY:1.5, x : 250, opacity : 0, ease: Circ.easeIn})
-            timelineCloud1.from(cloud1, 0.8, {scaleX:0.5, scaleY:0.5, x : -200, opacity : 0, ease: Circ.easeOut}, "-=1")
-            timelineCloud1.to(cloud1, 0.8, {scaleX:0.5, scaleY:0.5, x : 200, opacity : 0, ease: Circ.easeIn})
+            timelineCloud1.from(cloud2, 0.8, {scaleX:1.5, scaleY:1.5, x : 250, opacity : 0, ease: Circ.easeOut})
+            timelineCloud1.to(cloud2, 0.8, {scaleX:1.5, scaleY:1.5, x : -250, opacity : 0, ease: Circ.easeIn})
+            timelineCloud1.from(cloud1, 0.8, {scaleX:0.5, scaleY:0.5, x : 200, opacity : 0, ease: Circ.easeOut}, "-=1")
+            timelineCloud1.to(cloud1, 0.8, {scaleX:0.5, scaleY:0.5, x : -200, opacity : 0, ease: Circ.easeIn})
             timelineCloud1.play();
         }
     }
