@@ -29,7 +29,9 @@
                      CONSTANT,
                      pouchDB,
                      $ionicLoading,
-                     notification) {
+                     notification,
+                     $ionicPopup
+                     ) {
 
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
     $ionicPlatform.registerBackButtonAction(function (event) {
@@ -157,6 +159,8 @@
 
     });
     $ionicPlatform.ready(function () {
+      $rootScope.inBackground = false;
+
       if (User.getActiveProfileSync()) {
         $log.debug("CHECK 2")
         notification.online.set();
@@ -212,7 +216,16 @@
           notification.online.set();
         }
       });
-
+      $rootScope.$on('lowDiskSpace', function (event, networkState) {
+        $ionicLoading.hide()
+        $log.debug("Disk space full on app");
+            $ionicPopup.alert({
+              title:  CONSTANT.ERROR_MESSAGES.LOW_DISK_SPACE.TITLE,
+              template: CONSTANT.ERROR_MESSAGES.LOW_DISK_SPACE.MESSAGE
+            }).then(function() {
+            ionic.Platform.exitApp()
+            });
+      });
       if (navigator.splashscreen) {
         navigator.splashscreen.hide();
       }
@@ -269,6 +282,8 @@
     $ionicPlatform.on('resume', function () {
       notification.cancelAll();
       $rootScope.$broadcast('appResume');
+      $rootScope.inBackground = false;
+
       $log.debug("Current state", $state.current)
       if ($state.current.name === 'content.video') {
         // angular.element("#audioplayer")[0].play();
@@ -287,7 +302,8 @@
 
 
     $ionicPlatform.on('pause', function () {
-
+      $rootScope.$broadcast('appPause');
+      $rootScope.inBackground = true;
       notification.schedule(JSON.parse(localStorage.scheduleNotification),1);
 
       // content.getActiveResource().then(function(resource){

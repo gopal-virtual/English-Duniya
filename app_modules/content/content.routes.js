@@ -51,21 +51,27 @@
           views : {
               'state-vocab' : {
                   templateUrl : CONSTANT.PATH.CONTENT + '/content.vocabulary.intro' + CONSTANT.VIEW,
-                  controller : ['$stateParams','audio','$timeout','$state', '$scope', 'User',function($stateParams,audio,$timeout,$state, $scope, User){
+                  controller : ['$stateParams','audio','$timeout','$state', '$scope', 'User', '$rootScope','$log',function($stateParams,audio,$timeout,$state, $scope, User,$rootScope, $log){
                       var vocabIntroCtrl = this;
                       vocabIntroCtrl.vocab_data = $stateParams.vocab_data;
                       $scope.vocab_data = $stateParams.vocab_data;
                       vocabIntroCtrl.playDelayed = playDelayed;
                       $scope.userGender = User.getActiveProfileSync().data.profile.gender;
-
+                      $log.debug("Rootscope",$rootScope);
                       function playDelayed (url) {
                           $timeout(function(){
                               audio.player.play(url, function(){
                                   $state.go('content.vocabulary.overview',{})
-                              })
-                          },100)
+                              });
+                          },100);
                       }
-                      vocabIntroCtrl.playDelayed(vocabIntroCtrl.vocab_data.node.parsed_sound)
+                      $scope.$on('appResume',function(){
+                        audio.player.resume();
+                        audio.player.addCallback(function(){
+                                  $state.go('content.vocabulary.overview',{})
+                              });
+                      });
+                      vocabIntroCtrl.playDelayed(vocabIntroCtrl.vocab_data.node.parsed_sound);
                   }],
                   controllerAs : 'vocabIntroCtrl'
               }

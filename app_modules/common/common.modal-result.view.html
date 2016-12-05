@@ -1,4 +1,4 @@
-<ion-view class="modal-blue-stars" >
+<ion-view class="modal-blue-stars"  >
   <ion-content overflow-scroll="false">
     <div style="height:100%" class="vertical-center">
       <div>
@@ -16,9 +16,9 @@
             <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
 
         </div>
-        <div class="row padding-x-30 animation-fade-in-from-bottom" style="animation-delay: 3000ms;" ng-show="summary.stars >= 1">
+        <div class="row padding-x-30" ng-class="{true:'animation-fade-in-from-bottom',false:'transparent'}[resultPageNextShow]"  ng-show="summary.stars >= 1">
           <center style="width: 100%;padding-top:20px;">
-            <button class="sbtn sbtn-next-yellow" on-tap="audio.play('press') ; goToMap()"></button>
+            <button  class="sbtn sbtn-next-yellow" on-tap="audio.play('press') ; goToMap()"></button>
           </center>
         </div>
       </div>

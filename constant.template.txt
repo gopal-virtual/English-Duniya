@@ -102,8 +102,13 @@
       },
       'DIAGNOSIS_MEDIA' : @@DIAGNOSIS_MEDIA,
       'ERROR_MESSAGES': {
+
         'DEFAULT' : DEFAULT_ERROR_MESSAGE,
         'DEFAULT_TITLE' : DEFAULT_ERROR_TITLE,
+        'LOW_DISK_SPACE' : {
+          'TITLE': 'Low memory on phone',
+          'MESSAGE' : 'Please clear some memory and try again',
+        } ,
         'OFFLINE' : {
           'DEFAULT' : 'No internet connection found'
         },
