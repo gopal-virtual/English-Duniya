@@ -29,7 +29,9 @@
                      CONSTANT,
                      pouchDB,
                      $ionicLoading,
-                     notification) {
+                     notification,
+                     $ionicPopup
+                     ) {
 
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
     $ionicPlatform.registerBackButtonAction(function (event) {
@@ -214,7 +216,16 @@
           notification.online.set();
         }
       });
-
+      $rootScope.$on('lowDiskSpace', function (event, networkState) {
+        $ionicLoading.hide()
+        $log.debug("Disk space full on app");
+            $ionicPopup.alert({
+              title:  CONSTANT.ERROR_MESSAGES.LOW_DISK_SPACE.TITLE,
+              template: CONSTANT.ERROR_MESSAGES.LOW_DISK_SPACE.MESSAGE
+            }).then(function() {
+            ionic.Platform.exitApp()
+            });
+      });
       if (navigator.splashscreen) {
         navigator.splashscreen.hide();
       }

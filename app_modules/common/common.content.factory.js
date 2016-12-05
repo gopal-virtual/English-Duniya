@@ -132,7 +132,9 @@
       retry: true,
       heartbeat: false
     }).on('paused',function (err) {
-
+      if(err.reason === 'QuotaExceededError'){
+        $rootScope.$broadcast('lowDiskSpace');
+      }
       $log.debug("Paused in lessondb replicate",err)
     }).on('change',function (a) {
       $log.debug("change in lessondb replicate",a)
