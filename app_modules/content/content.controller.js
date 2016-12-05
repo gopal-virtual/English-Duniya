@@ -359,15 +359,7 @@
         audio.player.resume();
         angular.element("#audioplayer")[0].onended = intro_end_video;
       }
-      if( contentCtrl.videoCompleted == true){
-        $log.debug("app resume and video completed")
-        $timeout(function() {
-          $log.debug("timeout done");
-              $scope.ribbon_modal.hide();
-              $scope.resultMenu.show();
-              
-          })
-      }
+
 
     });
     // $scope.nodeRibbon;
