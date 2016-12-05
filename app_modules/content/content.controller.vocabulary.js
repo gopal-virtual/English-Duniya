@@ -25,6 +25,7 @@
     $scope.goToMap = goToMap;
     $scope.utilities = Utilities;
     $scope.audio = audio;
+    $scope.userGender = User.getActiveProfileSync().data.profile.gender;
     $scope.openPauseMenu = openPauseMenu;
     $scope.openNodeMenu = openPauseMenu;
     $scope.closePauseMenu = closePauseMenu;
