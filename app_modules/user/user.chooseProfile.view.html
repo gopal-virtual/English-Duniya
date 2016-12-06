@@ -37,6 +37,7 @@
         align-items: center;
         margin: 2vw 1.5vw;
         padding : 3vw;
+        min-height: 55vw;
     }
     .profile-box-blue{
         background-color: #A6CEEE;
@@ -113,15 +114,15 @@
 <ion-view class="bg-pale">
     <div class="row header-fixed animation-fade-in">
         <div class="col center">
-            <a ng-tap="profileCtrl.goToMap()" ng-click="profileCtrl.goToMap()"><img class="absolute-right" src="img/assets_svg/cross.svg" alt=""></a>
+            <a ng-tap="profileCtrl.goToMap()" ng-click="profileCtrl.goToMap()" ng-show="profileCtrl.hasCurrentUser()"><img class="absolute-right" src="img/assets_svg/cross.svg" alt=""></a>
             <!-- <img src="img/assets_svg/profile_ribbon.svg" alt=""> -->
             <img src="img/assets_svg/profile_ribbon.svg" alt="" ng-show="profileCtrl.hasCurrentUser()">
             <img class="choose" src="img/assets_svg/chooseyourname_ribbon.svg" alt="" ng-show="!profileCtrl.hasCurrentUser()">
         </div>
     </div>
-    <ion-content class="has-headers" overflow-scroll="false" has-bouncing="true">
+    <ion-content class="has-headers">
         <div class="profile-box-container">
-            <div ng-tap="profileCtrl.selectProfile(profile)" ng-click="profileCtrl.selectProfile(profile)" class="profile-box animation-fade-in-from-top" style="-webkit-animation-delay: {{$index*100}}ms;" ng-class="{true : 'profile-box-darkblue', false : 'profile-box-blue'}[profileCtrl.getCurrentProfile() == profile.doc._id]" ng-repeat="profile in profileCtrl.profiles | limitTo: 4">
+            <div ng-tap="profileCtrl.selectProfile(profile)" ng-click="profileCtrl.selectProfile(profile)" class="profile-box animation-fade-in-from-top" style="-webkit-animation-delay: {{$index*100}}ms;" ng-class="{true : 'profile-box-darkblue', false : 'profile-box-blue'}[profileCtrl.getCurrentProfile() == profile.doc._id]" ng-repeat="profile in profileCtrl.profiles | limitTo : 4">
                 <div class="font-lg" ng-class="{true : 'font-pale' , false : 'font-blue'}[profileCtrl.getCurrentProfile() == profile.doc._id]">
                     {{::profile.doc.data.profile.first_name}}
                 </div>

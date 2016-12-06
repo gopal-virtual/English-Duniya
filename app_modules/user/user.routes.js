@@ -97,6 +97,7 @@
                 }
 
                 function selectProfile(profile) {
+                    localStorage.removeItem('currentPosition');
                     $ionicLoading.show({
                       noBackdrop: false,
                       hideOnStateChange: true

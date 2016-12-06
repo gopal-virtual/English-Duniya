@@ -99,9 +99,15 @@
       return soundArrPath;
     }
 
+    function getLastSound(soundArr) {
+        var soundArrPath = [];
+        soundArrPath.push(soundArr[soundArr.length - 1].path);
+        return soundArrPath;
+    }
+
     function playDelayed(sound) {
       $timeout(function() {
-        vocabCardCtrl.audio.player.chain(0, getSoundArr(sound))
+        vocabCardCtrl.audio.player.chain(0, getLastSound(sound))
       }, 100)
     }
 

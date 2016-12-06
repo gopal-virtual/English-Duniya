@@ -342,7 +342,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                 graphics.drawRect(0,0,game.camera.width,game.camera.height);
                 graphics.endFill();
                 groups.nonRegion.demoOverlay.add(graphics);
-                temp['demoFinger'] = groups.nonRegion.demoNodeOverlay.create(0.5*game.camera.width, 0.4*game.camera.height, 'finger');
+                temp['demoFinger'] = groups.nonRegion.demoNodeOverlay.create(0.5*game.camera.width, 0.5*game.camera.height, 'finger');
                 temp.demoFinger.anchor.setTo(0.5);
                 temp.demoFinger.scale.setTo(-0.5,0.5);
                 temp.demoFinger.angle = 180;
@@ -626,7 +626,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                         if (Demo.getStep() != 1) {
                             temp["nodeWobbleTween"] = game.add.tween(node.scale).to({ x: [0.8,1,0.8], y: [0.8,1,0.8] }, 1500, Phaser.Easing.Back.Out, true, 400).loop(true);
                         }else{
-                            var fingerTween = game.add.tween(temp.demoFinger).to({x: [0.5*game.camera.width,0.5*game.camera.width], y: [0.55*game.camera.height,0.4*game.camera.height] }, 2000, Phaser.Easing.Back.Out, true).loop(true);
+                            var fingerTween = game.add.tween(temp.demoFinger).to({x: [0.5*game.camera.width,0.5*game.camera.width], y: [0.58*game.camera.height,0.5*game.camera.height] }, 2000, Phaser.Easing.Back.Out, true).loop(true);
                             log.debug("Not a demo I guess", fingerTween)
                             fingerTween.onStart.add(pressButton,this);
                             fingerTween.onLoop.add(pressButton,this);
@@ -667,6 +667,14 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                     }
                 }
 
+
+                if(!localStorage.currentPosition){
+                    localStorage.setItem('currentPosition', (posy - game.height / 2));
+                    var currentPosition = {
+                        "x": game.input._x,
+                        "y": game.input._y,
+                    }
+                }
                 // if(temp.activeLessonKey == undefined){
                 //     temp["activeLessonKey"] = -1;
                 // }
@@ -842,6 +850,9 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                     deltaWheel: 400
                 });
                 game.kineticScrolling.start();
+            }
+
+            function scrollTo() {
                 game.camera.y = localStorage.getItem('currentPosition') ? parseInt(localStorage.getItem('currentPosition')) : parseInt(((~~game.world.height / game.height) - 1) * game.height);
             }
 
@@ -852,6 +863,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                 renderWorld(renderedRegion);
                 cameraInit();
                 // setTimeout(function() {
+                // cameraInit();
                     // gameRestart();
                 // }, 10000);
                 renderRegion(renderedRegion);
@@ -863,6 +875,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                     }
                     renderNodesByML(renderedRegion);
                     renderNodePath(renderedRegion,points);
+                    scrollTo();
                     log.debug("Port Node Flag",regionPage,regions.length-1,temp.activeLessonKey,regionPage < regions.length-1,regionPage < regions.length-1 && temp.activeLessonKey == -1)
                     if(regionPage < regions.length-1 && temp.activeLessonKey > last_node_index){
                         renderPortNodes("next");
@@ -878,7 +891,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                         //log.debug("star in lesson", lessons[animateStarFlag.clickedNode].stars);
                         //log.debug("animateStarFlag",animateStarFlag);
                         log.debug("animateStar condition 1");
-                        if (lessons[animateStarFlag.clickedNode].stars && lessons[animateStarFlag.clickedNode].stars > animateStarFlag.clickedNodeStar) {
+                        if (lessons[animateStarFlag.clickedNode] && lessons[animateStarFlag.clickedNode].stars && lessons[animateStarFlag.clickedNode].stars > animateStarFlag.clickedNodeStar) {
                             //log.debug("Hey brother");
                             log.debug("animateStar condition 2");
                             scope.$emit('animateStar');
