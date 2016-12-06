@@ -119,7 +119,6 @@
         star = 0;
       }
       $log.debug("playing star sound", star);
-      audio.player.play('sound/yay_we_learned_a_lot_from_video.mp3',function(){
       for (var i = 0; i < star; i++) {
         $log.debug("sound source", starSound[i]);
         (function(count) {
@@ -127,26 +126,14 @@
             $scope.resultStarFlag[count] = true;
             $log.debug("sound source", starSound, count, starSound[count]);
             $log.debug("count,star,count==star-1",count,star,count == star-1);
+            audio.player.play("sound/" + starSound[count] + ".mp3");  
             if(count == star-1){
-              $log.debug("HEREEE");
-            audio.player.play("sound/" + starSound[count] + ".mp3",function(){
-              $log.debug("Setting resultPageNextShow");
               $scope.resultPageNextShow = true;
-            });
-            }else{
-              $log.debug("HEREEE 1");
-
-            audio.player.play("sound/" + starSound[count] + ".mp3");
             }
-            // angular.element("#audioplayer")[0].pause();
-            // angular.element("#audioSource")[0].src = ;
-            // angular.element("#audioplayer")[0].load();
-            // angular.element("#audioplayer")[0].play();
           }, (count + 1) * 1000);
         })(i)
 
       }
-      })
 
     }
 
@@ -192,8 +179,9 @@
       submitReport()
       
           $log.debug("onvideocompleted sound played");
-
+      audio.player.play('sound/yay_we_learned_a_lot_from_video.mp3',function(){
           contentCtrl.playStarSound();
+})
           $timeout(function() {
             $scope.resultPageNextShow = false;
               $scope.ribbon_modal.hide();
@@ -358,6 +346,12 @@
       if ($scope.ribbon_modal.isShown()) {
         audio.player.resume();
         angular.element("#audioplayer")[0].onended = intro_end_video;
+      }
+      if($scope.resultMenu.isShown()) {
+        audio.player.resume();
+        angular.element("#audioplayer")[0].onended = contentCtrl.playStarSound;
+
+
       }
 
 
