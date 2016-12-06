@@ -180,8 +180,10 @@
       })
     }
     function checkIfProfileOnline() {
-      $log.debug("UUID",device.uuid)
+      $log.debug("inside check if profile online")
       return PouchDB.replicate( CONSTANT.PROFILES_DB_SERVER+device.uuid, 'profilesDB',{retry:true}).then(function () {
+      $log.debug("completed check if profile online")
+
         return profilesDB.allDocs({
           include_docs: true
         })

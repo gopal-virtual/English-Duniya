@@ -51,6 +51,7 @@
       } else {
         content.replicateLessonDB();
       }
+
       $log.debug(toState.name !== 'user.personalise', !User.getActiveProfileSync());
 
 
@@ -65,7 +66,9 @@
         if (network.isOnline()) {
 
           User.checkIfProfileOnline().then(function (profiles) {
+            localStorage.setItem('profiles_fetched','true');
             $log.debug("HERE");
+
             $log.debug("Ionic loading hide should happen",profiles,profiles.total_rows > 0);
             if (profiles.total_rows == 0) {
               $state.go('user.personalise');
@@ -215,6 +218,13 @@
           $log.debug("CHECK 1")
           notification.online.set();
         }
+        if(localStorage.profiles_fetched === undefined){
+          $log.debug("User online fetching profiles now");  
+         User.checkIfProfileOnline().then(function(){
+          localStorage.setItem('profiles_fetched','true');
+         }); 
+        }
+
       });
       $rootScope.$on('lowDiskSpace', function (event, networkState) {
         $ionicLoading.hide()
