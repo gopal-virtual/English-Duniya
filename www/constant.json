@@ -53,7 +53,7 @@
     "CONTENT_TEST":true,
     "LOCK": true,
     "FAKE_LOGIN": true,
-    "FAKE_ID_DEVICE": "micromaxtest4",
+    "FAKE_ID_DEVICE": "xdhfvbkjkdjfv",
     "FAKE_DEVICE": true,
     "BACKEND_SERVICE_DOMAIN": "https://cc-test.zaya.in/",
     "RESOURCE_SERVER": "https://cc-test.zaya.in",
