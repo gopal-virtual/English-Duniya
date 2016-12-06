@@ -51,7 +51,6 @@
       } else {
         content.replicateLessonDB();
       }
-
       $log.debug(toState.name !== 'user.personalise', !User.getActiveProfileSync());
 
 
@@ -162,6 +161,9 @@
 
     });
     $ionicPlatform.ready(function () {
+
+      User.startProfileSync();
+  
       $rootScope.inBackground = false;
 
       if (User.getActiveProfileSync()) {
@@ -215,7 +217,7 @@
         $log.debug("This app is online dude")
         queue.startSync();
         if (User.getActiveProfileSync()) {
-          $log.debug("CHECK 1")
+          $log.debug("CHECK 1");
           notification.online.set();
         }
         if(localStorage.profiles_fetched === undefined){
