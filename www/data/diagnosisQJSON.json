@@ -512,12 +512,12 @@
             "node": {
                 "status": "PUBLISHED", 
                 "rght": 9683, 
-                "updated": "2016-12-05T07:56:33.797788Z", 
+                "updated": "2016-12-06T04:56:46.214914Z", 
                 "description": "", 
                 "parent": "a63a6d7a-b809-4c68-a080-5f6baecc4be0", 
                 "created": "2016-12-03T08:27:56.682001Z", 
                 "deleted": null, 
-                "title": "[Listening Comprehension - Level 8]", 
+                "title": "Why do you think is India a secular nation? [[sound id=1]]", 
                 "tag": "listening", 
                 "account": "0429fb91-4f3c-47de-9adb-609996962188", 
                 "object_id": "6c8fc43b-a5f2-4417-92ab-f69a7b456de5", 
@@ -528,7 +528,7 @@
                 "content_type_name": "json question", 
                 "level": 3, 
                 "type": {
-                    "updated": "2016-12-05T07:56:33.782691Z", 
+                    "updated": "2016-12-06T04:56:46.201532Z", 
                     "microstandard": "58fb3d50-e49d-4ad9-a852-52463a8f3f8d", 
                     "created": "2016-12-03T08:27:56.658497Z", 
                     "deleted": "None", 
@@ -536,28 +536,30 @@
                     "content": {
                         "widgets": {
                             "images": {}, 
-                            "sounds": {}, 
+                            "sounds": {
+                                "1": "/media/ell/sounds/2016/12/06/listening-comprehension-secularism.mp3"
+                            }, 
                             "videos": {}
                         }, 
                         "is_multiple": false, 
                         "options": [
                             {
-                                "option": " Answer choice 1 ", 
+                                "option": " to prevent conflict between its religions ", 
                                 "key": 1
                             }, 
                             {
-                                "option": " Correct Answer choice ", 
+                                "option": " to take away the freedom of some religious groups ", 
                                 "key": 2
                             }, 
                             {
-                                "option": " Answer choice 3 ", 
+                                "option": " to ensure that all laws are based on religion ", 
                                 "key": 3
                             }
                         ]
                     }, 
                     "score": 0, 
                     "answer": [
-                        2
+                        1
                     ], 
                     "level": 8, 
                     "type": "choicequestion", 
@@ -567,19 +569,19 @@
             }, 
             "ml": {
                 "options_content": [
-                    " Answer choice 1 ", 
-                    " Correct Answer choice ", 
-                    " Answer choice 3 "
+                    " to prevent conflict between its religions ", 
+                    " to take away the freedom of some religious groups ", 
+                    " to ensure that all laws are based on religion "
                 ], 
-                "q_title": "[Listening Comprehension - Level 8]", 
-                "answer_content": " Correct Answer choice ", 
+                "q_title": "Why do you think is India a secular nation? [[sound id=1]]", 
+                "answer_content": " to prevent conflict between its religions ", 
                 "lesson_skill": "grammar", 
                 "skill_area": "listening", 
                 "microstandard": "58fb3d50-e49d-4ad9-a852-52463a8f3f8d", 
                 "level": 8, 
                 "sr": "5c456413-01ec-4229-99cd-7f5734db4b2f", 
                 "lesson_name": null, 
-                "answer": "2", 
+                "answer": "1", 
                 "_id": "c2d03b90-23b4-4337-b006-5fb04a041e1a", 
                 "options": [
                     "1", 
