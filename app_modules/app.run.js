@@ -55,7 +55,7 @@
 
 
 
-      if (toState.name == 'user.personalise' && !User.getActiveProfileSync() && localStorage.getItem('first_time') == undefined) {
+      if ((toState.name == 'map.navigate' || toState.name == 'user.personalise') && !User.getActiveProfileSync() && localStorage.getItem('first_time') == undefined) {
         event.preventDefault();
         $log.debug("Ionic loading show with hide on state change");
 
@@ -113,10 +113,10 @@
           $state.go('map.navigate');
         });
       }
-      if(toState.name == 'map.navigate' && !User.getActiveProfileSync()){
-        event.preventDefault();
-        $state.go('user.personalise')
-      }
+    //   if(toState.name == 'map.navigate' && !User.getActiveProfileSync()){
+    //     event.preventDefault();
+    //     $state.go('user.personalise')
+    //   }
       // if(toState.name == 'litmus_result' && !toParams.average_level){
       //   event.preventDefault();
       //   $state.go('user.personalise')
@@ -163,7 +163,7 @@
     $ionicPlatform.ready(function () {
 
       User.startProfileSync();
-  
+
       $rootScope.inBackground = false;
 
       if (User.getActiveProfileSync()) {
@@ -221,10 +221,10 @@
           notification.online.set();
         }
         if(localStorage.profiles_fetched === undefined){
-          $log.debug("User online fetching profiles now");  
+          $log.debug("User online fetching profiles now");
          User.checkIfProfileOnline().then(function(){
           localStorage.setItem('profiles_fetched','true');
-         }); 
+         });
         }
 
       });

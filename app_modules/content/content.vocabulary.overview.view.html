@@ -121,20 +121,20 @@
         height : 100vh;
     }
 </style>
-<ion-view style="background-color:{{vocabOverviewCtrl.vocab_data[vocabOverviewCtrl.currentIndex].node.type.background_color}};background-image: url(img/assets/transparent_star.png);
+<ion-view style="background-color:{{::vocabOverviewCtrl.vocab_data[vocabOverviewCtrl.currentIndex].node.type.background_color}};background-image: url(img/assets/transparent_star.png);
     background-size: 33%;">
     <ion-content>
         <div class="row vh-100">
             <div class="col col-60 col-offset-20 align-middle flash-body-card">
-                <div class="flash-card align-middle" ng-repeat="card in vocabOverviewCtrl.vocab_data" ng-show="vocabOverviewCtrl.currentIndex == $index" style="background-color : {{card.node.type.foreground_color}}">
-                    <img src="" alt="" ng-src="{{card.node.type.image.path}}" ng-class="{'animation-repeat-bounce-in':!vocabOverviewCtrl.audio.player.isPaused()}">
+                <div class="flash-card align-middle" ng-repeat="card in ::vocabOverviewCtrl.vocab_data" ng-show="vocabOverviewCtrl.currentIndex == $index" style="background-color : {{::card.node.type.foreground_color}}">
+                    <img src="" alt="" ng-src="{{::card.node.type.image.path}}" ng-class="{'animation-repeat-bounce-in':!vocabOverviewCtrl.audio.player.isPaused()}">
                 </div>
-                <div ng-repeat="card in vocabOverviewCtrl.vocab_data" ng-show="vocabOverviewCtrl.currentIndex == $index">
+                <div ng-repeat="card in ::vocabOverviewCtrl.vocab_data" ng-show="vocabOverviewCtrl.currentIndex == $index">
                     <div class="flash-text-offset">
-                        {{card.node.title}}
+                        {{::card.node.title}}
                     </div>
                     <div class="flash-text">
-                        {{card.node.title}}
+                        {{::card.node.title}}
                     </div>
                 </div>
             </div>

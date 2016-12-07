@@ -124,7 +124,6 @@
     mapCtrl.animateStar["resetColor"] = resetColor;
     // ;
     mapCtrl.setAnimateStarFlag = setAnimateStarFlag;
-    mapCtrl.setLessonRange = setLessonRange;
     mapCtrl.emitNode = emitNode;
 
     // port node
@@ -148,7 +147,7 @@
     // notification.dbDestroy();
     // notification.smartContentSet();
     // $log.debug("DB LOADING",notification.db.load());
-    $scope.$on('pageRegion', mapCtrl.setLessonRange )
+    // $scope.$on('pageRegion', mapCtrl.setLessonRange )
     $scope.$on('backButton', mapCtrl.onBackButtonPress)
 
     function onBackButtonPress() {
@@ -193,31 +192,6 @@
     })
     // $log.debug("Defining types in map",notification.defineTypes());
     // $scope.$on('nextRegion', mapCtrl.setLessonRange )
-    function setLessonRange(event, regionPage, action, regionLength){
-        // if (regionPage > 0 && regionPage < 3) {
-          $ionicLoading.show();
-          if (action=="next") {
-            if (regionPage < regionLength) {
-              localStorage.setItem('regionPage',parseInt(regionPage)+1);
-            }else{
-              localStorage.setItem('regionPage',parseInt(regionPage));
-            }
-            localStorage.setItem('currentPosition', 4000);
-          }else if (action=="prev") {
-            if (regionPage > 0) {
-              localStorage.setItem('regionPage',parseInt(regionPage)-1);
-            }else{
-              localStorage.setItem('regionPage',parseInt(regionPage));
-            }
-            localStorage.setItem('currentPosition', 0);
-          }
-
-        // }
-        $timeout(function() {
-          window.location.reload()
-        }, 10);
-        //
-    }
     // end : port node
 
 
@@ -271,7 +245,7 @@
     // }, 100);
 
 
-    $scope.$on('removeLoader',function() {
+    $scope.$on('removeLoader',function(showHud) {
       $ionicLoading.hide();
     });
 

@@ -92,12 +92,15 @@
                 }
 
                 function goToCreateNewProfile (){
+                        localStorage.removeItem('currentPosition');
+                        localStorage.removeItem('regionPage');
                         localStorage.removeItem('profile');
                         $state.go('user.personalise', {})
                 }
 
                 function selectProfile(profile) {
                     localStorage.removeItem('currentPosition');
+                    localStorage.removeItem('regionPage');
                     $ionicLoading.show({
                       noBackdrop: false,
                       hideOnStateChange: true

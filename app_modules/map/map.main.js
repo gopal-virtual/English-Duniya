@@ -205,8 +205,15 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
             if (localStorage.getItem("regionPage")) {
                 var regionPage = localStorage.getItem("regionPage");
             }else{
-                localStorage.setItem("regionPage",0);
-                var regionPage = 0;
+                for (var count = 0, residue = lessons.length; count < regions.length; count++) {
+                    if(residue < regionNodes[regions[count]]){
+                        localStorage.setItem("regionPage",count);
+                        var regionPage = count;
+                        break;
+                    }
+                    residue = residue - regionNodes[regions[count]]
+                }
+                // log.debug('regionPage')
             }
             renderedRegion[0] = regions[regionPage];
 
@@ -869,7 +876,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                 renderRegion(renderedRegion);
                 var fetchMapRequest = fetchMapPath(renderedRegion,points);
                 fetchMapRequest.then(function(){
-                    scope.$emit('removeLoader');
+                    scope.$emit('removeLoader', true);
                     if (Demo.getStep() == 1) {
                         renderDemoOverlay();
                     }

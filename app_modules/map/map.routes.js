@@ -80,7 +80,6 @@
           orientation.setPortrait();
           $ionicLoading.show({
             templateUrl: 'templates/common/common.loader.view.html',
-            // duration: 3000
           });
           if (!lessons) {
             $state.go('map.unauthorised');

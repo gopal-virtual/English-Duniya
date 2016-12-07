@@ -141,7 +141,7 @@
 
     });
 
- 
+
   }
 
     function findNewMediaToDownload() {
@@ -436,7 +436,7 @@
                            if(playlist[i][key].type === 'resource'){
                             $log.debug("previusly attempted Video found ");
                             include_vocab_flag = false;
-                           }   
+                           }
                       }
                     }
                     if(include_vocab_flag){
@@ -445,13 +445,13 @@
                     }
                   }
                   if (node_type == 'resource' && lessons[i].doc.lesson.objects[c].node.content_type_name  === 'resource' && include_video_flag === true) {
-                    resources.push(angular.copy(lessons[i].doc.lesson.objects[c]));
+                      resources.push(angular.copy(lessons[i].doc.lesson.objects[c]));
                   }
                   if (node_type == 'assessment' && lessons[i].doc.lesson.objects[c].node.content_type_name  === 'assessment') {
-                    resources.push(angular.copy(lessons[i].doc.lesson.objects[c]));
+                      resources.push(angular.copy(lessons[i].doc.lesson.objects[c]));
                   }
                 }
-                })  
+                })
 
             }
 
