@@ -1,10 +1,13 @@
 console.log("==== Bundling media ====");
 console.log("==== Note : www/bundled/ should be empty befor this operation. ====");
 var fs = require('fs');
+var argv = require('yargs').argv;
 var fs_extra = require('fs-extra');
-var source_folder = 'media/ell/';
 var target_folder = 'www/bundled/';
 var ncp = require('ncp').ncp;
+var env = argv.env ? argv.env : 'production';
+var source_folder = env === 'production'? 'media-production/ell/' : 'media-test/ell/';
+
 
 function getFileNameFromURl(url) {
   var a = url.split('/');
@@ -23,7 +26,8 @@ function getSourceNameFromURL(url) {
   return a.join('/').substr(1);
 }
 var json = [];
-var lessons = process.argv[2];
+var lessons = argv.lessons;
+
 var media = [];
 media.push('/media/ell/images/dog_O5P4I8.png');
 media.push('/media/ell/images/person_9FDOFJ.png');
