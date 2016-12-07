@@ -723,6 +723,51 @@
       var suggestedSrs = [];
       var levelsOfSuggestedSrs = [];
 
+      var levelArray = Object.keys(questionSet);
+
+      var minLevelArray = Math.min.apply(null, levelArray);
+      var maxLevelArray = Math.max.apply(null, levelArray);
+
+      var pushSr = null;
+      var skillPushSr = null;
+
+      for (var i = maxLevelArray; i >= minLevelArray; i--) {
+          console.log('i', i, questionSet[i]["answered"]);
+          if(questionSet[i]["answered"] == "right"){
+              if(questionSet[i + 1] != undefined){
+                  pushSr = questionSet[i + 1]["sr"];
+                  skillPushSr = questionSet[i + 1]["skill"];
+              }else{
+                  pushSr = questionSet[i]["sr"];                
+                  skillPushSr = questionSet[i]["skill"];
+              }
+              break;
+          }        
+      }
+
+      if(pushSr == null){
+          pushSr = questionSet[minLevelArray]["sr"];
+          skillPushSr = questionSet[minLevelArray]["skill"];
+      }
+
+      levelsOfSuggestedSrs.push({ "level": ml.dqJSON[pushSr]["node"]["type"]["level"], "skill": ml.dqJSON[pushSr]["node"]["tag"] });
+
+      suggestedSrs.push(pushSr);
+      if (getSuggestedLevel != undefined) {
+          return levelsOfSuggestedSrs;
+      }
+      console.log('levelsOfSuggestedSrs', levelsOfSuggestedSrs);
+
+      return suggestedSrs;
+
+  }
+
+
+
+    function getSuggestedSr_depricated(questionSet, getSuggestedLevel) {
+      var suggestedSrs = [];
+      var levelsOfSuggestedSrs = [];
+
       var levelArray = [];
       for (var level in questionSet) {
           levelArray.push(parseInt(level));
