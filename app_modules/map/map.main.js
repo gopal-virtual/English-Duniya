@@ -342,7 +342,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                 graphics.drawRect(0,0,game.camera.width,game.camera.height);
                 graphics.endFill();
                 groups.nonRegion.demoOverlay.add(graphics);
-                temp['demoFinger'] = groups.nonRegion.demoNodeOverlay.create(0.5*game.camera.width, 0.5*game.camera.height, 'finger');
+                temp['demoFinger'] = groups.nonRegion.demoNodeOverlay.create(0.5*game.camera.width, 0.3*game.camera.height, 'finger');
                 temp.demoFinger.anchor.setTo(0.5);
                 temp.demoFinger.scale.setTo(-0.5,0.5);
                 temp.demoFinger.angle = 180;
@@ -626,7 +626,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                         if (Demo.getStep() != 1) {
                             temp["nodeWobbleTween"] = game.add.tween(node.scale).to({ x: [0.8,1,0.8], y: [0.8,1,0.8] }, 1500, Phaser.Easing.Back.Out, true, 400).loop(true);
                         }else{
-                            var fingerTween = game.add.tween(temp.demoFinger).to({x: [0.5*game.camera.width,0.5*game.camera.width], y: [0.58*game.camera.height,0.5*game.camera.height] }, 2000, Phaser.Easing.Back.Out, true).loop(true);
+                            var fingerTween = game.add.tween(temp.demoFinger).to({x: [0.5*game.camera.width,0.5*game.camera.width, 0.5*game.camera.width], y: [0.3*game.camera.height,0.5*game.camera.height, 0.3*game.camera.height] }, 2000, Phaser.Easing.Back.Out, true).loop(true);
                             log.debug("Not a demo I guess", fingerTween)
                             fingerTween.onStart.add(pressButton,this);
                             fingerTween.onLoop.add(pressButton,this);

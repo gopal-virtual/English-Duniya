@@ -18,6 +18,7 @@
       passingThreshold: 0.7,
       roadMapMax: 8,
       maxSuggestionCount: 3,
+      diagQuestionsPerSkill: 5,
       runDiagnostic: runDiagnostic,
       suggestBridge: suggestBridge,
       getUniqueArray: getUniqueArray,
@@ -57,7 +58,21 @@
       if(ml.roadMapData != undefined && ml.roadMapData["batch"] != undefined){
         batch = ml.roadMapData["batch"] + 1;
       }
-      ml.roadMapData = {"roadMap": [], "recommendationsWithPrereqs": recommendationsWithPrereqs, "batch": batch};
+
+      var levelRec = {
+        "avgLevel": 2,
+        "skillLevel": {
+            "vocabulary": 2,
+            "listening": 2,
+            "reading": 2
+        }
+      };
+
+      if(ml.roadMapData != undefined && ml.roadMapData["levelRec"] != undefined){
+        levelRec = ml.roadMapData["levelRec"];
+      }
+
+      ml.roadMapData = {"roadMap": [], "recommendationsWithPrereqs": recommendationsWithPrereqs, "batch": batch, "levelRec": levelRec};
       for(var i = 0; i< roadMap.length;i++){
         ml.roadMapData["roadMap"].push({"sr": roadMap[i], "suggestionCount": 0, "resultTrack": {}, "previousNode": null, "currentNode": null});
       }
@@ -66,7 +81,7 @@
     function getLessonSuggestion(data){
       $log.debug("in getLessonSuggestion", data);
       var suggestionData = updateRoadMapSuggestion(data);
-      $log.debug('suggestionData from updateRoadMapSuggestion', suggestionData);
+      $log.debug('suggestionData from updateRoadMapSuggestion', suggestionData, ml.roadMapData);
       // save to localStorage
       localStorage.setItem("roadMapData", JSON.stringify(ml.roadMapData));
       return suggestionData;
@@ -183,9 +198,25 @@
       }else{
         ml.roadMapData = JSON.parse(localStorage.roadMapData);
       }
+
+      $log.debug('lililililoili', ml.roadMapData["levelRec"]);
+      if(ml.roadMapData["levelRec"] == undefined){
+        $log.debug('lili here', JSON.stringify(ml.roadMapData));
+        ml.roadMapData["levelRec"] = {
+            "avgLevel": 2,
+            "skillLevel": {
+                "vocabulary": 2,
+                "listening": 2,
+                "reading": 2
+            }
+        };
+      }
+
       $log.debug('ml.roadMapData, data', ml.roadMapData, data);
       if(data["event"] == "diagnosisTest"){
-        // $log.debug('in diagnosisTest', );
+        if(data["levelRec"]){
+            ml.roadMapData["levelRec"] = data["levelRec"];
+        }
         var recommendationsWithPrereqs = runDiagnostic()[0];
         setNewRoadMap(recommendationsWithPrereqs);
         $log.debug('ml.roadMapData 1', ml.roadMapData);
@@ -217,6 +248,7 @@
               ml.roadMapData["roadMap"][0]["resultTrack"] = {};
               var dependencyData = {"dependency": "root", "batch": ml.roadMapData["batch"]};
               $log.debug('dependencyData root 2', dependencyData);
+              $log.debug('lili here 2', JSON.stringify(ml.roadMapData));
               return handleMultipleSuggestions();
             }else{
               // if roadMap empty
@@ -1123,7 +1155,7 @@
 
       try {
           if (test.length > 0) {
-              if (test[0]["count"] >= 2) {
+              if (test[0]["count"] >= ml.diagQuestionsPerSkill) {
                   test = displaySuggestedSr(test[0]["level"], test, diagLitmusMapping);
                   var newTest = test.slice(1, test.length);
                   return getNextQSr(newTest, diagLitmusMapping);
@@ -1145,7 +1177,7 @@
                       return getNextQSr(newTest, diagLitmusMapping);
                   }
               } else if (test[0]["previousAnswer"] == false) {
-                  if (diagLitmusMapping[test[0]["skill"]][test[0]["level"] - 2] != undefined) {
+                  if (diagLitmusMapping[test[0]["skill"]][test[0]["level"] - 2] != undefined && test[0]["qSet"][test[0]["level"] - 2] == undefined) {
                       var q_set = diagLitmusMapping[test[0]["skill"]][test[0]["level"] - 2]["questions"];
                       if (q_set.length == 0) {
 
@@ -1154,7 +1186,9 @@
                       }
                       var intermediate_q_set = diagLitmusMapping[test[0]["skill"]][test[0]["level"] - 1]["questions"];
                       test[0]["qSet"][test[0]["level"] - 1] = { "qSr": intermediate_q_set[Math.floor(Math.random() * (intermediate_q_set.length)) + 0], "answered": "NA" };
-                      var suggestion = { "skill": test[0]["skill"], "qSr": q_set[Math.floor(Math.random() * (q_set.length)) + 0], "test": test, "actualLevel": test[0]["level"] - 2, "microstandard": diagLitmusMapping[test[0]["skill"]][test[0]["level"] - 2]["microstandard"] };
+                      var suggestion = { "skill": test[0]["skill"], "qSr": q_set[Math.floor(Math.random() * (q_set.length)) + 0], "actualLevel": test[0]["level"] - 2, "microstandard": diagLitmusMapping[test[0]["skill"]][test[0]["level"] - 2]["microstandard"] };
+                      test[0]["level"] -= 2;
+                      suggestion["test"] = test;
                       $log.debug('suggestion from ml', suggestion);
                       return suggestion;
                   } else {
@@ -1163,7 +1197,7 @@
                       return getNextQSr(newTest, diagLitmusMapping);
                   }
               } else if (test[0]["previousAnswer"] == true) {
-                  if (diagLitmusMapping[test[0]["skill"]][test[0]["level"] + 2] != undefined) {
+                  if (diagLitmusMapping[test[0]["skill"]][test[0]["level"] + 2] != undefined && test[0]["qSet"][test[0]["level"] + 2] == undefined) {
                       var q_set = diagLitmusMapping[test[0]["skill"]][test[0]["level"] + 2]["questions"];
                       if (q_set.length == 0) {
 
@@ -1172,7 +1206,9 @@
                       }
                       var intermediate_q_set = diagLitmusMapping[test[0]["skill"]][test[0]["level"] + 1]["questions"];
                       test[0]["qSet"][test[0]["level"] + 1] = { "qSr": intermediate_q_set[Math.floor(Math.random() * (intermediate_q_set.length)) + 0], "answered": "NA" };
-                      var suggestion = { "skill": test[0]["skill"], "qSr": q_set[Math.floor(Math.random() * (q_set.length)) + 0], "test": test, "actualLevel": test[0]["level"] + 2, "microstandard": diagLitmusMapping[test[0]["skill"]][test[0]["level"] + 2]["microstandard"] };
+                      var suggestion = { "skill": test[0]["skill"], "qSr": q_set[Math.floor(Math.random() * (q_set.length)) + 0], "actualLevel": test[0]["level"] + 2, "microstandard": diagLitmusMapping[test[0]["skill"]][test[0]["level"] + 2]["microstandard"] };
+                      test[0]["level"] += 2;
+                      suggestion["test"] = test;
                       $log.debug('suggestion from ml', suggestion);
                       return suggestion;
                   } else {
@@ -1210,7 +1246,7 @@
         var newQSet = {};
         // array = [];
         var last = null;
-        for (var i = 0; i <= 3; i++) {
+        for (var i = 0; i <= 8; i++) {
             if (last == null) {
                 last = parseInt(level_one) * -1;
             } else {

@@ -26,11 +26,11 @@
             var timelinePropeler = new TimelineMax({ repeat : -1})
             var planeWrapper = document.querySelector('#boy-plane-wrapper');
             var timelinePlaneWrapper = new TimelineMax({repeat : -1})
-            timelinePlaneWrapper.fromTo(planeWrapper, 1, {y : -30},{y : 30})
-            timelinePlaneWrapper.fromTo(planeWrapper, 1, {y : 30}, {y : -30})
+            timelinePlaneWrapper.fromTo(planeWrapper, 1, {y : -30, ease: Power0.easeNone},{y : 30})
+            timelinePlaneWrapper.fromTo(planeWrapper, 1, {y : 30, ease: Power0.easeNone}, {y : -30})
             timelinePlaneWrapper.play();
             TweenLite.set(propeler, {transformOrigin:"50% 50%"})
-            timelinePropeler.to(propeler, 1, {rotationX:-720, rotationZ : 720})
+            timelinePropeler.to(propeler, 1, {rotationX:-720, rotationZ : 720, ease: Power0.easeNone})
             timelinePropeler.play();
             TweenLite.set(plane, {transformOrigin:"50% 50%"})
             timelinePlane.fromTo(plane, 1.2, {rotationZ:5, ease: Circ.easeOut},{rotationZ:-5})

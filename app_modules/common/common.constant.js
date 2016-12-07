@@ -23,7 +23,7 @@
       'LESSON_DB_VERSION': 'na',
       'NOTIFICATION_DB_SERVER': 'https://ci-couch.zaya.in/notifications',
       'ANALYTICS' : true,
-      'GRADE' : [2,3],
+      'GRADE' : [2,3,4,5,6,7,8],
       'QUESTION_DEMO' : false,
       'QUESTION' : {
         'DEMO' : '5ecf8ad5-4c3a-4a67-9758-dd7e3993c4d8'
