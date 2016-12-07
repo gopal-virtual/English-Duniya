@@ -11,6 +11,12 @@ function getFileNameFromURl(url) {
   var a = url.split('/');
   return a.join('/').substr(1);
 }
+function gerDirectoryFromURL(url){
+  var a = url.split('/');
+  a.splice(-1);
+  a.shift();
+  return target_folder+a.join('/');
+}
 var json = [];
 var lessons = process.argv[2];
 var media = [];
@@ -84,15 +90,17 @@ fs.readFile('lesson.json', 'utf8', function(err, data) {
     }, []);
     
     console.log("Please wait while we bundle " + media.length + " media files");
-    for (i in media) {
+   for (i in media) {
       var filename = getFileNameFromURl(media[i]);
-      // fs_extra.ensureFileSync(target_folder + filename);
-      console.log(source_folder + media[i].split('/')[media[i].split('/').length - 2] + '/' + media[i].split('/').pop(),' to ', target_folder + filename);
+      var directory = gerDirectoryFromURL(media[i]);
+      fs_extra.ensureDirSync(directory)
+      console.log(source_folder + media[i].split('/')[media[i].split('/').length - 2] + '/' + media[i].split('/').pop(), ' to ', target_folder + filename);
       ncp(source_folder + media[i].split('/')[media[i].split('/').length - 2] + '/' + media[i].split('/').pop(), target_folder + filename, function(error) {
         if (error) {
-          console.log("Error Occured");
+          console.log("Error Occured", error);
         }
       });
-    }
-  });
+    }  
+
+});
 });
