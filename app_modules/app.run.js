@@ -51,6 +51,10 @@
       } else {
         content.replicateLessonDB();
       }
+
+      if(localStorage.first_time !== undefined){
+        User.startProfileSync();
+      }
       $log.debug(toState.name !== 'user.personalise', !User.getActiveProfileSync());
 
 
@@ -162,7 +166,6 @@
     });
     $ionicPlatform.ready(function () {
 
-      User.startProfileSync();
   
       $rootScope.inBackground = false;
 
