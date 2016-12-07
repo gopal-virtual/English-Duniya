@@ -54,7 +54,6 @@
       $log.debug(toState.name !== 'user.personalise', !User.getActiveProfileSync());
 
 
-
       if ((toState.name == 'map.navigate' || toState.name == 'user.personalise') && !User.getActiveProfileSync() && localStorage.getItem('first_time') == undefined) {
         event.preventDefault();
         $log.debug("Ionic loading show with hide on state change");
@@ -113,10 +112,10 @@
           $state.go('map.navigate');
         });
       }
-    //   if(toState.name == 'map.navigate' && !User.getActiveProfileSync()){
-    //     event.preventDefault();
-    //     $state.go('user.personalise')
-    //   }
+      if(toState.name == 'map.navigate' && !User.getActiveProfileSync()){
+        event.preventDefault();
+        $state.go('user.personalise')
+      }
       // if(toState.name == 'litmus_result' && !toParams.average_level){
       //   event.preventDefault();
       //   $state.go('user.personalise')

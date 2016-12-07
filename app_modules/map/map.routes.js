@@ -119,5 +119,14 @@
           }
         }
       })
+      .state('repaint', {
+        url: '/repaint',
+        onEnter : ['$state', '$timeout', '$log','$ionicLoading',function($state, $timeout, $log,$ionicLoading){
+            $timeout(function(){
+                $state.go('map.navigate',{})
+            },1000)
+        }],
+        template: "<ion-nav-view></ion-nav-view>"
+      })
   }
 })();

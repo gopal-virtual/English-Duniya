@@ -1089,11 +1089,6 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
         var canvas = document.querySelector('#map_canvas');
         canvas.parentNode.removeChild(canvas);
     });
-    scope.$on('reloadMap',function(){
-
-      // game.destroy();
-      // location.reload();
-    })
   // scope.$on('showInfoIcon',function (flag) {
   //   log.debug("showInfoIcon event recieved",flag);
   //   showInfoIcon = flag;

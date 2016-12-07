@@ -44,7 +44,8 @@
     'content',
     '$cordovaLocalNotification',
     'notification',
-    'device'
+    'device',
+    'multiUser'
 ];
 
   function mapController(
@@ -77,7 +78,8 @@
         content,
         $cordovaLocalNotification,
         notification,
-        device
+        device,
+        multiUser
     ) {
     $scope.audio = audio;
     $scope.settings = settings;
@@ -85,6 +87,7 @@
     temp.name = temp.first_name + ' ' + temp.last_name;
 
     $scope.settings.user = temp
+    $scope.multiUser = multiUser;
     $scope.orientation = orientation;
     $scope.activatedLesson = $stateParams.activatedLesson;
     $scope.progress = localStorage.getItem('progress');
@@ -469,6 +472,14 @@
     }).then(function(nodeMenu) {
       $scope.nodeMenu = nodeMenu;
     });
+    $ionicModal.fromTemplateUrl(CONSTANT.PATH.USER + '/user.chooseProfile' + CONSTANT.VIEW, {
+      scope: $scope,
+      animation: 'slide-in-down',
+      hardwareBackButtonClose: false
+    }).then(function(profileScreen) {
+      $scope.profileScreen = profileScreen;
+    });
+
 
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.demo' + CONSTANT.VIEW, {
       scope: $scope,
@@ -601,7 +612,8 @@
     }
 
     function goToChooseProfile() {
-      $state.go('user.chooseProfile');
+        $scope.profileScreen.show();
+    //   $state.go('user.chooseProfile');
     }
   }
 })();
