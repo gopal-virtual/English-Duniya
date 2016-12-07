@@ -80,7 +80,6 @@
           orientation.setPortrait();
           $ionicLoading.show({
             templateUrl: 'templates/common/common.loader.view.html',
-            // duration: 3000
           });
           if (!lessons) {
             $state.go('map.unauthorised');
@@ -119,6 +118,15 @@
             controller: 'mapController as mapCtrl'
           }
         }
+      })
+      .state('repaint', {
+        url: '/repaint',
+        onEnter : ['$state', '$timeout', '$log','$ionicLoading',function($state, $timeout, $log,$ionicLoading){
+            $timeout(function(){
+                $state.go('map.navigate',{})
+            },1000)
+        }],
+        template: "<ion-nav-view></ion-nav-view>"
       })
   }
 })();

@@ -58,8 +58,7 @@
       $log.debug(toState.name !== 'user.personalise', !User.getActiveProfileSync());
 
 
-
-      if (toState.name == 'user.personalise' && !User.getActiveProfileSync() && localStorage.getItem('first_time') == undefined) {
+      if ((toState.name == 'map.navigate' || toState.name == 'user.personalise') && !User.getActiveProfileSync() && localStorage.getItem('first_time') == undefined) {
         event.preventDefault();
         $log.debug("Ionic loading show with hide on state change");
 
@@ -224,10 +223,10 @@
           notification.online.set();
         }
         if(localStorage.profiles_fetched === undefined){
-          $log.debug("User online fetching profiles now");  
+          $log.debug("User online fetching profiles now");
          User.checkIfProfileOnline().then(function(){
           localStorage.setItem('profiles_fetched','true');
-         }); 
+         });
         }
 
       });

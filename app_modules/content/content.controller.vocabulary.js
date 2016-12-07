@@ -21,6 +21,7 @@
     vocabCardCtrl.submitReport = submitReport;
     vocabCardCtrl.onVocabComplete = onVocabComplete;
     vocabCardCtrl.playStarSound = playStarSound;
+    vocabCardCtrl.enable = false;
     $scope.resultStarFlag = [];
     $scope.goToMap = goToMap;
     $scope.utilities = Utilities;
@@ -83,11 +84,13 @@
 
     function prev() {
       $log.debug('Clicked : Prev')
+      vocabCardCtrl.enable = false;
       vocabCardCtrl.currentIndex = (vocabCardCtrl.currentIndex > 0) ? --vocabCardCtrl.currentIndex : vocabCardCtrl.currentIndex;
     }
 
     function next() {
       $log.debug('Clicked : Next')
+      vocabCardCtrl.enable = false;
       vocabCardCtrl.currentIndex = (vocabCardCtrl.currentIndex < vocabCardCtrl.vocab_data.length - 1) ? ++vocabCardCtrl.currentIndex : vocabCardCtrl.currentIndex;
     }
 
@@ -106,8 +109,11 @@
     }
 
     function playDelayed(sound) {
+      vocabCardCtrl.enable = false;
       $timeout(function() {
-        vocabCardCtrl.audio.player.chain(0, getLastSound(sound))
+        vocabCardCtrl.audio.player.chain(0, getLastSound(sound), function(){
+            vocabCardCtrl.enable = true;
+        })
       }, 100)
     }
 
@@ -170,7 +176,7 @@
             $scope.resultStarFlag[count] = true;
             $log.debug("sound source", starSound, count, starSound[count]);
             $log.debug("count,star,count==star-1",count,star,count == star-1);
-            audio.player.play("sound/" + starSound[count] + ".mp3");            
+            audio.player.play("sound/" + starSound[count] + ".mp3");
             if(count == star-1){
               $scope.resultPageNextShow = true;
             }
