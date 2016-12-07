@@ -1,6 +1,5 @@
 console.log("==== Bundling media ====");
 console.log("==== Note : www/bundled/ should be empty befor this operation. ====");
-
 var fs = require('fs');
 var fs_extra = require('fs-extra');
 var source_folder = 'media/ell/';
@@ -11,11 +10,17 @@ function getFileNameFromURl(url) {
   var a = url.split('/');
   return a.join('/').substr(1);
 }
-function gerDirectoryFromURL(url){
+
+function gerDirectoryFromURL(url) {
   var a = url.split('/');
   a.splice(-1);
   a.shift();
-  return target_folder+a.join('/');
+  return target_folder + a.join('/');
+}
+
+function getSourceNameFromURL(url) {
+  var a = url.split('/');
+  return a.join('/').substr(1);
 }
 var json = [];
 var lessons = process.argv[2];
@@ -25,7 +30,6 @@ media.push('/media/ell/images/person_9FDOFJ.png');
 media.push('/media/ell/images/place_KJMRCN.png');
 media.push('/media/ell/images/animal_7C4FVV.png');
 media.push('/media/ell/images/thing_0IS1M4.png');
-
 fs.readFile('lesson.json', 'utf8', function(err, data) {
   if (err) {
     return console.log(err);
@@ -88,19 +92,17 @@ fs.readFile('lesson.json', 'utf8', function(err, data) {
       if (a.indexOf(b) < 0) a.push(b);
       return a;
     }, []);
-    
     console.log("Please wait while we bundle " + media.length + " media files");
-   for (i in media) {
+    for (i in media) {
       var filename = getFileNameFromURl(media[i]);
       var directory = gerDirectoryFromURL(media[i]);
       fs_extra.ensureDirSync(directory)
-      console.log(source_folder + media[i].split('/')[media[i].split('/').length - 2] + '/' + media[i].split('/').pop(), ' to ', target_folder + filename);
-      ncp(source_folder + media[i].split('/')[media[i].split('/').length - 2] + '/' + media[i].split('/').pop(), target_folder + filename, function(error) {
+      console.log(getSourceNameFromURL(media[i]), ' to ', target_folder + filename);
+      ncp(getSourceNameFromURL(media[i]), target_folder + filename, function(error) {
         if (error) {
           console.log("Error Occured", error);
         }
       });
-    }  
-
-});
+    }
+  });
 });
