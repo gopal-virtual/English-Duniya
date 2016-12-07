@@ -17,29 +17,30 @@
             goToCreateNewProfile : goToCreateNewProfile,
             canAdd : canAdd,
             hasCurrentUser : hasCurrentUser,
-            getProfiles : (function(){
-                return User.profile.getAll().then(function (profiles) {
-                    var promises = [];
-                    $log.debug('Profile list :', profiles)
-                    for (var i = 0; i < profiles.length; i++) {
-                        if(profiles[i].doc._id == getCurrentProfile()){
-                            var currentProfile = profiles.splice(i,1)
-                        }
-                    }
-                    currentProfile && profiles.unshift(currentProfile[0]);
-                    angular.forEach(profiles, function(profile, index){
-                        promises.push(getProfileMeta(profile, profile.doc._id))
-                    })
-                    $q.all(promises).then(function(profiles){
-                        multiUser.profiles = profiles;
-                    })
-                })
-            })()
+            getProfiles : getProfiles
         };
 
         return multiUser;
 
 
+        function getProfiles() {
+            User.profile.getAll().then(function (profiles) {
+                var promises = [];
+                $log.debug('Profile list :', profiles)
+                for (var i = 0; i < profiles.length; i++) {
+                    if(profiles[i].doc._id == getCurrentProfile()){
+                        var currentProfile = profiles.splice(i,1)
+                    }
+                }
+                currentProfile && profiles.unshift(currentProfile[0]);
+                angular.forEach(profiles, function(profile, index){
+                    promises.push(getProfileMeta(profile, profile.doc._id))
+                })
+                $q.all(promises).then(function(profiles){
+                    multiUser.profiles = profiles;
+                })
+            })
+        }
 
         function hasCurrentUser (){
             return User.getActiveProfileSync() ? true : false;

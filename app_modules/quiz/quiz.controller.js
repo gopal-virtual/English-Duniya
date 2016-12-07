@@ -790,6 +790,7 @@
           $log.debug(suggestion,"Suggestion");
           User.profile.updateRoadMapData(ml.roadMapData,User.getActiveProfileSync()._id).then(function(){
             User.playlist.add(User.getActiveProfileSync()._id,suggestion).then(function(){
+                $log.debug("average level", levelRec.avgLevel)
               $state.go('litmus_result',{'average_level':levelRec.avgLevel});
             })
           })

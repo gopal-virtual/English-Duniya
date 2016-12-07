@@ -88,6 +88,7 @@
 
     $scope.settings.user = temp
     $scope.multiUser = multiUser;
+    multiUser.getProfiles();
     $scope.orientation = orientation;
     $scope.activatedLesson = $stateParams.activatedLesson;
     $scope.progress = localStorage.getItem('progress');
@@ -155,18 +156,23 @@
 
     function onBackButtonPress() {
         $log.debug('Do you want to exit?')
-        var confirmExit = $ionicPopup.confirm({
-         title: 'Exit',
-         template: 'Do you want to exit?'
-       });
+        if($scope.profileScreen.isShown()){
+            $scope.profileScreen.hide();
+        }
+        else{
+            var confirmExit = $ionicPopup.confirm({
+                title: 'Exit',
+                template: 'Do you want to exit?'
+            });
 
-       confirmExit.then(function(res) {
-         if(res) {
-           ionic.Platform.exitApp();
-         } else {
-           console.log('You are not sure');
-         }
-       });
+            confirmExit.then(function(res) {
+                if(res) {
+                    ionic.Platform.exitApp();
+                } else {
+                    console.log('You are not sure');
+                }
+            });
+        }
     }
 
     notification.getFromServer({

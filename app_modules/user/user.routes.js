@@ -58,6 +58,7 @@
             templateUrl: CONSTANT.PATH.USER + '/user.chooseProfile' + CONSTANT.VIEW,
             controller: ['multiUser','$scope',function(multiUser,$scope){
                 $scope.multiUser = multiUser;
+                multiUser.getProfiles();
             }],
             controllerAs : 'profileCtrl'
           }

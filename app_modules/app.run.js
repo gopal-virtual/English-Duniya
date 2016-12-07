@@ -58,39 +58,36 @@
       $log.debug(toState.name !== 'user.personalise', !User.getActiveProfileSync());
 
 
-      if ((toState.name == 'map.navigate' || toState.name == 'user.personalise') && !User.getActiveProfileSync() && localStorage.getItem('first_time') == undefined) {
+      if (toState.name == 'map.navigate' && !User.getActiveProfileSync()) {
         event.preventDefault();
-        $log.debug("Ionic loading show with hide on state change");
+        $log.debug("Ionic loading show with hide on state change",localStorage.getItem('first_time') == undefined , network.isOnline());
+        if(network.isOnline()){
+            $ionicLoading.show({hideOnStateChange:true});
+            localStorage.setItem('first_time','no');
+            User.checkIfProfileOnline().then(function (profiles) {
+                localStorage.setItem('profiles_fetched','true');
+                $log.debug("HERE");
 
-        $ionicLoading.show({hideOnStateChange:true});
-        localStorage.setItem('first_time','no');
-
-        if (network.isOnline()) {
-
-          User.checkIfProfileOnline().then(function (profiles) {
-            localStorage.setItem('profiles_fetched','true');
-            $log.debug("HERE");
-
-            $log.debug("Ionic loading hide should happen",profiles,profiles.total_rows > 0);
-            if (profiles.total_rows == 0) {
-              $state.go('user.personalise');
-            } else {
-              $log.debug("profile fetched online");
-              User.startProfileSync();
-              User.profile.getAll().then(function(profiles) {
-                $log.debug("Got profiles",profiles)
-                $state.go('user.chooseProfile',{'profiles':profiles});
-              })
-              $log.debug("Check if user has multiple profiles, if yes allow user to choose one");
-              // $state.go('map.navigate');
-              $log.debug("CHECK 3");
-              notification.online.set();
-              $log.debug("profile fetched online 2")
-            }
-          })
-
-        } else {
-          $state.go('user.personalise');
+                $log.debug("Ionic loading hide should happen",profiles,profiles.total_rows > 0);
+                if (profiles.total_rows == 0) {
+                    $state.go('user.personalise');
+                } else {
+                    $log.debug("profile fetched online");
+                    User.startProfileSync();
+                    User.profile.getAll().then(function(profiles) {
+                        $log.debug("Got profiles",profiles)
+                        $state.go('user.chooseProfile',{'profiles':profiles});
+                    })
+                    $log.debug("Check if user has multiple profiles, if yes allow user to choose one");
+                    // $state.go('map.navigate');
+                    $log.debug("CHECK 3");
+                    notification.online.set();
+                    $log.debug("profile fetched online 2")
+                }
+            })
+        }
+        else{
+            $state.go('user.personalise')
         }
 
       }
@@ -115,10 +112,6 @@
 
           $state.go('map.navigate');
         });
-      }
-      if(toState.name == 'map.navigate' && !User.getActiveProfileSync()){
-        event.preventDefault();
-        $state.go('user.personalise')
       }
       // if(toState.name == 'litmus_result' && !toParams.average_level){
       //   event.preventDefault();
@@ -165,7 +158,7 @@
     });
     $ionicPlatform.ready(function () {
 
-  
+
       $rootScope.inBackground = false;
 
       if (User.getActiveProfileSync()) {
