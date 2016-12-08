@@ -138,8 +138,8 @@
         var now = new Date().getTime();
         data['at'] = new Date(now + time * 60000);
       }
-      data['icon'] = 'res://ic_stat_english_duniya';
-      data['smallIcon'] = 'res://icon';
+      data['icon'] = 'res://icon';
+      data['smallIcon'] = 'res://ic_stat_english_duniya';
       // data['icon'] = "http://www.company-name-generator.com/blog/wp-content/uploads/2010/10/BMW_logo_small.png"
       // data['smallIcon'] = "http://www.company-name-generator.com/blog/wp-content/uploads/2010/10/BMW_logo_small.png"
       $log.debug("THIS IS DATA",data)
