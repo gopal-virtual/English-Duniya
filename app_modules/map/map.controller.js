@@ -618,6 +618,7 @@
     }
 
     function goToChooseProfile() {
+        multiUser.getProfiles()
         $scope.profileScreen.show();
     //   $state.go('user.chooseProfile');
     }

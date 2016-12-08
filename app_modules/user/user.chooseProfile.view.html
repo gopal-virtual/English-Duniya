@@ -128,14 +128,14 @@
     </div>
     <ion-content class="has-headers">
         <div class="profile-box-container">
-            <div ng-tap="profile.id != multiUser.getCurrentProfile() && multiUser.selectProfile(profile);profileScreen.hide()" ng-click="profile.id != multiUser.getCurrentProfile() && multiUser.selectProfile(profile);profileScreen.hide()" class="profile-box animation-fade-in-from-top" style="-webkit-animation-delay: {{$index*100}}ms;" ng-class="::{true : 'profile-box-darkblue', false : 'profile-box-blue'}[multiUser.getCurrentProfile() == profile.doc._id]" ng-repeat="profile in ::multiUser.profiles | limitTo : 4">
+            <div ng-tap="profile.id != multiUser.getCurrentProfile() && multiUser.selectProfile(profile);profileScreen.hide()" ng-click="profile.id != multiUser.getCurrentProfile() && multiUser.selectProfile(profile);profileScreen.hide()" class="profile-box" ng-class="::{true : 'profile-box-darkblue', false : 'profile-box-blue'}[multiUser.getCurrentProfile() == profile.doc._id]" ng-repeat="profile in multiUser.profiles | limitTo : 4">
                 <div class="font-lg" ng-class="::{true : 'font-pale' , false : 'font-blue'}[multiUser.getCurrentProfile() == profile.doc._id]">
                     {{::profile.doc.data.profile.first_name}}
                 </div>
                 <div>
                     <img class="profile-avatar" ng-src="img/assets_svg/profile-{{::profile.doc.data.profile.gender == 'M' ? 'boy' : 'girl'}}.svg">
                     <div class="profile-level">
-                        <strong>{{::profile.levels}}</strong>
+                        <strong>{{profile.levels}}</strong>
                     </div>
                     <div class="profile-level-ribbon-tail">
                     </div>
@@ -143,12 +143,12 @@
                 <div class="profile-star-small">
                     <img src="img/assets_svg/star-yellow.svg" alt="">
                     <span class="font-xl" ng-class="::{true : 'font-bright-gold', false : 'font-off-gold'}[multiUser.getCurrentProfile() == profile.doc._id]">
-                        {{::profile.stars}}
+                        {{profile.stars}}
                     </span>
                 </div>
             </div>
             <!-- ng-show="multiUser.canAdd()" -->
-            <div  ng-show="::multiUser.canAdd()" class="profile-box profile-box-add" ng-tap="multiUser.goToCreateNewProfile();profileScreen.hide()" ng-click="multiUser.goToCreateNewProfile();profileScreen.hide()">
+            <div  ng-show="multiUser.canAdd()" class="profile-box profile-box-add" ng-tap="multiUser.goToCreateNewProfile();profileScreen.hide()" ng-click="multiUser.goToCreateNewProfile();profileScreen.hide()">
                 <img src="img/assets_svg/add_sign.svg" alt="">
             </div>
         </div>

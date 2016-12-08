@@ -246,10 +246,11 @@
         },
         templateUrl: CONSTANT.PATH.QUIZ + '/quiz.litmus_summary' + CONSTANT.VIEW,
 
-        controller: ['$log', 'User', 'audio', '$timeout', '$stateParams', '$scope', '$state', function($log, User, audio, $timeout, $stateParams, $scope, $state) {
+        controller: ['$log', 'User', 'audio', '$timeout', '$stateParams', '$scope', '$state', '$ionicLoading', function($log, User, audio, $timeout, $stateParams, $scope, $state, $ionicLoading) {
           $scope.gender = User.getActiveProfileSync().data.profile.gender == 'M' ? 'boy' : 'girl';
 		  $scope.average_level = $stateParams.average_level ? $stateParams.average_level : 1;
 		  $scope.redirect = function(){
+              $ionicLoading.show({hideOnStateChange:true})
               if($stateParams.average_level < 4){
                   $state.go('map.navigate',{})
               }
@@ -266,9 +267,10 @@
         },
         templateUrl: CONSTANT.PATH.COMMON + '/common.no_content' + CONSTANT.VIEW,
 
-        controller: ['$log', 'User', 'audio', '$timeout', '$stateParams', '$scope', '$state', function($log, User, audio, $timeout, $stateParams, $scope, $state) {
+        controller: ['$log', 'User', 'audio', '$timeout', '$stateParams', '$scope', '$state', '$ionicLoading', function($log, User, audio, $timeout, $stateParams, $scope, $state, $ionicLoading) {
           $scope.gender = User.getActiveProfileSync().data.profile.gender == 'M' ? 'boy' : 'girl';
 		  $scope.redirect = function(){
+              $ionicLoading.show({hideOnStateChange:true})
 			  $state.go('map.navigate',{})
 		  }
         }]
