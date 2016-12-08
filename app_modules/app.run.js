@@ -62,8 +62,8 @@
             $log.debug("Checked if profile online")
             localStorage.setItem('profiles_fetched', 'true');
             User.profile.getAll().then(function(profiles) {
-              $log.debug("Got profiles", profiles);
-              if (profiles.total_rows == 0) {
+              if (profiles.length == 0) {
+                $log.debug("Going to user personalise");
                 $state.go('user.personalise');
               } else {
                 $state.go('user.chooseProfile', {

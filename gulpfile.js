@@ -72,6 +72,13 @@ var environments = {
   test: 'TESTING',
   content : 'CONTENT'
 };
+var raven_key = {
+  default: 'http://d52f1916c41a41e9b6506dddf7e805fa@zsentry.zaya.in/4',
+  production: 'http://886f9ba54ac1453c9fcf2e2bdae62831@zsentry.zaya.in/6',
+  dev: 'http://d52f1916c41a41e9b6506dddf7e805fa@zsentry.zaya.in/4',
+  test: 'http://d52f1916c41a41e9b6506dddf7e805fa@zsentry.zaya.in/4',
+  content : 'http://d52f1916c41a41e9b6506dddf7e805fa@zsentry.zaya.in/4'
+};
 var env = argument.argv.env ? environments[argument.argv.env] : environments.default;
 var app_type = argument.argv.app_type ? argument.argv.app_type : 'na';
 var is_bundled = argument.argv.is_bundled ? argument.argv.is_bundled : false;
@@ -87,7 +94,7 @@ var xml       = file.readFileSync('./config.xml');
 var content         = cheerio.load(xml, { xmlMode: true });
 app_version   = content('widget')[0].attribs.version;
 console.log("VERSION",app_version);
-
+console.log("envi",raven_key[argument.argv.env])
 
 gulp.task('default', function(callback){
   runSequence('generate-lessondb','get-diagnosis-media','make-main','generate-constants', 'sass', 'html', 'scripts',callback);
@@ -103,6 +110,8 @@ gulp.task('get-lessondb-version', function () {
   var res = request('GET', 'http://ci-couch.zaya.in/lessonsdb/version');
   lesson_db_version = JSON.parse(res.getBody().toString()).version;
 });
+
+
 // gulp.task('optimize', function(cb) {
 //   gulp.src(paths.image)
 //     .pipe(optimization())
@@ -124,6 +133,10 @@ gulp.task('make-main',function(){
         {
           match : /\/\*raven_environment_start\*\/[\'\'\.0-9a-zA-Z]+\/\*raven_environment_end\*\//g,
           replacement: '/*raven_environment_start*/\''+env+'\'/*raven_environment_end*/'
+        },
+        {
+          match : /\/\*raven_key_start\*\/'https?:\/\/[:a-zA-Z0-9@.\/']+\/\*raven_key_end\*\//g,
+          replacement: '/*raven_key_start*/\''+raven_key[argument.argv.env]+'\'/*raven_key_end*/'
         }
       ]
 
