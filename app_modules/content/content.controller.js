@@ -60,6 +60,7 @@
     $scope.goToMap = goToMap;
     contentCtrl.playStarSound = playStarSound;
     contentCtrl.videoCompleted = false;
+    var timeout = '';
     $log.debug('$stateParams', $stateParams)
     contentCtrl.config = {
       sources: [$stateParams.video],
@@ -71,7 +72,7 @@
       },
       theme: "lib/videogular-themes-default/videogular.css"
     };
-    $timeout(function() {
+    timeout = $timeout(function() {
       contentCtrl.config.plugins.controls.showControl = false;
     }, 2000);
     //   $ionicPlatform.registerBackButtonAction(function(event) {
@@ -122,12 +123,12 @@
       for (var i = 0; i < star; i++) {
         $log.debug("sound source", starSound[i]);
         (function(count) {
-          $timeout(function() {
+          timeout = $timeout(function() {
             $scope.resultStarFlag[count] = true;
             $log.debug("sound source", starSound, count, starSound[count]);
-            $log.debug("count,star,count==star-1",count,star,count == star-1);
-            audio.player.play("sound/" + starSound[count] + ".mp3");  
-            if(count == star-1){
+            $log.debug("count,star,count==star-1", count, star, count == star - 1);
+            audio.player.play("sound/" + starSound[count] + ".mp3");
+            if (count == star - 1) {
               $scope.resultPageNextShow = true;
             }
           }, (count + 1) * 1000);
@@ -176,26 +177,24 @@
         stars: 3
       }
       orientation.setPortrait();
-      submitReport()
-      
-          $log.debug("onvideocompleted sound played");
-      audio.player.play('sound/yay_we_learned_a_lot_from_video.mp3',function(){
-          contentCtrl.playStarSound();
-})
-          $timeout(function() {
-            $scope.resultPageNextShow = false;
-              $scope.ribbon_modal.hide();
-              $scope.resultMenu.show();
-              analytics.log({
-                      name: 'VIDEO',
-                      type: 'END',
-                      id: $stateParams.video.id
-                  }, {
-                      time: new Date()
-                  },
-                  User.getActiveProfileSync()._id
-              )
-          })
+      submitReport();
+      audio.player.play('sound/yay_we_learned_a_lot_from_video.mp3', function() {
+        contentCtrl.playStarSound();
+      })
+      timeout = $timeout(function() {
+        $scope.resultPageNextShow = false;
+        $scope.ribbon_modal.hide();
+        !$scope.resultMenu.isShown() && $scope.resultMenu.show();
+        analytics.log({
+            name: 'VIDEO',
+            type: 'END',
+            id: $stateParams.video.id
+          }, {
+            time: new Date()
+          },
+          User.getActiveProfileSync()._id
+        )
+      })
     }
 
     function submitReport() {
@@ -275,7 +274,7 @@
           angular.element("#audioplayer")[0].onended = intro_end_video;
         } else {
           $log.debug(contentCtrl.API, "here");
-          $timeout(function() {
+          timeout = $timeout(function() {
             intro_end_video()
             contentCtrl.play();
           }, 1000)
@@ -290,7 +289,7 @@
 
     function onStateChange(state) {
       if (state == 'play') {
-        $timeout(function() {
+        timeout = $timeout(function() {
           orientation.setLandscape();
         })
       }
@@ -343,20 +342,22 @@
     });
 
     $scope.$on('appResume', function() {
-      if ($scope.ribbon_modal.isShown()) {
-        audio.player.resume();
-        angular.element("#audioplayer")[0].onended = intro_end_video;
-      }
-      if($scope.resultMenu.isShown()) {
-        audio.player.resume();
-        angular.element("#audioplayer")[0].onended = contentCtrl.playStarSound;
-
-
-      }
-
-
-    });
-    // $scope.nodeRibbon;
+        if (!$scope.ribbon_modal.isShown() && !$scope.resultMenu.isShown()) {
+          contentCtrl.API.pause();
+          $scope.openNodeMenu();
+        } else if ($scope.ribbon_modal.isShown()) {
+          audio.player.resume();
+          angular.element("#audioplayer")[0].onended = intro_end_video;
+        } else if ($scope.resultMenu.isShown()) {
+            // contentCtrl.onVideoComplete();
+        }
+        else{}
+      })
+      $scope.$on('appPause', function() {
+        audio.player.removeCallback();
+        audio.player.stop();
+        $timeout.cancel(timeout);
+      })
 
 
   }

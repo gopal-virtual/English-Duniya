@@ -10,6 +10,7 @@
   /* @ngInject */
   function vocabularyCardController($log, $state, audio, $timeout, $interval, $scope, $stateParams, CONSTANT, lessonutils, User, analytics, orientation, $ionicModal, Utilities, $ionicLoading) {
     var vocabCardCtrl = this;
+    var timeout = '';
     vocabCardCtrl.prev = prev;
     vocabCardCtrl.next = next;
     vocabCardCtrl.currentIndex = 0;
@@ -70,7 +71,6 @@
       });
     }
 
-
     function goToMap() {
       $log.debug('going to map.navigate');
       $ionicLoading.show({
@@ -110,7 +110,7 @@
 
     function playDelayed(sound) {
       vocabCardCtrl.enable = false;
-      $timeout(function() {
+      timeout = $timeout(function() {
         vocabCardCtrl.audio.player.chain(0, getLastSound(sound), function(){
             vocabCardCtrl.enable = true;
         })
@@ -155,9 +155,6 @@
         })
     }
 
-
-
-
     function playStarSound() {
       var starSound = ["one_star", "two_star", "three_star"];
       var star = 0;
@@ -172,7 +169,7 @@
       for (var i = 0; i < star; i++) {
         // $log.debug("sound source", starSound[i]);
         (function(count) {
-             $timeout(function() {
+             timeout = $timeout(function() {
             $scope.resultStarFlag[count] = true;
             $log.debug("sound source", starSound, count, starSound[count]);
             $log.debug("count,star,count==star-1",count,star,count == star-1);
@@ -191,7 +188,7 @@
       }
       vocabCardCtrl.playStarSound();
       submitReport()
-      $timeout(function() {
+      timeout = $timeout(function() {
         orientation.setPortrait();
         //   $scope.ribbon_modal.hide();
         $scope.resultPageNextShow = false;
@@ -210,6 +207,21 @@
 
     playDelayed(vocabCardCtrl.vocab_data[vocabCardCtrl.currentIndex].node.type.sound);
 
+    $scope.$on('appResume', function(){
+        // show pause menu
+        vocabCardCtrl.audio.player.removeCallback();
+        vocabCardCtrl.audio.player.stop();
+        vocabCardCtrl.enable = true;
+        if(!$scope.resultMenu.isShown()){
+            openPauseMenu();
+        }
+    })
+    $scope.$on('appPause', function(){
+        vocabCardCtrl.audio.player.removeCallback();
+        vocabCardCtrl.audio.player.stop();
+        vocabCardCtrl.enable = true;
+        $timeout.cancel( timeout );
+    })
 
   }
 })();
