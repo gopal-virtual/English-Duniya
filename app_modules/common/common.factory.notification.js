@@ -156,15 +156,13 @@
     function defineType(data,type){
       $log.info("Defining types ...")
       var now = new Date().getTime();
-      // $log.debug("This is the time",new Date(now + 10 * 60000))
+      $log.debug("This is the time",(new Date(now + 10 * 60000)).toString())
       var returnType;
       switch(type){
         case 'discovered':
           returnType = {
             id: data._id,
-            at: (function(){
-              return new Date(now + CONSTANT.NOTIFICATION.DISCOVERED * 60000);
-            })(),
+            at: CONSTANT.NOTIFICATION.DURATION.DISCOVERED,
             title: "Let's play",
             text: "Hey, let's resume your learning"
           };
@@ -172,9 +170,7 @@
         case 'undiscovered':
           returnType = {
             id: data._id,
-            at: (function(){
-              return new Date(now + CONSTANT.NOTIFICATION.UNDISCOVERED * 60000);
-            })(),
+            at: CONSTANT.NOTIFICATION.DURATION.UNDISCOVERED,
             title: data.title,
             text: data.text
           };
@@ -182,6 +178,7 @@
         default:
           returnType = false;
       }
+      $log.debug('define',returnType);
       return returnType;
     }
 
