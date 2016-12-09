@@ -280,6 +280,25 @@
     }
 
 
+    function onlinePatch(newToken){
+      $log.debug('patching with nnew fcm token ...')
+      $http({
+        method: 'PATCH',
+        url: CONSTANT.BACKEND_SERVICE_DOMAIN+'/api/v1/devices/'+device.uuid,
+        data: {
+              reg_id : newToken,
+              is_active: true
+            }
+      }).then(function successCallback(response) {
+        $log.debug("successfully patched", response.data[0])
+      }, function errorCallback(response) {
+        $log.error("Not successfully patched", response)
+        // if (response.status == 400) {
+        //   $log.warn("This is totally okay. The user is already registered for notification.")
+        // }
+      }); 
+    }
+
     function cancelAll(){
       try{
         return $cordovaLocalNotification.cancelAll()
@@ -290,8 +309,8 @@
 
     function onlineSet() {
       $log.debug("APP RUN USER RGISTERD");
+      console.log('CONSTANT.CONFIG.NOTIFICATION.SENDERID',CONSTANT.CONFIG.NOTIFICATION.SENDERID)
       try{
-        // localStorage.myPush = ''; // I use a localStorage variable to persist the token
         $cordovaPushV5.initialize(  // important to initialize with the multidevice structure !!
           {
             android: {
@@ -301,76 +320,43 @@
         ).then(function (result) {
           $cordovaPushV5.onNotification();
           $cordovaPushV5.onError();
-          // if (localStorage.pushKey) {
-            // $log.debug("notifId ",localStorage.pushKey);
-            // onlineRegister({
-            //     dev_id: device.uuid,
-            //     dev_type: "ANDROID",
-            //     reg_id: resultreg
-            // });
-          // }else{
+          $cordovaPushV5.register().then(function (resultreg) {
+            console.log('NOTIFICATION. Registered with FCM server',resultreg)
+          })
+            // getFromServer({
+            //   dev_id: device.uuid
+            // }).then(function(response) {
+            //   if (!response.data[0]) {
+            //     $log.warn("You aren\'t registered with the server")
+            //     $log.debug("we will register you soon. But first let\'s get your token from FCM server");
+               
+            //     $cordovaPushV5.register().then(function (resultreg) {
+            //       $log.debug("We got your token from FCM server. \nToken: "+resultreg+"\n Registering you with the server now")
+            //       onlineRegister({
+            //         dev_id: device.uuid,
+            //         dev_type: "ANDROID",
+            //         reg_id: resultreg
+            //       });
 
-            getFromServer({
-              dev_id: device.uuid
-            }).then(function(response) {
-              if (!response.data[0]) {
-                $log.warn("You aren\'t registered with the server")
-                $log.debug("we will register you soon. But first let\'s get your token from FCM server")
-                if(localStorage.pushKey){
-                  $log.debug("Looks like your app already has a FCM token in the localstorage. Let\'s register you on the server with it")
-                  onlineRegister({
-                    dev_id: device.uuid,
-                    dev_type: "ANDROID",
-                    reg_id: localStorage.pushKey
-                  });
-                }else{
-                  $cordovaPushV5.register().then(function (resultreg) {
-                    $log.debug("We got your token from FCM server. \nToken: "+resultreg+"\n Registering you with the server now")
-                    onlineRegister({
-                      dev_id: device.uuid,
-                      dev_type: "ANDROID",
-                      reg_id: resultreg
-                    });   
-                    localStorage.setItem('pushKey',resultreg);
-                  });
-                }
-                // onlineRegister({
-                //   dev_id: device.uuid,
-                //   dev_type: "ANDROID",
-                //   reg_id: resultreg
-                // });
-              }else{
-                $log.warn("You are already registered with notificaton server\n", response)
-              }
-            }, function(response) {
-              $log.error("We couldn't get", response)
-            });
-
-            // $cordovaPushV5.register().then(function (resultreg) {
-            //   // localStorage.myPush = resultreg;
-            //   // $log.debug("this is supposed to go to server");
-            //   // $log.debug({
-            //   //   dev_id: device.uuid,
-            //   //   reg_id: resultreg
-            //   // });
-            //   localStorage.setItem('pushKey',resultreg);
-            //   // $log.debug(device,"Check this please");
-            //   onlineRegister({
-            //     dev_id: device.uuid,
-            //     dev_type: "ANDROID",
-            //     reg_id: resultreg
-            //   });
-
-            //   $log.debug('Sending to server',resultreg);
-            //   // SEND THE TOKEN TO THE SERVER, best associated with your device id and user
-            // }, function (err) {
-            //   $log.debug("Some error occured",err);
-            //   // handle error
+            //       localStorage.setItem('pushKey',resultreg);
+            //     },function(err){
+            //       $log.error('Cant register with server \n',err)
+            //     });
+            //     $log.debug("HOLALALA notification is driving me crazy")
+            //   }else if(response.data[0] && !response.data[0].is_active){
+            //     $log.warn("Your fcm token has expired. Getting you a new token")
+            //     $cordovaPushV5.register().then(function (resultreg) {
+            //       $log.debug("We got your token from FCM server. \nToken: "+resultreg+"\n Registering you with the server now")
+            //       onlinePatch(resultreg);   
+            //       localStorage.setItem('pushKey',resultreg);
+            //     });
+            //   }else{
+            //     $log.warn("You are already registered with notificaton server and are active. No need for a new token\n", response)
+            //   }
+            // }, function(response) {
+            //   $log.error("We couldn't get", response)
             // });
 
-
-
-          // }
         });
 
 
