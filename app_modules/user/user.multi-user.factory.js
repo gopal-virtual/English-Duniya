@@ -24,6 +24,8 @@
 
 
         function getProfiles() {
+            multiUser.profiles = [];
+            $log.debug('get profiles')
             User.profile.getAll().then(function (profiles) {
                 var promises = [];
                 $log.debug('Profile list :', profiles)

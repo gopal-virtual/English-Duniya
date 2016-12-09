@@ -57,21 +57,25 @@
                       $scope.vocab_data = $stateParams.vocab_data;
                       vocabIntroCtrl.playDelayed = playDelayed;
                       $scope.userGender = User.getActiveProfileSync().data.profile.gender;
-                      $log.debug("Rootscope",$rootScope);
+                      var timeout = '';
+
                       function playDelayed (url) {
-                          $timeout(function(){
+                          timeout = $timeout(function(){
                               audio.player.play(url, function(){
                                   $state.go('content.vocabulary.overview',{})
                               });
                           },100);
                       }
-                      $scope.$on('appResume',function(){
-                        audio.player.resume();
-                        audio.player.addCallback(function(){
-                                  $state.go('content.vocabulary.overview',{})
-                              });
-                      });
                       vocabIntroCtrl.playDelayed(vocabIntroCtrl.vocab_data.node.parsed_sound);
+
+                      $scope.$on('appResume', function(){
+                          vocabIntroCtrl.playDelayed(vocabIntroCtrl.vocab_data.node.parsed_sound);
+                      })
+                      $scope.$on('appPause', function(){
+                          audio.player.removeCallback();
+                          $timeout.cancel( timeout );
+                      })
+
                   }],
                   controllerAs : 'vocabIntroCtrl'
               }
@@ -116,14 +120,24 @@
                       vocabInstructionCtrl.params = $stateParams;
                       vocabInstructionCtrl.playDelayed = playDelayed;
                       $scope.userGender = User.getActiveProfileSync().data.profile.gender;
+                      var timeout = '';
                       function playDelayed (url) {
-                          $timeout(function(){
+                          timeout = $timeout(function(){
                               audio.player.play(url, function(){
                                   $state.go('content.vocabulary.card',{})
                               })
                           },100)
                       }
                       vocabInstructionCtrl.playDelayed('sound/now_its_your_turn.mp3')
+
+                      $scope.$on('appResume', function(){
+                          vocabInstructionCtrl.playDelayed('sound/now_its_your_turn.mp3')
+                      })
+                      $scope.$on('appPause', function(){
+                          vocabInstructionCtrl.audio.player.removeCallback();
+                          $timeout.cancel( timeout );
+                      })
+
                   }],
                   controllerAs : 'vocabInstructionCtrl'
               }

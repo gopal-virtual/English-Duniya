@@ -17,6 +17,7 @@
         vocabOverviewCtrl.automateCard = automateCard;
         vocabOverviewCtrl.CONSTANT = CONSTANT;
         vocabOverviewCtrl.getSoundArr = getSoundArr;
+        var timeout = '';
 
         $log.debug('vocab state params',$stateParams)
 
@@ -24,6 +25,10 @@
             $timeout(function(){
                 vocabOverviewCtrl.audio.player.play(url)
             },100)
+        }
+
+        function setCurrentIndex(index){
+            vocabOverviewCtrl.currentIndex = index;
         }
 
         function getSoundArr (soundArr) {
@@ -40,7 +45,7 @@
                 0, getSoundArr(sound),
                 function(){
                     if(vocabOverviewCtrl.currentIndex < vocabOverviewCtrl.vocab_data.length - 1){
-                        $timeout(function(){
+                        timeout = $timeout(function(){
                             ++vocabOverviewCtrl.currentIndex;
                             vocabOverviewCtrl.automateCard()
                         },1000)
@@ -54,6 +59,14 @@
         ++vocabOverviewCtrl.currentIndex;
         automateCard();
 
+        $scope.$on('appResume', function(){
+            setCurrentIndex(0);
+            automateCard();
+        })
+        $scope.$on('appPause', function(){
+            vocabOverviewCtrl.audio.player.removeCallback();
+            $timeout.cancel( timeout );
+        })
 
     }
 })();

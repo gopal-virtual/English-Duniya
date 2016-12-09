@@ -1,37 +1,37 @@
 //To do : handle native back button
 (function() {
   angular
-  .module('zaya-quiz')
-  .controller('QuizController', QuizController)
+    .module('zaya-quiz')
+    .controller('QuizController', QuizController)
 
   QuizController.$inject = [
-  'quiz',
-  'widgetParser',
-  '$stateParams',
-  '$state',
-  '$scope',
-  'audio',
-  '$log',
-  '$ionicModal',
-  'CONSTANT',
-  '$ionicSlideBoxDelegate',
-  'Utilities',
-  'Auth',
-  '$ionicLoading',
-  '$ionicPopup',
-  'lessonutils',
-  'orientation',
-  '$ionicScrollDelegate',
-  '$timeout',
-  '$interval',
-  '$q',
-  'ml',
-  'data',
-  '$ionicPlatform',
-  'nzTour',
-  'analytics',
-  'User',
-  'content'
+    'quiz',
+    'widgetParser',
+    '$stateParams',
+    '$state',
+    '$scope',
+    'audio',
+    '$log',
+    '$ionicModal',
+    'CONSTANT',
+    '$ionicSlideBoxDelegate',
+    'Utilities',
+    'Auth',
+    '$ionicLoading',
+    '$ionicPopup',
+    'lessonutils',
+    'orientation',
+    '$ionicScrollDelegate',
+    '$timeout',
+    '$interval',
+    '$q',
+    'ml',
+    'data',
+    '$ionicPlatform',
+    'nzTour',
+    'analytics',
+    'User',
+    'content'
   ];
 
   function QuizController(
@@ -62,7 +62,7 @@
     analytics,
     User,
     content
-    ) {
+  ) {
 
     var quizCtrl = this;
     //bind quiz resolved to controller
@@ -179,28 +179,28 @@
       }
     }
 
-    function isScroll(id){
+    function isScroll(id) {
 
     }
 
-    function redo(){
+    function redo() {
 
-     if(quizCtrl.quiz.objects[0].node.id === CONSTANT.QUESTION.DEMO){
-       quizCtrl.quiz.objects.shift()
-     }
-     lessonutils.playResource(quizCtrl.quiz)
-   }
+      if (quizCtrl.quiz.objects[0].node.id === CONSTANT.QUESTION.DEMO) {
+        quizCtrl.quiz.objects.shift()
+      }
+      lessonutils.playResource(quizCtrl.quiz)
+    }
 
-   function stopTimer() {
-    $interval.cancel(quizCtrl.interval);
-  }
+    function stopTimer() {
+      $interval.cancel(quizCtrl.interval);
+    }
 
-  function startTimer() {
-    quizCtrl.interval = $interval(function() {
-      quizCtrl.counter++;
-      quizCtrl.timer += 1000;
-    }, 1000);
-  }
+    function startTimer() {
+      quizCtrl.interval = $interval(function() {
+        quizCtrl.counter++;
+        quizCtrl.timer += 1000;
+      }, 1000);
+    }
 
     // function starCount(index) {
     //   var count = quizCtrl.summary.stars - index;
@@ -208,28 +208,28 @@
     // }
 
     function playStarSound() {
-      var starSound = ["one_star","two_star","three_star"];
+      var starSound = ["one_star", "two_star", "three_star"];
       var star = 0;
       if (quizCtrl.summary.stars) {
         star = quizCtrl.summary.stars;
       } else if (quizCtrl.summary.score.percent) {
         star = quizCtrl.summary.score.percent > CONSTANT.STAR.THREE ? 3 : quizCtrl.summary.score.percent > CONSTANT.STAR.TWO ? 2 : quizCtrl.summary.score.percent > CONSTANT.STAR.ONE ? 1 : 0;
-      } else  {
-              star = 0;
+      } else {
+        star = 0;
       }
-      $log.debug("playing star sound", star );
+      $log.debug("playing star sound", star);
       for (var i = 0; i < star; i++) {
-        $log.debug("sound source",starSound[i]);
-        (function(count){
-          $timeout( function() {
+        $log.debug("sound source", starSound[i]);
+        (function(count) {
+          $timeout(function() {
             $scope.resultStarFlag[count] = true;
-            $log.debug("sound source",starSound,count,starSound[count]);
-            audio.player.play("sound/"+starSound[count]+".mp3")
+            $log.debug("sound source", starSound, count, starSound[count]);
+            audio.player.play("sound/" + starSound[count] + ".mp3")
               // angular.element("#audioplayer")[0].pause();
               // angular.element("#audioSource")[0].src = ;
               // angular.element("#audioplayer")[0].load();
               // angular.element("#audioplayer")[0].play();
-          },(count+1)*1000);
+          }, (count + 1) * 1000);
         })(i);
 
       }
@@ -240,35 +240,35 @@
       var lesson = lessonutils.getLocalLesson();
 
       User.skills.update({
-        profileId: User.getActiveProfileSync()._id,
-        lessonId: quiz.parent,
-        id: quiz.node.id,
-        score: summary.score.marks,
-        totalScore: quizCtrl.quiz.node.type.score,
-        skill: quiz.node.tag
-      })
-      .then(function() {
-        return data.getQuizScore({
-          'profileId': User.getActiveProfileSync()._id,
-          'lessonId': lesson.node.id,
-          'id': quizCtrl.quiz.node.id
-        });
-      })
-      .then(function(previousScore) {
-        if ((!previousScore) || (!previousScore.hasOwnProperty('score')) || (previousScore && parseInt(previousScore.score) < summary.score.marks)) {
+          profileId: User.getActiveProfileSync()._id,
+          lessonId: quiz.parent,
+          id: quiz.node.id,
+          score: summary.score.marks,
+          totalScore: quizCtrl.quiz.node.type.score,
+          skill: quiz.node.tag
+        })
+        .then(function() {
+          return data.getQuizScore({
+            'profileId': User.getActiveProfileSync()._id,
+            'lessonId': lesson.node.id,
+            'id': quizCtrl.quiz.node.id
+          });
+        })
+        .then(function(previousScore) {
+          if ((!previousScore) || (!previousScore.hasOwnProperty('score')) || (previousScore && parseInt(previousScore.score) < summary.score.marks)) {
 
-          return User.scores.update({
-            profileId: User.getActiveProfileSync()._id,
-            lessonId: lesson.node.id,
-            id: quiz.node.id,
-            score: summary.score.marks,
-            totalScore: quizCtrl.quiz.node.type.score,
-            type: 'assessment',
-            skill: quiz.node.tag
-          })
+            return User.scores.update({
+              profileId: User.getActiveProfileSync()._id,
+              lessonId: lesson.node.id,
+              id: quiz.node.id,
+              score: summary.score.marks,
+              totalScore: quizCtrl.quiz.node.type.score,
+              type: 'assessment',
+              skill: quiz.node.tag
+            })
 
-        }
-      })
+          }
+        })
 
       .then(function() {
         var attempts = [];
@@ -294,9 +294,9 @@
     function disableSwipe() {
       $ionicSlideBoxDelegate.enableSlide(false);
     }
+
     function init(quiz) {
-      if ($state.current.name == "quiz.start") {
-      }
+      if ($state.current.name == "quiz.start") {}
       if ($state.current.name == "quiz.summary") {
         quizCtrl.report = $stateParams.report;
         quizCtrl.quiz = $stateParams.quiz;
@@ -304,7 +304,7 @@
         quizCtrl.playStarSound();
       } else if ($state.current.name == "quiz.questions") {
         quizCtrl.setCurrentIndex(0);
-        quizCtrl.logQuestion(0,'START');
+        quizCtrl.logQuestion(0, 'START');
         if ($stateParams.type == 'assessment') {
           quizCtrl.startTimer();
         }
@@ -319,16 +319,16 @@
             $scope.modal = modal;
           });
           $scope.openModal = function() {
-            $log.debug("openModal" );
-            $scope.modal.show().then(function(){
+            $log.debug("openModal");
+            $scope.modal.show().then(function() {
               $timeout(function() {
-                $log.debug("openModal timeout triggered, is modal shown",$scope.modal.isShown());
-                if(quizCtrl.currentIndex == quizCtrl.quiz.objects.length - 1){
+                $log.debug("openModal timeout triggered, is modal shown", $scope.modal.isShown());
+                if (quizCtrl.currentIndex == quizCtrl.quiz.objects.length - 1) {
                   $log.debug("PRactice end");
                 }
                 quizCtrl.practiceEnd = true;
                 if ($scope.modal.isShown()) {
-                  $log.debug("openModal closing modal " );
+                  $log.debug("openModal closing modal ");
 
                   $scope.closeModal(quizCtrl.closeModalCallback);
                 }
@@ -337,14 +337,14 @@
 
           };
           $scope.closeModal = function(callback) {
-            $log.debug("closeModal" );
+            $log.debug("closeModal");
 
             quizCtrl.canRemoveFeedback = false;
             $scope.modal.hide().then(function() {
-              $log.debug("closeModal modal hidden" );
+              $log.debug("closeModal modal hidden");
 
-              if(callback){
-                $log.debug("closeModal callback found " );
+              if (callback) {
+                $log.debug("closeModal callback found ");
 
                 callback();
               }
@@ -379,18 +379,20 @@
       }
 
     }
-    function closeModalCallback () {
-      $log.debug("closeModalCallback" );
+
+    function closeModalCallback() {
+      $log.debug("closeModalCallback");
 
       if (quizCtrl.currentIndex >= quizCtrl.quiz.objects.length - 1) {
-        $log.debug("closeModalCallback quizCtrl.currentIndex >= quizCtrl.quiz.objects.length - 1" );
+        $log.debug("closeModalCallback quizCtrl.currentIndex >= quizCtrl.quiz.objects.length - 1");
 
         quizCtrl.submitQuiz('practice');
       } else {
-        $log.debug("closeModalCallback quizCtrl.currentIndex < quizCtrl.quiz.objects.length - 1" );
+        $log.debug("closeModalCallback quizCtrl.currentIndex < quizCtrl.quiz.objects.length - 1");
         $ionicSlideBoxDelegate.slide(quizCtrl.getCurrentIndex() + 1);
       }
     }
+
     function parseHtml(index) {
       quizCtrl.quiz.objects[index].node.widgetHtml = quizCtrl.widgetParser.parseToDisplay(quizCtrl.quiz.objects[index].node.title, index, quizCtrl.quiz);
 
@@ -448,7 +450,7 @@
       $log.debug("get Feedback");
       quizCtrl.submitAttempt(question.node.id, question.attempted);
       if (quizCtrl.isCorrectAttempted(question)) {
-        $log.debug("get Feedback Correct" );
+        $log.debug("get Feedback Correct");
 
         audio.play('correct');
         quizCtrl.summary.analysis[question.node.id] = {
@@ -456,11 +458,11 @@
           status: 'correct',
           score: question.node.type.score
         }
-        quizCtrl.summary.score.marks += question.node.id!=CONSTANT.QUESTION.DEMO ? question.node.type.score : 0;
+        quizCtrl.summary.score.marks += question.node.id != CONSTANT.QUESTION.DEMO ? question.node.type.score : 0;
         quizCtrl.summary.score.percent = parseInt((quizCtrl.summary.score.marks / quizCtrl.quiz.node.type.score) * 100);
         quizCtrl.summary.stars = quizCtrl.calculateStars(quizCtrl.summary.score.percent);
       } else {
-        $log.debug("get Feedback Wrong" );
+        $log.debug("get Feedback Wrong");
 
         quizCtrl.summary.analysis[question.node.id] = {
           title: question.node.title,
@@ -480,7 +482,7 @@
         //   quizCtrl.quiz.objects.push(angular.copy(question));
         // }
       }
-      $log.debug("get Feedback Opening Modal" );
+      $log.debug("get Feedback Opening Modal");
 
       $scope.openModal();
     }
@@ -518,7 +520,7 @@
     }
 
     function setSuggestion() {
-      $timeout(function () {
+      $timeout(function() {
 
 
         quizCtrl.disable_submit = true;
@@ -528,18 +530,18 @@
 
 
           temp_quiz.objects.push(ml.dqJSON[temp_quiz.suggestion.qSr]);
-          content.getAssessment(temp_quiz).then(function(response){
+          content.getAssessment(temp_quiz).then(function(response) {
             response.suggestion = temp_quiz.suggestion;
-            $log.debug(response.objects.length, response.objects[response.objects.length-1], response, "RESPONSE")
-            quizCtrl.quiz.objects.push(angular.copy(response.objects[response.objects.length-1]))
+            $log.debug(response.objects.length, response.objects[response.objects.length - 1], response, "RESPONSE")
+            quizCtrl.quiz.objects.push(angular.copy(response.objects[response.objects.length - 1]))
             quizCtrl.quiz.suggestion = (response.suggestion);
-            $log.debug(quizCtrl.quiz,response,"Check diff")
-            // quizCtrl.quiz = response;
+            $log.debug(quizCtrl.quiz, response, "Check diff")
+              // quizCtrl.quiz = response;
 
 
             // quizCtrl.nextQuestion()
             $ionicSlideBoxDelegate.update();
-            quizCtrl.report.attempts[quizCtrl.quiz.objects[quizCtrl.currentIndex+1].node.id] = [];
+            quizCtrl.report.attempts[quizCtrl.quiz.objects[quizCtrl.currentIndex + 1].node.id] = [];
 
             $timeout(function() {
               quizCtrl.currentIndex++;
@@ -553,7 +555,7 @@
 
           quizCtrl.endQuiz();
         }
-      },300)
+      }, 300)
 
 
 
@@ -574,14 +576,14 @@
       if (quizCtrl.getQuestionType(question) == CONSTANT.WIDGETS.QUESTION_TYPES.MCQ) {
         for (var i = 0; i < quizCtrl.report.attempts[question.node.id].length; i++) {
           if (_.chain(quizCtrl.report.attempts[question.node.id][i]).map(function(num, key) {
-            return num ? parseInt(key) : false;
-          }).reject(function(num) {
-            return !num;
-          }).value().length > 0)
+              return num ? parseInt(key) : false;
+            }).reject(function(num) {
+              return !num;
+            }).value().length > 0)
             return true;
-          }
-          return false;
         }
+        return false;
+      }
       // single choice
       if (quizCtrl.getQuestionType(question) == CONSTANT.WIDGETS.QUESTION_TYPES.SCQ) {
         return quizCtrl.report.attempts[question.node.id].length > 0;
@@ -608,14 +610,14 @@
       if (quizCtrl.getQuestionType(question) == CONSTANT.WIDGETS.QUESTION_TYPES.MCQ) {
         for (var i = 0; i < quizCtrl.report.attempts[question.node.id].length; i++) {
           if (_.chain(quizCtrl.report.attempts[question.node.id][i]).map(function(num, key) {
-            return num ? parseInt(key) : false;
-          }).reject(function(num) {
-            return !num;
-          }).sort().isEqual(question.node.type.answer.sort()).value())
+              return num ? parseInt(key) : false;
+            }).reject(function(num) {
+              return !num;
+            }).sort().isEqual(question.node.type.answer.sort()).value())
             return true;
-          }
-          return false;
         }
+        return false;
+      }
       // single choice
       if (quizCtrl.getQuestionType(question) == CONSTANT.WIDGETS.QUESTION_TYPES.SCQ) {
         return quizCtrl.report.attempts[question.node.id].indexOf(question.node.type.answer[0]) != -1 ? (true) : false;
@@ -623,7 +625,7 @@
     }
 
     function isKeyCorrect(question, key) {
-      return question.node.type.answer.indexOf(key) != -1 ;
+      return question.node.type.answer.indexOf(key) != -1;
     }
 
     function isKeyAttempted(question, key) {
@@ -631,16 +633,17 @@
       if (question.node.type.content.is_multiple) {
         return _.chain(quizCtrl.report.attempts[question.node.id]).last().has(key).value();
       } else {
-        return quizCtrl.report.attempts[question.node.id].indexOf(key) != -1 ;
+        return quizCtrl.report.attempts[question.node.id].indexOf(key) != -1;
       }
     }
 
     function playAudio(key, index) {
-      if(key){
+      if (key) {
         audio.player.play(key)
       }
 
     }
+
     function stopAudio() {
       audio.player.stop()
 
@@ -703,30 +706,28 @@
     }
 
     function submitQuiz(quizType) {
-      if(quizCtrl.summary.analysis[CONSTANT.QUESTION.DEMO])
+      if (quizCtrl.summary.analysis[CONSTANT.QUESTION.DEMO])
         delete quizCtrl.summary.analysis[CONSTANT.QUESTION.DEMO];
-      if(quizCtrl.report.attempts[CONSTANT.QUESTION.DEMO])
+      if (quizCtrl.report.attempts[CONSTANT.QUESTION.DEMO])
         delete quizCtrl.report.attempts[CONSTANT.QUESTION.DEMO];
       if (quizType === 'practice') {
 
 
         $scope.modal.hide().then(function() {
-          analytics.log(
-          {
-            name : 'PRACTICE',
-            type : 'END',
-            id : quizCtrl.quiz.node.type.id
-          },
-          {
-            time : new Date()
-          },
-          User.getActiveProfileSync()._id
-          ) &&
-          $state.go('quiz.summary', {
-            report: (quizCtrl.report),
-            summary: (quizCtrl.summary),
-            type: 'practice'
-          })
+          analytics.log({
+                name: 'PRACTICE',
+                type: 'END',
+                id: quizCtrl.quiz.node.type.id
+              }, {
+                time: new Date()
+              },
+              User.getActiveProfileSync()._id
+            ) &&
+            $state.go('quiz.summary', {
+              report: (quizCtrl.report),
+              summary: (quizCtrl.summary),
+              type: 'practice'
+            })
         });
 
 
@@ -739,23 +740,21 @@
           if (res) {
             quizCtrl.generateReport(quizCtrl.quiz);
             quizCtrl.summary = quizCtrl.generateSummary(quizCtrl.report, quizCtrl.quiz);
-            analytics.log(
-            {
-              name : 'QUIZ',
-              type : 'END',
-              id : quizCtrl.quiz.id
-            },
-            {
-              time : new Date()
-            },
-            User.getActiveProfileSync()._id
-            ) &&
-            $state.go('quiz.summary', {
-              report: angular.copy(quizCtrl.report),
-              summary: angular.copy(quizCtrl.summary),
-              type: 'assessment'
+            analytics.log({
+                  name: 'QUIZ',
+                  type: 'END',
+                  id: quizCtrl.quiz.id
+                }, {
+                  time: new Date()
+                },
+                User.getActiveProfileSync()._id
+              ) &&
+              $state.go('quiz.summary', {
+                report: angular.copy(quizCtrl.report),
+                summary: angular.copy(quizCtrl.summary),
+                type: 'assessment'
 
-            });
+              });
           }
         });
       }
@@ -764,10 +763,10 @@
 
     function generateReport(quiz) {
       angular.forEach(quiz.objects, function(value, key) {
-        if (quizCtrl.getQuestionType(value) == CONSTANT.WIDGETS.QUESTION_TYPES.SCQ && value.attempted !== '' && value.id !=CONSTANT.QUESTION.DEMO) {
+        if (quizCtrl.getQuestionType(value) == CONSTANT.WIDGETS.QUESTION_TYPES.SCQ && value.attempted !== '' && value.id != CONSTANT.QUESTION.DEMO) {
           quizCtrl.submitAttempt(value.node.id,
             value.attempted);
-        } else if (quizCtrl.getQuestionType(value) == CONSTANT.WIDGETS.QUESTION_TYPES.MCQ && value.attempted.length > 0 && value.id !=CONSTANT.QUESTION.DEMO) {
+        } else if (quizCtrl.getQuestionType(value) == CONSTANT.WIDGETS.QUESTION_TYPES.MCQ && value.attempted.length > 0 && value.id != CONSTANT.QUESTION.DEMO) {
           quizCtrl.submitAttempt(value.node.id,
             value.attempted);
         }
@@ -780,25 +779,27 @@
         noBackdrop: false,
         hideOnStateChange: true
       });
-      if($stateParams.type == 'litmus'){
+      if ($stateParams.type == 'litmus') {
         var levelRec = ml.getLevelRecommendation();
         $log.debug('levelRec', levelRec);
         ml.setLessonResultMapping().then(function() {
           var suggestion = ml.getLessonSuggestion({
             "event": "diagnosisTest"
           });
-          $log.debug(suggestion,"Suggestion");
-          User.profile.updateRoadMapData(ml.roadMapData,User.getActiveProfileSync()._id).then(function(){
-            User.playlist.add(User.getActiveProfileSync()._id,suggestion).then(function(){
-                $log.debug("average level", levelRec.avgLevel)
-              $state.go('litmus_result',{'average_level':levelRec.avgLevel});
+          $log.debug(suggestion, "Suggestion");
+          User.profile.updateRoadMapData(ml.roadMapData, User.getActiveProfileSync()._id).then(function() {
+            User.playlist.add(User.getActiveProfileSync()._id, suggestion).then(function() {
+              $log.debug("average level", levelRec.avgLevel)
+              $state.go('litmus_result', {
+                'average_level': levelRec.avgLevel
+              });
             })
           })
 
         });
 
-        localStorage.setItem('diagnosis_flag',true);
-      }else{
+        localStorage.setItem('diagnosis_flag', true);
+      } else {
         $state.go('map.navigate', {});
       }
     }
@@ -825,48 +826,48 @@
 
 
 
-      // $ionicPlatform.registerBackButtonAction(function(event) {
-      //     if($state.is('quiz.questions')){
-      //         try {
-      //             $scope.showNodeMenu();
-      //         } catch (error) {
-      //             ;
-      //         }
-      //     }
-      // }, 101);
+    // $ionicPlatform.registerBackButtonAction(function(event) {
+    //     if($state.is('quiz.questions')){
+    //         try {
+    //             $scope.showNodeMenu();
+    //         } catch (error) {
+    //             ;
+    //         }
+    //     }
+    // }, 101);
 
-      $scope.showNodeMenu = function() {
-        quizCtrl.pauseModal.show().then(function(){
-          audio.player.play('sound/pause_menu.mp3');
-        });
-      }
-      $scope.closeNodeMenu = function() {
-        quizCtrl.pauseModal.hide().then(function(){
-          audio.player.stop();
-        });
-      }
+    $scope.showNodeMenu = function() {
+      quizCtrl.pauseModal.show().then(function() {
+        audio.player.play('sound/pause_menu.mp3');
+      });
+    }
+    $scope.closeNodeMenu = function() {
+      quizCtrl.pauseModal.hide().then(function() {
+        audio.player.stop();
+      });
+    }
 
-      function restartQuiz() {
-        $state.go($state.current, {}, {
-          reload: true
-        });
-      }
+    function restartQuiz() {
+      $state.go($state.current, {}, {
+        reload: true
+      });
+    }
 
 
 
-      function inViewTrigger(index, viewPart) {
-        quizCtrl.inViewData[index] = viewPart;
-        if (quizCtrl.inViewFlag) {
-          if (viewPart == 'bottom' || viewPart == 'both' || viewPart == 'neither' || (viewPart == 'top' && quizCtrl.inViewData[index - 1] === undefined)) {
-            quizCtrl.setCurrentIndex(index);
-          }
-
+    function inViewTrigger(index, viewPart) {
+      quizCtrl.inViewData[index] = viewPart;
+      if (quizCtrl.inViewFlag) {
+        if (viewPart == 'bottom' || viewPart == 'both' || viewPart == 'neither' || (viewPart == 'top' && quizCtrl.inViewData[index - 1] === undefined)) {
+          quizCtrl.setCurrentIndex(index);
         }
-      }
 
-      function highlightSoundIcon(questionIndex) {
+      }
+    }
+
+    function highlightSoundIcon(questionIndex) {
       // if (quizCtrl.quiz.objects[questionIndex].node.widgetHtml.indexOf(CONSTANT.WIDGETS.SPEAKER_IMAGE) >= 0) {
-        // quizCtrl.quiz.objects[questionIndex].node.widgetHtml = quizCtrl.quiz.objects[questionIndex].node.widgetHtml.replace(CONSTANT.WIDGETS.SPEAKER_IMAGE, CONSTANT.WIDGETS.SPEAKER_IMAGE_SELECTED)
+      // quizCtrl.quiz.objects[questionIndex].node.widgetHtml = quizCtrl.quiz.objects[questionIndex].node.widgetHtml.replace(CONSTANT.WIDGETS.SPEAKER_IMAGE, CONSTANT.WIDGETS.SPEAKER_IMAGE_SELECTED)
       // }
 
       // $log.debug("Original WidgetSound",quizCtrl.quiz.objects[questionIndex].node.widgetSound)
@@ -879,37 +880,37 @@
       quizCtrl.highlightSoundIconFlag = true;
       if (quizCtrl.quiz.objects[questionIndex].node.widgetSound != null) {
         var watchAudio = $interval(function() {
-            // $log.debug("WidgetSound trimmed",quizCtrl.quiz.objects[questionIndex].node.widgetSound.split("/").pop())
-            // $log.debug("Source trimmed",angular.element("#audioSource")[0].src.split("/").pop())
-            // $log.debug("THIS WHY I HATE BUNDLED",quizCtrl.quiz.objects[questionIndex].node.widgetSound.split("/").pop() != angular.element("#audioSource")[0].src.split("/").pop())
-            if (angular.element("#audioplayer")[0].paused || quizCtrl.quiz.objects[questionIndex].node.widgetSound.split("/").pop() != angular.element("#audioSource")[0].src.split("/").pop()) {
-              quizCtrl.highlightSoundIconFlag = false;
-              $interval.cancel(watchAudio)
+          // $log.debug("WidgetSound trimmed",quizCtrl.quiz.objects[questionIndex].node.widgetSound.split("/").pop())
+          // $log.debug("Source trimmed",angular.element("#audioSource")[0].src.split("/").pop())
+          // $log.debug("THIS WHY I HATE BUNDLED",quizCtrl.quiz.objects[questionIndex].node.widgetSound.split("/").pop() != angular.element("#audioSource")[0].src.split("/").pop())
+          if (angular.element("#audioplayer")[0].paused || quizCtrl.quiz.objects[questionIndex].node.widgetSound.split("/").pop() != angular.element("#audioSource")[0].src.split("/").pop()) {
+            quizCtrl.highlightSoundIconFlag = false;
+            $interval.cancel(watchAudio)
               // quizCtrl.quiz.objects[questionIndex].node.widgetHtml = quizCtrl.quiz.objects[questionIndex].node.widgetHtml.replace(CONSTANT.WIDGETS.SPEAKER_IMAGE_SELECTED, CONSTANT.WIDGETS.SPEAKER_IMAGE)
-            }
-          }, 100)
-      }else{
+          }
+        }, 100)
+      } else {
         $log.warn("This question doesn't have sound")
       }
     }
 
     function next() {
       // if (quizCtrl.summary.stars >= 1) {
-        $ionicLoading.show({
-          hideOnStateChange: true
-        });
-        analytics.log(
-        {
-          name : 'LESSON',
-          type : 'END',
-          id : $scope.selectedNode.node.id
-        },
-        {
-          time : new Date()
+      $ionicLoading.show({
+        hideOnStateChange: true
+      });
+      analytics.log({
+          name: 'LESSON',
+          type: 'END',
+          id: $scope.selectedNode.node.id
+        }, {
+          time: new Date()
         },
         User.getActiveProfileSync()._id
-        )
-        $state.go('map.navigate', {"activatedLesson" : quizCtrl.quiz});
+      )
+      $state.go('map.navigate', {
+        "activatedLesson": quizCtrl.quiz
+      });
       // }
       // else {
       //   $scope.showNodeMenu();
@@ -920,7 +921,7 @@
 
     $scope.tour = {
       config: {
-        onComplete: function () {
+        onComplete: function() {
           quizCtrl.noPauseFlag = false;
           $log.debug('Unsetting noPauseFlag2')
         }
@@ -944,12 +945,11 @@
     function tourNextStep() {
 
       if (nzTour.current) {
-        if(nzTour.current.step === 0){
+        if (nzTour.current.step === 0) {
           audio.player.play('sound/demo-quiz-2.mp3');
-        }else if(nzTour.current.step === 1){
+        } else if (nzTour.current.step === 1) {
           audio.player.play('sound/demo-quiz-3.mp3');
-        }
-        else if(nzTour.current.step === 2){
+        } else if (nzTour.current.step === 2) {
           // $log.debug("Unsetting No Pause Flag")
           //HERE YOU ARE
 
@@ -961,69 +961,70 @@
         nzTour.next();
       }
     }
-    function playInstruction(index){
 
-      if(quizCtrl.quiz.objects[index].node.instructionSound){
+    function playInstruction(index) {
+
+      if (quizCtrl.quiz.objects[index].node.instructionSound) {
         audio.player.play(quizCtrl.quiz.objects[index].node.instructionSound)
         angular.element("#audioplayer")[0].onended = instructionEndCallback
 
-      }else if(quizCtrl.quiz.objects[index].node){
+      } else if (quizCtrl.quiz.objects[index].node) {
         audio.player.play(quizCtrl.quiz.objects[index].node.widgetSound);
         quizCtrl.highlightSoundIcon(index);
       }
     }
-    function instructionEndCallback(){
+
+    function instructionEndCallback() {
       var index = quizCtrl.currentIndex;
       audio.player.play(quizCtrl.quiz.objects[index].node.widgetSound);
       quizCtrl.highlightSoundIcon(index);
     }
 
-    function logQuestion(index, type){
-      analytics.log(
-      {
-        name : 'QUESTION',
-        type : type,
-        id : quizCtrl.quiz.objects[index].node.id
-      },
-      {
-        time : new Date()
-      },
-      User.getActiveProfileSync()._id
+    function logQuestion(index, type) {
+      analytics.log({
+          name: 'QUESTION',
+          type: type,
+          id: quizCtrl.quiz.objects[index].node.id
+        }, {
+          time: new Date()
+        },
+        User.getActiveProfileSync()._id
       )
     }
-    function intro_end_quiz(){
+
+    function intro_end_quiz() {
       $log.debug("Inside onended event");
 
       // $log.debug("removed event listener quiz",$state);
       angular.element("#audioplayer")[0].onended = null
-      if($state.current.name == 'quiz.questions'){
+      if ($state.current.name == 'quiz.questions') {
         $scope.nodeRibbonFlag = false;
         // $scope.nodeRibbon.hide().then(function(){
 
-          if($state.is('quiz.questions') && User.demo.isShown(5) && CONSTANT.QUESTION_DEMO){
-            $timeout(function(){
-              quizCtrl.noPauseFlag = true;
-              if($stateParams.type!=='litmus'){
-                audio.player.play('sound/demo-quiz-1.mp3');
-                nzTour.start($scope.tour); // commenting nztour
-                User.demo.setStep(5);
-                $timeout(function(){
-                  if(nzTour.current.step === 0){
-                    tourNextStep();
-                  }
-                },3500)
-              }
+        if ($state.is('quiz.questions') && User.demo.isShown(5) && CONSTANT.QUESTION_DEMO) {
+          $timeout(function() {
+            quizCtrl.noPauseFlag = true;
+            if ($stateParams.type !== 'litmus') {
+              audio.player.play('sound/demo-quiz-1.mp3');
+              nzTour.start($scope.tour); // commenting nztour
+              User.demo.setStep(5);
+              $timeout(function() {
+                if (nzTour.current.step === 0) {
+                  tourNextStep();
+                }
+              }, 3500)
+            }
 
-            });
+          });
 
-          }else{
+        } else {
 
-            $log.debug('Demo has ended')
-            quizCtrl.noPauseFlag = false;
-            $log.debug("Unsetting noPauseFlag");
-            quizCtrl.playInstruction(0);
+          $log.debug('Demo has ended')
+          quizCtrl.noPauseFlag = false;
+          $log.debug("Unsetting noPauseFlag");
+          quizCtrl.playInstruction(0);
 
-          }
+        }
 
         // });
       }
@@ -1035,28 +1036,28 @@
       // animation: 'slide-in-up',
       backdropClickToClose: false,
       hardwareBackButtonClose: false
-    }).then(function(modal){
+    }).then(function(modal) {
       $scope.nodeRibbon = modal;
       $scope.nodeRibbonFlag = true;
       quizCtrl.noPauseFlag = true;
 
-    //   $log.debug("Setting No Pause Flag");
-    //   if(quiz.node.parsed_sound){
-    //     audio.player.play(quiz.node.parsed_sound);
-    //     angular.element("#audioplayer")[0].onended = intro_end_quiz;
-    //     $log.debug("Added onended event");
-    //   }
-    //   else{
-    //     $timeout(function(){
-    //       intro_end_quiz();
-    //     },1000)
-    //   }
+      //   $log.debug("Setting No Pause Flag");
+      //   if(quiz.node.parsed_sound){
+      //     audio.player.play(quiz.node.parsed_sound);
+      //     angular.element("#audioplayer")[0].onended = intro_end_quiz;
+      //     $log.debug("Added onended event");
+      //   }
+      //   else{
+      //     $timeout(function(){
+      //       intro_end_quiz();
+      //     },1000)
+      //   }
 
     });
 
-// quizCtrl.playQuizIntro()
+    // quizCtrl.playQuizIntro()
 
-    function playQuizIntro(){
+    function playQuizIntro() {
 
       intro_end_quiz()
         // $scope.nodeRibbon.show().then(function(){
@@ -1069,17 +1070,29 @@
 
     // $scope.progressBar();
 
-    $scope.$on('backButton',function(){
+    $scope.$on('backButton', function() {
       $log.debug('back button pressed')
-              // $log.debug("nzTour",nzTour.current.step);
-              if (!quizCtrl.noPauseFlag) {
-                audio.player.stop();
-                $scope.showNodeMenu();
-              }
-            });
-            $scope.$on('appResume',function(){
-            	$log.debug("Appresume in quiz controller");
-            	audio.player.resume();
-            })
+        // $log.debug("nzTour",nzTour.current.step);
+      if (!quizCtrl.noPauseFlag) {
+        audio.player.stop();
+        $scope.showNodeMenu();
+      }
+    });
+    $scope.$on('appResume', function(){
+        if($state.current.name != 'quiz.summary' && !$scope.nodeRibbon.isShown()){
+            $scope.closeModal();
+            $scope.showNodeMenu();
+        }
+        else if($scope.nodeRibbon.isShown()){
+          audio.player.resume();
+        }
+        else{}
+    })
+    $scope.$on('appPause', function(){
+        audio.player.removeCallback();
+        audio.player.stop();
+        $timeout.cancel( timeout );
+    })
+
   }
 })();
