@@ -69,6 +69,7 @@
                 $state.go('user.chooseProfile', {
                   'profiles': profiles
                 });
+                $log.debug("CHECK 5")
                 notification.online.set();
               }
             });
@@ -155,6 +156,10 @@
           smallIcon: 'res://icon'
         })
       });
+
+      $rootScope.$on('$cordovaPushV5:errorOcurred', function(event, error){
+        $log.error("Error occured online notification", event, error);
+      })
       //
       $rootScope.mediaSyncStatus = {
         size: null,

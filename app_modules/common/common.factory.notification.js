@@ -261,24 +261,24 @@
     }
 
     function onlineRegister(data){
-      $log.debug("Inside online Register")
+      $log.warn("NOTIFICATION. Inside online Register")
       $http({
         method: 'POST',
         url: CONSTANT.BACKEND_SERVICE_DOMAIN+'/api/v1/devices/',
         data: {dev_id: data.dev_id, dev_type: data.dev_type, reg_id: data.reg_id}
       }).then(function successCallback(response) {
-        $log.debug("successfully posted", response.data[0])
+        $log.debug("NOTIFICATION. successfully posted", response)
       }, function errorCallback(response) {
-        $log.error("Not successfully posted", response)
+        $log.error("NOTIFICATION. Not successfully posted", response)
         if (response.status == 400) {
-          $log.warn("This is totally okay. The user is already registered for notification.")
+          $log.warn("NOTIFICATION. This is totally okay. The user is already registered for notification.")
         }
       });
     }
 
 
     function onlinePatch(newToken){
-      $log.debug('patching with nnew fcm token ...')
+      $log.warn('NOTIFICATION. Patching with nnew fcm token ...')
       $http({
         method: 'PATCH',
         url: CONSTANT.BACKEND_SERVICE_DOMAIN+'/api/v1/devices/'+device.uuid,
@@ -287,9 +287,9 @@
               is_active: true
             }
       }).then(function successCallback(response) {
-        $log.debug("successfully patched", response.data[0])
+        $log.debug("NOTIFICATION. successfully patched", response)
       }, function errorCallback(response) {
-        $log.error("Not successfully patched", response)
+        $log.error("NOTIFICATION. Not successfully patched", response)
         // if (response.status == 400) {
         //   $log.warn("This is totally okay. The user is already registered for notification.")
         // }
@@ -315,50 +315,70 @@
             }
           }
         ).then(function (result) {
-          $cordovaPushV5.onNotification();
-          $cordovaPushV5.onError();
-          $cordovaPushV5.register().then(function (resultreg) {
-            console.log('NOTIFICATION. Registered with FCM server',resultreg)
-          })
+            $log.warn("NOTIFICATION. ",result)
+            $cordovaPushV5.onNotification();
+            $cordovaPushV5.onError();
+            $cordovaPushV5.register().then(function (resultreg) {
+              $log.warn("NOTIFIICATION. token from gcm ",resultreg)
+              getFromServer({
+                dev_id: device.uuid
+              }).then(function(response) {
+                  if (!response.data[0]) {
+                    $log.warn("NOTIFICATION. not registered with server. Will register",response)
+                    onlineRegister({
+                      dev_id: device.uuid,
+                      dev_type: "ANDROID",
+                      reg_id: resultreg
+                    });
+                  }else{
+                    $log.warn("NOTIFICATION. registered with server. patching")
+                    onlinePatch(resultreg);   
+                  }  
+              })
+            },function(error) {
+              $log.error("NOTIFICATION. This is an error. Google is mibehaving. Contact Rudra")
+            })
+            //this logic is not working
             // getFromServer({
             //   dev_id: device.uuid
             // }).then(function(response) {
-            //   if (!response.data[0]) {
-            //     $log.warn("You aren\'t registered with the server")
-            //     $log.debug("we will register you soon. But first let\'s get your token from FCM server");
-               
-            //     $cordovaPushV5.register().then(function (resultreg) {
-            //       $log.debug("We got your token from FCM server. \nToken: "+resultreg+"\n Registering you with the server now")
-            //       onlineRegister({
-            //         dev_id: device.uuid,
-            //         dev_type: "ANDROID",
-            //         reg_id: resultreg
-            //       });
-
-            //       localStorage.setItem('pushKey',resultreg);
-            //     },function(err){
-            //       $log.error('Cant register with server \n',err)
-            //     });
-            //     $log.debug("HOLALALA notification is driving me crazy")
-            //   }else if(response.data[0] && !response.data[0].is_active){
-            //     $log.warn("Your fcm token has expired. Getting you a new token")
-            //     $cordovaPushV5.register().then(function (resultreg) {
-            //       $log.debug("We got your token from FCM server. \nToken: "+resultreg+"\n Registering you with the server now")
-            //       onlinePatch(resultreg);   
-            //       localStorage.setItem('pushKey',resultreg);
-            //     });
-            //   }else{
-            //     $log.warn("You are already registered with notificaton server and are active. No need for a new token\n", response)
-            //   }
+              
+            //   // if (!response.data[0]) {
+            //   //   $log.warn("NOTIFICATION. not registered with server. Will register")
+            //   //   $cordovaPushV5.onNotification();
+            //   //   $cordovaPushV5.onError();
+            //   //   $cordovaPushV5.register().then(function (resultreg) {
+            //   //     $log.warn('NOTIFICATION. Registered with FCM server',resultreg)
+            //   //     onlineRegister({
+            //   //       dev_id: device.uuid,
+            //   //       dev_type: "ANDROID",
+            //   //       reg_id: resultreg
+            //   //     });
+            //   //     localStorage.setItem('pushKey',resultreg);
+            //   //   },function(err){
+            //   //     $log.error('NOTIFICATION. Cant register with server \n',err)
+            //   //   });
+            //   // }else if(response.data[0] && !response.data[0].is_active){
+            //   //   $log.warn("NOTIFICATION. Your fcm token has expired. Getting you a new token")
+            //   //   $cordovaPushV5.onNotification();
+            //   //   $cordovaPushV5.onError();
+            //   //   $cordovaPushV5.register().then(function (resultreg) {
+            //   //     $log.warn('NOTIFICATION. Registered with FCM server',resultreg)
+            //   //     onlinePatch(resultreg);   
+            //   //     localStorage.setItem('pushKey',resultreg);
+            //   //   });
+            //   // }else{
+            //   //   $log.warn("NOTIFICATION. You are already registered with notificaton server and are active. No need for a new token\n", response)
+            //   // }
             // }, function(response) {
-            //   $log.error("We couldn't get", response)
+            //   $log.error("NOTIFICATION. We couldn't get", response)
             // });
 
         });
 
 
       }catch(err){
-        $log.warn("Need to run app on mobile to enable push notifications",err)
+        $log.warn("NOTIFICATION. Need to run app on mobile to enable push notifications",err)
       }
     }
   }
