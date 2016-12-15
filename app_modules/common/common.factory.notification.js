@@ -261,21 +261,40 @@
     }
 
     function onlineRegister(data){
-      $log.debug("Inside online Register")
+      $log.warn("NOTIFICATION. Inside online Register")
       $http({
         method: 'POST',
         url: CONSTANT.BACKEND_SERVICE_DOMAIN+'/api/v1/devices/',
         data: {dev_id: data.dev_id, dev_type: data.dev_type, reg_id: data.reg_id}
       }).then(function successCallback(response) {
-        $log.debug("successfully posted", response.data[0])
+        $log.debug("NOTIFICATION. successfully posted", response)
       }, function errorCallback(response) {
-        $log.error("Not successfully posted", response)
+        $log.error("NOTIFICATION. Not successfully posted", response)
         if (response.status == 400) {
-          $log.warn("This is totally okay. The user is already registered for notification.")
+          $log.warn("NOTIFICATION. This is totally okay. The user is already registered for notification.")
         }
       });
     }
 
+
+    function onlinePatch(newToken){
+      $log.warn('NOTIFICATION. Patching with nnew fcm token ...')
+      $http({
+        method: 'PATCH',
+        url: CONSTANT.BACKEND_SERVICE_DOMAIN+'/api/v1/devices/'+device.uuid,
+        data: {
+              reg_id : newToken,
+              is_active: true
+            }
+      }).then(function successCallback(response) {
+        $log.debug("NOTIFICATION. successfully patched", response)
+      }, function errorCallback(response) {
+        $log.error("NOTIFICATION. Not successfully patched", response)
+        // if (response.status == 400) {
+        //   $log.warn("This is totally okay. The user is already registered for notification.")
+        // }
+      }); 
+    }
 
     function cancelAll(){
       try{
@@ -287,8 +306,8 @@
 
     function onlineSet() {
       $log.debug("APP RUN USER RGISTERD");
+      console.log('CONSTANT.CONFIG.NOTIFICATION.SENDERID',CONSTANT.CONFIG.NOTIFICATION.SENDERID)
       try{
-        // localStorage.myPush = ''; // I use a localStorage variable to persist the token
         $cordovaPushV5.initialize(  // important to initialize with the multidevice structure !!
           {
             android: {
@@ -296,83 +315,70 @@
             }
           }
         ).then(function (result) {
-          $cordovaPushV5.onNotification();
-          $cordovaPushV5.onError();
-          // if (localStorage.pushKey) {
-            // $log.debug("notifId ",localStorage.pushKey);
-            // onlineRegister({
-            //     dev_id: device.uuid,
-            //     dev_type: "ANDROID",
-            //     reg_id: resultreg
-            // });
-          // }else{
-
-            getFromServer({
-              dev_id: device.uuid
-            }).then(function(response) {
-              if (!response.data[0]) {
-                $log.warn("You aren\'t registered with the server")
-                $log.debug("we will register you soon. But first let\'s get your token from FCM server")
-                if(localStorage.pushKey){
-                  $log.debug("Looks like your app already has a FCM token in the localstorage. Let\'s register you on the server with it")
-                  onlineRegister({
-                    dev_id: device.uuid,
-                    dev_type: "ANDROID",
-                    reg_id: localStorage.pushKey
-                  });
-                }else{
-                  $cordovaPushV5.register().then(function (resultreg) {
-                    $log.debug("We got your token from FCM server. \nToken: "+resultreg+"\n Registering you with the server now")
+            $log.warn("NOTIFICATION. ",result)
+            $cordovaPushV5.onNotification();
+            $cordovaPushV5.onError();
+            $cordovaPushV5.register().then(function (resultreg) {
+              $log.warn("NOTIFIICATION. token from gcm ",resultreg)
+              getFromServer({
+                dev_id: device.uuid
+              }).then(function(response) {
+                  if (!response.data[0]) {
+                    $log.warn("NOTIFICATION. not registered with server. Will register",response)
                     onlineRegister({
                       dev_id: device.uuid,
                       dev_type: "ANDROID",
                       reg_id: resultreg
-                    });   
-                    localStorage.setItem('pushKey',resultreg);
-                  });
-                }
-                // onlineRegister({
-                //   dev_id: device.uuid,
-                //   dev_type: "ANDROID",
-                //   reg_id: resultreg
-                // });
-              }else{
-                $log.warn("You are already registered with notificaton server\n", response)
-              }
-            }, function(response) {
-              $log.error("We couldn't get", response)
-            });
-
-            // $cordovaPushV5.register().then(function (resultreg) {
-            //   // localStorage.myPush = resultreg;
-            //   // $log.debug("this is supposed to go to server");
-            //   // $log.debug({
-            //   //   dev_id: device.uuid,
-            //   //   reg_id: resultreg
-            //   // });
-            //   localStorage.setItem('pushKey',resultreg);
-            //   // $log.debug(device,"Check this please");
-            //   onlineRegister({
-            //     dev_id: device.uuid,
-            //     dev_type: "ANDROID",
-            //     reg_id: resultreg
-            //   });
-
-            //   $log.debug('Sending to server',resultreg);
-            //   // SEND THE TOKEN TO THE SERVER, best associated with your device id and user
-            // }, function (err) {
-            //   $log.debug("Some error occured",err);
-            //   // handle error
+                    });
+                  }else{
+                    $log.warn("NOTIFICATION. registered with server. patching")
+                    onlinePatch(resultreg);   
+                  }  
+              })
+            },function(error) {
+              $log.error("NOTIFICATION. This is an error. Google is mibehaving. Contact Rudra")
+            })
+            //this logic is not working
+            // getFromServer({
+            //   dev_id: device.uuid
+            // }).then(function(response) {
+              
+            //   // if (!response.data[0]) {
+            //   //   $log.warn("NOTIFICATION. not registered with server. Will register")
+            //   //   $cordovaPushV5.onNotification();
+            //   //   $cordovaPushV5.onError();
+            //   //   $cordovaPushV5.register().then(function (resultreg) {
+            //   //     $log.warn('NOTIFICATION. Registered with FCM server',resultreg)
+            //   //     onlineRegister({
+            //   //       dev_id: device.uuid,
+            //   //       dev_type: "ANDROID",
+            //   //       reg_id: resultreg
+            //   //     });
+            //   //     localStorage.setItem('pushKey',resultreg);
+            //   //   },function(err){
+            //   //     $log.error('NOTIFICATION. Cant register with server \n',err)
+            //   //   });
+            //   // }else if(response.data[0] && !response.data[0].is_active){
+            //   //   $log.warn("NOTIFICATION. Your fcm token has expired. Getting you a new token")
+            //   //   $cordovaPushV5.onNotification();
+            //   //   $cordovaPushV5.onError();
+            //   //   $cordovaPushV5.register().then(function (resultreg) {
+            //   //     $log.warn('NOTIFICATION. Registered with FCM server',resultreg)
+            //   //     onlinePatch(resultreg);   
+            //   //     localStorage.setItem('pushKey',resultreg);
+            //   //   });
+            //   // }else{
+            //   //   $log.warn("NOTIFICATION. You are already registered with notificaton server and are active. No need for a new token\n", response)
+            //   // }
+            // }, function(response) {
+            //   $log.error("NOTIFICATION. We couldn't get", response)
             // });
 
-
-
-          // }
         });
 
 
       }catch(err){
-        $log.warn("Need to run app on mobile to enable push notifications",err)
+        $log.warn("NOTIFICATION. Need to run app on mobile to enable push notifications",err)
       }
     }
   }

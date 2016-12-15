@@ -69,6 +69,7 @@
                 $state.go('user.chooseProfile', {
                   'profiles': profiles
                 });
+                $log.debug("CHECK 5")
                 notification.online.set();
               }
             });
@@ -150,12 +151,16 @@
         $log.warn("ROCK YOU2 event", event);
         notification.schedule({
           id: 'notif-online-1',
-          text: JSON.parse(data.message).data.text,
-          title: JSON.parse(data.message).data.title,
-          icon: 'res: //ic_stat_english_duniya',
-          smallIcon: 'res://icon'
+          text: data.message,
+          title: data.title,
+          icon: 'res://icon',
+          smallIcon: 'res: //ic_stat_english_duniya'
         })
       });
+
+      $rootScope.$on('$cordovaPushV5:errorOcurred', function(event, error){
+        $log.error("Error occured online notification", event, error);
+      })
       //
       $rootScope.mediaSyncStatus = {
         size: null,
