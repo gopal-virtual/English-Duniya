@@ -6,8 +6,8 @@
     .module('common')
     .constant('CONSTANT', {
       'APP':{
-      'TYPE': 'Non-Bundled',
-      'VERSION': '0.2.0'
+      'TYPE': 'na',
+      'VERSION': '0.2.1'
       },
       'BUNDLED': false,
       'LOCK': true,
