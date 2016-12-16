@@ -120,7 +120,8 @@
       getAll: getAllProfiles,
       patch: patchProfile,
       updateRoadMapData: updateRoadMapData,
-      select: selectProfile
+      select: selectProfile,
+      getLanguage: getLanguage
     };
     User.skills = {
       get: getSkills,
@@ -150,27 +151,29 @@
     User.startProfileSync = startProfileSync;
 
     function startProfileSync() {
-        if(!$rootScope.profilesDBeplicationStarted){
-          $rootScope.profilesDBeplicationStarted = true;
-      profilesDB.replicate.to(CONSTANT.PROFILES_DB_SERVER + device.uuid, {
-          live: true,
-          retry: true,
-          timeout : 20000
-        }).$promise
-        .then(null, null, function(progress) {
-          $log.debug('startProfileSync replication status', progress);
-        })
-        .then(function(result) {
-          $log.debug('startProfileSync replication resolved with', result);
-        })
-        .catch(function(reason) {
-          $log.debug('startProfileSync replication failed with', reason);
-        })
-        .finally(function() {
-          $log.debug('startProfileSync replication done');
-        });
+      if (!$rootScope.profilesDBeplicationStarted) {
+        $rootScope.profilesDBeplicationStarted = true;
+        profilesDB.replicate.to(CONSTANT.PROFILES_DB_SERVER + device.uuid, {
+            live: true,
+            retry: true,
+            timeout: 20000
+          }).$promise
+          .then(null, null, function(progress) {
+            $log.debug('startProfileSync replication status', progress);
+          })
+          .then(function(result) {
+            $log.debug('startProfileSync replication resolved with', result);
+          })
+          .catch(function(reason) {
+            $log.debug('startProfileSync replication failed with', reason);
+          })
+          .finally(function() {
+            $log.debug('startProfileSync replication done');
+          });
       }
     }
+
+    function getLanguage() {}
 
     function updateRoadMapData(roadMapData, profileId) {
       $log.debug("updateRoadMapData", roadMapData, profileId)
@@ -534,16 +537,19 @@
     }
 
     function addNodeToPlaylist(profileId, nodeData) {
-      return profilesDB.get(profileId).then(function(response) {
-        response.data.playlist.push({
-          'lesson_id': nodeData.suggestedLesson,
-          'dependencyData': nodeData.dependencyData
-        });
-        $log.debug("Response", response);
-        return profilesDB.put({
-          '_id': profileId,
-          '_rev': response._rev,
-          'data': response.data
+      return $injector.get('content').getLocalizedNode("c9e344cf-b0b6-4284-81e7-750039efc0ea",'ta').then(function(localizedNode) {
+        return profilesDB.get(profileId).then(function(response) {
+          $log.debug("pushing in playlist",localizedNode)
+          response.data.playlist.push({
+            'lesson_id': "8eacad6f-42e6-4f9e-8f00-9aca44874dd6",
+            'suggestedLesson': nodeData.suggestedLesson,
+            'dependencyData': nodeData.dependencyData
+          });
+          return profilesDB.put({
+            '_id': profileId,
+            '_rev': response._rev,
+            'data': response.data
+          })
         })
       })
     }

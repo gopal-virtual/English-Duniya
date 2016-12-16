@@ -52,6 +52,7 @@
       getActiveResource: getActiveResource,
       getActiveLessonId: getActiveLessonId,
       replicateLessonDB: replicateLessonDB,
+      getLocalizedNode: getLocalizedNode,
       getStatus: getStatus,
       demo_question: {
         "node": {
@@ -119,28 +120,37 @@
     return contentProperties;
 
     function replicateLessonDB() {
-      if(!$rootScope.lessonDBReplicationStarted){
-      $log.debug("Replication");
-      $rootScope.lessonDBReplicationStarted = true;
+      if (!$rootScope.lessonDBReplicationStarted) {
+        $log.debug("Replication");
+        $rootScope.lessonDBReplicationStarted = true;
         lessonDB.replicate.from(CONSTANT.LESSONS_DB_SERVER, {
-          live: true,
-          retry: true,
-          timeout : 20000
-        }).$promise
-        .then(null, null, function(progress) {
-          $log.debug('lessondb replication status', progress);
-        })
-        .then(function(result) {
-          $log.debug('lessondb replication resolved with', result);
-        })
-        .catch(function(reason) {
-          $log.debug('lessondb replication failed with', reason);
-        })
-        .finally(function() {
-          $log.debug('lessondb replication done');
-        });
+            retry: true,
+            timeout: 20000
+          }).$promise
+          .then(null, null, function(progress) {
+            $log.debug('lessondb replication status', progress);
+          })
+          .then(function(result) {
+            $log.debug('lessondb replication resolved with', result);
+          })
+          .catch(function(reason) {
+            $log.debug('lessondb replication failed with', reason);
+          })
+          .finally(function() {
+            $log.debug('lessondb replication done');
+          });
       }
-      
+    }
+
+    function getLocalizedNode(nodeId, targetLanguage) {
+      return lessonDB.get('localization_mapping').then(function(localizationMapping){
+        $log.debug("localizationMapping.map",localizationMapping.map);
+        $log.debug("localizationMapping.map[nodeId]",localizationMapping.map[nodeId]);
+        $log.debug("localizationMapping.map[nodeId][targetLanguage]",localizationMapping.map[nodeId][targetLanguage]);
+
+        return localizationMapping.map[nodeId][targetLanguage];
+      });
+
     }
 
     function findNewMediaToDownload() {
