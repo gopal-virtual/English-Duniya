@@ -154,7 +154,19 @@
           title: data.title,
           icon: 'res://icon',
           smallIcon: 'res: //ic_stat_english_duniya'
-        })
+        });
+        var profileId; 
+        if (User.getActiveProfileSync()) {
+          profileId = User.getActiveProfileSync()._id ? User.getActiveProfileSync()._id : device.uuid; 
+        }
+        localStorage.setItem("Hello","Hello2")
+        analytics.log({
+          name: 'NOTIFICATION',
+          type: 'RECEIVED',
+          id: null
+        }, {
+          time: new Date()
+        }, profileId);
       });
 
       $rootScope.$on('$cordovaPushV5:errorOcurred', function(event, error){

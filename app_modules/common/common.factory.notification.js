@@ -311,7 +311,9 @@
         $cordovaPushV5.initialize(  // important to initialize with the multidevice structure !!
           {
             android: {
-              senderID: CONSTANT.CONFIG.NOTIFICATION.SENDERID
+              senderID: CONSTANT.CONFIG.NOTIFICATION.SENDERID,
+              icon: 'ic_stat_english_duniya',
+              color: 'green'  
             }
           }
         ).then(function (result) {

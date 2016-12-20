@@ -66,6 +66,12 @@
         "CONTENT": null,
         "START": "start app",
         "END": "end app"
+      },
+      "NOTIFICATION" : {
+        "CONTENT" : null,
+        "RECEIVED" : "received notification",
+        "CLICKED" : "clicked notification"
+
       }
     };
 
