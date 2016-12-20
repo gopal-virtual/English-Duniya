@@ -29,10 +29,11 @@
     $http,
     $rootScope
   ) {
-    var lessonDB = null;
+    // var lessonDB = null;
     // if (User.getActiveProfileSync() && User.getActiveProfileSync().data) {
-    lessonDB = pouchDB('lessonsDB', {
-      revs_limit: 1
+    var lessonDB = pouchDB('lessonsDB', {
+      revs_limit: 1,
+      auto_compaction : true
     });
     // }
     var contentProperties = {
@@ -54,6 +55,7 @@
       replicateLessonDB: replicateLessonDB,
       getLocalizedNode: getLocalizedNode,
       getStatus: getStatus,
+      deleteLessonDB: deleteLessonDB,
       demo_question: {
         "node": {
           "id": CONSTANT.QUESTION.DEMO,
@@ -118,6 +120,10 @@
       }
     };
     return contentProperties;
+
+    function deleteLessonDB() {
+      return lessonDB.erase();
+    }
 
     function replicateLessonDB() {
       if (!$rootScope.lessonDBReplicationStarted) {
@@ -278,9 +284,9 @@
 
     function createLessonDBIfNotExists() {
       $log.debug("createLessonDBIfNotExists")
-      lessonDB = pouchDB('lessonsDB', {
-        revs_limit: 1
-      });
+      // lessonDB = pouchDB('lessonsDB', {
+      //   revs_limit: 1
+      // });
       return lessonDB.get('_local/preloaded').then(function(doc) {}).catch(function(err) {
         if (err.name !== 'not_found') {
           throw err;
@@ -297,9 +303,9 @@
 
     function createOrUpdateLessonDB() {
       $log.debug("create or update lessondb")
-      lessonDB = pouchDB('lessonsDB', {
-        revs_limit: 1
-      });
+      // lessonDB = pouchDB('lessonsDB', {
+      //   revs_limit: 1
+      // });
       $log.debug("NEW DB MADE 1");
       return lessonDB.load(CONSTANT.PATH.DATA + '/lessons.db', {
           proxy: CONSTANT.LESSONS_DB_SERVER
@@ -310,9 +316,9 @@
     }
 
     function createLessonDBIfNotExistsPatch() {
-      lessonDB = pouchDB('lessonsDB', {
-        revs_limit: 1
-      });
+      // lessonDB = pouchDB('lessonsDB', {
+      //   revs_limit: 1
+      // });
       return lessonDB.get('_local/preloaded').then(function(doc) {}).catch(function(err) {
         if (err.name !== 'not_found') {
           throw err;

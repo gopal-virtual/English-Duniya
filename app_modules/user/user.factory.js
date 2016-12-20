@@ -24,8 +24,12 @@
     $rootScope) {
     var User = {};
     var profilesDB = pouchDB('profilesDB', {
-      revs_limit: 1
+      auto_compaction : true,
+      revs_limit: 1,
     });
+
+  
+    // $log.debug(profilesDB.info());
     // var remoteProfilesDb = pouchDB('http://anna:secret@127.0.0.1:5984/device'+device.uuid);
     // var myIndex = {
     //   _id: '_design/profile',
@@ -149,7 +153,19 @@
     }
     User.checkIfProfileOnline = checkIfProfileOnline;
     User.startProfileSync = startProfileSync;
-
+    User.compactDB = function(){
+        return profilesDB.compact().then(function(result){
+          $log.debug("Compaction done",result);
+        })
+        .catch(function(err){
+          $log.debug("Compaction error",err);
+        });
+      }
+      User.info = function () {
+          profilesDB.info().then(function(result){
+      $log.debug("profilesDB info",result);
+    })
+      }
     function startProfileSync() {
       if (!$rootScope.profilesDBeplicationStarted) {
         $rootScope.profilesDBeplicationStarted = true;
@@ -260,6 +276,8 @@
         }
       };
       profile.client_uid = record._id;
+      
+      
       $log.debug("Adding new profile", record);
       return profilesDB.put(record)
         .then(function() {
@@ -280,7 +298,6 @@
         "_id": id ? id : generateProfileID(),
         "data": {
           "scores": {},
-          "reports": [],
           "skills": initial_skills,
           "profile": profile
         }

@@ -302,6 +302,7 @@ gulp.task('watch', ['default'], function () {
   gulp.watch(paths.sass, ['sass']);
   gulp.watch(paths.script, ['scripts']);
   gulp.watch(paths.html, ['html']);
+  gulp.watch();
 });
 
 // gulp.task('install', ['git-check'], function() {

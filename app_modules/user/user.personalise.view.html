@@ -29,6 +29,22 @@
 <ion-view class="bg-pale">
     <ion-content>
         <ion-slide-box delegate-handle="slide" show-pager="false" ng-init="userCtrl.disableSwipe()" on-slide-changed="userCtrl.playAudio($index)">
+        <ion-slide >
+                
+                <div class="name-avatar">
+                    <h2 style="top:25vh" class="center full-width absolute personalize-title">Choose Language </h2>
+                    <div style="top:34vh; margin-top: 10vh" class="center full-width absolute flex">
+                  <div ng-repeat="lang in userCtrl.CONSTANT.LANGUAGES" ng-click="userCtrl.user.language = lang.code" ng-class="{'selected':userCtrl.user.language == lang.code}" class="center lcard center bg-white card-radius">
+                  <div class="lcard-inner padding-10 option">
+                  {{userCtrl.localizedContent.personalise.choose_language[lang.code]}}</div>
+                  </div>
+                    </div>
+                  <div style="top:83vh; text-align: center;" class="full-width absolute">
+                        <button ng-disabled="!userCtrl.user.language" class="sbtn sbtn-next-blue" ng-class="{'animation-repeat-bounce': userCtrl.user.language}" ng-click="audio.play('press');userCtrl.nextSlide();"></button>
+                    </div>
+
+                </div>
+            </ion-slide>
             <ion-slide ng-init="userCtrl.user.limit = 15">
                 <!-- <div class="box name-avatar">
                     <div class="row padding-x-10">
@@ -48,7 +64,7 @@
                     </center>
                 </div> -->
                 <div class="name-avatar">
-                    <h2 style="top:25vh" class="center full-width absolute personalize-title">आपका नाम क्या है?</h2>
+                    <h2 style="top:25vh" class="center full-width absolute personalize-title">{{userCtrl.localizedContent.personalise.enter_your_name[userCtrl.language]}}</h2>
                     <div style="top:34vh"  ng-init="userCtrl.user.name=''" class="full-width absolute">
                         <div class="col font-md personalize-input" style="">{{userCtrl.user.name}}</div>
                     </div>
@@ -66,7 +82,7 @@
             <ion-slide>
                 <div>
                     <div style="top:7vh;" class="full-width absolute">
-                        <h2 style="line-height: 1" class="center personalize-title">लड़का या लड़की</h2>
+                        <h2 style="line-height: 1" class="center personalize-title">{{userCtrl.localizedContent.personalise.boyorgirl[userCtrl.language]}}</h2>
                     </div>
                     <div style="top: 16vh;" class="full-width absolute">
                         <div class="flex">

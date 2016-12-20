@@ -12,7 +12,7 @@
       'BUNDLED': false,
       'LOCK': true,
       'FAKE_LOGIN': true,
-      'FAKE_ID_DEVICE': 'micromaxtest24',
+      'FAKE_ID_DEVICE': 'micromaxtest04',
       'FAKE_DEVICE': true,
       'CONTENT_TEST':false,
       'DEBUG' : true,

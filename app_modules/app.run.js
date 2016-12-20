@@ -41,9 +41,12 @@
         $log.debug("Local storage !== ", CONSTANT.APP.VERSION);
         notification.db.load();
         // new PouchDB('lessonsDB').erase();
+        // Check if user has updated app and delete older lesson db then add new db
         localStorage.setItem('version', CONSTANT.APP.VERSION);
         // content.createOrUpdateLessonDB()
       } else {
+        // if lessons dont exist in this case create lesson db and start replication
+
         // content.replicateLessonDB();
       }
       if (localStorage.first_time !== undefined) {
