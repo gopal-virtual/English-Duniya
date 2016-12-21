@@ -90,6 +90,7 @@
     userCtrl.disableSwipe = disableSwipe;
     userCtrl.playAudio = playAudio;
     userCtrl.selectProfile = selectProfile;
+    userCtrl.audioPlayer = audio.player;
     userCtrl.playAudio(-1);
     $log.debug("Hukata")
     $scope.audio = audio;
@@ -107,18 +108,19 @@
     }
 
     function playAudio(index) {
+      $log.debug("playaudio",index,userCtrl.localizedContent.audio.personalise,userCtrl.user && userCtrl.user.language);
       var src;
       if (index == -1) {
-        src = 'sound/welcome_to_ed_write_your_name.mp3'
-      }
-      if (index == 0) {
-        src = 'sound/voice_name.mp3'
+        src = 'sound/placeholder.mp3';
       }
       if (index == 1) {
-        src = 'sound/voice_gender.mp3'
+        src = userCtrl.localizedContent.audio.personalise.enter_your_name[userCtrl.user.language] || 'sound/placeholder.mp3';
       }
       if (index == 2) {
-        src = 'sound/voice_class.mp3'
+        src = userCtrl.localizedContent.audio.personalise.select_your_gender[userCtrl.user.language] || 'sound/placeholder.mp3';
+      }
+      if (index == 3) {
+        src = userCtrl.localizedContent.audio.personalise.select_your_class[userCtrl.user.language] || 'sound/placeholder.mp3';
       }
       if (src) {
         audio.player.play(src);

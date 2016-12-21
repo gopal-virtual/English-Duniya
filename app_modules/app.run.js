@@ -142,6 +142,10 @@
       }
     });
     $ionicPlatform.ready(function() {
+analytics.getLocation().then(function(location) {
+  $log.debug("Location",location);
+})
+
       content.replicateLessonDB();
       $rootScope.inBackground = false;
       if (User.getActiveProfileSync()) {

@@ -12,13 +12,13 @@
       'BUNDLED': false,
       'LOCK': true,
       'FAKE_LOGIN': true,
-      'FAKE_ID_DEVICE': 'micromaxtest04',
+      'FAKE_ID_DEVICE': 'test04',
       'FAKE_DEVICE': true,
       'CONTENT_TEST':false,
       'DEBUG' : true,
       'BACKEND_SERVICE_DOMAIN': 'https://cc-test.zaya.in/',
       'RESOURCE_SERVER': 'https://cc-test.zaya.in',
-      'LESSONS_DB_SERVER': 'https://ci-couch.zaya.in/lessonsdb',
+      'LESSONS_DB_SERVER': 'https://ci-couch.zaya.in/localisedlessons',
       'PROFILES_DB_SERVER': 'https://ci-couch.zaya.in/device',
       'LESSON_DB_VERSION': 'na',
       'NOTIFICATION_DB_SERVER': 'https://ci-couch.zaya.in/notifications',
@@ -140,6 +140,16 @@
             'DISCOVERED': 1,
             'UNDISCOVERED' : 1 
           }
-        }
+        },
+        'LANGUAGES' : [
+          {
+            name: 'hindi',
+            code: 'hi'
+          },
+          {
+            name : 'gujarati',
+            code : 'gu'
+          }
+        ]
     })
 })();
