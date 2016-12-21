@@ -1,0 +1,55 @@
+<style type="text/css">
+	.num-row{
+		display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+	}
+
+	.num{
+		width: 12vw;
+    height: 12vw;
+    margin: 2px 8px;
+    background: #A5CCEC;
+    border: 3px #FFF solid;
+    box-sizing: content-box;
+    box-shadow: 0px -2px inset;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 9vw;
+    line-height: 1.6;
+	}
+	.num-ghost{
+		width: 12vw;
+    height: 12vw;
+    margin: 2px 10px;
+	}
+	.num.activated, .num.active{
+		background: #FFD800;
+	}
+	.num-icon{
+		display: flex;
+	  align-items: center;
+	  justify-content: center;
+	}
+
+</style>
+<div class="num-row">
+  <a ng-repeat="(num,value) in { '1':'1', '2':'2', '3':'3'}" class="num" ng-click="numCtrl.input(value)">{{num}}</a>
+</div>
+<div class="num-row">
+  <a ng-repeat="(num,value) in {'4':'4', '5':'5', '6':'6'}" class="num" ng-click="numCtrl.input(value)">{{num}}</a>
+</div>
+<div class="num-row">
+  <a ng-repeat="(num,value) in {'7':'7', '8':'8', '9':'9'}" class="num" ng-click="numCtrl.input(value)">{{num}}</a>
+</div>
+<div class="num-row">
+  <a class="num-ghost"></a>
+  <a class="num" on-tap="numCtrl.input('0')">0</a>
+  <a class="num-ghost num-icon" on-tap="numCtrl.erase()"><div class="sicon-back"></div></a>
+
+  <!-- <a ng-repeat="(key,value) in {'U':'U', 'V':'V', 'W':'W','SPACE':' ', 'X':'X', 'Y':'Y', 'Z':'Z'}" class="key lbtn" on-tap="keyCtrl.input(value)">{{key}}</a> -->
+</div>
+<!-- <div class="key-row"> -->
+  <!-- <a class="key lbtn" on-tap="keyCtrl.input(' ')">SPACE</a> -->
+  <!-- <a class="key key-symbol lbtn" on-tap="keyCtrl.erase()"><i class="ion-arrow-left-c"></i></a> -->
+<!-- </div> -->

@@ -45,7 +45,8 @@
     '$cordovaLocalNotification',
     'notification',
     'device',
-    'multiUser'
+    'multiUser',
+    '$ionicSlideBoxDelegate'
 ];
 
   function mapController(
@@ -79,7 +80,8 @@
         $cordovaLocalNotification,
         notification,
         device,
-        multiUser
+        multiUser,
+        $ionicSlideBoxDelegate
     ) {
     $scope.audio = audio;
     $scope.settings = settings;
@@ -148,6 +150,31 @@
     $scope.goToPhoneNumber = goToPhoneNumber;
     $scope.exitPhoneNumber = exitPhoneNumber;
     // mapCtrl.notification = notification;
+    $scope.phone = {
+      number : '',
+      otp : '',
+      sendNumber : sendPhoneNumber,
+      disableSwipe : disableSwipe,
+      verifyOtp : verifyOtp,
+      nextSlide : nextSlide
+    }
+    
+    function sendPhoneNumber(num){
+      $log.debug("Your Phone Number is ",num);
+      nextSlide();
+    }
+
+    function verifyOtp(){
+      $log.debug("Verifying Otp")
+    }
+
+    function disableSwipe() {
+      $ionicSlideBoxDelegate.enableSlide(false);
+    }
+
+    function nextSlide() {
+      $ionicSlideBoxDelegate.$getByHandle('slide-phone').next();
+    }
 
     // notification.createDb();
     // notification.init();
