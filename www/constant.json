@@ -9,7 +9,7 @@
     "ANALYTICS": true,
     "PROFILES_DB_SERVER": "https://ed-couch.zaya.in/device",
     "LESSONS_DB_SERVER":"https://ed-couch.zaya.in/lessonsdb",
-    "DEBUG" : false,
+    "DEBUG" : true,
     "QUESTION_DEMO" : false,
     "NOTIFICATION_DURATION_DISCOVERED" : 300,
     "NOTIFICATION_DURATION_UNDISCOVERED" : 1440,

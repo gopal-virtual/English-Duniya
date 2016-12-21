@@ -88,7 +88,7 @@ var lock = argument.argv.lock ? argument.argv.lock : constants[env]['LOCK'];
 var fake_id_device = constants[env]['FAKE_ID_DEVICE'] || 'na';
 var lesson_db_version = 'na';
 var diagnosis_media = [];
-var lessonsdb_couch_server =   env == environments.production? 'https://ed-couch.zaya.in/lessonsdb' :'https://ci-couch.zaya.in/lessonsdb';  
+var lessonsdb_couch_server =   env == environments.production? 'https://ed-couch.zaya.in/lessonsdb' :'https://ci-couch.zaya.in/lessonsdb';
 //Get app version
 var xml       = file.readFileSync('./config.xml');
 var content         = cheerio.load(xml, { xmlMode: true });
@@ -97,7 +97,8 @@ console.log("VERSION",app_version);
 console.log("envi",raven_key[argument.argv.env])
 
 gulp.task('default', function(callback){
-  runSequence('generate-lessondb','get-diagnosis-media','make-main','generate-constants', 'sass', 'html', 'scripts',callback);
+  // runSequence('generate-lessondb','get-diagnosis-media','make-main','generate-constants', 'sass', 'html', 'scripts',callback);
+  runSequence('get-diagnosis-media','make-main','generate-constants', 'sass', 'html', 'scripts',callback);
 });
 
 gulp.task('generate-lessondb', shell.task(
@@ -232,7 +233,7 @@ gulp.task('scripts', function () {
     .pipe(stripDebug())
     .pipe(strip())
     .pipe(concate('mobile.app.js'))
-    .pipe(gulpif(env !== environments.dev && env !== environments.content,uglify()))
+    // .pipe(gulpif(env !== environments.dev && env !== environments.content,uglify()))
     .pipe(gulp.dest('www/build'))
   // .on('end',cb)
   // .pipe(broswerSync.stream())

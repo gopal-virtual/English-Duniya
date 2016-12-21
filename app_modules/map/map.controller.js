@@ -187,7 +187,11 @@
       }
     });
 
-    $log.debug("This is the lesson list",lessonList)
+    $log.debug("This is the lesson list")
+    $log.debug(JSON.stringify(lessonList))
+    $log.debug(lessonList.length)
+    $log.debug(JSON.stringify(lessonList[lessonList.length-1]))
+
     // $log.debug("FETCHINGDOCBYID",notification.fetchDocById())
     notification.fetchDocById(lessonList[lessonList.length-1].node.parent).then(function(doc){
       $log.debug("FETCHING DOC complete",doc)

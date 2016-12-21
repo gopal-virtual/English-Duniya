@@ -40,11 +40,11 @@
       if (localStorage.version !== CONSTANT.APP.VERSION) {
         $log.debug("Local storage !== ", CONSTANT.APP.VERSION);
         notification.db.load();
-        new PouchDB('lessonsDB').erase();
+        // new PouchDB('lessonsDB').erase();
         localStorage.setItem('version', CONSTANT.APP.VERSION);
-        content.createOrUpdateLessonDB()
+        // content.createOrUpdateLessonDB()
       } else {
-        content.replicateLessonDB();
+        // content.replicateLessonDB();
       }
       if (localStorage.first_time !== undefined) {
         User.startProfileSync();
@@ -139,6 +139,7 @@
       }
     });
     $ionicPlatform.ready(function() {
+      content.replicateLessonDB();
       $rootScope.inBackground = false;
       if (User.getActiveProfileSync()) {
         $log.debug("CHECK 2")

@@ -7,7 +7,7 @@
     .constant('CONSTANT', {
       'APP':{
       'TYPE': 'na',
-      'VERSION': '0.2.0'
+      'VERSION': '0.2.1'
       },
       'BUNDLED': false,
       'LOCK': true,
@@ -16,12 +16,12 @@
       'FAKE_DEVICE': false,
       'CONTENT_TEST':false,
       'DEBUG' : true,
-      'BACKEND_SERVICE_DOMAIN': 'https://cc-test.zaya.in/',
-      'RESOURCE_SERVER': 'https://cc-test.zaya.in/',
-      'LESSONS_DB_SERVER': 'https://ci-couch.zaya.in/lessonsdb',
-      'PROFILES_DB_SERVER': 'https://ci-couch.zaya.in/device',
+      'BACKEND_SERVICE_DOMAIN': 'https://eg-api.zaya.in/',
+      'RESOURCE_SERVER': 'https://eg-api.zaya.in/',
+      'LESSONS_DB_SERVER': 'https://ed-couch.zaya.in/lessonsdb',
+      'PROFILES_DB_SERVER': 'https://ed-couch.zaya.in/device',
       'LESSON_DB_VERSION': 'na',
-      'NOTIFICATION_DB_SERVER': 'https://ci-couch.zaya.in/notifications',
+      'NOTIFICATION_DB_SERVER': 'https://ed-couch.zaya.in/notifications',
       'ANALYTICS' : true,
       'GRADE' : [2,3,4,5,6,7,8],
       'QUESTION_DEMO' : false,
@@ -137,8 +137,8 @@
         'NODE_TYPE_LIST' : ['vocabulary','resource','assessment'],
         'NOTIFICATION': {
           'DURATION': {
-            'DISCOVERED': 1,
-            'UNDISCOVERED' : 1 
+            'DISCOVERED': 300,
+            'UNDISCOVERED' : 1440 
           }
         }
     })
