@@ -88,6 +88,7 @@
 
     $scope.settings.user = temp
     $scope.multiUser = multiUser;
+    $scope.user = User;
     multiUser.getProfiles();
     $scope.orientation = orientation;
     $scope.activatedLesson = $stateParams.activatedLesson;
@@ -143,6 +144,9 @@
     mapCtrl.goToChooseProfile = goToChooseProfile;
     mapCtrl.onBackButtonPress = onBackButtonPress;
 
+
+    $scope.goToPhoneNumber = goToPhoneNumber;
+    $scope.exitPhoneNumber = exitPhoneNumber;
     // mapCtrl.notification = notification;
 
     // notification.createDb();
@@ -490,6 +494,13 @@
       $scope.profileScreen = profileScreen;
     });
 
+    $ionicModal.fromTemplateUrl(CONSTANT.PATH.USER + '/user.phoneNumber' + CONSTANT.VIEW, {
+      scope: $scope,
+      animation: 'slide-in-down',
+      hardwareBackButtonClose: false
+    }).then(function(phoneNumberScreen) {
+      $scope.phoneNumberScreen = phoneNumberScreen;
+    });
 
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.demo' + CONSTANT.VIEW, {
       scope: $scope,
@@ -625,6 +636,20 @@
         multiUser.getProfiles()
         $scope.profileScreen.show();
     //   $state.go('user.chooseProfile');
+    }
+
+    function goToPhoneNumber() {
+      if ($scope.profileScreen.isShown()) {
+        $scope.profileScreen.hide()
+      }
+      $scope.phoneNumberScreen.show();
+    }
+
+    function exitPhoneNumber() {
+      if ($scope.profileScreen.isShown()) {
+        $scope.profileScreen.hide()
+      }
+      $scope.phoneNumberScreen.hide();
     }
   }
 })();

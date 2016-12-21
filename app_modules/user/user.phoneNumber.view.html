@@ -1,0 +1,48 @@
+
+<style>
+    .phone-title{
+        font-size: 5vh!important;
+        color: #1F81C5;
+        margin-top:0px;
+        line-height: 1;
+        margin:0px;
+    }
+</style>
+<ion-view class="bg-pale">
+    <!-- 
+    <div class="row header-fixed animation-fade-in">
+        
+
+        <div class="col center">
+            <a on-tap="exitPhoneNumber()" ng-show="::multiUser.hasCurrentUser()"><img class="absolute-right" src="img/assets_svg/cross.svg" alt=""></a>
+            <img src="img/assets_svg/profile_ribbon.svg" alt="" ng-show="::multiUser.hasCurrentUser()">
+            <img class="choose" src="img/assets_svg/chooseyourname_ribbon.svg" alt="" ng-show="::!multiUser.hasCurrentUser()">
+            <h1>Enter your number</h1>
+        </div>
+    </div> -->
+    <ion-content>
+        <ion-slide-box delegate-handle="slide" show-pager="false" ng-init="userCtrl.disableSwipe()" on-slide-changed="userCtrl.playAudio($index)">
+            <ion-slide>
+                <div>
+                    <div style="top:3vh" class="full-width absolute center">
+                        <img style="height:26vh" ng-src="{{user.getActiveProfileSync().data.profile.gender == 'M'?'img/assets/upperbody-boy.png':'img/assets/upperbody-girl.png'}}" alt="">
+                    </div>
+                    <div style="top:32vh" class="full-width absolute padding-x-20">
+                        <h2 class="center phone-title">Enter your Mobile Number to stay connected</h2>
+                    </div>
+                    <div style="top:37vh" class="full-width absolute padding-x-10">
+                        <div class="grade-box-container">
+                            <label class="grade-box radio" ng-repeat="grade in userCtrl.CONSTANT.GRADE" ng-class="{true : 'radio-selected', false : 'radio-not-selected'}[userCtrl.user.grade == grade]">
+                                {{grade}}
+                                <input type="radio" name="grade" value="{{grade}}" ng-model="userCtrl.user.grade">
+                            </label>
+                        </div>
+                    </div>
+                    <div style="top:83vh; text-align: center;" class="full-width absolute">
+                        <button ng-disabled="!userCtrl.user.grade" class="sbtn sbtn-next-blue" ng-class="{'animation-repeat-bounce': userCtrl.user.grade}" ng-click="audio.play('press');userCtrl.createProfile(userCtrl.user);"></button>
+                    </div>
+                </div>
+            </ion-slide>
+        </ion-slide-box>
+    </ion-content>
+</ion-view>

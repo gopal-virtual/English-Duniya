@@ -37,7 +37,7 @@
         align-items: center;
         margin: 2vw 1.5vw;
         padding : 3vw;
-        min-height: 55vw;
+        /*min-height: 55vw;*/
     }
     .profile-box:active,
     .profile-box:activated{
@@ -62,8 +62,8 @@
         right : 6.5vw;
     }
     .profile-avatar {
-        width: 25vw;
-        height: 25vw;
+        width: 20vw;
+        height: 20vw;
         background-color: #F9E9D0;
         border-radius: 50%;
         border: 3px solid #FAF5EB;
@@ -91,8 +91,8 @@
         text-align: center;
         background-color: #CE202F;
         padding-top: 12px;
-        margin-top: -15px;
-        width: 40px;
+        margin-top: -19px;
+        width: 30px;
         margin-left: auto;
         margin-right: auto;
         color: white;
@@ -101,19 +101,28 @@
         width: 0px;
         margin-left: auto;
         margin-right: auto;
-        border-left: 20px solid #CE202F;
-        border-right: 20px solid #CE202F;
+        border-left: 15px solid #CE202F;
+        border-right: 15px solid #CE202F;
         border-bottom: 5px solid transparent;
         border-top: 0;
     }
+    .profile-username{
+        font-size: 1.5em;
+        line-height: 1;
+    }
     .header-fixed{
-        position: fixed;;
+        position: fixed;
     }
     .has-headers{
         top: 70px;
     }
     .choose{
         width : 60vw;
+    }
+    .button-container{
+        position: absolute;
+        width: 100%;
+        bottom: 0;
     }
 </style>
 <ion-view class="bg-pale">
@@ -129,7 +138,7 @@
     <ion-content class="has-headers">
         <div class="profile-box-container">
             <div ng-tap="profile.id != multiUser.getCurrentProfile() && multiUser.selectProfile(profile);profileScreen.hide()" ng-click="profile.id != multiUser.getCurrentProfile() && multiUser.selectProfile(profile);profileScreen.hide()" class="profile-box" ng-class="::{true : 'profile-box-darkblue', false : 'profile-box-blue'}[multiUser.getCurrentProfile() == profile.doc._id]" ng-repeat="profile in multiUser.profiles | limitTo : 4">
-                <div class="font-lg" ng-class="::{true : 'font-pale' , false : 'font-blue'}[multiUser.getCurrentProfile() == profile.doc._id]">
+                <div class="profile-username" ng-class="::{true : 'font-pale' , false : 'font-blue'}[multiUser.getCurrentProfile() == profile.doc._id]">
                     {{::profile.doc.data.profile.first_name}}
                 </div>
                 <div>
@@ -151,6 +160,9 @@
             <div  ng-show="multiUser.canAdd()" class="profile-box profile-box-add" ng-tap="multiUser.goToCreateNewProfile();profileScreen.hide()" ng-click="multiUser.goToCreateNewProfile();profileScreen.hide()">
                 <img src="img/assets_svg/add_sign.svg" alt="">
             </div>
+        </div>
+        <div class="padding-10 center button-container">
+            <a ng-click="phoneNumberScreen.show()" class="sbtn sbtn-phone-add"></a>
         </div>
     </ion-content>
 </ion-view>

@@ -279,7 +279,21 @@
   width: 88px;
   height: 90px;
 }
-
+.sbtn-phone-add{
+  background: url('../img/assets_svg/button-phone-add.svg');
+  background-size: cover;
+  background-position: 0 0 !important;
+  background-repeat:no-repeat;
+  width: 268px;
+  height: 49px;
+}.sbtn-phone-change{
+  background: url('../img/assets_svg/button-phoone-change.svg');
+  background-size: cover;
+  background-position: 0 0 !important;
+  background-repeat:no-repeat;
+  width: 268px;
+  height: 49px;
+}
 
 // .sbtn:disabled{
 //   background: url('../img/assets_svg/button-grey.svg');
