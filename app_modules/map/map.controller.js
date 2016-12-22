@@ -156,7 +156,7 @@
       number : '',
       otp : '',
       otpErrorText : '',
-      otpInterval : 5000,
+      otpInterval : 90000,
       otpResendCount : 3,
       otpResendFlag : 0,
       resendOtp : resendOtp,
@@ -170,9 +170,23 @@
     
     var tempCount = 1;
 
+    function goToPhoneNumber() {
+      if ($scope.profileScreen.isShown()) {
+        $scope.profileScreen.hide()
+      }
+      $scope.phoneNumberScreen.show();
+    }
+
+    function exitPhoneNumber() {
+      if ($scope.profileScreen.isShown()) {
+        $scope.profileScreen.hide()
+      }
+      $scope.phoneNumberScreen.hide();
+    }
+
     function sendPhoneNumber(num){
       User.user.patchPhoneNumber("+91"+num).then(function(response){
-        $log.debug("We successfully sent the otp",response,num);
+        $log.debug("We successfully added the phone number. Requesting otp",response,num);
         nextSlide();
         resetResendFlag();
       })
@@ -180,16 +194,16 @@
 
     function resendOtp(num,interval){
       $log.debug("Asking for otp again")
-      // User.user.resendOtp(num).then(function(response){
-      //   $log.debug("Otp request was sent",response)
-      // })
+      User.user.resendOtp(num).then(function(response){
+        $log.debug("Otp request was sent",response)
+      })
       resetResendFlag();
     }
 
     function resetResendFlag(){
       $log.debug('disabling resend');
       $scope.phone.otpResendFlag = 0
-      if (tempCount >= $scope.phone.otpResendCount-1) {
+      if (tempCount > $scope.phone.otpResendCount-1) {
         return ;
       } 
       tempCount++;
@@ -745,18 +759,6 @@
     //   $state.go('user.chooseProfile');
     }
 
-    function goToPhoneNumber() {
-      if ($scope.profileScreen.isShown()) {
-        $scope.profileScreen.hide()
-      }
-      $scope.phoneNumberScreen.show();
-    }
-
-    function exitPhoneNumber() {
-      if ($scope.profileScreen.isShown()) {
-        $scope.profileScreen.hide()
-      }
-      $scope.phoneNumberScreen.hide();
-    }
+    
   }
 })();
