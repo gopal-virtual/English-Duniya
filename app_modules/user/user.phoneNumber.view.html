@@ -21,10 +21,22 @@
         border-radius: 20px;
         font-size: 5vh!important;
         color: #1F81C5;
+        line-height: 1.4;
     }
     .phone-input-placeholder{
         position: absolute;
         left: 19vw;
+    }
+    .phone-text{
+        font-size: 8vh!important;
+        line-height: 1;
+        color: #1F81C5;   
+    }
+    .phone-error-text{
+        font-size: 3.5vh!important;
+        line-height: 1;
+        color: #DB0000;
+        margin: 0px !important;   
     }
 </style>
 <ion-view class="bg-pale">
@@ -40,42 +52,63 @@
         </div>
     </div> -->
     <ion-content>
-        <ion-slide-box delegate-handle="slide-phone" show-pager="false" ng-init="userCtrl.disableSwipe()" on-slide-changed="userCtrl.playAudio($index)">
+        <ion-slide-box delegate-handle="slide-phone" show-pager="false" ng-init="phone.disableSwipe()" on-slide-changed="userCtrl.playAudio($index)">
             <ion-slide>
                 <div>
-                    <div style="top:3vh" class="full-width absolute center">
-                        <img style="height:22vh" ng-src="{{user.getActiveProfileSync().data.profile.gender == 'M'?'img/assets/upperbody-boy.png':'img/assets/upperbody-girl.png'}}" alt="">
+                    <div style="top:2vh" class="full-width absolute center">
+                        <img style="height:20vh" ng-src="{{user.getActiveProfileSync().data.profile.gender == 'M'?'img/assets/upperbody-boy.png':'img/assets/upperbody-girl.png'}}" alt="">
                     </div>
-                    <div style="top:26vh" class="full-width absolute padding-x-20">
+                    <div style="top:22vh" class="full-width absolute padding-x-20">
                         <h2 class="center phone-title">Enter your Mobile Number to stay connected</h2>
                     </div>
+<!--                     <div style="top:38vh" class="full-width absolute padding-x-20">
+                        <p class="center phone-error-text">This is an error text</p>
+                    </div> -->
                     <div style="top:42vh" class="phone-input-container full-width absolute padding-x-10">
                         <div class="col font-md phone-input center"><span class="phone-input-placeholder">+91</span><span>{{phone.number}}</span></div>
                     </div>
-                    <div style="top:50vh" class="full-width absolute numpad-container">
+                    <div style="top:52vh" class="full-width absolute numpad-container">
                         <virtual-numpad reference="phone.number" limit="9"></virtual-numpad>
                     </div>
                     <div style="top:88vh; text-align: center;" class="full-width absolute">
-                        <button ng-disabled="phone.number.length < 9" class="sbtn sbtn-next-blue" ng-class="{'animation-repeat-bounce': userCtrl.user.grade}" ng-click="audio.play('press');phone.sendNumber(phone.number)"></button>
+                        <!-- <button ng-disabled="phone.number.length < 9" class="sbtn sbtn-next sbtn-next-blue" ng-class="{'animation-repeat-bounce': userCtrl.user.grade}" ng-click="audio.play('press');phone.sendNumber(phone.number)"></button> -->
+                        <button ng-disabled="phone.number.length < 10" class="sbtn sbtn-next sbtn-next-blue" ng-click="audio.play('press');phone.sendNumber(phone.number)"></button>
                     </div>
                 </div>
             </ion-slide>
             <ion-slide>
                 <div>
-                    <div style="top:3vh" class="full-width absolute center">
-                        <img style="height:22vh" ng-src="{{user.getActiveProfileSync().data.profile.gender == 'M'?'img/assets/upperbody-boy.png':'img/assets/upperbody-girl.png'}}" alt="">
+                    <div style="top:2vh" class="full-width absolute center">
+                        <img style="height:20vh" ng-src="{{user.getActiveProfileSync().data.profile.gender == 'M'?'img/assets/upperbody-boy.png':'img/assets/upperbody-girl.png'}}" alt="">
                     </div>
-                    <div style="top:26vh" class="full-width absolute padding-x-20">
+                    <div style="top:22vh" class="full-width absolute padding-x-20">
                         <h2 class="center phone-title">To verify your number<br />Enter the number sent on your phone</h2>
+                    </div>
+                    <div style="top:38vh" class="full-width absolute padding-x-20">
+                        <p class="center phone-error-text">{{phone.otpErrorText}}</p>
                     </div>
                     <div style="top:42vh" class="phone-input-container full-width absolute padding-x-10">
                         <div class="col font-md phone-input center"><span>{{phone.otp}}</span></div>
                     </div>
-                    <div style="top:50vh" class="full-width absolute numpad-container">
+                    <div style="top:52vh" class="full-width absolute numpad-container">
                         <virtual-numpad reference="phone.otp" limit="5"></virtual-numpad>
                     </div>
                     <div style="top:88vh; text-align: center;" class="full-width absolute">
-                        <button ng-disabled="phone.otp.length < 5" class="sbtn sbtn-next-blue" ng-class="{'animation-repeat-bounce': userCtrl.user.grade}" ng-click="audio.play('press');phone.verifyOtp(phone.otp)"></button>
+                        <button ng-disabled="phone.otpResendFlag == 0" class="sbtn sbtn-resend" ng-click="audio.play('press');phone.resendOtp(phone.number)"></button>
+                        <button ng-disabled="phone.otp.length < 6" class="sbtn sbtn-done" ng-click="audio.play('press');phone.verifyOtp(phone.otp)"></button>
+                    </div>
+<!--                     <div style="top:88vh; text-align: center;" class="full-width absolute">
+                    </div> -->
+                </div>
+            </ion-slide>
+            <ion-slide>
+                <div>
+                    <div style="top:14vh" class="center absolute full-width">
+                        <p class="phone-text">Successful!</p>
+                    </div>
+                    <div style="top:26vh;height: 50vh;" class="total-center absolute full-width">
+                        <img style="height: 78%" class="absolute" src="img/assets_svg/circle.svg">
+                        <img style="height: 26%" class="absolute" src="img/assets_svg/tick.svg">
                     </div>
                 </div>
             </ion-slide>

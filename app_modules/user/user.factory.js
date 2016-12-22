@@ -11,7 +11,8 @@
     'queue',
     'device',
     '$injector',
-    '$rootScope'
+    '$rootScope',
+    '$http'
   ];
 
   function User(CONSTANT,
@@ -21,7 +22,8 @@
     queue,
     device,
     $injector,
-    $rootScope) {
+    $rootScope,
+    $http) {
     var User = {};
     var profilesDB = pouchDB('profilesDB', {
       revs_limit: 1
@@ -110,7 +112,10 @@
     User.setActiveProfileSync = setActiveProfileSync;
     User.updateActiveProfileSync = updateActiveProfileSync;
     User.user = {
-      getIdSync: getUserIdSync
+      getIdSync: getUserIdSync,
+      patchPhoneNumber : patchPhoneNumber,
+      resendOtp : resendOtp,
+      verifyOtp : verifyOtp
     };
     User.profile = {
       add: addNewProfile,
@@ -148,6 +153,36 @@
     }
     User.checkIfProfileOnline = checkIfProfileOnline;
     User.startProfileSync = startProfileSync;
+
+    function patchPhoneNumber(num) {
+      return $http({
+        method : 'PATCH',
+        url : 'https://cc-test.zaya.in/rest-auth/user/',
+        data : {
+          phone_number : num
+        }
+      })
+    }
+
+    function verifyOtp(otp) {
+      return $http({
+        method : 'POST',
+        url : 'https://cc-test.zaya.in/rest-auth/sms-verification/',
+        data : {
+          code : otp
+        }
+      }) 
+    }
+
+    function resendOtp(num) {
+      return $http({
+        method : 'POST',
+        url : 'https://cc-test.zaya.in/rest-auth/resend-sms-verification/',
+        data : {
+          phone_number : num
+        }
+      }) 
+    }
 
     function startProfileSync() {
         if(!$rootScope.profilesDBeplicationStarted){
