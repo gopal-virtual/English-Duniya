@@ -6,20 +6,20 @@
     .module('common')
     .constant('CONSTANT', {
       'APP':{
-      'TYPE': 'na',
+      'TYPE': 'Non-Bundled',
       'VERSION': '0.2.1'
       },
       'BUNDLED': false,
       'LOCK': true,
-      'FAKE_LOGIN': true,
-      'FAKE_ID_DEVICE': 'micromaxtest24',
-      'FAKE_DEVICE': true,
+      'FAKE_LOGIN': false,
+      'FAKE_ID_DEVICE': 'na',
+      'FAKE_DEVICE': false,
       'CONTENT_TEST':false,
       'DEBUG' : true,
       'BACKEND_SERVICE_DOMAIN': 'https://cc-test.zaya.in/',
-      'RESOURCE_SERVER': 'https://cc-test.zaya.in',
-      'LESSONS_DB_SERVER': 'http://52.187.70.243:5984/lessonsdb',
-      'PROFILES_DB_SERVER': 'http://52.187.70.243:5984/device',
+      'RESOURCE_SERVER': 'https://cc-test.zaya.in/',
+      'LESSONS_DB_SERVER': 'https://ci-couch.zaya.in/lessonsdb',
+      'PROFILES_DB_SERVER': 'https://ci-couch.zaya.in/device',
       'LESSON_DB_VERSION': 'na',
       'NOTIFICATION_DB_SERVER': 'https://ci-couch.zaya.in/notifications',
       'ANALYTICS' : true,

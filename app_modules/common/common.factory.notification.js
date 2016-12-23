@@ -14,10 +14,11 @@
     'lessonutils',
     '$cordovaPushV5',
     'CONSTANT',
-    'device'
+    'device',
+    'analytics'
   ];
 
-  function notification($log, $cordovaLocalNotification,content,$q,User,$http,lessonutils,$cordovaPushV5,CONSTANT,device) {
+  function notification($log, $cordovaLocalNotification,content,$q,User,$http,lessonutils,$cordovaPushV5,CONSTANT,device,analytics) {
     // types of notification
     // Undiscovered - content - 24hrs
     // Discovered - generic - 5hrs
@@ -396,7 +397,7 @@
       }
       analytics.log({
         name: 'NOTIFICATION',
-        type: type[typeMap],
+        type: typeMap[type],
         id: null
       }, {
         time: new Date()
