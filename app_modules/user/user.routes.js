@@ -152,7 +152,7 @@
               }
 
               function disableSwipe() {
-                $ionicSlideBoxDelegate.enableSlide(false);
+                // $ionicSlideBoxDelegate.enableSlide(false);
               }
 
               function nextSlide() {
