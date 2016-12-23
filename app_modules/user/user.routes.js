@@ -56,7 +56,8 @@
         views: {
           'state-user' : {
             templateUrl: CONSTANT.PATH.USER + '/user.chooseProfile' + CONSTANT.VIEW,
-            controller: ['multiUser','$scope',function(multiUser,$scope){
+            controller: ['multiUser','$scope','User',function(multiUser,$scope,User){
+                $scope.changeNumberFlag = User.user.getPhoneNumber() == '' ? 0 : 1;
                 $scope.multiUser = multiUser;
                 multiUser.getProfiles();
             }],
@@ -72,7 +73,7 @@
         views: {
           'state-user' : {
             templateUrl: CONSTANT.PATH.USER + '/user.phoneNumber' + CONSTANT.VIEW,
-            controller: ['$scope','$timeout','$log','User','$ionicSlideBoxDelegate','$state',function($scope,$timeout,$log,User,$ionicSlideBoxDelegate,$state){
+            controller: ['$scope','$timeout','$log','User','$ionicSlideBoxDelegate','$state','$ionicLoading',function($scope,$timeout,$log,User,$ionicSlideBoxDelegate,$state,$ionicLoading){
               $scope.phone = {
                 number : '',
                 otp : '',
@@ -97,6 +98,7 @@
               function exitPhoneNumber() {
                 $log.debug('Going to map')
                 $state.go('map.navigate');
+                $ionicLoading.show();
               }
 
               function sendPhoneNumber(num){
@@ -152,7 +154,7 @@
               }
 
               function disableSwipe() {
-                // $ionicSlideBoxDelegate.enableSlide(false);
+                $ionicSlideBoxDelegate.enableSlide(false);
               }
 
               function nextSlide() {

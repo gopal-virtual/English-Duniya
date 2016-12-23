@@ -148,6 +148,7 @@
     mapCtrl.goToChooseProfile = goToChooseProfile;
     mapCtrl.onBackButtonPress = onBackButtonPress;
 
+    $scope.changeNumberFlag = User.user.getPhoneNumber() == '';
     $scope.currentState = $state.current.name;
     // $scope.goToPhoneNumber = goToPhoneNumber;
     // $scope.exitPhoneNumber = exitPhoneNumber;
@@ -184,7 +185,8 @@
       }
       $scope.phoneNumberScreen.hide().then(function(){
         $ionicSlideBoxDelegate.slide(0);
-        $scope.otp = '';
+        $scope.phone.otp = '';
+        $scope.phone.otpErrorText = '';
         tempCount = 1;
       });
     }
