@@ -70,7 +70,7 @@
       "NOTIFICATION" : {
         "CONTENT" : null,
         "RECEIVED" : "received notification",
-        "CLICKED" : "clicked notification"
+        "TAPPED" : "tapped notification"
 
       }
     };

@@ -41,7 +41,8 @@
       },
       online: {
         register: onlineRegister,
-        set : onlineSet
+        set : onlineSet,
+        log : onlineLog
       }
     }
 
@@ -382,6 +383,24 @@
       }catch(err){
         $log.warn("NOTIFICATION. Need to run app on mobile to enable push notifications",err)
       }
+    }
+
+    function onlineLog(type){
+      var typeMap = {
+        'received' : 'RECEIVED',
+        'tapped' : 'TAPPED'
+      }
+      var profileId; 
+      if (User.getActiveProfileSync()) {
+        profileId = User.getActiveProfileSync()._id ? User.getActiveProfileSync()._id : device.uuid; 
+      }
+      analytics.log({
+        name: 'NOTIFICATION',
+        type: type[typeMap],
+        id: null
+      }, {
+        time: new Date()
+      }, profileId);
     }
   }
 })();
