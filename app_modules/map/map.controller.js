@@ -148,12 +148,12 @@
     mapCtrl.goToChooseProfile = goToChooseProfile;
     mapCtrl.onBackButtonPress = onBackButtonPress;
 
-
-    $scope.goToPhoneNumber = goToPhoneNumber;
-    $scope.exitPhoneNumber = exitPhoneNumber;
+    $scope.currentState = $state.current.name;
+    // $scope.goToPhoneNumber = goToPhoneNumber;
+    // $scope.exitPhoneNumber = exitPhoneNumber;
     // mapCtrl.notification = notification;
     $scope.phone = {
-      number : '',
+      number : User.user.getPhoneNumber(),
       otp : '',
       otpErrorText : '',
       otpInterval : 90000,
@@ -164,11 +164,12 @@
       disableSwipe : disableSwipe,
       verifyOtp : verifyOtp,
       nextSlide : nextSlide,
-      exitModal : exitPhoneNumber,
-      openModal : goToPhoneNumber,
+      exit : exitPhoneNumber,
+      open : goToPhoneNumber,
     }
-    
+
     var tempCount = 1;
+
 
     function goToPhoneNumber() {
       if ($scope.profileScreen.isShown()) {
@@ -181,7 +182,11 @@
       if ($scope.profileScreen.isShown()) {
         $scope.profileScreen.hide()
       }
-      $scope.phoneNumberScreen.hide();
+      $scope.phoneNumberScreen.hide().then(function(){
+        $ionicSlideBoxDelegate.slide(0);
+        $scope.otp = '';
+        tempCount = 1;
+      });
     }
 
     function sendPhoneNumber(num){
@@ -189,6 +194,7 @@
         $log.debug("We successfully added the phone number. Requesting otp",response,num);
         nextSlide();
         resetResendFlag();
+        User.user.updatePhoneLocal(response.data.phone_number);
       })
     }
 
@@ -246,7 +252,7 @@
         // $log.debug("Please cancel interval",$interval.cancel(otpCycle));
         nextSlide();
         if (!successInterval) {
-          successInterval = 2000;
+          successInterval = 1000;
         }
         $log.debug("Before timeout")
         $timeout(function() {

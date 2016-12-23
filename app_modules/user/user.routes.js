@@ -67,5 +67,102 @@
           profiles: null
         }
       })
+      .state('user.phoneNumber', {
+        url: '/phoneNumber',
+        views: {
+          'state-user' : {
+            templateUrl: CONSTANT.PATH.USER + '/user.phoneNumber' + CONSTANT.VIEW,
+            controller: ['$scope','$timeout','$log','User','$ionicSlideBoxDelegate','$state',function($scope,$timeout,$log,User,$ionicSlideBoxDelegate,$state){
+              $scope.phone = {
+                number : '',
+                otp : '',
+                otpErrorText : '',
+                otpInterval : 90000,
+                otpResendCount : 3,
+                otpResendFlag : 0,
+                resendOtp : resendOtp,
+                sendNumber : sendPhoneNumber,
+                disableSwipe : disableSwipe,
+                verifyOtp : verifyOtp,
+                nextSlide : nextSlide,
+                exit : exitPhoneNumber,
+                open : goToPhoneNumber,
+              }
+              var tempCount = 1;
+
+              function goToPhoneNumber() {
+                $log.debug('Whoosh! open')
+              }
+
+              function exitPhoneNumber() {
+                $log.debug('Going to map')
+                $state.go('map.navigate');
+              }
+
+              function sendPhoneNumber(num){
+                User.user.patchPhoneNumber("+91"+num).then(function(response){
+                  $log.debug("We successfully added the phone number. Requesting otp",response,num);
+                  nextSlide();
+                  resetResendFlag();
+                  User.user.updatePhoneLocal(response.data.phone_number);
+                })
+              }
+
+              function resendOtp(num,interval){
+                $log.debug("Asking for otp again")
+                User.user.resendOtp(num).then(function(response){
+                  $log.debug("Otp request was sent",response)
+                })
+                resetResendFlag();
+              }
+
+              function resetResendFlag(){
+                $log.debug('disabling resend');
+                $scope.phone.otpResendFlag = 0
+                if (tempCount > $scope.phone.otpResendCount-1) {
+                  return ;
+                } 
+                tempCount++;
+                $timeout(function() {
+                  $log.debug('activating resend')
+                  $scope.phone.otpResendFlag = 1;
+                }, $scope.phone.otpInterval);
+              }
+
+              function verifyOtp(otp,successInterval){
+                User.user.verifyOtp(otp).then(function(response){
+                  $log.debug("Verified otp",response);
+                  // $log.debug("Please cancel interval",$interval.cancel(otpCycle));
+                  nextSlide();
+                  if (!successInterval) {
+                    successInterval = 1000;
+                  }
+                  $log.debug("Before timeout")
+                  $timeout(function() {
+                    $log.debug("In timeout")
+                    exitPhoneNumber();
+                  },successInterval);
+                }, function(err){
+                  if(err.status == 400){
+                    $scope.phone.otpErrorText = err.data.details
+                  }else{
+                    $log.error(err)
+                  }
+                })
+              }
+
+              function disableSwipe() {
+                $ionicSlideBoxDelegate.enableSlide(false);
+              }
+
+              function nextSlide() {
+                $ionicSlideBoxDelegate.$getByHandle('slide-phone').next();
+              }
+
+            }],
+            controllerAs: 'phoneCtrl'
+          }
+        }
+      })
   }
 })();

@@ -112,10 +112,13 @@
     User.setActiveProfileSync = setActiveProfileSync;
     User.updateActiveProfileSync = updateActiveProfileSync;
     User.user = {
+      getDetails: getUserDetails,
       getIdSync: getUserIdSync,
       patchPhoneNumber : patchPhoneNumber,
+      getPhoneNumber : getPhoneNumber,
       resendOtp : resendOtp,
-      verifyOtp : verifyOtp
+      verifyOtp : verifyOtp,
+      updatePhoneLocal : updatePhoneLocal
     };
     User.profile = {
       add: addNewProfile,
@@ -182,6 +185,20 @@
           phone_number : num
         }
       }) 
+    }
+
+    function updatePhoneLocal(num){
+      var tempUserDetails = JSON.parse(localStorage.getItem('user_details'));
+      tempUserDetails.phone_number = num;
+      localStorage.setItem('user_details',JSON.stringify(tempUserDetails));
+    }
+
+    function getPhoneNumber(){
+      return getUserDetails().phone_number.replace('+91','')
+    }
+
+    function getUserDetails() {
+      return JSON.parse(localStorage.getItem('user_details'))
     }
 
     function startProfileSync() {

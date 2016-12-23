@@ -58,6 +58,9 @@
                     <div style="top:2vh" class="full-width absolute center">
                         <img style="height:20vh" ng-src="{{user.getActiveProfileSync().data.profile.gender == 'M'?'img/assets/upperbody-boy.png':'img/assets/upperbody-girl.png'}}" alt="">
                     </div>
+                    <div style="top:2vh" class="full-width absolute">
+                        <a  style="right: 2vh;" class="absolute" on-tap="phone.exit()"><img src="img/assets_svg/cross.svg" alt=""></a>
+                    </div>
                     <div style="top:22vh" class="full-width absolute padding-x-20">
                         <h2 class="center phone-title">Enter your Mobile Number to stay connected</h2>
                     </div>
@@ -72,7 +75,7 @@
                     </div>
                     <div style="top:88vh; text-align: center;" class="full-width absolute">
                         <!-- <button ng-disabled="phone.number.length < 9" class="sbtn sbtn-next sbtn-next-blue" ng-class="{'animation-repeat-bounce': userCtrl.user.grade}" ng-click="audio.play('press');phone.sendNumber(phone.number)"></button> -->
-                        <button ng-disabled="phone.number.length < 10" class="sbtn sbtn-next sbtn-next-blue" ng-click="audio.play('press');phone.sendNumber(phone.number)"></button>
+                        <button ng-disabled="phone.number.length < 10 || phone.number == user.user.getPhoneNumber()" class="sbtn sbtn-next sbtn-next-blue" ng-click="audio.play('press');phone.sendNumber(phone.number)"></button>
                     </div>
                 </div>
             </ion-slide>
@@ -80,6 +83,9 @@
                 <div>
                     <div style="top:2vh" class="full-width absolute center">
                         <img style="height:20vh" ng-src="{{user.getActiveProfileSync().data.profile.gender == 'M'?'img/assets/upperbody-boy.png':'img/assets/upperbody-girl.png'}}" alt="">
+                    </div>
+                    <div style="top:2vh" class="full-width absolute">
+                        <a  style="right: 2vh;" class="absolute" on-tap="phone.exit()"><img src="img/assets_svg/cross.svg" alt=""></a>
                     </div>
                     <div style="top:22vh" class="full-width absolute padding-x-20">
                         <h2 class="center phone-title">To verify your number<br />Enter the number sent on your phone</h2>

@@ -161,7 +161,7 @@
                 <img src="img/assets_svg/add_sign.svg" alt="">
             </div>
         </div>
-        <div class="padding-10 center button-container">
+        <div ng-if="currentState == 'map.navigate'" class="padding-10 center button-container">
             <a ng-click="phoneNumberScreen.show()" class="sbtn sbtn-phone-add"></a>
         </div>
     </ion-content>

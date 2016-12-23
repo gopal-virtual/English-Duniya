@@ -159,7 +159,10 @@
         // });
         if (data.additionalData.coldstart) {
           $log.debug("NOTIFICATION. App was started by tapping on notification");
-          notification.online.log('tapped')
+          notification.online.log('tapped');
+          if(data.additionalData.extra_params.redirect){
+            $state.go(data.additionalData.extra_params.redirect);
+          }
         }else{
           $log.debug("NOTIFICATION. Though notification was received, app wasn\'t started by clicking on notification")
           // localStorage.setItem("Hello2","Hello coldstart false")
