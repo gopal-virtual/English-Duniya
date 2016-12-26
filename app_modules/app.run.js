@@ -283,7 +283,11 @@
     $ionicPlatform.on('pause', function() {
       $rootScope.$broadcast('appPause');
       $rootScope.inBackground = true;
-      notification.schedule(JSON.parse(localStorage.scheduleNotification), JSON.parse(localStorage.scheduleNotification).at);
+      try{
+        notification.schedule(JSON.parse(localStorage.scheduleNotification), JSON.parse(localStorage.scheduleNotification).at);
+      }catch(err){
+        $log.warn("Looks like offline notifications haven\'t been set yet")
+      }
       // content.getActiveResource().then(function(resource){
       //   $log.debug("LOGGING ACTIVE",resource)
       //   activeResource = resource;
