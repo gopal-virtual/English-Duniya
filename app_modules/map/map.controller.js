@@ -155,6 +155,7 @@
     // mapCtrl.notification = notification;
     $scope.phone = {
       number : User.user.getPhoneNumber(),
+      numberErrorText : '',
       otp : '',
       otpErrorText : '',
       otpInterval : 90000,
@@ -170,7 +171,6 @@
     }
 
     var tempCount = 1;
-
 
     function goToPhoneNumber() {
       if ($scope.profileScreen.isShown()) {
@@ -192,6 +192,17 @@
     }
 
     function sendPhoneNumber(num){
+      // $log.debug(num[0]);
+      // $log.debug(num[0] != '9',num[0] != '8',num[0] != '7');
+      // $log.debug(num[0] != '9' && num[0] != '8' && num[0] != '7');
+
+      if (num[0] != '9' && num[0] != '8' && num[0] != '7') {
+        $log.debug("in rejection")
+        $scope.phone.numberErrorText = "Please enter a valid mobile number";
+        return ;
+      }
+      // $log.debug("not in rejection")
+      $scope.phone.numberErrorText = "";
       User.user.patchPhoneNumber("+91"+num).then(function(response){
         $log.debug("We successfully added the phone number. Requesting otp",response,num);
         nextSlide();

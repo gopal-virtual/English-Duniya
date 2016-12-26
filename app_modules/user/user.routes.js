@@ -76,6 +76,7 @@
             controller: ['$scope','$timeout','$log','User','$ionicSlideBoxDelegate','$state','$ionicLoading',function($scope,$timeout,$log,User,$ionicSlideBoxDelegate,$state,$ionicLoading){
               $scope.phone = {
                 number : '',
+                numberErrorText : '',
                 otp : '',
                 otpErrorText : '',
                 otpInterval : 90000,
@@ -102,6 +103,13 @@
               }
 
               function sendPhoneNumber(num){
+                if (num[0] != '9' && num[0] != '8' && num[0] != '7') {
+                  $log.debug("in rejection")
+                  $scope.phone.numberErrorText = "Please enter a valid mobile number";
+                  return ;
+                }
+                // $log.debug("not in rejection")
+                $scope.phone.numberErrorText = "";
                 User.user.patchPhoneNumber("+91"+num).then(function(response){
                   $log.debug("We successfully added the phone number. Requesting otp",response,num);
                   nextSlide();

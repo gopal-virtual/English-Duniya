@@ -54,6 +54,19 @@
         animation-timing-function: ease-in-out;
         -webkit-transform-origin: 50% 50%;
     }
+    .symbol{
+        height: 4vh;
+        width: 4vh;
+        background: #CD202F;
+        border-radius: 2vh;
+        /*content: 'i';*/
+        font-size: 4vh;
+        color: #fff;
+        text-align: center;
+        line-height: 4.6vh;
+        position: absolute;
+        bottom: 0;
+    }
 </style>
 <div class="profile-star" ng-class="::{'animation-fade-in-from-top animation-delay-more' : mapCtrl.demo.getStep() != 1}" ng-hide="::mapCtrl.demo.getStep() == 1">
     <img class="profile-star-icon-offset" src="img/assets_svg/icon-star-offset.svg">
@@ -62,6 +75,7 @@
 </div>
 <div ng-tap="mapCtrl.goToChooseProfile()" ng-click="mapCtrl.goToChooseProfile()"  class="profile" ng-class="::{'animation-fade-in-from-top animation-delay-more' : mapCtrl.demo.getStep() != 1}" ng-hide="::mapCtrl.demo.getStep() == 1">
     <img class="profile-avatar" ng-src="img/assets_svg/profile-{{::mapCtrl.gender == 'M' ? 'boy' : 'girl'}}.svg">
+    <div ng-if="phone.number == ''" class="symbol animation-repeat-bounce">i</div>
 </div>
 <div class="result-backdrop modal-dark" ng-show="::mapCtrl.backdrop" ng-click="mapCtrl.backdrop=false;mapCtrl.showScore=-1"></div>
 <ion-view>
