@@ -37,117 +37,128 @@
     }, 510);
     //$http.defaults.headers.common['Access-Control-Request-Headers'] = 'accept, auth-token, content-type, xsrfcookiename';
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
-      $log.debug("play resource state change",toState,toParams)
+      $log.debug("play resource state change", toState, toParams)
       if (localStorage.version !== CONSTANT.APP.VERSION) {
+        event.preventDefault();
+        $log.debug("tag First tim entering the app")
         $log.debug("Local storage !== ", CONSTANT.APP.VERSION);
+        $ionicLoading.show({hideOnStateChange:true})
+        content.deleteLessonDB().then(function() {
+          $log.debug("tag Deleted lesson db");
+          return content.createOrUpdateLessonDB()
+        }).then(function() {
+          $log.debug("tag Create lessondb", toState, toParams);
+          // $ionicLoading.hide()
+          localStorage.setItem('version', CONSTANT.APP.VERSION);
+          $state.go(toState.name, toParams);
+        })
+        .catch(function(err){
+          $log.debug("Tag error",err)
+        })
         notification.db.load();
         // new PouchDB('lessonsDB').erase();
         // Check if user has updated app and delete older lesson db then add new db
-        localStorage.setItem('version', CONSTANT.APP.VERSION);
         // content.createOrUpdateLessonDB()
       } else {
-        // if lessons dont exist in this case create lesson db and start replication
-
-        // content.replicateLessonDB();
-      }
-      if (localStorage.first_time !== undefined) {
-        User.startProfileSync();
-      }
-      $log.debug(toState.name !== 'user.personalise', !User.getActiveProfileSync());
-      if (toState.name == 'map.navigate' && !User.getActiveProfileSync()) {
-        event.preventDefault();
-        $log.debug("Ionic loading show with hide on state change", localStorage.getItem('first_time') == undefined, network.isOnline());
-        if (network.isOnline()) {
-          $ionicLoading.show({
-            hideOnStateChange: true
-          });
-          localStorage.setItem('first_time', 'no');
-          User.checkIfProfileOnline().then(function() {
-            $log.debug("Checked if profile online")
-            localStorage.setItem('profiles_fetched', 'true');
-            User.profile.getAll().then(function(profiles) {
-              if (profiles.length == 0) {
-                $log.debug("Going to user personalise");
-                $state.go('user.personalise');
-              } else {
-                $state.go('user.chooseProfile', {
-                  'profiles': profiles
-                });
-                $log.debug("CHECK 5")
-                notification.online.set();
-              }
-            });
-          });
-        } else {
-          $state.go('user.personalise');
+        content.replicateLessonDB();
+        $log.debug("tag here");
+        if (localStorage.first_time !== undefined) {
+          User.startProfileSync();
         }
-      }
-      if (toState.name === 'user.personalise' && User.getActiveProfileSync()) {
-        event.preventDefault();
-        $state.go('map.navigate');
-      }
-      if (toState.name !== 'user.personalise' && localStorage.getItem('profile') !== null && JSON.parse(localStorage.getItem(('profile')))._id === undefined) {
-        $log.debug("toState.name !== 'user.personalise' && localStorage.getItem('profile') !== null && JSON.parse(localStorage.getItem(('profile')))._id === undefined");
-        event.preventDefault();
-        var user = {
-          name: JSON.parse(localStorage.getItem(('profile'))).first_name,
-          grade: JSON.parse(localStorage.getItem(('profile'))).grade,
-          gender: JSON.parse(localStorage.getItem(('profile'))).gender
-        };
-        $log.debug("patching profile");
-        User.profile.patch(user, JSON.parse(localStorage.getItem(('profile'))).id).then(function(response) {
-          $log.debug("patched profile");
+        $log.debug(toState.name !== 'user.personalise', !User.getActiveProfileSync());
+        if (toState.name == 'map.navigate' && !User.getActiveProfileSync()) {
+          event.preventDefault();
+          $log.debug("Ionic loading show with hide on state change", localStorage.getItem('first_time') == undefined, network.isOnline());
+          if (network.isOnline()) {
+            $ionicLoading.show({
+              hideOnStateChange: true
+            });
+            localStorage.setItem('first_time', 'no');
+            User.checkIfProfileOnline().then(function() {
+              $log.debug("Checked if profile online")
+              localStorage.setItem('profiles_fetched', 'true');
+              User.profile.getAll().then(function(profiles) {
+                if (profiles.length == 0) {
+                  $log.debug("Going to user personalise");
+                  $state.go('user.personalise');
+                } else {
+                  $state.go('user.chooseProfile', {
+                    'profiles': profiles
+                  });
+                  $log.debug("CHECK 5")
+                  notification.online.set();
+                }
+              });
+            });
+          } else {
+            $state.go('user.personalise');
+          }
+        }
+        if (toState.name === 'user.personalise' && User.getActiveProfileSync()) {
+          event.preventDefault();
           $state.go('map.navigate');
-        });
-      }
-      // if(toState.name == 'litmus_result' && !toParams.average_level){
-      //   event.preventDefault();
-      //   $state.go('user.personalise')
-      // }
-      if (toState.name == 'content.vocabulary.intro' && !toParams.vocab_data) {
-        event.preventDefault();
-        $state.go('map.navigate');
-      }
-      if (toState.name == 'content.vocabulary.instruction' && !toParams.vocab_data) {
-        event.preventDefault();
-        $state.go('map.navigate');
-      }
-      if (toState.name == 'content.vocabulary.overview' && !toParams.vocab_data) {
-        event.preventDefault();
-        $state.go('map.navigate');
-      }
-      if (toState.name == 'content.vocabulary.card' && !toParams.vocab_data) {
-        event.preventDefault();
-        $state.go('map.navigate');
-      }
-      if (toState.name == 'quiz.questions' && toParams.type == 'practice' && !toParams.quiz) {
-        event.preventDefault();
-        $state.go('map.navigate');
-      }
-      if (toState.name == 'quiz.start' && !toParams.quiz) {
-        event.preventDefault();
-        $state.go('map.navigate');
-      }
-      if (toState.name == 'quiz.summary' && !toParams.report) {
-        event.preventDefault();
-        $state.go('map.navigate');
-      }
-      if (toState.name == 'quiz.practice.summary' && !toParams.report) {
-        event.preventDefault();
-        $state.go('map.navigate');
-      }
-      // block content state
-      if (toState.name == 'content.video' && !toParams.video) {
-        event.preventDefault();
-        $state.go('map.navigate');
+        }
+        if (toState.name !== 'user.personalise' && localStorage.getItem('profile') !== null && JSON.parse(localStorage.getItem(('profile')))._id === undefined) {
+          $log.debug("toState.name !== 'user.personalise' && localStorage.getItem('profile') !== null && JSON.parse(localStorage.getItem(('profile')))._id === undefined");
+          event.preventDefault();
+          var user = {
+            name: JSON.parse(localStorage.getItem(('profile'))).first_name,
+            grade: JSON.parse(localStorage.getItem(('profile'))).grade,
+            gender: JSON.parse(localStorage.getItem(('profile'))).gender
+          };
+          $log.debug("patching profile");
+          User.profile.patch(user, JSON.parse(localStorage.getItem(('profile'))).id).then(function(response) {
+            $log.debug("patched profile");
+            $state.go('map.navigate');
+          });
+        }
+        // if(toState.name == 'litmus_result' && !toParams.average_level){
+        //   event.preventDefault();
+        //   $state.go('user.personalise')
+        // }
+        if (toState.name == 'content.vocabulary.intro' && !toParams.vocab_data) {
+          event.preventDefault();
+          $state.go('map.navigate');
+        }
+        if (toState.name == 'content.vocabulary.instruction' && !toParams.vocab_data) {
+          event.preventDefault();
+          $state.go('map.navigate');
+        }
+        if (toState.name == 'content.vocabulary.overview' && !toParams.vocab_data) {
+          event.preventDefault();
+          $state.go('map.navigate');
+        }
+        if (toState.name == 'content.vocabulary.card' && !toParams.vocab_data) {
+          event.preventDefault();
+          $state.go('map.navigate');
+        }
+        if (toState.name == 'quiz.questions' && toParams.type == 'practice' && !toParams.quiz) {
+          event.preventDefault();
+          $state.go('map.navigate');
+        }
+        if (toState.name == 'quiz.start' && !toParams.quiz) {
+          event.preventDefault();
+          $state.go('map.navigate');
+        }
+        if (toState.name == 'quiz.summary' && !toParams.report) {
+          event.preventDefault();
+          $state.go('map.navigate');
+        }
+        if (toState.name == 'quiz.practice.summary' && !toParams.report) {
+          event.preventDefault();
+          $state.go('map.navigate');
+        }
+        // block content state
+        if (toState.name == 'content.video' && !toParams.video) {
+          event.preventDefault();
+          $state.go('map.navigate');
+        }
       }
     });
     $ionicPlatform.ready(function() {
-analytics.getLocation().then(function(location) {
-  $log.debug("Location",location);
-})
-
-      content.replicateLessonDB();
+      analytics.getLocation().then(function(location) {
+        $log.debug("Location", location);
+      })
       $rootScope.inBackground = false;
       if (User.getActiveProfileSync()) {
         $log.debug("CHECK 2")
@@ -165,11 +176,10 @@ analytics.getLocation().then(function(location) {
           smallIcon: 'res: //ic_stat_english_duniya'
         })
       });
-
-      $rootScope.$on('$cordovaPushV5:errorOcurred', function(event, error){
-        $log.error("Error occured online notification", event, error);
-      })
-      //
+      $rootScope.$on('$cordovaPushV5:errorOcurred', function(event, error) {
+          $log.error("Error occured online notification", event, error);
+        })
+        //
       $rootScope.mediaSyncStatus = {
         size: null,
         mediaToDownload: []

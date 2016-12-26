@@ -33,6 +33,7 @@
     // if (User.getActiveProfileSync() && User.getActiveProfileSync().data) {
     var lessonDB = pouchDB('lessonsDB', {
       revs_limit: 1,
+      adapter: 'websql'
       // auto_compaction : true
     });
     var diagnosisTranslationsDB = pouchDB('diagnosisTranslationsDB', {
@@ -131,6 +132,8 @@
       return lessonDB.erase();
     }
 
+
+
     function replicateLessonDB() {
       if (!$rootScope.lessonDBReplicationStarted) {
         $log.debug("Replication");
@@ -163,12 +166,11 @@
     function getLocalizedQuestion(questionId, targetLanguage) {
       return lessonDB.get('localized_mapping').then(function(localizationMapping) {
         var translatedQuestionID = localizationMapping.mapping[questionId][targetLanguage]
-         return diagnosisTranslationsDB.get(translatedQuestionID).then(function(question) {
-          $log.debug("localizedQuestion",question);
-        return question.question;
-      });
+        return diagnosisTranslationsDB.get(translatedQuestionID).then(function(question) {
+          $log.debug("localizedQuestion", question);
+          return question.question;
+        });
       })
-     
     }
 
     function findNewMediaToDownload() {
@@ -320,11 +322,9 @@
         // });
       $log.debug("NEW DB MADE 1");
       return lessonDB.load(CONSTANT.PATH.DATA + '/lessons.db', {
-          proxy: CONSTANT.LESSONS_DB_SERVER
+          // proxy: CONSTANT.LESSONS_DB_SERVER
         })
-        .then(function() {
-          return replicateLessonDB()
-        })
+        
     }
 
     function createDiagnosisTranslationsDB() {
@@ -472,9 +472,7 @@
       var d = $q.defer();
       var promises = [];
       for (var index = 0; index < quiz.objects.length; index++) {
-
         if (quiz.objects[index].node.meta && quiz.objects[index].node.meta.instructions && quiz.objects[index].node.meta.instructions.sounds[0] && localStorage.getItem(quiz.objects[index].node.meta.instructions.sounds[0]) != 'played') {
-
           localStorage.setItem(quiz.objects[index].node.meta.instructions.sounds[0], 'played');
           promises.push(mediaManager.getPath(quiz.objects[index].node.meta.instructions.sounds[0]).then(
             function(index) {
@@ -483,11 +481,10 @@
               }
             }(index)
           ))
-  }
+        }
         promises.push(widgetParser.parseToDisplay(quiz.objects[index].node.title, index, quiz).then(
           function(index) {
-        $log.debug("play resource here");
-
+            $log.debug("play resource here");
             return function(result) {
               quiz.objects[index].node.widgetHtml = result;
             }
@@ -524,7 +521,7 @@
         }
       }
       $q.all(promises).then(function() {
-        $log.debug("play resource respoving assessment",quiz);
+        $log.debug("play resource respoving assessment", quiz);
         d.resolve(quiz)
       });
       return d.promise;

@@ -9,7 +9,7 @@
 
 echo $ANDROID_HOME
 BUILD_TYPE='local'
-ENV='production'
+ENV='test'
 
 BUILD_NAME="englishduniya-$ENV-non-bundled"
 BUNDLED="Non-Bundled"
