@@ -37,6 +37,7 @@
     }, 510);
     //$http.defaults.headers.common['Access-Control-Request-Headers'] = 'accept, auth-token, content-type, xsrfcookiename';
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+      $log.debug("play resource state change",toState,toParams)
       if (localStorage.version !== CONSTANT.APP.VERSION) {
         $log.debug("Local storage !== ", CONSTANT.APP.VERSION);
         notification.db.load();

@@ -149,6 +149,10 @@
           {
             name : 'gujarati',
             code : 'gu'
+          },
+          {
+            name : 'tamil',
+            code : 'ta'
           }
         ]
     })

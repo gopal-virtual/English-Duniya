@@ -132,6 +132,7 @@
       });
       }
       catch(err){
+        $log.debug("HERE",CONSTANT.RESOURCE_SERVER+url)
         return $q.when(CONSTANT.RESOURCE_SERVER+url);
       }
     }

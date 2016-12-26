@@ -57,7 +57,9 @@
           'en': 'Select your class',
           'ta': 'நீங்கள் எந்த வர்க்கம் உள்ளன?',
           'gu': 'તમે કાયા વર્ગ માં ચો?'
-        },
+        }
+      },
+      litmus : {
         'litmus_start': {
           'hi': 'चलो अब हम एक छोटासा अभ्यास करेंगे!',
           'en': 'Let us practice now!',
@@ -70,17 +72,28 @@
       personalise: {
         'welcome': {
           'hi': 'sound/welcome_to_ed_write_your_name.mp3',
+
         },
          'select_your_language': {
+          'ta': 'ta_tamil-to-english.mp3'
         },
         'enter_your_name': {
           'hi': 'sound/voice_name.mp3',
         },
         'select_your_gender': {
           'hi': 'sound/voice_gender.mp3',
+          'ta': 'sound/ta_boy-or-girl.mp3'
         },
         'select_your_class': {
-          'hi': 'sound/voice_class.mp3'
+          'hi': 'sound/voice_class.mp3',
+          'ta': 'sound/ta_select_class.mp3'
+        }
+      },
+      litmus : {
+        'litmus_start': {
+          'hi': 'sound/lets_start_a_small_practice.mp3',
+          'ta': 'sound/ta_litmus-start.mp3',
+          'gu': 'ચાંલ્લો હવે આપડે એક નાનું સ્વાધ્યાય કરશુ!',
         }
       }
     };

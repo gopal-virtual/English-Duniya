@@ -122,6 +122,7 @@ gulp.task('get-lessondb-version', function () {
 gulp.task('preen', function (cb) {
   preen.preen({}, cb);
 });
+console.log('raven key',raven_key[argument.argv.env]);
 
 gulp.task('make-main',function(){
   gulp.src(paths.main)
@@ -288,7 +289,7 @@ gulp.task('get-diagnosis-media',function () {
       if(diagnosis_json[0][prop].node.type.content.widgets.hasOwnProperty(media_type)){
 
         for(var media_file in diagnosis_json[0][prop].node.type.content.widgets[media_type]){
-          console.log(diagnosis_json[0][prop].node.type.content.widgets[media_type][media_file])
+          // console.log(diagnosis_json[0][prop].node.type.content.widgets[media_type][media_file])
           diagnosis_media.push(diagnosis_json[0][prop].node.type.content.widgets[media_type][media_file]);
         }
       }

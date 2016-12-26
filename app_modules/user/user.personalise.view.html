@@ -33,16 +33,24 @@
                 
                 <div class="name-avatar">
                     <h2 style="top:25vh" class="center full-width absolute personalize-title">Choose Language </h2>
-                    <div style="top:34vh; margin-top: 10vh" class="center full-width absolute ">
-                  <div ng-repeat="lang in userCtrl.CONSTANT.LANGUAGES" ng-click="userCtrl.user.language = lang.code;userCtrl.audioPlayer.play('sound/placeholder.mp3')" ng-class="{'selected':userCtrl.user.language == lang.code}" class="center lcard center bg-white card-radius">
+                   
+                    <div style="top:34vh; height:38vh;margin-top: 10vh;display: flex;flex-wrap: wrap;
+    justify-content: center;" class="center full-width absolute ">
+     <ion-scroll
+        scrollbar-x="false" scrollbar-y="false"
+        direction="y"
+        style="height:38vh;"
+      >
+                  <div style="margin:2vw;" ng-repeat="lang in userCtrl.CONSTANT.LANGUAGES" ng-click="userCtrl.user.language = lang.code;userCtrl.audioPlayer.play('sound/placeholder.mp3')" ng-class="{'selected':userCtrl.user.language == lang.code}" class="center lcard center bg-white card-radius">
                   <div class="lcard-inner padding-10 option">
                   {{userCtrl.localizedContent.text.personalise.choose_language[lang.code]}}</div>
                   </div>
                     </div>
+</ion-scroll>
+
                   <div style="top:83vh; text-align: center;" class="full-width absolute">
                         <button ng-disabled="!userCtrl.user.language" class="sbtn sbtn-next-blue" ng-class="{'animation-repeat-bounce': userCtrl.user.language}" ng-click="audio.play('press');userCtrl.nextSlide();"></button>
                     </div>
-
                 </div>
             </ion-slide>
             <ion-slide ng-init="userCtrl.user.limit = 15">

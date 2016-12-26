@@ -132,7 +132,9 @@
       data["device"] = device;
       data["app_version"] = CONSTANT.APP.VERSION;
       data["app_type"] = CONSTANT.APP.TYPE;
-      data["location"] = location || {};
+      if(location && location.coords){
+      data["location"] = {'latitue':location.coords.latitude,'longitude':location.coords.longitude};        
+      }
       var post_param = {
         "verb": analytics.activity[action.name][action.type],
         "actor_content_type": "person",
@@ -149,8 +151,7 @@
       }
 
       if (CONSTANT.ANALYTICS) {
-
-
+        $log.debug("Pushing activity log")
         queue.push('activity-log', post_param);
       }
       // ionic.Platform.device().available &&
