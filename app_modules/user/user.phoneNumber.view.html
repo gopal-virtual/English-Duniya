@@ -75,7 +75,7 @@
                     </div>
                     <div style="top:88vh; text-align: center;" class="full-width absolute">
                         <!-- <button ng-disabled="phone.number.length < 9" class="sbtn sbtn-next sbtn-next-blue" ng-class="{'animation-repeat-bounce': userCtrl.user.grade}" ng-click="audio.play('press');phone.sendNumber(phone.number)"></button> -->
-                        <button ng-disabled="phone.number.length < 10 || phone.number == user.user.getPhoneNumber()" class="sbtn sbtn-next sbtn-next-blue" ng-click="audio.play('press');phone.sendNumber(phone.number)"></button>
+                        <button ng-disabled="phone.number.length < 10 || (phone.number == user.user.getPhoneNumber() && phone.isVerified)" class="sbtn sbtn-next sbtn-next-blue" ng-click="audio.play('press');phone.submitNumber(phone.number)"></button>
                     </div>
                 </div>
             </ion-slide>

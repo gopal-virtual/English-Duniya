@@ -118,7 +118,8 @@
       getPhoneNumber : getPhoneNumber,
       resendOtp : resendOtp,
       verifyOtp : verifyOtp,
-      updatePhoneLocal : updatePhoneLocal
+      updatePhoneLocal : updatePhoneLocal,
+      setIsVerified : setIsVerified
     };
     User.profile = {
       add: addNewProfile,
@@ -177,6 +178,7 @@
       }) 
     }
 
+
     function resendOtp(num) {
       return $http({
         method : 'POST',
@@ -193,8 +195,16 @@
       localStorage.setItem('user_details',JSON.stringify(tempUserDetails));
     }
 
+    function setIsVerified(flag){
+      var tempUserDetails = JSON.parse(localStorage.getItem('user_details'));
+      tempUserDetails.is_verified = flag;
+      localStorage.setItem('user_details',JSON.stringify(tempUserDetails)); 
+    }
+
     function getPhoneNumber(){
-      return getUserDetails().phone_number.replace('+91','')
+      // return getUserDetails().phone_number.replace('+91','')
+      return getUserDetails().phone_number
+
     }
 
     function getUserDetails() {

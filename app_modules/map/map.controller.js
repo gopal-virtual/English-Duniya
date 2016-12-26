@@ -156,19 +156,22 @@
     $scope.phone = {
       number : User.user.getPhoneNumber(),
       numberErrorText : '',
+      isVerified : User.user.getDetails().is_verified,
       otp : '',
       otpErrorText : '',
       otpInterval : 90000,
       otpResendCount : 3,
       otpResendFlag : 0,
       resendOtp : resendOtp,
-      sendNumber : sendPhoneNumber,
+      submitNumber : submitPhoneNumber,
       disableSwipe : disableSwipe,
       verifyOtp : verifyOtp,
       nextSlide : nextSlide,
       exit : exitPhoneNumber,
       open : goToPhoneNumber,
     }
+
+    // $log.debug("ISVERIFIED",$scope.phone.number.length < 10,$scope.phone.number == User.user.getPhoneNumber(), $scope.phone.isVerified)
 
     var tempCount = 1;
 
@@ -177,6 +180,9 @@
         $scope.profileScreen.hide()
       }
       $scope.phoneNumberScreen.show();
+
+      $scope.phone.isVerified = User.user.getDetails().is_verified;
+      $log.debug("PHONE.is verified",$scope.phone.isVerified)
     }
 
     function exitPhoneNumber() {
@@ -191,11 +197,7 @@
       });
     }
 
-    function sendPhoneNumber(num){
-      // $log.debug(num[0]);
-      // $log.debug(num[0] != '9',num[0] != '8',num[0] != '7');
-      // $log.debug(num[0] != '9' && num[0] != '8' && num[0] != '7');
-
+    function submitPhoneNumber(num){
       if (num[0] != '9' && num[0] != '8' && num[0] != '7') {
         $log.debug("in rejection")
         $scope.phone.numberErrorText = "Please enter a valid mobile number";
@@ -203,11 +205,29 @@
       }
       // $log.debug("not in rejection")
       $scope.phone.numberErrorText = "";
-      User.user.patchPhoneNumber("+91"+num).then(function(response){
+      if(!$scope.phone.isVerified && $scope.phone.number == User.user.getPhoneNumber()){
+        $log.debug('PHONE. asking for otp')
+        resendOtp(num,$scope.phone.otpInterval);
+        nextSlide();
+      }else{
+        $log.debug('PHONE. Patching phone')
+        sendPhoneNumber(num);
+      }
+    }
+
+    function sendPhoneNumber(num){
+      // $log.debug(num[0]);
+      // $log.debug(num[0] != '9',num[0] != '8',num[0] != '7');
+      // $log.debug(num[0] != '9' && num[0] != '8' && num[0] != '7');
+
+      User.user.patchPhoneNumber(num).then(function(response){
         $log.debug("We successfully added the phone number. Requesting otp",response,num);
         nextSlide();
         resetResendFlag();
         User.user.updatePhoneLocal(response.data.phone_number);
+        User.user.setIsVerified(response.data.is_verified);
+      }, function(err){
+        $scope.phone.numberErrorText = err.data.phone_number[0]
       })
     }
 
@@ -263,6 +283,8 @@
       User.user.verifyOtp(otp).then(function(response){
         $log.debug("Verified otp",response);
         // $log.debug("Please cancel interval",$interval.cancel(otpCycle));
+        User.user.setIsVerified(true);
+        // $scope.phone.isVerified = User.user.getDetails().is_verified
         nextSlide();
         if (!successInterval) {
           successInterval = 1000;
