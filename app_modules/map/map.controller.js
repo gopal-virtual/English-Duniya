@@ -227,7 +227,11 @@
         User.user.updatePhoneLocal(response.data.phone_number);
         User.user.setIsVerified(response.data.is_verified);
       }, function(err){
-        $scope.phone.numberErrorText = err.data.phone_number[0]
+        if(err.status == 400){
+          $scope.phone.otpErrorText = err.data.details;
+        }else{
+          $scope.phone.otpErrorText = JSON.stringify(err.data);
+        }
       })
     }
 
