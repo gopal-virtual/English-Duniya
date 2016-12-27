@@ -45,6 +45,7 @@
   ) {
     var contentCtrl = this;
     $scope.audio = audio;
+    $scope.video_id = $stateParams.video.id;
     $scope.orientation = orientation;
     contentCtrl.onPlayerReady = onPlayerReady;
     contentCtrl.onStateChange = onStateChange;
@@ -60,6 +61,18 @@
     $scope.goToMap = goToMap;
     contentCtrl.playStarSound = playStarSound;
     contentCtrl.videoCompleted = false;
+    $scope.analytics_quit_data = {name : 'VIDEO', type : 'QUIT', id : $stateParams.video.id};
+    $scope.logResume = function(){
+        analytics.log({
+            name: 'VIDEO',
+            type: 'RESUME',
+            id: $stateParams.video.id
+          }, {
+            time: new Date()
+          },
+          User.getActiveProfileSync()._id
+        )
+    }
     var timeout = '';
     $log.debug('$stateParams', $stateParams)
     contentCtrl.config = {
@@ -141,6 +154,15 @@
     $log.debug('video object', $stateParams.video.resource)
 
     function goToMap() {
+        analytics.log({
+            name: 'VIDEO',
+            type: 'SWITCH',
+            id: $stateParams.video.id
+          }, {
+            time: new Date()
+          },
+          User.getActiveProfileSync()._id
+        )
       $ionicLoading.show({
         hideOnStateChange: true
       });
@@ -301,6 +323,15 @@
     }
 
     $scope.openNodeMenu = function() {
+        analytics.log({
+            name: 'VIDEO',
+            type: 'PAUSE',
+            id: $stateParams.video.id
+          }, {
+            time: new Date()
+          },
+          User.getActiveProfileSync()._id
+        )
       if (contentCtrl.API.currentState == 'pause') {
         // orientation.setPortrait()        ;
         $scope.nodeMenu.show().then(function() {
