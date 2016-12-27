@@ -46,7 +46,7 @@
         toParams: toParams,
         fromState: fromState,
         fromParams: fromParams
-      },User.getActiveProfileSync()._id)
+      },User.getActiveProfileSync() && User.getActiveProfileSync()._id)
       if (localStorage.version !== CONSTANT.APP.VERSION) {
         event.preventDefault();
         $log.debug("tag First tim entering the app")
@@ -176,7 +176,7 @@
           toParams: toParams,
           fromState: fromState,
           fromParams: fromParams
-        },User.getActiveProfileSync()._id)
+        },User.getActiveProfileSync() && User.getActiveProfileSync()._id)
       })
      $rootScope.$on('$stateChangeError',
       function(event, toState, toParams, fromState, fromParams, error) {
@@ -189,7 +189,7 @@
           fromState: fromState,
           fromParams: fromParams,
           error : error
-        },User.getActiveProfileSync()._id)
+        },User.getActiveProfileSync() && User.getActiveProfileSync()._id)
       })
     $ionicPlatform.ready(function() {
       analytics.getLocation().then(function(location) {

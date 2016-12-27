@@ -175,11 +175,16 @@
 
     function getLocalizedQuestion(questionId, targetLanguage) {
       return lessonDB.get('localized_mapping').then(function(localizationMapping) {
-        var translatedQuestionID = localizationMapping.mapping[questionId][targetLanguage]
-        return diagnosisTranslationsDB.get(translatedQuestionID).then(function(question) {
+        var translatedQuestionID = localizationMapping.mapping[questionId][targetLanguage];
+        if(translatedQuestionID){
+           return diagnosisTranslationsDB.get(translatedQuestionID).then(function(question) {
           $log.debug("localizedQuestion", question);
           return question.question;
         });
+         }else{
+          return questionId;
+         }
+       
       })
     }
 
