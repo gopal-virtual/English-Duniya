@@ -38,23 +38,34 @@
     //$http.defaults.headers.common['Access-Control-Request-Headers'] = 'accept, auth-token, content-type, xsrfcookiename';
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
       $log.debug("play resource state change", toState, toParams)
+      analytics.log({
+        name: 'STATE',
+        type: 'CHANGE_START'
+      }, {
+        toState: toState,
+        toParams: toParams,
+        fromState: fromState,
+        fromParams: fromParams
+      },User.getActiveProfileSync()._id)
       if (localStorage.version !== CONSTANT.APP.VERSION) {
         event.preventDefault();
         $log.debug("tag First tim entering the app")
         $log.debug("Local storage !== ", CONSTANT.APP.VERSION);
-        $ionicLoading.show({hideOnStateChange:true})
+        $ionicLoading.show({
+          hideOnStateChange: true
+        })
         content.deleteLessonDB().then(function() {
-          $log.debug("tag Deleted lesson db");
-          return content.createOrUpdateLessonDB()
-        }).then(function() {
-          $log.debug("tag Create lessondb", toState, toParams);
-          // $ionicLoading.hide()
-          localStorage.setItem('version', CONSTANT.APP.VERSION);
-          $state.go(toState.name, toParams);
-        })
-        .catch(function(err){
-          $log.debug("Tag error",err)
-        })
+            $log.debug("tag Deleted lesson db");
+            return content.createDependentDBs();
+          }).then(function() {
+            $log.debug("tag Created lessondb", toState, toParams);
+            localStorage.setItem('version', CONSTANT.APP.VERSION);
+            $state.go(toState.name, toParams);
+          })
+          .catch(function(err) {
+            $rootScope.$broadcast('lowDiskSpace')
+            $log.debug("Tag error", err)
+          })
         notification.db.load();
         // new PouchDB('lessonsDB').erase();
         // Check if user has updated app and delete older lesson db then add new db
@@ -155,6 +166,31 @@
         }
       }
     });
+    $rootScope.$on('$stateChangeSuccess',
+      function(event, toState, toParams, fromState, fromParams) {
+        analytics.log({
+          name: 'STATE',
+          type: 'CHANGE_COMPLETE'
+        }, {
+          toState: toState,
+          toParams: toParams,
+          fromState: fromState,
+          fromParams: fromParams
+        },User.getActiveProfileSync()._id)
+      })
+     $rootScope.$on('$stateChangeError',
+      function(event, toState, toParams, fromState, fromParams, error) {
+        analytics.log({
+          name: 'STATE',
+          type: 'CHANGE_ERROR'
+        }, {
+          toState: toState,
+          toParams: toParams,
+          fromState: fromState,
+          fromParams: fromParams,
+          error : error
+        },User.getActiveProfileSync()._id)
+      })
     $ionicPlatform.ready(function() {
       analytics.getLocation().then(function(location) {
         $log.debug("Location", location);
@@ -218,6 +254,10 @@
       $rootScope.$on('lowDiskSpace', function(event, networkState) {
         $ionicLoading.hide()
         $log.debug("Disk space full on app");
+        analytics.log({
+          name: 'FAILURE',
+          type: 'LOW_DISK_SPACE'
+        }, null, User.getActiveProfileSync()._id);
         $ionicPopup.alert({
           title: CONSTANT.ERROR_MESSAGES.LOW_DISK_SPACE.TITLE,
           template: CONSTANT.ERROR_MESSAGES.LOW_DISK_SPACE.MESSAGE
