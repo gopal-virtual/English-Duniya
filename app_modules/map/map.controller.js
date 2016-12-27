@@ -147,6 +147,7 @@
     }
     mapCtrl.goToChooseProfile = goToChooseProfile;
     mapCtrl.onBackButtonPress = onBackButtonPress;
+    $scope.exitChooseProfile = exitChooseProfile;
 
     $scope.changeNumberFlag = User.user.getPhoneNumber() == '';
     $scope.currentState = $state.current.name;
@@ -194,7 +195,9 @@
         $scope.phone.otp = '';
         $scope.phone.otpErrorText = '';
         tempCount = 1;
+        audio.loop('background')
       });
+
     }
 
     function submitPhoneNumber(num){
@@ -659,6 +662,7 @@
       hardwareBackButtonClose: false
     }).then(function(profileScreen) {
       $scope.profileScreen = profileScreen;
+
     });
 
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.USER + '/user.phoneNumber' + CONSTANT.VIEW, {
@@ -801,8 +805,16 @@
 
     function goToChooseProfile() {
         multiUser.getProfiles()
-        $scope.profileScreen.show();
+        $scope.profileScreen.show().then(function(){
+          audio.stop('background');
+        });
     //   $state.go('user.chooseProfile');
+    }
+
+    function exitChooseProfile() {
+      $scope.profileScreen.hide().then(function(){
+        audio.loop('background');
+      });
     }
 
     

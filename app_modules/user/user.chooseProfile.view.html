@@ -128,7 +128,7 @@
 <ion-view class="bg-pale">
     <div class="row header-fixed animation-fade-in">
         <div class="col center">
-            <a ng-tap="profileScreen.hide()" ng-click="profileScreen.hide()" ng-show="::multiUser.hasCurrentUser()"><img class="absolute-right" src="img/assets_svg/cross.svg" alt=""></a>
+            <a ng-click="exitChooseProfile()" ng-show="::multiUser.hasCurrentUser()"><img class="absolute-right" src="img/assets_svg/cross.svg" alt=""></a>
             <!-- <img src="img/assets_svg/profile_ribbon.svg" alt=""> -->
             <!-- ng-show="multiUser.hasCurrentUser()" -->
             <img src="img/assets_svg/profile_ribbon.svg" alt="" ng-show="::multiUser.hasCurrentUser()">
