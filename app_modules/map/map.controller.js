@@ -226,11 +226,12 @@
         resetResendFlag();
         User.user.updatePhoneLocal(response.data.phone_number);
         User.user.setIsVerified(response.data.is_verified);
+        $scope.changeNumberFlag = User.user.getPhoneNumber() == '';
       }, function(err){
-        if(err.status == 400){
-          $scope.phone.otpErrorText = err.data.details;
+       if(err.status == 400){
+          $scope.phone.numberErrorText = err.data.details;
         }else{
-          $scope.phone.otpErrorText = JSON.stringify(err.data);
+          $scope.phone.numberErrorText = JSON.stringify(err.data);
         }
       })
     }
