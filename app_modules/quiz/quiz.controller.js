@@ -3,7 +3,6 @@
   angular
     .module('zaya-quiz')
     .controller('QuizController', QuizController)
-
   QuizController.$inject = [
     'quiz',
     'widgetParser',
@@ -63,17 +62,13 @@
     User,
     content
   ) {
-
     var quizCtrl = this;
     //bind quiz resolved to controller
-    quizCtrl.quiz = quiz;
-
-    ;
+    quizCtrl.quiz = quiz;;
     //report
     quizCtrl.report = {};
     quizCtrl.submitReport = submitReport;
     quizCtrl.generateReport = generateReport;
-
     //attempts and submission
     quizCtrl.submitAttempt = submitAttempt;
     quizCtrl.isAttempted = isAttempted;
@@ -85,17 +80,14 @@
     quizCtrl.setSuggestion = setSuggestion;
     quizCtrl.updateSlide = updateSlide;
     quizCtrl.parseHtml = parseHtml;
-
     //binding services to controller scope
     $scope.audio = audio;
     quizCtrl.audio = audio;
     $scope.orientation = orientation; //find why this is added
     quizCtrl.utilities = Utilities;
     quizCtrl.widgetParser = widgetParser;
-
     //init
     quizCtrl.init = init;
-
     // navigation
     quizCtrl.isCurrentIndex = isCurrentIndex;
     quizCtrl.setCurrentIndex = setCurrentIndex;
@@ -116,8 +108,6 @@
     quizCtrl.canRemoveFeedback = true;
     quizCtrl.next = next;
     quizCtrl.logQuestion = logQuestion;
-
-
     // quizCtrl.pauseQuiz = pauseQuiz;
     quizCtrl.restartQuiz = restartQuiz;
     quizCtrl.CONSTANT = CONSTANT;
@@ -129,36 +119,29 @@
     quizCtrl.highlightSoundIconFlag = false;
     quizCtrl.playInstruction = playInstruction;
     quizCtrl.calculateStars = calculateStars;
-
     //timer
     quizCtrl.counter = 0;
     quizCtrl.timer = new Date(1970, 0, 1).setSeconds(quizCtrl.counter);
     quizCtrl.stopTimer = stopTimer;
     quizCtrl.startTimer = startTimer;
-
     quizCtrl.isScroll = isScroll;
     //helper functions
     quizCtrl.getQuestionType = getQuestionType;
     quizCtrl.redo = redo;
     quizCtrl.playQuizIntro = playQuizIntro;
     quizCtrl.intro_end_quiz = intro_end_quiz;
-
     // initialisation call
     quizCtrl.init(quizCtrl.quiz);
-
     //state history
     quizCtrl.isAssessment = ($stateParams.type == 'assessment');
     // quizCtrl.tourFlag = true;
-
     quizCtrl.disable_submit = false;
     quizCtrl.enable_litmus = true;
     $scope.demo = {
       'tourNextStep': tourNextStep,
       'tourFlag': localStorage.getItem('tourFlag')
     }
-
     quizCtrl.noPauseFlag = true;
-
     $scope.tourNextStep = tourNextStep;
     $scope.lessonutils = lessonutils;
     $scope.userGender = User.getActiveProfileSync().data.profile.gender;
@@ -166,8 +149,6 @@
     $scope.modal = {};
     $scope.resultStarFlag = [];
     quizCtrl.closeModalCallback = closeModalCallback;
-
-
     $scope.groups = [];
     for (var i = 0; i < 10; i++) {
       $scope.groups[i] = {
@@ -179,12 +160,9 @@
       }
     }
 
-    function isScroll(id) {
-
-    }
+    function isScroll(id) {}
 
     function redo() {
-
       if (quizCtrl.quiz.objects[0].node.id === CONSTANT.QUESTION.DEMO) {
         quizCtrl.quiz.objects.shift()
       }
@@ -201,12 +179,10 @@
         quizCtrl.timer += 1000;
       }, 1000);
     }
-
     // function starCount(index) {
     //   var count = quizCtrl.summary.stars - index;
     //   return count > 0 ? count : 0;
     // }
-
     function playStarSound() {
       var starSound = ["one_star", "two_star", "three_star"];
       var star = 0;
@@ -231,14 +207,12 @@
               // angular.element("#audioplayer")[0].play();
           }, (count + 1) * 1000);
         })(i);
-
       }
     }
 
     function submitReport(quiz, report, summary) {
       // $log.debug("Submit Report called");
       var lesson = lessonutils.getLocalLesson();
-
       User.skills.update({
           profileId: User.getActiveProfileSync()._id,
           lessonId: quiz.parent,
@@ -256,7 +230,6 @@
         })
         .then(function(previousScore) {
           if ((!previousScore) || (!previousScore.hasOwnProperty('score')) || (previousScore && parseInt(previousScore.score) < summary.score.marks)) {
-
             return User.scores.update({
               profileId: User.getActiveProfileSync()._id,
               lessonId: lesson.node.id,
@@ -266,29 +239,25 @@
               type: 'assessment',
               skill: quiz.node.tag
             })
-
           }
         })
-
-      .then(function() {
-        var attempts = [];
-        angular.forEach(report.attempts, function(value, key) {
-          attempts.push({
-            answer: value.length > 0 ? value : null,
-            score: summary.analysis[key].score,
-            status: value.length > 0 ? CONSTANT.ATTEMPT.STATUS.ATTEMPTED : CONSTANT.ATTEMPT.STATUS.SKIPPED,
-            node: key
+        .then(function() {
+          var attempts = [];
+          angular.forEach(report.attempts, function(value, key) {
+            attempts.push({
+              answer: value.length > 0 ? value : null,
+              score: summary.analysis[key].score,
+              status: value.length > 0 ? CONSTANT.ATTEMPT.STATUS.ATTEMPTED : CONSTANT.ATTEMPT.STATUS.SKIPPED,
+              node: key
+            });
           });
-        });
-        return User.reports.save({
-          'score': summary.score.marks,
-          'attempts': attempts,
-          'profileId': User.getActiveProfileSync()._id,
-          'node': quizCtrl.quiz.node.id
+          return User.reports.save({
+            'score': summary.score.marks,
+            'attempts': attempts,
+            'profileId': User.getActiveProfileSync()._id,
+            'node': quizCtrl.quiz.node.id
+          })
         })
-
-      })
-
     }
 
     function disableSwipe() {
@@ -310,7 +279,6 @@
         }
         if ($stateParams.type == 'practice') {
           $ionicSlideBoxDelegate.enableSlide(false);
-
           $ionicModal.fromTemplateUrl(CONSTANT.PATH.QUIZ + '/practice.feedback' + CONSTANT.VIEW, {
             scope: $scope,
             animation: 'slide-in-down',
@@ -329,23 +297,18 @@
                 quizCtrl.practiceEnd = true;
                 if ($scope.modal.isShown()) {
                   $log.debug("openModal closing modal ");
-
                   $scope.closeModal(quizCtrl.closeModalCallback);
                 }
               }, 2000);
             });
-
           };
           $scope.closeModal = function(callback) {
             $log.debug("closeModal");
-
             quizCtrl.canRemoveFeedback = false;
             $scope.modal.hide().then(function() {
               $log.debug("closeModal modal hidden");
-
               if (callback) {
                 $log.debug("closeModal callback found ");
-
                 callback();
               }
               quizCtrl.canRemoveFeedback = true;
@@ -358,7 +321,6 @@
         };
         quizCtrl.summary.analysis = {};
         quizCtrl.report.attempts = {};
-
         //init report
         for (i = 0; i < quiz.objects.length; i++) {
           quizCtrl.report.attempts[quiz.objects[i].node.id] = [];
@@ -369,7 +331,6 @@
             quizCtrl.quiz.objects[i].isVisited = false;
           else
             quizCtrl.quiz.objects[i].isVisited = true;
-
           if (quizCtrl.getQuestionType(quizCtrl.quiz.objects[i]) == CONSTANT.WIDGETS.QUESTION_TYPES.SCQ) {
             quizCtrl.quiz.objects[i].attempted = "";
           } else if (quizCtrl.getQuestionType(quizCtrl.quiz.objects[i]) == CONSTANT.WIDGETS.QUESTION_TYPES.MCQ) {
@@ -377,15 +338,12 @@
           }
         }
       }
-
     }
 
     function closeModalCallback() {
       $log.debug("closeModalCallback");
-
       if (quizCtrl.currentIndex >= quizCtrl.quiz.objects.length - 1) {
         $log.debug("closeModalCallback quizCtrl.currentIndex >= quizCtrl.quiz.objects.length - 1");
-
         quizCtrl.submitQuiz('practice');
       } else {
         $log.debug("closeModalCallback quizCtrl.currentIndex < quizCtrl.quiz.objects.length - 1");
@@ -395,7 +353,6 @@
 
     function parseHtml(index) {
       quizCtrl.quiz.objects[index].node.widgetHtml = quizCtrl.widgetParser.parseToDisplay(quizCtrl.quiz.objects[index].node.title, index, quizCtrl.quiz);
-
       quizCtrl.quiz.objects[index].node.widgetSound = quizCtrl.widgetParser.getSoundId(quizCtrl.quiz.objects[index].node.title);
       for (j = 0; j < quizCtrl.quiz.objects[index].node.type.content.options.length; j++) {
         quizCtrl.quiz.objects[index].node.type.content.options[j].widgetHtml = quizCtrl.widgetParser.parseToDisplay(quizCtrl.quiz.objects[index].node.type.content.options[j].option, index, quizCtrl.quiz)
@@ -410,7 +367,6 @@
     }
 
     function isCurrentIndex(index) {
-
       return quizCtrl.currentIndex == index;
     }
 
@@ -424,24 +380,18 @@
     }
 
     function prevQuestion() {
-
       quizCtrl.currentIndex = (quizCtrl.currentIndex > 0) ? --quizCtrl.currentIndex : quizCtrl.currentIndex;
     }
 
     function nextQuestion(shouldScroll) {
       if (quizCtrl.currentIndex < quizCtrl.quiz.objects.length - 1) {
-
         if (shouldScroll) {
           quizCtrl.inViewFlag = false;
           var id = 'question-' + (quizCtrl.getCurrentIndex() + 1);
           var position = $('#' + id).position();
           $ionicScrollDelegate.scrollBy(position.left, position.top, true);
         }
-
-
         ++quizCtrl.currentIndex;
-
-
       }
       return true;
     }
@@ -451,7 +401,6 @@
       quizCtrl.submitAttempt(question.node.id, question.attempted);
       if (quizCtrl.isCorrectAttempted(question)) {
         $log.debug("get Feedback Correct");
-
         audio.play('correct');
         quizCtrl.summary.analysis[question.node.id] = {
           title: question.node.title,
@@ -463,7 +412,6 @@
         quizCtrl.summary.stars = quizCtrl.calculateStars(quizCtrl.summary.score.percent);
       } else {
         $log.debug("get Feedback Wrong");
-
         quizCtrl.summary.analysis[question.node.id] = {
           title: question.node.title,
           status: 'incorrect',
@@ -483,13 +431,11 @@
         // }
       }
       $log.debug("get Feedback Opening Modal");
-
       $scope.openModal();
     }
 
     function canSubmit() {
       var question = quizCtrl.quiz.objects[quizCtrl.currentIndex];
-
       // SCQ
       if (quizCtrl.getQuestionType(question) == CONSTANT.WIDGETS.QUESTION_TYPES.SCQ) {
         return quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted;
@@ -516,7 +462,6 @@
         quizCtrl.report.attempts[questionId].push(angular.copy(attempt));
         return true;
       }
-
     }
 
     function setSuggestion() {
@@ -557,9 +502,6 @@
         }
       }, 300)
 
-
-
-
       return true;
     }
 
@@ -569,7 +511,6 @@
         $ionicSlideBoxDelegate.next();
       }, 300)
     }
-
 
     function isAttempted(question) {
       // multiple choice
@@ -591,7 +532,6 @@
     }
 
     function isCorrect(question, attempt) {
-
       // multiple choice
       if (quizCtrl.getQuestionType(question) == CONSTANT.WIDGETS.QUESTION_TYPES.MCQ) {
         return _.chain(attempt).map(function(num, key) {
@@ -605,7 +545,6 @@
     }
 
     function isCorrectAttempted(question) {
-
       // multiple choice
       if (quizCtrl.getQuestionType(question) == CONSTANT.WIDGETS.QUESTION_TYPES.MCQ) {
         for (var i = 0; i < quizCtrl.report.attempts[question.node.id].length; i++) {
@@ -629,7 +568,6 @@
     }
 
     function isKeyAttempted(question, key) {
-
       if (question.node.type.content.is_multiple) {
         return _.chain(quizCtrl.report.attempts[question.node.id]).last().has(key).value();
       } else {
@@ -641,12 +579,10 @@
       if (key) {
         audio.player.play(key)
       }
-
     }
 
     function stopAudio() {
       audio.player.stop()
-
     }
 
     function generateSummary(report, quiz) {
@@ -687,7 +623,6 @@
       return result;
     }
 
-
     function calculateStars(percentScore) {
       if (percentScore >= CONSTANT.STAR.ONE) {
         if (percentScore >= CONSTANT.STAR.TWO) {
@@ -711,8 +646,6 @@
       if (quizCtrl.report.attempts[CONSTANT.QUESTION.DEMO])
         delete quizCtrl.report.attempts[CONSTANT.QUESTION.DEMO];
       if (quizType === 'practice') {
-
-
         $scope.modal.hide().then(function() {
           analytics.log({
                 name: 'PRACTICE',
@@ -729,9 +662,6 @@
               type: 'practice'
             })
         });
-
-
-
       } else if (quizType === 'assessment') {
         $ionicPopup.confirm({
           title: 'Submit Quiz?',
@@ -753,12 +683,10 @@
                 report: angular.copy(quizCtrl.report),
                 summary: angular.copy(quizCtrl.summary),
                 type: 'assessment'
-
               });
           }
         });
       }
-
     }
 
     function generateReport(quiz) {
@@ -795,15 +723,12 @@
               });
             })
           })
-
         });
-
         localStorage.setItem('diagnosis_flag', true);
       } else {
         $state.go('map.navigate', {});
       }
     }
-
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal-rope' + CONSTANT.VIEW, {
       scope: $scope,
       animation: 'slide-in-down',
@@ -811,21 +736,15 @@
     }).then(function(modal) {
       quizCtrl.pauseModal = modal;
     });
-
     // $ionicPlatform.onHardwareBackButton(function(event) {
     //     if ($state.is('quiz.questions')) {
     //
     //     }
     //   })
-
-
     // YOU ARE HERE
     // $ionicPlatform.registerBackButtonAction(function(event) {
     //   event.preventDefault()
     // }, 101);
-
-
-
     // $ionicPlatform.registerBackButtonAction(function(event) {
     //     if($state.is('quiz.questions')){
     //         try {
@@ -835,7 +754,6 @@
     //         }
     //     }
     // }, 101);
-
     $scope.showNodeMenu = function() {
       quizCtrl.pauseModal.show().then(function() {
         audio.player.play('sound/pause_menu.mp3');
@@ -853,15 +771,12 @@
       });
     }
 
-
-
     function inViewTrigger(index, viewPart) {
       quizCtrl.inViewData[index] = viewPart;
       if (quizCtrl.inViewFlag) {
         if (viewPart == 'bottom' || viewPart == 'both' || viewPart == 'neither' || (viewPart == 'top' && quizCtrl.inViewData[index - 1] === undefined)) {
           quizCtrl.setCurrentIndex(index);
         }
-
       }
     }
 
@@ -869,7 +784,6 @@
       // if (quizCtrl.quiz.objects[questionIndex].node.widgetHtml.indexOf(CONSTANT.WIDGETS.SPEAKER_IMAGE) >= 0) {
       // quizCtrl.quiz.objects[questionIndex].node.widgetHtml = quizCtrl.quiz.objects[questionIndex].node.widgetHtml.replace(CONSTANT.WIDGETS.SPEAKER_IMAGE, CONSTANT.WIDGETS.SPEAKER_IMAGE_SELECTED)
       // }
-
       // $log.debug("Original WidgetSound",quizCtrl.quiz.objects[questionIndex].node.widgetSound)
       // $log.debug("SoundSource",angular.element("#audioSource")[0].src)
       // $log.debug("Original WidgetSound - bundled","file:///android_asset/www/"+quizCtrl.quiz.objects[questionIndex].node.widgetSound)
@@ -916,9 +830,7 @@
       //   $scope.showNodeMenu();
       // }
     }
-
     // intronext
-
     $scope.tour = {
       config: {
         onComplete: function() {
@@ -929,21 +841,16 @@
       steps: [{
         target: '#step1',
         content: 'This is the first step!',
-
       }, {
         target: '#step2',
         content: 'Blah blah blah.',
-
       }, {
         target: '#step3',
         content: 'I guess this is a menu!',
-
       }]
     };
 
-
     function tourNextStep() {
-
       if (nzTour.current) {
         if (nzTour.current.step === 0) {
           audio.player.play('sound/demo-quiz-2.mp3');
@@ -952,7 +859,6 @@
         } else if (nzTour.current.step === 2) {
           // $log.debug("Unsetting No Pause Flag")
           //HERE YOU ARE
-
           // $ionicPlatform.registerBackButtonAction(function(event) {
           //   audio.player.stop();
           //   $scope.showNodeMenu();
@@ -963,11 +869,9 @@
     }
 
     function playInstruction(index) {
-
       if (quizCtrl.quiz.objects[index].node.instructionSound) {
         audio.player.play(quizCtrl.quiz.objects[index].node.instructionSound)
         angular.element("#audioplayer")[0].onended = instructionEndCallback
-
       } else if (quizCtrl.quiz.objects[index].node) {
         audio.player.play(quizCtrl.quiz.objects[index].node.widgetSound);
         quizCtrl.highlightSoundIcon(index);
@@ -994,13 +898,11 @@
 
     function intro_end_quiz() {
       $log.debug("Inside onended event");
-
       // $log.debug("removed event listener quiz",$state);
       angular.element("#audioplayer")[0].onended = null
       if ($state.current.name == 'quiz.questions') {
         $scope.nodeRibbonFlag = false;
         // $scope.nodeRibbon.hide().then(function(){
-
         if ($state.is('quiz.questions') && User.demo.isShown(5) && CONSTANT.QUESTION_DEMO) {
           $timeout(function() {
             quizCtrl.noPauseFlag = true;
@@ -1014,23 +916,16 @@
                 }
               }, 3500)
             }
-
           });
-
         } else {
-
           $log.debug('Demo has ended')
           quizCtrl.noPauseFlag = false;
           $log.debug("Unsetting noPauseFlag");
           quizCtrl.playInstruction(0);
-
         }
-
         // });
       }
-
     }
-
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.CONTENT + '/content.modal-ribbon' + CONSTANT.VIEW, {
       scope: $scope,
       // animation: 'slide-in-up',
@@ -1040,7 +935,6 @@
       $scope.nodeRibbon = modal;
       $scope.nodeRibbonFlag = true;
       quizCtrl.noPauseFlag = true;
-
       //   $log.debug("Setting No Pause Flag");
       //   if(quiz.node.parsed_sound){
       //     audio.player.play(quiz.node.parsed_sound);
@@ -1052,13 +946,9 @@
       //       intro_end_quiz();
       //     },1000)
       //   }
-
     });
-
     // quizCtrl.playQuizIntro()
-
     function playQuizIntro() {
-
       intro_end_quiz()
         // $scope.nodeRibbon.show().then(function(){
         //       if(quiz.node.parsed_sound){
@@ -1067,9 +957,7 @@
         //         }
         // })
     }
-
     // $scope.progressBar();
-
     $scope.$on('backButton', function() {
       $log.debug('back button pressed')
         // $log.debug("nzTour",nzTour.current.step);
@@ -1078,21 +966,18 @@
         $scope.showNodeMenu();
       }
     });
-    $scope.$on('appResume', function(){
-        if($state.current.name != 'quiz.summary' && !$scope.nodeRibbon.isShown()){
-            $scope.closeModal();
-            $scope.showNodeMenu();
-        }
-        else if($scope.nodeRibbon.isShown()){
-          audio.player.resume();
-        }
-        else{}
+    $scope.$on('appResume', function() {
+      if ($state.current.name != 'quiz.summary' && !$scope.nodeRibbon.isShown()) {
+        $scope.closeModal();
+        $scope.showNodeMenu();
+      } else if ($scope.nodeRibbon.isShown()) {
+        audio.player.resume();
+      } else {}
     })
-    $scope.$on('appPause', function(){
-        audio.player.removeCallback();
-        audio.player.stop();
-        $timeout.cancel( timeout );
+    $scope.$on('appPause', function() {
+      audio.player.removeCallback();
+      audio.player.stop();
+      $timeout.cancel(timeout);
     })
-
   }
 })();

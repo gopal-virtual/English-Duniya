@@ -26,8 +26,12 @@
     $http) {
     var User = {};
     var profilesDB = pouchDB('profilesDB', {
-      revs_limit: 1
+      // auto_compaction : true,
+      revs_limit: 1,
     });
+
+  
+    // $log.debug(profilesDB.info());
     // var remoteProfilesDb = pouchDB('http://anna:secret@127.0.0.1:5984/device'+device.uuid);
     // var myIndex = {
     //   _id: '_design/profile',
@@ -129,7 +133,8 @@
       getAll: getAllProfiles,
       patch: patchProfile,
       updateRoadMapData: updateRoadMapData,
-      select: selectProfile
+      select: selectProfile,
+      getLanguage: getLanguage
     };
     User.skills = {
       get: getSkills,
@@ -157,6 +162,19 @@
     }
     User.checkIfProfileOnline = checkIfProfileOnline;
     User.startProfileSync = startProfileSync;
+    User.compactDB = function(){
+        return profilesDB.compact().then(function(result){
+          $log.debug("Compaction done",result);
+        })
+        .catch(function(err){
+          $log.debug("Compaction error",err);
+        });
+      }
+      User.info = function () {
+          profilesDB.info().then(function(result){
+      $log.debug("profilesDB info",result);
+    })
+      }
 
     function patchPhoneNumber(num) {
       return $http({
@@ -211,28 +229,30 @@
       return JSON.parse(localStorage.getItem('user_details'))
     }
 
-    function startProfileSync() {
-        if(!$rootScope.profilesDBeplicationStarted){
-          $rootScope.profilesDBeplicationStarted = true;
-      profilesDB.replicate.to(CONSTANT.PROFILES_DB_SERVER + device.uuid, {
-          live: true,
-          retry: true,
-          timeout : 20000
-        }).$promise
-        .then(null, null, function(progress) {
-          $log.debug('startProfileSync replication status', progress);
-        })
-        .then(function(result) {
-          $log.debug('startProfileSync replication resolved with', result);
-        })
-        .catch(function(reason) {
-          $log.debug('startProfileSync replication failed with', reason);
-        })
-        .finally(function() {
-          $log.debug('startProfileSync replication done');
-        });
+   	function startProfileSync() {
+      if (!$rootScope.profilesDBeplicationStarted) {
+        $rootScope.profilesDBeplicationStarted = true;
+        profilesDB.replicate.to(CONSTANT.PROFILES_DB_SERVER + device.uuid, {
+            live: true,
+            retry: true,
+            timeout: 20000
+          }).$promise
+          .then(null, null, function(progress) {
+            $log.debug('startProfileSync replication status', progress);
+          })
+          .then(function(result) {
+            $log.debug('startProfileSync replication resolved with', result);
+          })
+          .catch(function(reason) {
+            $log.debug('startProfileSync replication failed with', reason);
+          })
+          .finally(function() {
+            $log.debug('startProfileSync replication done');
+          });
       }
     }
+
+    function getLanguage() {}
 
     function updateRoadMapData(roadMapData, profileId) {
       $log.debug("updateRoadMapData", roadMapData, profileId)
@@ -319,6 +339,8 @@
         }
       };
       profile.client_uid = record._id;
+      
+      
       $log.debug("Adding new profile", record);
       return profilesDB.put(record)
         .then(function() {
@@ -339,7 +361,6 @@
         "_id": id ? id : generateProfileID(),
         "data": {
           "scores": {},
-          "reports": [],
           "skills": initial_skills,
           "profile": profile
         }
@@ -490,6 +511,7 @@
     }
 
     function saveReport(report) {
+      $log.debug("queue","pushing report")
       return queue.push('reports', {
         'client_uid': report.profileId,
         'node': report.node,
@@ -596,16 +618,20 @@
     }
 
     function addNodeToPlaylist(profileId, nodeData) {
-      return profilesDB.get(profileId).then(function(response) {
-        response.data.playlist.push({
-          'lesson_id': nodeData.suggestedLesson,
-          'dependencyData': nodeData.dependencyData
-        });
-        $log.debug("Response", response);
-        return profilesDB.put({
-          '_id': profileId,
-          '_rev': response._rev,
-          'data': response.data
+      $log.debug("addNodetOplaylist",nodeData.suggestedLesson,getActiveProfileSync().data.profile.language)
+      return $injector.get('content').getLocalizedNode(nodeData.suggestedLesson,getActiveProfileSync().data.profile.language).then(function(localizedNode) {
+        return profilesDB.get(profileId).then(function(response) {
+          $log.debug("pushing in playlist",localizedNode)
+          response.data.playlist.push({
+            'lesson_id': localizedNode,
+            'suggestedLesson': nodeData.suggestedLesson,
+            'dependencyData': nodeData.dependencyData
+          });
+          return profilesDB.put({
+            '_id': profileId,
+            '_rev': response._rev,
+            'data': response.data
+          })
         })
       })
     }

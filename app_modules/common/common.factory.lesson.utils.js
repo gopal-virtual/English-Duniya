@@ -192,7 +192,7 @@
 
       // to do
   
-      $log.debug("Play Resource");
+      $log.debug("Play Resource",utils.resourceType(resource));
       if (utils.resourceType(resource) == 'vocabulary') {
         content.downloadVocabulary(resource)
         .then(function() {
@@ -230,6 +230,7 @@
           })
         })
       } else if (utils.resourceType(resource) == 'assessment') {
+        $log.debug("play resource asseessmnet")
         content.downloadAssessment(resource)
           .then(function() {
             $timeout(function() {
@@ -257,22 +258,13 @@
           })
 
       } else if (utils.resourceType(resource) == 'practice') {
-        $log.debug("Assessment found")
+        $log.debug("Play resource practice found")
         content.downloadAssessment(resource).then(function() {
-            $log.debug("Downloaded assessment")
+            $log.debug("Play resource practice downlaoded",resource.node.id,resource)
 
             $timeout(function() {
-              !($stateParams.type == 'practice' && $state.current.name == 'quiz.questions') &&
-              analytics.log({
-                    name: 'PRACTICE',
-                    type: 'START',
-                    id: resource.node.id
-                  }, {
-                    time: new Date()
-                  },
-                  User.getActiveProfileSync()._id
-
-                ) &&
+              $log.debug("play resource")
+              
                 $state.go('quiz.start', {
                   id: resource.node.id,
                   type: 'practice',
@@ -281,7 +273,7 @@
               $stateParams.type == 'practice' && $ionicLoading.hide();
             });
           }).catch(function(e) {
-            $log.debug("We need to check", e)
+            $log.debug("play resource error", e)
 
             $ionicPopup.alert({
               title: CONSTANT.ERROR_MESSAGES.DEFAULT_TITLE,

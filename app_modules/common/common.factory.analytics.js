@@ -80,7 +80,7 @@
       getLocation: getLocation,
       log: log
     };
-
+    var location = {};
     return analytics;
 
     function getPostParam(
@@ -121,11 +121,15 @@
 
 
     function getLocation() {
+      $log.debug("getting location");
       var posOptions = {
         timeout: 10000,
         enableHighAccuracy: false
       };
-      return $cordovaGeolocation.getCurrentPosition(posOptions);
+      return $cordovaGeolocation.getCurrentPosition(posOptions).then(function (response) {
+          location = response;
+          return response;
+      });
     }
 
     function log(action, data, profile_id, user_id) {
@@ -134,7 +138,9 @@
       data["device"] = device;
       data["app_version"] = CONSTANT.APP.VERSION;
       data["app_type"] = CONSTANT.APP.TYPE;
-      data["location"] = {};
+      if(location && location.coords){
+      data["location"] = {'latitue':location.coords.latitude,'longitude':location.coords.longitude};        
+      }
       var post_param = {
         "verb": analytics.activity[action.name][action.type],
         "actor_content_type": "person",
@@ -151,8 +157,7 @@
       }
 
       if (CONSTANT.ANALYTICS) {
-
-
+        $log.debug("Pushing activity log")
         queue.push('activity-log', post_param);
       }
       // ionic.Platform.device().available &&

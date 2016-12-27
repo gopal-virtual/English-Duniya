@@ -223,7 +223,6 @@
       var localDb = new PouchDB('notificationDB');
       var remoteDb = new PouchDB(CONSTANT.NOTIFICATION_DB_SERVER);
       remoteDb.replicate.to(localDb, {
-        live: true,
         retry: true
       }).on('change', function (change) {
         $log.debug("NOTIFICATION DATABASE CHANGE",change);

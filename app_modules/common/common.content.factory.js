@@ -29,11 +29,18 @@
     $http,
     $rootScope
   ) {
-    var lessonDB = null;
+    // var lessonDB = null;
     // if (User.getActiveProfileSync() && User.getActiveProfileSync().data) {
-    lessonDB = pouchDB('lessonsDB', {
-      revs_limit: 1
+    var lessonDB = pouchDB('lessonsDB', {
+      revs_limit: 1,
+      adapter: 'websql'
+      // auto_compaction : true
     });
+    var diagnosisTranslationsDB = pouchDB('diagnosisTranslationsDB', {
+      revs_limit: 1,
+      // auto_compaction : true
+    });
+    createDiagnosisTranslationsDB();
     // }
     var contentProperties = {
       createLessonDBIfNotExists: createLessonDBIfNotExists,
@@ -52,7 +59,10 @@
       getActiveResource: getActiveResource,
       getActiveLessonId: getActiveLessonId,
       replicateLessonDB: replicateLessonDB,
+      getLocalizedNode: getLocalizedNode,
+      getLocalizedQuestion: getLocalizedQuestion,
       getStatus: getStatus,
+      deleteLessonDB: deleteLessonDB,
       demo_question: {
         "node": {
           "id": CONSTANT.QUESTION.DEMO,
@@ -118,29 +128,49 @@
     };
     return contentProperties;
 
+    function deleteLessonDB() {
+      return lessonDB.erase();
+    }
+
+
+
     function replicateLessonDB() {
-      if(!$rootScope.lessonDBReplicationStarted){
-      $log.debug("Replication");
-      $rootScope.lessonDBReplicationStarted = true;
+      if (!$rootScope.lessonDBReplicationStarted) {
+        $log.debug("Replication");
+        $rootScope.lessonDBReplicationStarted = true;
         lessonDB.replicate.from(CONSTANT.LESSONS_DB_SERVER, {
-          live: true,
-          retry: true,
-          timeout : 20000
-        }).$promise
-        .then(null, null, function(progress) {
-          $log.debug('lessondb replication status', progress);
-        })
-        .then(function(result) {
-          $log.debug('lessondb replication resolved with', result);
-        })
-        .catch(function(reason) {
-          $log.debug('lessondb replication failed with', reason);
-        })
-        .finally(function() {
-          $log.debug('lessondb replication done');
-        });
+            retry: true,
+            timeout: 20000
+          }).$promise
+          .then(null, null, function(progress) {
+            $log.debug('lessondb replication status', progress);
+          })
+          .then(function(result) {
+            $log.debug('lessondb replication resolved with', result);
+          })
+          .catch(function(reason) {
+            $log.debug('lessondb replication failed with', reason);
+          })
+          .finally(function() {
+            $log.debug('lessondb replication done');
+          });
       }
-      
+    }
+
+    function getLocalizedNode(nodeId, targetLanguage) {
+      return lessonDB.get('localized_mapping').then(function(localizationMapping) {
+        return localizationMapping.mapping[nodeId][targetLanguage];
+      });
+    }
+
+    function getLocalizedQuestion(questionId, targetLanguage) {
+      return lessonDB.get('localized_mapping').then(function(localizationMapping) {
+        var translatedQuestionID = localizationMapping.mapping[questionId][targetLanguage]
+        return diagnosisTranslationsDB.get(translatedQuestionID).then(function(question) {
+          $log.debug("localizedQuestion", question);
+          return question.question;
+        });
+      })
     }
 
     function findNewMediaToDownload() {
@@ -268,9 +298,9 @@
 
     function createLessonDBIfNotExists() {
       $log.debug("createLessonDBIfNotExists")
-      lessonDB = pouchDB('lessonsDB', {
-        revs_limit: 1
-      });
+        // lessonDB = pouchDB('lessonsDB', {
+        //   revs_limit: 1
+        // });
       return lessonDB.get('_local/preloaded').then(function(doc) {}).catch(function(err) {
         if (err.name !== 'not_found') {
           throw err;
@@ -287,22 +317,25 @@
 
     function createOrUpdateLessonDB() {
       $log.debug("create or update lessondb")
-      lessonDB = pouchDB('lessonsDB', {
-        revs_limit: 1
-      });
+        // lessonDB = pouchDB('lessonsDB', {
+        //   revs_limit: 1
+        // });
       $log.debug("NEW DB MADE 1");
       return lessonDB.load(CONSTANT.PATH.DATA + '/lessons.db', {
-          proxy: CONSTANT.LESSONS_DB_SERVER
+          // proxy: CONSTANT.LESSONS_DB_SERVER
         })
-        .then(function() {
-          return replicateLessonDB()
-        })
+        
+    }
+
+    function createDiagnosisTranslationsDB() {
+      $log.debug("createDiagnosisTranslationsDB")
+      return diagnosisTranslationsDB.load(CONSTANT.PATH.DATA + '/diagnosis_translations.db', {})
     }
 
     function createLessonDBIfNotExistsPatch() {
-      lessonDB = pouchDB('lessonsDB', {
-        revs_limit: 1
-      });
+      // lessonDB = pouchDB('lessonsDB', {
+      //   revs_limit: 1
+      // });
       return lessonDB.get('_local/preloaded').then(function(doc) {}).catch(function(err) {
         if (err.name !== 'not_found') {
           throw err;
@@ -451,6 +484,7 @@
         }
         promises.push(widgetParser.parseToDisplay(quiz.objects[index].node.title, index, quiz).then(
           function(index) {
+            $log.debug("play resource here");
             return function(result) {
               quiz.objects[index].node.widgetHtml = result;
             }
@@ -487,6 +521,7 @@
         }
       }
       $q.all(promises).then(function() {
+        $log.debug("play resource respoving assessment", quiz);
         d.resolve(quiz)
       });
       return d.promise;
