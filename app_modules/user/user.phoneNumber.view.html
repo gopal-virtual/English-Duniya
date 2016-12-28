@@ -71,7 +71,7 @@
                         <div class="col font-md phone-input center"><span class="phone-input-placeholder">+91</span><span>{{phone.number}}</span></div>
                     </div>
                     <div style="top:52vh" class="full-width absolute numpad-container">
-                        <virtual-numpad reference="phone.number" limit="9"></virtual-numpad>
+                        <virtual-numpad ng-click="phone.numberErrorText = ''" reference="phone.number" limit="9"></virtual-numpad>
                     </div>
                     <div style="top:88vh; text-align: center;" class="full-width absolute">
                         <!-- <button ng-disabled="phone.number.length < 9" class="sbtn sbtn-next sbtn-next-blue" ng-class="{'animation-repeat-bounce': userCtrl.user.grade}" ng-click="audio.play('press');phone.sendNumber(phone.number)"></button> -->
@@ -97,7 +97,7 @@
                         <div class="col font-md phone-input center"><span>{{phone.otp}}</span></div>
                     </div>
                     <div style="top:52vh" class="full-width absolute numpad-container">
-                        <virtual-numpad reference="phone.otp" limit="5"></virtual-numpad>
+                        <virtual-numpad ng-click="phone.otpErrorText = ''" reference="phone.otp" limit="5"></virtual-numpad>
                     </div>
                     <div style="top:88vh; text-align: center;" class="full-width absolute">
                         <button ng-disabled="phone.otpResendFlag == 0" class="sbtn sbtn-resend" ng-click="audio.play('press');phone.resendOtp(phone.number)"></button>
