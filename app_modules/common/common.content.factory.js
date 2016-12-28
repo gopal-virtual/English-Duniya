@@ -153,6 +153,9 @@
           }).$promise
           .then(null, null, function(progress) {
             $log.debug('lessondb replication status', progress);
+            if(progress.paused && (progress.paused.name === 'indexed_db_went_bad' || progress.paused.name == "InvalidStateError" || progress.paused.reason === "QuotaExceededError")){
+               $rootScope.$broadcast('lowDiskSpace')
+            }
           })
           .then(function(result) {
             $log.debug('lessondb replication resolved with', result);

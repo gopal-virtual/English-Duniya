@@ -98,7 +98,7 @@
         "CHANGE_COMPLETE": "stage change complete",
         "CHANGE_ERROR": "stage change error"
       },
-      "FAULURE":{
+      "FAILURE":{
         "LOW_DISK_SPACE": "low disk space"
       },
       "PHONENUMBER" : {
