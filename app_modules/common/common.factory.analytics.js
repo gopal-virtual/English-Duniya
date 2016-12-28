@@ -79,6 +79,19 @@
       },
       "FAULURE":{
         "LOW_DISK_SPACE": "low disk space"
+      },
+      "PHONENUMBER" : {
+        "TAP_ADD" : "tap phone number add ",
+        "TAP_CHANGE" : "tap phone number change",
+        "OPEN" : "open phone number",
+        "CLOSE" : "close phone number",
+        "NUMBER_SUBMIT" : "submit phone number",
+        "NUMBER_SUCCESS" : "register phone number success",
+        "NUMBER_ERROR" : "register phone number error",
+        "OTP_SUBMIT" : "submit otp",
+        "OTP_RESEND" : "resend otp",
+        "OTP_SUCCESS" : "verify otp success",
+        "OTP_ERROR" : "verify otp error",
       }
     };
 

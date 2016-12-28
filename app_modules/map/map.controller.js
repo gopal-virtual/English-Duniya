@@ -149,7 +149,7 @@
     mapCtrl.onBackButtonPress = onBackButtonPress;
     $scope.exitChooseProfile = exitChooseProfile;
 
-    $scope.changeNumberFlag = User.user.getPhoneNumber() == '';
+    $scope.changeNumberFlag = (function(){User.user.getPhoneNumber() == '';})
     $scope.currentState = $state.current.name;
     // $scope.goToPhoneNumber = goToPhoneNumber;
     // $scope.exitPhoneNumber = exitPhoneNumber;
@@ -181,9 +181,19 @@
         $scope.profileScreen.hide()
       }
       $scope.phoneNumberScreen.show();
-
       $scope.phone.isVerified = User.user.getDetails().is_verified;
-      $log.debug("PHONE.is verified",$scope.phone.isVerified)
+      $log.debug("PHONE.is verified",$scope.phone.isVerified);
+      analytics.log(
+        {
+            name : 'PHONENUMBER',
+            type : $scope.changeNumberFlag == true ? 'TAP:CHANGE' : 'TAP_ADD',
+            id : null
+        },
+        {
+            time : new Date()
+        },
+        User.getActiveProfileSync()._id
+      );
     }
 
     function exitPhoneNumber() {
@@ -195,7 +205,17 @@
         $scope.phone.otp = '';
         $scope.phone.otpErrorText = '';
         tempCount = 1;
-        audio.loop('background')
+        audio.loop('background');
+        analytics.log(
+          {
+            name : 'PHONENUMBER',
+            type : 'CLOSE'
+          },
+          {
+            time : new Date()
+          },
+          User.getActiveProfileSync()._id
+        )
       });
 
     }
@@ -206,6 +226,17 @@
         $scope.phone.numberErrorText = "Please enter a valid mobile number";
         return ;
       }
+      analytics.log(
+        {
+          name : 'PHONENUMBER',
+          type : 'NUMBER_SUBMIT'
+        },
+        {
+          time : new Date(),
+          number : num
+        },
+        User.getActiveProfileSync()._id
+      )
       // $log.debug("not in rejection")
       $scope.phone.numberErrorText = "";
       if(!$scope.phone.isVerified && $scope.phone.number == User.user.getPhoneNumber()){
@@ -230,19 +261,38 @@
         User.user.updatePhoneLocal(response.data.phone_number);
         User.user.setIsVerified(response.data.is_verified);
         $scope.changeNumberFlag = User.user.getPhoneNumber() == '';
+        analytics.log({
+          name : 'PHONENUMBER'
+          type : 'NUMBER_SUCCESS',
+        },{
+          time : new Date()
+        },User.getActiveProfileSync()._id);
       }, function(err){
        if(err.status == 400){
           $scope.phone.numberErrorText = err.data.details;
         }else{
           $scope.phone.numberErrorText = JSON.stringify(err.data);
         }
+        analytics.log({
+          name : 'PHONENUMBER'
+          type : 'NUMBER_ERROR',
+        },{
+          time : new Date()
+        },User.getActiveProfileSync()._id);
       })
     }
 
     function resendOtp(num,interval){
       $log.debug("Asking for otp again")
       User.user.resendOtp(num).then(function(response){
+        analytics.log({
+          name : 'PHONENUMBER'
+          type : 'RESEND_OTP',
+        },{
+          time : new Date()
+        },User.getActiveProfileSync()._id);
         $log.debug("Otp request was sent",response)
+        
       })
       resetResendFlag();
     }
