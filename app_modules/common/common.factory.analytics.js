@@ -71,7 +71,14 @@
         "CONTENT" : null,
         "RECEIVED" : "received notification",
         "TAPPED" : "tapped notification"
-
+      },
+      "STATE":{
+        "CHANGE_START": "stage change start",
+        "CHANGE_COMPLETE": "stage change complete",
+        "CHANGE_ERROR": "stage change error"
+      },
+      "FAULURE":{
+        "LOW_DISK_SPACE": "low disk space"
       }
     };
 
