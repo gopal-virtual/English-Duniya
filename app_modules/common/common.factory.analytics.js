@@ -83,7 +83,9 @@
       "APP": {
         "CONTENT": null,
         "START": "start app",
-        "END": "end app"
+        "END": "end app",
+        "EXIT_MODAL_SHOW": "exit modal show",
+        "Exit_MODAL_HIDE": "exit modal hide",
       },
       "STATE":{
         "CHANGE_START": "stage change start",
