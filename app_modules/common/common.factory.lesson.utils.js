@@ -84,8 +84,15 @@
       return false;
     }
 
-    function leaveLesson() {
+    function leaveLesson(analytics_quit_data) {
       angular.element("#audioplayer")[0].pause();
+      if(analytics_quit_data){
+          analytics.log(analytics_quit_data, {
+              time: new Date()
+            },
+            User.getActiveProfileSync()._id
+          )
+      }
       !$state.is('map.navigate') &&
         $ionicLoading.show({
           noBackdrop: false,
@@ -191,7 +198,7 @@
 
 
       // to do
-  
+
       $log.debug("Play Resource",utils.resourceType(resource));
       if (utils.resourceType(resource) == 'vocabulary') {
         content.downloadVocabulary(resource)
@@ -243,7 +250,6 @@
                     time: new Date()
                   },
                   User.getActiveProfileSync()._id
-
                 ) &&
                 $state.go('quiz.questions', {
                   id: resource.node.id,
@@ -264,7 +270,15 @@
 
             $timeout(function() {
               $log.debug("play resource")
-              
+              analytics.log({
+                  name: 'PRACTICE',
+                  type: 'START',
+                  id: resource.node.id
+                }, {
+                  time: new Date()
+                },
+                User.getActiveProfileSync()._id
+              ) &&
                 $state.go('quiz.start', {
                   id: resource.node.id,
                   type: 'practice',

@@ -33,7 +33,6 @@
     // if (User.getActiveProfileSync() && User.getActiveProfileSync().data) {
     var lessonDB = pouchDB('lessonsDB', {
       revs_limit: 1,
-      adapter: 'websql'
         // auto_compaction : true
     });
     var diagnosisTranslationsDB = pouchDB('diagnosisTranslationsDB', {
@@ -169,7 +168,7 @@
 
     function getLocalizedNode(nodeId, targetLanguage) {
       return lessonDB.get('localized_mapping').then(function(localizationMapping) {
-        return localizationMapping.mapping[nodeId][targetLanguage];
+        return localizationMapping.mapping[nodeId][targetLanguage] || nodeId;
       });
     }
 

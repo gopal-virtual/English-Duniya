@@ -147,8 +147,10 @@
     $scope.userGender = User.getActiveProfileSync().data.profile.gender;
     $scope.selectedNode = lessonutils.getLocalLesson();
     $scope.modal = {};
+    $scope.logResume = logResume;
     $scope.resultStarFlag = [];
     quizCtrl.closeModalCallback = closeModalCallback;
+    $scope.analytics_quit_data = {name : 'PRACTICE', type : 'QUIT', id : quizCtrl.quiz.node.id};
     $scope.groups = [];
     for (var i = 0; i < 10; i++) {
       $scope.groups[i] = {
@@ -160,6 +162,17 @@
       }
     }
 
+    function logResume(){
+        analytics.log({
+                name: 'PRACTICE',
+                type: 'RESUME',
+                id: quizCtrl.quiz.node.id
+            }, {
+                time: new Date()
+            },
+            User.getActiveProfileSync()._id
+        )
+    }
     function isScroll(id) {}
 
     function redo() {
@@ -576,6 +589,16 @@
     }
 
     function playAudio(key, index) {
+        key && analytics.log({
+              name: 'QUESTION',
+              type: 'PLAY',
+              id: quizCtrl.quiz.objects[index].node.id
+            }, {
+              time: new Date(),
+              file : key
+            },
+            User.getActiveProfileSync()._id
+          )
       if (key) {
         audio.player.play(key)
       }
@@ -650,7 +673,7 @@
           analytics.log({
                 name: 'PRACTICE',
                 type: 'END',
-                id: quizCtrl.quiz.node.type.id
+                id: quizCtrl.quiz.node.id
               }, {
                 time: new Date()
               },
@@ -755,6 +778,15 @@
     //     }
     // }, 101);
     $scope.showNodeMenu = function() {
+        $stateParams.type == 'practice' && analytics.log({
+            name: 'PRACTICE',
+            type: 'PAUSE',
+            id: quizCtrl.quiz.node.id
+          }, {
+            time: new Date()
+          },
+          User.getActiveProfileSync()._id
+        )
       quizCtrl.pauseModal.show().then(function() {
         audio.player.play('sound/pause_menu.mp3');
       });
@@ -817,6 +849,15 @@
           name: 'LESSON',
           type: 'END',
           id: $scope.selectedNode.node.id
+        }, {
+          time: new Date()
+        },
+        User.getActiveProfileSync()._id
+      )
+      $stateParams.type == 'practice' && analytics.log({
+          name: 'PRACTICE',
+          type: 'SWITCH',
+          id: quizCtrl.quiz.node.id
         }, {
           time: new Date()
         },
