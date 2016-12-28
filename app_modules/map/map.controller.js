@@ -180,7 +180,14 @@
       if ($scope.profileScreen.isShown()) {
         $scope.profileScreen.hide()
       }
-      $scope.phoneNumberScreen.show();
+      $scope.phoneNumberScreen.show().then(function(){
+        analytics.log({
+          name : 'PHONENUMBER',
+          type : 'OPEN',
+        },{
+          time : new Date(),
+        },User.getActiveProfileSync()._id);
+      });
       $scope.phone.isVerified = User.user.getDetails().is_verified;
       $log.debug("PHONE.is verified",$scope.phone.isVerified);
       analytics.log(
@@ -262,7 +269,7 @@
         User.user.setIsVerified(response.data.is_verified);
         $scope.changeNumberFlag = User.user.getPhoneNumber() == '';
         analytics.log({
-          name : 'PHONENUMBER'
+          name : 'PHONENUMBER',
           type : 'NUMBER_SUCCESS',
         },{
           time : new Date()
@@ -274,7 +281,7 @@
           $scope.phone.numberErrorText = JSON.stringify(err.data);
         }
         analytics.log({
-          name : 'PHONENUMBER'
+          name : 'PHONENUMBER',
           type : 'NUMBER_ERROR',
         },{
           time : new Date()
@@ -286,8 +293,8 @@
       $log.debug("Asking for otp again")
       User.user.resendOtp(num).then(function(response){
         analytics.log({
-          name : 'PHONENUMBER'
-          type : 'RESEND_OTP',
+          name : 'PHONENUMBER',
+          type : 'OTP_RESEND',
         },{
           time : new Date()
         },User.getActiveProfileSync()._id);
@@ -338,6 +345,13 @@
     // }
 
     function verifyOtp(otp,successInterval){
+      analytics.log({
+        name : 'PHONENUMBER',
+        type : 'OTP_SUBMIT',
+      },{
+        time : new Date(),
+        otp : otp
+      },User.getActiveProfileSync()._id);
       User.user.verifyOtp(otp).then(function(response){
         $log.debug("Verified otp",response);
         // $log.debug("Please cancel interval",$interval.cancel(otpCycle));
@@ -352,12 +366,26 @@
           $log.debug("In timeout")
           exitPhoneNumber();
         },successInterval);
+        analytics.log({
+          name : 'PHONENUMBER',
+          type : 'OTP_SUCCESS',
+        },{
+          time : new Date(),
+          otp : otp
+        },User.getActiveProfileSync()._id);
       }, function(err){
         if(err.status == 400){
           $scope.phone.otpErrorText = err.data.details
         }else{
           $log.error(err)
         }
+        analytics.log({
+          name : 'PHONENUMBER',
+          type : 'OTP_ERROR',
+        },{
+          time : new Date(),
+          otp : otp
+        },User.getActiveProfileSync()._id);
       })
     }
 
