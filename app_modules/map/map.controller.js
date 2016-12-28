@@ -145,6 +145,9 @@
     mapCtrl.onBackButtonPress = onBackButtonPress;
     $scope.exitChooseProfile = exitChooseProfile;
 
+    $scope.onProfileCardClick = onProfileCardClick;
+
+
     $scope.changeNumberFlag = (function(){User.user.getPhoneNumber() == '';})
     $scope.currentState = $state.current.name;
     // $scope.goToPhoneNumber = goToPhoneNumber;
@@ -821,17 +824,47 @@
     }
 
     function goToChooseProfile() {
+        analytics.log({
+          name : 'CHOOSEPROFILE',
+          type : 'TAP',
+        },{
+          time : new Date(),
+        },User.getActiveProfileSync()._id);
         multiUser.getProfiles()
         $scope.profileScreen.show().then(function(){
+          analytics.log({
+            name : 'CHOOSEPROFILE',
+            type : 'OPEN',
+          },{
+            time : new Date(),
+          },User.getActiveProfileSync()._id);
           audio.stop('background');
         });
+        // analytics.log({
+
+        // })
     //   $state.go('user.chooseProfile');
     }
 
     function exitChooseProfile() {
       $scope.profileScreen.hide().then(function(){
         audio.loop('background');
+        analytics.log({
+            name : 'CHOOSEPROFILE',
+            type : 'CLOSE',
+          },{
+            time : new Date(),
+          },User.getActiveProfileSync()._id);
       });
+    }
+
+    function onProfileCardClick() {
+      analytics.log({
+        name : 'CHOOSEPROFILE',
+        type : 'PROFILE_TAP',
+      },{
+        time : new Date(),
+      },User.getActiveProfileSync()._id);
     }
 
     

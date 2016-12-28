@@ -113,6 +113,14 @@
         "OTP_RESEND" : "resend otp",
         "OTP_SUCCESS" : "verify otp success",
         "OTP_ERROR" : "verify otp error",
+      },
+      "CHOOSEPROFILE" : {
+        "TAP" : "tap choose profile",
+        "OPEN" : "open choose profile",
+        "CLOSE" : "close choose profile",
+        "PROFILE_TAP" : "tap profile card",
+        "SWITCH" : "switch profile",
+        "ADD" : "add profile"
       }
     };
 

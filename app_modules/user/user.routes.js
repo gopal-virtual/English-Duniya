@@ -50,10 +50,19 @@
         views: {
           'state-user': {
             templateUrl: CONSTANT.PATH.USER + '/user.chooseProfile' + CONSTANT.VIEW,
-            controller: ['multiUser','$scope','User',function(multiUser,$scope,User){
+            controller: ['multiUser','$scope','User','analytics',function(multiUser,$scope,User,analytics){
                 $scope.changeNumberFlag = User.user.getPhoneNumber() == '' ? 0 : 1;
                 $scope.multiUser = multiUser;
                 multiUser.getProfiles();
+                $scope.onProfileCardClick = onProfileCardClick;
+                function onProfileCardClick() {
+                  analytics.log({
+                    name : 'CHOOSEPROFILE',
+                    type : 'PROFILE_TAP',
+                  },{
+                    time : new Date(),
+                  },User.getActiveProfileSync()._id);
+                }
             }],
             controllerAs: 'profileCtrl'
           }

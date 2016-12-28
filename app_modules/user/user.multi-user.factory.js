@@ -5,10 +5,10 @@
         .module('zaya-user')
         .factory('multiUser', multiUser);
 
-    multiUser.$inject = ['User','$log','$state', 'CONSTANT', '$q', '$ionicLoading', '$rootScope', '$timeout'];
+    multiUser.$inject = ['User','$log','$state', 'CONSTANT', '$q', '$ionicLoading', '$rootScope', '$timeout','analytics'];
 
     /* @ngInject */
-    function multiUser(User, $log, $state, CONSTANT, $q, $ionicLoading, $rootScope, $timeout) {
+    function multiUser(User, $log, $state, CONSTANT, $q, $ionicLoading, $rootScope, $timeout, analytics) {
         var multiUser = {
             getCurrentProfile : getCurrentProfile,
             goToMap : goToMap,
@@ -56,12 +56,28 @@
                 localStorage.removeItem('currentPosition');
                 localStorage.removeItem('regionPage');
                 localStorage.removeItem('profile');
+                analytics.log({
+                    name : 'CHOOSEPROFILE',
+                    type : 'ADD'
+                },{
+                    time : new Date(),
+                    from : multiUser.getCurrentProfile(),
+                    to : profile
+                }, multiUser.getCurrentProfile());
                 $state.go('user.personalise', {})
         }
 
         function selectProfile(profile, scope) {
             localStorage.removeItem('currentPosition');
             localStorage.removeItem('regionPage');
+            analytics.log({
+                name : 'CHOOSEPROFILE',
+                type : 'SWITCH'
+            },{
+                time : new Date(),
+                from : multiUser.getCurrentProfile(),
+                to : profile
+            }, multiUser.getCurrentProfile());
             User.profile.select(profile);
             $log.debug('selected profile', profile.id, multiUser.getCurrentProfile())
             if($state.current.name == 'map.navigate'){
