@@ -137,7 +137,7 @@
                 <button ng-disabled="!vocabCardCtrl.enable" ng-class="{'greyed' : !vocabCardCtrl.enable}" ng-show="vocabCardCtrl.currentIndex" class="sbtn sbtn-arrow-back" ng-click="vocabCardCtrl.prev();vocabCardCtrl.playDelayed(vocabCardCtrl.vocab_data[vocabCardCtrl.currentIndex].node.type.sound);audio.play('press')"></button>
             </div>
             <div class="col col-60 align-middle flash-body-card">
-                <div class="flash-card align-middle" ng-click="vocabCardCtrl.playDelayed(card.node.type.sound)" ng-repeat="card in ::vocabCardCtrl.vocab_data" ng-show="vocabCardCtrl.currentIndex == $index" style="background-color : {{::card.node.type.foreground_color}}">
+                <div class="flash-card align-middle" ng-click="vocabCardCtrl.playDelayed(card.node.type.sound, true, $index)" ng-repeat="card in ::vocabCardCtrl.vocab_data" ng-show="vocabCardCtrl.currentIndex == $index" style="background-color : {{::card.node.type.foreground_color}}">
                     <img src="" alt="" ng-src="{{::card.node.type.image.path}}" ng-class="{'animation-repeat-bounce-in':!vocabCardCtrl.enable}">
                 </div>
                 <div ng-repeat="card in ::vocabCardCtrl.vocab_data" ng-show="vocabCardCtrl.currentIndex == $index">

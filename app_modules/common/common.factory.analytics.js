@@ -58,6 +58,7 @@
       "VOCABULARY_CARD": {
         "CONTENT": "vocabularycard",
         "START": "start vocabulary card",
+        "PLAY" : "tap to play vocabulary card",
         "END": "end vocabulary card",
       },
       "PRACTICE": {

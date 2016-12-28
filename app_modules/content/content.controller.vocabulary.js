@@ -158,7 +158,17 @@
         return soundArrPath;
     }
 
-    function playDelayed(sound) {
+    function playDelayed(sound, userinput, index) {
+        userinput && analytics.log({
+            name: 'VOCABULARY_CARD',
+            type: 'PLAY',
+            id: vocabCardCtrl.vocab_data[index].node.id
+          }, {
+            time: new Date(),
+            file : getLastSound(sound)
+          },
+          User.getActiveProfileSync()._id
+        )
       vocabCardCtrl.enable = false;
       timeout = $timeout(function() {
         vocabCardCtrl.audio.player.chain(0, getLastSound(sound), function(){
@@ -265,7 +275,7 @@
       })
     }
 
-    playDelayed(vocabCardCtrl.vocab_data[vocabCardCtrl.currentIndex].node.type.sound);
+    playDelayed(vocabCardCtrl.vocab_data[vocabCardCtrl.currentIndex].node.type.sound, false);
 
     $scope.$on('appResume', function(){
         // show pause menu
