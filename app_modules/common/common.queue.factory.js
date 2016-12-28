@@ -43,14 +43,19 @@
     };
 
     function push(url, body, method) {
-      $log.debug("queue", "push",url,new Date().getTime().toString(),body)
+      $log.debug("queue", "push",{
+        '_id': new Date().getTime().toString(),
+        'url': url,
+        'body': body,
+        'method': method
+      })
       if (!method) {
         method = 'post'
       }
       return queueDB.put({
         '_id': new Date().getTime().toString(),
         'url': url,
-        'body': body,
+        'body': JSON.parse(JSON.stringify(body)),
         'method': method
       }).then(function() {
         $log.debug("queue", "push success")

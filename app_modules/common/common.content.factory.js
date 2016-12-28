@@ -34,13 +34,13 @@
     var lessonDB = pouchDB('lessonsDB', {
       revs_limit: 1,
       adapter: 'websql'
-      // auto_compaction : true
+        // auto_compaction : true
     });
     var diagnosisTranslationsDB = pouchDB('diagnosisTranslationsDB', {
       revs_limit: 1,
       // auto_compaction : true
     });
-    createDiagnosisTranslationsDB();
+    // createDiagnosisTranslationsDB();
     // }
     var contentProperties = {
       createLessonDBIfNotExists: createLessonDBIfNotExists,
@@ -63,6 +63,7 @@
       getLocalizedQuestion: getLocalizedQuestion,
       getStatus: getStatus,
       deleteLessonDB: deleteLessonDB,
+      createDependentDBs: createDependentDBs,
       demo_question: {
         "node": {
           "id": CONSTANT.QUESTION.DEMO,
@@ -129,10 +130,19 @@
     return contentProperties;
 
     function deleteLessonDB() {
+      $log.debug("tag deletelessondb")
       return lessonDB.erase();
     }
 
+    function createDiagnosisTranslationsDB() {
+      return diagnosisTranslationsDB.load(CONSTANT.PATH.DATA + '/diagnosis_translations.db');
+    }
 
+    function createDependentDBs() {
+      var createLessonsDB = createOrUpdateLessonDB();
+      var createtranslationsDB = createDiagnosisTranslationsDB()
+      return $q.all(createLessonsDB, createtranslationsDB);
+    }
 
     function replicateLessonDB() {
       if (!$rootScope.lessonDBReplicationStarted) {
@@ -165,11 +175,16 @@
 
     function getLocalizedQuestion(questionId, targetLanguage) {
       return lessonDB.get('localized_mapping').then(function(localizationMapping) {
-        var translatedQuestionID = localizationMapping.mapping[questionId][targetLanguage]
-        return diagnosisTranslationsDB.get(translatedQuestionID).then(function(question) {
+        var translatedQuestionID = localizationMapping.mapping[questionId][targetLanguage];
+        if(translatedQuestionID){
+           return diagnosisTranslationsDB.get(translatedQuestionID).then(function(question) {
           $log.debug("localizedQuestion", question);
           return question.question;
         });
+         }else{
+          return questionId;
+         }
+       
       })
     }
 
@@ -322,14 +337,8 @@
         // });
       $log.debug("NEW DB MADE 1");
       return lessonDB.load(CONSTANT.PATH.DATA + '/lessons.db', {
-          // proxy: CONSTANT.LESSONS_DB_SERVER
-        })
-        
-    }
-
-    function createDiagnosisTranslationsDB() {
-      $log.debug("createDiagnosisTranslationsDB")
-      return diagnosisTranslationsDB.load(CONSTANT.PATH.DATA + '/diagnosis_translations.db', {})
+        // proxy: CONSTANT.LESSONS_DB_SERVER
+      })
     }
 
     function createLessonDBIfNotExistsPatch() {

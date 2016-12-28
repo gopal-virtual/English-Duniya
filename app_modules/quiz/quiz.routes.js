@@ -51,16 +51,22 @@
               };
               return $q.all(all_promises).then(function() {
                 var suggestion = ml.getNextQSr(data.getTestParams(User.getActiveProfileSync().data.profile.grade), ml.mapping);
+                $log.debug(ml.dqJSON[suggestion.qSr]);
                 return content.getLocalizedQuestion(suggestion.qSr, User.getActiveProfileSync().data.profile.language).then(function(translatedQuestion) {
-                    var question = angular.copy(ml.dqJSON[suggestion.qSr]);
+                  var question ;
+                  if (translatedQuestion.node) {
+                     question = angular.copy(translatedQuestion);
+                  } else {
+                     question = ml.dqJSON[suggestion.qSr];
+                  }
                     question.ml_node = angular.copy(question.node);
-                    question = angular.copy(translatedQuestion);
                     question && litmus.objects.push(question);
+                  
                     litmus['suggestion'] = suggestion;
-                    $log.debug("HERE I AM")
+
                     return content.getAssessment(litmus);
-                  });
-                  // return litmus;
+                });
+                // return litmus;
               });
             } else {
               $log.debug("play resource resolving assessment");
@@ -78,10 +84,10 @@
               // }
               User.demo.isShown(5) && CONSTANT.QUESTION_DEMO && $stateParams.quiz.objects.unshift(content.demo_question);
               return content.getAssessment($stateParams.quiz).then(function(response) {
-                return content.getLocalizedNode(response.node.parent,'hi').then(function(parentHindiLesson){
+                return content.getLocalizedNode(response.node.parent, 'hi').then(function(parentHindiLesson) {
                   response.parentHindiLessonId = parentHindiLesson;
-                $log.debug("play resource resolving assessment 2",response);
-                return response;
+                  $log.debug("play resource resolving assessment 2", response);
+                  return response;
                 })
               });
               // return $stateParams.quiz;
@@ -174,7 +180,6 @@
             .then(function() {
               if (quiz.node.requiresSuggestion) {
                 debugger;
-
                 ml.setLessonResultMapping().then(function() {
                   var suggestion = ml.getLessonSuggestion({
                     "event": "assessment",
