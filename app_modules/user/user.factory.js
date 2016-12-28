@@ -179,7 +179,7 @@
     function patchPhoneNumber(num) {
       return $http({
         method : 'PATCH',
-        url : 'https://cc-test.zaya.in/rest-auth/user/',
+        url : CONSTANT.BACKEND_SERVICE_DOMAIN+'/rest-auth/user/',
         data : {
           phone_number : num
         }
@@ -189,7 +189,7 @@
     function verifyOtp(otp) {
       return $http({
         method : 'POST',
-        url : 'https://cc-test.zaya.in/rest-auth/sms-verification/',
+        url : CONSTANT.BACKEND_SERVICE_DOMAIN+'/rest-auth/sms-verification/',
         data : {
           code : otp
         }
@@ -200,7 +200,7 @@
     function resendOtp(num) {
       return $http({
         method : 'POST',
-        url : 'https://cc-test.zaya.in/rest-auth/resend-sms-verification/',
+        url : CONSTANT.BACKEND_SERVICE_DOMAIN+'/rest-auth/resend-sms-verification/',
         data : {
           phone_number : num
         }
