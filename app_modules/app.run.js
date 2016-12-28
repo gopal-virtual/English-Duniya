@@ -38,15 +38,15 @@
     //$http.defaults.headers.common['Access-Control-Request-Headers'] = 'accept, auth-token, content-type, xsrfcookiename';
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
       $log.debug("play resource state change", toState, toParams)
-      analytics.log({
-        name: 'STATE',
-        type: 'CHANGE_START'
-      }, {
-        toState: toState,
-        toParams: toParams,
-        fromState: fromState,
-        fromParams: fromParams
-      },User.getActiveProfileSync() && User.getActiveProfileSync()._id)
+      // analytics.log({
+      //   name: 'STATE',
+      //   type: 'CHANGE_START'
+      // }, {
+      //   toState: toState,
+      //   toParams: toParams,
+      //   fromState: fromState,
+      //   fromParams: fromParams
+      // },User.getActiveProfileSync() && User.getActiveProfileSync()._id)
       if (localStorage.version !== CONSTANT.APP.VERSION) {
         event.preventDefault();
         $log.debug("tag First tim entering the app")
@@ -166,31 +166,31 @@
         }
       }
     });
-    $rootScope.$on('$stateChangeSuccess',
-      function(event, toState, toParams, fromState, fromParams) {
-        analytics.log({
-          name: 'STATE',
-          type: 'CHANGE_COMPLETE'
-        }, {
-          toState: toState,
-          toParams: toParams,
-          fromState: fromState,
-          fromParams: fromParams
-        },User.getActiveProfileSync() && User.getActiveProfileSync()._id)
-      })
-     $rootScope.$on('$stateChangeError',
-      function(event, toState, toParams, fromState, fromParams, error) {
-        analytics.log({
-          name: 'STATE',
-          type: 'CHANGE_ERROR'
-        }, {
-          toState: toState,
-          toParams: toParams,
-          fromState: fromState,
-          fromParams: fromParams,
-          error : error
-        },User.getActiveProfileSync() && User.getActiveProfileSync()._id)
-      })
+    // $rootScope.$on('$stateChangeSuccess',
+    //   function(event, toState, toParams, fromState, fromParams) {
+    //     analytics.log({
+    //       name: 'STATE',
+    //       type: 'CHANGE_COMPLETE'
+    //     }, {
+    //       toState: toState,
+    //       toParams: toParams,
+    //       fromState: fromState,
+    //       fromParams: fromParams
+    //     },User.getActiveProfileSync() && User.getActiveProfileSync()._id)
+    //   })
+    //  $rootScope.$on('$stateChangeError',
+    //   function(event, toState, toParams, fromState, fromParams, error) {
+    //     analytics.log({
+    //       name: 'STATE',
+    //       type: 'CHANGE_ERROR'
+    //     }, {
+    //       toState: toState,
+    //       toParams: toParams,
+    //       fromState: fromState,
+    //       fromParams: fromParams,
+    //       error : error
+    //     },User.getActiveProfileSync() && User.getActiveProfileSync()._id)
+    //   })
     $ionicPlatform.ready(function() {
       analytics.getLocation().then(function(location) {
         $log.debug("Location", location);
@@ -257,7 +257,7 @@
         analytics.log({
           name: 'FAILURE',
           type: 'LOW_DISK_SPACE'
-        }, null, User.getActiveProfileSync()._id);
+        }, {}, User.getActiveProfileSync() && User.getActiveProfileSync()._id);
         $ionicPopup.alert({
           title: CONSTANT.ERROR_MESSAGES.LOW_DISK_SPACE.TITLE,
           template: CONSTANT.ERROR_MESSAGES.LOW_DISK_SPACE.MESSAGE
