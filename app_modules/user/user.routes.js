@@ -94,6 +94,12 @@
               function exitPhoneNumber() {
                 $log.debug('Going to map')
                 $state.go('map.navigate');
+                analytics.log({
+                    name : 'PHONENUMBER',
+                    type : 'CLOSE'
+                }, {
+                  time : new Date()
+                }, User.getActiveProfileSync()._id);
                 $ionicLoading.show();
               }
 
@@ -103,6 +109,13 @@
                  $scope.phone.numberErrorText = "Please enter a valid mobile number";
                  return ;
                 }
+                analytics.log({
+                    name : 'PHONENUMBER',
+                    type : 'NUMBER_SUBMIT'
+                }, {
+                  time : new Date(),
+                  number : num
+                }, User.getActiveProfileSync()._id)
                 // $log.debug("not in rejection")
                 $scope.phone.numberErrorText = "";
                 if(!$scope.phone.isVerified && $scope.phone.number == User.user.getPhoneNumber()){
@@ -121,25 +134,44 @@
                 // $log.debug(num[0] != '9' && num[0] != '8' && num[0] != '7');
 
                 User.user.patchPhoneNumber(num).then(function(response){
-                 $log.debug("We successfully added the phone number. Requesting otp",response,num);
-                 nextSlide();
-                 resetResendFlag();
-                 User.user.updatePhoneLocal(response.data.phone_number);
+                  $log.debug("We successfully added the phone number. Requesting otp",response,num);
+                  nextSlide();
+                  resetResendFlag();
+                  User.user.updatePhoneLocal(response.data.phone_number);
                   User.user.setIsVerified(response.data.is_verified);
-
+                  $scope.changeNumberFlag = User.user.getPhoneNumber() == '';
+                  analytics.log({
+                    name : 'PHONENUMBER',
+                    type : 'NUMBER_SUCCESS',
+                  },{
+                    time : new Date()
+                  },User.getActiveProfileSync()._id);
                 }, function(err){
                  if(err.status == 400){
                     $scope.phone.numberErrorText = err.data.details;
                   }else{
                     $scope.phone.numberErrorText = JSON.stringify(err.data);
                   }
+                  analytics.log({
+                    name : 'PHONENUMBER',
+                    type : 'NUMBER_ERROR',
+                  },{
+                    time : new Date()
+                  },User.getActiveProfileSync()._id);
                 })
               }
 
               function resendOtp(num,interval){
                 $log.debug("Asking for otp again")
                 User.user.resendOtp(num).then(function(response){
+                  analytics.log({
+                    name : 'PHONENUMBER',
+                    type : 'OTP_RESEND',
+                  },{
+                    time : new Date()
+                  },User.getActiveProfileSync()._id);
                   $log.debug("Otp request was sent",response)
+                  
                 })
                 resetResendFlag();
               }
@@ -158,11 +190,18 @@
               }
 
               function verifyOtp(otp,successInterval){
+                analytics.log({
+                  name : 'PHONENUMBER',
+                  type : 'OTP_SUBMIT',
+                },{
+                  time : new Date(),
+                  otp : otp
+                },User.getActiveProfileSync()._id);
                 User.user.verifyOtp(otp).then(function(response){
                   $log.debug("Verified otp",response);
                   // $log.debug("Please cancel interval",$interval.cancel(otpCycle));
                   User.user.setIsVerified(true);
-                  // $scope.phone.isVerified : User.user.getDetails().is_verified;
+                  // $scope.phone.isVerified = User.user.getDetails().is_verified
                   nextSlide();
                   if (!successInterval) {
                     successInterval = 1000;
@@ -172,12 +211,26 @@
                     $log.debug("In timeout")
                     exitPhoneNumber();
                   },successInterval);
+                  analytics.log({
+                    name : 'PHONENUMBER',
+                    type : 'OTP_SUCCESS',
+                  },{
+                    time : new Date(),
+                    otp : otp
+                  },User.getActiveProfileSync()._id);
                 }, function(err){
                   if(err.status == 400){
                     $scope.phone.otpErrorText = err.data.details
                   }else{
                     $log.error(err)
                   }
+                  analytics.log({
+                    name : 'PHONENUMBER',
+                    type : 'OTP_ERROR',
+                  },{
+                    time : new Date(),
+                    otp : otp
+                  },User.getActiveProfileSync()._id);
                 })
               }
 

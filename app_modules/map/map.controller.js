@@ -209,16 +209,12 @@
         $scope.phone.otpErrorText = '';
         tempCount = 1;
         audio.loop('background');
-        analytics.log(
-          {
+        analytics.log({
             name : 'PHONENUMBER',
             type : 'CLOSE'
-          },
-          {
-            time : new Date()
-          },
-          User.getActiveProfileSync()._id
-        )
+        }, {
+          time : new Date()
+        }, User.getActiveProfileSync()._id);
       });
 
     }
@@ -229,17 +225,13 @@
         $scope.phone.numberErrorText = "Please enter a valid mobile number";
         return ;
       }
-      analytics.log(
-        {
+      analytics.log({
           name : 'PHONENUMBER',
           type : 'NUMBER_SUBMIT'
-        },
-        {
-          time : new Date(),
-          number : num
-        },
-        User.getActiveProfileSync()._id
-      )
+      }, {
+        time : new Date(),
+        number : num
+      }, User.getActiveProfileSync()._id)
       // $log.debug("not in rejection")
       $scope.phone.numberErrorText = "";
       if(!$scope.phone.isVerified && $scope.phone.number == User.user.getPhoneNumber()){

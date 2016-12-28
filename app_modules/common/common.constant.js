@@ -12,7 +12,7 @@
       'BUNDLED': false,
       'LOCK': true,
       'FAKE_LOGIN': true,
-      'FAKE_ID_DEVICE': 'gopal-macmini',
+      'FAKE_ID_DEVICE': 'rudra-baba',
       'FAKE_DEVICE': true,
       'CONTENT_TEST':false,
       'DEBUG' : true,
