@@ -235,13 +235,16 @@
           average_level: null
         },
         templateUrl: CONSTANT.PATH.QUIZ + '/quiz.litmus_summary' + CONSTANT.VIEW,
-        controller: ['$log', 'User', 'audio', '$timeout', '$stateParams', '$scope', '$state', '$ionicLoading', function($log, User, audio, $timeout, $stateParams, $scope, $state, $ionicLoading) {
+        controller: ['$log', 'User', 'audio', '$timeout', '$stateParams', '$scope', '$state', '$ionicLoading','analytics', function($log, User, audio, $timeout, $stateParams, $scope, $state, $ionicLoading, analytics) {
           $scope.gender = User.getActiveProfileSync().data.profile.gender == 'M' ? 'boy' : 'girl';
           $scope.average_level = $stateParams.average_level ? $stateParams.average_level : 1;
           $scope.redirect = function() {
+            analytics.log({name:'LITMUS',type:'EXIT'},{level:$scope.average_level},User.getActiveProfileSync()._id);
+
             $ionicLoading.show({
               hideOnStateChange: true
-            })
+            });
+            analytics.log({name:'LITMUS',type:'SUMMARY'},{level:$scope.average_level},User.getActiveProfileSync()._id);
             if ($stateParams.average_level < 4) {
               $state.go('map.navigate', {})
             } else {
@@ -269,12 +272,13 @@
       .state('litmus_start', {
         url: '/litmus_start',
         templateUrl: CONSTANT.PATH.QUIZ + '/quiz.litmus_start' + CONSTANT.VIEW,
-        controller: ['$log', 'User', '$scope', 'audio', 'localized', function($log, User, $scope, audio, localized) {
+        controller: ['$log', 'User', '$scope', 'audio', 'localized','analytics', function($log, User, $scope, audio, localized,analytics) {
           $scope.audio = audio;
           $scope.name = User.getActiveProfileSync().data.profile.first_name;
           $scope.gender = User.getActiveProfileSync().data.profile.gender == 'M' ? 'boy' : 'girl';
           $scope.localizedContent = localized;
           $scope.language = User.getActiveProfileSync().data.profile.language;
+          $scope.analytics = analytics;
           $log.debug('litmus start')
           audio.player.play(localized.audio.litmus.litmus_start[$scope.language]);
         }]

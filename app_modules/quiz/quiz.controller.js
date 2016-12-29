@@ -671,7 +671,7 @@
       if (quizType === 'practice') {
         $scope.modal.hide().then(function() {
           analytics.log({
-                name: 'PRACTICE',
+                name: $stateParams.type == 'litmus' ? 'LITMUS':'PRACTICE',
                 type: 'END',
                 id: quizCtrl.quiz.node.id
               }, {
@@ -926,21 +926,25 @@
     }
 
     function logQuestion(index, type) {
+      var activityName = 'QUESTION';
+      if($stateParams.type === 'litmus'){
+        activityName = 'LITMUS';
+      }
       analytics.log({
-          name: 'QUESTION',
+          name: activityName,
           type: type,
           id: quizCtrl.quiz.objects[index].node.id
         }, {
           time: new Date()
         },
         User.getActiveProfileSync()._id
-      )
+      );
     }
 
     function intro_end_quiz() {
       $log.debug("Inside onended event");
       // $log.debug("removed event listener quiz",$state);
-      angular.element("#audioplayer")[0].onended = null
+      angular.element("#audioplayer")[0].onended = null;
       if ($state.current.name == 'quiz.questions') {
         $scope.nodeRibbonFlag = false;
         // $scope.nodeRibbon.hide().then(function(){
