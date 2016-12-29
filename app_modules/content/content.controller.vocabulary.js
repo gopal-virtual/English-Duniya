@@ -48,6 +48,8 @@
         )
     }
 
+    $scope.resultButtonAnimationFlag = 0;
+    // $scope.resultButtonAnimation = resultButtonAnimation;
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.COMMON + '/common.modal-result' + CONSTANT.VIEW, {
         scope: $scope,
         animation: 'slide-in-down',
@@ -262,7 +264,9 @@
         orientation.setPortrait();
         //   $scope.ribbon_modal.hide();
         $scope.resultPageNextShow = false;
-        $scope.resultMenu.show();
+        $scope.resultMenu.show().then(function(){
+          resultButtonAnimation()
+        });
         analytics.log({
             name: 'VOCABULARY',
             type: 'END',
@@ -292,6 +296,17 @@
         vocabCardCtrl.enable = true;
         $timeout.cancel( timeout );
     })
+
+    function resultButtonAnimation() {
+      $log.debug("ANIMATION. Inside button animation")
+      $timeout(function() {
+        $scope.resultButtonAnimationFlag = 1;
+      },3000).then(function(){
+        $timeout(function(){
+          $scope.resultButtonAnimationFlag = 2;
+        },400)
+      })
+    }
 
   }
 })();
