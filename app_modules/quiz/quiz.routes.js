@@ -84,11 +84,7 @@
               // }
               User.demo.isShown(5) && CONSTANT.QUESTION_DEMO && $stateParams.quiz.objects.unshift(content.demo_question);
               return content.getAssessment($stateParams.quiz).then(function(response) {
-                return content.getLocalizedNode(response.node.parent, 'hi').then(function(parentHindiLesson) {
-                  response.parentHindiLessonId = parentHindiLesson;
-                  $log.debug("play resource resolving assessment 2", response);
                   return response;
-                })
               });
               // return $stateParams.quiz;
             }
@@ -179,16 +175,15 @@
             })
             .then(function() {
               if (quiz.node.requiresSuggestion) {
-                debugger;
                 ml.setLessonResultMapping().then(function() {
                   var suggestion = ml.getLessonSuggestion({
                     "event": "assessment",
                     "score": summary.score.marks,
                     "totalScore": quiz.node.type.score,
                     "skill": quiz.node.tag.toLowerCase(),
-                    "sr": quiz.parentHindiLessonId
+                    "sr": quiz.node.parentHindiLessonId
                   });
-                  // $log.debug("got sugggestion",suggestion);
+                  $log.debug("got sugggestion",suggestion);
                   return User.profile.updateRoadMapData(ml.roadMapData, User.getActiveProfileSync()._id).then(function() {
                     return User.playlist.add(User.getActiveProfileSync()._id, suggestion)
                   })
@@ -239,7 +234,7 @@
           $scope.gender = User.getActiveProfileSync().data.profile.gender == 'M' ? 'boy' : 'girl';
           $scope.average_level = $stateParams.average_level ? $stateParams.average_level : 1;
           $scope.redirect = function() {
-            analytics.log({name:'LITMUS',type:'EXIT'},{level:$scope.average_level},User.getActiveProfileSync()._id);
+            analytics.log({name:'LITMUS',type:'EXIT'},{},User.getActiveProfileSync()._id);
 
             $ionicLoading.show({
               hideOnStateChange: true

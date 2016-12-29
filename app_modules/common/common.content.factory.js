@@ -413,7 +413,7 @@
               var index = -1;
               while ((index = playlist_ids.indexOf(data.rows[i].id, index + 1)) != -1) {
                 lessons[index] = data.rows[i];
-                lessons[index]['parentHindiLesson'] = playlist[index]['suggestedLesson']
+                lessons[index]['parentHindiLessonId'] = playlist[index]['suggestedLesson']
               }
             }
             // if(playlist.indexOf(data.rows[i].id) >= 0){
@@ -427,7 +427,7 @@
                 }
                 lessons[i].doc.lesson.objects[c].node.tag = lessons[i].doc.lesson.node.tag;
                 lessons[i].doc.lesson.objects[c].node.playlist_index = i;
-                lessons[i].doc.lesson.objects[c].node.parentHindiLesson = lessons[i]['parentHindiLesson'];
+                lessons[i].doc.lesson.objects[c].node.parentHindiLessonId = lessons[i]['parentHindiLessonId'];
               }
               // for(var c = 0; c < lessons[i].doc.lesson.objects.length; c++){
               // $log.debug("Iter ",lessons[i].doc.lesson.objects[c].node.playlist_index )
