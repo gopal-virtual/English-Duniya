@@ -16,6 +16,10 @@
         border: 5px solid white;
         color: #1D81C4;
     }
+    .grade-box p{
+        margin: 0;
+        padding-top: 1vh;
+    }
     .radio-selected {
         background-color: #FCBA1E;
         box-shadow: inset 0px -4px 0px 0px #C48D2B;
@@ -177,7 +181,7 @@
                         </div> -->
                         <div class="grade-box-container">
                             <label on-tap="audio.play('click');" class="grade-box radio" ng-repeat="grade in userCtrl.CONSTANT.GRADE" ng-class="{true : 'radio-selected', false : 'radio-not-selected'}[userCtrl.user.grade == grade]">
-                                {{grade}}
+                                <p>{{grade}}</p>
                                 <input type="radio" name="grade" value="{{grade}}" ng-model="userCtrl.user.grade">
                             </label>
                         </div>
