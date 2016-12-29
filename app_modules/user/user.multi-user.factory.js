@@ -61,8 +61,6 @@
                     type : 'ADD'
                 },{
                     time : new Date(),
-                    from : multiUser.getCurrentProfile(),
-                    to : profile
                 }, multiUser.getCurrentProfile());
                 $state.go('user.personalise', {})
         }
