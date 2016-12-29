@@ -76,11 +76,11 @@
         views: {
           'state-user' : {
             templateUrl: CONSTANT.PATH.USER + '/user.phoneNumber' + CONSTANT.VIEW,
-            controller: ['$scope','$timeout','$log','User','$ionicSlideBoxDelegate','$state','$ionicLoading',function($scope,$timeout,$log,User,$ionicSlideBoxDelegate,$state,$ionicLoading){
+            controller: ['$scope','$timeout','$log','User','$ionicSlideBoxDelegate','$state','$ionicLoading','analytics',function($scope,$timeout,$log,User,$ionicSlideBoxDelegate,$state,$ionicLoading,analytics){
               $scope.phone = {
-                number : '',
+                number : (function(){return User.user.getPhoneNumber()})(),
                 numberErrorText : '',
-                isVerified : User.user.getDetails().is_verified,
+                isVerified : (function(){return User.user.getDetails().is_verified})(),
                 otp : '',
                 otpErrorText : '',
                 otpInterval : 90000,

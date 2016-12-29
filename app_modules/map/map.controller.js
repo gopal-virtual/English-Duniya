@@ -148,15 +148,15 @@
     $scope.onProfileCardClick = onProfileCardClick;
 
 
-    $scope.changeNumberFlag = (function(){User.user.getPhoneNumber() == '';})
+    $scope.changeNumberFlag = (function(){return User.user.getPhoneNumber() != '';})()
     $scope.currentState = $state.current.name;
     // $scope.goToPhoneNumber = goToPhoneNumber;
     // $scope.exitPhoneNumber = exitPhoneNumber;
     // mapCtrl.notification = notification;
     $scope.phone = {
-      number : User.user.getPhoneNumber(),
+      number : (function(){return User.user.getPhoneNumber()})(),
       numberErrorText : '',
-      isVerified : User.user.getDetails().is_verified,
+      isVerified : (function(){return User.user.getDetails().is_verified})(),
       otp : '',
       otpErrorText : '',
       otpInterval : 90000,
@@ -172,7 +172,7 @@
     }
 
     // $log.debug("ISVERIFIED",$scope.phone.number.length < 10,$scope.phone.number == User.user.getPhoneNumber(), $scope.phone.isVerified)
-
+    $log.debug("PHONE. changed number flag",$scope.changeNumberFlag);
     var tempCount = 1;
 
     function goToPhoneNumber() {
@@ -187,8 +187,8 @@
           time : new Date(),
         },User.getActiveProfileSync()._id);
       });
-      $scope.phone.isVerified = User.user.getDetails().is_verified;
-      $log.debug("PHONE.is verified",$scope.phone.isVerified);
+      // $scope.phone.isVerified = User.user.getDetails().is_verified;
+      // $log.debug("PHONE.is verified",$scope.phone.isVerified);
       analytics.log(
         {
             name : 'PHONENUMBER',
@@ -258,7 +258,7 @@
         resetResendFlag();
         User.user.updatePhoneLocal(response.data.phone_number);
         User.user.setIsVerified(response.data.is_verified);
-        $scope.changeNumberFlag = User.user.getPhoneNumber() == '';
+        // $scope.changeNumberFlag = User.user.getPhoneNumber() == '';
         analytics.log({
           name : 'PHONENUMBER',
           type : 'NUMBER_SUCCESS',
@@ -824,6 +824,8 @@
     }
 
     function goToChooseProfile() {
+    $log.debug("PHONE. changed number flag",$scope.changeNumberFlag);
+
         analytics.log({
           name : 'CHOOSEPROFILE',
           type : 'TAP',
