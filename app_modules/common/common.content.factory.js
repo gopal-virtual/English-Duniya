@@ -171,7 +171,7 @@
 
     function getLocalizedNode(nodeId, targetLanguage) {
       return lessonDB.get('localized_mapping').then(function(localizationMapping) {
-        return localizationMapping.mapping[nodeId][targetLanguage] || nodeId;
+        return (localizationMapping.mapping[nodeId] && localizationMapping.mapping[nodeId][targetLanguage]) || nodeId;
       });
     }
 
@@ -413,6 +413,7 @@
               var index = -1;
               while ((index = playlist_ids.indexOf(data.rows[i].id, index + 1)) != -1) {
                 lessons[index] = data.rows[i];
+                lessons[index]['parentHindiLesson'] = playlist[index]['suggestedLesson']
               }
             }
             // if(playlist.indexOf(data.rows[i].id) >= 0){
@@ -426,6 +427,7 @@
                 }
                 lessons[i].doc.lesson.objects[c].node.tag = lessons[i].doc.lesson.node.tag;
                 lessons[i].doc.lesson.objects[c].node.playlist_index = i;
+                lessons[i].doc.lesson.objects[c].node.parentHindiLesson = lessons[i]['parentHindiLesson'];
               }
               // for(var c = 0; c < lessons[i].doc.lesson.objects.length; c++){
               // $log.debug("Iter ",lessons[i].doc.lesson.objects[c].node.playlist_index )
@@ -435,14 +437,10 @@
               $log.debug("pre", playlist.length);
               angular.forEach(CONSTANT.NODE_TYPE_LIST, function(node_type) {
                 for (var c = 0; c < lessons[i].doc.lesson.objects.length; c++) {
-                  $log.debug("pre playlist", playlist[i])
                   if (node_type == 'vocabulary' && lessons[i].doc.lesson.objects[c].node.content_type_name === 'vocabulary') {
-                    $log.debug("pre vocab found")
                     for (var key in playlist[i]) {
                       if (playlist[i].hasOwnProperty(key)) {
-                        $log.debug("Previously attempted ", playlist[i][key].type, key)
                         if (playlist[i][key].type === 'resource') {
-                          $log.debug("previusly attempted Video found ");
                           include_vocab_flag = false;
                         }
                       }
