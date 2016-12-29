@@ -50,7 +50,7 @@
         views: {
           'state-user': {
             templateUrl: CONSTANT.PATH.USER + '/user.chooseProfile' + CONSTANT.VIEW,
-            controller: ['multiUser','$scope','User','analytics',function(multiUser,$scope,User,analytics){
+            controller: ['multiUser','$scope','User','analytics','audio',function(multiUser,$scope,User,analytics,audio){
                 $scope.changeNumberFlag = User.user.getPhoneNumber() == '' ? 0 : 1;
                 $scope.multiUser = multiUser;
                 multiUser.getProfiles();
@@ -76,7 +76,8 @@
         views: {
           'state-user' : {
             templateUrl: CONSTANT.PATH.USER + '/user.phoneNumber' + CONSTANT.VIEW,
-            controller: ['$scope','$timeout','$log','User','$ionicSlideBoxDelegate','$state','$ionicLoading','analytics',function($scope,$timeout,$log,User,$ionicSlideBoxDelegate,$state,$ionicLoading,analytics){
+            controller: ['$scope','$timeout','$log','User','$ionicSlideBoxDelegate','$state','$ionicLoading','analytics','audio',function($scope,$timeout,$log,User,$ionicSlideBoxDelegate,$state,$ionicLoading,analytics,audio){
+              $scope.audio = audio;
               $scope.phone = {
                 number : (function(){return User.user.getPhoneNumber()})(),
                 numberErrorText : '',

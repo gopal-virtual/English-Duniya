@@ -74,7 +74,7 @@
     <div class="star-count">{{::mapCtrl.totalStars}}</div>
     <img class="profile-star-icon" src="img/assets_svg/icon-star.svg">
 </div>
-<div ng-tap="mapCtrl.goToChooseProfile()" ng-click="mapCtrl.goToChooseProfile()"  class="profile" ng-hide="::mapCtrl.demo.getStep() == 1"  ng-class="::{'animation-fade-in-from-top animation-delay-more' : mapCtrl.demo.getStep() != 1}">
+<div ng-tap="mapCtrl.goToChooseProfile();audio.play('click');" ng-click="mapCtrl.goToChooseProfile();audio.play('click');"  class="profile" ng-hide="::mapCtrl.demo.getStep() == 1"  ng-class="::{'animation-fade-in-from-top animation-delay-more' : mapCtrl.demo.getStep() != 1}">
     <img class="profile-avatar" ng-src="img/assets_svg/profile-{{::mapCtrl.gender == 'M' ? 'boy' : 'girl'}}.svg">
     <!-- <div ng-if="phone.number == ''" class="symbol animation-repeat-bounce">i</div> -->
 </div>

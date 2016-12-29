@@ -41,7 +41,7 @@
         direction="y"
         style="height:38vh;"
       >
-                  <div style="margin:2vw;" ng-repeat="lang in userCtrl.CONSTANT.LANGUAGES" ng-click="userCtrl.user.language = lang.code;userCtrl.audioPlayer.play('sound/placeholder.mp3')" ng-class="{'selected':userCtrl.user.language == lang.code}" class="center lcard center bg-white card-radius">
+                  <div style="margin:2vw;" ng-repeat="lang in userCtrl.CONSTANT.LANGUAGES" on-tap="audio.play('click');" ng-click="userCtrl.user.language = lang.code;userCtrl.audioPlayer.play('sound/placeholder.mp3')" ng-class="{'selected':userCtrl.user.language == lang.code}" class="center lcard center bg-white card-radius">
                   <div class="lcard-inner padding-10 option">
                   {{userCtrl.localizedContent.text.personalise.choose_language[lang.code]}}</div>
                   </div>
@@ -176,7 +176,7 @@
                             </div>
                         </div> -->
                         <div class="grade-box-container">
-                            <label class="grade-box radio" ng-repeat="grade in userCtrl.CONSTANT.GRADE" ng-class="{true : 'radio-selected', false : 'radio-not-selected'}[userCtrl.user.grade == grade]">
+                            <label on-tap="audio.play('click');" class="grade-box radio" ng-repeat="grade in userCtrl.CONSTANT.GRADE" ng-class="{true : 'radio-selected', false : 'radio-not-selected'}[userCtrl.user.grade == grade]">
                                 {{grade}}
                                 <input type="radio" name="grade" value="{{grade}}" ng-model="userCtrl.user.grade">
                             </label>

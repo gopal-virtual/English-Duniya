@@ -128,7 +128,7 @@
 <ion-view class="bg-pale">
     <div class="row header-fixed animation-fade-in">
         <div class="col center">
-            <a ng-tap="exitChooseProfile()" ng-click="exitChooseProfile()" ng-show="::multiUser.hasCurrentUser()"><img class="absolute-right" src="img/assets_svg/cross.svg" alt=""></a>
+            <a ng-tap="exitChooseProfile();audio.play('click');" ng-click="exitChooseProfile();audio.play('click');" ng-show="::multiUser.hasCurrentUser()"><img class="absolute-right" src="img/assets_svg/cross.svg" alt=""></a>
             <!-- <img src="img/assets_svg/profile_ribbon.svg" alt=""> -->
             <!-- ng-show="multiUser.hasCurrentUser()" -->
             <img src="img/assets_svg/profile_ribbon.svg" alt="" ng-show="::multiUser.hasCurrentUser()">
@@ -137,7 +137,7 @@
     </div>
     <ion-content class="has-headers">
         <div class="profile-box-container">
-            <div ng-tap="profile.id != multiUser.getCurrentProfile() && multiUser.selectProfile(profile);onProfileCardClick();profileScreen.hide();" ng-click="profile.id != multiUser.getCurrentProfile() && multiUser.selectProfile(profile);onProfileCardClick();profileScreen.hide();" class="profile-box" ng-class="::{true : 'profile-box-darkblue', false : 'profile-box-blue'}[multiUser.getCurrentProfile() == profile.doc._id]" ng-repeat="profile in multiUser.profiles | limitTo : 4">
+            <div ng-tap="profile.id != multiUser.getCurrentProfile() && multiUser.selectProfile(profile);onProfileCardClick();profileScreen.hide();audio.play('click');" ng-click="profile.id != multiUser.getCurrentProfile() && multiUser.selectProfile(profile);onProfileCardClick();profileScreen.hide();audio.play('click');" class="profile-box" ng-class="::{true : 'profile-box-darkblue', false : 'profile-box-blue'}[multiUser.getCurrentProfile() == profile.doc._id]" ng-repeat="profile in multiUser.profiles | limitTo : 4">
                 <div class="profile-username" ng-class="::{true : 'font-pale' , false : 'font-blue'}[multiUser.getCurrentProfile() == profile.doc._id]">
                     {{::profile.doc.data.profile.first_name}}
                 </div>
@@ -157,12 +157,12 @@
                 </div>
             </div>
             <!-- ng-show="multiUser.canAdd()" -->
-            <div  ng-show="multiUser.canAdd()" class="profile-box profile-box-add" ng-tap="multiUser.goToCreateNewProfile();profileScreen.hide()" ng-click="multiUser.goToCreateNewProfile();profileScreen.hide()">
+            <div  ng-show="multiUser.canAdd()" class="profile-box profile-box-add" ng-tap="multiUser.goToCreateNewProfile();profileScreen.hide();audio.play('click');" ng-click="multiUser.goToCreateNewProfile();profileScreen.hide();audio.play('click');">
                 <img src="img/assets_svg/add_sign.svg" alt="">
             </div>
         </div>
         <div ng-if="currentState == 'map.navigate'"  class="padding-10 center button-container">
-            <a ng-click="phone.open()" ng-class="{true : 'sbtn-phone-change', false : 'sbtn-phone-add'}[changeNumberFlag]" class="sbtn"></a>
+            <a ng-click="phone.open();audio.play('press');" ng-class="{true : 'sbtn-phone-change', false : 'sbtn-phone-add'}[changeNumberFlag]" class="sbtn"></a>
         </div>
     </ion-content>
 </ion-view>

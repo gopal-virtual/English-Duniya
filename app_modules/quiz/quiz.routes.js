@@ -239,6 +239,7 @@
           $scope.gender = User.getActiveProfileSync().data.profile.gender == 'M' ? 'boy' : 'girl';
           $scope.average_level = $stateParams.average_level ? $stateParams.average_level : 1;
           $scope.redirect = function() {
+            audio.play('press');
             $ionicLoading.show({
               hideOnStateChange: true
             })
