@@ -47,13 +47,13 @@
     .profile-star-icon-offset, .profile-star-icon, .star-count{
         position : absolute;
     }
-    .profile.activated,.profile.active{
+    /*.profile.activated,.profile.active{
         -webkit-animation-name: repeat-bounce;
         -webkit-animation-duration: 500ms;
         animation-iteration-count: 3;
         animation-timing-function: ease-in-out;
         -webkit-transform-origin: 50% 50%;
-    }
+    }*/
     .symbol{
         height: 4vh;
         width: 4vh;
@@ -69,11 +69,12 @@
     }
 </style>
 <div class="profile-star" ng-class="::{'animation-fade-in-from-top animation-delay-more' : mapCtrl.demo.getStep() != 1}" ng-hide="::mapCtrl.demo.getStep() == 1">
+<!-- <div class="profile-star" ng-hide="::mapCtrl.demo.getStep() == 1"> -->
     <img class="profile-star-icon-offset" src="img/assets_svg/icon-star-offset.svg">
     <div class="star-count">{{::mapCtrl.totalStars}}</div>
     <img class="profile-star-icon" src="img/assets_svg/icon-star.svg">
 </div>
-<div ng-tap="mapCtrl.goToChooseProfile()" ng-click="mapCtrl.goToChooseProfile()"  class="profile" ng-class="::{'animation-fade-in-from-top animation-delay-more' : mapCtrl.demo.getStep() != 1}" ng-hide="::mapCtrl.demo.getStep() == 1">
+<div ng-tap="mapCtrl.goToChooseProfile()" ng-click="mapCtrl.goToChooseProfile()"  class="profile" ng-hide="::mapCtrl.demo.getStep() == 1"  ng-class="::{'animation-fade-in-from-top animation-delay-more' : mapCtrl.demo.getStep() != 1}">
     <img class="profile-avatar" ng-src="img/assets_svg/profile-{{::mapCtrl.gender == 'M' ? 'boy' : 'girl'}}.svg">
     <!-- <div ng-if="phone.number == ''" class="symbol animation-repeat-bounce">i</div> -->
 </div>
