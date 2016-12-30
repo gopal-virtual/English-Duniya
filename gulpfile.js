@@ -262,12 +262,13 @@ gulp.task('html', function() {
 });
 gulp.task('get-diagnosis-media', function() {
   if (env !== environments.dev) {
-    var docs_list = JSON.parse(request('GET', diagnosis_couch_db_server + '/_all_docs').getBody().toString())
+    var docs_list = JSON.parse(request('GET', diagnosis_couch_db_server + '/_all_docs').getBody().toString());
       // console.log("docs list",docs_list)
     for (var i = 0; i < docs_list.rows.length; i++) {
       // console.log("Value", docs_list.rows[i].id);
       var id = docs_list.rows[i].id;
-      var doc = JSON.parse(request('GET', diagnosis_couch_db_server + +id).getBody().toString());
+      var doc = JSON.parse(request('GET', diagnosis_couch_db_server + '/'+id).getBody().toString());
+
       // console.log("Doc", doc.question);
       for (var media_type in doc.question.node.type.content.widgets) {
         if (doc.question.node.type.content.widgets.hasOwnProperty(media_type)) {
