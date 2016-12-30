@@ -172,7 +172,19 @@
     }
 
     $scope.exitModal = {
-      message : 'Do you want to exit?'
+      message : 'Do you want to exit?',
+      dismiss : exitModalDismiss,
+      confirm : exitModalConfirm
+    }
+
+    function exitModalDismiss() {
+      $log.debug('EXITING NOT SURELY')
+      $scope.exitApp.hide();
+    }
+
+    function exitModalConfirm() {
+      $log.debug('EXITING SURELY')
+      ionic.Platform.exitApp();
     }
 
     // $log.debug("ISVERIFIED",$scope.phone.number.length < 10,$scope.phone.number == User.user.getPhoneNumber(), $scope.phone.isVerified)

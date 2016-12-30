@@ -11,7 +11,7 @@
             restrict: 'E',
             templateUrl: CONSTANT.PATH.COMMON + '/common.ribbon-confirm' + CONSTANT.VIEW,
             scope: {
-                'message' : '@message',
+                'message' : '=',
                 'confirm' : '=',
                 'dismiss' : '='
             },
@@ -24,8 +24,11 @@
         return directive;
     }
 
-    function linkFunc(scope, el, attr, $log) {
-        $log.debug('CONFIRM3',scope)
+    function linkFunc(scope, el, attr, ctrl) {
+        // scope.message = ctrl.message;
+        // scope.confirm = ctrl.confirm;
+        // scope.dismiss = ctrl.dismiss;
+        // $log.warn('CONFIRM3',scope)
     }
 
     ribbonConfirmController.$inject = ['$log','$scope','User'];
@@ -35,8 +38,8 @@
         var ribbonCnfCtrl = this;
         $scope.user = User;
         $log.debug('CONFIRM',$scope);
-        $scope.confirm = confirm;
-        $scope.dismiss = dismiss;
+        $scope.confirm = ribbonCnfCtrl.confirm;
+        $scope.dismiss = ribbonCnfCtrl.dismiss;
 
         function dismiss(){
             $log.warn('CONFIRM2',$scope)
