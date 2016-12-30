@@ -728,10 +728,7 @@
 
     function endQuiz() {
       // $log.debug("End quiz called");
-      $ionicLoading.show({
-        noBackdrop: false,
-        hideOnStateChange: true
-      });
+     
       if ($stateParams.type == 'litmus') {
         var levelRec = ml.getLevelRecommendation();
         $log.debug('levelRec', levelRec);
