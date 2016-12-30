@@ -233,13 +233,14 @@
         controller: ['$log', 'User', 'audio', '$timeout', '$stateParams', '$scope', '$state', '$ionicLoading','analytics', function($log, User, audio, $timeout, $stateParams, $scope, $state, $ionicLoading, analytics) {
           $scope.gender = User.getActiveProfileSync().data.profile.gender == 'M' ? 'boy' : 'girl';
           $scope.average_level = $stateParams.average_level ? $stateParams.average_level : 1;
+            analytics.log({name:'LITMUS',type:'SUMMARY'},{level:$scope.average_level},User.getActiveProfileSync()._id);
+          
           $scope.redirect = function() {
             analytics.log({name:'LITMUS',type:'EXIT'},{},User.getActiveProfileSync()._id);
 
             $ionicLoading.show({
               hideOnStateChange: true
             });
-            analytics.log({name:'LITMUS',type:'SUMMARY'},{level:$scope.average_level},User.getActiveProfileSync()._id);
             if ($stateParams.average_level < 4) {
               $state.go('map.navigate', {})
             } else {

@@ -88,6 +88,7 @@ var fake_id_device = constants[env]['FAKE_ID_DEVICE'] || 'na';
 var lesson_db_version = 'na';
 var diagnosis_media = [];
 var lessonsdb_couch_server = env == environments.production ? 'https://ed-couch.zaya.in/lessonsdb' : 'https://ci-couch.zaya.in/lessonsdb';
+var diagnosis_couch_db_server = env == environments.production ? 'https://ed-couch.zaya.in/diagnosis_translations' : 'https://ci-couch.zaya.in/diagnosis_translations';
 //Get app version
 var xml = file.readFileSync('./config.xml');
 var content = cheerio.load(xml, {
@@ -259,25 +260,25 @@ gulp.task('html', function() {
     }))
     .pipe(gulp.dest('./www/templates/'))
 });
-
-
 gulp.task('get-diagnosis-media', function() {
-  var docs_list = JSON.parse(request('GET', 'http://ci-couch.zaya.in/diagnosis_translations/_all_docs').getBody().toString())
-    // console.log("docs list",docs_list)
-  for (var i = 0; i < docs_list.rows.length; i++) {
-    // console.log("Value", docs_list.rows[i].id);
-    var id = docs_list.rows[i].id;
-    var doc = JSON.parse(request('GET', 'http://ci-couch.zaya.in/diagnosis_translations/' + id).getBody().toString());
-    // console.log("Doc", doc.question);
-    for (var media_type in doc.question.node.type.content.widgets) {
-      if (doc.question.node.type.content.widgets.hasOwnProperty(media_type)) {
-        for (var media_file in doc.question.node.type.content.widgets[media_type]) {
-          console.log(doc.question.node.type.content.widgets[media_type][media_file])
-          diagnosis_media.push(doc.question.node.type.content.widgets[media_type][media_file]);
+  if (env !== environments.dev) {
+    var docs_list = JSON.parse(request('GET', diagnosis_couch_db_server + '/_all_docs').getBody().toString())
+      // console.log("docs list",docs_list)
+    for (var i = 0; i < docs_list.rows.length; i++) {
+      // console.log("Value", docs_list.rows[i].id);
+      var id = docs_list.rows[i].id;
+      var doc = JSON.parse(request('GET', diagnosis_couch_db_server + +id).getBody().toString());
+      // console.log("Doc", doc.question);
+      for (var media_type in doc.question.node.type.content.widgets) {
+        if (doc.question.node.type.content.widgets.hasOwnProperty(media_type)) {
+          for (var media_file in doc.question.node.type.content.widgets[media_type]) {
+            console.log(doc.question.node.type.content.widgets[media_type][media_file])
+            diagnosis_media.push(doc.question.node.type.content.widgets[media_type][media_file]);
+          }
         }
       }
+      // break;
     }
-    // break;
   }
 });
 gulp.task('watch', ['default'], function() {
