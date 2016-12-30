@@ -28,31 +28,34 @@
         background-color: #A6CEEE;
         box-shadow: inset 0px -4px 0px 0px #1D81C4;
     }
+    .lcard.language-card{
+        height: auto;
+        min-height: auto;
+    }
+    .lcard.language-card .lcard-inner{
+        height: auto;
+        min-height: auto;
+        font-size: 4vh;
+        line-height: 1.3;
+    }
 </style>
 
 <ion-view class="bg-pale">
     <ion-content>
         <ion-slide-box delegate-handle="slide" show-pager="false" ng-init="userCtrl.disableSwipe()" on-slide-changed="userCtrl.playAudio($index)">
-        <ion-slide >
-                
+            <ion-slide >
                 <div class="name-avatar">
                     <h2 style="top:25vh" class="center full-width absolute personalize-title">Choose Language </h2>
-                   
-                    <div style="top:34vh; height:38vh;margin-top: 10vh;display: flex;flex-wrap: wrap;
-    justify-content: center;" class="center full-width absolute ">
-     <ion-scroll
-        scrollbar-x="false" scrollbar-y="false"
-        direction="y"
-        style="height:38vh;"
-      >
-                  <div style="margin:2vw;" ng-repeat="lang in userCtrl.CONSTANT.LANGUAGES" on-tap="audio.play('click');" ng-click="userCtrl.user.language = lang.code;userCtrl.audioPlayer.play('sound/placeholder.mp3')" ng-class="{'selected':userCtrl.user.language == lang.code}" class="center lcard center bg-white card-radius">
-                  <div class="lcard-inner padding-10 option">
-                  {{userCtrl.localizedContent.text.personalise.choose_language[lang.code]}}</div>
-                  </div>
+                    <div style="top:38vh;display: flex;flex-wrap: wrap; justify-content: center;" class="center full-width absolute ">
+                        <ion-scroll scrollbar-x="false" scrollbar-y="false" direction="y" style="height:38vh;" >
+                            <div style="margin:2vw;" ng-repeat="lang in userCtrl.CONSTANT.LANGUAGES" on-tap="audio.play('click');" ng-click="userCtrl.user.language = lang.code;userCtrl.audioPlayer.play('sound/placeholder.mp3')" ng-class="{'selected':userCtrl.user.language == lang.code}" class="center language-card lcard center bg-white card-radius">
+                                <div class="lcard-inner padding-10 option">
+                                    {{userCtrl.localizedContent.text.personalise.choose_language[lang.code]}}
+                                </div> 
+                            </div>
+                        </ion-scroll>
                     </div>
-</ion-scroll>
-
-                  <div style="top:83vh; text-align: center;" class="full-width absolute">
+                    <div style="top:83vh; text-align: center;" class="full-width absolute">
                         <button ng-disabled="!userCtrl.user.language" class="sbtn sbtn-next sbtn-next-blue" ng-class="{'animation-repeat-bounce': userCtrl.user.language}" ng-click="audio.play('press');userCtrl.nextSlide();"></button>
                     </div>
                 </div>
