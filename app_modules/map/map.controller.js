@@ -171,6 +171,10 @@
       open : goToPhoneNumber,
     }
 
+    $scope.exitModal = {
+      message : 'Do you want to exit?'
+    }
+
     // $log.debug("ISVERIFIED",$scope.phone.number.length < 10,$scope.phone.number == User.user.getPhoneNumber(), $scope.phone.isVerified)
     $log.debug("PHONE. changed number flag",$scope.changeNumberFlag);
     var tempCount = 1;
@@ -398,30 +402,32 @@
     $scope.$on('backButton', mapCtrl.onBackButtonPress)
 
     function onBackButtonPress() {
-      $log.debug('Do you want to exit?')
-      if ($scope.profileScreen.isShown()) {
-        $scope.profileScreen.hide();
-      } else {
-        analytics.log({
-          name: 'APP',
-          type: 'EXIT_MODAL_SHOW'
-        }, {},User.getActiveProfileSync()._id);
-        var confirmExit = $ionicPopup.confirm({
-          title: 'Exit',
-          template: 'Do you want to exit?'
-        });
-        confirmExit.then(function(res) {
-          if (res) {
-            ionic.Platform.exitApp();
-          } else {
-            analytics.log({
-          name: 'APP',
-          type: 'EXIT_MODAL_HIDE'
-        }, {},User.getActiveProfileSync()._id);
-            console.log('You are not sure');
-          }
-        });
-      }
+      // $log.debug('Do you want to exit?')
+      // if ($scope.profileScreen.isShown()) {
+      //   $scope.profileScreen.hide();
+      // } else {
+      //   analytics.log({
+      //     name: 'APP',
+      //     type: 'EXIT_MODAL_SHOW'
+      //   }, {},User.getActiveProfileSync()._id);
+      //   var confirmExit = $ionicPopup.confirm({
+      //     title: 'Exit',
+      //     template: 'Do you want to exit?'
+      //   });
+      //   confirmExit.then(function(res) {
+      //     if (res) {
+      //       ionic.Platform.exitApp();
+      //     } else {
+      //       analytics.log({
+      //     name: 'APP',
+      //     type: 'EXIT_MODAL_HIDE'
+      //   }, {},User.getActiveProfileSync()._id);
+      //       console.log('You are not sure');
+      //     }
+      //   });
+      // }
+      $log.warn('Clicked on back button on map');
+      $scope.exitApp.show();
     }
     notification.getFromServer({
       dev_id: device.uuid
@@ -686,6 +692,15 @@
       });
       return true;
     };
+
+    $ionicModal.fromTemplateUrl(CONSTANT.PATH.COMMON + '/common.modal-exit' + CONSTANT.VIEW, {
+      scope: $scope,
+      animation: 'slide-in-down',
+      hardwareBackButtonClose: false
+    }).then(function(nodeMenu) {
+      $scope.exitApp = nodeMenu;
+    });
+
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal-rope' + CONSTANT.VIEW, {
       scope: $scope,
       animation: 'slide-in-down',
