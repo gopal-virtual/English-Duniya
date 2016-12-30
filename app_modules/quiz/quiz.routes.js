@@ -236,8 +236,8 @@
             analytics.log({name:'LITMUS',type:'SUMMARY'},{level:$scope.average_level},User.getActiveProfileSync()._id);
           
           $scope.redirect = function() {
+            audio.play('press');
             analytics.log({name:'LITMUS',type:'EXIT'},{},User.getActiveProfileSync()._id);
-
             $ionicLoading.show({
               hideOnStateChange: true
             });

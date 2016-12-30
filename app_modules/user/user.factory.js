@@ -11,7 +11,8 @@
     'queue',
     'device',
     '$injector',
-    '$rootScope'
+    '$rootScope',
+    '$http'
   ];
 
   function User(CONSTANT,
@@ -21,7 +22,8 @@
     queue,
     device,
     $injector,
-    $rootScope) {
+    $rootScope,
+    $http) {
     var User = {};
     var profilesDB = pouchDB('profilesDB', {
       // auto_compaction : true,
@@ -114,7 +116,14 @@
     User.setActiveProfileSync = setActiveProfileSync;
     User.updateActiveProfileSync = updateActiveProfileSync;
     User.user = {
-      getIdSync: getUserIdSync
+      getDetails: getUserDetails,
+      getIdSync: getUserIdSync,
+      patchPhoneNumber : patchPhoneNumber,
+      getPhoneNumber : getPhoneNumber,
+      resendOtp : resendOtp,
+      verifyOtp : verifyOtp,
+      updatePhoneLocal : updatePhoneLocal,
+      setIsVerified : setIsVerified
     };
     User.profile = {
       add: addNewProfile,
@@ -166,7 +175,61 @@
       $log.debug("profilesDB info",result);
     })
       }
-    function startProfileSync() {
+
+    function patchPhoneNumber(num) {
+      return $http({
+        method : 'PATCH',
+        url : CONSTANT.BACKEND_SERVICE_DOMAIN+'/rest-auth/user/',
+        data : {
+          phone_number : num
+        }
+      })
+    }
+
+    function verifyOtp(otp) {
+      return $http({
+        method : 'POST',
+        url : CONSTANT.BACKEND_SERVICE_DOMAIN+'/rest-auth/sms-verification/',
+        data : {
+          code : otp
+        }
+      }) 
+    }
+
+
+    function resendOtp(num) {
+      return $http({
+        method : 'POST',
+        url : CONSTANT.BACKEND_SERVICE_DOMAIN+'/rest-auth/resend-sms-verification/',
+        data : {
+          phone_number : num
+        }
+      }) 
+    }
+
+    function updatePhoneLocal(num){
+      var tempUserDetails = JSON.parse(localStorage.getItem('user_details'));
+      tempUserDetails.phone_number = num;
+      localStorage.setItem('user_details',JSON.stringify(tempUserDetails));
+    }
+
+    function setIsVerified(flag){
+      var tempUserDetails = JSON.parse(localStorage.getItem('user_details'));
+      tempUserDetails.is_verified = flag;
+      localStorage.setItem('user_details',JSON.stringify(tempUserDetails)); 
+    }
+
+    function getPhoneNumber(){
+      // return getUserDetails().phone_number.replace('+91','')
+      return getUserDetails().phone_number
+
+    }
+
+    function getUserDetails() {
+      return JSON.parse(localStorage.getItem('user_details'))
+    }
+
+   	function startProfileSync() {
       if (!$rootScope.profilesDBeplicationStarted) {
         $rootScope.profilesDBeplicationStarted = true;
         profilesDB.replicate.to(CONSTANT.PROFILES_DB_SERVER + device.uuid, {

@@ -202,15 +202,28 @@
       }
       $rootScope.$on('$cordovaPushV5:notificationReceived', function(event, data) {
         event.preventDefault();
-        $log.warn("ROCK YOU", data);
-        $log.warn("ROCK YOU2 event", event);
-        notification.schedule({
-          id: 'notif-online-1',
-          text: data.message,
-          title: data.title,
-          icon: 'res://icon',
-          smallIcon: 'res: //ic_stat_english_duniya'
-        })
+        $log.warn("NOTIFICATION. Some notification arrived. This is the data", event, data);
+        // $log.warn("ROCK YOU2 event", event);
+        notification.online.log('received');
+        // notification.schedule({
+        //   id: 'notif-online-1',
+        //   text: data.message,
+        //   title: data.title,
+        //   icon: 'res://icon',
+        //   smallIcon: 'res: //ic_stat_english_duniya'
+        // });
+        if (data.additionalData.coldstart) {
+          $log.debug("NOTIFICATION. App was started by tapping on notification");
+          notification.online.log('tapped');
+          if(data.additionalData.extra_params.redirect){
+            $state.go(data.additionalData.extra_params.redirect);
+          }
+        }else{
+          $log.debug("NOTIFICATION. Though notification was received, app wasn\'t started by clicking on notification")
+          // localStorage.setItem("Hello2","Hello coldstart false")
+        }
+
+
       });
       $rootScope.$on('$cordovaPushV5:errorOcurred', function(event, error) {
           $log.error("Error occured online notification", event, error);

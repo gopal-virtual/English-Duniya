@@ -152,6 +152,8 @@
     quizCtrl.closeModalCallback = closeModalCallback;
     $scope.analytics_quit_data = {name : 'PRACTICE', type : 'QUIT', id : quizCtrl.quiz.node.id};
     $scope.groups = [];
+    $scope.resultButtonAnimationFlag = 0;
+    $scope.quizResultButtonAnimation = quizResultButtonAnimation;
     for (var i = 0; i < 10; i++) {
       $scope.groups[i] = {
         name: i,
@@ -1024,5 +1026,15 @@
       audio.player.stop();
       $timeout.cancel(timeout);
     })
+
+    function quizResultButtonAnimation() {
+      $timeout(function() {
+        $scope.resultButtonAnimationFlag = 1;
+      },3000).then(function(){
+        $timeout(function(){
+          $scope.resultButtonAnimationFlag = 2;
+        },400)
+      })
+    }
   }
 })();

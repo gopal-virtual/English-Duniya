@@ -14,10 +14,11 @@
     'lessonutils',
     '$cordovaPushV5',
     'CONSTANT',
-    'device'
+    'device',
+    'analytics'
   ];
 
-  function notification($log, $cordovaLocalNotification,content,$q,User,$http,lessonutils,$cordovaPushV5,CONSTANT,device) {
+  function notification($log, $cordovaLocalNotification,content,$q,User,$http,lessonutils,$cordovaPushV5,CONSTANT,device,analytics) {
     // types of notification
     // Undiscovered - content - 24hrs
     // Discovered - generic - 5hrs
@@ -41,7 +42,8 @@
       },
       online: {
         register: onlineRegister,
-        set : onlineSet
+        set : onlineSet,
+        log : onlineLog
       }
     }
 
@@ -310,7 +312,9 @@
         $cordovaPushV5.initialize(  // important to initialize with the multidevice structure !!
           {
             android: {
-              senderID: CONSTANT.CONFIG.NOTIFICATION.SENDERID
+              senderID: CONSTANT.CONFIG.NOTIFICATION.SENDERID,
+              icon: 'ic_stat_english_duniya',
+              color: 'green'  
             }
           }
         ).then(function (result) {
@@ -379,6 +383,24 @@
       }catch(err){
         $log.warn("NOTIFICATION. Need to run app on mobile to enable push notifications",err)
       }
+    }
+
+    function onlineLog(type){
+      var typeMap = {
+        'received' : 'RECEIVED',
+        'tapped' : 'TAPPED'
+      }
+      var profileId; 
+      if (User.getActiveProfileSync()) {
+        profileId = User.getActiveProfileSync()._id ? User.getActiveProfileSync()._id : device.uuid; 
+      }
+      analytics.log({
+        name: 'NOTIFICATION',
+        type: typeMap[type],
+        id: null
+      }, {
+        time: new Date()
+      }, profileId);
     }
   }
 })();

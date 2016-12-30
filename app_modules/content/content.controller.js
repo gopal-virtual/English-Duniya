@@ -73,6 +73,7 @@
           User.getActiveProfileSync()._id
         )
     }
+
     var timeout = '';
     $log.debug('$stateParams', $stateParams)
     contentCtrl.config = {
@@ -206,7 +207,10 @@
       timeout = $timeout(function() {
         $scope.resultPageNextShow = false;
         $scope.ribbon_modal.hide();
-        !$scope.resultMenu.isShown() && $scope.resultMenu.show();
+        !$scope.resultMenu.isShown() && $scope.resultMenu.show().then(function(){
+          $log.debug('ANIMATION. result menu was open');
+          resultButtonAnimation();
+        });
         analytics.log({
             name: 'VIDEO',
             type: 'END',
@@ -356,7 +360,10 @@
     $scope.openResult = function() {
       if (contentCtrl.API.currentState == 'pause') {
         orientation.setPortrait();
-        $scope.resultMenu.show();
+        $scope.resultMenu.show().then(function(){
+          $log.debug('ANIMATION. result menu was open');
+          resultButtonAnimation();
+        });
       }
       return true;
     }
@@ -390,6 +397,16 @@
         $timeout.cancel(timeout);
       })
 
+    function resultButtonAnimation() {
+      $log.debug("ANIMATION. Inside button animation")
+      $timeout(function() {
+        $scope.resultButtonAnimationFlag = 1;
+      },3000).then(function(){
+        $timeout(function(){
+          $scope.resultButtonAnimationFlag = 2;
+        },400)
+      })
+    }
 
   }
 

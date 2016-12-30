@@ -105,6 +105,11 @@
         "EXIT_MODAL_SHOW": "exit modal show",
         "Exit_MODAL_HIDE": "exit modal hide",
       },
+      "NOTIFICATION" : {
+        "CONTENT" : null,
+        "RECEIVED" : "received notification",
+        "TAPPED" : "tapped notification"
+      },
       "STATE":{
         "CHANGE_START": "stage change start",
         "CHANGE_COMPLETE": "stage change complete",
@@ -112,6 +117,27 @@
       },
       "FAILURE":{
         "LOW_DISK_SPACE": "low disk space"
+      },
+      "PHONENUMBER" : {
+        "TAP_ADD" : "tap phone number add ",
+        "TAP_CHANGE" : "tap phone number change",
+        "OPEN" : "open phone number",
+        "CLOSE" : "close phone number",
+        "NUMBER_SUBMIT" : "submit phone number",
+        "NUMBER_SUCCESS" : "register phone number success",
+        "NUMBER_ERROR" : "register phone number error",
+        "OTP_SUBMIT" : "submit otp",
+        "OTP_RESEND" : "resend otp",
+        "OTP_SUCCESS" : "verify otp success",
+        "OTP_ERROR" : "verify otp error",
+      },
+      "CHOOSEPROFILE" : {
+        "TAP" : "tap choose profile",
+        "OPEN" : "open choose profile",
+        "CLOSE" : "close choose profile",
+        "PROFILE_TAP" : "tap profile card",
+        "SWITCH" : "switch profile",
+        "ADD" : "add profile"
       }
     };
 
