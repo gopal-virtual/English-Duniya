@@ -29,6 +29,13 @@
   ) {
 
     var ACTIVITY_TYPE = {
+      "REGISTRATION": {
+        "CONTENT": null,
+        "LANGUAGE": "select language",
+        "NAME": "enter name",
+        "GENDER": "select gender",
+        "GRADE": "select grade",
+      },
       "LESSON": {
         "CONTENT": "lesson",
         "START": "start lesson",
@@ -79,6 +86,16 @@
         "CONTENT": "jsonquestion",
         "START": "start question",
         "END": "end question",
+        "PLAY" : "play audio"
+      },
+      "LITMUS": {
+        "CONTENT": "jsonquestion",
+        "START": "start litmus",
+        "END": "end litmus",
+        "LEVEL": "level assigned",
+        "START_BUTTON_LEVEL": "start button level",
+        "EXIT": "exit litmus",
+        "SUMMARY": "result litmus",
         "PLAY" : "play audio"
       },
       "APP": {
