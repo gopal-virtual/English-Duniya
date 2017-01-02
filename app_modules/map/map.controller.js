@@ -182,7 +182,15 @@
 
     function exitModalDismiss() {
       $log.debug('EXITING NOT SURELY')
-      $scope.exitApp.hide();
+      $scope.exitApp.hide().then(function(){
+        analytics.log({
+          name: 'APP',
+          type: 'EXIT_MODAL_HIDE'
+        }, {
+          time : new Date()
+        },User.getActiveProfileSync()._id);
+        $log.debug('You are not sure');
+      });
     }
 
     function exitModalConfirm() {
@@ -438,8 +446,23 @@
       //     }
       //   });
       // }
-      $log.warn('Clicked on back button on map');
-      $scope.exitApp.show();
+      if ($scope.profileScreen.isShown()) {
+        $scope.profileScreen.hide();
+      } else if($scope.phoneNumberScreen.isShown()){
+        $scope.phone.exit();
+      } else {
+        if (!$scope.exitApp.isShown()) {
+          $log.warn('Clicked on back button on map');
+          $scope.exitApp.show().then(function(){
+            analytics.log({
+              name : 'APP',
+              type : 'EXIT_MODAL_SHOW'
+            }, {
+              time : new Date()
+            },User.getActiveProfileSync()._id);
+          });  
+        }
+      }
     }
     notification.getFromServer({
       dev_id: device.uuid

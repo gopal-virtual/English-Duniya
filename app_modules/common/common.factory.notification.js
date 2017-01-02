@@ -314,7 +314,8 @@
             android: {
               senderID: CONSTANT.CONFIG.NOTIFICATION.SENDERID,
               icon: 'ic_stat_english_duniya',
-              color: 'green'  
+              iconColor: "blue",
+              forceShow : true
             }
           }
         ).then(function (result) {
