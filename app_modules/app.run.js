@@ -67,6 +67,7 @@
             $log.debug("Tag error", err)
           })
         notification.db.load();
+        User.user.setNotifyPhone(1);
         // new PouchDB('lessonsDB').erase();
         // Check if user has updated app and delete older lesson db then add new db
         // content.createOrUpdateLessonDB()

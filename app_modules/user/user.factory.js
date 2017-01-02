@@ -123,7 +123,9 @@
       resendOtp : resendOtp,
       verifyOtp : verifyOtp,
       updatePhoneLocal : updatePhoneLocal,
-      setIsVerified : setIsVerified
+      setIsVerified : setIsVerified,
+      setNotifyPhone : setNotifyPhone,
+      getNotifyPhone : getNotifyPhone
     };
     User.profile = {
       add: addNewProfile,
@@ -175,6 +177,23 @@
       $log.debug("profilesDB info",result);
     })
       }
+
+
+    function setNotifyPhone(val){
+      $log.debug("Setting notifyPhone")
+      if (val == 0 || val == 1) {
+        localStorage.setItem('notifyPhone',val);
+        // return true;
+      }else{
+        $log.error('Can\'t assign any other value except 0 or 1');
+        // return false;
+      }
+
+    }
+
+    function getNotifyPhone(){
+      return parseInt(localStorage.getItem('notifyPhone'));
+    }
 
     function patchPhoneNumber(num) {
       return $http({

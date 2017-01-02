@@ -153,6 +153,9 @@
     // $scope.goToPhoneNumber = goToPhoneNumber;
     // $scope.exitPhoneNumber = exitPhoneNumber;
     // mapCtrl.notification = notification;
+
+    $log.error('ThiS is notify phone', User.user.getNotifyPhone());
+
     $scope.phone = {
       number : (function(){return User.user.getPhoneNumber()})(),
       numberErrorText : '',
@@ -205,17 +208,14 @@
       });
       // $scope.phone.isVerified = User.user.getDetails().is_verified;
       // $log.debug("PHONE.is verified",$scope.phone.isVerified);
-      analytics.log(
-        {
+      analytics.log({
             name : 'PHONENUMBER',
             type : $scope.changeNumberFlag == true ? 'TAP:CHANGE' : 'TAP_ADD',
             id : null
-        },
-        {
-            time : new Date()
-        },
-        User.getActiveProfileSync()._id
-      );
+      },{
+          time : new Date()
+      }, User.getActiveProfileSync()._id);
+      User.user.setNotifyPhone(0);
     }
 
     function exitPhoneNumber() {
