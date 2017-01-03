@@ -62,7 +62,8 @@ var paths = {
     destination: './app_modules/common/',
     destination_filename: 'common.constant.js'
   },
-  main: './www/main.html'
+  main: './www/main.html',
+  main_template: './main.template.txt'
 };
 var environments = {
   default: 'PRODUCTION',
@@ -121,13 +122,13 @@ gulp.task('preen', function(cb) {
 });
 console.log('raven key', raven_key[argument.argv.env]);
 gulp.task('make-main', function() {
-  gulp.src(paths.main)
+  gulp.src(paths.main_template)
     .pipe(replace_task({
       patterns: [{
         match: /\/\*raven_release_start\*\/[\'\'\.0-9a-z]+\/\*raven_release_end\*\//g,
         replacement: '/*raven_release_start*/\'' + app_version + '\'/*raven_release_end*/'
       }, {
-        match: /\/\*raven_environment_start\*\/[\'\'\.0-9a-zA-Z]+\/\*raven_environment_end\*\//g,
+        match: /\/\*rtaven_environment_start\*\/[\'\'\.0-9a-zA-Z]+\/\*raven_environment_end\*\//g,
         replacement: '/*raven_environment_start*/\'' + env + '\'/*raven_environment_end*/'
       }, {
         match: /\/\*raven_key_start\*\/'https?:\/\/[:a-zA-Z0-9@.\/']+\/\*raven_key_end\*\//g,
