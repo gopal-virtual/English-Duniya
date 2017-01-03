@@ -197,6 +197,18 @@
       $log.debug('EXITING SURELY')
       ionic.Platform.exitApp();
     }
+    $scope.showCreateProfileModal = function(){
+        $scope.createProfileModal.show();
+    }
+    function createProfileModalDismiss() {
+      $scope.createProfileModal.hide();
+    }
+
+    function createProfileModalConfirm() {
+      $scope.profileScreen.hide();
+      $scope.createProfileModal.hide();
+      $scope.multiUser.goToCreateNewProfile();
+    }
 
     // $log.debug("ISVERIFIED",$scope.phone.number.length < 10,$scope.phone.number == User.user.getPhoneNumber(), $scope.phone.isVerified)
     $log.debug("PHONE. changed number flag",$scope.changeNumberFlag);
@@ -314,7 +326,7 @@
           time : new Date()
         },User.getActiveProfileSync()._id);
         $log.debug("Otp request was sent",response)
-        
+
       })
       resetResendFlag();
     }
@@ -324,7 +336,7 @@
       $scope.phone.otpResendFlag = 0
       if (tempCount > $scope.phone.otpResendCount-1) {
         return ;
-      } 
+      }
       tempCount++;
       $timeout(function() {
         $log.debug('activating resend')
@@ -349,7 +361,7 @@
     //           template: 'Hey, looks like some error occured with sms server. Please try later'
     //         }).then(function(){
     //           exitPhoneNumber();
-    //         });  
+    //         });
     //       }, interval);
     //     }
     //     tempCount++;
@@ -735,6 +747,13 @@
     }).then(function(nodeMenu) {
       $scope.exitApp = nodeMenu;
     });
+    $ionicModal.fromTemplateUrl(CONSTANT.PATH.COMMON + '/common.modal-exit' + CONSTANT.VIEW, {
+      scope: $scope,
+      animation: 'slide-in-up',
+      hardwareBackButtonClose: false
+    }).then(function(nodeMenu) {
+      $scope.createProfileModal = nodeMenu;
+    });
 
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal-rope' + CONSTANT.VIEW, {
       scope: $scope,
@@ -874,6 +893,9 @@
     }
 
     function goToChooseProfile() {
+    $scope.exitModal.message = "Do you want to create<br>a new profile";
+    $scope.exitModal.dismiss = createProfileModalDismiss;
+    $scope.exitModal.confirm = createProfileModalConfirm;
     $log.debug("PHONE. changed number flag",$scope.changeNumberFlag);
 
         analytics.log({
@@ -899,6 +921,9 @@
     }
 
     function exitChooseProfile() {
+        $scope.exitModal.message = "Do you want to exit?";
+        $scope.exitModal.dismiss = exitModalDismiss;
+        $scope.exitModal.confirm = exitModalConfirm;
       $scope.profileScreen.hide().then(function(){
         audio.loop('background');
         analytics.log({
@@ -919,6 +944,6 @@
       },User.getActiveProfileSync()._id);
     }
 
-    
+
   }
 })();

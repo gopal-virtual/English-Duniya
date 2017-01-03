@@ -33,3 +33,6 @@ app_modules/common/common.constant.js
 www/main.html
 www/sound/temp/
 www/img/temp
+in_app_audio*
+*log
+verifyNodePresence.js

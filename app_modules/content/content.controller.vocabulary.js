@@ -267,15 +267,6 @@
         $scope.resultMenu.show().then(function(){
           resultButtonAnimation()
         });
-        analytics.log({
-            name: 'VOCABULARY',
-            type: 'END',
-            id: $stateParams.vocab_data.node.id
-          }, {
-            time: new Date()
-          },
-          User.getActiveProfileSync()._id
-        )
       })
     }
 

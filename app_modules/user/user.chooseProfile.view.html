@@ -137,7 +137,7 @@
     </div>
     <ion-content class="has-headers">
         <div class="profile-box-container">
-            <div ng-tap="profile.id != multiUser.getCurrentProfile() && multiUser.selectProfile(profile);onProfileCardClick();profileScreen.hide();audio.play('click');" ng-click="profile.id != multiUser.getCurrentProfile() && multiUser.selectProfile(profile);onProfileCardClick();profileScreen.hide();audio.play('click');" class="profile-box" ng-class="::{true : 'profile-box-darkblue', false : 'profile-box-blue'}[multiUser.getCurrentProfile() == profile.doc._id]" ng-repeat="profile in multiUser.profiles | limitTo : 4">
+            <div ng-tap="profile.id != multiUser.getCurrentProfile() && multiUser.selectProfile(profile);onProfileCardClick();profileScreen.hide();audio.play('click');" ng-click="profile.id != multiUser.getCurrentProfile() && multiUser.selectProfile(profile);onProfileCardClick();profileScreen.hide();audio.play('click');" class="profile-box animation-fade-in-from-bottom" style="-webkit-animation-delay: {{$index*100}}ms" ng-class="::{true : 'profile-box-darkblue', false : 'profile-box-blue'}[multiUser.getCurrentProfile() == profile.doc._id]" ng-repeat="profile in multiUser.profiles | limitTo : 4">
                 <div class="profile-username" ng-class="::{true : 'font-pale' , false : 'font-blue'}[multiUser.getCurrentProfile() == profile.doc._id]">
                     {{::profile.doc.data.profile.first_name}}
                 </div>
@@ -157,7 +157,9 @@
                 </div>
             </div>
             <!-- ng-show="multiUser.canAdd()" -->
-            <div  ng-show="multiUser.canAdd()" class="profile-box profile-box-add" ng-tap="multiUser.goToCreateNewProfile();profileScreen.hide();audio.play('click');" ng-click="multiUser.goToCreateNewProfile();profileScreen.hide();audio.play('click');">
+            <!-- multiUser.goToCreateNewProfile() -->
+            <!-- ng-show="::multiUser.canAdd()" -->
+            <div ng-show="::multiUser.canAdd()" class="profile-box profile-box-add" ng-tap="showCreateProfileModal();audio.play('click');" ng-click="showCreateProfileModal();audio.play('click');">
                 <img src="img/assets_svg/add_sign.svg" alt="">
             </div>
         </div>

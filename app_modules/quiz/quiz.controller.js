@@ -1011,7 +1011,7 @@
       }
     });
     $scope.$on('appResume', function() {
-      if ($state.current.name != 'quiz.summary' && !$scope.nodeRibbon.isShown()) {
+      if ($stateParams.type == 'practice' && $state.current.name != 'quiz.summary' && !$scope.nodeRibbon.isShown()) {
         $scope.closeModal();
         $scope.showNodeMenu();
       } else if ($scope.nodeRibbon.isShown()) {

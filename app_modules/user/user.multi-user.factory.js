@@ -49,7 +49,10 @@
         }
 
         function canAdd (){
-            return multiUser.profiles && multiUser.profiles.length < 4;
+            $timeout(function () {
+                //DOM has finished rendering
+                return multiUser.profiles && multiUser.profiles.length < 4;
+            });
         }
 
         function goToCreateNewProfile (){
@@ -98,9 +101,7 @@
             var levels = 0;
             return User.playlist.get(profile_id).then(function(playlist){
                 angular.forEach(playlist,function(playlist_item,index){
-                    $log.debug('Playlist item : ', playlist_item)
                     angular.forEach(playlist_item, function(resource, resource_id){
-                        $log.debug('Resource id : ', resource_id)
                         if(['dependencyData','lesson_id'].indexOf(resource_id) == -1){
                             var percent = (resource.score / resource.totalScore) * 100;
                             stars += (percent >= CONSTANT.STAR.THREE) ? 3 :
@@ -111,7 +112,7 @@
                     })
                 })
                 profile["stars"] = stars;
-                profile["levels"] = levels + 1;
+                profile["levels"] = levels ? levels : 1;
                 return profile;
             })
         }
