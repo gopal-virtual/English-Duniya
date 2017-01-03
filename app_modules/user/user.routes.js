@@ -50,11 +50,36 @@
         views: {
           'state-user': {
             templateUrl: CONSTANT.PATH.USER + '/user.chooseProfile' + CONSTANT.VIEW,
-            controller: ['multiUser','$scope','User','analytics','audio',function(multiUser,$scope,User,analytics,audio){
+            controller: ['multiUser','$scope','User','analytics','audio','$ionicModal',function(multiUser,$scope,User,analytics,audio, $ionicModal){
                 $scope.changeNumberFlag = User.user.getPhoneNumber() == '' ? 0 : 1;
                 $scope.multiUser = multiUser;
                 multiUser.getProfiles();
                 $scope.onProfileCardClick = onProfileCardClick;
+                $ionicModal.fromTemplateUrl(CONSTANT.PATH.COMMON + '/common.modal-exit' + CONSTANT.VIEW, {
+                  scope: $scope,
+                  animation: 'slide-in-up',
+                  hardwareBackButtonClose: false
+                }).then(function(nodeMenu) {
+                  $scope.createProfileModal = nodeMenu;
+                });
+                $scope.exitModal = {
+                  message : 'Do you want to create<br>a new profile?',
+                  dismiss : createProfileModalDismiss,
+                  confirm : createProfileModalConfirm
+                }
+                $scope.showCreateProfileModal = function(){
+                    $scope.createProfileModal.show();
+                }
+
+                function createProfileModalDismiss() {
+                  $scope.createProfileModal.hide();
+                }
+
+                function createProfileModalConfirm() {
+                  $scope.createProfileModal.hide();
+                  $scope.multiUser.goToCreateNewProfile();
+                }
+
                 function onProfileCardClick() {
                   analytics.log({
                     name : 'CHOOSEPROFILE',
@@ -181,7 +206,7 @@
                     time : new Date()
                   },User.getActiveProfileSync()._id);
                   $log.debug("Otp request was sent",response)
-                  
+
                 })
                 resetResendFlag();
               }
@@ -191,7 +216,7 @@
                 $scope.phone.otpResendFlag = 0
                 if (tempCount > $scope.phone.otpResendCount-1) {
                   return ;
-                } 
+                }
                 tempCount++;
                 $timeout(function() {
                   $log.debug('activating resend')

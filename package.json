@@ -4,7 +4,7 @@
   "description": "zaya-mobile: An Ionic project",
   "scripts": {
     "deploy": "bash deploy.sh",
-    "build:content" : "./node_modules/.bin/gulp watch --env=content"
+    "build:content": "./node_modules/.bin/gulp watch --env=content"
   },
   "dependencies": {
     "gulp": "^3.5.6",
@@ -38,6 +38,7 @@
     "gulp-util": "^2.2.14",
     "jsonfile": "^2.4.0",
     "node-bourbon": "^4.2.8",
+    "node-fetch": "^1.6.3",
     "pouchdb": "^5.4.5",
     "pouchdb-server": "^1.2.0",
     "preen": "^1.2.0",
