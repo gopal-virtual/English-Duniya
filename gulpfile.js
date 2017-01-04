@@ -100,7 +100,7 @@ console.log("VERSION", app_version);
 console.log("envi", raven_key[argument.argv.env])
 gulp.task('default', function(callback) {
   // runSequence('generate-lessondb','get-diagnosis-media','make-main','generate-constants', 'sass', 'html', 'scripts',callback);
-  runSequence('get-diagnosis-media', 'make-main', 'generate-constants', 'sass', 'html', 'scripts', callback);
+  runSequence('generate-lessondb','get-diagnosis-media', 'make-main', 'generate-constants', 'sass', 'html', 'scripts', callback);
 });
 gulp.task('generate-lessondb', shell.task(
   (env !== environments.dev) ? [
