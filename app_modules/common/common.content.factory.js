@@ -177,10 +177,9 @@
 
     function getLocalizedQuestion(questionId, targetLanguage) {
       return lessonDB.get('localized_mapping').then(function(localizationMapping) {
+        if(localizationMapping.mapping[questionId]){
         var translatedQuestionID = localizationMapping.mapping[questionId][targetLanguage];
-        if(translatedQuestionID){
            return diagnosisTranslationsDB.get(translatedQuestionID).then(function(question) {
-          $log.debug("localizedQuestion", question);
           return question.question;
         });
          }else{

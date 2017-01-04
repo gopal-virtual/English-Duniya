@@ -117,13 +117,13 @@
       if (index == -1) {
         src = 'sound/placeholder.mp3';
       }
+      // if (index == 1) {
+      //   src = userCtrl.localizedContent.audio.personalise.enter_your_name[userCtrl.user.language] || 'sound/placeholder.mp3';
+      // }
       if (index == 1) {
-        src = userCtrl.localizedContent.audio.personalise.enter_your_name[userCtrl.user.language] || 'sound/placeholder.mp3';
-      }
-      if (index == 2) {
         src = userCtrl.localizedContent.audio.personalise.select_your_gender[userCtrl.user.language] || 'sound/placeholder.mp3';
       }
-      if (index == 3) {
+      if (index == 2) {
         src = userCtrl.localizedContent.audio.personalise.select_your_class[userCtrl.user.language] || 'sound/placeholder.mp3';
       }
       if (src) {
