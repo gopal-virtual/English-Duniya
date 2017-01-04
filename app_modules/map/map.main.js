@@ -755,7 +755,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                     portType = "prev";
                 }
                 var port = game.add.button(game.world.centerX, portType=="prev"?game.world.height-80:150, 'node-port', function(){
-                    loading.show();
+                    // loading.show();
                     if (portType =="next" && regionPage < regions.length) {
                         localStorage.setItem('regionPage',parseInt(regionPage)+1);
                         localStorage.setItem('currentPosition', 4000);
