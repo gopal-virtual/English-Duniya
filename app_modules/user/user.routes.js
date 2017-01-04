@@ -106,7 +106,7 @@
               $scope.phone = {
                 number : (function(){return User.user.getPhoneNumber()})(),
                 numberErrorText : '',
-                isVerified : (function(){return User.user.getDetails().is_verified})(),
+                isVerified : (function(){return User.user.getDetails()?User.user.getDetails().is_verified:false})(),
                 otp : '',
                 otpErrorText : '',
                 otpInterval : 90000,

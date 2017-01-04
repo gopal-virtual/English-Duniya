@@ -239,13 +239,21 @@
     }
 
     function getPhoneNumber(){
+      var tempUserDetails = localStorage.getItem('user_details'); 
       // return getUserDetails().phone_number.replace('+91','')
-      return getUserDetails().phone_number
-
+      if (tempUserDetails) {
+        return getUserDetails().phone_number;
+      } else {
+        return false;
+      }
     }
 
     function getUserDetails() {
-      return JSON.parse(localStorage.getItem('user_details'))
+      // if (localStorage.getItem('user_details')) {
+        return JSON.parse(localStorage.getItem('user_details'))
+      // }else{
+        // $log.warn("Can\'t find user_details in localstorage. Are you sure app is online?")
+      // }
     }
 
    	function startProfileSync() {
