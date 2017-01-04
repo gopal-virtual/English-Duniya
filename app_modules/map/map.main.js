@@ -103,25 +103,25 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
         "x" : [],
         "y" : []
     };
-    // var regionNodes = {
-    //     "desert1" : 17,
-    //     "desert2" : 24,
-    //     "ice1" : 22,
-    //     "ice2" : 19,
-    //     "forest1" : 20,
-    //     "forest2" : 18,
-    //     "peru1" : 26
-    // }
-
     var regionNodes = {
-        "desert1" : 2,
-        "desert2" : 2,
-        "ice1" : 2,
-        "ice2" : 2,
-        "forest1" : 2,
-        "forest2" : 2,
-        "peru1" : 2
+        "desert1" : 17,
+        "desert2" : 24,
+        "ice1" : 22,
+        "ice2" : 19,
+        "forest1" : 20,
+        "forest2" : 18,
+        "peru1" : 26
     }
+
+    // var regionNodes = {
+    //     "desert1" : 2,
+    //     "desert2" : 2,
+    //     "ice1" : 2,
+    //     "ice2" : 2,
+    //     "forest1" : 2,
+    //     "forest2" : 2,
+    //     "peru1" : 2
+    // }
     var regionPathOffset = {
         "desert1" : 320,
         "desert2" : 625,
