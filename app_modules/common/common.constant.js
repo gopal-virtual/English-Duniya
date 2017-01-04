@@ -12,7 +12,11 @@
       'BUNDLED': false,
       'LOCK': true,
       'FAKE_LOGIN': true,
+<<<<<<< HEAD
       'FAKE_ID_DEVICE': 'kartik-asus',
+=======
+      'FAKE_ID_DEVICE': 'rudra-lenovo2',
+>>>>>>> origin/phone-number-notification
       'FAKE_DEVICE': true,
       'CONTENT_TEST':false,
       'DEBUG' : true,

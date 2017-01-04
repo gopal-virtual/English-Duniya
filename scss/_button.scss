@@ -287,6 +287,14 @@
   width: 268px;
   height: 49px;
 }
+.sbtn-phone-add:disabled{
+  background: url('../img/assets_svg/button-phone-add-grey.svg');
+  background-size: cover;
+  background-position: 0 0 !important;
+  background-repeat:no-repeat;
+  width: 268px;
+  height: 49px;
+}
 .sbtn-phone-change{
   background: url('../img/assets_svg/button-phone-change.svg');
   background-size: cover;

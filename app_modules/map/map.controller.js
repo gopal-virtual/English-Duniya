@@ -148,7 +148,7 @@
     $scope.onProfileCardClick = onProfileCardClick;
 
 
-    $scope.changeNumberFlag = (function(){return User.user.getPhoneNumber() != '';})()
+    $scope.changeNumberFlag = (function(){return User.user.getPhoneNumber()})()
     $scope.currentState = $state.current.name;
     // $scope.goToPhoneNumber = goToPhoneNumber;
     // $scope.exitPhoneNumber = exitPhoneNumber;
@@ -159,7 +159,7 @@
     $scope.phone = {
       number : (function(){return User.user.getPhoneNumber()})(),
       numberErrorText : '',
-      isVerified : (function(){return User.user.getDetails().is_verified})(),
+      isVerified : (function(){return User.user.getDetails()?User.user.getDetails().is_verified:false})(),
       otp : '',
       otpErrorText : '',
       otpInterval : 90000,
@@ -230,7 +230,7 @@
       // $log.debug("PHONE.is verified",$scope.phone.isVerified);
       analytics.log({
             name : 'PHONENUMBER',
-            type : $scope.changeNumberFlag == true ? 'TAP:CHANGE' : 'TAP_ADD',
+            type : $scope.changeNumberFlag == true ? 'TAP_CHANGE' : 'TAP_ADD',
             id : null
       },{
           time : new Date()

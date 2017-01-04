@@ -138,6 +138,11 @@
         "PROFILE_TAP" : "tap profile card",
         "SWITCH" : "switch profile",
         "ADD" : "add profile"
+      },
+      "MAP" : {
+        "PORT_NEXT" : "tap portal next",
+        "PORT_PREV" : "tap portal prev",
+        "REGION" : "on region"
       }
     };
 
