@@ -1,4 +1,4 @@
-window.createGame = function(scope, lessons, audio, injector, log, lessonutils, loading) {
+window.createGame = function(scope, lessons, audio, injector, log, lessonutils, loading, analytics) {
     'use strict';
 
     var Demo = scope.demo;
@@ -103,14 +103,24 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
         "x" : [],
         "y" : []
     };
+    // var regionNodes = {
+    //     "desert1" : 17,
+    //     "desert2" : 24,
+    //     "ice1" : 22,
+    //     "ice2" : 19,
+    //     "forest1" : 20,
+    //     "forest2" : 18,
+    //     "peru1" : 26
+    // }
+
     var regionNodes = {
-        "desert1" : 17,
-        "desert2" : 24,
-        "ice1" : 22,
-        "ice2" : 19,
-        "forest1" : 20,
-        "forest2" : 18,
-        "peru1" : 26
+        "desert1" : 2,
+        "desert2" : 2,
+        "ice1" : 2,
+        "ice2" : 2,
+        "forest1" : 2,
+        "forest2" : 2,
+        "peru1" : 2
     }
     var regionPathOffset = {
         "desert1" : 320,
@@ -201,6 +211,8 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
             for (var key in regionHeight) {
                 totalRegionHeight += regionHeight[key];
             }
+
+
 
             if (localStorage.getItem("regionPage")) {
                 var regionPage = localStorage.getItem("regionPage");
@@ -383,6 +395,13 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
             }
 
             function renderRegion(region){
+                analytics.log({
+                  name : 'MAP',
+                  type : 'REGION',
+                },{
+                  time : new Date(),
+                  region : regions[localStorage.getItem("regionPage")]
+                },JSON.parse(localStorage.getItem('profile'))._id);
                 log.info("Rendering Regions ...")
                 for (var i = region.length - 1; i >= 0; i--) {
                     groups.regionBg[region[i]].position.set(0, 0 + regionOffset[region[i]]);
@@ -756,6 +775,12 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                 }
                 var port = game.add.button(game.world.centerX, portType=="prev"?game.world.height-80:150, 'node-port', function(){
                     // loading.show();
+                    analytics.log({
+                      name : 'MAP',
+                      type : portType == "prev"?"PORT_PREV":"PORT_NEXT",
+                    },{
+                      time : new Date(),
+                    },JSON.parse(localStorage.getItem('profile'))._id);
                     if (portType =="next" && regionPage < regions.length) {
                         localStorage.setItem('regionPage',parseInt(regionPage)+1);
                         localStorage.setItem('currentPosition', 4000);
