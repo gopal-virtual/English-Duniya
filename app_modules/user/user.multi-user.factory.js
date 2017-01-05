@@ -49,10 +49,7 @@
         }
 
         function canAdd (){
-            $timeout(function () {
-                //DOM has finished rendering
                 return multiUser.profiles && multiUser.profiles.length < 4;
-            });
         }
 
         function goToCreateNewProfile (){
