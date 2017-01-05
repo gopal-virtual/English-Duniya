@@ -76,7 +76,7 @@
 </div>
 <div ng-tap="mapCtrl.goToChooseProfile();audio.play('click');" ng-click="mapCtrl.goToChooseProfile();audio.play('click');"  class="profile" ng-hide="::mapCtrl.demo.getStep() == 1"  ng-class="::{'animation-fade-in-from-top animation-delay-more' : mapCtrl.demo.getStep() != 1}">
     <img class="profile-avatar" ng-src="img/assets_svg/profile-{{::mapCtrl.gender == 'M' ? 'boy' : 'girl'}}.svg">
-    <div ng-if="user.user.getNotifyPhone() == 1 && phone.number == '' && user.user.getDetails()" class="symbol animation-repeat-bounce">i</div>
+    <div ng-if="notifyPhone == 1 && phone.number == '' && userDetails" class="symbol animation-repeat-bounce">i</div>
 </div>
 <!-- <div style="top: 100px; left: 100px; position: absolute;z-index: 100;" ng-click="mapCtrl.onBackButtonPress()">
     <h1>BACK BUTTON SIMULATOR</h1>

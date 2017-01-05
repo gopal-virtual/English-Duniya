@@ -148,8 +148,11 @@
     $scope.onProfileCardClick = onProfileCardClick;
 
 
-    $scope.changeNumberFlag = (function(){return User.user.getPhoneNumber()})()
+    $scope.changeNumberFlag = User.user.getPhoneNumber()
     $scope.currentState = $state.current.name;
+
+    $scope.userDetails = User.user.getDetails();
+    $scope.notifyPhone = User.user.getNotifyPhone();
     // $scope.goToPhoneNumber = goToPhoneNumber;
     // $scope.exitPhoneNumber = exitPhoneNumber;
     // mapCtrl.notification = notification;
@@ -157,9 +160,9 @@
     $log.error('ThiS is notify phone', User.user.getNotifyPhone());
 
     $scope.phone = {
-      number : (function(){return User.user.getPhoneNumber()})(),
+      number : User.user.getPhoneNumber(),
       numberErrorText : '',
-      isVerified : (function(){return User.user.getDetails()?User.user.getDetails().is_verified:false})(),
+      isVerified : User.user.getDetails()?User.user.getDetails().is_verified:false,
       otp : '',
       otpErrorText : '',
       otpInterval : 90000,
