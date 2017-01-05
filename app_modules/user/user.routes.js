@@ -119,8 +119,23 @@
                 nextSlide : nextSlide,
                 exit : exitPhoneNumber,
                 open : goToPhoneNumber,
+                playAudio : playAudio 
               }
               var tempCount = 1;
+
+              function playAudio(index) {
+                var src;
+                if (index == 0) {
+                  src = 'sound/phone_number_write.mp3';
+                } else if (index == 1) {
+                  src = 'sound/phone_number_verify.mp3';
+                }
+                if (src) {
+                  audio.player.play(src);
+                } else {
+                  audio.player.stop();
+                }
+              }
 
               function goToPhoneNumber() {
                 $log.debug('Whoosh! open')
@@ -271,6 +286,7 @@
 
               function disableSwipe() {
                 $ionicSlideBoxDelegate.enableSlide(false);
+                playAudio(0);
               }
 
               function nextSlide() {

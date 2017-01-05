@@ -170,6 +170,7 @@
       disableSwipe : disableSwipe,
       verifyOtp : verifyOtp,
       nextSlide : nextSlide,
+      playAudio : playAudio,
       exit : exitPhoneNumber,
       open : goToPhoneNumber,
     }
@@ -219,6 +220,7 @@
         $scope.profileScreen.hide()
       }
       $scope.phoneNumberScreen.show().then(function(){
+        playAudio(0);
         analytics.log({
           name : 'PHONENUMBER',
           type : 'OPEN',
@@ -424,6 +426,19 @@
       $ionicSlideBoxDelegate.$getByHandle('slide-phone').next();
     }
 
+    function playAudio(index) {
+      var src;
+      if (index == 0) {
+        src = 'sound/phone_number_write.mp3';
+      } else if (index == 1) {
+        src = 'sound/phone_number_verify.mp3';
+      }
+      if (src) {
+        audio.player.play(src);
+      } else {
+        audio.player.stop();
+      }
+    }
     // notification.createDb();
     // notification.init();
     // notification.defineTypes();
