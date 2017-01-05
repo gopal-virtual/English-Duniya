@@ -165,7 +165,7 @@
         </div>
         <div ng-if="currentState == 'map.navigate'"  class="padding-10 center button-container">
             <!-- <button ng-click="phone.open();audio.play('press');" ng-class="{'sbtn-phone-change' : changeNumberFlag, 'sbtn-phone-add' : !changeNumberFlag, 'animation-repeat-bounce' : user.user.getNotifyPhone() == 1}" class="sbtn" disabled="disabled"></button> -->
-            <button ng-disabled="user.user.getDetails() == undefined" ng-click="phone.open();audio.play('press');" ng-class="{'sbtn-phone-change' : changeNumberFlag, 'sbtn-phone-add' : !changeNumberFlag, 'animation-repeat-bounce' : notifyPhone == 1 && phone.number == '' && user.userDetails}" class="sbtn"></button>
+            <button ng-disabled="user.user.getDetails() == undefined" ng-click="phone.open();audio.play('press');" ng-class="{'sbtn-phone-change' : changeNumberFlag, 'sbtn-phone-add' : !changeNumberFlag, 'animation-repeat-bounce' : notifyPhone == 1 && phone.number == '' && userDetails}" class="sbtn"></button>
         </div>
     </ion-content>
 </ion-view>
