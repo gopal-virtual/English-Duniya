@@ -184,6 +184,7 @@
       confirm : exitModalConfirm
     }
 
+
     function exitModalDismiss() {
       $log.debug('EXITING NOT SURELY')
       $scope.exitApp.hide().then(function(){
@@ -217,6 +218,19 @@
     // $log.debug("ISVERIFIED",$scope.phone.number.length < 10,$scope.phone.number == User.user.getPhoneNumber(), $scope.phone.isVerified)
     $log.debug("PHONE. changed number flag",$scope.changeNumberFlag);
     var tempCount = 1;
+    
+    function resetPhoneValues() {
+      $log.warn('resetting phone values')
+      $scope.phone.number = User.user.getPhoneNumber();
+      $scope.phone.numberErrorText = '';
+      $scope.phone.isVerified = User.user.getDetails()?User.user.getDetails().is_verified:false;
+      $scope.phone.otp = '';
+      $scope.phone.otpErrorText = '';
+      $scope.phone.number = User.user.getPhoneNumber();
+      $scope.userDetails = User.user.getDetails();
+      $scope.notifyPhone = User.user.getNotifyPhone();
+      $scope.changeNumberFlag = User.user.getPhoneNumber()
+    }
 
     function goToPhoneNumber() {
       if ($scope.profileScreen.isShown()) {
@@ -248,6 +262,7 @@
         $scope.profileScreen.hide()
       }
       $scope.phoneNumberScreen.hide().then(function(){
+        resetPhoneValues();
         $ionicSlideBoxDelegate.slide(0);
         $scope.phone.otp = '';
         $scope.phone.otpErrorText = '';
