@@ -125,7 +125,7 @@
 
               function playAudio(index) {
                 var src;
-                if (index == 0) {
+                if (index == -1) {
                   src = 'sound/phone_number_write.mp3';
                 } else if (index == 1) {
                   src = 'sound/phone_number_verify.mp3';
@@ -286,7 +286,7 @@
 
               function disableSwipe() {
                 $ionicSlideBoxDelegate.enableSlide(false);
-                playAudio(0);
+                playAudio(-1);
               }
 
               function nextSlide() {
