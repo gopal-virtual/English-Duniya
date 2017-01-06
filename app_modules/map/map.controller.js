@@ -958,7 +958,7 @@
         $scope.exitModal.message = "Do you want to exit?";
         $scope.exitModal.dismiss = exitModalDismiss;
         $scope.exitModal.confirm = exitModalConfirm;
-      $scope.profileScreen.hide().then(function(){
+        $scope.profileScreen.hide().then(function(){
         audio.loop('background');
         analytics.log({
             name : 'CHOOSEPROFILE',

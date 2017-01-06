@@ -137,7 +137,7 @@
     </div>
     <ion-content class="has-headers">
         <div class="profile-box-container">
-            <div ng-tap="profile.id != multiUser.getCurrentProfile() && multiUser.selectProfile(profile);onProfileCardClick();profileScreen.hide();audio.play('click');" ng-click="profile.id != multiUser.getCurrentProfile() && multiUser.selectProfile(profile);onProfileCardClick();profileScreen.hide();audio.play('click');" class="profile-box animation-fade-in-from-bottom" style="-webkit-animation-delay: {{$index*100}}ms" ng-class="::{true : 'profile-box-darkblue', false : 'profile-box-blue'}[multiUser.getCurrentProfile() == profile.doc._id]" ng-repeat="profile in multiUser.profiles | limitTo : 4">
+            <div ng-tap="profile.id != multiUser.getCurrentProfile() && multiUser.selectProfile(profile);onProfileCardClick();exitChooseProfile();audio.play('click');" ng-click="profile.id != multiUser.getCurrentProfile() && multiUser.selectProfile(profile);onProfileCardClick();exitChooseProfile();audio.play('click');" class="profile-box animation-fade-in-from-bottom" style="-webkit-animation-delay: {{$index*100}}ms" ng-class="::{true : 'profile-box-darkblue', false : 'profile-box-blue'}[multiUser.getCurrentProfile() == profile.doc._id]" ng-repeat="profile in multiUser.profiles | limitTo : 4">
                 <div class="profile-username" ng-class="::{true : 'font-pale' , false : 'font-blue'}[multiUser.getCurrentProfile() == profile.doc._id]">
                     {{::profile.doc.data.profile.first_name}}
                 </div>
