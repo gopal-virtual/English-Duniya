@@ -104,9 +104,9 @@
             controller: ['$scope','$timeout','$log','User','$ionicSlideBoxDelegate','$state','$ionicLoading','analytics','audio',function($scope,$timeout,$log,User,$ionicSlideBoxDelegate,$state,$ionicLoading,analytics,audio){
               $scope.audio = audio;
               $scope.phone = {
-                number : (function(){return User.user.getPhoneNumber()})(),
+                number : User.user.getPhoneNumber(),
                 numberErrorText : '',
-                isVerified : (function(){return User.user.getDetails()?User.user.getDetails().is_verified:false})(),
+                isVerified : User.user.getDetails()?User.user.getDetails().is_verified:false,
                 otp : '',
                 otpErrorText : '',
                 otpInterval : 90000,
