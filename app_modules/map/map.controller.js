@@ -262,6 +262,10 @@
         $scope.profileScreen.hide()
       }
       $scope.phoneNumberScreen.hide().then(function(){
+        
+        $scope.exitModal.message = "Do you want to leave the game?";
+        $scope.exitModal.dismiss = exitModalDismiss;
+        $scope.exitModal.confirm = exitModalConfirm;
         resetPhoneValues();
         $ionicSlideBoxDelegate.slide(0);
         $scope.phone.otp = '';
@@ -493,7 +497,8 @@
       //   });
       // }
       if ($scope.profileScreen.isShown()) {
-        $scope.profileScreen.hide();
+        // $scope.profileScreen.hide();
+        exitChooseProfile()
       } else if($scope.phoneNumberScreen.isShown()){
         $scope.phone.exit();
       } else {
