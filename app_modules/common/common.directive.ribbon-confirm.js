@@ -41,7 +41,7 @@
         $log.debug('CONFIRM',$scope);
         $scope.confirm = ribbonCnfCtrl.confirm;
         $scope.dismiss = ribbonCnfCtrl.dismiss;
-        $scope.userGender = User.getActiveProfileSync().data.profile.gender;
+        $scope.userGender = User.getActiveProfileSync() ? User.getActiveProfileSync().data.profile.gender : 'M';
 
         function dismiss(){
             $log.warn('CONFIRM2',$scope)
