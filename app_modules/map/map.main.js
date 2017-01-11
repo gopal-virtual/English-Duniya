@@ -774,7 +774,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                     portType = "prev";
                 }
                 var port = game.add.button(game.world.centerX, portType=="prev"?game.world.height-80:150, 'node-port', function(){
-                    // loading.show();
+                    loading.show();
                     analytics.log({
                       name : 'MAP',
                       type : portType == "prev"?"PORT_PREV":"PORT_NEXT",
