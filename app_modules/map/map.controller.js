@@ -179,7 +179,7 @@
     }
 
     $scope.exitModal = {
-      message : 'Do you want to exit?',
+      message : 'Do you want to leave the game?',
       dismiss : exitModalDismiss,
       confirm : exitModalConfirm
     }
@@ -955,7 +955,7 @@
     }
 
     function exitChooseProfile() {
-        $scope.exitModal.message = "Do you want to exit?";
+        $scope.exitModal.message = "Do you want to leave the game?";
         $scope.exitModal.dismiss = exitModalDismiss;
         $scope.exitModal.confirm = exitModalConfirm;
         $scope.profileScreen.hide().then(function(){

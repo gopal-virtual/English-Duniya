@@ -31,15 +31,17 @@
         // $log.warn('CONFIRM3',scope)
     }
 
-    ribbonConfirmController.$inject = ['$log','$scope','User'];
+    ribbonConfirmController.$inject = ['$log','$scope','User','audio'];
 
     /* @ngInject */
-    function ribbonConfirmController($log, $scope, User) {
+    function ribbonConfirmController($log, $scope, User, audio) {
         var ribbonCnfCtrl = this;
         $scope.user = User;
+        $scope.audio = audio;
         $log.debug('CONFIRM',$scope);
         $scope.confirm = ribbonCnfCtrl.confirm;
         $scope.dismiss = ribbonCnfCtrl.dismiss;
+        $scope.userGender = User.getActiveProfileSync().data.profile.gender;
 
         function dismiss(){
             $log.warn('CONFIRM2',$scope)
