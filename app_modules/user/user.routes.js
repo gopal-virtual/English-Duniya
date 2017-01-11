@@ -53,6 +53,7 @@
             controller: ['multiUser','$scope','User','analytics','audio','$ionicModal',function(multiUser,$scope,User,analytics,audio, $ionicModal){
                 $scope.changeNumberFlag = User.user.getPhoneNumber() == '' ? 0 : 1;
                 $scope.multiUser = multiUser;
+                $scope.audio = audio
                 multiUser.getProfiles();
                 $scope.onProfileCardClick = onProfileCardClick;
                 $ionicModal.fromTemplateUrl(CONSTANT.PATH.COMMON + '/common.modal-exit' + CONSTANT.VIEW, {
