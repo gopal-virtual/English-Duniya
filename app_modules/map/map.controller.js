@@ -300,7 +300,10 @@
       if(!$scope.phone.isVerified && $scope.phone.number == User.user.getPhoneNumber()){
         $log.debug('PHONE. asking for otp')
         resendOtp(num,$scope.phone.otpInterval);
-        nextSlide();
+        var currentIndex = $ionicSlideBoxDelegate.$getByHandle('slide-phone').currentIndex(); 
+        if (currentIndex == 0) {
+          nextSlide(1);
+        }
       }else{
         $log.debug('PHONE. Patching phone')
         sendPhoneNumber(num);
@@ -314,7 +317,10 @@
 
       User.user.patchPhoneNumber(num).then(function(response){
         $log.debug("We successfully added the phone number. Requesting otp",response,num);
-        nextSlide();
+        var currentIndex = $ionicSlideBoxDelegate.$getByHandle('slide-phone').currentIndex(); 
+        if (currentIndex == 0) {
+          nextSlide(1);
+        }
         resetResendFlag();
         User.user.updatePhoneLocal(response.data.phone_number);
         User.user.setIsVerified(response.data.is_verified);
@@ -408,7 +414,10 @@
         // $log.debug("Please cancel interval",$interval.cancel(otpCycle));
         User.user.setIsVerified(true);
         // $scope.phone.isVerified = User.user.getDetails().is_verified
-        nextSlide();
+        var currentIndex = $ionicSlideBoxDelegate.$getByHandle('slide-phone').currentIndex(); 
+        if (currentIndex == 0) {
+          nextSlide(2);
+        }
         if (!successInterval) {
           successInterval = 1000;
         }
@@ -444,8 +453,8 @@
       $ionicSlideBoxDelegate.enableSlide(false);
     }
 
-    function nextSlide() {
-      $ionicSlideBoxDelegate.$getByHandle('slide-phone').next();
+    function nextSlide(index) {
+      $ionicSlideBoxDelegate.$getByHandle('slide-phone').slide(index);
     }
 
     function playAudio(index) {
