@@ -112,19 +112,19 @@
 
 
     function playAudio(index) {
-      $log.debug("playaudio", index, userCtrl.localizedContent.audio.personalise, userCtrl.user && userCtrl.user.language);
+      $log.debug("playaudio", index, userCtrl.localizedContent.audio.personalise, userCtrl.user );
       var src;
       if (index == -1) {
-        src = 'sound/placeholder.mp3';
+        src = userCtrl.localizedContent.audio.personalise.enter_your_name['hi'] || 'sound/placeholder.mp3';
       }
       // if (index == 1) {
-      //   src = userCtrl.localizedContent.audio.personalise.enter_your_name[userCtrl.user.language] || 'sound/placeholder.mp3';
+        // src = 'sound/placeholder.mp3';
       // }
       if (index == 1) {
-        src = userCtrl.localizedContent.audio.personalise.select_your_gender[userCtrl.user.language] || 'sound/placeholder.mp3';
+        src = userCtrl.localizedContent.audio.personalise.select_your_gender['hi'] || 'sound/placeholder.mp3';
       }
       if (index == 2) {
-        src = userCtrl.localizedContent.audio.personalise.select_your_class[userCtrl.user.language] || 'sound/placeholder.mp3';
+        src = userCtrl.localizedContent.audio.personalise.select_your_class['hi'] || 'sound/placeholder.mp3';
       }
       if (src) {
         audio.player.play(src);
