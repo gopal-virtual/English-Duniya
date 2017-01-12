@@ -403,20 +403,29 @@
           }).then(function(data) {
             // $log.debug("AAAAAAAA "+data+" END");
             $log.debug("USERPLAYLIST IS"+JSON.stringify(playlist));
+            $log.debug("DATA IS"+JSON.stringify(data));
             var lessons = [];
             var resources = [];
             var playlist_ids = [];
 
             for (i = 0; i < playlist.length; i++) {
+              $log.debug("making playlist ids");
               playlist_ids.push(playlist[i].lesson_id);
             }
+            $log.debug("done making playlist ids");
             for (i = 0; i < data.rows.length; i++) {
+            $log.debug("making lessonlist");
+
               var index = -1;
               while ((index = playlist_ids.indexOf(data.rows[i].id, index + 1)) != -1) {
+            $log.debug("making lessonlist 1");
+
                 lessons[index] = data.rows[i];
                 lessons[index]['parentHindiLessonId'] = playlist[index]['suggestedLesson']
               }
             }
+            $log.debug("done making lessonlist");
+
             // if(playlist.indexOf(data.rows[i].id) >= 0){
             //     lessons[playlist.indexOf(data.rows[i].id)] = data.rows[i]
             //   }
