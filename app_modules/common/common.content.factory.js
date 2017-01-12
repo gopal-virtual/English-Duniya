@@ -424,24 +424,32 @@
                 lessons[index]['parentHindiLessonId'] = playlist[index]['suggestedLesson']
               }
             }
-            $log.debug("done making lessonlist");
+            $log.debug("done making lessonlist"+JSON.stringify(lessons));
 
             // if(playlist.indexOf(data.rows[i].id) >= 0){
             //     lessons[playlist.indexOf(data.rows[i].id)] = data.rows[i]
             //   }
+            $log.debug("Modifying lessons list")
             for (i = 0; i < lessons.length; i++) {
+            $log.debug("Modifying lessons list 1")
+
               // data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key;
               for (var c = 0; c < lessons[i].doc.lesson.objects.length; c++) {
+            $log.debug("Modifying lessons list 2")
+
                 if (lessons[i].doc.lesson.node.meta && lessons[i].doc.lesson.node.meta.intros && lessons[i].doc.lesson.node.meta.intros.sound && lessons[i].doc.lesson.node.meta.intros.sound[0]) {
                   lessons[i].doc.lesson.objects[c].node.intro_sound = lessons[i].doc.lesson.node.meta.intros.sound[0];
                 }
                 lessons[i].doc.lesson.objects[c].node.tag = lessons[i].doc.lesson.node.tag;
                 lessons[i].doc.lesson.objects[c].node.playlist_index = i;
+                $log.debug("parent hindi lesson is " + lessons[i]['parentHindiLessonId'])
                 lessons[i].doc.lesson.objects[c].node.parentHindiLessonId = lessons[i]['parentHindiLessonId'];
               }
               // for(var c = 0; c < lessons[i].doc.lesson.objects.length; c++){
               // $log.debug("Iter ",lessons[i].doc.lesson.objects[c].node.playlist_index )
               // }
+            $log.debug("Done Modifying lessons list"+JSON.stringify(lessons));
+
               var include_video_flag = true;
               var include_vocab_flag = true;
               $log.debug("pre", playlist.length);
