@@ -402,9 +402,11 @@
             include_docs: true
           }).then(function(data) {
             // $log.debug("AAAAAAAA "+data+" END");
+            $log.debug("USERPLAYLIST IS"+JSON.stringify(playlist));
             var lessons = [];
             var resources = [];
             var playlist_ids = [];
+
             for (i = 0; i < playlist.length; i++) {
               playlist_ids.push(playlist[i].lesson_id);
             }
@@ -461,6 +463,7 @@
             if (resources.length) {
               resources[resources.length - 1].node.requiresSuggestion = true;
             }
+            $log.debug("Resource list resolving"+$log.debug(resources));
             d.resolve(resources)
           });
           // $log.debug("data",data)
