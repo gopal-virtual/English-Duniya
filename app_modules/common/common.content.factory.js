@@ -412,7 +412,7 @@
               $log.debug("making playlist ids");
               playlist_ids.push(playlist[i].lesson_id);
             }
-            $log.debug("done making playlist ids");
+            $log.debug("done making playlist ids"+JSON.stringify(playlist_ids));
             for (i = 0; i < data.rows.length; i++) {
             $log.debug("making lessonlist");
 
