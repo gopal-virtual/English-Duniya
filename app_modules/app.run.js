@@ -54,10 +54,12 @@
         $ionicLoading.show({
           hideOnStateChange: true
         })
-        content.deleteLessonDB().then(function() {
-            $log.debug("tag Deleted lesson db");
-            return content.createDependentDBs();
-          }).then(function() {
+        // content.deleteLessonDB().then(function() {
+        //     $log.debug("tag Deleted lesson db");
+        //     return content.createDependentDBs();
+        //   })
+        content.createDependentDBs()
+        .then(function() {
             $log.debug("tag Created lessondb", toState, toParams);
             localStorage.setItem('version', CONSTANT.APP.VERSION);
             $state.go(toState.name, toParams);

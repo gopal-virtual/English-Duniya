@@ -402,8 +402,6 @@
             include_docs: true
           }).then(function(data) {
             // $log.debug("AAAAAAAA "+data+" END");
-            $log.debug("USERPLAYLIST IS"+JSON.stringify(playlist));
-            $log.debug("DATA IS"+JSON.stringify(data));
             var lessons = [];
             var resources = [];
             var playlist_ids = [];
@@ -424,7 +422,6 @@
                 lessons[index]['parentHindiLessonId'] = playlist[index]['suggestedLesson']
               }
             }
-            $log.debug("done making lessonlist"+JSON.stringify(lessons));
 
             // if(playlist.indexOf(data.rows[i].id) >= 0){
             //     lessons[playlist.indexOf(data.rows[i].id)] = data.rows[i]
@@ -448,7 +445,6 @@
               // for(var c = 0; c < lessons[i].doc.lesson.objects.length; c++){
               // $log.debug("Iter ",lessons[i].doc.lesson.objects[c].node.playlist_index )
               // }
-            $log.debug("Done Modifying lessons list"+JSON.stringify(lessons));
 
               var include_video_flag = true;
               var include_vocab_flag = true;
