@@ -405,32 +405,47 @@
             var lessons = [];
             var resources = [];
             var playlist_ids = [];
+
             for (i = 0; i < playlist.length; i++) {
+              $log.debug("making playlist ids");
               playlist_ids.push(playlist[i].lesson_id);
             }
+            $log.debug("done making playlist ids"+JSON.stringify(playlist_ids));
             for (i = 0; i < data.rows.length; i++) {
+            $log.debug("making lessonlist");
+
               var index = -1;
               while ((index = playlist_ids.indexOf(data.rows[i].id, index + 1)) != -1) {
+            $log.debug("making lessonlist 1");
+
                 lessons[index] = data.rows[i];
                 lessons[index]['parentHindiLessonId'] = playlist[index]['suggestedLesson']
               }
             }
+
             // if(playlist.indexOf(data.rows[i].id) >= 0){
             //     lessons[playlist.indexOf(data.rows[i].id)] = data.rows[i]
             //   }
+            $log.debug("Modifying lessons list")
             for (i = 0; i < lessons.length; i++) {
+            $log.debug("Modifying lessons list 1")
+
               // data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key;
               for (var c = 0; c < lessons[i].doc.lesson.objects.length; c++) {
+            $log.debug("Modifying lessons list 2")
+
                 if (lessons[i].doc.lesson.node.meta && lessons[i].doc.lesson.node.meta.intros && lessons[i].doc.lesson.node.meta.intros.sound && lessons[i].doc.lesson.node.meta.intros.sound[0]) {
                   lessons[i].doc.lesson.objects[c].node.intro_sound = lessons[i].doc.lesson.node.meta.intros.sound[0];
                 }
                 lessons[i].doc.lesson.objects[c].node.tag = lessons[i].doc.lesson.node.tag;
                 lessons[i].doc.lesson.objects[c].node.playlist_index = i;
+                $log.debug("parent hindi lesson is " + lessons[i]['parentHindiLessonId'])
                 lessons[i].doc.lesson.objects[c].node.parentHindiLessonId = lessons[i]['parentHindiLessonId'];
               }
               // for(var c = 0; c < lessons[i].doc.lesson.objects.length; c++){
               // $log.debug("Iter ",lessons[i].doc.lesson.objects[c].node.playlist_index )
               // }
+
               var include_video_flag = true;
               var include_vocab_flag = true;
               $log.debug("pre", playlist.length);
@@ -461,6 +476,7 @@
             if (resources.length) {
               resources[resources.length - 1].node.requiresSuggestion = true;
             }
+            $log.debug("Resource list resolving"+$log.debug(resources));
             d.resolve(resources)
           });
           // $log.debug("data",data)

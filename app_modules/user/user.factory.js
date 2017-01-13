@@ -581,10 +581,14 @@
     }
 
     function getUserPlaylist(profileId) {
-      $log.debug("In user playlist")
+      $log.debug("In user playlist");
       return profilesDB.get(profileId).then(function(response) {
-        if (response.data.playlist)
+        if (response.data.playlist){
+      $log.debug("In user playlist resolving"+JSON.stringify(response.data.playlist));
+
           return response.data.playlist;
+          
+        }
         else
           return getPatchedUserPlaylist(profileId);
       })
