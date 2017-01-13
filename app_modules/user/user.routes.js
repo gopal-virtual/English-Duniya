@@ -104,6 +104,13 @@
             templateUrl: CONSTANT.PATH.USER + '/user.phoneNumber' + CONSTANT.VIEW,
             controller: ['$scope','$timeout','$log','User','$ionicSlideBoxDelegate','$state','$ionicLoading','analytics','audio',function($scope,$timeout,$log,User,$ionicSlideBoxDelegate,$state,$ionicLoading,analytics,audio){
               $scope.audio = audio;
+              $scope.isOnline = network.isOnline();
+              $scope.$on('$cordovaNetwork:online',function(event,networkState){
+                $scope.isOnline = network.isOnline();
+              })
+              $scope.$on('$cordovaNetwork:offline',function(event,networkState){
+                $scope.isOnline = network.isOnline();
+              })
               $scope.phone = {
                 number : User.user.getPhoneNumber(),
                 numberErrorText : '',

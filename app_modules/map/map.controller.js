@@ -45,7 +45,8 @@
     'device',
     'multiUser',
     '$ionicSlideBoxDelegate',
-    '$interval'
+    '$interval',
+    'network'
 ];
 
   function mapController(
@@ -81,7 +82,8 @@
         device,
         multiUser,
         $ionicSlideBoxDelegate,
-        $interval
+        $interval,
+        network
     ) {
     $scope.audio = audio;
     $scope.settings = settings;
@@ -146,6 +148,14 @@
     $scope.exitChooseProfile = exitChooseProfile;
 
     $scope.onProfileCardClick = onProfileCardClick;
+
+    $scope.isOnline = network.isOnline();
+    $scope.$on('$cordovaNetwork:online',function(event,networkState){
+      $scope.isOnline = network.isOnline();
+    })
+    $scope.$on('$cordovaNetwork:offline',function(event,networkState){
+      $scope.isOnline = network.isOnline();
+    })
 
 
     $scope.changeNumberFlag = User.user.getPhoneNumber()
