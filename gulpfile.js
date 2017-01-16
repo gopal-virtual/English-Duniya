@@ -29,7 +29,7 @@ var paths = {
     './scss/**/*.scss',
     './scss/*.scss'
   ],
-  diagnosis : 'www/data/diagnosisQJSON.json',
+  diagnosis: 'www/data/diagnosisQJSON.json',
   script: [
     './www/templates/templates.js',
     './app_modules/common/common.module.js',
@@ -56,29 +56,47 @@ var paths = {
     './www/img/*.jpg',
     './www/img/*.jpeg'
   ],
-
-  constants : {
-    environment : './www/constant.json',
-    template : './constant.template.txt',
-    destination : './app_modules/common/',
-    destination_filename : 'common.constant.js'
+  constants: {
+    environment: './www/constant.json',
+    template: './constant.template.txt',
+    destination: './app_modules/common/',
+    destination_filename: 'common.constant.js'
   },
-  main : './www/main.html'
+  localizationFactory: {
+    template: './localizationFactory.template.txt',
+    destination: './app_modules/common/',
+    destination_filename: 'common.localization.factory.js'
+  },
+  main: './www/main.html',
+  main_template: './main.template.txt'
 };
 var environments = {
   default: 'PRODUCTION',
   production: 'PRODUCTION',
   dev: 'DEVELOPMENT',
   test: 'TESTING',
-  content : 'CONTENT'
+  content: 'CONTENT'
 };
 var raven_key = {
   default: 'http://d52f1916c41a41e9b6506dddf7e805fa@zsentry.zaya.in/4',
   production: 'http://886f9ba54ac1453c9fcf2e2bdae62831@zsentry.zaya.in/6',
   dev: 'http://d52f1916c41a41e9b6506dddf7e805fa@zsentry.zaya.in/4',
   test: 'http://d52f1916c41a41e9b6506dddf7e805fa@zsentry.zaya.in/4',
-  content : 'http://d52f1916c41a41e9b6506dddf7e805fa@zsentry.zaya.in/4'
+  content: 'http://d52f1916c41a41e9b6506dddf7e805fa@zsentry.zaya.in/4'
 };
+var languages_list = [{
+  name: 'hindi',
+  code: 'hi'
+}, {
+  name: 'gujarati',
+  code: 'gu'
+}, {
+  name: 'tamil',
+  code: 'ta'
+}, {
+  name: 'telugu',
+  code: 'te'
+}];
 var env = argument.argv.env ? environments[argument.argv.env] : environments.default;
 var app_type = argument.argv.app_type ? argument.argv.app_type : 'na';
 var is_bundled = argument.argv.is_bundled ? argument.argv.is_bundled : false;
@@ -88,66 +106,59 @@ var lock = argument.argv.lock ? argument.argv.lock : constants[env]['LOCK'];
 var fake_id_device = constants[env]['FAKE_ID_DEVICE'] || 'na';
 var lesson_db_version = 'na';
 var diagnosis_media = [];
-var lessonsdb_couch_server =   env == environments.production? 'https://ed-couch.zaya.in/lessonsdb' :'https://ci-couch.zaya.in/lessonsdb';
+var allowed_languages = languages_list;
+var lessonsdb_couch_server = env == environments.production ? 'https://ed-couch.zaya.in/lessonsdb' : 'https://ci-couch.zaya.in/lessonsdb';
 //Get app version
-var xml       = file.readFileSync('./config.xml');
-var content         = cheerio.load(xml, { xmlMode: true });
-app_version   = content('widget')[0].attribs.version;
-console.log("VERSION",app_version);
-console.log("envi",raven_key[argument.argv.env])
-
-gulp.task('default', function(callback){
-  // runSequence('generate-lessondb','get-diagnosis-media','make-main','generate-constants', 'sass', 'html', 'scripts',callback);
-  runSequence('get-diagnosis-media','make-main','generate-constants', 'sass', 'html', 'scripts',callback);
+var xml = file.readFileSync('./config.xml');
+var content = cheerio.load(xml, {
+  xmlMode: true
 });
-
+app_version = content('widget')[0].attribs.version;
+console.log("VERSION", app_version);
+console.log("envi", raven_key[argument.argv.env])
+gulp.task('default', function(callback) {
+  // runSequence('generate-lessondb','get-diagnosis-media','make-main','generate-constants', 'sass', 'html', 'scripts',callback);
+  runSequence('generate-lessondb', 'get-diagnosis-media', 'make-main', 'generate-constants', 'sass', 'html', 'scripts', callback);
+});
 gulp.task('generate-lessondb', shell.task(
-(env !== environments.dev)?[
-  'rm www/data/lessons.db',
-  'pouchdb-dump '+lessonsdb_couch_server+' > www/data/lessons.db'
-]:[]
+  (env !== environments.dev) ? [
+    'rm www/data/lessons.db',
+    'pouchdb-dump ' + lessonsdb_couch_server + ' > www/data/lessons.db'
+  ] : []
 ));
-gulp.task('get-lessondb-version', function () {
+gulp.task('get-lessondb-version', function() {
   var res = request('GET', 'http://ci-couch.zaya.in/lessonsdb/version');
   lesson_db_version = JSON.parse(res.getBody().toString()).version;
 });
-
-
 // gulp.task('optimize', function(cb) {
 //   gulp.src(paths.image)
 //     .pipe(optimization())
 //     .pipe(gulp.dest('www/img'))
 // });
-
-gulp.task('preen', function (cb) {
+gulp.task('preen', function(cb) {
   preen.preen({}, cb);
 });
-console.log('raven key',raven_key[argument.argv.env]);
-
-gulp.task('make-main',function(){
+console.log('raven key', raven_key[argument.argv.env]);
+gulp.task('make-main', function() {
   gulp.src(paths.main)
     .pipe(replace_task({
-      patterns:[
-        {
-          match : /\/\*raven_release_start\*\/[\'\'\.0-9a-z]+\/\*raven_release_end\*\//g,
-          replacement: '/*raven_release_start*/\''+app_version+'\'/*raven_release_end*/'
-        },
-        {
-          match : /\/\*raven_environment_start\*\/[\'\'\.0-9a-zA-Z]+\/\*raven_environment_end\*\//g,
-          replacement: '/*raven_environment_start*/\''+env+'\'/*raven_environment_end*/'
-        },
-        {
-          match : /\/\*raven_key_start\*\/'https?:\/\/[:a-zA-Z0-9@.\/']+\/\*raven_key_end\*\//g,
-          replacement: '/*raven_key_start*/\''+raven_key[argument.argv.env]+'\'/*raven_key_end*/'
-        }
-      ]
-
+      patterns: [{
+        match: /\/\*raven_release_start\*\/[\'\'\.0-9a-z]+\/\*raven_release_end\*\//g,
+        replacement: '/*raven_release_start*/\'' + app_version + '\'/*raven_release_end*/'
+      }, {
+        match: /\/\*raven_environment_start\*\/[\'\'\.0-9a-zA-Z]+\/\*raven_environment_end\*\//g,
+        replacement: '/*raven_environment_start*/\'' + env + '\'/*raven_environment_end*/'
+      }, {
+        match: /\/\*raven_key_start\*\/'https?:\/\/[:a-zA-Z0-9@.\/']+\/\*raven_key_end\*\//g,
+        replacement: '/*raven_key_start*/\'' + raven_key[argument.argv.env] + '\'/*raven_key_end*/'
+      }]
     }))
     .pipe(rename('main.html'))
-    .pipe(gulp.dest('./www/',{overwrite:true}))
+    .pipe(gulp.dest('./www/', {
+      overwrite: true
+    }))
 });
-
-gulp.task('generate-constants', function () {
+gulp.task('generate-constants', function() {
   gulp.src(paths.constants.template)
     .pipe(replace_task({
       patterns: [{
@@ -195,60 +206,55 @@ gulp.task('generate-constants', function () {
       }, {
         match: 'DIAGNOSIS_MEDIA',
         replacement: JSON.stringify(diagnosis_media)
-      },{
+      }, {
         match: 'GRADE',
         replacement: grades.getGrades(paths.diagnosis)
-      },{
+      }, {
         match: 'QUESTION_DEMO',
         replacement: constants[env]['QUESTION_DEMO']
-      },{
+      }, {
         match: 'CONTENT_TEST',
         replacement: constants[env]['CONTENT_TEST']
-      },{
+      }, {
         match: 'NOTIFICATION_DURATION_DISCOVERED',
         replacement: constants[env]['NOTIFICATION_DURATION_DISCOVERED']
-      },{
+      }, {
         match: 'NOTIFICATION_DURATION_UNDISCOVERED',
         replacement: constants[env]['NOTIFICATION_DURATION_UNDISCOVERED']
-      },{
+      }, {
         match: 'NOTIFICATION_DB_SERVER',
         replacement: constants[env]['NOTIFICATION_DB_SERVER']
-      }
-
-      ]
+      }, {
+        match: 'ALLOWED_LANGUAGES',
+        replacement: allowed_languages
+      }]
     }))
     .pipe(rename(paths.constants.destination_filename))
     .pipe(gulp.dest(paths.constants.destination))
-
 });
-
-
-
-gulp.task('scripts', function () {
-
+gulp.task('scripts', function() {
   gulp.src(paths.script)
-    .pipe(print(function (filepath) {
+    .pipe(print(function(filepath) {
       // return filepath;
     }))
     .pipe(ngAnnotate())
     .pipe(stripDebug())
     .pipe(strip())
     .pipe(concate('mobile.app.js'))
-    // .pipe(gulpif(env !== environments.dev && env !== environments.content,uglify()))
+    .pipe(gulpif(env !== environments.dev && env !== environments.content, uglify()))
     .pipe(gulp.dest('www/build'))
-  // .on('end',cb)
-  // .pipe(broswerSync.stream())
+    // .on('end',cb)
+    // .pipe(broswerSync.stream())
 });
-
-gulp.task('sass', function () {
+gulp.task('sass', function() {
   gulp.src('./scss/ionic.app.scss')
     .pipe(sass({
       includePaths: require('node-bourbon').includePaths
     }))
     .on('error', sass.logError)
     // .pipe(autoprefixer({
-    // 	browsers: ['last 2 versions'],
-    // 	cascade: false
+    //  browsers: ['last 2 versions'],
+    //  cascade: false
     // }))
     .pipe(gulp.dest('./www/css/'))
     .pipe(minifyCss({
@@ -257,62 +263,69 @@ gulp.task('sass', function () {
     .pipe(rename({
       extname: '.min.css'
     }))
-    .pipe(gulp.dest('./www/css/'))
-  // .on('end', done);
+    .pipe(gulp.dest('./www/css/'));
+    // .on('end', done);
 });
-
-gulp.task('html', function () {
-        return gulp.src(paths.html)
-          .pipe(print(function (filepath) {
-            return filepath;
-          }))
-          .pipe(strip())
-          .pipe(templateCache({
-            base: function (file) {
-              var filename = file.relative.replace('www/', '');
-              return 'templates/' + filename;
-            },
-            standalone: true,
-            moduleSystem: 'IIFE'
-          }))
-          .pipe(gulp.dest('./www/templates/'))
-
-
-
+gulp.task('html', function() {
+  return gulp.src(paths.html)
+    .pipe(print(function(filepath) {
+      return filepath;
+    }))
+    .pipe(strip())
+    .pipe(templateCache({
+      base: function(file) {
+        var filename = file.relative.replace('www/', '');
+        return 'templates/' + filename;
+      },
+      standalone: true,
+      moduleSystem: 'IIFE'
+    }))
+    .pipe(gulp.dest('./www/templates/'))
 });
-
-
-gulp.task('get-diagnosis-media',function () {
-  var diagnosis_json = JSON.parse(file.readFileSync('diagnosisQJSON.json', 'utf8'));
-  for(var prop in diagnosis_json[0]){
-    for(var media_type in diagnosis_json[0][prop].node.type.content.widgets){
-      if(diagnosis_json[0][prop].node.type.content.widgets.hasOwnProperty(media_type)){
-
-        for(var media_file in diagnosis_json[0][prop].node.type.content.widgets[media_type]){
-          // console.log(diagnosis_json[0][prop].node.type.content.widgets[media_type][media_file])
-          diagnosis_media.push(diagnosis_json[0][prop].node.type.content.widgets[media_type][media_file]);
+gulp.task('get-diagnosis-media', function() {
+  if (env !== environments.dev) {
+    var docs_list = JSON.parse(request('GET', diagnosis_couch_db_server + '/_all_docs').getBody().toString());
+    // console.log("docs list",docs_list)
+    for (var i = 0; i < docs_list.rows.length; i++) {
+      // console.log("Value", docs_list.rows[i].id);
+      var id = docs_list.rows[i].id;
+      var doc = JSON.parse(request('GET', diagnosis_couch_db_server + '/' + id).getBody().toString());
+      // console.log("Doc", doc.question);
+      for (var media_type in doc.question.node.type.content.widgets) {
+        if (doc.question.node.type.content.widgets.hasOwnProperty(media_type)) {
+          for (var media_file in doc.question.node.type.content.widgets[media_type]) {
+            console.log(doc.question.node.type.content.widgets[media_type][media_file])
+            diagnosis_media.push(doc.question.node.type.content.widgets[media_type][media_file]);
+          }
         }
       }
     }
-
   }
-
 });
-
-gulp.task('watch', ['default'], function () {
+gulp.task('makeLocalizationFactory', function() {
+  var localizedAudio = JSON.parse(request('GET', 'http://localization.englishduniya.in/get/json').getBody().toString());
+  gulp.src(paths.localizationFactory.template)
+    .pipe(replace_task({
+      patterns: [{
+        match: 'LOCALIZED_AUDIO',
+        replacement: localizedAudio
+      }]
+    }))
+    .pipe(rename(paths.localizationFactory.destination_filename))
+    .pipe(gulp.dest(paths.localizationFactory.destination));
+});
+gulp.task('watch', ['default'], function() {
   gulp.watch(paths.sass, ['sass']);
   gulp.watch(paths.script, ['scripts']);
   gulp.watch(paths.html, ['html']);
-  gulp.watch();
+  gulp.watch([paths.constants.template, paths.consants.destination_filename, paths.consants.environment], ['default']);
 });
-
 // gulp.task('install', ['git-check'], function() {
 //   return bower.commands.install()
 //     .on('log', function(data) {
 //       gutil.log('bower', gutil.colors.cyan(data.id), data.message);
 //     });
 // });
-
 // gulp.task('git-check', function(done) {
 //   if (!sh.which('git')) {
 //     console.log(

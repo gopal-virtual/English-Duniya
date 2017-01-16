@@ -238,9 +238,9 @@
               hideOnStateChange: true
             })
             if ($stateParams.average_level < 4) {
-              $state.go('map.navigate', {})
+              $state.go('map.navigate', {});
             } else {
-              $state.go('no_content', {})
+              $state.go('no_content', {});
             }
           }
         }]
@@ -270,8 +270,8 @@
           $scope.gender = User.getActiveProfileSync().data.profile.gender == 'M' ? 'boy' : 'girl';
           $scope.localizedContent = localized;
           $scope.language = User.getActiveProfileSync().data.profile.language;
-          $log.debug('litmus start')
-          audio.player.play(localized.audio.litmus.litmus_start[$scope.language]);
+          $log.debug('litmus start');
+          audio.player.play('sound/'+localized.audio.diagnosis.landing.lang[$scope.language]);
         }]
       })
   }

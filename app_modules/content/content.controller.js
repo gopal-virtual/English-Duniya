@@ -21,7 +21,8 @@
     'User',
     '$q',
     'Utilities',
-    '$state'
+    '$state',
+    'localized'
   ];
 
   /* @ngInject */
@@ -41,7 +42,8 @@
     User,
     $q,
     Utilities,
-    $state
+    $state,
+    localized
   ) {
     var contentCtrl = this;
     $scope.audio = audio;
@@ -178,7 +180,7 @@
       }
       orientation.setPortrait();
       submitReport();
-      audio.player.play('sound/yay_we_learned_a_lot_from_video.mp3', function() {
+      audio.player.play('sound/'+localized.audio.Video.LearnedFromVideo.lang[User.getActiveProfileSync().data.profile.language], function() {
         contentCtrl.playStarSound();
       })
       timeout = $timeout(function() {

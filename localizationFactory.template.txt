@@ -3,30 +3,16 @@
   angular
     .module('common')
     .factory('localized', localized);
-  localized.$inject = [
-    '$log',
-    'CONSTANT',
-    '$q',
-    'User',
-    '$http',
-    '$rootScope'
-  ];
   /* @ngInject */
-  function localized(pouchDB,
-    $log,
-    CONSTANT,
-    $q,
-    User,
-    $http,
-    $rootScope
+  function localized(
   ) {
     var localizedText = {
       personalise: {
         'choose_language': {
           'hi': 'हिंदी से अंग्रेजी',
           'en': 'english to english',
-          'ta': 'தமிழ் ஆங்கிலத்திற்கு',
-          'gu': 'ગુજરાતી માંથી ઇંગલિશ શિકાવાનું',
+          'ta': 'ஆங்கிலம் தமிழ்',
+          'gu': 'ઇંગલિશ માટે ગુજરાતી',
         },
         'enter_your_name': {
           'hi': 'आपका नाम क्या है?',
@@ -68,35 +54,7 @@
         }
       }
     };
-    var localizedAudio = {
-      personalise: {
-        'welcome': {
-          'hi': 'sound/welcome_to_ed_write_your_name.mp3',
-
-        },
-         'select_your_language': {
-          'ta': 'ta_tamil-to-english.mp3'
-        },
-        'enter_your_name': {
-          'hi': 'sound/voice_name.mp3',
-        },
-        'select_your_gender': {
-          'hi': 'sound/voice_gender.mp3',
-          'ta': 'sound/ta_boy-or-girl.mp3'
-        },
-        'select_your_class': {
-          'hi': 'sound/voice_class.mp3',
-          'ta': 'sound/ta_select_class.mp3'
-        }
-      },
-      litmus : {
-        'litmus_start': {
-          'hi': 'sound/lets_start_a_small_practice.mp3',
-          'ta': 'sound/ta_litmus-start.mp3',
-          'gu': 'ચાંલ્લો હવે આપડે એક નાનું સ્વાધ્યાય કરશુ!',
-        }
-      }
-    };
+    var localizedAudio = @@LOCALIZED_AUDIO;
     return {
       text: localizedText,
       audio: localizedAudio
