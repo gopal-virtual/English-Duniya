@@ -108,6 +108,8 @@ var lesson_db_version = 'na';
 var diagnosis_media = [];
 var allowed_languages = languages_list;
 var lessonsdb_couch_server = env == environments.production ? 'https://ed-couch.zaya.in/lessonsdb' : 'https://ci-couch.zaya.in/lessonsdb';
+var diagnosis_couch_db_server = env == environments.production ? 'https://ed-couch.zaya.in/diagnosis_translations' : 'https://ci-couch.zaya.in/diagnosis_translations';
+
 //Get app version
 var xml = file.readFileSync('./config.xml');
 var content = cheerio.load(xml, {
@@ -140,13 +142,13 @@ gulp.task('preen', function(cb) {
 });
 console.log('raven key', raven_key[argument.argv.env]);
 gulp.task('make-main', function() {
-  gulp.src(paths.main)
+  gulp.src(paths.main_template)
     .pipe(replace_task({
       patterns: [{
         match: /\/\*raven_release_start\*\/[\'\'\.0-9a-z]+\/\*raven_release_end\*\//g,
         replacement: '/*raven_release_start*/\'' + app_version + '\'/*raven_release_end*/'
       }, {
-        match: /\/\*raven_environment_start\*\/[\'\'\.0-9a-zA-Z]+\/\*raven_environment_end\*\//g,
+        match: /\/\*rtaven_environment_start\*\/[\'\'\.0-9a-zA-Z]+\/\*raven_environment_end\*\//g,
         replacement: '/*raven_environment_start*/\'' + env + '\'/*raven_environment_end*/'
       }, {
         match: /\/\*raven_key_start\*\/'https?:\/\/[:a-zA-Z0-9@.\/']+\/\*raven_key_end\*\//g,
@@ -241,7 +243,7 @@ gulp.task('scripts', function() {
     .pipe(stripDebug())
     .pipe(strip())
     .pipe(concate('mobile.app.js'))
-    .pipe(gulpif(env !== environments.dev && env !== environments.content, uglify()))
+    .pipe(gulpif(env !== environments.dev && env !== environments.content,uglify()))
     .pipe(gulp.dest('www/build'))
     // .on('end',cb)
     // .pipe(broswerSync.stream())
@@ -263,7 +265,7 @@ gulp.task('sass', function() {
     .pipe(rename({
       extname: '.min.css'
     }))
-    .pipe(gulp.dest('./www/css/'));
+    .pipe(gulp.dest('./www/css/'))
     // .on('end', done);
 });
 gulp.task('html', function() {
@@ -285,11 +287,12 @@ gulp.task('html', function() {
 gulp.task('get-diagnosis-media', function() {
   if (env !== environments.dev) {
     var docs_list = JSON.parse(request('GET', diagnosis_couch_db_server + '/_all_docs').getBody().toString());
-    // console.log("docs list",docs_list)
+      // console.log("docs list",docs_list)
     for (var i = 0; i < docs_list.rows.length; i++) {
       // console.log("Value", docs_list.rows[i].id);
       var id = docs_list.rows[i].id;
-      var doc = JSON.parse(request('GET', diagnosis_couch_db_server + '/' + id).getBody().toString());
+      var doc = JSON.parse(request('GET', diagnosis_couch_db_server + '/'+id).getBody().toString());
+
       // console.log("Doc", doc.question);
       for (var media_type in doc.question.node.type.content.widgets) {
         if (doc.question.node.type.content.widgets.hasOwnProperty(media_type)) {
@@ -299,6 +302,7 @@ gulp.task('get-diagnosis-media', function() {
           }
         }
       }
+      // break;
     }
   }
 });

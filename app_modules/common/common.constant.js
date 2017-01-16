@@ -7,12 +7,12 @@
     .constant('CONSTANT', {
       'APP':{
       'TYPE': 'na',
-      'VERSION': '0.2.1'
+      'VERSION': '0.2.2'
       },
       'BUNDLED': false,
       'LOCK': true,
       'FAKE_LOGIN': true,
-      'FAKE_ID_DEVICE': 'test0401',
+      'FAKE_ID_DEVICE': 'kartik-asus',
       'FAKE_DEVICE': true,
       'CONTENT_TEST':false,
       'DEBUG' : true,

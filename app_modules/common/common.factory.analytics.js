@@ -29,6 +29,13 @@
   ) {
 
     var ACTIVITY_TYPE = {
+      "REGISTRATION": {
+        "CONTENT": null,
+        "LANGUAGE": "select language",
+        "NAME": "enter name",
+        "GENDER": "select gender",
+        "GRADE": "select grade",
+      },
       "LESSON": {
         "CONTENT": "lesson",
         "START": "start lesson",
@@ -40,17 +47,35 @@
         "CONTENT": "resource",
         "START": "start video",
         "END": "end video",
-        "SEEK": "seek video"
+        "SEEK": "seek video",
+        "PAUSE" : "pause video",
+        "RESUME" : "resume video",
+        "QUIT" : "quit video",
+        "SWITCH" : "switch from video to map"
       },
       "VOCABULARY": {
         "CONTENT": "vocabulary",
         "START": "start vocabulary",
         "END": "end vocabulary",
+        "PAUSE" : "pause vocabulary",
+        "RESUME" : "resume vocabulary",
+        "QUIT" : "quit vocabulary",
+        "SWITCH" : "switch from vocabulary to map"
+      },
+      "VOCABULARY_CARD": {
+        "CONTENT": "vocabularycard",
+        "START": "start vocabulary card",
+        "PLAY" : "tap to play vocabulary card",
+        "END": "end vocabulary card",
       },
       "PRACTICE": {
         "CONTENT": "assessment",
         "START": "start practice",
-        "END": "end practice"
+        "QUIT" : "quit practice",
+        "PAUSE" : "pause practice",
+        "RESUME" : "resume practice",
+        "END": "end practice",
+        "SWITCH" : "switch from practice to map"
       },
       "QUIZ": {
         "CONTENT": "assessment",
@@ -60,12 +85,64 @@
       "QUESTION": {
         "CONTENT": "jsonquestion",
         "START": "start question",
-        "END": "end question"
+        "END": "end question",
+        "PLAY" : "play audio"
+      },
+      "LITMUS": {
+        "CONTENT": "jsonquestion",
+        "START": "start litmus",
+        "END": "end litmus",
+        "LEVEL": "level assigned",
+        "START_BUTTON_LEVEL": "start button level",
+        "EXIT": "exit litmus",
+        "SUMMARY": "result litmus",
+        "PLAY" : "play audio"
       },
       "APP": {
         "CONTENT": null,
         "START": "start app",
-        "END": "end app"
+        "END": "end app",
+        "EXIT_MODAL_SHOW": "exit modal show",
+        "Exit_MODAL_HIDE": "exit modal hide",
+      },
+      "NOTIFICATION" : {
+        "CONTENT" : null,
+        "RECEIVED" : "received notification",
+        "TAPPED" : "tapped notification"
+      },
+      "STATE":{
+        "CHANGE_START": "stage change start",
+        "CHANGE_COMPLETE": "stage change complete",
+        "CHANGE_ERROR": "stage change error"
+      },
+      "FAILURE":{
+        "LOW_DISK_SPACE": "low disk space"
+      },
+      "PHONENUMBER" : {
+        "TAP_ADD" : "tap phone number add ",
+        "TAP_CHANGE" : "tap phone number change",
+        "OPEN" : "open phone number",
+        "CLOSE" : "close phone number",
+        "NUMBER_SUBMIT" : "submit phone number",
+        "NUMBER_SUCCESS" : "register phone number success",
+        "NUMBER_ERROR" : "register phone number error",
+        "OTP_SUBMIT" : "submit otp",
+        "OTP_RESEND" : "resend otp",
+        "OTP_SUCCESS" : "verify otp success",
+        "OTP_ERROR" : "verify otp error",
+      },
+      "CHOOSEPROFILE" : {
+        "TAP" : "tap choose profile",
+        "OPEN" : "open choose profile",
+        "CLOSE" : "close choose profile",
+        "PROFILE_TAP" : "tap profile card",
+        "SWITCH" : "switch profile",
+        "ADD" : "add profile"
+      },
+      "MAP" : {
+        "PORT_NEXT" : "tap portal next",
+        "PORT_PREV" : "tap portal prev",
+        "REGION" : "on region"
       }
     };
 
@@ -133,7 +210,7 @@
       data["app_version"] = CONSTANT.APP.VERSION;
       data["app_type"] = CONSTANT.APP.TYPE;
       if(location && location.coords){
-      data["location"] = {'latitue':location.coords.latitude,'longitude':location.coords.longitude};        
+      data["location"] = {'latitue':location.coords.latitude,'longitude':location.coords.longitude};
       }
       var post_param = {
         "verb": analytics.activity[action.name][action.type],

@@ -5,10 +5,10 @@
         .module('zaya-user')
         .factory('multiUser', multiUser);
 
-    multiUser.$inject = ['User','$log','$state', 'CONSTANT', '$q', '$ionicLoading', '$rootScope', '$timeout'];
+    multiUser.$inject = ['User','$log','$state', 'CONSTANT', '$q', '$ionicLoading', '$rootScope', '$timeout','analytics'];
 
     /* @ngInject */
-    function multiUser(User, $log, $state, CONSTANT, $q, $ionicLoading, $rootScope, $timeout) {
+    function multiUser(User, $log, $state, CONSTANT, $q, $ionicLoading, $rootScope, $timeout, analytics) {
         var multiUser = {
             getCurrentProfile : getCurrentProfile,
             goToMap : goToMap,
@@ -49,19 +49,33 @@
         }
 
         function canAdd (){
-            return multiUser.profiles && multiUser.profiles.length < 4;
+                return multiUser.profiles && multiUser.profiles.length < 4;
         }
 
         function goToCreateNewProfile (){
                 localStorage.removeItem('currentPosition');
                 localStorage.removeItem('regionPage');
                 localStorage.removeItem('profile');
+                analytics.log({
+                    name : 'CHOOSEPROFILE',
+                    type : 'ADD'
+                },{
+                    time : new Date(),
+                }, multiUser.getCurrentProfile());
                 $state.go('user.personalise', {})
         }
 
         function selectProfile(profile, scope) {
             localStorage.removeItem('currentPosition');
             localStorage.removeItem('regionPage');
+            analytics.log({
+                name : 'CHOOSEPROFILE',
+                type : 'SWITCH'
+            },{
+                time : new Date(),
+                from : multiUser.getCurrentProfile(),
+                to : profile
+            }, multiUser.getCurrentProfile());
             User.profile.select(profile);
             $log.debug('selected profile', profile.id, multiUser.getCurrentProfile())
             if($state.current.name == 'map.navigate'){
@@ -84,9 +98,7 @@
             var levels = 0;
             return User.playlist.get(profile_id).then(function(playlist){
                 angular.forEach(playlist,function(playlist_item,index){
-                    $log.debug('Playlist item : ', playlist_item)
                     angular.forEach(playlist_item, function(resource, resource_id){
-                        $log.debug('Resource id : ', resource_id)
                         if(['dependencyData','lesson_id'].indexOf(resource_id) == -1){
                             var percent = (resource.score / resource.totalScore) * 100;
                             stars += (percent >= CONSTANT.STAR.THREE) ? 3 :
@@ -97,7 +109,7 @@
                     })
                 })
                 profile["stars"] = stars;
-                profile["levels"] = levels + 1;
+                profile["levels"] = levels ? levels : 1;
                 return profile;
             })
         }

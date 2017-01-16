@@ -22,6 +22,7 @@
     vocabCardCtrl.submitReport = submitReport;
     vocabCardCtrl.onVocabComplete = onVocabComplete;
     vocabCardCtrl.playStarSound = playStarSound;
+    vocabCardCtrl.logCard = logCard;
     vocabCardCtrl.enable = false;
     $scope.resultStarFlag = [];
     $scope.goToMap = goToMap;
@@ -33,8 +34,22 @@
     $scope.closePauseMenu = closePauseMenu;
     $scope.closeNodeMenu = closePauseMenu;
     $scope.lessonutils = lessonutils;
+    $scope.analytics_quit_data = {name : 'VOCABULARY', type : 'QUIT', id : $stateParams.vocab_data.node.id};
     $scope.$on('backButton', backButton);
+    $scope.logResume = function(){
+        analytics.log({
+            name: 'VOCABULARY',
+            type: 'RESUME',
+            id: $stateParams.vocab_data.node.id
+          }, {
+            time: new Date()
+          },
+          User.getActiveProfileSync()._id
+        )
+    }
 
+    $scope.resultButtonAnimationFlag = 0;
+    // $scope.resultButtonAnimation = resultButtonAnimation;
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.COMMON + '/common.modal-result' + CONSTANT.VIEW, {
         scope: $scope,
         animation: 'slide-in-down',
@@ -60,6 +75,15 @@
     }
 
     function openPauseMenu() {
+        analytics.log({
+            name: 'VOCABULARY',
+            type: 'PAUSE',
+            id: $stateParams.vocab_data.node.id
+          }, {
+            time: new Date()
+          },
+          User.getActiveProfileSync()._id
+        )
       $scope.pauseMenu.show().then(function(){
           audio.player.play('sound/pause_menu.mp3');
       });
@@ -72,6 +96,15 @@
     }
 
     function goToMap() {
+        analytics.log({
+            name: 'VOCABULARY',
+            type: 'SWITCH',
+            id: $stateParams.vocab_data.node.id
+          }, {
+            time: new Date()
+          },
+          User.getActiveProfileSync()._id
+        )
       $log.debug('going to map.navigate');
       $ionicLoading.show({
         hideOnStateChange: true
@@ -81,16 +114,35 @@
         activatedLesson: $stateParams.vocab_data
       });
     }
-
+    vocabCardCtrl.logCard(0, 'START');
+    function logCard(index, type) {
+      analytics.log({
+          name: 'VOCABULARY_CARD',
+          type: type,
+          id: vocabCardCtrl.vocab_data[index].node.id
+        }, {
+          time: new Date()
+        },
+        User.getActiveProfileSync()._id
+      )
+    }
     function prev() {
       $log.debug('Clicked : Prev')
       vocabCardCtrl.enable = false;
+      if(vocabCardCtrl.currentIndex > 0){
+          vocabCardCtrl.logCard(vocabCardCtrl.currentIndex, 'END');
+          vocabCardCtrl.logCard(vocabCardCtrl.currentIndex - 1, 'START');
+      }
       vocabCardCtrl.currentIndex = (vocabCardCtrl.currentIndex > 0) ? --vocabCardCtrl.currentIndex : vocabCardCtrl.currentIndex;
     }
 
     function next() {
       $log.debug('Clicked : Next')
       vocabCardCtrl.enable = false;
+      if((vocabCardCtrl.currentIndex < vocabCardCtrl.vocab_data.length - 1)){
+          vocabCardCtrl.logCard(vocabCardCtrl.currentIndex, 'END');
+          vocabCardCtrl.logCard(vocabCardCtrl.currentIndex + 1, 'START');
+      }
       vocabCardCtrl.currentIndex = (vocabCardCtrl.currentIndex < vocabCardCtrl.vocab_data.length - 1) ? ++vocabCardCtrl.currentIndex : vocabCardCtrl.currentIndex;
     }
 
@@ -108,7 +160,17 @@
         return soundArrPath;
     }
 
-    function playDelayed(sound) {
+    function playDelayed(sound, userinput, index) {
+        userinput && analytics.log({
+            name: 'VOCABULARY_CARD',
+            type: 'PLAY',
+            id: vocabCardCtrl.vocab_data[index].node.id
+          }, {
+            time: new Date(),
+            file : getLastSound(sound)
+          },
+          User.getActiveProfileSync()._id
+        )
       vocabCardCtrl.enable = false;
       timeout = $timeout(function() {
         vocabCardCtrl.audio.player.chain(0, getLastSound(sound), function(){
@@ -183,6 +245,16 @@
     }
 
     function onVocabComplete() {
+      vocabCardCtrl.logCard(vocabCardCtrl.currentIndex, 'END');
+      analytics.log({
+          name: 'VOCABULARY',
+          type: 'END',
+          id: $stateParams.vocab_data.node.id
+        }, {
+          time: new Date()
+        },
+        User.getActiveProfileSync()._id
+      )
       $scope.summary = {
         stars: 3
       }
@@ -192,20 +264,13 @@
         orientation.setPortrait();
         //   $scope.ribbon_modal.hide();
         $scope.resultPageNextShow = false;
-        $scope.resultMenu.show();
-        analytics.log({
-            name: 'VOCABULARY',
-            type: 'END',
-            id: $stateParams.vocab_data.node.id
-          }, {
-            time: new Date()
-          },
-          User.getActiveProfileSync()._id
-        )
+        $scope.resultMenu.show().then(function(){
+          resultButtonAnimation()
+        });
       })
     }
 
-    playDelayed(vocabCardCtrl.vocab_data[vocabCardCtrl.currentIndex].node.type.sound);
+    playDelayed(vocabCardCtrl.vocab_data[vocabCardCtrl.currentIndex].node.type.sound, false);
 
     $scope.$on('appResume', function(){
         // show pause menu
@@ -222,6 +287,17 @@
         vocabCardCtrl.enable = true;
         $timeout.cancel( timeout );
     })
+
+    function resultButtonAnimation() {
+      $log.debug("ANIMATION. Inside button animation")
+      $timeout(function() {
+        $scope.resultButtonAnimationFlag = 1;
+      },3000).then(function(){
+        $timeout(function(){
+          $scope.resultButtonAnimationFlag = 2;
+        },400)
+      })
+    }
 
   }
 })();

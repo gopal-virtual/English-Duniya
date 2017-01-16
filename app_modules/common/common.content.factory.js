@@ -33,13 +33,13 @@
     // if (User.getActiveProfileSync() && User.getActiveProfileSync().data) {
     var lessonDB = pouchDB('lessonsDB', {
       revs_limit: 1,
-      // auto_compaction : true
+        // auto_compaction : true
     });
     var diagnosisTranslationsDB = pouchDB('diagnosisTranslationsDB', {
       revs_limit: 1,
       // auto_compaction : true
     });
-    createDiagnosisTranslationsDB();
+    // createDiagnosisTranslationsDB();
     // }
     var contentProperties = {
       createLessonDBIfNotExists: createLessonDBIfNotExists,
@@ -62,6 +62,7 @@
       getLocalizedQuestion: getLocalizedQuestion,
       getStatus: getStatus,
       deleteLessonDB: deleteLessonDB,
+      createDependentDBs: createDependentDBs,
       demo_question: {
         "node": {
           "id": CONSTANT.QUESTION.DEMO,
@@ -128,7 +129,18 @@
     return contentProperties;
 
     function deleteLessonDB() {
+      $log.debug("tag deletelessondb")
       return lessonDB.erase();
+    }
+
+    function createDiagnosisTranslationsDB() {
+      return diagnosisTranslationsDB.load(CONSTANT.PATH.DATA + '/diagnosis_translations.db');
+    }
+
+    function createDependentDBs() {
+      var createLessonsDB = createOrUpdateLessonDB();
+      var createtranslationsDB = createDiagnosisTranslationsDB()
+      return $q.all(createLessonsDB, createtranslationsDB);
     }
 
     function replicateLessonDB() {
@@ -141,6 +153,9 @@
           }).$promise
           .then(null, null, function(progress) {
             $log.debug('lessondb replication status', progress);
+            if(progress.paused && (progress.paused.name === 'indexed_db_went_bad' || progress.paused.name == "InvalidStateError" || progress.paused.reason === "QuotaExceededError")){
+               $rootScope.$broadcast('lowDiskSpace')
+            }
           })
           .then(function(result) {
             $log.debug('lessondb replication resolved with', result);
@@ -156,19 +171,22 @@
 
     function getLocalizedNode(nodeId, targetLanguage) {
       return lessonDB.get('localized_mapping').then(function(localizationMapping) {
-        return localizationMapping.mapping[nodeId][targetLanguage];
+        return (localizationMapping.mapping[nodeId] && localizationMapping.mapping[nodeId][targetLanguage]) || nodeId;
       });
     }
 
     function getLocalizedQuestion(questionId, targetLanguage) {
       return lessonDB.get('localized_mapping').then(function(localizationMapping) {
-        var translatedQuestionID = localizationMapping.mapping[questionId][targetLanguage]
-         return diagnosisTranslationsDB.get(translatedQuestionID).then(function(question) {
-          $log.debug("localizedQuestion",question);
-        return question.question;
-      });
+        if(localizationMapping.mapping[questionId]){
+        var translatedQuestionID = localizationMapping.mapping[questionId][targetLanguage];
+           return diagnosisTranslationsDB.get(translatedQuestionID).then(function(question) {
+          return question.question;
+        });
+         }else{
+          return questionId;
+         }
+       
       })
-     
     }
 
     function findNewMediaToDownload() {
@@ -320,16 +338,8 @@
         // });
       $log.debug("NEW DB MADE 1");
       return lessonDB.load(CONSTANT.PATH.DATA + '/lessons.db', {
-          proxy: CONSTANT.LESSONS_DB_SERVER
-        })
-        .then(function() {
-          return replicateLessonDB()
-        })
-    }
-
-    function createDiagnosisTranslationsDB() {
-      $log.debug("createDiagnosisTranslationsDB")
-      return diagnosisTranslationsDB.load(CONSTANT.PATH.DATA + '/diagnosis_translations.db', {})
+        // proxy: CONSTANT.LESSONS_DB_SERVER
+      })
     }
 
     function createLessonDBIfNotExistsPatch() {
@@ -395,43 +405,56 @@
             var lessons = [];
             var resources = [];
             var playlist_ids = [];
+
             for (i = 0; i < playlist.length; i++) {
+              $log.debug("making playlist ids");
               playlist_ids.push(playlist[i].lesson_id);
             }
+            $log.debug("done making playlist ids"+JSON.stringify(playlist_ids));
             for (i = 0; i < data.rows.length; i++) {
+            $log.debug("making lessonlist");
+
               var index = -1;
               while ((index = playlist_ids.indexOf(data.rows[i].id, index + 1)) != -1) {
+            $log.debug("making lessonlist 1");
+
                 lessons[index] = data.rows[i];
+                lessons[index]['parentHindiLessonId'] = playlist[index]['suggestedLesson']
               }
             }
+
             // if(playlist.indexOf(data.rows[i].id) >= 0){
             //     lessons[playlist.indexOf(data.rows[i].id)] = data.rows[i]
             //   }
+            $log.debug("Modifying lessons list")
             for (i = 0; i < lessons.length; i++) {
+            $log.debug("Modifying lessons list 1")
+
               // data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key;
               for (var c = 0; c < lessons[i].doc.lesson.objects.length; c++) {
+            $log.debug("Modifying lessons list 2")
+
                 if (lessons[i].doc.lesson.node.meta && lessons[i].doc.lesson.node.meta.intros && lessons[i].doc.lesson.node.meta.intros.sound && lessons[i].doc.lesson.node.meta.intros.sound[0]) {
                   lessons[i].doc.lesson.objects[c].node.intro_sound = lessons[i].doc.lesson.node.meta.intros.sound[0];
                 }
                 lessons[i].doc.lesson.objects[c].node.tag = lessons[i].doc.lesson.node.tag;
                 lessons[i].doc.lesson.objects[c].node.playlist_index = i;
+                $log.debug("parent hindi lesson is " + lessons[i]['parentHindiLessonId'])
+                lessons[i].doc.lesson.objects[c].node.parentHindiLessonId = lessons[i]['parentHindiLessonId'];
               }
               // for(var c = 0; c < lessons[i].doc.lesson.objects.length; c++){
               // $log.debug("Iter ",lessons[i].doc.lesson.objects[c].node.playlist_index )
               // }
+
               var include_video_flag = true;
               var include_vocab_flag = true;
               $log.debug("pre", playlist.length);
               angular.forEach(CONSTANT.NODE_TYPE_LIST, function(node_type) {
                 for (var c = 0; c < lessons[i].doc.lesson.objects.length; c++) {
-                  $log.debug("pre playlist", playlist[i])
                   if (node_type == 'vocabulary' && lessons[i].doc.lesson.objects[c].node.content_type_name === 'vocabulary') {
-                    $log.debug("pre vocab found")
                     for (var key in playlist[i]) {
                       if (playlist[i].hasOwnProperty(key)) {
-                        $log.debug("Previously attempted ", playlist[i][key].type, key)
                         if (playlist[i][key].type === 'resource') {
-                          $log.debug("previusly attempted Video found ");
                           include_vocab_flag = false;
                         }
                       }
@@ -453,6 +476,7 @@
             if (resources.length) {
               resources[resources.length - 1].node.requiresSuggestion = true;
             }
+            $log.debug("Resource list resolving"+$log.debug(resources));
             d.resolve(resources)
           });
           // $log.debug("data",data)
@@ -472,9 +496,7 @@
       var d = $q.defer();
       var promises = [];
       for (var index = 0; index < quiz.objects.length; index++) {
-
         if (quiz.objects[index].node.meta && quiz.objects[index].node.meta.instructions && quiz.objects[index].node.meta.instructions.sounds[0] && localStorage.getItem(quiz.objects[index].node.meta.instructions.sounds[0]) != 'played') {
-
           localStorage.setItem(quiz.objects[index].node.meta.instructions.sounds[0], 'played');
           promises.push(mediaManager.getPath(quiz.objects[index].node.meta.instructions.sounds[0]).then(
             function(index) {
@@ -483,11 +505,10 @@
               }
             }(index)
           ))
-  }
+        }
         promises.push(widgetParser.parseToDisplay(quiz.objects[index].node.title, index, quiz).then(
           function(index) {
-        $log.debug("play resource here");
-
+            $log.debug("play resource here");
             return function(result) {
               quiz.objects[index].node.widgetHtml = result;
             }
@@ -524,7 +545,7 @@
         }
       }
       $q.all(promises).then(function() {
-        $log.debug("play resource respoving assessment",quiz);
+        $log.debug("play resource respoving assessment", quiz);
         d.resolve(quiz)
       });
       return d.promise;

@@ -47,6 +47,7 @@
   ) {
     var contentCtrl = this;
     $scope.audio = audio;
+    $scope.video_id = $stateParams.video.id;
     $scope.orientation = orientation;
     contentCtrl.onPlayerReady = onPlayerReady;
     contentCtrl.onStateChange = onStateChange;
@@ -62,6 +63,19 @@
     $scope.goToMap = goToMap;
     contentCtrl.playStarSound = playStarSound;
     contentCtrl.videoCompleted = false;
+    $scope.analytics_quit_data = {name : 'VIDEO', type : 'QUIT', id : $stateParams.video.id};
+    $scope.logResume = function(){
+        analytics.log({
+            name: 'VIDEO',
+            type: 'RESUME',
+            id: $stateParams.video.id
+          }, {
+            time: new Date()
+          },
+          User.getActiveProfileSync()._id
+        )
+    }
+
     var timeout = '';
     $log.debug('$stateParams', $stateParams)
     contentCtrl.config = {
@@ -143,6 +157,15 @@
     $log.debug('video object', $stateParams.video.resource)
 
     function goToMap() {
+        analytics.log({
+            name: 'VIDEO',
+            type: 'SWITCH',
+            id: $stateParams.video.id
+          }, {
+            time: new Date()
+          },
+          User.getActiveProfileSync()._id
+        )
       $ionicLoading.show({
         hideOnStateChange: true
       });
@@ -186,7 +209,10 @@
       timeout = $timeout(function() {
         $scope.resultPageNextShow = false;
         $scope.ribbon_modal.hide();
-        !$scope.resultMenu.isShown() && $scope.resultMenu.show();
+        !$scope.resultMenu.isShown() && $scope.resultMenu.show().then(function(){
+          $log.debug('ANIMATION. result menu was open');
+          resultButtonAnimation();
+        });
         analytics.log({
             name: 'VIDEO',
             type: 'END',
@@ -303,6 +329,15 @@
     }
 
     $scope.openNodeMenu = function() {
+        analytics.log({
+            name: 'VIDEO',
+            type: 'PAUSE',
+            id: $stateParams.video.id
+          }, {
+            time: new Date()
+          },
+          User.getActiveProfileSync()._id
+        )
       if (contentCtrl.API.currentState == 'pause') {
         // orientation.setPortrait()        ;
         $scope.nodeMenu.show().then(function() {
@@ -327,7 +362,10 @@
     $scope.openResult = function() {
       if (contentCtrl.API.currentState == 'pause') {
         orientation.setPortrait();
-        $scope.resultMenu.show();
+        $scope.resultMenu.show().then(function(){
+          $log.debug('ANIMATION. result menu was open');
+          resultButtonAnimation();
+        });
       }
       return true;
     }
@@ -361,6 +399,16 @@
         $timeout.cancel(timeout);
       })
 
+    function resultButtonAnimation() {
+      $log.debug("ANIMATION. Inside button animation")
+      $timeout(function() {
+        $scope.resultButtonAnimationFlag = 1;
+      },3000).then(function(){
+        $timeout(function(){
+          $scope.resultButtonAnimationFlag = 2;
+        },400)
+      })
+    }
 
   }
 

@@ -23,7 +23,8 @@
     'audio',
     'notification',
     '$stateParams',
-    'localized'
+    'localized',
+    'analytics'
   ];
 
   function userController(CONSTANT,
@@ -45,7 +46,8 @@
     audio,
     notification,
     $stateParams,
-    localized) {
+    localized,
+    analytics) {
     var userCtrl = this;
     userCtrl.calcAge = calcAge;
     userCtrl.closeKeyboard = closeKeyboard;
@@ -56,6 +58,7 @@
     userCtrl.tabIndex = 0;
     userCtrl.CONSTANT = CONSTANT;
     userCtrl.localizedContent = localized;
+    userCtrl.analytics  = analytics;
     userCtrl.personaliseFormValidations = {
       // 'gender': ['required'],
       // 'firstName': ['required'],
@@ -106,6 +109,7 @@
         userCtrl.profiles = data;
       });
     }
+
 
     function playAudio(index) {
       var src;
@@ -188,6 +192,7 @@
           $log.debug("CREATING USER");
           localStorage.setItem('demo_flag', 1);
           localStorage.setItem('diagnosis_flag', false);
+          
           $state.go('litmus_start');
           // $state.go('quiz.questions', {'type':'litmus','id':'litmus_question'});
           $log.debug("CHECK 4")

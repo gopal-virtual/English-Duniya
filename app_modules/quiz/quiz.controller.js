@@ -147,9 +147,13 @@
     $scope.userGender = User.getActiveProfileSync().data.profile.gender;
     $scope.selectedNode = lessonutils.getLocalLesson();
     $scope.modal = {};
+    $scope.logResume = logResume;
     $scope.resultStarFlag = [];
     quizCtrl.closeModalCallback = closeModalCallback;
+    $scope.analytics_quit_data = {name : 'PRACTICE', type : 'QUIT', id : quizCtrl.quiz.node.id};
     $scope.groups = [];
+    $scope.resultButtonAnimationFlag = 0;
+    $scope.quizResultButtonAnimation = quizResultButtonAnimation;
     for (var i = 0; i < 10; i++) {
       $scope.groups[i] = {
         name: i,
@@ -160,6 +164,17 @@
       }
     }
 
+    function logResume(){
+        analytics.log({
+                name: 'PRACTICE',
+                type: 'RESUME',
+                id: quizCtrl.quiz.node.id
+            }, {
+                time: new Date()
+            },
+            User.getActiveProfileSync()._id
+        )
+    }
     function isScroll(id) {}
 
     function redo() {
@@ -576,6 +591,16 @@
     }
 
     function playAudio(key, index) {
+        key && analytics.log({
+              name: 'QUESTION',
+              type: 'PLAY',
+              id: quizCtrl.quiz.objects[index].node.id
+            }, {
+              time: new Date(),
+              file : key
+            },
+            User.getActiveProfileSync()._id
+          )
       if (key) {
         audio.player.play(key)
       }
@@ -648,9 +673,9 @@
       if (quizType === 'practice') {
         $scope.modal.hide().then(function() {
           analytics.log({
-                name: 'PRACTICE',
+                name: $stateParams.type == 'litmus' ? 'LITMUS':'PRACTICE',
                 type: 'END',
-                id: quizCtrl.quiz.node.type.id
+                id: quizCtrl.quiz.node.id
               }, {
                 time: new Date()
               },
@@ -703,10 +728,7 @@
 
     function endQuiz() {
       // $log.debug("End quiz called");
-      $ionicLoading.show({
-        noBackdrop: false,
-        hideOnStateChange: true
-      });
+     
       if ($stateParams.type == 'litmus') {
         var levelRec = ml.getLevelRecommendation();
         $log.debug('levelRec', levelRec);
@@ -755,6 +777,15 @@
     //     }
     // }, 101);
     $scope.showNodeMenu = function() {
+        $stateParams.type == 'practice' && analytics.log({
+            name: 'PRACTICE',
+            type: 'PAUSE',
+            id: quizCtrl.quiz.node.id
+          }, {
+            time: new Date()
+          },
+          User.getActiveProfileSync()._id
+        )
       quizCtrl.pauseModal.show().then(function() {
         audio.player.play('sound/pause_menu.mp3');
       });
@@ -817,6 +848,15 @@
           name: 'LESSON',
           type: 'END',
           id: $scope.selectedNode.node.id
+        }, {
+          time: new Date()
+        },
+        User.getActiveProfileSync()._id
+      )
+      $stateParams.type == 'practice' && analytics.log({
+          name: 'PRACTICE',
+          type: 'SWITCH',
+          id: quizCtrl.quiz.node.id
         }, {
           time: new Date()
         },
@@ -885,21 +925,25 @@
     }
 
     function logQuestion(index, type) {
+      var activityName = 'QUESTION';
+      if($stateParams.type === 'litmus'){
+        activityName = 'LITMUS';
+      }
       analytics.log({
-          name: 'QUESTION',
+          name: activityName,
           type: type,
           id: quizCtrl.quiz.objects[index].node.id
         }, {
           time: new Date()
         },
         User.getActiveProfileSync()._id
-      )
+      );
     }
 
     function intro_end_quiz() {
       $log.debug("Inside onended event");
       // $log.debug("removed event listener quiz",$state);
-      angular.element("#audioplayer")[0].onended = null
+      angular.element("#audioplayer")[0].onended = null;
       if ($state.current.name == 'quiz.questions') {
         $scope.nodeRibbonFlag = false;
         // $scope.nodeRibbon.hide().then(function(){
@@ -967,7 +1011,7 @@
       }
     });
     $scope.$on('appResume', function() {
-      if ($state.current.name != 'quiz.summary' && !$scope.nodeRibbon.isShown()) {
+      if ($stateParams.type == 'practice' && $state.current.name != 'quiz.summary' && !$scope.nodeRibbon.isShown()) {
         $scope.closeModal();
         $scope.showNodeMenu();
       } else if ($scope.nodeRibbon.isShown()) {
@@ -979,5 +1023,15 @@
       audio.player.stop();
       $timeout.cancel(timeout);
     })
+
+    function quizResultButtonAnimation() {
+      $timeout(function() {
+        $scope.resultButtonAnimationFlag = 1;
+      },3000).then(function(){
+        $timeout(function(){
+          $scope.resultButtonAnimationFlag = 2;
+        },400)
+      })
+    }
   }
 })();
