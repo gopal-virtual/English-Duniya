@@ -81,6 +81,7 @@ var raven_key = {
 };
 var env = argument.argv.env ? environments[argument.argv.env] : environments.default;
 var app_type = argument.argv.app_type ? argument.argv.app_type : 'na';
+var app_source = argument.argv.app_source ? argument.argv.app_source : 'playstore';
 var is_bundled = argument.argv.is_bundled ? argument.argv.is_bundled : false;
 var app_version = 'na';
 var constants = JSON.parse(file.readFileSync(paths.constants.environment, 'utf8'));
@@ -100,7 +101,7 @@ console.log("VERSION", app_version);
 console.log("envi", raven_key[argument.argv.env])
 gulp.task('default', function(callback) {
   // runSequence('generate-lessondb','get-diagnosis-media','make-main','generate-constants', 'sass', 'html', 'scripts',callback);
-  runSequence('generate-lessondb','get-diagnosis-media', 'make-main', 'generate-constants', 'sass', 'html', 'scripts', callback);
+  runSequence('generate-lessondb', 'get-diagnosis-media', 'make-main', 'generate-constants', 'sass', 'html', 'scripts', callback);
 });
 gulp.task('generate-lessondb', shell.task(
   (env !== environments.dev) ? [
@@ -206,6 +207,9 @@ gulp.task('generate-constants', function() {
       }, {
         match: 'NOTIFICATION_DB_SERVER',
         replacement: constants[env]['NOTIFICATION_DB_SERVER']
+      }, {
+        match: 'APP_SOURCE',
+        replacement: app_source
       }]
     }))
     .pipe(rename(paths.constants.destination_filename))
@@ -220,7 +224,7 @@ gulp.task('scripts', function() {
     .pipe(stripDebug())
     .pipe(strip())
     .pipe(concate('mobile.app.js'))
-    .pipe(gulpif(env !== environments.dev && env !== environments.content,uglify()))
+    .pipe(gulpif(env !== environments.dev && env !== environments.content, uglify()))
     .pipe(gulp.dest('www/build'))
     // .on('end',cb)
     // .pipe(broswerSync.stream())
@@ -264,12 +268,11 @@ gulp.task('html', function() {
 gulp.task('get-diagnosis-media', function() {
   if (env !== environments.dev) {
     var docs_list = JSON.parse(request('GET', diagnosis_couch_db_server + '/_all_docs').getBody().toString());
-      // console.log("docs list",docs_list)
+    // console.log("docs list",docs_list)
     for (var i = 0; i < docs_list.rows.length; i++) {
       // console.log("Value", docs_list.rows[i].id);
       var id = docs_list.rows[i].id;
-      var doc = JSON.parse(request('GET', diagnosis_couch_db_server + '/'+id).getBody().toString());
-
+      var doc = JSON.parse(request('GET', diagnosis_couch_db_server + '/' + id).getBody().toString());
       // console.log("Doc", doc.question);
       for (var media_type in doc.question.node.type.content.widgets) {
         if (doc.question.node.type.content.widgets.hasOwnProperty(media_type)) {
