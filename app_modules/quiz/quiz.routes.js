@@ -275,7 +275,7 @@
           $scope.localizedContent = localized;
           $scope.language = User.getActiveProfileSync().data.profile.language;
           $log.debug('litmus start');
-          audio.player.play('sound/'+localized.audio.diagnosis.landing.lang[$scope.language]);
+          audio.player.play(CONSTANT.PATH.LOCALIZED_AUDIO+localized.audio.diagnosis.landing.lang[$scope.language]);
         }]
       })
   }

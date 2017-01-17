@@ -318,11 +318,18 @@ gulp.task('makeLocalizationFactory', function() {
     .pipe(rename(paths.localizationFactory.destination_filename))
     .pipe(gulp.dest(paths.localizationFactory.destination));
 });
+gulp.task('downloadLocalizedAudio', shell.task(
+  (env !== environments.dev) ? [
+    'rm www/sound/localized/*',
+    'wget -O localizedSounds.zip http://localization.englishduniya.in/download',
+    'unzip localizedSounds.zip -d www/sound/localized'
+  ] : []
+));
 gulp.task('watch', ['default'], function() {
   gulp.watch(paths.sass, ['sass']);
   gulp.watch(paths.script, ['scripts']);
   gulp.watch(paths.html, ['html']);
-  gulp.watch([paths.constants.template, paths.consants.destination_filename, paths.consants.environment], ['default']);
+  // gulp.watch([paths.constants.template, paths.consants.destination_filename, paths.consants.environment], ['default']);
 });
 // gulp.task('install', ['git-check'], function() {
 //   return bower.commands.install()

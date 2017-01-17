@@ -254,10 +254,10 @@
           time: new Date()
         },
         User.getActiveProfileSync()._id
-      )
+      ),
       $scope.summary = {
         stars: 3
-      }
+      },
       vocabCardCtrl.playStarSound();
       submitReport()
       timeout = $timeout(function() {

@@ -203,7 +203,7 @@
       }
       orientation.setPortrait();
       submitReport();
-      audio.player.play('sound/'+localized.audio.Video.LearnedFromVideo.lang[User.getActiveProfileSync().data.profile.language], function() {
+      audio.player.play(CONSTANT.PATH.LOCALIZED_AUDIO+localized.audio.Video.LearnedFromVideo.lang[User.getActiveProfileSync().data.profile.language], function() {
         contentCtrl.playStarSound();
       })
       timeout = $timeout(function() {
