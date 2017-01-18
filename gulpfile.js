@@ -120,7 +120,7 @@ console.log("VERSION", app_version);
 console.log("envi", raven_key[argument.argv.env])
 gulp.task('default', function(callback) {
   // runSequence('generate-lessondb','get-diagnosis-media','make-main','generate-constants', 'sass', 'html', 'scripts',callback);
-  runSequence('generate-lessondb', 'get-diagnosis-media', 'make-main', 'generate-constants', 'sass', 'html', 'scripts', callback);
+  runSequence('makeLocalizationFactory','generate-lessondb', 'get-diagnosis-media', 'make-main', 'generate-constants', 'sass', 'html', 'scripts', callback);
 });
 gulp.task('generate-lessondb', shell.task(
   (env !== environments.dev) ? [
@@ -308,11 +308,16 @@ gulp.task('get-diagnosis-media', function() {
 });
 gulp.task('makeLocalizationFactory', function() {
   var localizedAudio = JSON.parse(request('GET', 'http://localization.englishduniya.in/get/json').getBody().toString());
+  var localizedText = JSON.parse(request('GET', 'http://localization.englishduniya.in/get/textjson').getBody().toString());
+ 
   gulp.src(paths.localizationFactory.template)
     .pipe(replace_task({
       patterns: [{
         match: 'LOCALIZED_AUDIO',
         replacement: localizedAudio
+      },{
+        match: 'LOCALIZED_TEXT',
+        replacement: localizedText
       }]
     }))
     .pipe(rename(paths.localizationFactory.destination_filename))

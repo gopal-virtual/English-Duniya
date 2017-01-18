@@ -49,7 +49,7 @@
         <ion-scroll scrollbar-x="false" scrollbar-y="false" direction="y" style="height:38vh;" >
         <div style="margin:2vw;" ng-repeat="lang in userCtrl.CONSTANT.LANGUAGES" on-tap="audio.play('click');" ng-click="userCtrl.user.language = lang.code;userCtrl.audioPlayer.play('sound/localized/'+userCtrl.localizedContent.audio.registration.SelectLanguage.lang[lang.code])" ng-class="{'selected':userCtrl.user.language == lang.code}" class="center language-card lcard center bg-white card-radius">
             <div class="lcard-inner padding-10 option">
-                {{userCtrl.localizedContent.text.personalise.choose_language[lang.code]}}
+                {{userCtrl.localizedContent.text.registration.Language.lang[lang.code]}}
             </div>
         </div>
         </ion-scroll>
@@ -78,7 +78,7 @@
     </center>
 </div> -->
 <div class="name-avatar">
-    <h2 style="top:25vh" class="center full-width absolute personalize-title">{{userCtrl.localizedContent.text.personalise.enter_your_name[userCtrl.user.language]}}</h2>
+    <h2 style="top:25vh" class="center full-width absolute personalize-title">{{userCtrl.localizedContent.text.registration.Name.lang[userCtrl.user.language]}}</h2>
     <div style="top:34vh"  ng-init="userCtrl.user.name=''" class="full-width absolute">
         <div class="col font-md personalize-input" style="">{{userCtrl.user.name}}</div>
     </div>
@@ -93,7 +93,7 @@
 <ion-slide>
 <div>
     <div style="top:7vh;" class="full-width absolute">
-        <h2 style="line-height: 1" class="center personalize-title">{{userCtrl.localizedContent.text.personalise.boyorgirl[userCtrl.user.language]}}</h2>
+        <h2 style="line-height: 1" class="center personalize-title">{{userCtrl.localizedContent.text.registration.Gender.lang[userCtrl.user.language]}}</h2>
     </div>
     <div style="top: 16vh;" class="full-width absolute">
         <div class="flex">
@@ -150,7 +150,7 @@
         <img style="height:26vh" ng-src="{{userCtrl.user.gender == 'M'?'img/assets/upperbody-boy.png':'img/assets/upperbody-girl.png'}}" alt="">
     </div>
     <div style="top:32vh" class="full-width absolute">
-        <h2 style="margin-top:0px;line-height: 1;margin:0px;" class="center personalize-title">{{userCtrl.localizedContent.text.personalise.select_your_class[userCtrl.user.language]}}</h2>
+        <h2 style="margin-top:0px;line-height: 1;margin:0px;" class="center personalize-title">{{userCtrl.localizedContent.text.registration.Class.lang[userCtrl.user.language]}}</h2>
     </div>
     <div style="top:37vh" class="full-width absolute padding-x-10">
         <!-- <div class="radio-box-container-inner clearfix">

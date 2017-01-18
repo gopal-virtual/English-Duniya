@@ -260,9 +260,9 @@
           $scope.redirect = function() {
             $ionicLoading.show({
               hideOnStateChange: true
-            })
-            $state.go('map.navigate', {})
-          }
+            });
+            $state.go('map.navigate', {});
+          };
         }]
       })
       .state('litmus_start', {
@@ -277,6 +277,6 @@
           $log.debug('litmus start');
           audio.player.play(CONSTANT.PATH.LOCALIZED_AUDIO+localized.audio.diagnosis.landing.lang[$scope.language]);
         }]
-      })
+      });
   }
 })();

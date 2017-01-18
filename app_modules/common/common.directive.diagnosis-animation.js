@@ -280,7 +280,7 @@
         } else if (scope.level <= 8) {
           audioName = 'level8'
         } else {}
-          audio.player.play(CONSTANT.PATH.LOCALIZED_AUDIO+localized.audio.diagnosis[audioName].lang[User.getProfileSync().data.profile.language])
+          audio.player.play(CONSTANT.PATH.LOCALIZED_AUDIO+localized.audio.diagnosis[audioName].lang[User.getActiveProfileSync().data.profile.language])
       }
     }
   }

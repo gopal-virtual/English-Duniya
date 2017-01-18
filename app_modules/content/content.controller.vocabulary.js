@@ -235,7 +235,7 @@
             $scope.resultStarFlag[count] = true;
             $log.debug("sound source", starSound, count, starSound[count]);
             $log.debug("count,star,count==star-1",count,star,count == star-1);
-            audio.player.play("sound/" + starSound[count] + ".mp3");
+            audio.player.play("sound/duScrollSpyWait" + starSound[count] + ".mp3");
             if(count == star-1){
               $scope.resultPageNextShow = true;
             }

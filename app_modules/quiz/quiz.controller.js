@@ -789,7 +789,7 @@
           User.getActiveProfileSync()._id
         )
       quizCtrl.pauseModal.show().then(function() {
-        audio.player.play('sound/'+localized.audio.app.ExitResource.lang[User.getActiveProfileSync().data.profile.language]);
+        audio.player.play(CONSTANT.PATH.LOCALIZED_AUDIO+localized.audio.app.ExitResource.lang[User.getActiveProfileSync().data.profile.language]);
       });
     }
     $scope.closeNodeMenu = function() {

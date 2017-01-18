@@ -372,6 +372,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                 // game.add.tween(demoFinger).to({x: [0.5*game.camera.width,0.5*game.camera.width], y: [0.6*game.camera.height,0.5*game.camera.height] }, 1000, Phaser.Easing.Back.Out, true).loop(true);
                 // game.add.tween(demoFinger).to({angle: "270", x: [0.5*game.camera.width,0.8*game.camera.width], y: [0.6*game.camera.height,0.5*game.camera.height] }, 1000, Phaser.Easing.Linear.None, true).loop(true);
                 //log.debug("SOUND",audio)
+                log.debug("demoAudio",demoAudio);
                 audio.player.play(demoAudio)
             }
 
