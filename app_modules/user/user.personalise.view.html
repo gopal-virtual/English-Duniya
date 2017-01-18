@@ -47,10 +47,9 @@
     <h2 style="top:25vh" class="center full-width absolute personalize-title">Choose Language </h2>
     <div style="top:38vh;display: flex;flex-wrap: wrap; justify-content: center;" class="center full-width absolute ">
         <ion-scroll scrollbar-x="false" scrollbar-y="false" direction="y" style="height:38vh;" >
-        <div style="margin:2vw;" ng-repeat="lang in userCtrl.CONSTANT.LANGUAGES" on-tap="audio.play('click');" ng-click="userCtrl.user.language = lang.code;userCtrl.audioPlayer.play('sound/'+userCtrl.localizedContent.audio.registration.SelectLanguage.lang[lang.code])" ng-class="{'selected':userCtrl.user.language == lang.code}" class="center language-card lcard center bg-white card-radius">
+        <div style="margin:2vw;" ng-repeat="lang in userCtrl.CONSTANT.LANGUAGES" on-tap="audio.play('click');" ng-click="userCtrl.user.language = lang.code;userCtrl.audioPlayer.play('sound/localized/'+userCtrl.localizedContent.audio.registration.SelectLanguage.lang[lang.code])" ng-class="{'selected':userCtrl.user.language == lang.code}" class="center language-card lcard center bg-white card-radius">
             <div class="lcard-inner padding-10 option">
                 {{userCtrl.localizedContent.text.personalise.choose_language[lang.code]}}
-   
             </div>
         </div>
         </ion-scroll>

@@ -30,7 +30,8 @@
     'nzTour',
     'analytics',
     'User',
-    'content'
+    'content',
+    'localized'
   ];
 
   function QuizController(
@@ -60,7 +61,8 @@
     nzTour,
     analytics,
     User,
-    content
+    content,
+    localized
   ) {
     var quizCtrl = this;
     //bind quiz resolved to controller
@@ -787,7 +789,7 @@
           User.getActiveProfileSync()._id
         )
       quizCtrl.pauseModal.show().then(function() {
-        audio.player.play('sound/pause_menu.mp3');
+        audio.player.play('sound/'+localized.audio.app.ExitResource.lang[User.getActiveProfileSync().data.profile.language]);
       });
     }
     $scope.closeNodeMenu = function() {

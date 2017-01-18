@@ -125,8 +125,9 @@
       if (index == 3) {
         src = userCtrl.localizedContent.audio.registration.SelectClass.lang[userCtrl.user.language];
       }
+        $log.debug("playaudio",index,src);
       if (src) {
-        audio.player.play('sound/' + src);
+        audio.player.play('sound/localized/' + src);
       } else {
         audio.player.stop();
       }

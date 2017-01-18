@@ -85,7 +85,7 @@
           User.getActiveProfileSync()._id
         )
       $scope.pauseMenu.show().then(function(){
-          audio.player.play('sound/pause_menu.mp3');
+        audio.player.play('sound/'+localized.audio.app.ExitResource.lang[User.getActiveProfileSync().data.profile.language]);
       });
     }
 

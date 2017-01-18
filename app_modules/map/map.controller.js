@@ -899,6 +899,7 @@
       if (User.demo.isShown() && User.demo.getStep() == '1') {
         $timeout(function() {
           $scope.demo.show().then(function() {
+            $log.debug("playdemoaudio",CONSTANT.PATH.LOCALIZED_AUDIO+ localized.audio.demo.startEnglish.lang[User.getActiveProfileSync().data.profile.language])
             audio.player.play(CONSTANT.PATH.LOCALIZED_AUDIO+ localized.audio.demo.startEnglish.lang[User.getActiveProfileSync().data.profile.language]);
             User.demo.setStep(2)
           });
