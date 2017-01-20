@@ -268,13 +268,20 @@
       .state('litmus_start', {
         url: '/litmus_start',
         templateUrl: CONSTANT.PATH.QUIZ + '/quiz.litmus_start' + CONSTANT.VIEW,
-        controller: ['$log', 'User', '$scope', 'audio', 'localized','analytics', function($log, User, $scope, audio, localized,analytics) {
+        controller: ['$log', 'User', '$scope', 'audio', 'localized','analytics','$state', function($log, User, $scope, audio, localized,analytics,$state) {
           $scope.audio = audio;
           $scope.name = User.getActiveProfileSync().data.profile.first_name;
           $scope.gender = User.getActiveProfileSync().data.profile.gender == 'M' ? 'boy' : 'girl';
           $scope.localizedContent = localized;
           $scope.language = User.getActiveProfileSync().data.profile.language;
           $log.debug('litmus start');
+          $scope.gotoLitmus = function(){
+            $log.debug("inside go to litmus")
+            audio.player.stop()
+            $state.go('quiz.questions',{'type':'litmus','id':'litmus_question'})
+
+            // ui-sref="quiz.questions()"
+          }
           audio.player.play(CONSTANT.PATH.LOCALIZED_AUDIO+localized.audio.diagnosis.landing.lang[$scope.language]);
         }]
       });

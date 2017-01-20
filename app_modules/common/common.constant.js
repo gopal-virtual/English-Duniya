@@ -6,19 +6,19 @@
     .module('common')
     .constant('CONSTANT', {
       'APP':{
-      'TYPE': 'na',
+      'TYPE': 'Non-Bundled',
       'VERSION': '0.2.2'
       },
       'BUNDLED': false,
       'LOCK': true,
-      'FAKE_LOGIN': true,
-      'FAKE_ID_DEVICE': 'kartik-asus',
-      'FAKE_DEVICE': true,
-      'CONTENT_TEST':false,
+      'FAKE_LOGIN': false,
+      'FAKE_ID_DEVICE': 'content_test_tamil',
+      'FAKE_DEVICE': false,
+      'CONTENT_TEST':true,
       'DEBUG' : true,
       'BACKEND_SERVICE_DOMAIN': 'https://cc-test.zaya.in/',
       'RESOURCE_SERVER': 'https://cc-test.zaya.in',
-      'LESSONS_DB_SERVER': 'https://ci-couch.zaya.in/lessonsdb',
+      'LESSONS_DB_SERVER': 'https://ci-couch.zaya.in/tamildb',
       'PROFILES_DB_SERVER': 'https://ci-couch.zaya.in/device',
       'LESSON_DB_VERSION': 'na',
       'NOTIFICATION_DB_SERVER': 'https://ci-couch.zaya.in/notifications',
@@ -142,6 +142,6 @@
             'UNDISCOVERED' : 1 
           }
         },
-        'LANGUAGES' : [{"name":"hindi","code":"hi"},{"name":"gujarati","code":"gu"},{"name":"tamil","code":"ta"},{"name":"telugu","code":"te"}]
+        'LANGUAGES' : [{"name":"hindi","code":"hi"},{"name":"tamil","code":"ta"}]
     })
 })();

@@ -88,14 +88,8 @@ var languages_list = [{
   name: 'hindi',
   code: 'hi'
 }, {
-  name: 'gujarati',
-  code: 'gu'
-}, {
   name: 'tamil',
   code: 'ta'
-}, {
-  name: 'telugu',
-  code: 'te'
 }];
 var env = argument.argv.env ? environments[argument.argv.env] : environments.default;
 var app_type = argument.argv.app_type ? argument.argv.app_type : 'na';
@@ -107,7 +101,7 @@ var fake_id_device = constants[env]['FAKE_ID_DEVICE'] || 'na';
 var lesson_db_version = 'na';
 var diagnosis_media = [];
 var allowed_languages = languages_list;
-var lessonsdb_couch_server = env == environments.production ? 'https://ed-couch.zaya.in/lessonsdb' : 'https://ci-couch.zaya.in/lessonsdb';
+var lessonsdb_couch_server = env == environments.production ? 'https://ed-couch.zaya.in/lessonsdb' : 'https://ci-couch.zaya.in/tamildb';
 var diagnosis_couch_db_server = env == environments.production ? 'https://ed-couch.zaya.in/diagnosis_translations' : 'https://ci-couch.zaya.in/diagnosis_translations';
 
 //Get app version
@@ -120,10 +114,10 @@ console.log("VERSION", app_version);
 console.log("envi", raven_key[argument.argv.env])
 gulp.task('default', function(callback) {
   // runSequence('generate-lessondb','get-diagnosis-media','make-main','generate-constants', 'sass', 'html', 'scripts',callback);
-  runSequence('makeLocalizationFactory','generate-lessondb', 'get-diagnosis-media', 'make-main', 'generate-constants', 'sass', 'html', 'scripts', callback);
+  runSequence('makeLocalizationFactory', 'make-main', 'generate-constants', 'sass', 'html', 'scripts', callback);
 });
 gulp.task('generate-lessondb', shell.task(
-  (env !== environments.dev) ? [
+  (env !== environments.content) ? [
     'rm www/data/lessons.db',
     'pouchdb-dump ' + lessonsdb_couch_server + ' > www/data/lessons.db'
   ] : []
@@ -285,7 +279,7 @@ gulp.task('html', function() {
     .pipe(gulp.dest('./www/templates/'))
 });
 gulp.task('get-diagnosis-media', function() {
-  if (env !== environments.dev) {
+  if (env !== environments.content) {
     var docs_list = JSON.parse(request('GET', diagnosis_couch_db_server + '/_all_docs').getBody().toString());
       // console.log("docs list",docs_list)
     for (var i = 0; i < docs_list.rows.length; i++) {
@@ -326,6 +320,7 @@ gulp.task('makeLocalizationFactory', function() {
 gulp.task('downloadLocalizedAudio', shell.task(
   (env !== environments.dev) ? [
     'rm www/sound/localized/*',
+    'rm localizedSounds.zip',
     'wget -O localizedSounds.zip http://localization.englishduniya.in/download',
     'unzip localizedSounds.zip -d www/sound/localized'
   ] : []

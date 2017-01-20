@@ -38,6 +38,14 @@
         font-size: 4vh;
         line-height: 1.3;
     }
+    .personalize-title.small{
+        font-size: 4vh !important;
+        line-height: 0.8em;
+    }
+    .grade-box.small{
+        margin: 1.5vw;
+    }
+
 </style>
 <ion-view class="bg-pale">
 <ion-content>
@@ -78,7 +86,7 @@
     </center>
 </div> -->
 <div class="name-avatar">
-    <h2 style="top:25vh" class="center full-width absolute personalize-title">{{userCtrl.localizedContent.text.registration.Name.lang[userCtrl.user.language]}}</h2>
+    <h2 style="top:25vh" class="center full-width absolute personalize-title small">{{userCtrl.localizedContent.text.registration.Name.lang[userCtrl.user.language]}}</h2>
     <div style="top:34vh"  ng-init="userCtrl.user.name=''" class="full-width absolute">
         <div class="col font-md personalize-input" style="">{{userCtrl.user.name}}</div>
     </div>
@@ -152,7 +160,7 @@
     <div style="top:32vh" class="full-width absolute">
         <h2 style="margin-top:0px;line-height: 1;margin:0px;" class="center personalize-title">{{userCtrl.localizedContent.text.registration.Class.lang[userCtrl.user.language]}}</h2>
     </div>
-    <div style="top:37vh" class="full-width absolute padding-x-10">
+    <div style="top:45vh" class="full-width absolute padding-x-10">
         <!-- <div class="radio-box-container-inner clearfix">
             <div class="lcard radio-con block" style="margin-left: auto;margin-right: auto;" ng-class="{'selected':userCtrl.user.grade == 1}">
                 <label on-tap="audio.play('click');"  class="lcard-inner radio radio-box center">1
@@ -177,7 +185,7 @@
             </div>
         </div> -->
         <div class="grade-box-container">
-            <label on-tap="audio.play('click');" class="grade-box radio" ng-repeat="grade in userCtrl.CONSTANT.GRADE" ng-class="{true : 'radio-selected', false : 'radio-not-selected'}[userCtrl.user.grade == grade]">
+            <label on-tap="audio.play('click');" class="grade-box small radio" ng-repeat="grade in userCtrl.CONSTANT.GRADE" ng-class="{true : 'radio-selected', false : 'radio-not-selected'}[userCtrl.user.grade == grade]">
                 <p>{{grade}}</p>
                 <input type="radio" name="grade" value="{{grade}}" ng-model="userCtrl.user.grade">
             </label>

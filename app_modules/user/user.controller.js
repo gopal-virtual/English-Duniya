@@ -114,7 +114,7 @@
     function playAudio(index) {
       var src;
       if (index == -1) {
-        src = userCtrl.localizedContent.audio.registration.Welcome.lang[userCtrl.user.language || 'hi'];
+        // src = userCtrl.localizedContent.audio.registration.Welcome.lang[userCtrl.user.language || 'hi'];
       }
       if (index == 1) {
         src = userCtrl.localizedContent.audio.registration.WriteName.lang[userCtrl.user.language];
