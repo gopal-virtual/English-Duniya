@@ -36,3 +36,5 @@ www/img/temp
 in_app_audio*
 *log
 verifyNodePresence.js
+www/data/lessons.db
+app_modules/common/common.constant.js
