@@ -6,7 +6,7 @@ var fs_extra = require('fs-extra');
 var target_folder = 'www/bundled/';
 var ncp = require('ncp').ncp;
 var env = argv.env ? argv.env : 'production';
-var source_folder = env === 'production' ? 'media-production' : 'media-test';
+var source_folder = env === 'production' ? '/media/zaya-mobile-custom-build/media-production' : '/media/zaya-mobile-custom-build/media-test';
 var request = require('sync-request');
 var diagnosis_docs_list = JSON.parse(request('GET', 'http://ci-couch.zaya.in/diagnosis_translations/_all_docs').getBody().toString());
 var lesson_docs_list = JSON.parse(request('GET', 'http://ci-couch.zaya.in/lessonsdb/_all_docs').getBody().toString()).rows;
