@@ -90,6 +90,12 @@ var languages_list = [{
 }, {
   name: 'tamil',
   code: 'ta'
+}, {
+  name: 'gujarati',
+  code: 'gu'
+}, {
+  name: 'telugu',
+  code: 'te'
 }];
 var env = argument.argv.env ? environments[argument.argv.env] : environments.default;
 var app_type = argument.argv.app_type ? argument.argv.app_type : 'na';
@@ -100,10 +106,15 @@ var lock = argument.argv.lock ? argument.argv.lock : constants[env]['LOCK'];
 var fake_id_device = constants[env]['FAKE_ID_DEVICE'] || 'na';
 var lesson_db_version = 'na';
 var diagnosis_media = [];
-var allowed_languages = languages_list;
+var allowed_languages = argument.argv.languages ? argument.argv.languages : 'hi';
+var allowed_languages_list = [];
+for (i in languages_list) {
+  if (allowed_languages.indexOf(languages_list[i].code) !== -1) {
+    allowed_languages_list.push(languages_list[i]);
+  }
+}
 var lessonsdb_couch_server = env == environments.production ? 'https://ed-couch.zaya.in/lessonsdb' : 'https://ci-couch.zaya.in/tamildb';
 var diagnosis_couch_db_server = env == environments.production ? 'https://ed-couch.zaya.in/diagnosis_translations' : 'https://ci-couch.zaya.in/diagnosis_translations';
-
 //Get app version
 var xml = file.readFileSync('./config.xml');
 var content = cheerio.load(xml, {
@@ -222,7 +233,7 @@ gulp.task('generate-constants', function() {
         replacement: constants[env]['NOTIFICATION_DB_SERVER']
       }, {
         match: 'ALLOWED_LANGUAGES',
-        replacement: allowed_languages
+        replacement: allowed_languages_list
       }]
     }))
     .pipe(rename(paths.constants.destination_filename))
@@ -237,7 +248,7 @@ gulp.task('scripts', function() {
     .pipe(stripDebug())
     .pipe(strip())
     .pipe(concate('mobile.app.js'))
-    .pipe(gulpif(env !== environments.dev && env !== environments.content,uglify()))
+    .pipe(gulpif(env !== environments.dev && env !== environments.content, uglify()))
     .pipe(gulp.dest('www/build'))
     // .on('end',cb)
     // .pipe(broswerSync.stream())
@@ -281,12 +292,11 @@ gulp.task('html', function() {
 gulp.task('get-diagnosis-media', function() {
   if (env !== environments.content) {
     var docs_list = JSON.parse(request('GET', diagnosis_couch_db_server + '/_all_docs').getBody().toString());
-      // console.log("docs list",docs_list)
+    // console.log("docs list",docs_list)
     for (var i = 0; i < docs_list.rows.length; i++) {
       // console.log("Value", docs_list.rows[i].id);
       var id = docs_list.rows[i].id;
-      var doc = JSON.parse(request('GET', diagnosis_couch_db_server + '/'+id).getBody().toString());
-
+      var doc = JSON.parse(request('GET', diagnosis_couch_db_server + '/' + id).getBody().toString());
       // console.log("Doc", doc.question);
       for (var media_type in doc.question.node.type.content.widgets) {
         if (doc.question.node.type.content.widgets.hasOwnProperty(media_type)) {
@@ -303,13 +313,12 @@ gulp.task('get-diagnosis-media', function() {
 gulp.task('makeLocalizationFactory', function() {
   var localizedAudio = JSON.parse(request('GET', 'http://localization.englishduniya.in/get/json').getBody().toString());
   var localizedText = JSON.parse(request('GET', 'http://localization.englishduniya.in/get/textjson').getBody().toString());
- 
   gulp.src(paths.localizationFactory.template)
     .pipe(replace_task({
       patterns: [{
         match: 'LOCALIZED_AUDIO',
         replacement: localizedAudio
-      },{
+      }, {
         match: 'LOCALIZED_TEXT',
         replacement: localizedText
       }]
