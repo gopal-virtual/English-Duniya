@@ -116,12 +116,12 @@ for (i in languages_list) {
 var lessonsdb_couch_server = argument.argv.lessonsdb;
 var diagnosis_couch_db_server = argument.argv.diagnosisdb;
 //Get app version
-var xml = file.readFileSync('./config.xml');
-var content = cheerio.load(xml, {
-  xmlMode: true
-});
-app_version = content('widget')[0].attribs.version;
-console.log("VERSION", app_version);
+// var xml = file.readFileSync('./config.xml');
+// var content = cheerio.load(xml, {
+//   xmlMode: true
+// });
+// app_version = content('widget')[0].attribs.version;
+// console.log("VERSION", app_version);
 console.log("envi", raven_key[argument.argv.env])
 gulp.task('default', function(callback) {
   // runSequence('generate-lessondb','get-diagnosis-media','make-main','generate-constants', 'sass', 'html', 'scripts',callback);
