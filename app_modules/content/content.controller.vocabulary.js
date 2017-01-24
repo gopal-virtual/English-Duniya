@@ -85,7 +85,7 @@
           User.getActiveProfileSync()._id
         )
       $scope.pauseMenu.show().then(function(){
-          audio.player.play('sound/pause_menu.mp3');
+        audio.player.play('sound/'+localized.audio.app.ExitResource.lang[User.getActiveProfileSync().data.profile.language]);
       });
     }
 
@@ -235,7 +235,7 @@
             $scope.resultStarFlag[count] = true;
             $log.debug("sound source", starSound, count, starSound[count]);
             $log.debug("count,star,count==star-1",count,star,count == star-1);
-            audio.player.play("sound/" + starSound[count] + ".mp3");
+            audio.player.play("sound/duScrollSpyWait" + starSound[count] + ".mp3");
             if(count == star-1){
               $scope.resultPageNextShow = true;
             }
@@ -254,10 +254,10 @@
           time: new Date()
         },
         User.getActiveProfileSync()._id
-      )
+      ),
       $scope.summary = {
         stars: 3
-      }
+      },
       vocabCardCtrl.playStarSound();
       submitReport()
       timeout = $timeout(function() {

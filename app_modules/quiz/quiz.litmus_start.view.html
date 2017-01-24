@@ -4,16 +4,16 @@
 			<center style="padding-top: 20px;">
 				<img height="150" ng-src="img/assets/upperbody-{{gender}}.png">
 			</center>
-			<div class="color-dblue padding-20" style="font-size: 2.5em;line-height: 1.2em">
+			<div class="color-dblue padding-20" style="font-size: 2em;line-height: 1.2em">
 				<p>
 					Hi, {{name}}
 				</p>
 				<p>
-					{{localizedContent.text.litmus.litmus_start[language]}}
+					{{localizedContent.text.diagnosis.start.lang[language]}}
 				</p>
 			</div>
 			<center>
-				<button ui-sref="quiz.questions({'type':'litmus','id':'litmus_question'})" class="sbtn sbtn-next-blue animation-repeat-bounce" ng-click="audio.play('press');"></button>
+				<button  class="sbtn sbtn-next-blue animation-repeat-bounce" ng-click="audio.play('press');gotoLitmus()"></button>
 			</center>
 		</div>
 	</div>

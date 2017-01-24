@@ -42,7 +42,8 @@
         'COMMON': ROOT + '/common',
         'MAP': ROOT + '/map',
         'CONTENT': ROOT + '/content',
-        'DATA': 'data'
+        'DATA': 'data',
+        'LOCALIZED_AUDIO': 'sound/localized/'
       },
       'VIEW': '.view.html',
       'CONFIG': {
@@ -141,19 +142,6 @@
             'UNDISCOVERED' : @@NOTIFICATION_DURATION_UNDISCOVERED 
           }
         },
-        'LANGUAGES' : [
-          {
-            name: 'hindi',
-            code: 'hi'
-          },
-          {
-            name : 'gujarati',
-            code : 'gu'
-          },
-          {
-            name : 'tamil',
-            code : 'ta'
-          }
-        ]
+        'LANGUAGES' : @@ALLOWED_LANGUAGES
     })
 })();

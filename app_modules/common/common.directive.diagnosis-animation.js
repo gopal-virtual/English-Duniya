@@ -6,7 +6,7 @@
     .directive('diagnosis', diagnosis)
 
   /* @ngInject */
-  function diagnosis(CONSTANT, audio) {
+  function diagnosis(CONSTANT, audio, localized, User) {
     var diagnosis = {
       restrict: 'E',
       templateUrl: CONSTANT.PATH.COMMON + '/common.diagnosis.animation' + CONSTANT.VIEW,
@@ -262,23 +262,25 @@
       }
 
       function playLevelAudio() {
+        var audioName ;
         if (scope.level <= 1) {
-          audio.player.play('sound/not_bad_you_are_at_level_1.mp3')
+          audioName = 'level1'
         } else if (scope.level <= 2) {
-          audio.player.play('sound/yay_you_reached_level_2.mp3')
+          audioName = 'level2'
         } else if (scope.level <= 3) {
-          audio.player.play('sound/yay_you_reached_level_3.mp3')
+          audioName = 'level3'
         } else if (scope.level <= 4) {
-          audio.player.play('sound/nice_you_reached_level_4.mp3')
+          audioName = 'level4'
         } else if (scope.level <= 5) {
-          audio.player.play('sound/yay_you_are_on_level_5.mp3')
+          audioName = 'level5'
         } else if (scope.level <= 6) {
-          audio.player.play('sound/yay_you_are_on_level_6.mp3')
+          audioName = 'level6'
         } else if (scope.level <= 7) {
-          audio.player.play('sound/yay_you_are_on_level_7.mp3')
+          audioName = 'level7'
         } else if (scope.level <= 8) {
-          audio.player.play('sound/yay_you_are_on_level_8.mp3')
+          audioName = 'level8'
         } else {}
+          audio.player.play(CONSTANT.PATH.LOCALIZED_AUDIO+localized.audio.diagnosis[audioName].lang[User.getActiveProfileSync().data.profile.language])
       }
     }
   }
