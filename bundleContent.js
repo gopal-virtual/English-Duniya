@@ -5,11 +5,12 @@ var argv = require('yargs').argv;
 var fs_extra = require('fs-extra');
 var target_folder = 'www/bundled/';
 var ncp = require('ncp').ncp;
-var env = argv.env ? argv.env : 'production';
-var source_folder = env === 'production' ? '/cimedia/zaya-mobile-custom-build/media-production' : '/cimedia/zaya-mobile-custom-build/media-test';
+var source_folder = argv.source_folder;
 var request = require('sync-request');
-var diagnosis_docs_list = JSON.parse(request('GET', 'http://ci-couch.zaya.in/diagnosis_translations/_all_docs').getBody().toString());
-var lesson_docs_list = JSON.parse(request('GET', 'http://ci-couch.zaya.in/lessonsdb/_all_docs').getBody().toString()).rows;
+var diagnosis_db = argv.diagnosis_db;
+var lessons_db = argv.lessons_db;
+var diagnosis_docs_list = JSON.parse(request('GET', diagnosis_db + '_all_docs').getBody().toString());
+var lesson_docs_list = JSON.parse(request('GET', lessons_db + '_all_docs').getBody().toString()).rows;
 
 function getFileNameFromURl(url) {
   var a = url.split('/');
@@ -38,8 +39,8 @@ media.push('/media/ell/images/thing_0IS1M4.png');
 var counter = [0, 0, 0, 0];
 if (lessons == 'all') {
   for (var i = 0; i < lesson_docs_list.length; i++) {
-    if(lesson_docs_list[i].id !== 'localized_mapping')
-    var lesson_doc = JSON.parse(request('GET', 'http://ci-couch.zaya.in/lessonsdb/' + lesson_docs_list[i].id).getBody().toString()).lesson;
+    if (lesson_docs_list[i].id !== 'localized_mapping' && lesson_docs_list[i].id !== '_design/_auth')
+      var lesson_doc = JSON.parse(request('GET', lessons_db + lesson_docs_list[i].id).getBody().toString()).lesson;
     for (var j = 0; j < lesson_doc.objects.length; j++) {
       //if Video
       if (lesson_doc.objects[j].node.content_type_name == 'resource') {
@@ -73,7 +74,7 @@ if (lessons == 'all') {
 for (var i = 0; i < diagnosis_docs_list.rows.length; i++) {
   // console.log("Value", docs_list.rows[i].id);
   var id = diagnosis_docs_list.rows[i].id;
-  var doc = JSON.parse(request('GET', 'http://ci-couch.zaya.in/diagnosis_translations/' + id).getBody().toString());
+  var doc = JSON.parse(request('GET', diagnosis_db + id).getBody().toString());
   // console.log("Doc", doc.question);
   for (var media_type in doc.question.node.type.content.widgets) {
     if (doc.question.node.type.content.widgets.hasOwnProperty(media_type)) {
