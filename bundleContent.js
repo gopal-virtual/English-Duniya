@@ -39,7 +39,7 @@ var counter = [0, 0, 0, 0];
 if (lessons == 'all') {
   for (var i = 0; i < lesson_docs_list.length; i++) {
     if(lesson_docs_list[i].id !== 'localized_mapping')
-    var lesson_doc = JSON.parse(request('GET', 'http://ci-couch.zaya.in/lessonsdb/' + lesson_docs_list[i].id).getBody().toString());
+    var lesson_doc = JSON.parse(request('GET', 'http://ci-couch.zaya.in/lessonsdb/' + lesson_docs_list[i].id).getBody().toString()).lesson;
     for (var j = 0; j < lesson_doc.objects.length; j++) {
       //if Video
       if (lesson_doc.objects[j].node.content_type_name == 'resource') {
