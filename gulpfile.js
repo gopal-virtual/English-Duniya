@@ -113,8 +113,8 @@ for (i in languages_list) {
     allowed_languages_list.push(languages_list[i]);
   }
 }
-var lessonsdb_couch_server = env == environments.production ? 'https://ed-couch.zaya.in/lessonsdb' : 'https://ci-couch.zaya.in/tamildb';
-var diagnosis_couch_db_server = env == environments.production ? 'https://ed-couch.zaya.in/diagnosis_translations' : 'https://ci-couch.zaya.in/diagnosis_translations';
+var lessonsdb_couch_server = argument.argv.lessonsdb;
+var diagnosis_couch_db_server = argument.argv.diagnosisdb;
 //Get app version
 var xml = file.readFileSync('./config.xml');
 var content = cheerio.load(xml, {
@@ -133,10 +133,6 @@ gulp.task('generate-lessondb', shell.task(
     'pouchdb-dump ' + lessonsdb_couch_server + ' > www/data/lessons.db'
   ] : []
 ));
-gulp.task('get-lessondb-version', function() {
-  var res = request('GET', 'http://ci-couch.zaya.in/lessonsdb/version');
-  lesson_db_version = JSON.parse(res.getBody().toString()).version;
-});
 // gulp.task('optimize', function(cb) {
 //   gulp.src(paths.image)
 //     .pipe(optimization())
