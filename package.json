@@ -39,6 +39,7 @@
     "jsonfile": "^2.4.0",
     "node-bourbon": "^4.2.8",
     "node-fetch": "^1.6.3",
+    "node-sass": "^4.3.0",
     "pouchdb": "^5.4.5",
     "pouchdb-server": "^1.2.0",
     "preen": "^1.2.0",
@@ -70,7 +71,6 @@
     "cordova-plugin-network-information",
     "cordova-plugin-screen-orientation",
     "cordova-plugin-compat",
-    "cordova-plugin-crosswalk-webview",
     {
       "locator": "https://github.com/katzer/cordova-plugin-local-notifications",
       "id": "phonegap-plugin-push"

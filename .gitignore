@@ -38,3 +38,4 @@ in_app_audio*
 verifyNodePresence.js
 www/data/lessons.db
 app_modules/common/common.constant.js
+config.xml
