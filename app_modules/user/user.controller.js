@@ -94,40 +94,40 @@
     userCtrl.playAudio = playAudio;
     userCtrl.selectProfile = selectProfile;
     userCtrl.audioPlayer = audio.player;
+    userCtrl.user = {};
     userCtrl.playAudio(-1);
-    $log.debug("Hukata")
     $scope.audio = audio;
     // $timeout(function () {
     //   userCtrl.playAudio(0);
     // }, 5000);
-    $log.debug("StateParams", $stateParams)
+    $log.debug("StateParams", $stateParams);
     if ($stateParams.profiles) {
       userCtrl.profiles = $stateParams.profiles;
-      $log.debug("Profiles", userCtrl.profiles)
+      $log.debug("Profiles", userCtrl.profiles);
     } else {
       User.profile.getAll().then(function(data) {
         userCtrl.profiles = data;
-      })
+      });
     }
 
 
     function playAudio(index) {
-      $log.debug("playaudio", index, userCtrl.localizedContent.audio.personalise, userCtrl.user );
       var src;
       if (index == -1) {
-        src = userCtrl.localizedContent.audio.personalise.enter_your_name['hi'] || 'sound/placeholder.mp3';
+        // src = userCtrl.localizedContent.audio.registration.Welcome.lang[userCtrl.user.language || 'hi'];
       }
-      // if (index == 1) {
-        // src = 'sound/placeholder.mp3';
-      // }
       if (index == 1) {
-        src = userCtrl.localizedContent.audio.personalise.select_your_gender['hi'] || 'sound/placeholder.mp3';
+        src = userCtrl.localizedContent.audio.registration.WriteName.lang[userCtrl.user.language];
       }
       if (index == 2) {
-        src = userCtrl.localizedContent.audio.personalise.select_your_class['hi'] || 'sound/placeholder.mp3';
+        src = userCtrl.localizedContent.audio.registration.SelectGender.lang[userCtrl.user.language];
       }
+      if (index == 3) {
+        src = userCtrl.localizedContent.audio.registration.SelectClass.lang[userCtrl.user.language];
+      }
+        $log.debug("playaudio",index,src);
       if (src) {
-        audio.player.play(src);
+        audio.player.play('sound/localized/' + src);
       } else {
         audio.player.stop();
       }

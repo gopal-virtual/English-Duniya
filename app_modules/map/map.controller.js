@@ -46,45 +46,47 @@
     'multiUser',
     '$ionicSlideBoxDelegate',
     '$interval',
-    'network'
-];
+    'network',
+    'localized'
+  ];
 
   function mapController(
-        $scope,
-        $rootScope,
-        $log,
-        $ionicPopup,
-        $ionicModal,
-        $state,
-        lessons,
-        scores,
-        skills,
-        CONSTANT,
-        $ionicLoading,
-        $timeout,
-        orientation,
-        Auth,
-        lessonutils,
-        audio,
-        User,
-        ml,
-        lessonLocked,
-        $ionicPlatform,
-        settings,
-        mediaManager,
-        $stateParams,
-        analytics,
-        $q,
-        queue,
-        content,
-        $cordovaLocalNotification,
-        notification,
-        device,
-        multiUser,
-        $ionicSlideBoxDelegate,
-        $interval,
-        network
-    ) {
+    $scope,
+    $rootScope,
+    $log,
+    $ionicPopup,
+    $ionicModal,
+    $state,
+    lessons,
+    scores,
+    skills,
+    CONSTANT,
+    $ionicLoading,
+    $timeout,
+    orientation,
+    Auth,
+    lessonutils,
+    audio,
+    User,
+    ml,
+    lessonLocked,
+    $ionicPlatform,
+    settings,
+    mediaManager,
+    $stateParams,
+    analytics,
+    $q,
+    queue,
+    content,
+    $cordovaLocalNotification,
+    notification,
+    device,
+    multiUser,
+    $ionicSlideBoxDelegate,
+    $interval,
+    network,
+    localized
+  ) {
     $scope.audio = audio;
     $scope.settings = settings;
     var temp = JSON.parse(localStorage.getItem('profile')).data.profile;
@@ -146,64 +148,55 @@
     mapCtrl.goToChooseProfile = goToChooseProfile;
     mapCtrl.onBackButtonPress = onBackButtonPress;
     $scope.exitChooseProfile = exitChooseProfile;
-
     $scope.onProfileCardClick = onProfileCardClick;
-
     $scope.isOnline = network.isOnline();
-    $scope.$on('$cordovaNetwork:online',function(event,networkState){
+    $scope.$on('$cordovaNetwork:online', function(event, networkState) {
       $scope.isOnline = network.isOnline();
     })
-    $scope.$on('$cordovaNetwork:offline',function(event,networkState){
+    $scope.$on('$cordovaNetwork:offline', function(event, networkState) {
       $scope.isOnline = network.isOnline();
     })
-
-
     $scope.changeNumberFlag = User.user.getPhoneNumber()
     $scope.currentState = $state.current.name;
-
     $scope.userDetails = User.user.getDetails();
     $scope.notifyPhone = User.user.getNotifyPhone();
     // $scope.goToPhoneNumber = goToPhoneNumber;
     // $scope.exitPhoneNumber = exitPhoneNumber;
     // mapCtrl.notification = notification;
-
     $log.error('ThiS is notify phone', User.user.getNotifyPhone());
-
     $scope.phone = {
-      number : User.user.getPhoneNumber(),
-      numberErrorText : '',
-      isVerified : User.user.getDetails()?User.user.getDetails().is_verified:false,
-      otp : '',
-      otpErrorText : '',
-      otpInterval : 90000,
-      otpResendCount : 3,
-      otpResendFlag : 0,
-      resendOtp : resendOtp,
-      submitNumber : submitPhoneNumber,
-      disableSwipe : disableSwipe,
-      verifyOtp : verifyOtp,
-      nextSlide : nextSlide,
-      playAudio : playAudio,
-      exit : exitPhoneNumber,
-      open : goToPhoneNumber,
+      number: User.user.getPhoneNumber(),
+      numberErrorText: '',
+      isVerified: User.user.getDetails() ? User.user.getDetails().is_verified : false,
+      otp: '',
+      otpErrorText: '',
+      otpInterval: 90000,
+      otpResendCount: 3,
+      otpResendFlag: 0,
+      resendOtp: resendOtp,
+      submitNumber: submitPhoneNumber,
+      disableSwipe: disableSwipe,
+      verifyOtp: verifyOtp,
+      nextSlide: nextSlide,
+      playAudio: playAudio,
+      exit: exitPhoneNumber,
+      open: goToPhoneNumber,
     }
-
     $scope.exitModal = {
-      message : 'Do you want to leave the game?',
-      dismiss : exitModalDismiss,
-      confirm : exitModalConfirm
+      message: 'Do you want to leave the game?',
+      dismiss: exitModalDismiss,
+      confirm: exitModalConfirm
     }
-
 
     function exitModalDismiss() {
       $log.debug('EXITING NOT SURELY')
-      $scope.exitApp.hide().then(function(){
+      $scope.exitApp.hide().then(function() {
         analytics.log({
           name: 'APP',
           type: 'EXIT_MODAL_HIDE'
         }, {
-          time : new Date()
-        },User.getActiveProfileSync()._id);
+          time: new Date()
+        }, User.getActiveProfileSync()._id);
         $log.debug('You are not sure');
       });
     }
@@ -212,9 +205,10 @@
       $log.debug('EXITING SURELY')
       ionic.Platform.exitApp();
     }
-    $scope.showCreateProfileModal = function(){
-        $scope.createProfileModal.show();
+    $scope.showCreateProfileModal = function() {
+      $scope.createProfileModal.show();
     }
+
     function createProfileModalDismiss() {
       $scope.createProfileModal.hide();
     }
@@ -224,16 +218,15 @@
       $scope.createProfileModal.hide();
       $scope.multiUser.goToCreateNewProfile();
     }
-
     // $log.debug("ISVERIFIED",$scope.phone.number.length < 10,$scope.phone.number == User.user.getPhoneNumber(), $scope.phone.isVerified)
-    $log.debug("PHONE. changed number flag",$scope.changeNumberFlag);
+    $log.debug("PHONE. changed number flag", $scope.changeNumberFlag);
     var tempCount = 1;
-    
+
     function resetPhoneValues() {
       $log.warn('resetting phone values')
       $scope.phone.number = User.user.getPhoneNumber();
       $scope.phone.numberErrorText = '';
-      $scope.phone.isVerified = User.user.getDetails()?User.user.getDetails().is_verified:false;
+      $scope.phone.isVerified = User.user.getDetails() ? User.user.getDetails().is_verified : false;
       $scope.phone.otp = '';
       $scope.phone.otpErrorText = '';
       $scope.phone.number = User.user.getPhoneNumber();
@@ -246,23 +239,23 @@
       if ($scope.profileScreen.isShown()) {
         $scope.profileScreen.hide()
       }
-      $scope.phoneNumberScreen.show().then(function(){
+      $scope.phoneNumberScreen.show().then(function() {
         playAudio(-1);
         analytics.log({
-          name : 'PHONENUMBER',
-          type : 'OPEN',
-        },{
-          time : new Date(),
-        },User.getActiveProfileSync()._id);
+          name: 'PHONENUMBER',
+          type: 'OPEN',
+        }, {
+          time: new Date(),
+        }, User.getActiveProfileSync()._id);
       });
       // $scope.phone.isVerified = User.user.getDetails().is_verified;
       // $log.debug("PHONE.is verified",$scope.phone.isVerified);
       analytics.log({
-            name : 'PHONENUMBER',
-            type : $scope.changeNumberFlag == true ? 'TAP_CHANGE' : 'TAP_ADD',
-            id : null
-      },{
-          time : new Date()
+        name: 'PHONENUMBER',
+        type: $scope.changeNumberFlag == true ? 'TAP_CHANGE' : 'TAP_ADD',
+        id: null
+      }, {
+        time: new Date()
       }, User.getActiveProfileSync()._id);
       User.user.setNotifyPhone(0);
     }
@@ -271,8 +264,7 @@
       if ($scope.profileScreen.isShown()) {
         $scope.profileScreen.hide()
       }
-      $scope.phoneNumberScreen.hide().then(function(){
-        
+      $scope.phoneNumberScreen.hide().then(function() {
         $scope.exitModal.message = "Do you want to leave the game?";
         $scope.exitModal.dismiss = exitModalDismiss;
         $scope.exitModal.confirm = exitModalConfirm;
@@ -283,51 +275,49 @@
         tempCount = 1;
         audio.loop('background');
         analytics.log({
-            name : 'PHONENUMBER',
-            type : 'CLOSE'
+          name: 'PHONENUMBER',
+          type: 'CLOSE'
         }, {
-          time : new Date()
+          time: new Date()
         }, User.getActiveProfileSync()._id);
       });
-
     }
 
-    function submitPhoneNumber(num){
+    function submitPhoneNumber(num) {
       if (num[0] != '9' && num[0] != '8' && num[0] != '7') {
         $log.debug("in rejection")
         $scope.phone.numberErrorText = "Please enter a valid mobile number";
-        return ;
+        return;
       }
       analytics.log({
-          name : 'PHONENUMBER',
-          type : 'NUMBER_SUBMIT'
-      }, {
-        time : new Date(),
-        number : num
-      }, User.getActiveProfileSync()._id)
-      // $log.debug("not in rejection")
+          name: 'PHONENUMBER',
+          type: 'NUMBER_SUBMIT'
+        }, {
+          time: new Date(),
+          number: num
+        }, User.getActiveProfileSync()._id)
+        // $log.debug("not in rejection")
       $scope.phone.numberErrorText = "";
-      if(!$scope.phone.isVerified && $scope.phone.number == User.user.getPhoneNumber()){
+      if (!$scope.phone.isVerified && $scope.phone.number == User.user.getPhoneNumber()) {
         $log.debug('PHONE. asking for otp')
-        resendOtp(num,$scope.phone.otpInterval);
-        var currentIndex = $ionicSlideBoxDelegate.$getByHandle('slide-phone').currentIndex(); 
+        resendOtp(num, $scope.phone.otpInterval);
+        var currentIndex = $ionicSlideBoxDelegate.$getByHandle('slide-phone').currentIndex();
         if (currentIndex == 0) {
           nextSlide(1);
         }
-      }else{
+      } else {
         $log.debug('PHONE. Patching phone')
         sendPhoneNumber(num);
       }
     }
 
-    function sendPhoneNumber(num){
+    function sendPhoneNumber(num) {
       // $log.debug(num[0]);
       // $log.debug(num[0] != '9',num[0] != '8',num[0] != '7');
       // $log.debug(num[0] != '9' && num[0] != '8' && num[0] != '7');
-
-      User.user.patchPhoneNumber(num).then(function(response){
-        $log.debug("We successfully added the phone number. Requesting otp",response,num);
-        var currentIndex = $ionicSlideBoxDelegate.$getByHandle('slide-phone').currentIndex(); 
+      User.user.patchPhoneNumber(num).then(function(response) {
+        $log.debug("We successfully added the phone number. Requesting otp", response, num);
+        var currentIndex = $ionicSlideBoxDelegate.$getByHandle('slide-phone').currentIndex();
         if (currentIndex == 0) {
           nextSlide(1);
         }
@@ -336,46 +326,45 @@
         User.user.setIsVerified(response.data.is_verified);
         // $scope.changeNumberFlag = User.user.getPhoneNumber() == '';
         analytics.log({
-          name : 'PHONENUMBER',
-          type : 'NUMBER_SUCCESS',
-        },{
-          time : new Date()
-        },User.getActiveProfileSync()._id);
-      }, function(err){
-       if(err.status == 400){
+          name: 'PHONENUMBER',
+          type: 'NUMBER_SUCCESS',
+        }, {
+          time: new Date()
+        }, User.getActiveProfileSync()._id);
+      }, function(err) {
+        if (err.status == 400) {
           $scope.phone.numberErrorText = err.data.details;
-        }else{
+        } else {
           $scope.phone.numberErrorText = JSON.stringify(err.data);
         }
         analytics.log({
-          name : 'PHONENUMBER',
-          type : 'NUMBER_ERROR',
-        },{
-          time : new Date()
-        },User.getActiveProfileSync()._id);
+          name: 'PHONENUMBER',
+          type: 'NUMBER_ERROR',
+        }, {
+          time: new Date()
+        }, User.getActiveProfileSync()._id);
       })
     }
 
-    function resendOtp(num,interval){
+    function resendOtp(num, interval) {
       $log.debug("Asking for otp again")
-      User.user.resendOtp(num).then(function(response){
+      User.user.resendOtp(num).then(function(response) {
         analytics.log({
-          name : 'PHONENUMBER',
-          type : 'OTP_RESEND',
-        },{
-          time : new Date()
-        },User.getActiveProfileSync()._id);
-        $log.debug("Otp request was sent",response)
-
+          name: 'PHONENUMBER',
+          type: 'OTP_RESEND',
+        }, {
+          time: new Date()
+        }, User.getActiveProfileSync()._id);
+        $log.debug("Otp request was sent", response)
       })
       resetResendFlag();
     }
 
-    function resetResendFlag(){
+    function resetResendFlag() {
       $log.debug('disabling resend');
       $scope.phone.otpResendFlag = 0
-      if (tempCount > $scope.phone.otpResendCount-1) {
-        return ;
+      if (tempCount > $scope.phone.otpResendCount - 1) {
+        return;
       }
       tempCount++;
       $timeout(function() {
@@ -383,7 +372,6 @@
         $scope.phone.otpResendFlag = 1;
       }, $scope.phone.otpInterval);
     }
-
     // function askForOtpCycle(num, interval, count){
     //   var tempCount = 1;
     //   var lastOtpCycle;
@@ -410,21 +398,20 @@
     //     // })
     //   },interval,count);
     // }
-
-    function verifyOtp(otp,successInterval){
+    function verifyOtp(otp, successInterval) {
       analytics.log({
-        name : 'PHONENUMBER',
-        type : 'OTP_SUBMIT',
-      },{
-        time : new Date(),
-        otp : otp
-      },User.getActiveProfileSync()._id);
-      User.user.verifyOtp(otp).then(function(response){
-        $log.debug("Verified otp",response);
+        name: 'PHONENUMBER',
+        type: 'OTP_SUBMIT',
+      }, {
+        time: new Date(),
+        otp: otp
+      }, User.getActiveProfileSync()._id);
+      User.user.verifyOtp(otp).then(function(response) {
+        $log.debug("Verified otp", response);
         // $log.debug("Please cancel interval",$interval.cancel(otpCycle));
         User.user.setIsVerified(true);
         // $scope.phone.isVerified = User.user.getDetails().is_verified
-        var currentIndex = $ionicSlideBoxDelegate.$getByHandle('slide-phone').currentIndex(); 
+        var currentIndex = $ionicSlideBoxDelegate.$getByHandle('slide-phone').currentIndex();
         if (currentIndex == 0) {
           nextSlide(2);
         }
@@ -435,27 +422,27 @@
         $timeout(function() {
           $log.debug("In timeout")
           exitPhoneNumber();
-        },successInterval);
+        }, successInterval);
         analytics.log({
-          name : 'PHONENUMBER',
-          type : 'OTP_SUCCESS',
-        },{
-          time : new Date(),
-          otp : otp
-        },User.getActiveProfileSync()._id);
-      }, function(err){
-        if(err.status == 400){
+          name: 'PHONENUMBER',
+          type: 'OTP_SUCCESS',
+        }, {
+          time: new Date(),
+          otp: otp
+        }, User.getActiveProfileSync()._id);
+      }, function(err) {
+        if (err.status == 400) {
           $scope.phone.otpErrorText = err.data.details
-        }else{
+        } else {
           $log.error(err)
         }
         analytics.log({
-          name : 'PHONENUMBER',
-          type : 'OTP_ERROR',
-        },{
-          time : new Date(),
-          otp : otp
-        },User.getActiveProfileSync()._id);
+          name: 'PHONENUMBER',
+          type: 'OTP_ERROR',
+        }, {
+          time: new Date(),
+          otp: otp
+        }, User.getActiveProfileSync()._id);
       })
     }
 
@@ -468,12 +455,12 @@
     }
 
     function playAudio(index) {
-      $log.error('INDEX',index)
+      $log.error('INDEX', index)
       var src;
       if (index == -1) {
-        src = 'sound/phone_number_write.mp3';
+        src = CONSTANT.PATH.LOCALIZED_AUDIO+localized.audio.phone.EnterPhoneNumber.lang[User.getActiveProfileSync().data.profile.language];
       } else if (index == 1) {
-        src = 'sound/phone_number_verify.mp3';
+        src = CONSTANT.PATH.LOCALIZED_AUDIO+localized.audio.phone.EnterOtp.lang[User.getActiveProfileSync().data.profile.language];
       }
       if (src) {
         audio.player.play(src);
@@ -518,19 +505,19 @@
       if ($scope.profileScreen.isShown()) {
         // $scope.profileScreen.hide();
         exitChooseProfile()
-      } else if($scope.phoneNumberScreen.isShown()){
+      } else if ($scope.phoneNumberScreen.isShown()) {
         $scope.phone.exit();
       } else {
         if (!$scope.exitApp.isShown()) {
           $log.warn('Clicked on back button on map');
-          $scope.exitApp.show().then(function(){
+          $scope.exitApp.show().then(function() {
             analytics.log({
-              name : 'APP',
-              type : 'EXIT_MODAL_SHOW'
+              name: 'APP',
+              type: 'EXIT_MODAL_SHOW'
             }, {
-              time : new Date()
-            },User.getActiveProfileSync()._id);
-          });  
+              time: new Date()
+            }, User.getActiveProfileSync()._id);
+          });
         }
       }
     }
@@ -797,7 +784,6 @@
       });
       return true;
     };
-
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.COMMON + '/common.modal-exit' + CONSTANT.VIEW, {
       scope: $scope,
       animation: 'slide-in-down',
@@ -812,7 +798,6 @@
     }).then(function(nodeMenu) {
       $scope.createProfileModal = nodeMenu;
     });
-
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal-rope' + CONSTANT.VIEW, {
       scope: $scope,
       animation: 'slide-in-down',
@@ -826,9 +811,7 @@
       hardwareBackButtonClose: false
     }).then(function(profileScreen) {
       $scope.profileScreen = profileScreen;
-
     });
-
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.USER + '/user.phoneNumber' + CONSTANT.VIEW, {
       scope: $scope,
       animation: 'slide-in-down',
@@ -836,7 +819,6 @@
     }).then(function(phoneNumberScreen) {
       $scope.phoneNumberScreen = phoneNumberScreen;
     });
-
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.demo' + CONSTANT.VIEW, {
       scope: $scope,
       animation: 'slide-in-down',
@@ -917,10 +899,8 @@
       if (User.demo.isShown() && User.demo.getStep() == '1') {
         $timeout(function() {
           $scope.demo.show().then(function() {
-            angular.element("#audioplayer")[0].pause();
-            angular.element("#audioSource")[0].src = 'sound/voice_letstart.mp3';
-            angular.element("#audioplayer")[0].load();
-            angular.element("#audioplayer")[0].play();
+            $log.debug("playdemoaudio",CONSTANT.PATH.LOCALIZED_AUDIO+ localized.audio.demo.startEnglish.lang[User.getActiveProfileSync().data.profile.language])
+            audio.player.play(CONSTANT.PATH.LOCALIZED_AUDIO+ localized.audio.demo.startEnglish.lang[User.getActiveProfileSync().data.profile.language]);
             User.demo.setStep(2)
           });
         })
@@ -951,57 +931,53 @@
     }
 
     function goToChooseProfile() {
-    $scope.exitModal.message = "Do you want to create<br>a new profile";
-    $scope.exitModal.dismiss = createProfileModalDismiss;
-    $scope.exitModal.confirm = createProfileModalConfirm;
-    $log.debug("PHONE. changed number flag",$scope.changeNumberFlag);
-
+      $scope.exitModal.message = "Do you want to create<br>a new profile";
+      $scope.exitModal.dismiss = createProfileModalDismiss;
+      $scope.exitModal.confirm = createProfileModalConfirm;
+      $log.debug("PHONE. changed number flag", $scope.changeNumberFlag);
+      analytics.log({
+        name: 'CHOOSEPROFILE',
+        type: 'TAP',
+      }, {
+        time: new Date(),
+      }, User.getActiveProfileSync()._id);
+      multiUser.getProfiles()
+      $scope.profileScreen.show().then(function() {
         analytics.log({
-          name : 'CHOOSEPROFILE',
-          type : 'TAP',
-        },{
-          time : new Date(),
-        },User.getActiveProfileSync()._id);
-        multiUser.getProfiles()
-        $scope.profileScreen.show().then(function(){
-          analytics.log({
-            name : 'CHOOSEPROFILE',
-            type : 'OPEN',
-          },{
-            time : new Date(),
-          },User.getActiveProfileSync()._id);
-          audio.stop('background');
-        });
-        // analytics.log({
-
-        // })
-    //   $state.go('user.chooseProfile');
+          name: 'CHOOSEPROFILE',
+          type: 'OPEN',
+        }, {
+          time: new Date(),
+        }, User.getActiveProfileSync()._id);
+        audio.stop('background');
+      });
+      // analytics.log({
+      // })
+      //   $state.go('user.chooseProfile');
     }
 
     function exitChooseProfile() {
-        $scope.exitModal.message = "Do you want to leave the game?";
-        $scope.exitModal.dismiss = exitModalDismiss;
-        $scope.exitModal.confirm = exitModalConfirm;
-        $scope.profileScreen.hide().then(function(){
+      $scope.exitModal.message = "Do you want to leave the game?";
+      $scope.exitModal.dismiss = exitModalDismiss;
+      $scope.exitModal.confirm = exitModalConfirm;
+      $scope.profileScreen.hide().then(function() {
         audio.loop('background');
         analytics.log({
-            name : 'CHOOSEPROFILE',
-            type : 'CLOSE',
-          },{
-            time : new Date(),
-          },User.getActiveProfileSync()._id);
+          name: 'CHOOSEPROFILE',
+          type: 'CLOSE',
+        }, {
+          time: new Date(),
+        }, User.getActiveProfileSync()._id);
       });
     }
 
     function onProfileCardClick() {
       analytics.log({
-        name : 'CHOOSEPROFILE',
-        type : 'PROFILE_TAP',
-      },{
-        time : new Date(),
-      },User.getActiveProfileSync()._id);
+        name: 'CHOOSEPROFILE',
+        type: 'PROFILE_TAP',
+      }, {
+        time: new Date(),
+      }, User.getActiveProfileSync()._id);
     }
-
-
   }
 })();

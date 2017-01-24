@@ -370,7 +370,7 @@
           for (var i = 0; i < data.rows.length; i++) {
             //   data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key;
             $log.debug("====", data.rows[i].id)
-            if (data.rows[i].doc && data.rows[i].id !== '_design/_auth') {
+            if (data.rows[i].doc && data.rows[i].id !== '_design/_auth' && data.rows[i].id !== 'localized_mapping') {
               currentLesson = data.rows[i].doc.lesson
               $log.debug('modified lesson', data.rows[i])
               for (var c = 0; c < currentLesson.objects.length; c++) {

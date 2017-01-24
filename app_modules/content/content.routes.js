@@ -113,7 +113,7 @@
           views : {
               'state-vocab' : {
                   templateUrl : CONSTANT.PATH.CONTENT + '/content.vocabulary.instruction' + CONSTANT.VIEW,
-                  controller : ['$stateParams','audio','$timeout','$state', '$scope', 'User','$log',function($stateParams,audio,$timeout,$state, $scope, User, $log){
+                  controller : ['$stateParams','audio','$timeout','$state', '$scope', 'User','$log','localized',function($stateParams,audio,$timeout,$state, $scope, User, $log,localized){
                       var vocabInstructionCtrl = this;
                       $log.debug("vocab instruction stateparams",$stateParams);
                       vocabInstructionCtrl.vocab_data = $stateParams.vocab_data.objects;
@@ -128,10 +128,10 @@
                               })
                           },100)
                       }
-                      vocabInstructionCtrl.playDelayed('sound/now_its_your_turn.mp3')
+                      vocabInstructionCtrl.playDelayed(CONSTANT.PATH.LOCALIZED_AUDIO+localized.audio.Vocabulary.ItsYourTurn.lang[User.getActiveProfileSync().data.profile.language])
 
                       $scope.$on('appResume', function(){
-                          vocabInstructionCtrl.playDelayed('sound/now_its_your_turn.mp3')
+                          vocabInstructionCtrl.playDelayed(CONSTANT.PATH.LOCALIZED_AUDIO+localized.audio.Vocabulary.ItsYourTurn.lang[User.getActiveProfileSync().data.profile.language])
                       })
                       $scope.$on('appPause', function(){
                           vocabInstructionCtrl.audio.player.removeCallback();

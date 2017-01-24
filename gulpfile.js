@@ -62,6 +62,11 @@ var paths = {
     destination: './app_modules/common/',
     destination_filename: 'common.constant.js'
   },
+  localizationFactory: {
+    template: './localizationFactory.template.txt',
+    destination: './app_modules/common/',
+    destination_filename: 'common.localization.factory.js'
+  },
   main: './www/main.html',
   main_template: './main.template.txt'
 };
@@ -79,6 +84,13 @@ var raven_key = {
   test: 'http://d52f1916c41a41e9b6506dddf7e805fa@zsentry.zaya.in/4',
   content: 'http://d52f1916c41a41e9b6506dddf7e805fa@zsentry.zaya.in/4'
 };
+var languages_list = [{
+  name: 'hindi',
+  code: 'hi'
+}, {
+  name: 'tamil',
+  code: 'ta'
+}];
 var env = argument.argv.env ? environments[argument.argv.env] : environments.default;
 var app_type = argument.argv.app_type ? argument.argv.app_type : 'na';
 var is_bundled = argument.argv.is_bundled ? argument.argv.is_bundled : false;
@@ -88,8 +100,10 @@ var lock = argument.argv.lock ? argument.argv.lock : constants[env]['LOCK'];
 var fake_id_device = constants[env]['FAKE_ID_DEVICE'] || 'na';
 var lesson_db_version = 'na';
 var diagnosis_media = [];
-var lessonsdb_couch_server = env == environments.production ? 'https://ed-couch.zaya.in/lessonsdb' : 'https://ci-couch.zaya.in/lessonsdb';
+var allowed_languages = languages_list;
+var lessonsdb_couch_server = env == environments.production ? 'https://ed-couch.zaya.in/lessonsdb' : 'https://ci-couch.zaya.in/tamildb';
 var diagnosis_couch_db_server = env == environments.production ? 'https://ed-couch.zaya.in/diagnosis_translations' : 'https://ci-couch.zaya.in/diagnosis_translations';
+
 //Get app version
 var xml = file.readFileSync('./config.xml');
 var content = cheerio.load(xml, {
@@ -100,10 +114,10 @@ console.log("VERSION", app_version);
 console.log("envi", raven_key[argument.argv.env])
 gulp.task('default', function(callback) {
   // runSequence('generate-lessondb','get-diagnosis-media','make-main','generate-constants', 'sass', 'html', 'scripts',callback);
-  runSequence('generate-lessondb','get-diagnosis-media', 'make-main', 'generate-constants', 'sass', 'html', 'scripts', callback);
+  runSequence('makeLocalizationFactory', 'make-main', 'generate-constants', 'sass', 'html', 'scripts', callback);
 });
 gulp.task('generate-lessondb', shell.task(
-  (env !== environments.dev) ? [
+  (env !== environments.content) ? [
     'rm www/data/lessons.db',
     'pouchdb-dump ' + lessonsdb_couch_server + ' > www/data/lessons.db'
   ] : []
@@ -206,6 +220,9 @@ gulp.task('generate-constants', function() {
       }, {
         match: 'NOTIFICATION_DB_SERVER',
         replacement: constants[env]['NOTIFICATION_DB_SERVER']
+      }, {
+        match: 'ALLOWED_LANGUAGES',
+        replacement: allowed_languages
       }]
     }))
     .pipe(rename(paths.constants.destination_filename))
@@ -262,7 +279,7 @@ gulp.task('html', function() {
     .pipe(gulp.dest('./www/templates/'))
 });
 gulp.task('get-diagnosis-media', function() {
-  if (env !== environments.dev) {
+  if (env !== environments.content) {
     var docs_list = JSON.parse(request('GET', diagnosis_couch_db_server + '/_all_docs').getBody().toString());
       // console.log("docs list",docs_list)
     for (var i = 0; i < docs_list.rows.length; i++) {
@@ -283,11 +300,36 @@ gulp.task('get-diagnosis-media', function() {
     }
   }
 });
+gulp.task('makeLocalizationFactory', function() {
+  var localizedAudio = JSON.parse(request('GET', 'http://localization.englishduniya.in/get/json').getBody().toString());
+  var localizedText = JSON.parse(request('GET', 'http://localization.englishduniya.in/get/textjson').getBody().toString());
+ 
+  gulp.src(paths.localizationFactory.template)
+    .pipe(replace_task({
+      patterns: [{
+        match: 'LOCALIZED_AUDIO',
+        replacement: localizedAudio
+      },{
+        match: 'LOCALIZED_TEXT',
+        replacement: localizedText
+      }]
+    }))
+    .pipe(rename(paths.localizationFactory.destination_filename))
+    .pipe(gulp.dest(paths.localizationFactory.destination));
+});
+gulp.task('downloadLocalizedAudio', shell.task(
+  (env !== environments.dev) ? [
+    'rm www/sound/localized/*',
+    'rm localizedSounds.zip',
+    'wget -O localizedSounds.zip http://localization.englishduniya.in/download',
+    'unzip localizedSounds.zip -d www/sound/localized'
+  ] : []
+));
 gulp.task('watch', ['default'], function() {
   gulp.watch(paths.sass, ['sass']);
   gulp.watch(paths.script, ['scripts']);
   gulp.watch(paths.html, ['html']);
-  gulp.watch();
+  // gulp.watch([paths.constants.template, paths.consants.destination_filename, paths.consants.environment], ['default']);
 });
 // gulp.task('install', ['git-check'], function() {
 //   return bower.commands.install()
