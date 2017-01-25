@@ -47,7 +47,8 @@
     '$ionicSlideBoxDelegate',
     '$interval',
     'network',
-    'localized'
+    'localized',
+    '$cordovaInAppBrowser'
   ];
 
   function mapController(
@@ -85,7 +86,8 @@
     $ionicSlideBoxDelegate,
     $interval,
     network,
-    localized
+    localized,
+    $cordovaInAppBrowser
   ) {
     $scope.audio = audio;
     $scope.settings = settings;
@@ -145,6 +147,7 @@
       "listening": "darkblue",
       "reading": "orange"
     }
+    mapCtrl.goToChallenge = goToChallenge;
     mapCtrl.goToChooseProfile = goToChooseProfile;
     mapCtrl.onBackButtonPress = onBackButtonPress;
     $scope.exitChooseProfile = exitChooseProfile;
@@ -458,9 +461,9 @@
       $log.error('INDEX', index)
       var src;
       if (index == -1) {
-        src = CONSTANT.PATH.LOCALIZED_AUDIO+localized.audio.phone.EnterPhoneNumber.lang[User.getActiveProfileSync().data.profile.language];
+        src = CONSTANT.PATH.LOCALIZED_AUDIO + localized.audio.phone.EnterPhoneNumber.lang[User.getActiveProfileSync().data.profile.language];
       } else if (index == 1) {
-        src = CONSTANT.PATH.LOCALIZED_AUDIO+localized.audio.phone.EnterOtp.lang[User.getActiveProfileSync().data.profile.language];
+        src = CONSTANT.PATH.LOCALIZED_AUDIO + localized.audio.phone.EnterOtp.lang[User.getActiveProfileSync().data.profile.language];
       }
       if (src) {
         audio.player.play(src);
@@ -899,8 +902,8 @@
       if (User.demo.isShown() && User.demo.getStep() == '1') {
         $timeout(function() {
           $scope.demo.show().then(function() {
-            $log.debug("playdemoaudio",CONSTANT.PATH.LOCALIZED_AUDIO+ localized.audio.demo.startEnglish.lang[User.getActiveProfileSync().data.profile.language])
-            audio.player.play(CONSTANT.PATH.LOCALIZED_AUDIO+ localized.audio.demo.startEnglish.lang[User.getActiveProfileSync().data.profile.language]);
+            $log.debug("playdemoaudio", CONSTANT.PATH.LOCALIZED_AUDIO + localized.audio.demo.startEnglish.lang[User.getActiveProfileSync().data.profile.language])
+            audio.player.play(CONSTANT.PATH.LOCALIZED_AUDIO + localized.audio.demo.startEnglish.lang[User.getActiveProfileSync().data.profile.language]);
             User.demo.setStep(2)
           });
         })
@@ -978,6 +981,25 @@
       }, {
         time: new Date(),
       }, User.getActiveProfileSync()._id);
+    }
+
+    function goToChallenge() {
+      var options = {
+        location: 'no',
+        clearcache: 'yes',
+        toolbar: 'no',
+        zoom: 'no',
+        hardwareback: 'no'
+      };
+      $cordovaInAppBrowser.open('http://challenge.englishduniya.in', '_blank', options)
+        .then(function(event) {
+          $log.debug("Success", event)
+            // success
+        })
+        .catch(function(event) {
+          $log.debug("Error", event)
+            // error
+        });
     }
   }
 })();
