@@ -40,6 +40,7 @@ var counter = [0, 0, 0, 0];
 if (lessons == 'all') {
   for (var i = 0; i < lesson_docs_list.length; i++) {
     if (lesson_docs_list[i].id !== 'localized_mapping' && lesson_docs_list[i].id !== '_design/_auth') {
+      console.log(lesson_docs_list[i].id)
       var lesson_doc = JSON.parse(request('GET', lessons_db + lesson_docs_list[i].id).getBody().toString()).lesson;
       for (var j = 0; j < lesson_doc.objects.length; j++) {
         //if Video
