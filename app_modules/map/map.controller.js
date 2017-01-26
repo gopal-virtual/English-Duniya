@@ -48,7 +48,8 @@
     '$interval',
     'network',
     'localized',
-    '$cordovaInAppBrowser'
+    '$cordovaInAppBrowser',
+    '$cordovaSocialSharing'
   ];
 
   function mapController(
@@ -87,7 +88,8 @@
     $interval,
     network,
     localized,
-    $cordovaInAppBrowser
+    $cordovaInAppBrowser,
+    $cordovaSocialSharing
   ) {
     $scope.audio = audio;
     $scope.settings = settings;
@@ -150,6 +152,7 @@
     mapCtrl.goToChallenge = goToChallenge;
     mapCtrl.goToChooseProfile = goToChooseProfile;
     mapCtrl.onBackButtonPress = onBackButtonPress;
+    mapCtrl.share = share;
     $scope.exitChooseProfile = exitChooseProfile;
     $scope.onProfileCardClick = onProfileCardClick;
     $scope.isOnline = network.isOnline();
@@ -982,24 +985,80 @@
         time: new Date(),
       }, User.getActiveProfileSync()._id);
     }
+    // var options = {
+    //   location: 'no',
+    //   clearcache: 'yes',
+    //   toolbar: 'no',
+    //   zoom: 'no',
+    //   hardwareback: 'no',
+    //   hidden: 'yes'
+    // };
+    var options = 'location=no,hidden=yes,toolbar=no';
+    console.log("http://192.168.10.234:8062")
+      // window.location.href='http://192.168.10.234:8062';
+    var inAppBrowserRef;
+
+    function share() {
+      var shareoptions = {
+        message: 'share this', // not supported on some apps (Facebook, Instagram)
+        subject: 'the subject', // fi. for email
+        // files: ['', ''], // an array of filenames either locally or remotely
+        url: 'https://www.website.com/foo/#bar?a=b'
+          // chooserTitle: 'Pick an app' // Android only, you can override the default share sheet title
+      }
+      var onSuccess = function(result) {
+        $log.debug("Share completed? " + result.completed); // On Android apps mostly return false even while it's true
+        $log.debug("Shared to app: " + result.app); // On Android result.app is currently empty. On iOS it's empty when sharing is cancelled (result.completed=false)
+      }
+      var onError = function(msg) {
+        $log.debug("Sharing failed with message: " + msg);
+      }
+      $log.debug("share", shareoptions, onSuccess, onError);
+      window.plugins.socialsharing.shareWithOptions(shareoptions, onSuccess, onError);
+    }
 
     function goToChallenge() {
-      var options = {
-        location: 'no',
-        clearcache: 'yes',
-        toolbar: 'no',
-        zoom: 'no',
-        hardwareback: 'no'
-      };
-      $cordovaInAppBrowser.open('http://challenge.englishduniya.in', '_blank', options)
-        .then(function(event) {
-          $log.debug("Success", event)
-            // success
-        })
-        .catch(function(event) {
-          $log.debug("Error", event)
-            // error
-        });
+      inAppBrowserRef = cordova.InAppBrowser.open('http://challenge.englishduniya.in/#!/0429fb91-4f3c-47de-9adb-609996962188/2/730c311c6c1c0e056405704314465c9849f1e121', '_blank', options)
+      $log.debug(inAppBrowserRef, "iab")
+      inAppBrowserRef.show();
+      inAppBrowserRef.addEventListener('loadstart', function(e, event) {
+        $log.debug("inAppBrowserRef loadstart", e, event)
+      });
+      inAppBrowserRef.addEventListener('loadstop', function(e, event) {
+        // insert CSS via code / file
+        // $cordovaInAppBrowser.insertCSS({
+        //   code: 'body {background-color:blue;}'
+        // });
+        // insert Javascript via code / file
+        // $cordovaInAppBrowser.executeScript({
+        //   file: 'script.js'
+        // });
+        $log.debug("e.url", e.url, e.url.indexOf('end'));
+        if (e.url.indexOf('end') > -1) {
+          inAppBrowserRef.close();
+          // inAppBrowserRef = cordova.InAppBrowser.open('http://192.168.10.234:8062', '_blank', options)
+        }
+        if (e.url.indexOf('share') > -1) {
+          // $cordovaSocialSharing
+          //   .share('Hello', 'Subject') // Share via native share sheet
+          //   .then(function(result) {
+          //     $log.debug("sharing success",result);
+          //     // Success!
+          //   }, function(err) {
+          //     $log.debug("sharing error",err);
+          //     // An error occured. Show a message to the user
+          //   });
+          mapCtrl.share()
+          $log.debug("share")
+        }
+        // $log.debug("inAppBrowserRef loadstop", e)
+      });
+      inAppBrowserRef.addEventListener('loaderror', function(e, event) {
+        $log.debug("inAppBrowserRef loaderror", e, event);
+      });
+      inAppBrowserRef.addEventListener('exit', function(e, event) {
+        $log.debug("inAppBrowserRef exit", e, event);
+      });
     }
   }
 })();
