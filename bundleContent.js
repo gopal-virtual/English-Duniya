@@ -39,31 +39,32 @@ media.push('/media/ell/images/thing_0IS1M4.png');
 var counter = [0, 0, 0, 0];
 if (lessons == 'all') {
   for (var i = 0; i < lesson_docs_list.length; i++) {
-    if (lesson_docs_list[i].id !== 'localized_mapping' && lesson_docs_list[i].id !== '_design/_auth')
+    if (lesson_docs_list[i].id !== 'localized_mapping' && lesson_docs_list[i].id !== '_design/_auth') {
       var lesson_doc = JSON.parse(request('GET', lessons_db + lesson_docs_list[i].id).getBody().toString()).lesson;
-    for (var j = 0; j < lesson_doc.objects.length; j++) {
-      //if Video
-      if (lesson_doc.objects[j].node.content_type_name == 'resource') {
-        // add video to media[]
-        media.push(lesson_doc.objects[j].node.type.path)
-      }
-      // If assessment
-      if (lesson_doc.objects[j].node.content_type_name == 'assessment') {
-        //Iterate questions
-        for (var k = 0; k < lesson_doc.objects[j].objects.length; k++) {
-          // add widgets to media[]
-          if (lesson_doc.objects[j].objects[k].node.type.content && lesson_doc.objects[j].objects[k].node.type.content.widgets) {
-            for (var mediaType in lesson_doc.objects[j].objects[k].node.type.content.widgets) {
-              if (lesson_doc.objects[j].objects[k].node.type.content.widgets.hasOwnProperty(mediaType)) {
-                for (var file in lesson_doc.objects[j].objects[k].node.type.content.widgets[mediaType]) {
-                  media.push(lesson_doc.objects[j].objects[k].node.type.content.widgets[mediaType][file]);
+      for (var j = 0; j < lesson_doc.objects.length; j++) {
+        //if Video
+        if (lesson_doc.objects[j].node.content_type_name == 'resource') {
+          // add video to media[]
+          media.push(lesson_doc.objects[j].node.type.path)
+        }
+        // If assessment
+        if (lesson_doc.objects[j].node.content_type_name == 'assessment') {
+          //Iterate questions
+          for (var k = 0; k < lesson_doc.objects[j].objects.length; k++) {
+            // add widgets to media[]
+            if (lesson_doc.objects[j].objects[k].node.type.content && lesson_doc.objects[j].objects[k].node.type.content.widgets) {
+              for (var mediaType in lesson_doc.objects[j].objects[k].node.type.content.widgets) {
+                if (lesson_doc.objects[j].objects[k].node.type.content.widgets.hasOwnProperty(mediaType)) {
+                  for (var file in lesson_doc.objects[j].objects[k].node.type.content.widgets[mediaType]) {
+                    media.push(lesson_doc.objects[j].objects[k].node.type.content.widgets[mediaType][file]);
+                  }
                 }
               }
             }
-          }
-          //add instructions to media[]
-          if (lesson_doc.objects[j].objects[k].node.meta && lesson_doc.objects[j].objects[k].node.meta.instructions && lesson_doc.objects[j].objects[k].node.meta.instructions.sounds) {
-            media = media.concat(lesson_doc.objects[j].objects[k].node.meta.instructions.sounds);
+            //add instructions to media[]
+            if (lesson_doc.objects[j].objects[k].node.meta && lesson_doc.objects[j].objects[k].node.meta.instructions && lesson_doc.objects[j].objects[k].node.meta.instructions.sounds) {
+              media = media.concat(lesson_doc.objects[j].objects[k].node.meta.instructions.sounds);
+            }
           }
         }
       }
