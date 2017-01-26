@@ -128,7 +128,7 @@ gulp.task('default', function(callback) {
   runSequence('generate-lessondb','get-diagnosis-media','makeLocalizationFactory', 'make-main', 'generate-constants', 'sass', 'html', 'scripts', callback);
 });
 gulp.task('generate-lessondb', shell.task(
-  (env !== environments.content) ? [
+  (env !== environments.dev) ? [
     'rm www/data/lessons.db',
     'pouchdb-dump ' + lessonsdb_couch_server + ' > www/data/lessons.db'
   ] : []
@@ -286,7 +286,7 @@ gulp.task('html', function() {
     .pipe(gulp.dest('./www/templates/'))
 });
 gulp.task('get-diagnosis-media', function() {
-  if (env !== environments.content) {
+  if (env !== environments.dev) {
     var docs_list = JSON.parse(request('GET', diagnosis_couch_db_server + '/_all_docs').getBody().toString());
     // console.log("docs list",docs_list)
     for (var i = 0; i < docs_list.rows.length; i++) {
