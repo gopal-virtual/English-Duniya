@@ -42,6 +42,11 @@ if (lessons == 'all') {
     if (lesson_docs_list[i].id !== 'localized_mapping' && lesson_docs_list[i].id !== '_design/_auth') {
       console.log(lesson_docs_list[i].id)
       var lesson_doc = JSON.parse(request('GET', lessons_db + lesson_docs_list[i].id).getBody().toString()).lesson;
+
+      // Add Intros to media[]
+      if (lesson_doc.node.meta && lesson_doc.node.meta.intros && lesson_doc.node.meta.intros.sound) {
+        media = media.concat(lesson_doc.node.meta.intros.sound);
+      }
       for (var j = 0; j < lesson_doc.objects.length; j++) {
         //if Video
         if (lesson_doc.objects[j].node.content_type_name == 'resource') {
