@@ -99,7 +99,7 @@ var languages_list = [{
 }];
 var env = argument.argv.env ? environments[argument.argv.env] : environments.default;
 var app_type = argument.argv.app_type ? argument.argv.app_type : 'na';
-var is_bundled = argument.argv.is_bundled ? argument.argv.is_bundled : false;
+var is_bundled = app_type == 'bundled' ? true : false;
 var app_version = 'na';
 var constants = JSON.parse(file.readFileSync(paths.constants.environment, 'utf8'));
 var lock = argument.argv.lock ? argument.argv.lock : constants[env]['LOCK'];
