@@ -115,7 +115,7 @@ for (i in media) {
   var directory = gerDirectoryFromURL(media[i]);
   fs_extra.ensureDirSync(directory)
   console.log(getSourceNameFromURL(media[i]), ' to ', target_folder + filename);
-  ncp(getSourceNameFromURL(media[i]), target_folder + filename, function(error) {
+  fs_extra.copy(getSourceNameFromURL(media[i]), target_folder + filename, function(error) {
     if (error) {
       console.log("Error Occured", error);
     }
