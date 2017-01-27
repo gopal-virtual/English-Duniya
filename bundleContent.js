@@ -42,7 +42,6 @@ if (lessons == 'all') {
     if (lesson_docs_list[i].id !== 'localized_mapping' && lesson_docs_list[i].id !== '_design/_auth') {
       console.log(lesson_docs_list[i].id)
       var lesson_doc = JSON.parse(request('GET', lessons_db + lesson_docs_list[i].id).getBody().toString()).lesson;
-
       // Add Intros to media[]
       if (lesson_doc.node.meta && lesson_doc.node.meta.intros && lesson_doc.node.meta.intros.sound) {
         media = media.concat(lesson_doc.node.meta.intros.sound);
@@ -70,6 +69,20 @@ if (lessons == 'all') {
             //add instructions to media[]
             if (lesson_doc.objects[j].objects[k].node.meta && lesson_doc.objects[j].objects[k].node.meta.instructions && lesson_doc.objects[j].objects[k].node.meta.instructions.sounds) {
               media = media.concat(lesson_doc.objects[j].objects[k].node.meta.instructions.sounds);
+            }
+          }
+        }
+        if (lesson_doc.objects[j].node.content_type_name == 'vocabulary') {
+          for (var l = 0; l < lesson_doc.objects[j].objects.length; l++) {
+            // vocab sounds
+            if (lesson_doc.objects[j].objects[l].node.type.sound) {
+              for (var soundIndex in lesson_doc.objects[j].objects[l].node.type.sound) {
+                media.push(lesson_doc.objects[j].objects[l].node.type.sound[soundIndex].path)
+              }
+            }
+            //vocab images
+            if (lesson_doc.objects[j].objects[l].node.type.image) {
+              media.push(lesson_doc.objects[j].objects[l].node.type.image.path)
             }
           }
         }
