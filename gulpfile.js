@@ -244,7 +244,7 @@ gulp.task('scripts', function() {
     .pipe(stripDebug())
     .pipe(strip())
     .pipe(concate('mobile.app.js'))
-    .pipe(gulpif(env !== environments.dev && env !== environments.content, uglify()))
+    .pipe(gulpif(env !== environments.dev && env !== environments.content && env !== environments.test, uglify()))
     .pipe(gulp.dest('www/build'))
     // .on('end',cb)
     // .pipe(broswerSync.stream())
