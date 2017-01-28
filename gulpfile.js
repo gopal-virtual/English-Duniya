@@ -99,7 +99,7 @@ var languages_list = [{
 }];
 var env = argument.argv.env ? environments[argument.argv.env] : environments.default;
 var app_type = argument.argv.app_type ? argument.argv.app_type : 'na';
-var is_bundled = argument.argv.is_bundled ? argument.argv.is_bundled : false;
+var is_bundled = app_type == 'bundled' ? true : false;
 var app_version = 'na';
 var constants = JSON.parse(file.readFileSync(paths.constants.environment, 'utf8'));
 var lock = argument.argv.lock ? argument.argv.lock : constants[env]['LOCK'];
@@ -125,12 +125,14 @@ var diagnosis_couch_db_server = argument.argv.diagnosisdb;
 console.log("envi", raven_key[argument.argv.env])
 gulp.task('default', function(callback) {
   // runSequence('generate-lessondb','get-diagnosis-media','make-main','generate-constants', 'sass', 'html', 'scripts',callback);
-  runSequence('makeLocalizationFactory', 'make-main', 'generate-constants', 'sass', 'html', 'scripts', callback);
+  runSequence('generate-lessondb','get-diagnosis-media','makeLocalizationFactory', 'make-main', 'generate-constants', 'sass', 'html', 'scripts', callback);
 });
 gulp.task('generate-lessondb', shell.task(
-  (env !== environments.content) ? [
+  (env !== environments.dev) ? [
     'rm www/data/lessons.db',
-    'pouchdb-dump ' + lessonsdb_couch_server + ' > www/data/lessons.db'
+    'rm www/data/diagnosis_translations.db',
+    'pouchdb-dump ' + lessonsdb_couch_server + ' > www/data/lessons.db',
+    'pouchdb-dump ' + diagnosis_couch_db_server + ' > www/data/diagnosis_translations.db'
   ] : []
 ));
 // gulp.task('optimize', function(cb) {
@@ -244,7 +246,7 @@ gulp.task('scripts', function() {
     .pipe(stripDebug())
     .pipe(strip())
     .pipe(concate('mobile.app.js'))
-    .pipe(gulpif(env !== environments.dev && env !== environments.content, uglify()))
+    .pipe(gulpif(env !== environments.dev && env !== environments.content && env !== environments.test, uglify()))
     .pipe(gulp.dest('www/build'))
     // .on('end',cb)
     // .pipe(broswerSync.stream())
@@ -286,7 +288,7 @@ gulp.task('html', function() {
     .pipe(gulp.dest('./www/templates/'))
 });
 gulp.task('get-diagnosis-media', function() {
-  if (env !== environments.content) {
+  if (env !== environments.dev) {
     var docs_list = JSON.parse(request('GET', diagnosis_couch_db_server + '/_all_docs').getBody().toString());
     // console.log("docs list",docs_list)
     for (var i = 0; i < docs_list.rows.length; i++) {
