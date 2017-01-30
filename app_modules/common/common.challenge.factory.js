@@ -13,7 +13,9 @@
     'widgetParser',
     'extendLesson',
     '$http',
-    '$rootScope'
+    '$rootScope',
+    'pointsQueue'
+
   ];
   /* @ngInject */
   function challenge(pouchDB,
@@ -25,34 +27,36 @@
     widgetParser,
     extendLesson,
     $http,
-    $rootScope
+    $rootScope,
+    pointsQueue
+
   ) {
     var challengeProperties = {
-      addPoints : addPoints,
+      addPoints: addPoints,
       getPoints: getPoints,
-      points : parseInt(localStorage.getItem('points'+User.getActiveProfileSync()._id))
+      points: parseInt(localStorage.getItem('points' + User.getActiveProfileSync()._id)) | 0
     };
 
-    function addPoints(profileID,points,action){
-      var oldPoints = parseInt(localStorage.getItem('points'+profileID)) | 0;
-      localStorage.setItem('points'+profileID,parseInt(points)+oldPoints);
-      getPoints();
-       pointsQueue.push({
+    function addPoints(profileID, points, action, nodeId) {
+      var oldPoints = parseInt(localStorage.getItem('points' + profileID)) | 0;
+      localStorage.setItem('points' + profileID, parseInt(points) + oldPoints);
+      getPoints(profileID);
+      pointsQueue.push({
         action: action,
-        score: points
+        score: points,
+        object_id: nodeId
       }).then(function() {
         $log.debug("pushPointsQueue success")
-      };
+      });
     }
 
-    function getPoints(profileID){
+    function getPoints(profileID) {
       // return User.scores.getScoreList().then(function(scoresList){
       //   $log.debug()
       // })
-      challengeProperties.points = parseInt(localStorage.getItem('points'+profileID));
+      challengeProperties.points = parseInt(localStorage.getItem('points' + profileID));
       return challengeProperties.points;
     }
-
     return challengeProperties;
   }
 })();

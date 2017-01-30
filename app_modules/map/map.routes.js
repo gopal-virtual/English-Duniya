@@ -121,8 +121,8 @@
       })
       .state('weekly-challenge', {
         url: '/weekly-challenge',
-        template: function() {
-          return "<ion-nav-view><iframe style='width:100vw;height:100vh' src='http://127.0.0.1:8062/#!/0429fb91-4f3c-47de-9adb-609996962188/2/730c311c6c1c0e056405704314465c9849f1e121'></iframe></ion-nav-view>"
+        template: function($stateParams) {
+          return "<ion-nav-view><iframe style='width:100vw;height:100vh' src='http://challenge.englishduniya.in/#!/0429fb91-4f3c-47de-9adb-609996962188/2/730c311c6c1c0e056405704314465c9849f1e121'></iframe></ion-nav-view>"
         },
         controller: ['$state','$log', function($state,$log) {
           

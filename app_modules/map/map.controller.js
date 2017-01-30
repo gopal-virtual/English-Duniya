@@ -1026,7 +1026,10 @@
     }
 
     function goToChallenge() {
+       pointsQueue.startSync().then(function() {
+        $log.debug("syncPointsQueue success")
       $state.go('weekly-challenge')
+      });
     }
 
     function pushPointsQueue() {
