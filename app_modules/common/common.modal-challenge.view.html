@@ -1,8 +1,42 @@
 
 <ion-view class="modal-extra-dark">
-	<ion-content>
-       <button class="button" ng-click="joinChallenge()" >Join Challenge</button>
-       <button class="button" ng-click="dismissJoinChallenge()" >Cancel</button>
-	</ion-content>
+<ion-content>
+<div  style="    margin-top: 15vh;
+	background-color: white;
+	width: 80vw;
+	margin-left: 10vw;
+	border-radius: 30px;">
+	<div class="row">
+		
+		<div class="col col-100 center">
+			<a ng-tap="exitChooseProfile();audio.play('click');" ng-click="dismissJoinChallenge()" ><img style="position: absolute;
+    top: -10px;
+    right: 7.5vw;" src="img/assets_svg/cross.svg" alt=""></a>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col col-100 center" style="padding: 0px">
+			<img src="img/assets/scholarship.png">
+		</div>
+	</div>
+	<div class="row">
+		
+		<div class="col col-100 center">
+			<p style="
+				font-size: 30px;
+				line-height: 32px;
+				color: orange;
+			">Win scholarship worth Rs 30,000/-</p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col col-100 center">
+			<button class="sbtn sbtn-join" ng-if="user.user.getIsVerified()" ng-click="audio.play('press');joinChallenge()"></button>
+			<button class="sbtn sbtn-phone-add" ng-if="!user.user.getIsVerified()" ng-click="audio.play('press');joinChallenge()"></button>
+			<!-- <button class="button" ng-click="" >Join Challenge</button> -->
+		</div>
+	</div>
+</div>
+<!-- <button class="button" ng-click="dismissJoinChallenge()" >Cancel</button> -->
+</ion-content>
 </ion-view>
-
