@@ -67,6 +67,50 @@ line-height: 4.6vh;
 position: absolute;
 bottom: 0;
 }
+div.challenge{
+    position: absolute;
+    z-index: 300;
+    width: 16vh;
+    height: 16vh;
+    background-color: #CB202E;
+    border: 0.6vh solid #FAF5EB;
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(0,0,0,0.6);
+    top: 25vh;
+    left: 5.5vh;
+}
+div.challenge > div.avatar{
+    position: absolute;
+    left: 1vh;
+    top: -8vh;
+}
+div.challenge > div.avatar > img{
+    width: 13.5vh;
+}
+div.challenge > div.header {
+    width: 140%;
+    height: 6vh;
+    background-color: #1D80C3;
+    border-radius: 3vh;
+    border: 0.6vh solid #459DCC;
+    box-shadow: 0 0 8px rgba(0,0,0,0.6);
+    color: white;
+    text-align: center;
+    line-height: 6vh;
+    font-size: 4vh;
+    margin-top: 7vh;
+    margin-left: -20%;
+}
+div.challenge > div.meta {
+    width: 100%;
+    height: 4vh;
+    background-color: #459DCC;
+    border-radius: 2.5vh;
+    color: white;
+    text-align: center;
+    line-height: 4.5vh;
+    font-size: 2.5vh;
+}
 </style>
 <div class="profile-star" ng-class="::{'animation-fade-in-from-top animation-delay-more' : mapCtrl.demo.getStep() != 1}" ng-hide="::mapCtrl.demo.getStep() == 1">
     <!-- <div class="profile-star" ng-hide="::mapCtrl.demo.getStep() == 1"> -->
@@ -74,18 +118,25 @@ bottom: 0;
     <div class="star-count">{{::mapCtrl.totalStars}}</div>
     <img class="profile-star-icon" src="img/assets_svg/icon-star.svg">
 </div>
-<div style="
+<!-- <div style="
     z-index: 300;
     margin-top: 4vh;
     position: absolute;
     margin-left: 40vw;
-    ">
-    <button ng-click="mapCtrl.syncPointsQueue()" class="button">Sync
+    "> -->
+    <!-- <button ng-click="mapCtrl.syncPointsQueue()" class="button">Sync -->
      <!-- ({{mapCtrl.challenge.getPoints(mapCtrl.User.getActiveProfileSync()._id)}}) -->
-     </button>
+     <!-- </button> -->
      <!-- <button ng-click="mapCtrl.syncPointsQueue2()" class="button">Sync2</button> -->
-    <button ng-click="mapCtrl.pushPointsQueue()" class="button">Push</button>
+    <!-- <button ng-click="mapCtrl.pushPointsQueue()" class="button">Push</button> -->
     <!-- <a href="intent:#Intent;action=android.intent.action.SEND;type=text/plain;S.android.intent.extra.TEXT=https%3A%2F%2Fpaul.kinlan.me%2F;S.android.intent.extra.SUBJECT=Amazing;S.browser_fallback_url=https:%3A%2F%2Ftwitter.com%2Fintent%2Ftweet;end">Share</a> -->
+<!-- </div> -->
+<div class="challenge">
+    <div class="avatar">
+        <img src="/img/assets_svg/boy_scholar.svg" alt="">
+    </div>
+    <div class="header">Challenge</div>
+    <div class="meta">6 days left</div>
 </div>
 <div ng-tap="mapCtrl.goToChooseProfile();audio.play('click');" ng-click="mapCtrl.goToChooseProfile();audio.play('click');"  class="profile" ng-hide="::mapCtrl.demo.getStep() == 1"  ng-class="::{'animation-fade-in-from-top animation-delay-more' : mapCtrl.demo.getStep() != 1}">
     <img class="profile-avatar" ng-src="img/assets_svg/profile-{{::mapCtrl.gender == 'M' ? 'boy' : 'girl'}}.svg">

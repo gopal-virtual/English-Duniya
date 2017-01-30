@@ -34,15 +34,15 @@
     };
 
     function addPoints(profileID,points,action){
-      var oldPoints = parseInt(localStorage.getItem('points'+profileID)) | 0;
+      var oldPoints = parseInt(localStorage.getItem('points'+profileID)) || 0;
       localStorage.setItem('points'+profileID,parseInt(points)+oldPoints);
       getPoints();
        pointsQueue.push({
         action: action,
         score: points
       }).then(function() {
-        $log.debug("pushPointsQueue success")
-      };
+        $log.debug("pushPointsQueue success");
+        });
     }
 
     function getPoints(profileID){
