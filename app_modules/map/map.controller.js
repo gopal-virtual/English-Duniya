@@ -161,6 +161,7 @@
     mapCtrl.pushPointsQueue = pushPointsQueue;
     mapCtrl.syncPointsQueue = syncPointsQueue;
     mapCtrl.syncPointsQueue2 = syncPointsQueue2;
+    mapCtrl.openChallenge = openChallenge;
     $scope.exitChooseProfile = exitChooseProfile;
     $scope.onProfileCardClick = onProfileCardClick;
     $scope.isOnline = network.isOnline();
@@ -202,6 +203,9 @@
       confirm: exitModalConfirm
     }
 
+    function openChallenge () {
+        $state.go('weeky-challenge-guide',{})
+    }
     function exitModalDismiss() {
       $log.debug('EXITING NOT SURELY')
       $scope.exitApp.hide().then(function() {
