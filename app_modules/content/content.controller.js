@@ -20,7 +20,8 @@
     '$q',
     'Utilities',
     '$state',
-    'localized'
+    'localized',
+    'challenge',
   ];
   /* @ngInject */
   function contentController(
@@ -40,7 +41,8 @@
     $q,
     Utilities,
     $state,
-    localized
+    localized,
+    challenge
   ) {
     var contentCtrl = this;
     $scope.audio = audio;

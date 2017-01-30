@@ -204,7 +204,6 @@
     }
 
     function openChallenge () {
-        $state.go('weeky-challenge-guide',{})
     }
     function exitModalDismiss() {
       $log.debug('EXITING NOT SURELY')
@@ -1030,7 +1029,10 @@
     }
 
     function goToChallenge() {
+       pointsQueue.startSync().then(function() {
+        $log.debug("syncPointsQueue success")
       $state.go('weekly-challenge')
+      });
     }
 
     function pushPointsQueue() {
