@@ -1026,10 +1026,16 @@
     }
 
     function goToChallenge() {
-       pointsQueue.startSync().then(function() {
-        $log.debug("syncPointsQueue success")
-      $state.go('weekly-challenge')
-      });
+      if (User.hasJoinedChallenge()) {
+        pointsQueue.startSync().then(function() {
+          $log.debug("syncPointsQueue success")
+          $state.go('weekly-challenge', {
+            profileId: User.getActiveProfileSync()._id
+          })
+        });
+      }else{
+        $scope.challengeModal.show();
+      }
     }
 
     function pushPointsQueue() {
@@ -1098,6 +1104,37 @@
       inAppBrowserRef.addEventListener('exit', function(e, event) {
         $log.debug("inAppBrowserRef exit", e, event);
       });
+    }
+    $log.debug("challenge demo step is", User.demo.getStep())
+    $ionicModal.fromTemplateUrl(CONSTANT.PATH.COMMON + '/common.modal-challenge' + CONSTANT.VIEW, {
+      scope: $scope,
+      animation: 'slide-in-down',
+      hardwareBackButtonClose: false
+    }).then(function(challengeModal) {
+      $log.debug("challenge modal defined", User.hasJoinedChallenge())
+      $scope.challengeModal = challengeModal;
+      if (User.demo.getStep() != 1 && !User.hasJoinedChallenge()) {
+        $log.debug("showing challenge modal")
+        $timeout(function() {
+          $scope.challengeModal.show();
+        }, 2000)
+      }
+    });
+    $scope.joinChallenge = function() {
+      $log.debug("join challenege");
+      if (User.user.getIsVerified()) {
+        User.joinChallenge();
+        $scope.challengeModal.hide();
+        $log.debug("Succesfully joined the challenge")
+      } else {
+        $scope.challengeModal.hide().then(function() {
+          goToPhoneNumber();
+        })
+      }
+    }
+    $scope.dismissJoinChallenge = function() {
+      $log.debug("dismiss join challenege");
+      $scope.challengeModal.hide();
     }
   }
 })();

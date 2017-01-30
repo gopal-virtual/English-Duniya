@@ -29,7 +29,7 @@
             } else {
               return content.getResourceList(User.getActiveProfileSync().data.profile.grade).then(function(lessons) {
                 return extendLesson.getLesson(lessons).then(function(result) {
-                  $log.debug("Result is " , result)
+                  $log.debug("Result is ", result)
                   return {
                     lockedLesson: result,
                     total_star: extendLesson.getTotalStar()
@@ -121,12 +121,13 @@
       })
       .state('weekly-challenge', {
         url: '/weekly-challenge',
-        template: function($stateParams) {
-          return "<ion-nav-view><iframe style='width:100vw;height:100vh' src='http://challenge.englishduniya.in/#!/0429fb91-4f3c-47de-9adb-609996962188/2/730c311c6c1c0e056405704314465c9849f1e121'></iframe></ion-nav-view>"
+        templateProvider: function($timeout, $stateParams, $log, User) {
+          $log.debug("weekly challenge template provider");
+          return $timeout(function() {
+            return "<ion-nav-view><iframe style='width:100vw;height:100vh' src='http://challenge.englishduniya.in/#!/0429fb91-4f3c-47de-9adb-609996962188/" + User.getActiveProfileSync()._id + "/" + localStorage.getItem('Authorization') + "'></iframe></ion-nav-view>"
+          }, 100);
         },
-        controller: ['$state','$log', function($state,$log) {
-          
-        }]
+        controller: ['$state', '$log', function($state, $log) {}]
       });
   }
 })();
