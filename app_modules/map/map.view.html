@@ -134,12 +134,12 @@ div.challenge > div.meta {
     <!-- <a href="intent:#Intent;action=android.intent.action.SEND;type=text/plain;S.android.intent.extra.TEXT=https%3A%2F%2Fpaul.kinlan.me%2F;S.android.intent.extra.SUBJECT=Amazing;S.browser_fallback_url=https:%3A%2F%2Ftwitter.com%2Fintent%2Ftweet;end">Share</a> -->
 <!-- </div> -->
 
-<div ng-if="mapCtrl.demo.getStep() >= 2" class="challenge" ng-click="mapCtrl.goToChallenge()">
+<div ng-if="::mapCtrl.demo.getStep() >= 2" class="challenge" ng-click="mapCtrl.goToChallenge()">
     <div class="avatar">
         <img src="/img/assets_svg/boy_scholar.svg" alt="">
     </div>
     <div class="header">Challenge </div>
-    <div class="meta">6 days left</div>
+    <div class="meta">{{mapCtrl.daysRemaining}} days left</div>
 </div>
 <div ng-tap="mapCtrl.goToChooseProfile();audio.play('click');" ng-click="mapCtrl.goToChooseProfile();audio.play('click');"  class="profile" ng-hide="::mapCtrl.demo.getStep() == 1"  ng-class="::{'animation-fade-in-from-top animation-delay-more' : mapCtrl.demo.getStep() != 1}">
     <img class="profile-avatar" ng-src="img/assets_svg/profile-{{::mapCtrl.gender == 'M' ? 'boy' : 'girl'}}.svg">

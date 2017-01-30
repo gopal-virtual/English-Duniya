@@ -203,8 +203,8 @@
       confirm: exitModalConfirm
     }
 
-    function openChallenge () {
-    }
+    function openChallenge() {}
+
     function exitModalDismiss() {
       $log.debug('EXITING NOT SURELY')
       $scope.exitApp.hide().then(function() {
@@ -1036,7 +1036,7 @@
             profileId: User.getActiveProfileSync()._id
           })
         });
-      }else{
+      } else {
         $scope.challengeModal.show();
       }
     }
@@ -1139,5 +1139,23 @@
       $log.debug("dismiss join challenege");
       $scope.challengeModal.hide();
     }
+
+    function daysBetween(date1, date2) {
+      //Get 1 day in milliseconds
+      var one_day = 1000 * 60 * 60 * 24;
+      // Convert both dates to milliseconds
+      var date1_ms = date1.getTime();
+      var date2_ms = date2.getTime();
+      // Calculate the difference in milliseconds
+      var difference_ms = date2_ms - date1_ms;
+      // Convert back to days and return
+      return Math.round(difference_ms / one_day);
+    }
+    //Set the two dates
+    var challengeStartDate = new Date(2017, 1, 28);
+    var challengeStartDateText = new Date(challengeStartDate.getFullYear(), challengeStartDate.getMonth(), challengeStartDate.getDate());
+    var today = new Date();
+    //displays 726
+    mapCtrl.daysRemaining = daysBetween(today, challengeStartDateText);
   }
 })();
