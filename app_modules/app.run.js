@@ -195,6 +195,9 @@
     //     },User.getActiveProfileSync() && User.getActiveProfileSync()._id)
     //   })
     $ionicPlatform.ready(function() {
+      window.addEventListener('message', function(event) {
+              $log.debug(event.data);
+          });
       analytics.getLocation().then(function(location) {
         $log.debug("Location", location);
       })

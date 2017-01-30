@@ -38,7 +38,7 @@
     "FAKE_LOGIN": true,
     "FAKE_ID_DEVICE": "kartik-asus",
     "FAKE_DEVICE": true,
-    "BACKEND_SERVICE_DOMAIN": "https://cc-test.zaya.in/",
+    "BACKEND_SERVICE_DOMAIN": "https://cc-test-2.zaya.in/",
     "RESOURCE_SERVER": "https://cc-test.zaya.in",
     "ANALYTICS": true,
     "PROFILES_DB_SERVER": "https://ci-couch.zaya.in/device",

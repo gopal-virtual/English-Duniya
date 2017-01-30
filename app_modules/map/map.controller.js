@@ -49,7 +49,9 @@
     'network',
     'localized',
     '$cordovaInAppBrowser',
-    '$cordovaSocialSharing'
+    '$cordovaSocialSharing',
+    'challenge',
+    'pointsQueue'
   ];
 
   function mapController(
@@ -89,7 +91,9 @@
     network,
     localized,
     $cordovaInAppBrowser,
-    $cordovaSocialSharing
+    $cordovaSocialSharing,
+    challenge,
+    pointsQueue
   ) {
     $scope.audio = audio;
     $scope.settings = settings;
@@ -112,7 +116,8 @@
       // $state.current.data && lessonList.unshift($state.current.data.litmus);
     mapCtrl.User = User;
     mapCtrl.demo = User.demo;
-    // mapCtrl.loading = $ionicLoading;
+    mapCtrl.challenge = challenge
+      // mapCtrl.loading = $ionicLoading;
     mapCtrl.authFactory = Auth;
     mapCtrl.queue = queue;
     mapCtrl.lessons = lessonList;
@@ -153,6 +158,9 @@
     mapCtrl.goToChooseProfile = goToChooseProfile;
     mapCtrl.onBackButtonPress = onBackButtonPress;
     mapCtrl.share = share;
+    mapCtrl.pushPointsQueue = pushPointsQueue;
+    mapCtrl.syncPointsQueue = syncPointsQueue;
+    mapCtrl.syncPointsQueue2 = syncPointsQueue2;
     $scope.exitChooseProfile = exitChooseProfile;
     $scope.onProfileCardClick = onProfileCardClick;
     $scope.isOnline = network.isOnline();
@@ -1018,6 +1026,34 @@
     }
 
     function goToChallenge() {
+      $state.go('weekly-challenge')
+    }
+
+    function pushPointsQueue() {
+      $log.debug("pushPointsQueue")
+      pointsQueue.push({
+        action: 'quiz_complete',
+        score: 0
+      }).then(function() {
+        $log.debug("pushPointsQueue success")
+      })
+    }
+
+    function syncPointsQueue() {
+      // $log.debug("syncPointsQueue",pointsQueue.startSync())
+      pointsQueue.startSync().then(function() {
+        $log.debug("syncPointsQueue success")
+      });
+    }
+
+    function syncPointsQueue2() {
+      // $log.debug("syncPointsQueue",pointsQueue.startSync())
+      pointsQueue.startSync().then(function() {
+        $log.debug("syncPointsQueue success2")
+      });
+    }
+
+    function goToChallengeInAppBrowser() {
       inAppBrowserRef = cordova.InAppBrowser.open('http://challenge.englishduniya.in/#!/0429fb91-4f3c-47de-9adb-609996962188/2/730c311c6c1c0e056405704314465c9849f1e121', '_blank', options)
       $log.debug(inAppBrowserRef, "iab")
       inAppBrowserRef.show();

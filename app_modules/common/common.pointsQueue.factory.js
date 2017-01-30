@@ -2,8 +2,8 @@
   'use strict';
   angular
     .module('common')
-    .factory('queue', queue);
-  queue.$inject = [
+    .factory('pointsQueue', pointsQueue);
+  pointsQueue.$inject = [
     'pouchDB',
     '$log',
     'Rest',
@@ -13,14 +13,14 @@
     'network'
   ];
   /* @ngInject */
-  function queue(pouchDB,
+  function pointsQueue(pouchDB,
     $log,
     Rest,
     CONSTANT,
     $q,
     Auth,
     network) {
-    var queueDB = pouchDB('queueDB', {
+    var queueDB = pouchDB('pointsQueueDB', {
       revs_limit: 1,
       // auto_compaction: true
     });
@@ -42,28 +42,19 @@
       // }
     };
 
-    function push(url, body, method) {
-      $log.debug("queue", "push",{
-        '_id': new Date().getTime().toString(),
-        'url': url,
-        'body': body,
-        'method': method
-      })
-      if (!method) {
-        method = 'post'
-      }
+    function push(body) {
+     
+      
       return queueDB.put({
         '_id': new Date().getTime().toString(),
-        'url': url,
         'body': JSON.parse(JSON.stringify(body)),
-        'method': method
+        'method': 'post'
       }).then(function() {
-        $log.debug("queue", "push success")
-        if (localStorage.getItem('syncing') !== 'true' && network.isOnline()) {
-          $log.debug("queue", "push success start sync")
-          startSync();
+        if (localStorage.getItem('syncingPoints') !== 'true' && network.isOnline()) {
+          // $log.debug("pointsQueue", "push success start sync")
+          // startSync();
         } else {
-          $log.debug("queue", "push success do not start sync")
+          // $log.debug("pointsQueue", "push success do not start sync")
         }
         return $q.resolve();
       }).catch(function(err) {
@@ -88,68 +79,45 @@
     //   return d.promise;
     // })
     function uploadIfRecord(records) {
-      $log.debug("queue", "upload if record")
+      // $log.debug("queue", "upload if record")
       if (records.length > 0) {
-        $log.debug("queue", "upload if record found")
+        // $log.debug("queue", "upload if record found")
         return uploadAndDelete(records[0]);
       } else {
-        $log.debug("queue", "upload if record no data")
+        // $log.debug("queue", "upload if record no data")
         return $q.resolve('no_data');
       }
     }
 
-    function startSync() {
-      $log.debug("queue", "starting sync")
-      localStorage.setItem('syncing', true)
-      Auth.loginIfNotAuthorised()
-        .then(function() {
-          $log.debug("queue", "authorised")
-          return Auth.createCouchIfNot()
-        })
-        .then(function() {
-          $log.debug("queue", "couch created")
-          return queueDB.allDocs({
-            include_docs: true
-          })
+    function startSync(d) {
+      localStorage.setItem('syncingPoints', true)
+      if(!d){
+      var d = $q.defer();        
+      }
+      queueDB.allDocs({
+          include_docs: true
         })
         .then(function(response) {
-          $log.debug("queue", "all records get")
           return uploadIfRecord(response.rows)
         })
         .then(function(response) {
-          $log.debug("queue", "upload if record success")
           if (response === 'no_data') {
-            localStorage.setItem('syncing', false);
-            return true;
+            $log.debug("no_data")
+            localStorage.setItem('syncingPoints', false);
+            d.resolve();
           } else {
-            $log.debug("queue", "starting sync 2")
-            startSync();
+            return startSync(d);
           }
         })
-        .catch(function(e) {
-          $log.debug("queue error", e)
-        })
+       
+        return d.promise;
     }
 
     function uploadAndDelete(record) {
-      //patch
-      $log.debug("queue", "upload amd delete", record)
-      if (!record.doc.body) {
-        record.doc.body = record.doc.data.data;
-        record.doc.method = 'post';
-        record.doc.url = 'activity-log';
-      }
-      //patch end
-      if (record.doc.url === 'activity-log') {
-        if (record.doc.body.client_uid === undefined && record.doc.body.actor_object_id === undefined) {
-          record.doc.body.actor_object_id = localStorage.user_details ? JSON.parse(localStorage.getItem('user_details')).id : null;
-        }
-      }
+
       var promise;
       if (record.doc.method === 'post') {
-        promise = Rest.all(record.doc.url).post(record.doc.body);
-      } else {
-        promise = Rest.all(record.doc.url).patch(record.doc.body);
+        promise = Rest.all('/profiles/a5200f28-bb72-41d6-888d-a43fa3aaf91a/points/').post(record.doc.body);
       }
       return promise.then(function() {
           $log.debug("queue", "upload success", record);
@@ -173,6 +141,5 @@
         });
     }
     return queueProperties;
-    
   }
 })();
