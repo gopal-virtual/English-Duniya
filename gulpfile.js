@@ -96,6 +96,9 @@ var languages_list = [{
 }, {
   name: 'telugu',
   code: 'te'
+}, {
+  name: 'bengali',
+  code: 'bn'
 }];
 var env = argument.argv.env ? environments[argument.argv.env] : environments.default;
 var app_type = argument.argv.app_type ? argument.argv.app_type : 'na';
