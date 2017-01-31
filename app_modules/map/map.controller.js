@@ -1029,15 +1029,19 @@
     }
 
     function goToChallenge() {
-      if (User.hasJoinedChallenge()) {
-        pointsQueue.startSync().then(function() {
-          $log.debug("syncPointsQueue success")
-          $state.go('weekly-challenge', {
-            profileId: User.getActiveProfileSync()._id
-          })
-        });
-      } else {
-        $scope.challengeModal.show();
+      if (network.isOnline()) {
+        if (User.hasJoinedChallenge()) {
+          pointsQueue.startSync().then(function() {
+            $log.debug("syncPointsQueue success")
+            $state.go('weekly-challenge', {
+              profileId: User.getActiveProfileSync()._id
+            })
+          });
+        } else {
+          $scope.challengeModal.show();
+        }
+      }else{
+        $ionicPopup.alert({title:'No Internet Connection',template:'You have to be online to play challenge' })
       }
     }
 
@@ -1062,50 +1066,6 @@
       // $log.debug("syncPointsQueue",pointsQueue.startSync())
       pointsQueue.startSync().then(function() {
         $log.debug("syncPointsQueue success2")
-      });
-    }
-
-    function goToChallengeInAppBrowser() {
-      inAppBrowserRef = cordova.InAppBrowser.open('http://challenge.englishduniya.in/#!/0429fb91-4f3c-47de-9adb-609996962188/2/730c311c6c1c0e056405704314465c9849f1e121', '_blank', options)
-      $log.debug(inAppBrowserRef, "iab")
-      inAppBrowserRef.show();
-      inAppBrowserRef.addEventListener('loadstart', function(e, event) {
-        $log.debug("inAppBrowserRef loadstart", e, event)
-      });
-      inAppBrowserRef.addEventListener('loadstop', function(e, event) {
-        // insert CSS via code / file
-        // $cordovaInAppBrowser.insertCSS({
-        //   code: 'body {background-color:blue;}'
-        // });
-        // insert Javascript via code / file
-        // $cordovaInAppBrowser.executeScript({
-        //   file: 'script.js'
-        // });
-        $log.debug("e.url", e.url, e.url.indexOf('end'));
-        if (e.url.indexOf('end') > -1) {
-          inAppBrowserRef.close();
-          // inAppBrowserRef = cordova.InAppBrowser.open('http://192.168.10.234:8062', '_blank', options)
-        }
-        if (e.url.indexOf('share') > -1) {
-          // $cordovaSocialSharing
-          //   .share('Hello', 'Subject') // Share via native share sheet
-          //   .then(function(result) {
-          //     $log.debug("sharing success",result);
-          //     // Success!
-          //   }, function(err) {
-          //     $log.debug("sharing error",err);
-          //     // An error occured. Show a message to the user
-          //   });
-          mapCtrl.share()
-          $log.debug("share")
-        }
-        // $log.debug("inAppBrowserRef loadstop", e)
-      });
-      inAppBrowserRef.addEventListener('loaderror', function(e, event) {
-        $log.debug("inAppBrowserRef loaderror", e, event);
-      });
-      inAppBrowserRef.addEventListener('exit', function(e, event) {
-        $log.debug("inAppBrowserRef exit", e, event);
       });
     }
     $log.debug("challenge demo step is", User.demo.getStep())
@@ -1156,6 +1116,6 @@
     var challengeStartDateText = new Date(challengeStartDate.getFullYear(), challengeStartDate.getMonth(), challengeStartDate.getDate());
     var today = new Date();
     //displays 726
-    mapCtrl.daysRemaining = daysBetween(today, challengeStartDateText);
+    mapCtrl.daysRemaining = daysBetween(today, challengeStartDateText) > 0 ? daysBetween(today, challengeStartDateText) : 0;
   }
 })();
