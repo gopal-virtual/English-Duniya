@@ -1,0 +1,2 @@
+cat scripts/automation/01-*.sh scripts/automation/02-*.sh scripts/automation/03-*.sh scripts/automation/04-*.sh scripts/automation/05-*.sh scripts/automation/06-*.sh scripts/automation/07-*.sh scripts/automation/08-*.sh > scripts/automation/test.sh
+bash scripts/automation/test.sh
