@@ -99,7 +99,11 @@ var languages_list = [{
 }, {
   name: 'bengali',
   code: 'bn'
-}];
+}, {
+  name: 'marathi',
+  code: 'mr'
+}
+];
 var env = argument.argv.env ? environments[argument.argv.env] : environments.default;
 var app_type = argument.argv.app_type ? argument.argv.app_type : 'na';
 var is_bundled = app_type == 'bundled' ? true : false;
