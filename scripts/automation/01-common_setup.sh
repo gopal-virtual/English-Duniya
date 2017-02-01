@@ -17,7 +17,7 @@ echo "MEDIA SOURCE "$MEDIA_SOURCE
 npm install
 bower install
 
-campaign_name=playstore
+
 
 # Common setup end
 
