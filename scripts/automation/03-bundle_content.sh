@@ -6,9 +6,11 @@
 #	$diagnosis_translationsdb
 if [ "$content_type" = 'bundled' ]; then
 lessons_download_count=all
+is_bundled=true
 fi
 if [ "$content_type" = 'non-bundled' ]; then
 lessons_download_count=0
+is_bundled=false
 fi
 
 rm -f -r www/bundled/*
