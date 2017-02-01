@@ -102,19 +102,18 @@ var languages_list = [{
 }, {
   name: 'marathi',
   code: 'mr'
-}
-];
+}];
 var env = argument.argv.env ? environments[argument.argv.env] : environments.default;
 var app_type = argument.argv.app_type ? argument.argv.app_type : 'na';
-var app_source = argument.argv.app_source ? argument.argv.app_source : 'playstore';
+var campaign_name = argument.argv.campaign_name ? argument.argv.campaign_name : 'playstore';
 var is_bundled = argument.argv.is_bundled ? argument.argv.is_bundled : false;
+var allowed_languages = argument.argv.languages ? argument.argv.languages : 'hi';
 var app_version = 'na';
 var constants = JSON.parse(file.readFileSync(paths.constants.environment, 'utf8'));
 var lock = argument.argv.lock ? argument.argv.lock : constants[env]['LOCK'];
 var fake_id_device = constants[env]['FAKE_ID_DEVICE'] || 'na';
 var lesson_db_version = 'na';
 var diagnosis_media = [];
-var allowed_languages = argument.argv.languages ? argument.argv.languages : 'hi';
 var allowed_languages_list = [];
 for (i in languages_list) {
   if (allowed_languages.indexOf(languages_list[i].code) !== -1) {
@@ -133,7 +132,7 @@ var diagnosis_couch_db_server = argument.argv.diagnosisdb;
 console.log("envi", raven_key[argument.argv.env])
 gulp.task('default', function(callback) {
   // runSequence('generate-lessondb','get-diagnosis-media','make-main','generate-constants', 'sass', 'html', 'scripts',callback);
-  runSequence('generate-lessondb','get-diagnosis-media','makeLocalizationFactory','downloadLocalizedAudio', 'make-main', 'generate-constants', 'sass', 'html', 'scripts', callback);
+  runSequence('generate-lessondb', 'get-diagnosis-media', 'makeLocalizationFactory', 'downloadLocalizedAudio', 'make-main', 'generate-constants', 'sass', 'html', 'scripts', callback);
 });
 gulp.task('generate-lessondb', shell.task(
   (env !== environments.dev) ? [
@@ -241,8 +240,8 @@ gulp.task('generate-constants', function() {
         match: 'ALLOWED_LANGUAGES',
         replacement: allowed_languages_list
       }, {
-        match: 'APP_SOURCE',
-        replacement: app_source
+        match: 'CAMPAIGN_NAME',
+        replacement: campaign_name
       }]
     }))
     .pipe(rename(paths.constants.destination_filename))

@@ -8,7 +8,7 @@
       'APP':{
       'TYPE': '@@APP_TYPE',
       'VERSION': '@@APP_VERSION',
-      'SOURCE' : '@@APP_SOURCE'
+      'CAMPAIGN' : '@@CAMPAIGN_NAME'
       },
       'BUNDLED': @@BUNDLED,
       'LOCK': @@LOCK,

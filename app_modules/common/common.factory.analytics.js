@@ -166,7 +166,7 @@
       data["network"] = network.getConnectionType();
       data["device"] = device;
       data["location"] = {};
-      data["app_source"] = CONSTANT.APP.SOURCE;
+      data["campaign_name"] = CONSTANT.APP.CAMPAIGN;
       var post_param = {
         "actor_object_id": actor_object_id,
         "verb": verb,
@@ -210,7 +210,7 @@
       data["device"] = device;
       data["app_version"] = CONSTANT.APP.VERSION;
       data["app_type"] = CONSTANT.APP.TYPE;
-      data["app_source"] = CONSTANT.APP.SOURCE;
+      data["campaign_name"] = CONSTANT.APP.CAMPAIGN;
       $log.debug("Loggin analytics",data);
       if(location && location.coords){
       data["location"] = {'latitue':location.coords.latitude,'longitude':location.coords.longitude};
