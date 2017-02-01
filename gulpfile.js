@@ -106,7 +106,8 @@ var languages_list = [{
 ];
 var env = argument.argv.env ? environments[argument.argv.env] : environments.default;
 var app_type = argument.argv.app_type ? argument.argv.app_type : 'na';
-var is_bundled = app_type == 'bundled' ? true : false;
+var app_source = argument.argv.app_source ? argument.argv.app_source : 'playstore';
+var is_bundled = argument.argv.is_bundled ? argument.argv.is_bundled : false;
 var app_version = 'na';
 var constants = JSON.parse(file.readFileSync(paths.constants.environment, 'utf8'));
 var lock = argument.argv.lock ? argument.argv.lock : constants[env]['LOCK'];
@@ -239,6 +240,9 @@ gulp.task('generate-constants', function() {
       }, {
         match: 'ALLOWED_LANGUAGES',
         replacement: allowed_languages_list
+      }, {
+        match: 'APP_SOURCE',
+        replacement: app_source
       }]
     }))
     .pipe(rename(paths.constants.destination_filename))
