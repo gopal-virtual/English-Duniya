@@ -27,9 +27,12 @@ jarsigner -tsa http://timestamp.comodoca.com/rfc3161 -sigalg SHA1withRSA -digest
 VERSION="$ANDROID_HOME/build-tools/23.0.1"
 BUILD_PATH="/tmp"
 
-final_build_name=$BUILD_PATH/$BUILD_NAME.apk
+release_build_name=$BUILD_PATH/$BUILD_NAME.apk
 
 
-$VERSION/zipalign 4 $REPO_PATH/platforms/android/build/outputs/apk/$unsigned_build_name $final_build_name
+$VERSION/zipalign 4 $REPO_PATH/platforms/android/build/outputs/apk/$unsigned_build_name $release_build_name
 
+release_build_upload_path=s3://zaya-builds/release/englishduniya-$campaign_name-$BUILD_NUMBER-$environment-$build_architecture-$content_type.apk
+
+s3cmd put --acl-public $release_build_name $release_build_upload_path
 # release build end
