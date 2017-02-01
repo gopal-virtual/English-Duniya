@@ -17,7 +17,8 @@ languages=hi
 keep_crosswalk=true
 
 #vars for step 7
-build_architecture=x86
+build_architecture=arm
 
 
 echo Campaign name $campaign_name
+echo Campaign owner name $campaign_owner_name
