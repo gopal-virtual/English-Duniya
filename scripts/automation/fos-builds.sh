@@ -7,4 +7,4 @@ cat scripts/automation/01-common_setup.sh scripts/automation/01.1-fos_builds_set
 # do
 # echo $step
 # done
-bash scripts/automation/fos-builds-generated-script.sh
+# bash scripts/automation/fos-builds-generated-script.sh

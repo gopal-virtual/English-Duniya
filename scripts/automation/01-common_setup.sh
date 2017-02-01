@@ -17,6 +17,8 @@ echo "MEDIA SOURCE "$MEDIA_SOURCE
 npm install
 bower install
 
+campaign_name=playstore
+
 # Common setup end
 
 
@@ -31,5 +33,3 @@ bower install
 # cp $REPO_PATH/resources/android/drawable-mdpi/screen.png $REPO_PATH/resources/android/splash/screen.png
 
 # configure icons/splashes end
-
-
