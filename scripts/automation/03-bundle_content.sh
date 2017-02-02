@@ -14,8 +14,8 @@ is_bundled=false
 fi
 
 rm -f -r www/bundled/*
-echo --lessons=$lessons_download_count --source_folder=$MEDIA_SOURCE --lessons_db=$lessonsdb --diagnosis_db=$diagnosis_translationsdb
-node bundleContent.js --lessons=$lessons_download_count --source_folder=$MEDIA_SOURCE --lessons_db=$lessonsdb --diagnosis_db=$diagnosis_translationsdb
+echo --lessons=$lessons_download_count --source_folder=$MEDIA_SOURCE --lessons_db=$lessonsdb --diagnosis_db=$diagnosis_translationsdb --languages=$languages
+node bundleContent.js --lessons=$lessons_download_count --source_folder=$MEDIA_SOURCE --lessons_db=$lessonsdb --diagnosis_db=$diagnosis_translationsdb --languages=$languages
 
 
 # End content bundle

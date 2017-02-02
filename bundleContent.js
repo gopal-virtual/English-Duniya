@@ -11,6 +11,7 @@ var diagnosis_db = argv.diagnosis_db;
 var lessons_db = argv.lessons_db;
 var diagnosis_docs_list = JSON.parse(request('GET', diagnosis_db + '_all_docs').getBody().toString());
 var lesson_docs_list = JSON.parse(request('GET', lessons_db + '_all_docs').getBody().toString()).rows;
+var languages = argv.languages;
 
 function getFileNameFromURl(url) {
   var a = url.split('/');
@@ -96,11 +97,14 @@ for (var i = 0; i < diagnosis_docs_list.rows.length; i++) {
   var id = diagnosis_docs_list.rows[i].id;
   var doc = JSON.parse(request('GET', diagnosis_db + id).getBody().toString());
   // console.log("Doc", doc.question);
-  for (var media_type in doc.question.node.type.content.widgets) {
-    if (doc.question.node.type.content.widgets.hasOwnProperty(media_type)) {
-      for (var media_file in doc.question.node.type.content.widgets[media_type]) {
-        //console.log(doc.question.node.type.content.widgets[media_type][media_file])
-        media.push(doc.question.node.type.content.widgets[media_type][media_file]);
+  // console.log(doc.question.node.localize.source);
+  if (languages.indexOf(doc.question.node.localize.source) >= 0) {
+    for (var media_type in doc.question.node.type.content.widgets) {
+      if (doc.question.node.type.content.widgets.hasOwnProperty(media_type)) {
+        for (var media_file in doc.question.node.type.content.widgets[media_type]) {
+          //console.log(doc.question.node.type.content.widgets[media_type][media_file])
+          media.push(doc.question.node.type.content.widgets[media_type][media_file]);
+        }
       }
     }
   }
