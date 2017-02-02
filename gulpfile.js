@@ -102,7 +102,11 @@ var languages_list = [{
 }, {
   name: 'marathi',
   code: 'mr'
-}];
+}, {
+  name: 'kannada',
+  code: 'kn'
+}
+];
 var env = argument.argv.env ? environments[argument.argv.env] : environments.default;
 var app_type = argument.argv.app_type ? argument.argv.app_type : 'na';
 var campaign_name = argument.argv.campaign_name ? argument.argv.campaign_name : 'playstore';

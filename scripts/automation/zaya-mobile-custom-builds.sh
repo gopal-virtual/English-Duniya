@@ -6,4 +6,4 @@ cat scripts/automation/01-common_setup.sh scripts/automation/02-media_sync.sh sc
 # do
 # echo $step
 # done
-# bash scripts/automation/zaya-mobile-custom-builds-generated-script.sh
+bash scripts/automation/zaya-mobile-custom-builds-generated-script.sh
