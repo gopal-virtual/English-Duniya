@@ -209,7 +209,7 @@ gulp.task('generate-constants', function() {
         replacement: lesson_db_version
       }, {
         match: 'LESSONS_DB_SERVER',
-        replacement: constants[env]['LESSONS_DB_SERVER']
+        replacement: lessonsdb_couch_server
       }, {
         match: 'PROFILES_DB_SERVER',
         replacement: constants[env]['PROFILES_DB_SERVER']
