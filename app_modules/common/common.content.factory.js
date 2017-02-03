@@ -33,7 +33,7 @@
     // if (User.getActiveProfileSync() && User.getActiveProfileSync().data) {
     var lessonDB = pouchDB('lessonsDB', {
       revs_limit: 1,
-        // auto_compaction : true
+      // auto_compaction : true
     });
     var diagnosisTranslationsDB = pouchDB('diagnosisTranslationsDB', {
       revs_limit: 1,
@@ -53,6 +53,7 @@
       downloadVocabulary: downloadVocabulary,
       downloadAssessment: downloadAssessment,
       downloadVideo: downloadVideo,
+      downloadLesson: downloadLesson,
       findNewMediaToDownload: findNewMediaToDownload,
       downloadNewMedia: downloadNewMedia,
       getActiveResource: getActiveResource,
@@ -153,8 +154,8 @@
           }).$promise
           .then(null, null, function(progress) {
             $log.debug('lessondb replication status', progress);
-            if(progress.paused && (progress.paused.name === 'indexed_db_went_bad' || progress.paused.name == "InvalidStateError" || progress.paused.reason === "QuotaExceededError")){
-               $rootScope.$broadcast('lowDiskSpace')
+            if (progress.paused && (progress.paused.name === 'indexed_db_went_bad' || progress.paused.name == "InvalidStateError" || progress.paused.reason === "QuotaExceededError")) {
+              $rootScope.$broadcast('lowDiskSpace')
             }
           })
           .then(function(result) {
@@ -177,15 +178,14 @@
 
     function getLocalizedQuestion(questionId, targetLanguage) {
       return lessonDB.get('localized_mapping').then(function(localizationMapping) {
-        if(localizationMapping.mapping[questionId]){
-        var translatedQuestionID = localizationMapping.mapping[questionId][targetLanguage];
-           return diagnosisTranslationsDB.get(translatedQuestionID).then(function(question) {
-          return question.question;
-        });
-         }else{
+        if (localizationMapping.mapping[questionId]) {
+          var translatedQuestionID = localizationMapping.mapping[questionId][targetLanguage];
+          return diagnosisTranslationsDB.get(translatedQuestionID).then(function(question) {
+            return question.question;
+          });
+        } else {
           return questionId;
-         }
-       
+        }
       })
     }
 
@@ -405,35 +405,29 @@
             var lessons = [];
             var resources = [];
             var playlist_ids = [];
-
             for (i = 0; i < playlist.length; i++) {
               $log.debug("making playlist ids");
               playlist_ids.push(playlist[i].lesson_id);
             }
-            $log.debug("done making playlist ids"+JSON.stringify(playlist_ids));
+            $log.debug("done making playlist ids" + JSON.stringify(playlist_ids));
             for (i = 0; i < data.rows.length; i++) {
-            $log.debug("making lessonlist");
-
+              $log.debug("making lessonlist");
               var index = -1;
               while ((index = playlist_ids.indexOf(data.rows[i].id, index + 1)) != -1) {
-            $log.debug("making lessonlist 1");
-
+                $log.debug("making lessonlist 1");
                 lessons[index] = data.rows[i];
                 lessons[index]['parentHindiLessonId'] = playlist[index]['suggestedLesson']
               }
             }
-
             // if(playlist.indexOf(data.rows[i].id) >= 0){
             //     lessons[playlist.indexOf(data.rows[i].id)] = data.rows[i]
             //   }
             $log.debug("Modifying lessons list")
             for (i = 0; i < lessons.length; i++) {
-            $log.debug("Modifying lessons list 1")
-
-              // data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key;
+              $log.debug("Modifying lessons list 1")
+                // data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key;
               for (var c = 0; c < lessons[i].doc.lesson.objects.length; c++) {
-            $log.debug("Modifying lessons list 2")
-
+                $log.debug("Modifying lessons list 2")
                 if (lessons[i].doc.lesson.node.meta && lessons[i].doc.lesson.node.meta.intros && lessons[i].doc.lesson.node.meta.intros.sound && lessons[i].doc.lesson.node.meta.intros.sound[0]) {
                   lessons[i].doc.lesson.objects[c].node.intro_sound = lessons[i].doc.lesson.node.meta.intros.sound[0];
                 }
@@ -445,7 +439,6 @@
               // for(var c = 0; c < lessons[i].doc.lesson.objects.length; c++){
               // $log.debug("Iter ",lessons[i].doc.lesson.objects[c].node.playlist_index )
               // }
-
               var include_video_flag = true;
               var include_vocab_flag = true;
               $log.debug("pre", playlist.length);
@@ -476,7 +469,7 @@
             if (resources.length) {
               resources[resources.length - 1].node.requiresSuggestion = true;
             }
-            $log.debug("Resource list resolving"+$log.debug(resources));
+            $log.debug("Resource list resolving" + $log.debug(resources));
             d.resolve(resources)
           });
           // $log.debug("data",data)
@@ -651,6 +644,38 @@
           d.reject(err)
         });
       return d.promise;
+    }
+
+    function downloadLesson(lesson) {
+      var vocabulary;
+      var assessment;
+      var video;
+      angular.forEach(lesson.objects, function(resource) {
+          if (resource.node.content_type_name === 'resource') {
+            video = resource;
+          } else if (resource.node.content_type_name === 'vocabulary') {
+            vocabulary = resource;
+          } else if (resource.node.content_type_name === 'assessment') {
+            assessment = resource;
+          }
+        })
+        //include assessment
+      if (vocabulary) {
+        //include vocabulary
+      } else {
+        //include video
+      }
+      return mediaManager.downloadIfNotExists(lesson.node.meta.intros.sound).then(function() {
+        return downloadAssessment(assessment)
+      }).then(function() {
+        if (vocabulary) {
+          return downloadVocabulary(vocabulary)
+        } else if (video) {
+          return downloadVideo(video)
+        } else {
+          return $q.when();
+        }
+      })
     }
 
     function getActiveResource() {

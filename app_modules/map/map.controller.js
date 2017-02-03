@@ -458,9 +458,9 @@
       $log.error('INDEX', index)
       var src;
       if (index == -1) {
-        src = CONSTANT.PATH.LOCALIZED_AUDIO+localized.audio.phone.EnterPhoneNumber.lang[User.getActiveProfileSync().data.profile.language];
+        src = CONSTANT.PATH.LOCALIZED_AUDIO + localized.audio.phone.EnterPhoneNumber.lang[User.getActiveProfileSync().data.profile.language];
       } else if (index == 1) {
-        src = CONSTANT.PATH.LOCALIZED_AUDIO+localized.audio.phone.EnterOtp.lang[User.getActiveProfileSync().data.profile.language];
+        src = CONSTANT.PATH.LOCALIZED_AUDIO + localized.audio.phone.EnterOtp.lang[User.getActiveProfileSync().data.profile.language];
       }
       if (src) {
         audio.player.play(src);
@@ -614,12 +614,13 @@
       //   $scope.demo.isShown() && $scope.demo.hide();
       var promise;
       $log.debug('intro sound', node.node.intro_sound, node)
-      if (node.node.intro_sound) {
-        promise = mediaManager.downloadIfNotExists(node.node.intro_sound)
-      } else {
-        promise = $q.resolve();
-      }
-      promise.then(function(s) {
+        // if (node.node.intro_sound) {
+        //   promise = mediaManager.downloadIfNotExists(node.node.intro_sound)
+        // } else {
+        //   promise = $q.resolve();
+        // }
+      lessonutils.cacheLessons()
+        .then(function(s) {
           $log.debug("Intro sound downloaded if not exist", s);
           if (s) {
             node.node.parsed_sound = s;
@@ -899,8 +900,8 @@
       if (User.demo.isShown() && User.demo.getStep() == '1') {
         $timeout(function() {
           $scope.demo.show().then(function() {
-            $log.debug("playdemoaudio",CONSTANT.PATH.LOCALIZED_AUDIO+ localized.audio.demo.startEnglish.lang[User.getActiveProfileSync().data.profile.language])
-            audio.player.play(CONSTANT.PATH.LOCALIZED_AUDIO+ localized.audio.demo.startEnglish.lang[User.getActiveProfileSync().data.profile.language]);
+            $log.debug("playdemoaudio", CONSTANT.PATH.LOCALIZED_AUDIO + localized.audio.demo.startEnglish.lang[User.getActiveProfileSync().data.profile.language])
+            audio.player.play(CONSTANT.PATH.LOCALIZED_AUDIO + localized.audio.demo.startEnglish.lang[User.getActiveProfileSync().data.profile.language]);
             User.demo.setStep(2)
           });
         })
