@@ -7,7 +7,8 @@
     .constant('CONSTANT', {
       'APP':{
       'TYPE': '@@APP_TYPE',
-      'VERSION': '@@APP_VERSION'
+      'VERSION': '@@APP_VERSION',
+      'CAMPAIGN' : '@@CAMPAIGN_NAME'
       },
       'BUNDLED': @@BUNDLED,
       'LOCK': @@LOCK,

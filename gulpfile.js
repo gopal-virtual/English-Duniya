@@ -90,42 +90,62 @@ var languages_list = [{
 }, {
   name: 'tamil',
   code: 'ta'
-}];
+}, {
+  name: 'gujarati',
+  code: 'gu'
+}, {
+  name: 'telugu',
+  code: 'te'
+}, {
+  name: 'bengali',
+  code: 'bn'
+}, {
+  name: 'marathi',
+  code: 'mr'
+}, {
+  name: 'kannada',
+  code: 'kn'
+}
+];
 var env = argument.argv.env ? environments[argument.argv.env] : environments.default;
 var app_type = argument.argv.app_type ? argument.argv.app_type : 'na';
+var campaign_name = argument.argv.campaign_name ? argument.argv.campaign_name : 'playstore';
 var is_bundled = argument.argv.is_bundled ? argument.argv.is_bundled : false;
+var allowed_languages = argument.argv.languages ? argument.argv.languages : 'hi';
 var app_version = 'na';
 var constants = JSON.parse(file.readFileSync(paths.constants.environment, 'utf8'));
 var lock = argument.argv.lock ? argument.argv.lock : constants[env]['LOCK'];
 var fake_id_device = constants[env]['FAKE_ID_DEVICE'] || 'na';
 var lesson_db_version = 'na';
 var diagnosis_media = [];
-var allowed_languages = languages_list;
-var lessonsdb_couch_server = env == environments.production ? 'https://ed-couch.zaya.in/lessonsdb' : 'https://ci-couch.zaya.in/tamildb';
-var diagnosis_couch_db_server = env == environments.production ? 'https://ed-couch.zaya.in/diagnosis_translations' : 'https://ci-couch.zaya.in/diagnosis_translations';
-
+var allowed_languages_list = [];
+for (i in languages_list) {
+  if (allowed_languages.indexOf(languages_list[i].code) !== -1) {
+    allowed_languages_list.push(languages_list[i]);
+  }
+}
+var lessonsdb_couch_server = argument.argv.lessonsdb;
+var diagnosis_couch_db_server = argument.argv.diagnosisdb;
 //Get app version
-var xml = file.readFileSync('./config.xml');
-var content = cheerio.load(xml, {
-  xmlMode: true
-});
-app_version = content('widget')[0].attribs.version;
-console.log("VERSION", app_version);
+// var xml = file.readFileSync('./config.xml');
+// var content = cheerio.load(xml, {
+//   xmlMode: true
+// });
+// app_version = content('widget')[0].attribs.version;
+// console.log("VERSION", app_version);
 console.log("envi", raven_key[argument.argv.env])
 gulp.task('default', function(callback) {
   // runSequence('generate-lessondb','get-diagnosis-media','make-main','generate-constants', 'sass', 'html', 'scripts',callback);
-  runSequence('makeLocalizationFactory', 'make-main', 'generate-constants', 'sass', 'html', 'scripts', callback);
+  runSequence('generate-lessondb', 'get-diagnosis-media', 'makeLocalizationFactory', 'downloadLocalizedAudio', 'make-main', 'generate-constants', 'sass', 'html', 'scripts', callback);
 });
 gulp.task('generate-lessondb', shell.task(
-  (env !== environments.content) ? [
+  (env !== environments.dev) ? [
     'rm www/data/lessons.db',
-    'pouchdb-dump ' + lessonsdb_couch_server + ' > www/data/lessons.db'
+    'rm www/data/diagnosis_translations.db',
+    'pouchdb-dump ' + lessonsdb_couch_server + ' > www/data/lessons.db',
+    'pouchdb-dump ' + diagnosis_couch_db_server + ' > www/data/diagnosis_translations.db'
   ] : []
 ));
-gulp.task('get-lessondb-version', function() {
-  var res = request('GET', 'http://ci-couch.zaya.in/lessonsdb/version');
-  lesson_db_version = JSON.parse(res.getBody().toString()).version;
-});
 // gulp.task('optimize', function(cb) {
 //   gulp.src(paths.image)
 //     .pipe(optimization())
@@ -189,7 +209,7 @@ gulp.task('generate-constants', function() {
         replacement: lesson_db_version
       }, {
         match: 'LESSONS_DB_SERVER',
-        replacement: constants[env]['LESSONS_DB_SERVER']
+        replacement: lessonsdb_couch_server
       }, {
         match: 'PROFILES_DB_SERVER',
         replacement: constants[env]['PROFILES_DB_SERVER']
@@ -222,7 +242,10 @@ gulp.task('generate-constants', function() {
         replacement: constants[env]['NOTIFICATION_DB_SERVER']
       }, {
         match: 'ALLOWED_LANGUAGES',
-        replacement: allowed_languages
+        replacement: allowed_languages_list
+      }, {
+        match: 'CAMPAIGN_NAME',
+        replacement: campaign_name
       }]
     }))
     .pipe(rename(paths.constants.destination_filename))
@@ -237,7 +260,7 @@ gulp.task('scripts', function() {
     .pipe(stripDebug())
     .pipe(strip())
     .pipe(concate('mobile.app.js'))
-    .pipe(gulpif(env !== environments.dev && env !== environments.content,uglify()))
+    .pipe(gulpif(env !== environments.dev && env !== environments.content && env !== environments.test, uglify()))
     .pipe(gulp.dest('www/build'))
     // .on('end',cb)
     // .pipe(broswerSync.stream())
@@ -279,14 +302,13 @@ gulp.task('html', function() {
     .pipe(gulp.dest('./www/templates/'))
 });
 gulp.task('get-diagnosis-media', function() {
-  if (env !== environments.content) {
+  if (env !== environments.dev) {
     var docs_list = JSON.parse(request('GET', diagnosis_couch_db_server + '/_all_docs').getBody().toString());
-      // console.log("docs list",docs_list)
+    // console.log("docs list",docs_list)
     for (var i = 0; i < docs_list.rows.length; i++) {
       // console.log("Value", docs_list.rows[i].id);
       var id = docs_list.rows[i].id;
-      var doc = JSON.parse(request('GET', diagnosis_couch_db_server + '/'+id).getBody().toString());
-
+      var doc = JSON.parse(request('GET', diagnosis_couch_db_server + '/' + id).getBody().toString());
       // console.log("Doc", doc.question);
       for (var media_type in doc.question.node.type.content.widgets) {
         if (doc.question.node.type.content.widgets.hasOwnProperty(media_type)) {
@@ -303,13 +325,12 @@ gulp.task('get-diagnosis-media', function() {
 gulp.task('makeLocalizationFactory', function() {
   var localizedAudio = JSON.parse(request('GET', 'http://localization.englishduniya.in/get/json').getBody().toString());
   var localizedText = JSON.parse(request('GET', 'http://localization.englishduniya.in/get/textjson').getBody().toString());
- 
   gulp.src(paths.localizationFactory.template)
     .pipe(replace_task({
       patterns: [{
         match: 'LOCALIZED_AUDIO',
         replacement: localizedAudio
-      },{
+      }, {
         match: 'LOCALIZED_TEXT',
         replacement: localizedText
       }]
