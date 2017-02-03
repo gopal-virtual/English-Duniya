@@ -734,10 +734,24 @@
       if ($stateParams.type == 'litmus') {
         var levelRec = ml.getLevelRecommendation();
         $log.debug('levelRec', levelRec);
+        
+        if(typeof(window.netConnected) == "undefined"){
+          window.netConnected = false;
+        }
+
         ml.setLessonResultMapping().then(function() {
           var suggestion = ml.getLessonSuggestion({
-            "event": "diagnosisTest"
+            "event": "diagnosisTest",
+            "levelRec": levelRec
           });
+          if(window.netConnected){
+            suggestion = {"suggestedLesson": suggestion["suggestedLesson"], "dependencyData": suggestion["dependencyData"]};
+            $log.debug('window.netConnected', window.netConnected, suggestion);
+          }else{
+            suggestion = {"suggestedLesson": suggestion["miss"], "dependencyData": suggestion["missDependencyData"]};
+            $log.debug('window.netConnected', window.netConnected, suggestion);
+          }
+
           $log.debug(suggestion, "Suggestion");
           User.profile.updateRoadMapData(ml.roadMapData, User.getActiveProfileSync()._id).then(function() {
             User.playlist.add(User.getActiveProfileSync()._id, suggestion).then(function() {

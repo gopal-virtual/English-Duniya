@@ -157,6 +157,7 @@
               skill: quiz.node.tag,
             })
             .then(function() {
+
               return User.scores.getScoreOfAssessment(quiz.node.id, lesson.node.id, User.getActiveProfileSync()._id, quiz.node.playlist_index)
             })
             .then(function(previousScore) {
@@ -176,14 +177,29 @@
             .then(function() {
               if (quiz.node.requiresSuggestion) {
                 ml.setLessonResultMapping().then(function() {
+                  if(typeof(window.netConnected) == "undefined"){
+                    window.netConnected = false;
+                  }
                   var suggestion = ml.getLessonSuggestion({
                     "event": "assessment",
                     "score": summary.score.marks,
                     "totalScore": quiz.node.type.score,
                     "skill": quiz.node.tag.toLowerCase(),
-                    "sr": quiz.node.parentHindiLessonId
+                    "sr": quiz.node.parentHindiLessonId,
+                    "miss": true
                   });
-                  $log.debug("got sugggestion",suggestion);
+                  $log.debug("got suggestion",suggestion);
+
+
+                  if(window.netConnected){
+                    suggestion = {"suggestedLesson": suggestion["suggestedLesson"], "dependencyData": suggestion["dependencyData"]};
+                    $log.debug('window.netConnected', true, suggestion);
+                  }else{
+                    suggestion = {"suggestedLesson": suggestion["miss"], "dependencyData": suggestion["missDependencyData"]};
+                    $log.debug('window.netConnected', false, suggestion);
+                  }
+                  
+
                   return User.profile.updateRoadMapData(ml.roadMapData, User.getActiveProfileSync()._id).then(function() {
                     return User.playlist.add(User.getActiveProfileSync()._id, suggestion)
                   })
