@@ -14,9 +14,9 @@
   /* @ngInject */
   function ml(data, $log, $q, User) {
     var ml = {
-      MAX: 10,
+      MAX: 20,
       passingThreshold: 0.7,
-      roadMapMax: 8,
+      roadMapMax: 15,
       maxSuggestionCount: 3,
       diagQuestionsPerSkill: 5,
       runDiagnostic: runDiagnostic,
@@ -84,13 +84,7 @@
       }
     }
 
-    function getLessonSuggestion(data){
-      $log.debug("in getLessonSuggestion", data);
-      var suggestionData = updateRoadMapSuggestion(data);
-      $log.debug('suggestionData from updateRoadMapSuggestion', suggestionData, ml.roadMapData);
-      localStorage.setItem("roadMapData", JSON.stringify(ml.roadMapData));
-
-      
+    function findLessonsToCache_withPrereqs(suggestionData) {
       if(ml.newBatchFlag){
         ml.maxSuggestionCount = 10;
         $log.debug('caching recommendation');
@@ -161,9 +155,47 @@
         localStorage.setItem("roadMapData", JSON.stringify(ml.roadMapData));
         suggestionData["cache"] = cache;
         ml.cache = cache;
+        localStorage.setItem("cache", JSON.stringify(cache));
       }
+      return suggestionData;
+    }
 
-      // save to localStorage
+    function findLessonsToCache(suggestionData) {
+      if(ml.newBatchFlag){
+
+        var cache = [];
+
+        for(var i = 0; i<ml.roadMapData.roadMap.length; i++){
+          var lesson_id = ml.roadMapData.roadMap[i]["sr"];
+          if(cache.indexOf(lesson_id) == -1){
+            cache.push(lesson_id);
+          }
+        }
+
+        ml.newBatchFlag = false;
+        suggestionData["cache"] = cache;
+        ml.cache = cache;
+      }
+      return suggestionData;
+    }
+
+    function getLessonSuggestion(data){
+      $log.debug("in getLessonSuggestion", data);
+      var suggestionData = updateRoadMapSuggestion(data);
+      $log.debug('suggestionData from updateRoadMapSuggestion', suggestionData, ml.roadMapData);
+      localStorage.setItem("roadMapData", JSON.stringify(ml.roadMapData));
+
+      suggestionData = findLessonsToCache(suggestionData);
+
+      if(ml.roadMapData["roadMap"][1]){
+        suggestionData["miss"] = ml.roadMapData["roadMap"][1]["sr"];
+      }else{
+        suggestionData["miss"] = null;
+      }
+      var missDependencyData = {"dependency": "miss", "relative": suggestionData["suggestedLesson"], "batch": ml.roadMapData["batch"]};
+      suggestionData["missDependencyData"] = missDependencyData;
+
+
       return suggestionData;
     }
 
@@ -310,6 +342,24 @@
       else if(data["event"] == "assessment"){
         var result = data["score"]/data["totalScore"];
         $log.debug('in assessment', result);
+
+        if(data["miss"] == true){
+          $log.debug('in miss');
+          deleteSuccessfulNodeFromRoadmap(ml.roadMapData["roadMap"][0]["sr"]);
+          var lesson = ml.roadMapData["roadMap"][0];
+          $log.debug('lesson after miss', lesson["sr"]);
+          ml.roadMapData["roadMap"][0]["previousNode"] = null;
+          ml.roadMapData["roadMap"][0]["currentNode"] = lesson["sr"];
+          ml.roadMapData["roadMap"][0]["resultTrack"] = {};
+          var dependencyData = {"dependency": "root", "batch": ml.roadMapData["batch"]};
+          $log.debug('dependencyData root 2', dependencyData);
+          $log.debug('lili here 2', JSON.stringify(ml.roadMapData));
+          handleMultipleSuggestions();
+          localStorage.setItem("roadMapData", JSON.stringify(ml.roadMapData));
+          delete data["miss"];
+          return updateRoadMapSuggestion(data);
+        }
+
 
         if(data["sr"] == ml.roadMapData["roadMap"][0]["sr"]){
           // if roadMap lessons
