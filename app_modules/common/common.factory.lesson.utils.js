@@ -1,10 +1,8 @@
 (function() {
   'use strict';
-
   angular
     .module('common')
     .factory('lessonutils', lessonutils);
-
   lessonutils.$inject = [
     '$ionicLoading',
     '$state',
@@ -17,9 +15,9 @@
     'content',
     'mediaManager',
     'analytics',
-    'User'
+    'User',
+    '$q'
   ];
-
   /* @ngInject */
   function lessonutils(
     $ionicLoading,
@@ -33,7 +31,8 @@
     content,
     mediaManager,
     analytics,
-    User
+    User,
+    $q
   ) {
     var utils = {
       leaveLesson: leaveLesson,
@@ -51,10 +50,31 @@
       canClickDemo: canClickDemo,
       getVideo: getVideo,
       user: User,
-      demoShown: demoShown
+      demoShown: demoShown,
+      cacheLessons: cacheLessons
     };
     // utils. = User.demo.isShown();
     return utils;
+
+    function cacheLessons() {
+      var lessonList = JSON.parse(localStorage.cachingList);
+      // var list = [];
+      var promises = [];
+      var promises2 = [];
+      angular.forEach(lessonList, function(lesson) {
+        promises2.push(content.getLesson(lesson))
+      });
+      return $q.all(promises2).then(function(data){
+        $log.debug("done 2",data);
+        angular.forEach(data,function(lessonData){
+          promises.push(content.downloadLesson(lessonData))
+        })
+        return $q.all(promises).then(function(a) {
+        $log.debug("done",a);
+      });
+      });
+      
+    }
 
     function demoShown() {
       User.demo.isShown();
@@ -86,14 +106,13 @@
 
     function leaveLesson(analytics_quit_data) {
       angular.element("#audioplayer")[0].pause();
-      if(analytics_quit_data){
-          analytics.log(analytics_quit_data, {
-              time: new Date()
-            },
-            User.getActiveProfileSync()._id
-          )
-      }
-      !$state.is('map.navigate') &&
+      if (analytics_quit_data) {
+        analytics.log(analytics_quit_data, {
+            time: new Date()
+          },
+          User.getActiveProfileSync()._id
+        )
+      }!$state.is('map.navigate') &&
         $ionicLoading.show({
           noBackdrop: false,
           hideOnStateChange: true
@@ -119,9 +138,7 @@
       // $ionicLoading.show();
       var lesson = null;
       return content.getLesson(id).then(function(response) {
-
           lesson = response;
-
           return User.scores.getScoreOfLesson(id, User.getActiveProfileSync()._id);
         })
         .then(function(score) {
@@ -133,7 +150,6 @@
         })
         .catch(function(e) {
           // $ionicLoading.hide();
-
           $ionicPopup.alert({
             title: CONSTANT.ERROR_MESSAGES.DEFAULT_TITLE,
             template: e.message ? e.message : CONSTANT.ERROR_MESSAGES.DEFAULT
@@ -179,15 +195,12 @@
         return CONSTANT.ASSETS.IMG.ICON + '/practice.png';
       } else if (resource.node.content_type_name == 'resource' && resource.node.type.file_type == 'mp4') {
         return CONSTANT.ASSETS.IMG.ICON + '/video.png';
-      } else {
-
-      }
+      } else {}
     }
 
     function playResource(resource, video, callback) {
       angular.element("#audioplayer")[0].pause();
-        // playDemoAudio(resource);
-
+      // playDemoAudio(resource);
       //   if (utils.resourceType(resource) == 'practice' && (User.demo.isShown() && [2, 3].indexOf(User.demo.getStep()) >= 0)) {
       //     return;
       //   }
@@ -195,47 +208,39 @@
       //   if (utils.resourceType(resource) == 'video' && (User.demo.isShown() && [4].indexOf(User.demo.getStep() ) >= 0)) {
       //     return;
       //   }
-
-
       // to do
-
-      $log.debug("Play Resource",utils.resourceType(resource));
+      $log.debug("Play Resource", utils.resourceType(resource));
       if (utils.resourceType(resource) == 'vocabulary') {
         content.downloadVocabulary(resource)
-        .then(function() {
-          analytics.log({
-                name: 'VOCABULARY',
-                type: 'START',
-                id: resource.node.id
-              }, {
-                time: new Date()
-              },
-              User.getActiveProfileSync()._id
-
-            ) &&
-            content.getVocabulary(resource).then(function(resource){
+          .then(function() {
+            analytics.log({
+                  name: 'VOCABULARY',
+                  type: 'START',
+                  id: resource.node.id
+                }, {
+                  time: new Date()
+                },
+                User.getActiveProfileSync()._id
+              ) &&
+              content.getVocabulary(resource).then(function(resource) {
                 $state.go('content.vocabulary.intro', {
-                    vocab_data: resource
+                  vocab_data: resource
                 });
-            }).catch(function(e) {
-            $log.debug("We need to check", e)
-
-            $ionicPopup.alert({
-              title: CONSTANT.ERROR_MESSAGES.DEFAULT_TITLE,
-              template: e.message ? e.message : CONSTANT.ERROR_MESSAGES.DEFAULT
-            }).then(function() {
-              if (callback) {
-
-                callback();
-              }
-            });
+              }).catch(function(e) {
+                $log.debug("We need to check", e)
+                $ionicPopup.alert({
+                  title: CONSTANT.ERROR_MESSAGES.DEFAULT_TITLE,
+                  template: e.message ? e.message : CONSTANT.ERROR_MESSAGES.DEFAULT
+                }).then(function() {
+                  if (callback) {
+                    callback();
+                  }
+                });
+              })
+              .finally(function() {
+                $ionicLoading.hide();
+              })
           })
-          .finally(function() {
-
-
-            $ionicLoading.hide();
-          })
-        })
       } else if (utils.resourceType(resource) == 'assessment') {
         $log.debug("play resource asseessmnet")
         content.downloadAssessment(resource)
@@ -259,26 +264,22 @@
               $stateParams.type == 'assessment' && $ionicLoading.hide();
             });
           })
-          .catch(function(e) {
-
-          })
-
+          .catch(function(e) {})
       } else if (utils.resourceType(resource) == 'practice') {
         $log.debug("Play resource practice found")
         content.downloadAssessment(resource).then(function() {
-            $log.debug("Play resource practice downlaoded",resource.node.id,resource)
-
+            $log.debug("Play resource practice downlaoded", resource.node.id, resource)
             $timeout(function() {
               $log.debug("play resource")
               analytics.log({
-                  name: 'PRACTICE',
-                  type: 'START',
-                  id: resource.node.id
-                }, {
-                  time: new Date()
-                },
-                User.getActiveProfileSync()._id
-              ) &&
+                    name: 'PRACTICE',
+                    type: 'START',
+                    id: resource.node.id
+                  }, {
+                    time: new Date()
+                  },
+                  User.getActiveProfileSync()._id
+                ) &&
                 $state.go('quiz.start', {
                   id: resource.node.id,
                   type: 'practice',
@@ -288,20 +289,16 @@
             });
           }).catch(function(e) {
             $log.debug("play resource error", e)
-
             $ionicPopup.alert({
               title: CONSTANT.ERROR_MESSAGES.DEFAULT_TITLE,
               template: e.message ? e.message : CONSTANT.ERROR_MESSAGES.DEFAULT
             }).then(function() {
               if (callback) {
-
                 callback();
               }
             });
           })
           .finally(function() {
-
-
             $ionicLoading.hide();
           })
       } else if (utils.resourceType(resource) == 'video') {
@@ -317,7 +314,6 @@
                       time: new Date()
                     },
                     User.getActiveProfileSync()._id
-
                   ) &&
                   $state.go('content.video', {
                     video: {
@@ -336,13 +332,11 @@
             });
           })
           .catch(function(e) {
-
             $ionicPopup.alert({
               title: CONSTANT.ERROR_MESSAGES.DEFAULT_TITLE,
               template: e.message ? e.message : CONSTANT.ERROR_MESSAGES.DEFAULT
             }).then(function() {
               if (callback) {
-
                 callback();
               }
             });
@@ -355,14 +349,11 @@
       }
     }
 
-
-
     function getSrc(src) {
       return $sce.trustAsResourceUrl(src);
     }
 
     function playDemoAudio(node) {
-
       //
       // if (User.demo.isShown() ) {
       //   if (User.demo.getStep() == 2) {
@@ -381,9 +372,7 @@
       //     angular.element("#audioplayer")[0].play();
       //   }
       // } else {
-
       if (node.node && node.node.parsed_sound) {
-
         angular.element("#audioSource")[0].src = node.node.parsed_sound;
         angular.element("#audioplayer")[0].load();
         angular.element("#audioplayer")[0].play();

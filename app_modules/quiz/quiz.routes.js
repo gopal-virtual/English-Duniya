@@ -177,26 +177,25 @@
             .then(function() {
               if (quiz.node.requiresSuggestion) {
                 ml.setLessonResultMapping().then(function() {
-                  if(typeof(window.netConnected) == "undefined"){
-                    window.netConnected = false;
-                  }
                   var suggestion = ml.getLessonSuggestion({
                     "event": "assessment",
                     "score": summary.score.marks,
                     "totalScore": quiz.node.type.score,
                     "skill": quiz.node.tag.toLowerCase(),
                     "sr": quiz.node.parentHindiLessonId,
-                    "miss": true
+                    "miss": lesson.miss
                   });
+                  //cache
                   $log.debug("got suggestion",suggestion);
 
 
-                  if(window.netConnected){
-                    suggestion = {"suggestedLesson": suggestion["suggestedLesson"], "dependencyData": suggestion["dependencyData"]};
-                    $log.debug('window.netConnected', true, suggestion);
+                  if(network.isOnline()){
+                    suggestion = {"suggestedLesson": suggestion["suggestedLesson"], "dependencyData": suggestion["dependencyData"],"miss":false};
+                    $log.debug('netConnected', true, suggestion);
                   }else{
-                    suggestion = {"suggestedLesson": suggestion["miss"], "dependencyData": suggestion["missDependencyData"]};
-                    $log.debug('window.netConnected', false, suggestion);
+
+                    suggestion = {"suggestedLesson": suggestion["miss"], "dependencyData": suggestion["missDependencyData"],"miss":true};
+                    $log.debug('netConnected', false, suggestion);
 
                     if(suggestion["suggestedLesson"] == null){
                       var suggestion = ml.getLessonSuggestion({
