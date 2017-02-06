@@ -665,7 +665,7 @@
       } else {
         //include video
       }
-      return mediaManager.downloadIfNotExists(lesson.node.meta.intros.sound).then(function() {
+      return mediaManager.downloadIfNotExists(lesson.node.meta.intros.sound[0]).then(function() {
         return downloadAssessment(assessment)
       }).then(function() {
         if (vocabulary) {
