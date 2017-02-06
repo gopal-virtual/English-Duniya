@@ -340,26 +340,41 @@
         return handleMultipleSuggestions();
       }
       else if(data["event"] == "assessment"){
-        var result = data["score"]/data["totalScore"];
-        $log.debug('in assessment', result);
 
         if(data["miss"] == true){
           $log.debug('in miss');
           deleteSuccessfulNodeFromRoadmap(ml.roadMapData["roadMap"][0]["sr"]);
           var lesson = ml.roadMapData["roadMap"][0];
-          $log.debug('lesson after miss', lesson["sr"]);
-          ml.roadMapData["roadMap"][0]["previousNode"] = null;
-          ml.roadMapData["roadMap"][0]["currentNode"] = lesson["sr"];
-          ml.roadMapData["roadMap"][0]["resultTrack"] = {};
-          var dependencyData = {"dependency": "root", "batch": ml.roadMapData["batch"]};
-          $log.debug('dependencyData root 2', dependencyData);
-          $log.debug('lili here 2', JSON.stringify(ml.roadMapData));
-          handleMultipleSuggestions();
-          localStorage.setItem("roadMapData", JSON.stringify(ml.roadMapData));
-          delete data["miss"];
-          return updateRoadMapSuggestion(data);
+          $log.debug('lesson after deleting because miss', lesson);
+
+          if (lesson != undefined){
+            $log.debug('lesson after miss', lesson["sr"]);
+            ml.roadMapData["roadMap"][0]["previousNode"] = null;
+            ml.roadMapData["roadMap"][0]["currentNode"] = lesson["sr"];
+            ml.roadMapData["roadMap"][0]["resultTrack"] = {};
+            var dependencyData = {"dependency": "root", "batch": ml.roadMapData["batch"]};
+            $log.debug('dependencyData root 2', dependencyData);
+            $log.debug('lili here 2', JSON.stringify(ml.roadMapData));
+            handleMultipleSuggestions();
+            localStorage.setItem("roadMapData", JSON.stringify(ml.roadMapData));
+            delete data["miss"];
+            return updateRoadMapSuggestion(data);
+          }else{
+            $log.debug('if miss and roadMap empty');
+            var recommendationsWithPrereqs = getNewBatchNodes()[0];
+            setNewRoadMap(recommendationsWithPrereqs);
+            ml.roadMapData["roadMap"][0]["previousNode"] = null;
+            ml.roadMapData["roadMap"][0]["currentNode"] = ml.roadMapData["roadMap"][0]["sr"];
+            ml.roadMapData["roadMap"][0]["resultTrack"] = {};
+            var dependencyData = {"dependency": "root", "batch": ml.roadMapData["batch"]};
+            $log.debug('dependencyData root 3', dependencyData);
+            return handleMultipleSuggestions();
+          }
         }
 
+
+        var result = data["score"]/data["totalScore"];
+        $log.debug('in assessment', result);
 
         if(data["sr"] == ml.roadMapData["roadMap"][0]["sr"]){
           // if roadMap lessons

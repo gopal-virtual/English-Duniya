@@ -197,6 +197,16 @@
                   }else{
                     suggestion = {"suggestedLesson": suggestion["miss"], "dependencyData": suggestion["missDependencyData"]};
                     $log.debug('window.netConnected', false, suggestion);
+
+                    if(suggestion["suggestedLesson"] == null){
+                      var suggestion = ml.getLessonSuggestion({
+                        "event": "assessment",
+                        "miss": true
+                      });
+                      $log.debug("got miss suggestion",suggestion);
+
+                    }
+
                   }
                   
 
