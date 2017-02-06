@@ -96,17 +96,28 @@ var languages_list = [{
 }, {
   name: 'telugu',
   code: 'te'
-}];
+}, {
+  name: 'bengali',
+  code: 'bn'
+}, {
+  name: 'marathi',
+  code: 'mr'
+}, {
+  name: 'kannada',
+  code: 'kn'
+}
+];
 var env = argument.argv.env ? environments[argument.argv.env] : environments.default;
 var app_type = argument.argv.app_type ? argument.argv.app_type : 'na';
-var is_bundled = app_type == 'bundled' ? true : false;
+var campaign_name = argument.argv.campaign_name ? argument.argv.campaign_name : 'playstore';
+var is_bundled = argument.argv.is_bundled ? argument.argv.is_bundled : false;
+var allowed_languages = argument.argv.languages ? argument.argv.languages : 'hi';
 var app_version = 'na';
 var constants = JSON.parse(file.readFileSync(paths.constants.environment, 'utf8'));
 var lock = argument.argv.lock ? argument.argv.lock : constants[env]['LOCK'];
 var fake_id_device = constants[env]['FAKE_ID_DEVICE'] || 'na';
 var lesson_db_version = 'na';
 var diagnosis_media = [];
-var allowed_languages = argument.argv.languages ? argument.argv.languages : 'hi';
 var allowed_languages_list = [];
 for (i in languages_list) {
   if (allowed_languages.indexOf(languages_list[i].code) !== -1) {
@@ -125,7 +136,7 @@ var diagnosis_couch_db_server = argument.argv.diagnosisdb;
 console.log("envi", raven_key[argument.argv.env])
 gulp.task('default', function(callback) {
   // runSequence('generate-lessondb','get-diagnosis-media','make-main','generate-constants', 'sass', 'html', 'scripts',callback);
-  runSequence('generate-lessondb','get-diagnosis-media','makeLocalizationFactory', 'make-main', 'generate-constants', 'sass', 'html', 'scripts', callback);
+  runSequence('generate-lessondb', 'get-diagnosis-media', 'makeLocalizationFactory', 'downloadLocalizedAudio', 'make-main', 'generate-constants', 'sass', 'html', 'scripts', callback);
 });
 gulp.task('generate-lessondb', shell.task(
   (env !== environments.dev) ? [
@@ -198,7 +209,7 @@ gulp.task('generate-constants', function() {
         replacement: lesson_db_version
       }, {
         match: 'LESSONS_DB_SERVER',
-        replacement: constants[env]['LESSONS_DB_SERVER']
+        replacement: lessonsdb_couch_server
       }, {
         match: 'PROFILES_DB_SERVER',
         replacement: constants[env]['PROFILES_DB_SERVER']
@@ -232,6 +243,9 @@ gulp.task('generate-constants', function() {
       }, {
         match: 'ALLOWED_LANGUAGES',
         replacement: allowed_languages_list
+      }, {
+        match: 'CAMPAIGN_NAME',
+        replacement: campaign_name
       }]
     }))
     .pipe(rename(paths.constants.destination_filename))
