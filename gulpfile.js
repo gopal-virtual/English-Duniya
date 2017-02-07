@@ -140,8 +140,8 @@ gulp.task('default', function(callback) {
 });
 gulp.task('generate-lessondb', shell.task(
   (env !== environments.dev) ? [
-    'rm www/data/lessons.db',
-    'rm www/data/diagnosis_translations.db',
+    // 'rm www/data/lessons.db',
+    // 'rm www/data/diagnosis_translations.db',
     'pouchdb-dump ' + lessonsdb_couch_server + ' > www/data/lessons.db',
     'pouchdb-dump ' + diagnosis_couch_db_server + ' > www/data/diagnosis_translations.db'
   ] : []

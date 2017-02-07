@@ -5,10 +5,10 @@
     .module('zaya-content')
     .controller('vocabularyCardController', vocabularyCardController);
 
-  vocabularyCardController.$inject = ['$log', '$state', 'audio', '$timeout', '$interval', '$scope', '$stateParams', 'CONSTANT', 'lessonutils', 'User', 'analytics', 'orientation', '$ionicModal', 'Utilities', '$ionicLoading'];
+  vocabularyCardController.$inject = ['$log', '$state', 'audio', '$timeout', '$interval', '$scope', '$stateParams', 'CONSTANT', 'lessonutils', 'User', 'analytics', 'orientation', '$ionicModal', 'Utilities', '$ionicLoading','challenge'];
 
   /* @ngInject */
-  function vocabularyCardController($log, $state, audio, $timeout, $interval, $scope, $stateParams, CONSTANT, lessonutils, User, analytics, orientation, $ionicModal, Utilities, $ionicLoading) {
+  function vocabularyCardController($log, $state, audio, $timeout, $interval, $scope, $stateParams, CONSTANT, lessonutils, User, analytics, orientation, $ionicModal, Utilities, $ionicLoading, challenge) {
     var vocabCardCtrl = this;
     var timeout = '';
     vocabCardCtrl.prev = prev;
@@ -182,9 +182,13 @@
     function submitReport() {
       var lesson = lessonutils.getLocalLesson();
       var promise = null;
+      $log.debug("$stateParams.vocab_data.isPlayed",$stateParams.vocab_data.isPlayed)
+      if(!$stateParams.vocab_data.isPlayed){
+      challenge.addPoints(User.getActiveProfileSync()._id,50,'node_complete',$stateParams.vocab_data.node.id);
+      }
+
       $log.debug('vocab parent lesson : ', lesson)
       if (!lesson.score || !lesson.score[$stateParams.vocab_data.node.id]) {
-
         promise = User.skills.update({
           profileId: User.getActiveProfileSync()._id,
           lessonId: lesson.node.id,
