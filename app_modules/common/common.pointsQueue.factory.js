@@ -117,7 +117,7 @@
 
       var promise;
       if (record.doc.method === 'post') {
-        promise = Rest.all('/profiles/a5200f28-bb72-41d6-888d-a43fa3aaf91a/points/').post(record.doc.body);
+        promise = Rest.all('/profiles/'+User.getActiveProfileSync()._id+'/points/').post(record.doc.body);
       }
       return promise.then(function() {
           $log.debug("queue", "upload success", record);

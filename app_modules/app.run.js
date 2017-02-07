@@ -26,7 +26,8 @@
     pouchDB,
     $ionicLoading,
     notification,
-    $ionicPopup
+    $ionicPopup,
+    $cordovaSocialSharing
   ) {
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
     $ionicPlatform.registerBackButtonAction(function(event) {
@@ -38,28 +39,28 @@
     //$http.defaults.headers.common['Access-Control-Request-Headers'] = 'accept, auth-token, content-type, xsrfcookiename';
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
       $log.debug("play resource state change", toState, toParams)
-      // analytics.log({
-      //   name: 'STATE',
-      //   type: 'CHANGE_START'
-      // }, {
-      //   toState: toState,
-      //   toParams: toParams,
-      //   fromState: fromState,
-      //   fromParams: fromParams
-      // },User.getActiveProfileSync() && User.getActiveProfileSync()._id)
+        // analytics.log({
+        //   name: 'STATE',
+        //   type: 'CHANGE_START'
+        // }, {
+        //   toState: toState,
+        //   toParams: toParams,
+        //   fromState: fromState,
+        //   fromParams: fromParams
+        // },User.getActiveProfileSync() && User.getActiveProfileSync()._id)
       if (localStorage.version !== CONSTANT.APP.VERSION) {
         event.preventDefault();
         $log.debug("tag First tim entering the app")
         $log.debug("Local storage !== ", CONSTANT.APP.VERSION);
         $ionicLoading.show({
-          hideOnStateChange: true
-        })
-        // content.deleteLessonDB().then(function() {
-        //     $log.debug("tag Deleted lesson db");
-        //     return content.createDependentDBs();
-        //   })
+            hideOnStateChange: true
+          })
+          // content.deleteLessonDB().then(function() {
+          //     $log.debug("tag Deleted lesson db");
+          //     return content.createDependentDBs();
+          //   })
         content.createDependentDBs()
-        .then(function() {
+          .then(function() {
             $log.debug("tag Created lessondb", toState, toParams);
             localStorage.setItem('version', CONSTANT.APP.VERSION);
             $state.go(toState.name, toParams);
@@ -196,8 +197,43 @@
     //   })
     $ionicPlatform.ready(function() {
       window.addEventListener('message', function(event) {
-              $log.debug(event.data);
+        $log.debug(event);
+        if (event.data === 'backToMap') {
+          $log.debug("Here")
+          $ionicLoading.show({
+            hideOnStateChange: true
           });
+          $state.go('map.navigate');
+        }
+        if (event.data.indexOf('share') >= 0) {
+          $log.debug("sharing", event.data.split('-')[1]);
+          var shareoptions = {
+            message: 'Hi, I just won ' + event.data.split('-')[1] + ' points on English Duniya!!! You can win too!  Download the app now to participate ', // not supported on some apps (Facebook, Instagram)
+            subject: 'English Duniya Scholarship Challenge', // fi. for email
+            files: ['img/assets/scholarship_share_image.png'], // an array of filenames either locally or remotely
+            url: 'https://play.google.com/store/apps/details?id=com.ionicframework.zayamobile694033'
+              // chooserTitle: 'Pick an app' // Android only, you can override the default share sheet title
+          }
+          var onSuccess = function(result) {
+            $log.debug("Share completed? " + result.completed); // On Android apps mostly return false even while it's true
+            $log.debug("Shared to app: " + result.app); // On Android result.app is currently empty. On iOS it's empty when sharing is cancelled (result.completed=false)
+          }
+          var onError = function(msg) {
+            $log.debug("Sharing failed with message: " + msg);
+          }
+          $log.debug("share", shareoptions, onSuccess, onError);
+          $cordovaSocialSharing
+            .share(shareoptions.message, shareoptions.subject,'https://www.englishduniya.com/assets/img/template/profile-1.png','https://play.google.com/store/apps/details?id=com.ionicframework.zayamobile694033') // Share via native share sheet
+            .then(function(result) {
+              $log.debug("Share completed? " + result); // On Android apps mostly return false even while it's true
+              // Success!
+            }, function(err) {
+              $log.debug("Sharing failed with message: ", err);
+              // An error occured. Show a message to the user
+            });
+          // window.plugins.socialsharing.shareWithOptions(shareoptions, onSuccess, onError);
+        }
+      });
       analytics.getLocation().then(function(location) {
         $log.debug("Location", location);
       })
@@ -221,15 +257,13 @@
         if (data.additionalData.coldstart) {
           $log.debug("NOTIFICATION. App was started by tapping on notification");
           notification.online.log('tapped');
-          if(data.additionalData.extra_params.redirect){
+          if (data.additionalData.extra_params.redirect) {
             $state.go(data.additionalData.extra_params.redirect);
           }
-        }else{
+        } else {
           $log.debug("NOTIFICATION. Though notification was received, app wasn\'t started by clicking on notification")
-          // localStorage.setItem("Hello2","Hello coldstart false")
+            // localStorage.setItem("Hello2","Hello coldstart false")
         }
-
-
       });
       $rootScope.$on('$cordovaPushV5:errorOcurred', function(event, error) {
           $log.error("Error occured online notification", event, error);
@@ -347,9 +381,9 @@
     $ionicPlatform.on('pause', function() {
       $rootScope.$broadcast('appPause');
       $rootScope.inBackground = true;
-      try{
+      try {
         notification.schedule(JSON.parse(localStorage.scheduleNotification), JSON.parse(localStorage.scheduleNotification).at);
-      }catch(err){
+      } catch (err) {
         $log.warn("Looks like offline notifications haven\'t been set yet")
       }
       // content.getActiveResource().then(function(resource){
