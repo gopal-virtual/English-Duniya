@@ -182,32 +182,10 @@
                     "score": summary.score.marks,
                     "totalScore": quiz.node.type.score,
                     "skill": quiz.node.tag.toLowerCase(),
-                    "sr": quiz.node.parentHindiLessonId,
-                    "miss": lesson.miss
+                    "sr": quiz.node.parentHindiLessonId
                   });
                   //cache
                   $log.debug("got suggestion",suggestion);
-
-
-                  if(network.isOnline()){
-                    suggestion = {"suggestedLesson": suggestion["suggestedLesson"], "dependencyData": suggestion["dependencyData"],"miss":false};
-                    $log.debug('netConnected', true, suggestion);
-                  }else{
-
-                    suggestion = {"suggestedLesson": suggestion["miss"], "dependencyData": suggestion["missDependencyData"],"miss":true};
-                    $log.debug('netConnected', false, suggestion);
-
-                    if(suggestion["suggestedLesson"] == null){
-                      var suggestion = ml.getLessonSuggestion({
-                        "event": "assessment",
-                        "miss": true
-                      });
-                      $log.debug("got miss suggestion",suggestion);
-
-                    }
-
-                  }
-                  
 
                   return User.profile.updateRoadMapData(ml.roadMapData, User.getActiveProfileSync()._id).then(function() {
                     return User.playlist.add(User.getActiveProfileSync()._id, suggestion)
