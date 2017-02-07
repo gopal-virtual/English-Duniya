@@ -31,7 +31,8 @@
     'analytics',
     'User',
     'content',
-    'localized'
+    'localized',
+    'network'
   ];
 
   function QuizController(
@@ -62,7 +63,8 @@
     analytics,
     User,
     content,
-    localized
+    localized,
+    network
   ) {
     var quizCtrl = this;
     //bind quiz resolved to controller
@@ -152,7 +154,11 @@
     $scope.logResume = logResume;
     $scope.resultStarFlag = [];
     quizCtrl.closeModalCallback = closeModalCallback;
-    $scope.analytics_quit_data = {name : 'PRACTICE', type : 'QUIT', id : quizCtrl.quiz.node.id};
+    $scope.analytics_quit_data = {
+      name: 'PRACTICE',
+      type: 'QUIT',
+      id: quizCtrl.quiz.node.id
+    };
     $scope.groups = [];
     $scope.resultButtonAnimationFlag = 0;
     $scope.quizResultButtonAnimation = quizResultButtonAnimation;
@@ -166,17 +172,18 @@
       }
     }
 
-    function logResume(){
-        analytics.log({
-                name: 'PRACTICE',
-                type: 'RESUME',
-                id: quizCtrl.quiz.node.id
-            }, {
-                time: new Date()
-            },
-            User.getActiveProfileSync()._id
-        )
+    function logResume() {
+      analytics.log({
+          name: 'PRACTICE',
+          type: 'RESUME',
+          id: quizCtrl.quiz.node.id
+        }, {
+          time: new Date()
+        },
+        User.getActiveProfileSync()._id
+      )
     }
+
     function isScroll(id) {}
 
     function redo() {
@@ -483,14 +490,10 @@
 
     function setSuggestion() {
       $timeout(function() {
-
-
         quizCtrl.disable_submit = true;
         var temp_quiz = angular.copy(quizCtrl.quiz);
         temp_quiz.suggestion = ml.getNextQSr(quizCtrl.quiz.suggestion.test, ml.mapping);
         if (temp_quiz.suggestion) {
-
-
           temp_quiz.objects.push(ml.dqJSON[temp_quiz.suggestion.qSr]);
           content.getAssessment(temp_quiz).then(function(response) {
             response.suggestion = temp_quiz.suggestion;
@@ -499,26 +502,20 @@
             quizCtrl.quiz.suggestion = (response.suggestion);
             $log.debug(quizCtrl.quiz, response, "Check diff")
               // quizCtrl.quiz = response;
-
-
-            // quizCtrl.nextQuestion()
+              // quizCtrl.nextQuestion()
             $ionicSlideBoxDelegate.update();
             quizCtrl.report.attempts[quizCtrl.quiz.objects[quizCtrl.currentIndex + 1].node.id] = [];
-
             $timeout(function() {
               quizCtrl.currentIndex++;
               $ionicSlideBoxDelegate.slide(quizCtrl.currentIndex);
               quizCtrl.enable_litmus = true;
               quizCtrl.disable_submit = false;
             }, 300);
-
           });
         } else {
-
           quizCtrl.endQuiz();
         }
       }, 300)
-
       return true;
     }
 
@@ -593,16 +590,16 @@
     }
 
     function playAudio(key, index) {
-        key && analytics.log({
-              name: 'QUESTION',
-              type: 'PLAY',
-              id: quizCtrl.quiz.objects[index].node.id
-            }, {
-              time: new Date(),
-              file : key
-            },
-            User.getActiveProfileSync()._id
-          )
+      key && analytics.log({
+          name: 'QUESTION',
+          type: 'PLAY',
+          id: quizCtrl.quiz.objects[index].node.id
+        }, {
+          time: new Date(),
+          file: key
+        },
+        User.getActiveProfileSync()._id
+      )
       if (key) {
         audio.player.play(key)
       }
@@ -675,7 +672,7 @@
       if (quizType === 'practice') {
         $scope.modal.hide().then(function() {
           analytics.log({
-                name: $stateParams.type == 'litmus' ? 'LITMUS':'PRACTICE',
+                name: $stateParams.type == 'litmus' ? 'LITMUS' : 'PRACTICE',
                 type: 'END',
                 id: quizCtrl.quiz.node.id
               }, {
@@ -730,37 +727,34 @@
 
     function endQuiz() {
       // $log.debug("End quiz called");
-     
       if ($stateParams.type == 'litmus') {
         var levelRec = ml.getLevelRecommendation();
         $log.debug('levelRec', levelRec);
-        
-        if(typeof(window.netConnected) == "undefined"){
+        if (typeof(window.netConnected) == "undefined") {
           window.netConnected = false;
         }
-
         ml.setLessonResultMapping().then(function() {
           var suggestion = ml.getLessonSuggestion({
             "event": "diagnosisTest",
             "levelRec": levelRec
           });
-          if(window.netConnected){
-            suggestion = {"suggestedLesson": suggestion["suggestedLesson"], "dependencyData": suggestion["dependencyData"]};
-            $log.debug('window.netConnected', window.netConnected, suggestion);
-          }else{
-            suggestion = {"suggestedLesson": suggestion["miss"], "dependencyData": suggestion["missDependencyData"]};
-            $log.debug('window.netConnected', window.netConnected, suggestion);
-          }
-
-          $log.debug(suggestion, "Suggestion");
+          localStorage.setItem('cachingList', JSON.stringify(suggestion.cache));
+          localStorage.setItem('cachedList', JSON.stringify([]));
+          $log.debug("caching diagnosis suggestion", suggestion);
+          suggestion = {
+            "suggestedLesson": suggestion["suggestedLesson"],
+            "dependencyData": suggestion["dependencyData"],
+            "miss": false
+          };
+          $log.debug('caching diagnosis online', network.isOnline(), suggestion);
           User.profile.updateRoadMapData(ml.roadMapData, User.getActiveProfileSync()._id).then(function() {
             User.playlist.add(User.getActiveProfileSync()._id, suggestion).then(function() {
-              $log.debug("average level", levelRec.avgLevel)
+              $log.debug("average level", levelRec.avgLevel);
               $state.go('litmus_result', {
                 'average_level': levelRec.avgLevel
               });
-            })
-          })
+            });
+          });
         });
         localStorage.setItem('diagnosis_flag', true);
       } else {
@@ -793,17 +787,17 @@
     //     }
     // }, 101);
     $scope.showNodeMenu = function() {
-        $stateParams.type == 'practice' && analytics.log({
-            name: 'PRACTICE',
-            type: 'PAUSE',
-            id: quizCtrl.quiz.node.id
-          }, {
-            time: new Date()
-          },
-          User.getActiveProfileSync()._id
-        )
+      $stateParams.type == 'practice' && analytics.log({
+          name: 'PRACTICE',
+          type: 'PAUSE',
+          id: quizCtrl.quiz.node.id
+        }, {
+          time: new Date()
+        },
+        User.getActiveProfileSync()._id
+      )
       quizCtrl.pauseModal.show().then(function() {
-        audio.player.play(CONSTANT.PATH.LOCALIZED_AUDIO+localized.audio.app.ExitResource.lang[User.getActiveProfileSync().data.profile.language]);
+        audio.player.play(CONSTANT.PATH.LOCALIZED_AUDIO + localized.audio.app.ExitResource.lang[User.getActiveProfileSync().data.profile.language]);
       });
     }
     $scope.closeNodeMenu = function() {
@@ -942,7 +936,7 @@
 
     function logQuestion(index, type) {
       var activityName = 'QUESTION';
-      if($stateParams.type === 'litmus'){
+      if ($stateParams.type === 'litmus') {
         activityName = 'LITMUS';
       }
       analytics.log({
@@ -1043,10 +1037,10 @@
     function quizResultButtonAnimation() {
       $timeout(function() {
         $scope.resultButtonAnimationFlag = 1;
-      },3000).then(function(){
-        $timeout(function(){
+      }, 3000).then(function() {
+        $timeout(function() {
           $scope.resultButtonAnimationFlag = 2;
-        },400)
+        }, 400)
       })
     }
   }

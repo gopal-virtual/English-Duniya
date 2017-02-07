@@ -64,16 +64,18 @@
       angular.forEach(lessonList, function(lesson) {
         promises2.push(content.getLesson(lesson))
       });
-      return $q.all(promises2).then(function(data){
-        $log.debug("done 2",data);
-        angular.forEach(data,function(lessonData){
+      return $q.all(promises2).then(function(data) {
+        $log.debug("done 2", data);
+        angular.forEach(data, function(lessonData) {
           promises.push(content.downloadLesson(lessonData))
         })
         return $q.all(promises).then(function(a) {
-        $log.debug("done",a);
+          var cachedList = localStorage.getItem('cachedList') ? JSON.parse(localStorage.getItem('cachedList')) : [];
+          cachedList = cachedList.concat(JSON.parse(localStorage.getItem('cachingList')));
+          localStorage.setItem('cachedList',JSON.stringify(cachedList));
+          $log.debug("done", a);
+        });
       });
-      });
-      
     }
 
     function demoShown() {

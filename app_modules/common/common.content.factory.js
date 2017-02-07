@@ -417,6 +417,7 @@
                 $log.debug("making lessonlist 1");
                 lessons[index] = data.rows[i];
                 lessons[index]['parentHindiLessonId'] = playlist[index]['suggestedLesson']
+                lessons[index]['miss'] = playlist[index]['miss'];
               }
             }
             // if(playlist.indexOf(data.rows[i].id) >= 0){
@@ -435,6 +436,7 @@
                 lessons[i].doc.lesson.objects[c].node.playlist_index = i;
                 $log.debug("parent hindi lesson is " + lessons[i]['parentHindiLessonId'])
                 lessons[i].doc.lesson.objects[c].node.parentHindiLessonId = lessons[i]['parentHindiLessonId'];
+                lessons[i].doc.lesson.objects[c].node.miss = lessons[i]['miss'];
               }
               // for(var c = 0; c < lessons[i].doc.lesson.objects.length; c++){
               // $log.debug("Iter ",lessons[i].doc.lesson.objects[c].node.playlist_index )

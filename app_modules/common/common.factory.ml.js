@@ -16,7 +16,7 @@
     var ml = {
       MAX: 20,
       passingThreshold: 0.7,
-      roadMapMax: 15,
+      roadMapMax: 2,
       maxSuggestionCount: 3,
       diagQuestionsPerSkill: 5,
       runDiagnostic: runDiagnostic,

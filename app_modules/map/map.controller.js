@@ -620,6 +620,9 @@
         //   promise = $q.resolve();
         // }
       lessonutils.cacheLessons()
+        .then(function() {
+          return mediaManager.getPath(node.node.intro_sound)
+        })
         .then(function(s) {
           $log.debug("Intro sound downloaded if not exist", s);
           if (s) {
