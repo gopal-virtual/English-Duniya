@@ -361,7 +361,12 @@
             return updateRoadMapSuggestion(data);
           }else{
             $log.debug('if miss and roadMap empty');
+            var previousRecommendationsWithPrereqs = angular.copy(ml.roadMapData.recommendationsWithPrereqs);
             var recommendationsWithPrereqs = getNewBatchNodes()[0];
+            if(ml.roadMapData["roadMap"].length == 0){
+              $log.debug('no history developed', previousRecommendationsWithPrereqs);
+              recommendationsWithPrereqs = previousRecommendationsWithPrereqs;
+            }
             setNewRoadMap(recommendationsWithPrereqs);
             ml.roadMapData["roadMap"][0]["previousNode"] = null;
             ml.roadMapData["roadMap"][0]["currentNode"] = ml.roadMapData["roadMap"][0]["sr"];
