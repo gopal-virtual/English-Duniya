@@ -188,6 +188,14 @@
       confirm: exitModalConfirm
     }
 
+    // notification.offline.list()
+    notification.offline.list().then(function(schedulerObjectArray){
+      // notification.offline.scheduleMulti(schedulerObjectArray);
+      $rootScope.toBeScheduled = schedulerObjectArray;
+    }).catch(function(err){
+      $log.error('some error occured while fetching offline notification doc',err);
+    })
+
     function exitModalDismiss() {
       $log.debug('EXITING NOT SURELY')
       $scope.exitApp.hide().then(function() {

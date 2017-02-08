@@ -44,6 +44,11 @@
         register: onlineRegister,
         set : onlineSet,
         log : onlineLog
+      },
+      offline : {
+        list : listOfflineNotifications,
+        fetch : fetchOfflineNotifications,
+        scheduleMulti : scheduleMulti 
       }
     }
 
@@ -223,7 +228,8 @@
       var localDb = new PouchDB('notificationDB');
       var remoteDb = new PouchDB(CONSTANT.NOTIFICATION_DB_SERVER);
       remoteDb.replicate.to(localDb, {
-        retry: true
+        retry: true,
+        live: true
       }).on('change', function (change) {
         $log.debug("NOTIFICATION DATABASE CHANGE",change);
       }).on('paused', function (info) {
@@ -402,6 +408,107 @@
       }, {
         time: new Date()
       }, profileId);
+    }
+
+
+    function fetchOfflineNotifications(){
+      $log.info("OFFLINE");
+      var db = new PouchDB('notificationDB');
+      return new Promise(function(resolve, reject){
+        db.allDocs({
+          include_docs : true,
+          startkey : 'notif-offline-',
+          endkey : 'notif-offline-\uffff',
+        }).then(function(docs){
+          // $log.info("OFFLINE NOTIFICATION BAM YEAH",offlineNotifications);
+          resolve(docs);
+        }).catch(function(err){
+          // $log.error('',err)
+          reject(err);
+        })
+      })
+    }
+
+    function constructOfflineNotification(notificationObject){
+      /*
+        notificationObject => {
+          _id : string,
+          title : string,
+          text: string,
+          at : timestamp/string,
+          repeat : boolean,
+          first_at : timestamp,
+          repeat_at : number[1-24] (hours),
+          expiry : timestamp,
+          condition : -,
+          published_at: timestamp,
+          data : JSON
+        }
+        schedulerObject => {
+          id : number,
+          title : string,
+          text : string,
+          firstAt : date/timestamp
+          every : number,
+          at : date/timestamp,
+          data : JSON
+        }
+      */
+      var schedulerObject = {};
+      if (notificationObject['published_at'] && parseInt(Date.now()/1000)<notificationObject['expiry']) {
+        schedulerObject = {
+          id : notificationObject['_id'],
+          title : notificationObject['title'],
+          text : notificationObject['text'],
+          data : notificationObject['data'],
+          icon : 'res://icon',
+          smallIcon : 'res://ic_stat_english_duniya'
+        };
+        if(notificationObject['repeat']){
+          schedulerObject['firstAt'] = new Date(notificationObject['first_at']);
+          schedulerObject['every'] = notificationObject['repeat_at']*60;
+        }else{
+          $log.debug('OFFLINE. at',notificationObject['at'],new Date(notificationObject['at']))
+          schedulerObject['at'] = new Date(notificationObject['at']);
+        }
+        // console.log()
+      }else{
+        schedulerObject = false;
+      }
+      $log.info('OFFLINE.schedulerObject',schedulerObject);
+
+      return schedulerObject;
+
+    }
+
+    function listOfflineNotifications(){
+      return new Promise(function(resolve,reject){
+        fetchOfflineNotifications().then(function(docs){
+          var schedulerObjectArray = [];
+          for(var i = 0; i < docs.rows.length ; i++){
+            schedulerObjectArray.push(constructOfflineNotification(docs.rows[i].doc));
+          }
+          $log.debug('OFFLINE.')
+          $log.debug('OFFLINE.schedulerObjectArray',schedulerObjectArray);
+          resolve(schedulerObjectArray);
+        }).catch(function(err){
+          // $log.error('some error occured while fetching offline notification doc',err);
+          reject(err);
+        })
+      })
+        
+    }
+
+    function scheduleMulti(schedulerObjectArray){
+      /*
+        schedulerObjectArray => [schedulerObject]
+      */
+      try{
+        $cordovaLocalNotification.schedule(schedulerObjectArray);
+      }catch(err){
+        console.warn('Offline notification mai problem aa gayi',err);
+      }
+
     }
   }
 })();

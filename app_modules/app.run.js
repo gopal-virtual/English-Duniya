@@ -75,6 +75,7 @@
         // content.createOrUpdateLessonDB()
       } else {
         content.replicateLessonDB();
+        notification.db.replicate();
         $log.debug("tag here");
         if (localStorage.first_time !== undefined) {
           User.startProfileSync();
@@ -343,12 +344,20 @@
     });
     $ionicPlatform.on('pause', function() {
       $rootScope.$broadcast('appPause');
+      $log.debug('OFFLINE, hello')
+      if($rootScope.toBeScheduled){
+        $log.debug('OFFLINE. notification set')
+        notification.offline.scheduleMulti($rootScope.toBeScheduled);
+      }else{
+        $log.warn('OFFLINE. no offline notification in queue');
+      }
       $rootScope.inBackground = true;
       try{
         notification.schedule(JSON.parse(localStorage.scheduleNotification), JSON.parse(localStorage.scheduleNotification).at);
       }catch(err){
         $log.warn("Looks like offline notifications haven\'t been set yet")
       }
+
       // content.getActiveResource().then(function(resource){
       //   $log.debug("LOGGING ACTIVE",resource)
       //   activeResource = resource;

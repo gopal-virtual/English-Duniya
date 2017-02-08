@@ -206,6 +206,7 @@
 
     function log(action, data, profile_id, user_id) {
       // $log.debug("Analytics", action, data);
+      saveState(action);
       data["network"] = network.getConnectionType();
       data["device"] = device;
       data["app_version"] = CONSTANT.APP.VERSION;
@@ -249,6 +250,11 @@
 
 
       return true;
+    }
+
+
+    function saveState(action){
+      $log.info('action',action.name+"."+action.type);
     }
 
   }
