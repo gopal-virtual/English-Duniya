@@ -265,6 +265,20 @@
       }
     }
 
+    function deleteMissedNodeFromRoadmap(sr){
+      var roadMap = ml.roadMapData["roadMap"];
+      if(roadMap){
+        for(var i = 0;i<roadMap.length;i++){
+          if(sr == roadMap[i]["sr"]){
+            roadMap.splice(0, i + 1);
+            break;
+          }
+        }
+        ml.roadMapData["roadMap"] = roadMap;
+        localStorage.setItem("roadMapData", JSON.stringify(ml.roadMapData));
+      }
+    }
+
     function deleteSuccessfulNodeFromRoadmap(sr, score){
       if(score != undefined){
         if(score < ml.passingThreshold){
@@ -343,7 +357,8 @@
 
         if(data["miss"] == true){
           $log.debug('in miss');
-          deleteSuccessfulNodeFromRoadmap(ml.roadMapData["roadMap"][0]["sr"]);
+          // deleteSuccessfulNodeFromRoadmap(ml.roadMapData["roadMap"][0]["sr"]);
+          deleteMissedNodeFromRoadmap(data["sr"]);
           var lesson = ml.roadMapData["roadMap"][0];
           $log.debug('lesson after deleting because miss', lesson);
 
