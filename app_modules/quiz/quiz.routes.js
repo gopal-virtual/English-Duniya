@@ -213,9 +213,12 @@
                       "dependencyData": suggestion["dependencyData"],
                       "miss": false
                     };
-                      localStorage.setItem('cachingList',JSON.stringify(suggestion.cache));
 
                     }
+                  }
+                  if(suggestion.cache){
+                    
+                      localStorage.setItem('cachingList',JSON.stringify(suggestion.cache));
                   }
                   return User.profile.updateRoadMapData(ml.roadMapData, User.getActiveProfileSync()._id).then(function() {
                     return User.playlist.add(User.getActiveProfileSync()._id, suggestion)
