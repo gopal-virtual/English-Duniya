@@ -358,7 +358,15 @@
         if(data["miss"] == true){
           $log.debug('in miss');
           // deleteSuccessfulNodeFromRoadmap(ml.roadMapData["roadMap"][0]["sr"]);
-          deleteMissedNodeFromRoadmap(data["sr"]);
+          var sr;
+          if(data["sr"]){
+            sr = data["sr"];
+          }else if(ml.roadMapData["roadMap"].length > 0){
+            sr = ml.roadMapData["roadMap"][0]["sr"];
+          }else{
+            ml.roadMapData["roadMap"] = [];
+          }
+          deleteMissedNodeFromRoadmap(sr);
           var lesson = ml.roadMapData["roadMap"][0];
           $log.debug('lesson after deleting because miss', lesson);
 
@@ -378,11 +386,12 @@
             $log.debug('if miss and roadMap empty');
             var previousRecommendationsWithPrereqs = angular.copy(ml.roadMapData.recommendationsWithPrereqs);
             var recommendationsWithPrereqs = getNewBatchNodes()[0];
+            setNewRoadMap(recommendationsWithPrereqs);
             if(ml.roadMapData["roadMap"].length == 0){
               $log.debug('no history developed', previousRecommendationsWithPrereqs);
               recommendationsWithPrereqs = previousRecommendationsWithPrereqs;
+              setNewRoadMap(recommendationsWithPrereqs);
             }
-            setNewRoadMap(recommendationsWithPrereqs);
             ml.roadMapData["roadMap"][0]["previousNode"] = null;
             ml.roadMapData["roadMap"][0]["currentNode"] = ml.roadMapData["roadMap"][0]["sr"];
             ml.roadMapData["roadMap"][0]["resultTrack"] = {};

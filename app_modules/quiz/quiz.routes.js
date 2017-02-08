@@ -190,6 +190,7 @@
                     suggestion = {
                       "suggestedLesson": suggestion["suggestedLesson"],
                       "dependencyData": suggestion["dependencyData"],
+                      "cache": suggestion["cache"],
                       "miss": false
                     };
                     $log.debug('caching quiz hit', network.isOnline(), suggestion);
@@ -199,6 +200,7 @@
                     suggestion = {
                       "suggestedLesson": suggestion["miss"],
                       "dependencyData": suggestion["missDependencyData"],
+                      "cache": suggestion["cache"],
                       "miss": true
                     };
                     if (suggestion["suggestedLesson"] == null) {
@@ -211,6 +213,7 @@
                       suggestion = {
                       "suggestedLesson": suggestion["suggestedLesson"],
                       "dependencyData": suggestion["dependencyData"],
+                      "cache": suggestion["cache"],
                       "miss": false
                     };
 
