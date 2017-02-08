@@ -124,12 +124,15 @@
         templateProvider: function($timeout, $stateParams, $log, User) {
           $log.debug("weekly challenge template provider");
           return $timeout(function() {
-            return "<ion-nav-view><iframe style='width:100vw;height:100vh' src='http://challenge.englishduniya.in/#!/0429fb91-4f3c-47de-9adb-609996962188/" + User.getActiveProfileSync()._id + "/" + localStorage.getItem('Authorization') + "'></iframe></ion-nav-view>"
+            return "<ion-nav-view><iframe style='width:100vw;height:100vh' src='http://challenge.englishduniya.in/#!/0429fb91-4f3c-47de-9adb-609996962188/" + User.getActiveProfileSync()._id + "/" + localStorage.getItem('Authorization') + "/?first_time="+!User.isChallengeVisited()+"'></iframe></ion-nav-view>"
           }, 100);
         },
         controller: ['$state','$log', function($state,$log) {
 
-        }]
+        }],
+         onEnter: ['$state', '$timeout', '$log', '$ionicLoading','User', function($state, $timeout, $log, $ionicLoading,User) {
+          User.setChallengeVisited();
+        }],
       });
   }
 })();

@@ -1032,7 +1032,9 @@
     function goToChallenge() {
       if (network.isOnline()) {
         if (User.hasJoinedChallenge()) {
-          $ionicLoading.show({hideOnStateChange:true})
+          $ionicLoading.show({
+            hideOnStateChange: true
+          })
           pointsQueue.startSync().then(function() {
             $log.debug("syncPointsQueue success")
             $state.go('weekly-challenge', {
@@ -1105,7 +1107,9 @@
     }
     $scope.dismissJoinChallenge = function() {
       $log.debug("dismiss join challenege");
-      $scope.challengeModal.hide();
+      $scope.challengeModal.hide().then(function(){
+        goToChallenge();
+      });
     }
 
     function daysBetween(date1, date2) {

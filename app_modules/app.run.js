@@ -197,7 +197,6 @@
     //     },User.getActiveProfileSync() && User.getActiveProfileSync()._id)
     //   })
     $ionicPlatform.ready(function() {
-
       window.addEventListener('message', function(event) {
         $log.debug(event);
         if (event.data === 'backToMap') {
@@ -212,21 +211,30 @@
           var shareoptions = {
             message: 'Hi, I just won ' + event.data.split('-')[1] + ' points on English Duniya!!! You can win too!  Download the app now to participate ', // not supported on some apps (Facebook, Instagram)
             subject: 'English Duniya Scholarship Challenge', // fi. for email
-            files: ['img/assets/scholarship_share_image.png'], // an array of filenames either locally or remotely
-            url: 'https://play.google.com/store/apps/details?id=com.ionicframework.zayamobile694033'
+            // files: ['img/assets/scholarship_share_image.png'], // an array of filenames either locally or remotely
+            // url: 'https://play.google.com/store/apps/details?id=com.ionicframework.zayamobile694033'
               // chooserTitle: 'Pick an app' // Android only, you can override the default share sheet title
           };
-          var onSuccess = function(result) {
-            $log.debug("Share completed? " + result.completed); // On Android apps mostly return false even while it's true
-            $log.debug("Shared to app: " + result.app); // On Android result.app is currently empty. On iOS it's empty when sharing is cancelled (result.completed=false)
-          }
-          var onError = function(msg) {
-            $log.debug("Sharing failed with message: " + msg);
-          }
-          $log.debug("share", shareoptions, onSuccess, onError);
+          // var onSuccess = function(result) {
+          //   $log.debug("Share completed? " + result.completed); // On Android apps mostly return false even while it's true
+          //   $log.debug("Shared to app: " + result.app); // On Android result.app is currently empty. On iOS it's empty when sharing is cancelled (result.completed=false)
+          // }
+          // var onError = function(msg) {
+          //   $log.debug("Sharing failed with message: " + msg);
+          // }
+          // $log.debug("share", shareoptions, onSuccess, onError);
           $cordovaSocialSharing
-            .share(shareoptions.message, shareoptions.subject,'https://www.englishduniya.com/assets/img/template/profile-1.png','https://play.google.com/store/apps/details?id=com.ionicframework.zayamobile694033') // Share via native share sheet
+            .share(shareoptions.message, shareoptions.subject, 'https://s3-ap-southeast-1.amazonaws.com/zaya-builds/production-images/englishduniya-scholarship-challenge.png', 'https://play.google.com/store/apps/details?id=com.ionicframework.zayamobile694033') // Share via native share sheet
             .then(function(result) {
+              if (result) {
+                $http.post('http://challenge.englishduniya.in/points/', {
+                  profile_id: User.getActiveProfileSync()._id,
+                  points: [{
+                    action: 'share',
+                    score: 5
+                  }]
+                });
+              }
               $log.debug("Share completed? " + result); // On Android apps mostly return false even while it's true
               // Success!
             }, function(err) {
