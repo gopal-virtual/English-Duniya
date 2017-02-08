@@ -197,7 +197,7 @@
     //     },User.getActiveProfileSync() && User.getActiveProfileSync()._id)
     //   })
     $ionicPlatform.ready(function() {
-     
+
       window.addEventListener('message', function(event) {
         $log.debug(event);
         if (event.data === 'backToMap') {
@@ -207,7 +207,7 @@
           });
           $state.go('map.navigate');
         }
-        if (event.data.indexOf('share') >= 0) {
+        if (typeof event.data === 'string' && event.data.indexOf('share') >= 0) {
           $log.debug("sharing", event.data.split('-')[1]);
           var shareoptions = {
             message: 'Hi, I just won ' + event.data.split('-')[1] + ' points on English Duniya!!! You can win too!  Download the app now to participate ', // not supported on some apps (Facebook, Instagram)
@@ -215,7 +215,7 @@
             files: ['img/assets/scholarship_share_image.png'], // an array of filenames either locally or remotely
             url: 'https://play.google.com/store/apps/details?id=com.ionicframework.zayamobile694033'
               // chooserTitle: 'Pick an app' // Android only, you can override the default share sheet title
-          }
+          };
           var onSuccess = function(result) {
             $log.debug("Share completed? " + result.completed); // On Android apps mostly return false even while it's true
             $log.debug("Shared to app: " + result.app); // On Android result.app is currently empty. On iOS it's empty when sharing is cancelled (result.completed=false)

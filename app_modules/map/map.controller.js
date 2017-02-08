@@ -621,6 +621,7 @@
       $scope.$emit('openNode', resource)
     }
     $scope.$on('openNode', function(event, node) {
+      $timeout.cancel(mapCtrl.openChallengeTimeout);
       $log.debug("Opennode Triggered");
       $ionicLoading.show({
         // noBackdrop: false
@@ -1031,6 +1032,7 @@
     function goToChallenge() {
       if (network.isOnline()) {
         if (User.hasJoinedChallenge()) {
+          $ionicLoading.show({hideOnStateChange:true})
           pointsQueue.startSync().then(function() {
             $log.debug("syncPointsQueue success")
             $state.go('weekly-challenge', {
@@ -1040,16 +1042,22 @@
         } else {
           $scope.challengeModal.show();
         }
-      }else{
-        $ionicPopup.alert({title:'No Internet Connection',template:'You have to be online to play challenge' })
+      } else {
+        $ionicPopup.alert({
+          title: 'No Internet Connection',
+          template: 'You have to be online to play challenge'
+        })
       }
     }
 
     function pushPointsQueue() {
       $log.debug("pushPointsQueue")
       pointsQueue.push({
-        action: 'quiz_complete',
-        score: 50
+        client_id: User.getActiveProfileSync()._id,
+        points: [{
+          action: 'quiz_complete',
+          score: 500
+        }]
       }).then(function() {
         $log.debug("pushPointsQueue success")
       })
@@ -1078,7 +1086,7 @@
       $scope.challengeModal = challengeModal;
       if (User.demo.getStep() != 1 && !User.hasJoinedChallenge()) {
         $log.debug("showing challenge modal")
-        $timeout(function() {
+        mapCtrl.openChallengeTimeout = $timeout(function() {
           $scope.challengeModal.show();
         }, 2000)
       }
@@ -1099,7 +1107,6 @@
       $log.debug("dismiss join challenege");
       $scope.challengeModal.hide();
     }
-
 
     function daysBetween(date1, date2) {
       //Get 1 day in milliseconds

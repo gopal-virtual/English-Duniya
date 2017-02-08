@@ -99,12 +99,15 @@
             return User.playlist.get(profile_id).then(function(playlist){
                 angular.forEach(playlist,function(playlist_item,index){
                     angular.forEach(playlist_item, function(resource, resource_id){
+                        if(resource){
+                            
                         if(['dependencyData','lesson_id'].indexOf(resource_id) == -1){
                             var percent = (resource.score / resource.totalScore) * 100;
                             stars += (percent >= CONSTANT.STAR.THREE) ? 3 :
                                      (percent >= CONSTANT.STAR.TWO && percent < CONSTANT.STAR.THREE) ? 2 :
                                      (percent >= CONSTANT.STAR.ONE && percent < CONSTANT.STAR.TWO) ? 1 : 0;
                             levels += 1;
+                        }
                         }
                     })
                 })
