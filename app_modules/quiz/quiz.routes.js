@@ -208,6 +208,11 @@
                         "event": "assessment",
                         "miss": true
                       });
+                      suggestion = {
+                      "suggestedLesson": suggestion["suggestedLesson"],
+                      "dependencyData": suggestion["dependencyData"],
+                      "miss": false
+                    };
                       localStorage.setItem('cachingList',JSON.stringify(suggestion.cache));
 
                     }
