@@ -27,7 +27,8 @@
     $ionicLoading,
     notification,
     $ionicPopup,
-    $cordovaSocialSharing
+    $cordovaSocialSharing,
+    Rest
   ) {
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
     $ionicPlatform.registerBackButtonAction(function(event) {
@@ -196,6 +197,7 @@
     //     },User.getActiveProfileSync() && User.getActiveProfileSync()._id)
     //   })
     $ionicPlatform.ready(function() {
+     
       window.addEventListener('message', function(event) {
         $log.debug(event);
         if (event.data === 'backToMap') {

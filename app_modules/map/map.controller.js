@@ -1049,7 +1049,7 @@
       $log.debug("pushPointsQueue")
       pointsQueue.push({
         action: 'quiz_complete',
-        score: 0
+        score: 50
       }).then(function() {
         $log.debug("pushPointsQueue success")
       })
@@ -1099,6 +1099,7 @@
       $log.debug("dismiss join challenege");
       $scope.challengeModal.hide();
     }
+
 
     function daysBetween(date1, date2) {
       //Get 1 day in milliseconds

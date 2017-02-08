@@ -10,7 +10,8 @@
     'CONSTANT',
     '$q',
     'Auth',
-    'network'
+    'network',
+    '$http'
   ];
   /* @ngInject */
   function pointsQueue(pouchDB,
@@ -19,7 +20,8 @@
     CONSTANT,
     $q,
     Auth,
-    network) {
+    network,
+    $http) {
     var queueDB = pouchDB('pointsQueueDB', {
       revs_limit: 1,
       // auto_compaction: true
@@ -43,8 +45,6 @@
     };
 
     function push(body) {
-     
-      
       return queueDB.put({
         '_id': new Date().getTime().toString(),
         'body': JSON.parse(JSON.stringify(body)),
@@ -91,8 +91,8 @@
 
     function startSync(d) {
       localStorage.setItem('syncingPoints', true)
-      if(!d){
-      var d = $q.defer();        
+      if (!d) {
+        var d = $q.defer();
       }
       queueDB.allDocs({
           include_docs: true
@@ -109,22 +109,18 @@
             return startSync(d);
           }
         })
-       
-        return d.promise;
+      return d.promise;
     }
 
     function uploadAndDelete(record) {
-
       var promise;
-      if (record.doc.method === 'post') {
-        promise = Rest.all('/profiles/'+User.getActiveProfileSync()._id+'/points/').post(record.doc.body);
-      }
-      return promise.then(function() {
+      return $http.post('http://challenge.englishduniya.in/points/', record.doc.body).then(
+        function success() {
           $log.debug("queue", "upload success", record);
           return queueDB.remove(record.doc);
-        })
-        .catch(function(error) {
-          if (error.status !== 0) {
+        },
+        function fail(error) {
+           if (error.status !== 0) {
             $log.debug("upload failed", record);
             var e = {
               "error": error,
@@ -138,7 +134,15 @@
           } else {
             return $q.reject();
           }
-        });
+        }
+      )
+      // if (record.doc.method === 'post') {
+      //   promise = Rest.all('/profiles/' + User.getActiveProfileSync()._id + '/points/').post(record.doc.body);
+      // }
+      // return promise.then(function() {})
+      //   .catch(function(error) {
+         
+      //   });
     }
     return queueProperties;
   }
