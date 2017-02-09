@@ -1097,7 +1097,9 @@
       $log.debug("join challenege");
       if (User.user.getIsVerified()) {
         User.joinChallenge();
-        $scope.challengeModal.hide();
+        $scope.challengeModal.hide().then(function(){
+          goToChallenge()
+        });
         $log.debug("Succesfully joined the challenge")
       } else {
         $scope.challengeModal.hide().then(function() {
@@ -1108,7 +1110,8 @@
     $scope.dismissJoinChallenge = function() {
       $log.debug("dismiss join challenege");
       $scope.challengeModal.hide().then(function(){
-        goToChallenge();
+        $log.debug("challenge modal hiden")
+        // goToChallenge();
       });
     }
 
