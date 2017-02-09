@@ -16,7 +16,7 @@
     var ml = {
       MAX: 20,
       passingThreshold: 0.7,
-      roadMapMax: 15,
+      roadMapMax: 8,
       maxSuggestionCount: 3,
       diagQuestionsPerSkill: 5,
       runDiagnostic: runDiagnostic,
@@ -92,6 +92,81 @@
       }
     }
 
+    function findLessonsToCache_withPrereqs(suggestionData) {
+      if(ml.newBatchFlag){
+        ml.maxSuggestionCount = 10;
+        $log.debug('caching recommendation');
+        ml.stateRoadMapData = angular.copy(ml.roadMapData);
+        ml.stateData = angular.copy(data);
+        if(ml.lessonResultMapping){
+          ml.stateLessonResultMapping = angular.copy(ml.lessonResultMapping);
+        }
+
+        var cache = [];
+        while(ml.roadMapData.roadMap.length > 0){
+          var lesson_id = ml.roadMapData.roadMap[0]["sr"];
+
+          var lesson_skill1 = ml.kmapsJSON[lesson_id]["unit"];
+          ml.lessonResultMapping[lesson_id] = {"unit": lesson_skill1, "result": 0};
+          var suggestion1_1 = updateRoadMapSuggestion({
+            "event": "assessment",
+            "score": 0,
+            "totalScore": 100,
+            "skill": lesson_skill1,
+            "sr": lesson_id
+          });
+
+          var lesson_skill1_1 = ml.kmapsJSON[suggestion1_1.suggestedLesson]["unit"];
+          ml.lessonResultMapping[suggestion1_1.suggestedLesson] = {"unit": lesson_skill1_1, "result": 1};
+          var suggestionTemp = updateRoadMapSuggestion({
+            "event": "assessment",
+            "score": 100,
+            "totalScore": 100,
+            "skill": lesson_skill1_1,
+            "sr": suggestion1_1.suggestedLesson
+          });
+
+          var suggestion1_2;
+          if(suggestionTemp.suggestedLesson == lesson_id){
+            ml.lessonResultMapping[lesson_id] = {"unit": lesson_skill1, "result": 0};
+            suggestion1_2 = updateRoadMapSuggestion({
+              "event": "assessment",
+              "score": 0,
+              "totalScore": 100,
+              "skill": lesson_skill1,
+              "sr": lesson_id
+            });
+          }else{
+            suggestion1_2 = suggestionTemp;
+          }
+
+          cache.push({"root": lesson_id, "children": [suggestion1_1.suggestedLesson, suggestion1_2.suggestedLesson]})
+
+          var lesson_skill1_2 = ml.kmapsJSON[suggestion1_2.suggestedLesson]["unit"];
+          
+
+          ml.lessonResultMapping[lesson_id] = {"unit": lesson_skill1, "result": 1};
+          ml.lessonResultMapping[suggestion1_1.suggestedLesson] = {"unit": lesson_skill1_1, "result": 1};
+          ml.lessonResultMapping[suggestion1_2.suggestedLesson] = {"unit": lesson_skill1_2, "result": 1};
+
+          ml.roadMapData.roadMap.splice(0,1)
+          localStorage.setItem("roadMapData", JSON.stringify(ml.roadMapData));
+
+        }
+
+
+        ml.newBatchFlag = false;
+        ml.maxSuggestionCount = 3;
+        ml.roadMapData = angular.copy(ml.stateRoadMapData);
+        data = angular.copy(ml.stateData);
+        ml.lessonResultMapping = angular.copy(ml.stateLessonResultMapping);
+        localStorage.setItem("roadMapData", JSON.stringify(ml.roadMapData));
+        suggestionData["cache"] = cache;
+        ml.cache = cache;
+        localStorage.setItem("cache", JSON.stringify(cache));
+      }
+      return suggestionData;
+    }
 
     function findLessonsToCache(suggestionData) {
       if(ml.newBatchFlag){
@@ -198,6 +273,20 @@
       }
     }
 
+    function deleteMissedNodeFromRoadmap(sr){
+      var roadMap = ml.roadMapData["roadMap"];
+      if(roadMap){
+        for(var i = 0;i<roadMap.length;i++){
+          if(sr == roadMap[i]["sr"]){
+            roadMap.splice(0, i + 1);
+            break;
+          }
+        }
+        ml.roadMapData["roadMap"] = roadMap;
+        localStorage.setItem("roadMapData", JSON.stringify(ml.roadMapData));
+      }
+    }
+
     function deleteSuccessfulNodeFromRoadmap(sr, score){
       if(score != undefined){
         if(score < ml.passingThreshold){
@@ -282,7 +371,16 @@
 
         if(data["miss"] == true){
           $log.debug('in miss');
-          deleteSuccessfulNodeFromRoadmap(ml.roadMapData["roadMap"][0]["sr"]);
+          // deleteSuccessfulNodeFromRoadmap(ml.roadMapData["roadMap"][0]["sr"]);
+          var sr;
+          if(data["sr"]){
+            sr = data["sr"];
+          }else if(ml.roadMapData["roadMap"].length > 0){
+            sr = ml.roadMapData["roadMap"][0]["sr"];
+          }else{
+            ml.roadMapData["roadMap"] = [];
+          }
+          deleteMissedNodeFromRoadmap(sr);
           var lesson = ml.roadMapData["roadMap"][0];
           $log.debug('lesson after deleting because miss', lesson);
 
@@ -300,8 +398,14 @@
             return updateRoadMapSuggestion(data);
           }else{
             $log.debug('if miss and roadMap empty');
+            var previousRecommendationsWithPrereqs = angular.copy(ml.roadMapData.recommendationsWithPrereqs);
             var recommendationsWithPrereqs = getNewBatchNodes()[0];
             setNewRoadMap(recommendationsWithPrereqs);
+            if(ml.roadMapData["roadMap"].length == 0){
+              $log.debug('no history developed', previousRecommendationsWithPrereqs);
+              recommendationsWithPrereqs = previousRecommendationsWithPrereqs;
+              setNewRoadMap(recommendationsWithPrereqs);
+            }
             ml.roadMapData["roadMap"][0]["previousNode"] = null;
             ml.roadMapData["roadMap"][0]["currentNode"] = ml.roadMapData["roadMap"][0]["sr"];
             ml.roadMapData["roadMap"][0]["resultTrack"] = {};
