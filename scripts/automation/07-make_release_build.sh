@@ -36,4 +36,6 @@ release_build_upload_path=s3://zaya-builds/englishduniya-release-$campaign_owner
 release_build_upload_link=/englishduniya-release-$campaign_owner_name-$campaign_name-$JOB_NAME-$BUILD_NUMBER-$environment-$build_architecture-$crosswalk_status-$content_type.apk
 
 s3cmd put --acl-public $release_build_name $release_build_upload_path
+
+rm /tmp/$JOB_NAME/*
 # release build end
