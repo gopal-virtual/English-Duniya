@@ -30,6 +30,14 @@ BUILD_PATH="/tmp/$JOB_NAME"
 
 release_build_name=$BUILD_PATH/$BUILD_NAME.apk
 
+echo "--------------"
+echo build_architecture $build_architecture
+echo crosswalk_status $crosswalk_status
+echo crosswalk $crosswalk
+echo crosswalk $crosswalk
+echo unsigned_build_name $unsigned_build_name
+echo BUILD_NAME $BUILD_NAME
+echo release_build_name $release_build_name
 
 $VERSION/zipalign 4 $REPO_PATH/platforms/android/build/outputs/apk/$unsigned_build_name $release_build_name
 

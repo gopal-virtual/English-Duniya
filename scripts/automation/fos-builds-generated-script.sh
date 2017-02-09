@@ -57,7 +57,8 @@ build_architecture=arm
 echo Campaign name $campaign_name
 echo Campaign owner name $campaign_owner_name
 crosswalk=keep-and-make-seperate-builds
-build_architecture=arm#ionic setup start
+build_architecture=arm
+#ionic setup start
 # Required variables
 #	$keep_crosswalk
 #   keep-and-make-seperate-builds
@@ -105,6 +106,7 @@ rm platforms/android/build/outputs/apk/*
 #	$build_architecture
 #	$content_type	
 
+rm /tmp/$JOB_NAME/*
 cordova build --release android
 
 BUILD_NAME="englishduniya-custom-$environment-$content_type-$crosswalk_status"
@@ -131,18 +133,28 @@ BUILD_PATH="/tmp/$JOB_NAME"
 
 release_build_name=$BUILD_PATH/$BUILD_NAME.apk
 
+echo "--------------"
+echo build_architecture $build_architecture
+echo crosswalk_status $crosswalk_status
+echo crosswalk $crosswalk
+echo crosswalk $crosswalk
+echo unsigned_build_name $unsigned_build_name
+echo BUILD_NAME $BUILD_NAME
+echo release_build_name $release_build_name
 
 $VERSION/zipalign 4 $REPO_PATH/platforms/android/build/outputs/apk/$unsigned_build_name $release_build_name
 
-release_build_upload_path=s3://zaya-builds/englishduniya-release-$campaign_owner_name-$campaign_name-$JOB_NAME-$BUILD_NUMBER-$environment-$build_architecture-$content_type.apk
-release_build_upload_link=/englishduniya-release-$campaign_owner_name-$campaign_name-$JOB_NAME-$BUILD_NUMBER-$environment-$build_architecture-$content_type.apk
+release_build_upload_path=s3://zaya-builds/englishduniya-release-$campaign_owner_name-$campaign_name-$JOB_NAME-$BUILD_NUMBER-$environment-$build_architecture-$crosswalk_status-$content_type.apk
+release_build_upload_link=/englishduniya-release-$campaign_owner_name-$campaign_name-$JOB_NAME-$BUILD_NUMBER-$environment-$build_architecture-$crosswalk_status-$content_type.apk
 
 s3cmd put --acl-public $release_build_name $release_build_upload_path
-# release build endecho Update Firebase --project fos-app-ed2c2 database:update /$campaign_owner_name/campaigns/$campaign_name/ -d {\"status\":\"available\"\,\"$build_architecture-crosswalk_status\":\"$release_build_upload_link\"}  --token 1/0fNl3uwDYBPhXJMHL9Oa-WLjS4lZxMYs5urCJdKKjm0 -y
-firebase --project fos-app-ed2c2 database:update /$campaign_owner_name/campaigns/$campaign_name/ -d {\"status\":\"available\"\,\"$build_architecture-crosswalk_status\":\"$release_build_upload_link\"}  --token 1/0fNl3uwDYBPhXJMHL9Oa-WLjS4lZxMYs5urCJdKKjm0 -y
+
+# release build endecho Update Firebase --project fos-app-ed2c2 database:update /$campaign_owner_name/campaigns/$campaign_name/ -d {\"status\":\"available\"\,\"$build_architecture-$crosswalk_status\":\"$release_build_upload_link\"}  --token 1/0fNl3uwDYBPhXJMHL9Oa-WLjS4lZxMYs5urCJdKKjm0 -y
+firebase --project fos-app-ed2c2 database:update /$campaign_owner_name/campaigns/$campaign_name/ -d {\"status\":\"available\"\,\"$build_architecture-$crosswalk_status\":\"$release_build_upload_link\"}  --token 1/0fNl3uwDYBPhXJMHL9Oa-WLjS4lZxMYs5urCJdKKjm0 -y
 echo Done update Firebase
 crosswalk=keep-and-make-seperate-builds
-build_architecture=x86#ionic setup start
+build_architecture=x86
+#ionic setup start
 # Required variables
 #	$keep_crosswalk
 #   keep-and-make-seperate-builds
@@ -190,6 +202,7 @@ rm platforms/android/build/outputs/apk/*
 #	$build_architecture
 #	$content_type	
 
+rm /tmp/$JOB_NAME/*
 cordova build --release android
 
 BUILD_NAME="englishduniya-custom-$environment-$content_type-$crosswalk_status"
@@ -216,18 +229,28 @@ BUILD_PATH="/tmp/$JOB_NAME"
 
 release_build_name=$BUILD_PATH/$BUILD_NAME.apk
 
+echo "--------------"
+echo build_architecture $build_architecture
+echo crosswalk_status $crosswalk_status
+echo crosswalk $crosswalk
+echo crosswalk $crosswalk
+echo unsigned_build_name $unsigned_build_name
+echo BUILD_NAME $BUILD_NAME
+echo release_build_name $release_build_name
 
 $VERSION/zipalign 4 $REPO_PATH/platforms/android/build/outputs/apk/$unsigned_build_name $release_build_name
 
-release_build_upload_path=s3://zaya-builds/englishduniya-release-$campaign_owner_name-$campaign_name-$JOB_NAME-$BUILD_NUMBER-$environment-$build_architecture-$content_type.apk
-release_build_upload_link=/englishduniya-release-$campaign_owner_name-$campaign_name-$JOB_NAME-$BUILD_NUMBER-$environment-$build_architecture-$content_type.apk
+release_build_upload_path=s3://zaya-builds/englishduniya-release-$campaign_owner_name-$campaign_name-$JOB_NAME-$BUILD_NUMBER-$environment-$build_architecture-$crosswalk_status-$content_type.apk
+release_build_upload_link=/englishduniya-release-$campaign_owner_name-$campaign_name-$JOB_NAME-$BUILD_NUMBER-$environment-$build_architecture-$crosswalk_status-$content_type.apk
 
 s3cmd put --acl-public $release_build_name $release_build_upload_path
-# release build endecho Update Firebase --project fos-app-ed2c2 database:update /$campaign_owner_name/campaigns/$campaign_name/ -d {\"status\":\"available\"\,\"$build_architecture-crosswalk_status\":\"$release_build_upload_link\"}  --token 1/0fNl3uwDYBPhXJMHL9Oa-WLjS4lZxMYs5urCJdKKjm0 -y
-firebase --project fos-app-ed2c2 database:update /$campaign_owner_name/campaigns/$campaign_name/ -d {\"status\":\"available\"\,\"$build_architecture-crosswalk_status\":\"$release_build_upload_link\"}  --token 1/0fNl3uwDYBPhXJMHL9Oa-WLjS4lZxMYs5urCJdKKjm0 -y
+
+# release build endecho Update Firebase --project fos-app-ed2c2 database:update /$campaign_owner_name/campaigns/$campaign_name/ -d {\"status\":\"available\"\,\"$build_architecture-$crosswalk_status\":\"$release_build_upload_link\"}  --token 1/0fNl3uwDYBPhXJMHL9Oa-WLjS4lZxMYs5urCJdKKjm0 -y
+firebase --project fos-app-ed2c2 database:update /$campaign_owner_name/campaigns/$campaign_name/ -d {\"status\":\"available\"\,\"$build_architecture-$crosswalk_status\":\"$release_build_upload_link\"}  --token 1/0fNl3uwDYBPhXJMHL9Oa-WLjS4lZxMYs5urCJdKKjm0 -y
 echo Done update Firebase
 crosswalk=keep-and-make-single-build
-build_architecture=x86andarm#ionic setup start
+build_architecture=x86andarm
+#ionic setup start
 # Required variables
 #	$keep_crosswalk
 #   keep-and-make-seperate-builds
@@ -275,6 +298,7 @@ rm platforms/android/build/outputs/apk/*
 #	$build_architecture
 #	$content_type	
 
+rm /tmp/$JOB_NAME/*
 cordova build --release android
 
 BUILD_NAME="englishduniya-custom-$environment-$content_type-$crosswalk_status"
@@ -301,18 +325,28 @@ BUILD_PATH="/tmp/$JOB_NAME"
 
 release_build_name=$BUILD_PATH/$BUILD_NAME.apk
 
+echo "--------------"
+echo build_architecture $build_architecture
+echo crosswalk_status $crosswalk_status
+echo crosswalk $crosswalk
+echo crosswalk $crosswalk
+echo unsigned_build_name $unsigned_build_name
+echo BUILD_NAME $BUILD_NAME
+echo release_build_name $release_build_name
 
 $VERSION/zipalign 4 $REPO_PATH/platforms/android/build/outputs/apk/$unsigned_build_name $release_build_name
 
-release_build_upload_path=s3://zaya-builds/englishduniya-release-$campaign_owner_name-$campaign_name-$JOB_NAME-$BUILD_NUMBER-$environment-$build_architecture-$content_type.apk
-release_build_upload_link=/englishduniya-release-$campaign_owner_name-$campaign_name-$JOB_NAME-$BUILD_NUMBER-$environment-$build_architecture-$content_type.apk
+release_build_upload_path=s3://zaya-builds/englishduniya-release-$campaign_owner_name-$campaign_name-$JOB_NAME-$BUILD_NUMBER-$environment-$build_architecture-$crosswalk_status-$content_type.apk
+release_build_upload_link=/englishduniya-release-$campaign_owner_name-$campaign_name-$JOB_NAME-$BUILD_NUMBER-$environment-$build_architecture-$crosswalk_status-$content_type.apk
 
 s3cmd put --acl-public $release_build_name $release_build_upload_path
-# release build endecho Update Firebase --project fos-app-ed2c2 database:update /$campaign_owner_name/campaigns/$campaign_name/ -d {\"status\":\"available\"\,\"$build_architecture-crosswalk_status\":\"$release_build_upload_link\"}  --token 1/0fNl3uwDYBPhXJMHL9Oa-WLjS4lZxMYs5urCJdKKjm0 -y
-firebase --project fos-app-ed2c2 database:update /$campaign_owner_name/campaigns/$campaign_name/ -d {\"status\":\"available\"\,\"$build_architecture-crosswalk_status\":\"$release_build_upload_link\"}  --token 1/0fNl3uwDYBPhXJMHL9Oa-WLjS4lZxMYs5urCJdKKjm0 -y
+
+# release build endecho Update Firebase --project fos-app-ed2c2 database:update /$campaign_owner_name/campaigns/$campaign_name/ -d {\"status\":\"available\"\,\"$build_architecture-$crosswalk_status\":\"$release_build_upload_link\"}  --token 1/0fNl3uwDYBPhXJMHL9Oa-WLjS4lZxMYs5urCJdKKjm0 -y
+firebase --project fos-app-ed2c2 database:update /$campaign_owner_name/campaigns/$campaign_name/ -d {\"status\":\"available\"\,\"$build_architecture-$crosswalk_status\":\"$release_build_upload_link\"}  --token 1/0fNl3uwDYBPhXJMHL9Oa-WLjS4lZxMYs5urCJdKKjm0 -y
 echo Done update Firebase
 crosswalk=remove-and-make-single-build
-build_architecture=x86andarm#ionic setup start
+build_architecture=x86andarm
+#ionic setup start
 # Required variables
 #	$keep_crosswalk
 #   keep-and-make-seperate-builds
@@ -360,6 +394,7 @@ rm platforms/android/build/outputs/apk/*
 #	$build_architecture
 #	$content_type	
 
+rm /tmp/$JOB_NAME/*
 cordova build --release android
 
 BUILD_NAME="englishduniya-custom-$environment-$content_type-$crosswalk_status"
@@ -386,13 +421,22 @@ BUILD_PATH="/tmp/$JOB_NAME"
 
 release_build_name=$BUILD_PATH/$BUILD_NAME.apk
 
+echo "--------------"
+echo build_architecture $build_architecture
+echo crosswalk_status $crosswalk_status
+echo crosswalk $crosswalk
+echo crosswalk $crosswalk
+echo unsigned_build_name $unsigned_build_name
+echo BUILD_NAME $BUILD_NAME
+echo release_build_name $release_build_name
 
 $VERSION/zipalign 4 $REPO_PATH/platforms/android/build/outputs/apk/$unsigned_build_name $release_build_name
 
-release_build_upload_path=s3://zaya-builds/englishduniya-release-$campaign_owner_name-$campaign_name-$JOB_NAME-$BUILD_NUMBER-$environment-$build_architecture-$content_type.apk
-release_build_upload_link=/englishduniya-release-$campaign_owner_name-$campaign_name-$JOB_NAME-$BUILD_NUMBER-$environment-$build_architecture-$content_type.apk
+release_build_upload_path=s3://zaya-builds/englishduniya-release-$campaign_owner_name-$campaign_name-$JOB_NAME-$BUILD_NUMBER-$environment-$build_architecture-$crosswalk_status-$content_type.apk
+release_build_upload_link=/englishduniya-release-$campaign_owner_name-$campaign_name-$JOB_NAME-$BUILD_NUMBER-$environment-$build_architecture-$crosswalk_status-$content_type.apk
 
 s3cmd put --acl-public $release_build_name $release_build_upload_path
-# release build endecho Update Firebase --project fos-app-ed2c2 database:update /$campaign_owner_name/campaigns/$campaign_name/ -d {\"status\":\"available\"\,\"$build_architecture-crosswalk_status\":\"$release_build_upload_link\"}  --token 1/0fNl3uwDYBPhXJMHL9Oa-WLjS4lZxMYs5urCJdKKjm0 -y
-firebase --project fos-app-ed2c2 database:update /$campaign_owner_name/campaigns/$campaign_name/ -d {\"status\":\"available\"\,\"$build_architecture-crosswalk_status\":\"$release_build_upload_link\"}  --token 1/0fNl3uwDYBPhXJMHL9Oa-WLjS4lZxMYs5urCJdKKjm0 -y
+
+# release build endecho Update Firebase --project fos-app-ed2c2 database:update /$campaign_owner_name/campaigns/$campaign_name/ -d {\"status\":\"available\"\,\"$build_architecture-$crosswalk_status\":\"$release_build_upload_link\"}  --token 1/0fNl3uwDYBPhXJMHL9Oa-WLjS4lZxMYs5urCJdKKjm0 -y
+firebase --project fos-app-ed2c2 database:update /$campaign_owner_name/campaigns/$campaign_name/ -d {\"status\":\"available\"\,\"$build_architecture-$crosswalk_status\":\"$release_build_upload_link\"}  --token 1/0fNl3uwDYBPhXJMHL9Oa-WLjS4lZxMYs5urCJdKKjm0 -y
 echo Done update Firebase
