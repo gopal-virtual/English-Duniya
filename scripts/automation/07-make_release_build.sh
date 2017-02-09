@@ -5,7 +5,7 @@
 
 cordova build --release android
 
-BUILD_NAME="englishduniya-custom-$environment-$content_type-crosswalk-$crosswalk"
+BUILD_NAME="englishduniya-custom-$environment-$content_type-$crosswalk_status"
 
 if [ "$build_architecture" = 'x86' ]; then
   unsigned_build_name="android-x86-release-unsigned.apk"
