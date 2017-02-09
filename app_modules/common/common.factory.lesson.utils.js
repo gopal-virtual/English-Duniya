@@ -71,7 +71,12 @@
         })
         return $q.all(promises).then(function(a) {
           var cachedList = localStorage.getItem('cachedList') ? JSON.parse(localStorage.getItem('cachedList')) : [];
-          cachedList = cachedList.concat(JSON.parse(localStorage.getItem('cachingList')));
+          angular.forEach(JSON.parse(localStorage.getItem('cachingList')),function(item){
+            if(cachedList.indexOf(item) < 0){
+              cachedList.push(item);
+            }
+          })
+          // cachedList = cachedList.concat(JSON.parse(localStorage.getItem('cachingList')));
           localStorage.setItem('cachedList',JSON.stringify(cachedList));
           $log.debug("done", a);
         });
