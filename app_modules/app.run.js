@@ -196,6 +196,17 @@
     //     },User.getActiveProfileSync() && User.getActiveProfileSync()._id)
     //   })
     $ionicPlatform.ready(function() {
+
+      try{
+        $log.debug('CLEVERTAP',CleverTap);
+        $log.debug('CLEVERTAP2');
+        var registerPush = CleverTap.registerPush();
+        CleverTap.profileSet({"Identity": User.getActiveProfileSync()._id,"custom12":1.311}); 
+        $log.debug('CLEVERTAP3',registerPush);
+      }catch(err){
+        $log.warn('CLEVERTAP. Error with CleverTap',err);
+      }
+
       analytics.getLocation().then(function(location) {
         $log.debug("Location", location);
       })

@@ -455,6 +455,7 @@
         }
       */
       var schedulerObject = {};
+      $log.info('OFFLINE. notification expiry check',parseInt(Date.now()/1000), notificationObject['expiry'], parseInt(Date.now()/1000)<notificationObject['expiry'])
       if (notificationObject['published_at'] && parseInt(Date.now()/1000)<notificationObject['expiry']) {
         schedulerObject = {
           id : notificationObject['_id'],
@@ -465,8 +466,40 @@
           smallIcon : 'res://ic_stat_english_duniya'
         };
         if(notificationObject['repeat']){
-          schedulerObject['firstAt'] = new Date(notificationObject['first_at']);
-          schedulerObject['every'] = notificationObject['repeat_at']*60;
+          /*
+            This case is basically a simple Arithmetic Progression problem.
+            Here, a[1] = firstAt : timestamp in secs,
+                  d = every : secs,
+                  a[n-approx] = now : timestamp in secs
+                  n[approx] = ? decimaled number of itetations
+                  n = ? : number of itetations
+            To find,
+                  a[n] = ? : timestamp at which the notification needs to be set
+
+            We first find number of iterations (n[approx]) by the formula,
+            
+                  n[approx] = (a[n-approx] - a[1] + d)/d
+
+            Now we ciel to get the actual value,
+
+                  n = ceil(n[approx])
+
+            Finally, we find a[n] as,
+
+                  a[n] = a[1] + (n-1)d
+
+            From the above equations we can conclude,
+
+                  a[n] = a[1] + (ceil((a[n-approx] - a[1])/d))d
+          */
+
+          var firstAt = new Date(notificationObject['first_at']).getTime()/1000,
+              every = notificationObject['repeat_at']*60*60,
+              now = Math.floor(Date.now()/1000);
+
+
+          schedulerObject['firstAt'] = new Date((firstAt + (Math.ceil((now - firstAt)/every))*every)*1000);
+          schedulerObject['every'] = every/60;
         }else{
           $log.debug('OFFLINE. at',notificationObject['at'],new Date(notificationObject['at']))
           schedulerObject['at'] = new Date(notificationObject['at']);
