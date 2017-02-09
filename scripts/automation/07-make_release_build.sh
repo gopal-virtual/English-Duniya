@@ -3,6 +3,7 @@
 #	$build_architecture
 #	$content_type	
 
+rm /tmp/$JOB_NAME/*
 cordova build --release android
 
 BUILD_NAME="englishduniya-custom-$environment-$content_type-$crosswalk_status"
@@ -37,5 +38,4 @@ release_build_upload_link=/englishduniya-release-$campaign_owner_name-$campaign_
 
 s3cmd put --acl-public $release_build_name $release_build_upload_path
 
-rm /tmp/$JOB_NAME/*
 # release build end
