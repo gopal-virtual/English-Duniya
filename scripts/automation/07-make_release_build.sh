@@ -25,7 +25,7 @@ fi
 jarsigner -tsa http://timestamp.comodoca.com/rfc3161 -sigalg SHA1withRSA -digestalg SHA1 -keystore classcloud.keystore -storepass zayaayaz1234 $PWD/platforms/android/build/outputs/apk/$unsigned_build_name angryape
 
 VERSION="$ANDROID_HOME/build-tools/23.0.1"
-BUILD_PATH="/tmp"
+BUILD_PATH="/tmp/$JOB_NAME"
 
 release_build_name=$BUILD_PATH/$BUILD_NAME.apk
 

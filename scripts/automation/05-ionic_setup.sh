@@ -10,6 +10,8 @@ ionic state restore
 ionic platform rm android
 ionic platform add android
 
+echo crosswalk is $crosswalk
+
 if [ "$crosswalk" = 'keep-and-make-seperate-builds' ]; then
   echo "keeping crosswalk"
   cp config_with_crosswalk.xml config.xml
