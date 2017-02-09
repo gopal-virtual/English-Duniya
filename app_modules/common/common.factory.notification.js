@@ -15,10 +15,11 @@
     '$cordovaPushV5',
     'CONSTANT',
     'device',
-    'analytics'
+    'analytics',
+    'appstate'
   ];
 
-  function notification($log, $cordovaLocalNotification,content,$q,User,$http,lessonutils,$cordovaPushV5,CONSTANT,device,analytics) {
+  function notification($log, $cordovaLocalNotification,content,$q,User,$http,lessonutils,$cordovaPushV5,CONSTANT,device,analytics,appstate) {
     // types of notification
     // Undiscovered - content - 24hrs
     // Discovered - generic - 5hrs
@@ -421,6 +422,8 @@
           endkey : 'notif-offline-\uffff',
         }).then(function(docs){
           // $log.info("OFFLINE NOTIFICATION BAM YEAH",offlineNotifications);
+
+
           resolve(docs);
         }).catch(function(err){
           // $log.error('',err)
@@ -457,6 +460,7 @@
       var schedulerObject = {};
       $log.info('OFFLINE. notification expiry check',parseInt(Date.now()/1000), notificationObject['expiry'], parseInt(Date.now()/1000)<notificationObject['expiry'])
       if (notificationObject['published_at'] && parseInt(Date.now()/1000)<notificationObject['expiry']) {
+        
         schedulerObject = {
           id : notificationObject['_id'],
           title : notificationObject['title'],
@@ -465,6 +469,24 @@
           icon : 'res://icon',
           smallIcon : 'res://ic_stat_english_duniya'
         };
+
+
+
+        if (notificationObject['condition']) {
+          // appstate.get('MAP.REGIO').then(function(value){
+          // if (notificationObject['condition']['state']) {}
+          $log.info('OFFLINE. condition',User.getActiveProfileSync().data._appstate[notificationObject['condition']['state']]);
+          if (!!User.getActiveProfileSync().data._appstate[notificationObject['condition']['state']] != notificationObject['condition']['value']) {
+            return false;
+          }
+          // else{
+
+          // }
+          // })
+
+          // notificationObject['condition']['state'];
+        }
+
         if(notificationObject['repeat']){
           /*
             This case is basically a simple Arithmetic Progression problem.
@@ -504,6 +526,7 @@
           $log.debug('OFFLINE. at',notificationObject['at'],new Date(notificationObject['at']))
           schedulerObject['at'] = new Date(notificationObject['at']);
         }
+
         // console.log()
       }else{
         schedulerObject = false;
@@ -519,7 +542,10 @@
         fetchOfflineNotifications().then(function(docs){
           var schedulerObjectArray = [];
           for(var i = 0; i < docs.rows.length ; i++){
-            schedulerObjectArray.push(constructOfflineNotification(docs.rows[i].doc));
+            var notificationObject = constructOfflineNotification(docs.rows[i].doc);
+            if (notificationObject) {
+              schedulerObjectArray.push(notificationObject);
+            }
           }
           $log.debug('OFFLINE.')
           $log.debug('OFFLINE.schedulerObjectArray',schedulerObjectArray);

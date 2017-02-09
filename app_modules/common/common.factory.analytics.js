@@ -13,7 +13,8 @@
     '$q',
     'device',
     'User',
-    'CONSTANT'
+    'CONSTANT',
+    'appstate'
   ];
 
   /* @ngInject */
@@ -25,7 +26,8 @@
     $q,
     device,
     User,
-    CONSTANT
+    CONSTANT,
+    appstate
   ) {
 
     var ACTIVITY_TYPE = {
@@ -206,7 +208,14 @@
 
     function log(action, data, profile_id, user_id) {
       // $log.debug("Analytics", action, data);
-      saveState(action);
+      $log.info('action',action.name+"."+action.type);
+      if (User.getActiveProfileSync()) {
+        appstate.set(action.name+"."+action.type,1).then(function(res){
+          $log.debug('STATE',res);
+        }).catch(function(err){
+          $log.warn('STATE',err);
+        });
+      }
       data["network"] = network.getConnectionType();
       data["device"] = device;
       data["app_version"] = CONSTANT.APP.VERSION;
