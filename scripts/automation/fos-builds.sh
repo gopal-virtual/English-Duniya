@@ -29,7 +29,7 @@ cat scripts/automation/08-update_firebase.sh  		>> scripts/automation/fos-builds
 # do
 # echo $step
 # done
-# bash scripts/automation/fos-builds-generated-script.sh
+bash scripts/automation/fos-builds-generated-script.sh
 
 #remove-and-make-single-build
 #keep-and-make-single-build
