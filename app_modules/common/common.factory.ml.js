@@ -1177,7 +1177,7 @@
       var prereqList = [];
       for (var i = 0; i < uniqueSuggestedSrs.length; i++) {
         var prereqSr = ml.makeTree(uniqueSuggestedSrs[i], undefined, undefined, 1); // makeTree will return the recommendations for a given sr
-        for (var j = 0; j < prereqSrs.length; j++) {
+        for (var j = 0; j < prereqSr.length; j++) {
           if(ml.kmapsJSON[prereqSr[j]]["kmap_level"] < (ml.roadMapData["levelRec"]["kmap_level"][ml.kmapsJSON[prereqSr[j]]["unit"]] || ml.defaultKmapLevel)){
               prereqSr.splice(j, 1);
               j--;
@@ -1342,7 +1342,7 @@
         }
 
         // if there are successfulSrs, else return []
-        // if (successfulSrs.length > 0) {
+        if (successfulSrs.length > 0) {
             // fetch all the lesson from Kmaps DB
             var allKmaps = ml.kmapsJSON;
             var srParentCount = {};
@@ -1390,7 +1390,7 @@
                 suggestedSrs = pushIfAbsent(suggestedSrs, rankedLessons);
             }
 
-          // }
+          }
 
         $log.debug('lastResort additions', suggestedSrs);
 
@@ -1635,6 +1635,8 @@
         });
         rankedPlaylist = rankedPlaylist.concat(sortedPlaylistLevel);
       }
+
+      rankedPlaylist = rankedPlaylist.reverse();
 
       if (typeof(recommendationsOnly) != "undefined") {
         return rankedPlaylist;
