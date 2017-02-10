@@ -61,7 +61,12 @@
         localStorage.setItem('cachedList', JSON.stringify([]));
       }
       if (!localStorage.getItem('cachingList')) {
-        localStorage.setItem('cachingList', JSON.stringify([]));
+        // make a caching list from roadmap data
+        var cachingList = [];
+        angular.forEach(JSON.parse(localStorage.roadMapData).roadMap, function(data) {
+          cachingList.push(data.sr);
+        });
+        localStorage.setItem('cachingList', JSON.stringify(cachingList));
       }
       var lessonList = JSON.parse(localStorage.cachingList);
       // var list = [];
