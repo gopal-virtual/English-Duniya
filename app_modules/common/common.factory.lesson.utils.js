@@ -70,6 +70,12 @@
           promises.push(content.downloadLesson(lessonData))
         })
         return $q.all(promises).then(function(a) {
+          if(!localStorage.getItem('cachedList')){
+            localStorage.setItem('cacheList',JSON.stringify([]));
+          }
+          if(!localStorage.getItem('cachingList')){
+            localStorage.setItem('cachingList',JSON.stringify([]));
+          }
           var cachedList = localStorage.getItem('cachedList') ? JSON.parse(localStorage.getItem('cachedList')) : [];
           angular.forEach(JSON.parse(localStorage.getItem('cachingList')),function(item){
             if(cachedList.indexOf(item) < 0){
