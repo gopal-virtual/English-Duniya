@@ -134,7 +134,7 @@ div.challenge > div.meta {
         <img  ng-src="img/assets_svg/scholar-{{::mapCtrl.gender == 'M' ? 'boy' : 'girl'}}.svg"  alt="">
     </div>
     <div class="header">Challenge </div>
-    <div class="meta">{{mapCtrl.daysRemaining}} days left</div>
+    <div class="meta" ng-if="::mapCtrl.daysRemaining">{{mapCtrl.daysRemaining}} days to go</div>
 </div>
 <div ng-tap="mapCtrl.goToChooseProfile();audio.play('click');" ng-click="mapCtrl.goToChooseProfile();audio.play('click');"  class="profile" ng-hide="::mapCtrl.demo.getStep() == 1"  ng-class="::{'animation-fade-in-from-top animation-delay-more' : mapCtrl.demo.getStep() != 1}">
     <img class="profile-avatar" ng-src="img/assets_svg/profile-{{::mapCtrl.gender == 'M' ? 'boy' : 'girl'}}.svg">
