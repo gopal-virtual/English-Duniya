@@ -48,6 +48,8 @@
         )
     }
 
+    $scope.isPlayed = $stateParams.vocab_data.isPlayed;
+
     $scope.resultButtonAnimationFlag = 0;
     // $scope.resultButtonAnimation = resultButtonAnimation;
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.COMMON + '/common.modal-result' + CONSTANT.VIEW, {
