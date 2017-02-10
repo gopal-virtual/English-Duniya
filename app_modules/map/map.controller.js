@@ -1128,10 +1128,12 @@
       return Math.round(difference_ms / one_day);
     }
     //Set the two dates
-    var challengeStartDate = new Date(2017, 1, 28);
+    var challengeStartDate = new Date(CONSTANT.CHALLENGE_START.YEAR, CONSTANT.CHALLENGE_START.MONTH, CONSTANT.CHALLENGE_START.DATE);
     var challengeStartDateText = new Date(challengeStartDate.getFullYear(), challengeStartDate.getMonth(), challengeStartDate.getDate());
     var today = new Date();
+    var todayText = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
     //displays 726
-    mapCtrl.daysRemaining = daysBetween(today, challengeStartDateText) > 0 ? daysBetween(today, challengeStartDateText) : 0;
+    mapCtrl.daysRemaining = daysBetween(todayText, challengeStartDateText) > 0 ? daysBetween(todayText, challengeStartDateText) : 0;
   }
 })();

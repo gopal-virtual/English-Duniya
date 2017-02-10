@@ -67,6 +67,7 @@
       type: 'QUIT',
       id: $stateParams.video.id
     };
+    $scope.isPlayed = $stateParams.video.resource.isPlayed;
     $scope.logResume = function() {
       analytics.log({
           name: 'VIDEO',

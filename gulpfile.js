@@ -246,6 +246,9 @@ gulp.task('generate-constants', function() {
       }, {
         match: 'CAMPAIGN_NAME',
         replacement: campaign_name
+      }, {
+        match: 'CHALLENGE_START',
+        replacement: constants[env]['CHALLENGE_START']
       }]
     }))
     .pipe(rename(paths.constants.destination_filename))
