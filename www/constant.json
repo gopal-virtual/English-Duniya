@@ -31,7 +31,7 @@
     "NOTIFICATION_DURATION_DISCOVERED" : 1,
     "NOTIFICATION_DURATION_UNDISCOVERED" : 1,
     "NOTIFICATION_DB_SERVER": "https://ci-couch.zaya.in/notifications",
-    "CHALLENGE_START": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 20 }
+    "CHALLENGE_START": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 10 }
 
   },
   "DEVELOPMENT": {
