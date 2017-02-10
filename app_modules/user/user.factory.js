@@ -342,7 +342,11 @@
     }
 
     function getUserIdSync() {
-      return JSON.parse(localStorage.getItem('user_details')).id
+      if (JSON.parse(localStorage.getItem('user_details'))) {
+        return JSON.parse(localStorage.getItem('user_details')).id
+      }else{
+        return null;
+      }
     }
 
     function getAllProfiles() {

@@ -26,7 +26,8 @@
     pouchDB,
     $ionicLoading,
     notification,
-    $ionicPopup
+    $ionicPopup,
+    $document
   ) {
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
     $ionicPlatform.registerBackButtonAction(function(event) {
@@ -197,15 +198,30 @@
     //   })
     $ionicPlatform.ready(function() {
 
-      try{
-        $log.debug('CLEVERTAP',CleverTap);
-        $log.debug('CLEVERTAP2');
-        var registerPush = CleverTap.registerPush();
-        CleverTap.profileSet({"Identity": User.getActiveProfileSync()._id,"custom12":1.311}); 
-        $log.debug('CLEVERTAP3',registerPush);
-      }catch(err){
-        $log.warn('CLEVERTAP. Error with CleverTap',err);
-      }
+      $http.get('https://cc-test.zaya.in/api/v1/profiles/?client_uid='+User.getActiveProfileSync()._id).then(function(response){
+        if (response.data) {
+          $log.debug('CLEVERTAP. profile',response);
+          var profileId = response.data[0].id;
+          $log.debug('CLEVERTAP. Profile id',profileId);
+          try{
+            $log.debug('CLEVERTAP',CleverTap);
+            $log.debug('CLEVERTAP2');
+            CleverTap.registerPush();
+            CleverTap.profileSet({"Identity": profileId});
+            // $log.debug('CLEVERTAP3',registerPush);
+          }catch(err){
+            $log.warn('CLEVERTAP. Error with CleverTap',err);
+          }
+          
+        }
+      })
+
+      // $log.debug('CLEVERTAP. document',$document)
+      // document.addEventListener('onPushNotification', function(e) {
+      //   $rootScope.$apply(function(){
+      //     $log.debug('CLEVERTAP. Notification',e.notification);
+      //   })
+      // }, false);
 
       analytics.getLocation().then(function(location) {
         $log.debug("Location", location);
@@ -262,7 +278,7 @@
         id: null
       }, {
         time: new Date()
-      });
+      }, User.getActiveProfileSync() ? User.getActiveProfileSync()._id : User.user.getIdSync());
       network.isOnline() && queue.startSync();
       $rootScope.$on('$cordovaNetwork:online', function(event, networkState) {
         // data.queueSync()
@@ -351,7 +367,7 @@
         id: null
       }, {
         time: new Date()
-      })
+      },User.getActiveProfileSync() ? User.getActiveProfileSync()._id : User.user.getIdSync())
     });
     $ionicPlatform.on('pause', function() {
       $rootScope.$broadcast('appPause');
@@ -387,7 +403,7 @@
         id: null
       }, {
         time: new Date()
-      })
+      },User.getActiveProfileSync() ? User.getActiveProfileSync()._id : User.user.getIdSync())
     });
   }
 })();
