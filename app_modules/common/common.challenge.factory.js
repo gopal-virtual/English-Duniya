@@ -32,7 +32,8 @@
     var challengeProperties = {
       addPoints: addPoints,
       getPoints: getPoints,
-      points: parseInt(localStorage.getItem('points' + User.getActiveProfileSync()._id)) | 0
+      points: parseInt(localStorage.getItem('points' + User.getActiveProfileSync()._id)) | 0,
+      isUserEligible : isUserEligible
     };
 
     function addPoints(profileID, points, action, nodeId) {
@@ -58,6 +59,13 @@
       // })
       challengeProperties.points = parseInt(localStorage.getItem('points' + profileID));
       return challengeProperties.points;
+    }
+    function isUserEligible(){
+      if(['2','3','4','5'].indexOf(User.getActiveProfileSync().data.profile.grade) >= 0){
+        return true;
+      }else{
+        return false;
+      }
     }
     return challengeProperties;
   }

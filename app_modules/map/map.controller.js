@@ -162,6 +162,7 @@
     mapCtrl.syncPointsQueue = syncPointsQueue;
     mapCtrl.syncPointsQueue2 = syncPointsQueue2;
     mapCtrl.openChallenge = openChallenge;
+    mapCtrl.isUserEligibleForChallenge = challenge.isUserEligible();
     $scope.exitChooseProfile = exitChooseProfile;
     $scope.onProfileCardClick = onProfileCardClick;
     $scope.isOnline = network.isOnline();
@@ -1086,7 +1087,7 @@
     }).then(function(challengeModal) {
       $log.debug("challenge modal defined", User.hasJoinedChallenge())
       $scope.challengeModal = challengeModal;
-      if (User.demo.getStep() != 1 && !User.hasJoinedChallenge()) {
+      if (User.demo.getStep() != 1 && !User.hasJoinedChallenge() && challenge.isUserEligible()) {
         $log.debug("showing challenge modal")
         mapCtrl.openChallengeTimeout = $timeout(function() {
           $scope.challengeModal.show();
