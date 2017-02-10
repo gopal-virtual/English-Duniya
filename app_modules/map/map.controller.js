@@ -1087,10 +1087,12 @@
     }).then(function(challengeModal) {
       $log.debug("challenge modal defined", User.hasJoinedChallenge())
       $scope.challengeModal = challengeModal;
-      if (User.demo.getStep() != 1 && !User.hasJoinedChallenge() && challenge.isUserEligible()) {
+      if (User.demo.getStep() != 1 && !User.hasJoinedChallenge() && challenge.isUserEligible() &&  $rootScope.showChallengeModal) {
         $log.debug("showing challenge modal")
         mapCtrl.openChallengeTimeout = $timeout(function() {
-          $scope.challengeModal.show();
+          $scope.challengeModal.show().then(function(){
+            $rootScope.showChallengeModal = false;
+          });
         }, 2000)
       }
     });

@@ -197,6 +197,8 @@
     //     },User.getActiveProfileSync() && User.getActiveProfileSync()._id)
     //   })
     $ionicPlatform.ready(function() {
+    $rootScope.showChallengeModal = true;
+
       window.addEventListener('message', function(event) {
         $log.debug(event);
         if (event.data === 'backToMap') {
