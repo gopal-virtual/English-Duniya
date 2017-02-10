@@ -68,6 +68,7 @@
       id: $stateParams.video.id
     };
     $scope.isPlayed = $stateParams.video.resource.isPlayed;
+    $scope.hasUserJoinedChallenge = User.hasJoinedChallenge();
     $scope.logResume = function() {
       analytics.log({
           name: 'VIDEO',
