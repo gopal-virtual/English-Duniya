@@ -14,6 +14,11 @@
     "NOTIFICATION_DURATION_DISCOVERED" : 300,
     "NOTIFICATION_DURATION_UNDISCOVERED" : 1440,
     "NOTIFICATION_DB_SERVER": "https://ed-couch.zaya.in/notifications",
+    "CLEVERTAP_VARS" : { 
+        "CLEVERTAP_ACCOUNT_ID" : "R5K-RK5-684Z",
+        "CLEVERTAP_TOKEN" : "ETM-IWZ-OIAL",
+        "GCM_PROJECT_NUMBER" : "150596025418" 
+    },
     "CHALLENGE_START": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 20 }
   },
   "TESTING": {
@@ -31,14 +36,18 @@
     "NOTIFICATION_DURATION_DISCOVERED" : 1,
     "NOTIFICATION_DURATION_UNDISCOVERED" : 1,
     "NOTIFICATION_DB_SERVER": "https://ci-couch.zaya.in/notifications",
+    "CLEVERTAP_VARS" : { 
+        "CLEVERTAP_ACCOUNT_ID" : "TEST-K5K-RK5-684Z",
+        "CLEVERTAP_TOKEN" : "CTM-IWZ-OIAL",
+        "GCM_PROJECT_NUMBER" : "150596025418" 
+    },
     "CHALLENGE_START": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 10 }
-
   },
   "DEVELOPMENT": {
     "CONTENT_TEST":false,
     "LOCK": true,
     "FAKE_LOGIN": true,
-    "FAKE_ID_DEVICE": "kartik-asus",
+    "FAKE_ID_DEVICE": "rudra-is-back",
     "FAKE_DEVICE": true,
     "BACKEND_SERVICE_DOMAIN": "https://cc-test-2.zaya.in/",
     "RESOURCE_SERVER": "https://cc-test.zaya.in",
@@ -50,13 +59,18 @@
     "NOTIFICATION_DURATION_DISCOVERED" : 1,
     "NOTIFICATION_DURATION_UNDISCOVERED" : 1,
     "NOTIFICATION_DB_SERVER": "https://ci-couch.zaya.in/notifications",
+    "CLEVERTAP_VARS" : { 
+        "CLEVERTAP_ACCOUNT_ID" : "TEST-K5K-RK5-684Z",
+        "CLEVERTAP_TOKEN" : "CTM-IWZ-OIAL",
+        "GCM_PROJECT_NUMBER" : "150596025418" 
+    },
     "CHALLENGE_START": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 20 }
   },
   "CONTENT": {
     "CONTENT_TEST":true,
     "LOCK": true,
     "FAKE_LOGIN": false,
-    "FAKE_ID_DEVICE": "content_test_tamil",
+    "FAKE_ID_DEVICE": "rudra-is-back",
     "FAKE_DEVICE": false,
     "BACKEND_SERVICE_DOMAIN": "https://cc-test.zaya.in/",
     "RESOURCE_SERVER": "https://cc-test.zaya.in",
@@ -68,6 +82,11 @@
     "NOTIFICATION_DURATION_DISCOVERED" : 1,
     "NOTIFICATION_DURATION_UNDISCOVERED" : 1,
     "NOTIFICATION_DB_SERVER": "https://ci-couch.zaya.in/notifications",
+    "CLEVERTAP_VARS" : { 
+        "CLEVERTAP_ACCOUNT_ID" : "TEST-K5K-RK5-684Z",
+        "CLEVERTAP_TOKEN" : "CTM-IWZ-OIAL",
+        "GCM_PROJECT_NUMBER" : "150596025418" 
+    },
     "CHALLENGE_START": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 20 }
 
   }

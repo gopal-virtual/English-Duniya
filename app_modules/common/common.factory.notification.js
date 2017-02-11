@@ -15,10 +15,11 @@
     '$cordovaPushV5',
     'CONSTANT',
     'device',
-    'analytics'
+    'analytics',
+    'appstate'
   ];
 
-  function notification($log, $cordovaLocalNotification,content,$q,User,$http,lessonutils,$cordovaPushV5,CONSTANT,device,analytics) {
+  function notification($log, $cordovaLocalNotification,content,$q,User,$http,lessonutils,$cordovaPushV5,CONSTANT,device,analytics,appstate) {
     // types of notification
     // Undiscovered - content - 24hrs
     // Discovered - generic - 5hrs
@@ -43,7 +44,14 @@
       online: {
         register: onlineRegister,
         set : onlineSet,
-        log : onlineLog
+        log : onlineLog,
+        clevertapRegister : onlineClevertapRegister,
+        clevertapProfile : onlineClevertapProfile
+      },
+      offline : {
+        list : listOfflineNotifications,
+        fetch : fetchOfflineNotifications,
+        scheduleMulti : scheduleMulti 
       }
     }
 
@@ -223,7 +231,8 @@
       var localDb = new PouchDB('notificationDB');
       var remoteDb = new PouchDB(CONSTANT.NOTIFICATION_DB_SERVER);
       remoteDb.replicate.to(localDb, {
-        retry: true
+        retry: true,
+        live: true
       }).on('change', function (change) {
         $log.debug("NOTIFICATION DATABASE CHANGE",change);
       }).on('paused', function (info) {
@@ -402,6 +411,192 @@
       }, {
         time: new Date()
       }, profileId);
+    }
+
+
+    function fetchOfflineNotifications(){
+      $log.info("OFFLINE");
+      var db = new PouchDB('notificationDB');
+      return new Promise(function(resolve, reject){
+        db.allDocs({
+          include_docs : true,
+          startkey : 'notif-offline-',
+          endkey : 'notif-offline-\uffff',
+        }).then(function(docs){
+          // $log.info("OFFLINE NOTIFICATION BAM YEAH",offlineNotifications);
+
+
+          resolve(docs);
+        }).catch(function(err){
+          // $log.error('',err)
+          reject(err);
+        })
+      })
+    }
+
+    function constructOfflineNotification(notificationObject){
+      /*
+        notificationObject => {
+          _id : string,
+          title : string,
+          text: string,
+          at : timestamp/string,
+          repeat : boolean,
+          first_at : timestamp,
+          repeat_at : number[1-24] (hours),
+          expiry : timestamp,
+          condition : -,
+          published_at: timestamp,
+          data : JSON
+        }
+        schedulerObject => {
+          id : number,
+          title : string,
+          text : string,
+          firstAt : date/timestamp
+          every : number,
+          at : date/timestamp,
+          data : JSON
+        }
+      */
+      var schedulerObject = {};
+      $log.info('OFFLINE. notification expiry check',parseInt(Date.now()/1000), notificationObject['expiry'], parseInt(Date.now()/1000)<notificationObject['expiry'])
+      if (notificationObject['published_at'] && parseInt(Date.now()/1000)<notificationObject['expiry']) {
+        
+        schedulerObject = {
+          id : notificationObject['_id'],
+          title : notificationObject['title'],
+          text : notificationObject['text'],
+          data : notificationObject['data'],
+          icon : 'res://icon',
+          smallIcon : 'res://ic_stat_english_duniya'
+        };
+
+
+
+        if (notificationObject['condition']) {
+          // appstate.get('MAP.REGIO').then(function(value){
+          // if (notificationObject['condition']['state']) {}
+          $log.info('OFFLINE. condition',User.getActiveProfileSync().data._appstate[notificationObject['condition']['state']]);
+          if (!!User.getActiveProfileSync().data._appstate[notificationObject['condition']['state']] != notificationObject['condition']['value']) {
+            return false;
+          }
+          // else{
+
+          // }
+          // })
+
+          // notificationObject['condition']['state'];
+        }
+
+        if(notificationObject['repeat']){
+          /*
+            This case is basically a simple Arithmetic Progression problem.
+            Here, a[1] = firstAt : timestamp in secs,
+                  d = every : secs,
+                  a[n-approx] = now : timestamp in secs
+                  n[approx] = ? decimaled number of itetations
+                  n = ? : number of itetations
+            To find,
+                  a[n] = ? : timestamp at which the notification needs to be set
+
+            We first find number of iterations (n[approx]) by the formula,
+            
+                  n[approx] = (a[n-approx] - a[1] + d)/d
+
+            Now we ciel to get the actual value,
+
+                  n = ceil(n[approx])
+
+            Finally, we find a[n] as,
+
+                  a[n] = a[1] + (n-1)d
+
+            From the above equations we can conclude,
+
+                  a[n] = a[1] + (ceil((a[n-approx] - a[1])/d))d
+          */
+
+          var firstAt = new Date(notificationObject['first_at']).getTime()/1000,
+              every = notificationObject['repeat_at']*60*60,
+              now = Math.floor(Date.now()/1000);
+
+
+          schedulerObject['firstAt'] = new Date((firstAt + (Math.ceil((now - firstAt)/every))*every)*1000);
+          schedulerObject['every'] = every/60;
+        }else{
+          $log.debug('OFFLINE. at',notificationObject['at'],new Date(notificationObject['at']))
+          schedulerObject['at'] = new Date(notificationObject['at']);
+        }
+
+        // console.log()
+      }else{
+        schedulerObject = false;
+      }
+      $log.info('OFFLINE.schedulerObject',schedulerObject);
+
+      return schedulerObject;
+
+    }
+
+    function listOfflineNotifications(){
+      return new Promise(function(resolve,reject){
+        fetchOfflineNotifications().then(function(docs){
+          var schedulerObjectArray = [];
+          for(var i = 0; i < docs.rows.length ; i++){
+            var notificationObject = constructOfflineNotification(docs.rows[i].doc);
+            if (notificationObject) {
+              schedulerObjectArray.push(notificationObject);
+            }
+          }
+          $log.debug('OFFLINE.')
+          $log.debug('OFFLINE.schedulerObjectArray',schedulerObjectArray);
+          resolve(schedulerObjectArray);
+        }).catch(function(err){
+          // $log.error('some error occured while fetching offline notification doc',err);
+          reject(err);
+        })
+      })
+        
+    }
+
+    function scheduleMulti(schedulerObjectArray){
+      /*
+        schedulerObjectArray => [schedulerObject]
+      */
+      try{
+        $cordovaLocalNotification.schedule(schedulerObjectArray);
+      }catch(err){
+        console.warn('Offline notification mai problem aa gayi',err);
+      }
+
+    }
+
+    function onlineClevertapRegister(){
+      try{
+        CleverTap.registerPush();
+      }catch(err){
+        $log.warn('Cant work with clevertap',err);
+      }
+    }
+
+    function onlineClevertapProfile(){
+      $http.get(CONSTANT.BACKEND_SERVICE_DOMAIN+'/api/v1/profiles/?client_uid='+User.getActiveProfileSync()._id).then(function(response){
+        if (response.data) {
+          $log.debug('CLEVERTAP. profile',response);
+          var profileId = response.data[0].id;
+          $log.debug('CLEVERTAP. Profile id',profileId);
+          try{
+            $log.debug('CLEVERTAP',CleverTap);
+            $log.debug('CLEVERTAP2');
+            CleverTap.profileSet({"Identity": profileId});
+            // $log.debug('CLEVERTAP3',registerPush);
+          }catch(err){
+            $log.warn('CLEVERTAP. Error with CleverTap',err);
+          }
+          
+        }
+      })
     }
   }
 })();
