@@ -141,11 +141,14 @@
       })
       .state('quiz.summary', {
         url: '/summary',
-        onEnter: ['$log', 'audio', 'content', '$stateParams', 'lessonutils', 'User', 'ml', 'network', function($log, audio, content, $stateParams, lessonutils, User, ml, network) {
+        onEnter: ['$log', 'audio', 'content', '$stateParams', 'lessonutils', 'User', 'ml', 'network','challenge', function($log, audio, content, $stateParams, lessonutils, User, ml, network,challenge) {
           var report = $stateParams.report;
           var quiz = $stateParams.quiz;
           var summary = $stateParams.summary;
           var lesson = lessonutils.getLocalLesson();
+          if (!$stateParams.quiz.isPlayed) {
+            challenge.addPoints(User.getActiveProfileSync()._id, 50,'node_complete',$stateParams.quiz.node.id);
+          }
           User.skills.update({
               profileId: User.getActiveProfileSync()._id,
               lessonId: quiz.parent,
@@ -223,6 +226,7 @@
                     
                       localStorage.setItem('cachingList',JSON.stringify(suggestion.cache));
                   }
+                  $log.debug("got sugggestion", suggestion);
                   return User.profile.updateRoadMapData(ml.roadMapData, User.getActiveProfileSync()._id).then(function() {
                     return User.playlist.add(User.getActiveProfileSync()._id, suggestion)
                   })

@@ -24,6 +24,8 @@ var runSequence = require('run-sequence');
 var shell = require('gulp-shell');
 var request = require('sync-request');
 var grades = require('./grades');
+var jeditor = require("gulp-json-editor");
+
 var paths = {
   sass: [
     './scss/**/*.scss',
@@ -136,12 +138,12 @@ var diagnosis_couch_db_server = argument.argv.diagnosisdb;
 console.log("envi", raven_key[argument.argv.env])
 gulp.task('default', function(callback) {
   // runSequence('generate-lessondb','get-diagnosis-media','make-main','generate-constants', 'sass', 'html', 'scripts',callback);
-  runSequence('generate-lessondb', 'get-diagnosis-media', 'makeLocalizationFactory', 'downloadLocalizedAudio', 'make-main', 'generate-constants', 'sass', 'html', 'scripts', callback);
+  runSequence('generate-lessondb', 'get-diagnosis-media', 'makeLocalizationFactory', 'downloadLocalizedAudio', 'make-main', 'generate-constants', 'sass', 'html', 'scripts', 'editPackageJson', callback);
 });
 gulp.task('generate-lessondb', shell.task(
   (env !== environments.dev) ? [
-    'rm www/data/lessons.db',
-    'rm www/data/diagnosis_translations.db',
+    // 'rm www/data/lessons.db',
+    // 'rm www/data/diagnosis_translations.db',
     'pouchdb-dump ' + lessonsdb_couch_server + ' > www/data/lessons.db',
     'pouchdb-dump ' + diagnosis_couch_db_server + ' > www/data/diagnosis_translations.db'
   ] : []
@@ -246,6 +248,9 @@ gulp.task('generate-constants', function() {
       }, {
         match: 'CAMPAIGN_NAME',
         replacement: campaign_name
+      }, {
+        match: 'CHALLENGE_START',
+        replacement: constants[env]['CHALLENGE_START']
       }]
     }))
     .pipe(rename(paths.constants.destination_filename))
@@ -370,3 +375,23 @@ gulp.task('watch', ['default'], function() {
 //   }
 //   done();
 // });
+
+//Rudra wrote this foolish code
+gulp.task('editPackageJson', function(){
+  return gulp.src("./package.json")
+  .pipe(jeditor(function(json) {
+    // json.version = "1.2.3";
+    // var cleverTapPlugin = json.cordovaPlugins.find(function(elem){
+    //   return elem.id == "com.clevertap.cordova.CleverTapPlugin";
+    // })
+    for (var i = 0; i < json.cordovaPlugins.length; i++) {
+      if(json.cordovaPlugins[i].id == "com.clevertap.cordova.CleverTapPlugin"){
+        json.cordovaPlugins[i].variables = constants[env]['CLEVERTAP_VARS'];
+      }
+    }
+    console.log('cordova - plugins - available',json.cordovaPlugins);
+    // cleverTapPlugin.variables = constants
+    return json; // must return JSON object. 
+  }))
+  .pipe(gulp.dest("."));
+})
