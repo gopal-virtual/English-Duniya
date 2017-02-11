@@ -57,6 +57,17 @@
     return utils;
 
     function cacheLessons() {
+      if (!localStorage.getItem('cachedList')) {
+        localStorage.setItem('cachedList', JSON.stringify([]));
+      }
+      if (!localStorage.getItem('cachingList')) {
+        // make a caching list from roadmap data
+        var cachingList = [];
+        angular.forEach(JSON.parse(localStorage.roadMapData).roadMap, function(data) {
+          cachingList.push(data.sr);
+        });
+        localStorage.setItem('cachingList', JSON.stringify(cachingList));
+      }
       var lessonList = JSON.parse(localStorage.cachingList);
       // var list = [];
       var promises = [];
@@ -71,13 +82,13 @@
         })
         return $q.all(promises).then(function(a) {
           var cachedList = localStorage.getItem('cachedList') ? JSON.parse(localStorage.getItem('cachedList')) : [];
-          angular.forEach(JSON.parse(localStorage.getItem('cachingList')),function(item){
-            if(cachedList.indexOf(item) < 0){
-              cachedList.push(item);
-            }
-          })
-          // cachedList = cachedList.concat(JSON.parse(localStorage.getItem('cachingList')));
-          localStorage.setItem('cachedList',JSON.stringify(cachedList));
+          angular.forEach(JSON.parse(localStorage.getItem('cachingList')), function(item) {
+              if (cachedList.indexOf(item) < 0) {
+                cachedList.push(item);
+              }
+            })
+            // cachedList = cachedList.concat(JSON.parse(localStorage.getItem('cachingList')));
+          localStorage.setItem('cachedList', JSON.stringify(cachedList));
           $log.debug("done", a);
         });
       });
