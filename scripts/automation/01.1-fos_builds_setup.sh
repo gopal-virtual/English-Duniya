@@ -14,7 +14,7 @@ node_locked=true
 languages=hi
 
 #vars for step 5
-keep_crosswalk=keep-and-make-single-build
+crosswalk=keep-and-make-single-build
 
 #vars for step 7
 build_architecture=arm
