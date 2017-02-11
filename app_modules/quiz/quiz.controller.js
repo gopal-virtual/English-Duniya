@@ -710,7 +710,7 @@
             $log.debug('ANIMATION. result menu was open');
             resultButtonAnimation();
             playStarSound();
-            if (!$stateParams.quiz.isPlayed && quizCtrl.hasJoinedChallenge) {
+            if (!$stateParams.quiz.isPlayed && quizCtrl.hasJoinedChallenge && challenge.isChallengeActive()) {
               challenge.addPoints(User.getActiveProfileSync()._id, 50, 'node_complete', $stateParams.quiz.node.id);
             }
             User.skills.update({

@@ -163,7 +163,8 @@
     mapCtrl.syncPointsQueue2 = syncPointsQueue2;
     mapCtrl.openChallenge = openChallenge;
     mapCtrl.isUserEligibleForChallenge = challenge.isUserEligible();
-    mapCtrl.hasJoinedChallenge = User.hasJoinedChallenge()
+    mapCtrl.hasJoinedChallenge = User.hasJoinedChallenge();
+    mapCtrl.isChallengeActive = challenge.isChallengeActive();
     $scope.exitChooseProfile = exitChooseProfile;
     $scope.onProfileCardClick = onProfileCardClick;
     $scope.isOnline = network.isOnline();

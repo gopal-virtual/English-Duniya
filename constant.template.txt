@@ -26,6 +26,7 @@
       'ANALYTICS' : @@ANALYTICS,
       'GRADE' : @@GRADE,
       'CHALLENGE_START' : @@CHALLENGE_START,
+      'CHALLENGE_END' : @@CHALLENGE_END,
       'QUESTION_DEMO' : @@QUESTION_DEMO,
       'QUESTION' : {
         'DEMO' : '5ecf8ad5-4c3a-4a67-9758-dd7e3993c4d8'

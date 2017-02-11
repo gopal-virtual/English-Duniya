@@ -19,7 +19,8 @@
         "CLEVERTAP_TOKEN" : "ETM-IWZ-OIAL",
         "GCM_PROJECT_NUMBER" : "150596025418" 
     },
-    "CHALLENGE_START": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 20 }
+    "CHALLENGE_START": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 20 },
+    "CHALLENGE_END": {"YEAR" : 2017, "MONTH" : 2 , "DATE": 13 }
   },
   "TESTING": {
     "CONTENT_TEST":false,
@@ -41,7 +42,9 @@
         "CLEVERTAP_TOKEN" : "CTM-IWZ-OIAL",
         "GCM_PROJECT_NUMBER" : "150596025418" 
     },
-    "CHALLENGE_START": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 10 }
+    "CHALLENGE_START": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 10 },
+    "CHALLENGE_END": {"YEAR" : 2017, "MONTH" : 2 , "DATE": 3 }
+
   },
   "DEVELOPMENT": {
     "CONTENT_TEST":false,
@@ -68,7 +71,9 @@
         "CLEVERTAP_TOKEN" : "CTM-IWZ-OIAL",
         "GCM_PROJECT_NUMBER" : "150596025418" 
     },
-    "CHALLENGE_START": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 20 }
+    "CHALLENGE_START": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 20 },
+    "CHALLENGE_END": {"YEAR" : 2017, "MONTH" : 2 , "DATE": 13 }
+
   },
   "CONTENT": {
     "CONTENT_TEST":true,
@@ -91,7 +96,9 @@
         "CLEVERTAP_TOKEN" : "CTM-IWZ-OIAL",
         "GCM_PROJECT_NUMBER" : "150596025418" 
     },
-    "CHALLENGE_START": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 20 }
+    "CHALLENGE_START": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 20 },
+    "CHALLENGE_END": {"YEAR" : 2017, "MONTH" : 2 , "DATE": 13 }
+
 
   }
 }
