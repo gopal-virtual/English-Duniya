@@ -118,6 +118,7 @@ var app_version = 'na';
 var constants = JSON.parse(file.readFileSync(paths.constants.environment, 'utf8'));
 var lock = argument.argv.lock ? argument.argv.lock : constants[env]['LOCK'];
 var fake_id_device = constants[env]['FAKE_ID_DEVICE'] || 'na';
+var notifications_couch_db_server = constants[env]['NOTIFICATION_DB_SERVER'];
 var lesson_db_version = 'na';
 var diagnosis_media = [];
 var allowed_languages_list = [];
@@ -145,7 +146,8 @@ gulp.task('generate-lessondb', shell.task(
     // 'rm www/data/lessons.db',
     // 'rm www/data/diagnosis_translations.db',
     'pouchdb-dump ' + lessonsdb_couch_server + ' > www/data/lessons.db',
-    'pouchdb-dump ' + diagnosis_couch_db_server + ' > www/data/diagnosis_translations.db'
+    'pouchdb-dump ' + diagnosis_couch_db_server + ' > www/data/diagnosis_translations.db',
+    'pouchdb-dump ' + notifications_couch_db_server + ' > www/data/notifications.db'
   ] : []
 ));
 // gulp.task('optimize', function(cb) {
