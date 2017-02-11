@@ -1032,6 +1032,12 @@
     }
 
     function goToChallenge() {
+      analytics.log({
+        name: 'CHALLENGE',
+        type: 'CLICKED'
+      }, {
+        time: new Date()
+      }, User.getActiveProfileSync()._id);
       if (network.isOnline()) {
         if (User.hasJoinedChallenge()) {
           $ionicLoading.show({
@@ -1088,10 +1094,10 @@
     }).then(function(challengeModal) {
       $log.debug("challenge modal defined", User.hasJoinedChallenge())
       $scope.challengeModal = challengeModal;
-      if (User.demo.getStep() != 1 && !User.hasJoinedChallenge() && challenge.isUserEligible() &&  $rootScope.showChallengeModal) {
+      if (User.demo.getStep() != 1 && !User.hasJoinedChallenge() && challenge.isUserEligible() && $rootScope.showChallengeModal) {
         $log.debug("showing challenge modal")
         mapCtrl.openChallengeTimeout = $timeout(function() {
-          $scope.challengeModal.show().then(function(){
+          $scope.challengeModal.show().then(function() {
             $rootScope.showChallengeModal = false;
           });
         }, 2000)
@@ -1101,7 +1107,13 @@
       $log.debug("join challenege");
       if (User.user.getIsVerified()) {
         User.joinChallenge();
-        $scope.challengeModal.hide().then(function(){
+        analytics.log({
+          name: 'CHALLENGE',
+          type: 'JOINED'
+        }, {
+          time: new Date()
+        }, User.getActiveProfileSync()._id);
+        $scope.challengeModal.hide().then(function() {
           goToChallenge()
         });
         $log.debug("Succesfully joined the challenge")
@@ -1113,9 +1125,9 @@
     }
     $scope.dismissJoinChallenge = function() {
       $log.debug("dismiss join challenege");
-      $scope.challengeModal.hide().then(function(){
+      $scope.challengeModal.hide().then(function() {
         $log.debug("challenge modal hiden")
-        // goToChallenge();
+          // goToChallenge();
       });
     }
 
@@ -1135,7 +1147,6 @@
     var challengeStartDateText = new Date(challengeStartDate.getFullYear(), challengeStartDate.getMonth(), challengeStartDate.getDate());
     var today = new Date();
     var todayText = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-
     //displays 726
     mapCtrl.daysRemaining = daysBetween(todayText, challengeStartDateText) > 0 ? daysBetween(todayText, challengeStartDateText) : 0;
   }
