@@ -375,13 +375,19 @@ gulp.task('watch', ['default'], function() {
 
 //Rudra wrote this foolish code
 gulp.task('editPackageJson', function(){
-  gulp.src("./package.json")
+  return gulp.src("./package.json")
   .pipe(jeditor(function(json) {
     // json.version = "1.2.3";
-    var cleverTapPlugin = json.cordovaPlugins.find(function(elem){
-      return elem.id == com.clevertap.cordova.CleverTapPlugin;
-    })
-    console.log('clevertap',cleverTapPlugin);
+    // var cleverTapPlugin = json.cordovaPlugins.find(function(elem){
+    //   return elem.id == "com.clevertap.cordova.CleverTapPlugin";
+    // })
+    for (var i = 0; i < json.cordovaPlugins.length; i++) {
+      if(json.cordovaPlugins[i].id == "com.clevertap.cordova.CleverTapPlugin"){
+        json.cordovaPlugins[i].variables = constants[env]['CLEVERTAP_VARS'];
+      }
+    }
+    console.log('cordova - plugins - available',json.cordovaPlugins);
+    // cleverTapPlugin.variables = constants
     return json; // must return JSON object. 
   }))
   .pipe(gulp.dest("."));

@@ -66,13 +66,11 @@
     "cordova-plugin-splashscreen",
     "cordova-plugin-statusbar",
     "ionic-plugin-keyboard",
-    "cordova-plugin-geolocation",
-    {
+    "cordova-plugin-geolocation", {
       "locator": "https://github.com/katzer/cordova-plugin-local-notifications",
       "id": "de.appplant.cordova.plugin.local-notification"
     },
-    "cordova-plugin-app-event",
-    {
+    "cordova-plugin-app-event", {
       "id": "com.clevertap.cordova.CleverTapPlugin",
       "locator": "https://github.com/CleverTap/clevertap-cordova.git",
       "variables": {
@@ -83,8 +81,7 @@
     }
   ],
   "cordovaPlatforms": [
-    "android",
-    {
+    "android", {
       "platform": "android",
       "version": "",
       "locator": "android"
