@@ -5,10 +5,10 @@
 #   remove-and-make-single-build
 #   keep-and-make-single-build
 	
-ionic state restore
+ionic state reset
 
-ionic platform rm android
-ionic platform add android
+#ionic platform rm android
+#ionic platform add android
 
 echo crosswalk is $crosswalk
 
