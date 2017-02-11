@@ -39,3 +39,4 @@ verifyNodePresence.js
 www/data/lessons.db
 www/data/diagnosis_translations.db
 config.xml
+www/sound/localized/*
