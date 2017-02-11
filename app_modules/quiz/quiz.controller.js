@@ -31,7 +31,8 @@
     'analytics',
     'User',
     'content',
-    'localized'
+    'localized',
+    'challenge'
   ];
 
   function QuizController(
@@ -62,7 +63,8 @@
     analytics,
     User,
     content,
-    localized
+    localized,
+    challenge
   ) {
     var quizCtrl = this;
     //bind quiz resolved to controller
@@ -152,10 +154,15 @@
     $scope.logResume = logResume;
     $scope.resultStarFlag = [];
     quizCtrl.closeModalCallback = closeModalCallback;
-    $scope.analytics_quit_data = {name : 'PRACTICE', type : 'QUIT', id : quizCtrl.quiz.node.id};
+    $scope.analytics_quit_data = {
+      name: 'PRACTICE',
+      type: 'QUIT',
+      id: quizCtrl.quiz.node.id
+    };
     $scope.groups = [];
     $scope.resultButtonAnimationFlag = 0;
     $scope.quizResultButtonAnimation = quizResultButtonAnimation;
+    $scope.enableGoToMapButton = false;
     quizCtrl.hasJoinedChallenge = User.hasJoinedChallenge();
     for (var i = 0; i < 10; i++) {
       $scope.groups[i] = {
@@ -167,17 +174,18 @@
       }
     }
 
-    function logResume(){
-        analytics.log({
-                name: 'PRACTICE',
-                type: 'RESUME',
-                id: quizCtrl.quiz.node.id
-            }, {
-                time: new Date()
-            },
-            User.getActiveProfileSync()._id
-        )
+    function logResume() {
+      analytics.log({
+          name: 'PRACTICE',
+          type: 'RESUME',
+          id: quizCtrl.quiz.node.id
+        }, {
+          time: new Date()
+        },
+        User.getActiveProfileSync()._id
+      )
     }
+
     function isScroll(id) {}
 
     function redo() {
@@ -484,14 +492,10 @@
 
     function setSuggestion() {
       $timeout(function() {
-
-
         quizCtrl.disable_submit = true;
         var temp_quiz = angular.copy(quizCtrl.quiz);
         temp_quiz.suggestion = ml.getNextQSr(quizCtrl.quiz.suggestion.test, ml.mapping);
         if (temp_quiz.suggestion) {
-
-
           temp_quiz.objects.push(ml.dqJSON[temp_quiz.suggestion.qSr]);
           content.getAssessment(temp_quiz).then(function(response) {
             response.suggestion = temp_quiz.suggestion;
@@ -500,26 +504,20 @@
             quizCtrl.quiz.suggestion = (response.suggestion);
             $log.debug(quizCtrl.quiz, response, "Check diff")
               // quizCtrl.quiz = response;
-
-
-            // quizCtrl.nextQuestion()
+              // quizCtrl.nextQuestion()
             $ionicSlideBoxDelegate.update();
             quizCtrl.report.attempts[quizCtrl.quiz.objects[quizCtrl.currentIndex + 1].node.id] = [];
-
             $timeout(function() {
               quizCtrl.currentIndex++;
               $ionicSlideBoxDelegate.slide(quizCtrl.currentIndex);
               quizCtrl.enable_litmus = true;
               quizCtrl.disable_submit = false;
             }, 300);
-
           });
         } else {
-
           quizCtrl.endQuiz();
         }
       }, 300)
-
       return true;
     }
 
@@ -594,16 +592,16 @@
     }
 
     function playAudio(key, index) {
-        key && analytics.log({
-              name: 'QUESTION',
-              type: 'PLAY',
-              id: quizCtrl.quiz.objects[index].node.id
-            }, {
-              time: new Date(),
-              file : key
-            },
-            User.getActiveProfileSync()._id
-          )
+      key && analytics.log({
+          name: 'QUESTION',
+          type: 'PLAY',
+          id: quizCtrl.quiz.objects[index].node.id
+        }, {
+          time: new Date(),
+          file: key
+        },
+        User.getActiveProfileSync()._id
+      )
       if (key) {
         audio.player.play(key)
       }
@@ -667,6 +665,24 @@
     function range(num) {
       return new Array(num);
     }
+    $ionicModal.fromTemplateUrl(CONSTANT.PATH.COMMON + '/common.modal-result-quiz' + CONSTANT.VIEW, {
+      scope: $scope,
+      animation: 'slide-in-down',
+      hardwareBackButtonClose: false
+    }).then(function(modal) {
+      $scope.resultMenu = modal;
+    });
+
+    function resultButtonAnimation() {
+      $log.debug("ANIMATION. Inside button animation")
+      $timeout(function() {
+        $scope.resultButtonAnimationFlag = 1;
+      }, 3000).then(function() {
+        $timeout(function() {
+          $scope.resultButtonAnimationFlag = 2;
+        }, 400)
+      })
+    }
 
     function submitQuiz(quizType) {
       if (quizCtrl.summary.analysis[CONSTANT.QUESTION.DEMO])
@@ -674,21 +690,103 @@
       if (quizCtrl.report.attempts[CONSTANT.QUESTION.DEMO])
         delete quizCtrl.report.attempts[CONSTANT.QUESTION.DEMO];
       if (quizType === 'practice') {
+        var report = quizCtrl.report;
+        var quiz = $stateParams.quiz;
+        var summary = quizCtrl.summary;
+        var lesson = lessonutils.getLocalLesson();
         $scope.modal.hide().then(function() {
           analytics.log({
-                name: $stateParams.type == 'litmus' ? 'LITMUS':'PRACTICE',
-                type: 'END',
-                id: quizCtrl.quiz.node.id
-              }, {
-                time: new Date()
-              },
-              User.getActiveProfileSync()._id
-            ) &&
-            $state.go('quiz.summary', {
-              report: (quizCtrl.report),
-              summary: (quizCtrl.summary),
-              type: 'practice'
-            })
+              name: $stateParams.type == 'litmus' ? 'LITMUS' : 'PRACTICE',
+              type: 'END',
+              id: quizCtrl.quiz.node.id
+            }, {
+              time: new Date()
+            },
+            User.getActiveProfileSync()._id
+          );
+          !$scope.resultMenu.isShown() && $scope.resultMenu.show().then(function() {
+            $log.debug('ANIMATION. result menu was open');
+            resultButtonAnimation();
+            playStarSound();
+            if (!$stateParams.quiz.isPlayed) {
+              challenge.addPoints(User.getActiveProfileSync()._id, 50, 'node_complete', $stateParams.quiz.node.id);
+            }
+            User.skills.update({
+                profileId: User.getActiveProfileSync()._id,
+                lessonId: quiz.parent,
+                id: quiz.node.id,
+                score: summary.score.marks,
+                totalScore: quiz.node.type.score,
+                skill: quiz.node.tag,
+              })
+              .then(function() {
+                return User.scores.getScoreOfAssessment(quiz.node.id, lesson.node.id, User.getActiveProfileSync()._id, quiz.node.playlist_index)
+              })
+              .then(function(previousScore) {
+                if ((!previousScore) || (!previousScore.hasOwnProperty('score')) || (previousScore && parseInt(previousScore.score) < summary.score.marks)) {
+                  return User.scores.update({
+                    profileId: User.getActiveProfileSync()._id,
+                    lessonId: lesson.node.id,
+                    id: quiz.node.id,
+                    score: summary.score.marks,
+                    totalScore: quiz.node.type.score,
+                    type: 'assessment',
+                    skill: quiz.node.tag,
+                    playlist_index: quiz.node.playlist_index
+                  })
+                }
+              })
+              .then(function() {
+                if (quiz.node.requiresSuggestion) {
+                  ml.setLessonResultMapping().then(function() {
+                    var suggestion = ml.getLessonSuggestion({
+                      "event": "assessment",
+                      "score": summary.score.marks,
+                      "totalScore": quiz.node.type.score,
+                      "skill": quiz.node.tag.toLowerCase(),
+                      "sr": quiz.node.parentHindiLessonId
+                    });
+                    $log.debug("got sugggestion", suggestion);
+                    return User.profile.updateRoadMapData(ml.roadMapData, User.getActiveProfileSync()._id).then(function() {
+                      return User.playlist.add(User.getActiveProfileSync()._id, suggestion)
+                    })
+                  })
+                } else {
+                  ml.setLessonResultMapping().then(function() {
+                    $log.debug('deleteSuccessfulNodeFromRoadmap');
+                    ml.deleteSuccessfulNodeFromRoadmap(quiz.node.parent, summary.score.marks / quiz.node.type.score);
+                  })
+                }
+              })
+              .then(function(success) {
+                $log.debug("playlist added user can go back to map")
+                $scope.enableGoToMapButton = true;
+                  // var report_id = success.id;
+                var attempts = [];
+                angular.forEach(report.attempts, function(value, key) {
+                  attempts.push({
+                    answer: value.length > 0 ? value : null,
+                    score: summary.analysis[key].score,
+                    status: value.length > 0 ? CONSTANT.ATTEMPT.STATUS.ATTEMPTED : CONSTANT.ATTEMPT.STATUS.SKIPPED,
+                    // person: Auth.getProfileId(),
+                    // report: report_id,
+                    node: key
+                  });
+                });
+                return User.reports.save({
+                  'score': summary.score.marks,
+                  'attempts': attempts,
+                  'profileId': User.getActiveProfileSync()._id,
+                  'node': quiz.node.id
+                })
+              })
+          });
+          // disable state go to summary
+          // $state.go('quiz.summary', {
+          //   report: (quizCtrl.report),
+          //   summary: (quizCtrl.summary),
+          //   type: 'practice'
+          // })
         });
       } else if (quizType === 'assessment') {
         $ionicPopup.confirm({
@@ -731,7 +829,6 @@
 
     function endQuiz() {
       // $log.debug("End quiz called");
-     
       if ($stateParams.type == 'litmus') {
         var levelRec = ml.getLevelRecommendation();
         $log.debug('levelRec', levelRec);
@@ -780,17 +877,17 @@
     //     }
     // }, 101);
     $scope.showNodeMenu = function() {
-        $stateParams.type == 'practice' && analytics.log({
-            name: 'PRACTICE',
-            type: 'PAUSE',
-            id: quizCtrl.quiz.node.id
-          }, {
-            time: new Date()
-          },
-          User.getActiveProfileSync()._id
-        )
+      $stateParams.type == 'practice' && analytics.log({
+          name: 'PRACTICE',
+          type: 'PAUSE',
+          id: quizCtrl.quiz.node.id
+        }, {
+          time: new Date()
+        },
+        User.getActiveProfileSync()._id
+      )
       quizCtrl.pauseModal.show().then(function() {
-        audio.player.play(CONSTANT.PATH.LOCALIZED_AUDIO+localized.audio.app.ExitResource.lang[User.getActiveProfileSync().data.profile.language]);
+        audio.player.play(CONSTANT.PATH.LOCALIZED_AUDIO + localized.audio.app.ExitResource.lang[User.getActiveProfileSync().data.profile.language]);
       });
     }
     $scope.closeNodeMenu = function() {
@@ -847,6 +944,11 @@
       $ionicLoading.show({
         hideOnStateChange: true
       });
+      $scope.resultMenu.hide().then(function(){
+         $state.go('map.navigate', {
+        "activatedLesson": quizCtrl.quiz
+      });
+      })
       analytics.log({
           name: 'LESSON',
           type: 'END',
@@ -865,9 +967,7 @@
         },
         User.getActiveProfileSync()._id
       )
-      $state.go('map.navigate', {
-        "activatedLesson": quizCtrl.quiz
-      });
+     
       // }
       // else {
       //   $scope.showNodeMenu();
@@ -929,7 +1029,7 @@
 
     function logQuestion(index, type) {
       var activityName = 'QUESTION';
-      if($stateParams.type === 'litmus'){
+      if ($stateParams.type === 'litmus') {
         activityName = 'LITMUS';
       }
       analytics.log({
@@ -1030,10 +1130,10 @@
     function quizResultButtonAnimation() {
       $timeout(function() {
         $scope.resultButtonAnimationFlag = 1;
-      },3000).then(function(){
-        $timeout(function(){
+      }, 3000).then(function() {
+        $timeout(function() {
           $scope.resultButtonAnimationFlag = 2;
-        },400)
+        }, 400)
       })
     }
   }
