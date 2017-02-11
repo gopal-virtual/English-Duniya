@@ -16,7 +16,7 @@
     var ml = {
       MAX: 20,
       passingThreshold: 0.7,
-      roadMapMax: 4,
+      roadMapMax: 8,
       maxSuggestionCount: 3,
       diagQuestionsPerSkill: 5,
       runDiagnostic: runDiagnostic,
@@ -1092,13 +1092,13 @@
     }
 
     function getDqsByLevelNSkill(level, skill){
-      // $log.debug('in getDqsByLevelNSkill', level, skill);
+      if(level > 3){
+        level = 3;
+      }
       var srs = [];
       for(var q_id in ml.dqJSON){
-        // if(ml.dqJSON[q_id]["node"]["level"] == level && ml.dqJSON[q_id]["node"]["skill_area"] == skill){ // Ayush -> beware, the structure of ported dqJSON changes quite often
         if(ml.dqJSON[q_id]["ml"]["level"] == level && ml.dqJSON[q_id]["ml"]["skill_area"] == skill){
-          srs.push({"sr": ml.dqJSON[q_id]["ml"]["sr"], "skill_area": skill, "lesson_skill": ml.dqJSON[q_id]["ml"]["lesson_skill"]});
-          // Ayush -> check <ml.dqJSON[q_id]["node"]["sr"]> is not undefined
+          srs.push({"sr": ml.dqJSON[q_id]["ml"]["sr"], "skill": skill, "lesson_skill": ml.dqJSON[q_id]["ml"]["lesson_skill"]});
         }
       }
       return srs;
@@ -1328,18 +1328,19 @@
     function getSuggestedRootSrs(level, skill, suggestedRootSrs){
         var srs = getDqsByLevelNSkill(level, skill);
         // $log.debug('srs', srs);
-        var suggestedRootSrsPerSkill = [];
-        for (var i = 0; i < srs.length; i++) {
-            if(srs[i]["skill_area"] == srs[i]["lesson_skill"]){
-                suggestedRootSrsPerSkill.push({ "sr": srs[i].sr, "skill": srs[i].skill_area });
-            }
-        }
-        if(suggestedRootSrsPerSkill.length > 0){
-            suggestedRootSrs = suggestedRootSrs.concat(suggestedRootSrsPerSkill);
+        // commented the below for loop because dq can be mapped to any skill lesson
+        // var suggestedRootSrsPerSkill = [];
+        // for (var i = 0; i < srs.length; i++) {
+        //     if(srs[i]["skill"] == srs[i]["lesson_skill"]){
+        //         suggestedRootSrsPerSkill.push({ "sr": srs[i].sr, "skill": srs[i].skill });
+        //     }
+        // }
+        // if(suggestedRootSrsPerSkill.length > 0){
+        //     suggestedRootSrs = suggestedRootSrs.concat(suggestedRootSrsPerSkill);
+        if(srs.length > 0){
+            suggestedRootSrs = suggestedRootSrs.concat(srs);
         }else{
-          // $log.debug('skill, level', skill, level);
             var specificLessons = getKmapsFiltered(skill, level);
-            // $log.debug('specificLessons', specificLessons);
             var specificSrs = [];
             for(var i = 0; i < specificLessons.length; i++){
                 specificSrs.push(specificLessons[i]["sr"]);
@@ -1394,7 +1395,7 @@
 
             for (var i in allKmaps) {
                 // if the lesson is completed successfully, continue
-                if (allSuccessfulSrs.indexOf(allKmaps[i]["sr"]) != -1) {
+                if (allSuccessfulSrs.indexOf(i) != -1) {
                     continue;
                 }
 
@@ -1414,19 +1415,20 @@
                     }
                 }
 
-                if(allKmaps[i]["kmap_level"] >= (ml.roadMapData["levelRec"]["kmap_level"][allKmaps[i]["unit"]] || ml.defaultKmapLevel)){
-                    unsuccessfulPrereqs.push(allKmaps[i]["sr"]);                    
+                if(!compareLevel(i)){
+                    unsuccessfulPrereqs.push(i);                    
                 }
 
                 // lastresort - if vocab level, other kmaps_level IN FUTURE find a way to deduce skill level - consider percent of scores, percent of lessons completed with struggle
                 // sameCount / unsuccessfulSrs and not KMapsParent.length
                 // dont consider NaN
+                // in getDqsByLevelNSkill return all q_ids of level 3 if level>3 in a skill
 
                 // the percentage of lessons which do not have any prereq will equal to NaN, which is infinity, hence will automatically come on top
                 // var ratio = sameCount / KmapParents.length;
                 var ratio = sameCount / unsuccessfulPrereqs.length;
 
-                if(ratio != NaN){
+                if(!isNaN(ratio)){
                   if (typeof(srParentCount[ratio]) == "undefined") {
                       srParentCount[ratio] = unsuccessfulPrereqs;
                   } else {
