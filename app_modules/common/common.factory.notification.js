@@ -44,7 +44,9 @@
       online: {
         register: onlineRegister,
         set : onlineSet,
-        log : onlineLog
+        log : onlineLog,
+        clevertapRegister : onlineClevertapRegister,
+        clevertapProfile : onlineClevertapProfile
       },
       offline : {
         list : listOfflineNotifications,
@@ -568,6 +570,33 @@
         console.warn('Offline notification mai problem aa gayi',err);
       }
 
+    }
+
+    function onlineClevertapRegister(){
+      try{
+        CleverTap.registerPush();
+      }catch(err){
+        $log.warn('Cant work with clevertap',err);
+      }
+    }
+
+    function onlineClevertapProfile(){
+      $http.get(CONSTANT.BACKEND_SERVICE_DOMAIN+'/api/v1/profiles/?client_uid='+User.getActiveProfileSync()._id).then(function(response){
+        if (response.data) {
+          $log.debug('CLEVERTAP. profile',response);
+          var profileId = response.data[0].id;
+          $log.debug('CLEVERTAP. Profile id',profileId);
+          try{
+            $log.debug('CLEVERTAP',CleverTap);
+            $log.debug('CLEVERTAP2');
+            CleverTap.profileSet({"Identity": profileId});
+            // $log.debug('CLEVERTAP3',registerPush);
+          }catch(err){
+            $log.warn('CLEVERTAP. Error with CleverTap',err);
+          }
+          
+        }
+      })
     }
   }
 })();

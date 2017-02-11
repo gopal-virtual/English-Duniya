@@ -208,11 +208,7 @@
       //     $log.debug('CLEVERTAP. Notification',e.notification);
       //   })
       // }, false);
-      try{
-        CleverTap.registerPush();
-      }catch(err){
-        $log.warn('Cant work with clevertap',err);
-      }
+      notification.online.clevertapRegister();
 
 
     $rootScope.showChallengeModal = true;
@@ -272,22 +268,8 @@
       if (User.getActiveProfileSync()) {
 
         
-        $http.get('https://cc-test.zaya.in/api/v1/profiles/?client_uid='+User.getActiveProfileSync()._id).then(function(response){
-          if (response.data) {
-            $log.debug('CLEVERTAP. profile',response);
-            var profileId = response.data[0].id;
-            $log.debug('CLEVERTAP. Profile id',profileId);
-            try{
-              $log.debug('CLEVERTAP',CleverTap);
-              $log.debug('CLEVERTAP2');
-              CleverTap.profileSet({"Identity": profileId});
-              // $log.debug('CLEVERTAP3',registerPush);
-            }catch(err){
-              $log.warn('CLEVERTAP. Error with CleverTap',err);
-            }
-            
-          }
-        })
+        notification.online.clevertapProfile();
+        
 
         // $log.debug("CHECK 2")
         //DO NOT REMOVE THIS CODE IT IS THERE INCASE CLEVERTAP IS REMOVED
