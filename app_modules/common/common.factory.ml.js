@@ -509,6 +509,7 @@
       }
     }
 
+    
 
     function getTempRoadMap(recommendationsWithPrereqs){
 
