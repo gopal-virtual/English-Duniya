@@ -101,8 +101,8 @@
                   $state.go('user.chooseProfile', {
                     'profiles': profiles
                   });
-                  $log.debug("CHECK 5")
-                  notification.online.set();
+                  // $log.debug("CHECK 5")
+                  // notification.online.set();
                 }
               });
             });
@@ -234,37 +234,40 @@
           }
         })
 
-        $log.debug("CHECK 2")
-        notification.online.set();
+        // $log.debug("CHECK 2")
+        //DO NOT REMOVE THIS CODE IT IS THERE INCASE CLEVERTAP IS REMOVED
+        // notification.online.set();
       }
-      $rootScope.$on('$cordovaPushV5:notificationReceived', function(event, data) {
-        event.preventDefault();
-        $log.warn("NOTIFICATION. Some notification arrived. This is the data", event, data);
-        // $log.warn("ROCK YOU2 event", event);
-        notification.online.log('received');
-        // notification.schedule({
-        //   id: 'notif-online-1',
-        //   text: data.message,
-        //   title: data.title,
-        //   icon: 'res://icon',
-        //   smallIcon: 'res: //ic_stat_english_duniya'
-        // });
-        if (data.additionalData.coldstart) {
-          $log.debug("NOTIFICATION. App was started by tapping on notification");
-          notification.online.log('tapped');
-          if(data.additionalData.extra_params.redirect){
-            $state.go(data.additionalData.extra_params.redirect);
-          }
-        }else{
-          $log.debug("NOTIFICATION. Though notification was received, app wasn\'t started by clicking on notification")
-          // localStorage.setItem("Hello2","Hello coldstart false")
-        }
+
+      //DO NOT REMOVE THIS CODE IT IS THERE INCASE CLEVERTAP IS REMOVED
+      // $rootScope.$on('$cordovaPushV5:notificationReceived', function(event, data) {
+      //   event.preventDefault();
+      //   $log.warn("NOTIFICATION. Some notification arrived. This is the data", event, data);
+      //   // $log.warn("ROCK YOU2 event", event);
+      //   notification.online.log('received');
+      //   // notification.schedule({
+      //   //   id: 'notif-online-1',
+      //   //   text: data.message,
+      //   //   title: data.title,
+      //   //   icon: 'res://icon',
+      //   //   smallIcon: 'res: //ic_stat_english_duniya'
+      //   // });
+      //   if (data.additionalData.coldstart) {
+      //     $log.debug("NOTIFICATION. App was started by tapping on notification");
+      //     notification.online.log('tapped');
+      //     if(data.additionalData.extra_params.redirect){
+      //       $state.go(data.additionalData.extra_params.redirect);
+      //     }
+      //   }else{
+      //     $log.debug("NOTIFICATION. Though notification was received, app wasn\'t started by clicking on notification")
+      //     // localStorage.setItem("Hello2","Hello coldstart false")
+      //   }
 
 
-      });
-      $rootScope.$on('$cordovaPushV5:errorOcurred', function(event, error) {
-          $log.error("Error occured online notification", event, error);
-        })
+      // });
+      // $rootScope.$on('$cordovaPushV5:errorOcurred', function(event, error) {
+      //     $log.error("Error occured online notification", event, error);
+      //   })
         //
       $rootScope.mediaSyncStatus = {
         size: null,
@@ -291,8 +294,9 @@
         $log.debug("This app is online dude")
         queue.startSync();
         if (User.getActiveProfileSync()) {
-          $log.debug("CHECK 1");
-          notification.online.set();
+          //DON NOT REMOVE THIS CODE IT IS THERE INCASE CLEVERTAP IS REMOVED
+          // $log.debug("CHECK 1");
+          // notification.online.set();
         }
         if (localStorage.profiles_fetched === undefined) {
           $log.debug("User online fetching profiles now");
