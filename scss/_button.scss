@@ -287,6 +287,17 @@
   width: 268px;
   height: 49px;
 }
+.sbtn-phone-add-small{
+  background: url('../img/assets_svg/button-phone-add-small.svg');
+  background-size: cover;
+  background-position: 0 0 !important;
+  background-repeat:no-repeat;
+  width: 199px;
+  height: 36px;
+}
+.sbtn-phone-add-small:disabled{
+  filter: grayscale(1);
+}
 .sbtn-phone-add:disabled{
   background: url('../img/assets_svg/button-phone-add-grey.svg');
   background-size: cover;
