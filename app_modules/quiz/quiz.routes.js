@@ -146,7 +146,7 @@
           var quiz = $stateParams.quiz;
           var summary = $stateParams.summary;
           var lesson = lessonutils.getLocalLesson();
-          if (!$stateParams.quiz.isPlayed) {
+          if (!$stateParams.quiz.isPlayed && User.hasJoinedChallenge()) {
             challenge.addPoints(User.getActiveProfileSync()._id, 50,'node_complete',$stateParams.quiz.node.id);
           }
           User.skills.update({

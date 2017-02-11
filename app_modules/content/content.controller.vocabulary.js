@@ -185,7 +185,7 @@
       var lesson = lessonutils.getLocalLesson();
       var promise = null;
       $log.debug("$stateParams.vocab_data.isPlayed",$stateParams.vocab_data.isPlayed)
-      if(!$stateParams.vocab_data.isPlayed){
+      if(!$stateParams.vocab_data.isPlayed && $scope.hasUserJoinedChallenge){
       challenge.addPoints(User.getActiveProfileSync()._id,50,'node_complete',$stateParams.vocab_data.node.id);
       }
 
