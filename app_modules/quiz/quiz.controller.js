@@ -32,11 +32,8 @@
     'User',
     'content',
     'localized',
-<<<<<<< HEAD
-    'network'
-=======
+    'network',
     'challenge'
->>>>>>> 6dac050dfea34aa46fb88b7a1e0dc04eae9af060
   ];
 
   function QuizController(
@@ -68,11 +65,8 @@
     User,
     content,
     localized,
-<<<<<<< HEAD
-    network
-=======
+    network,
     challenge
->>>>>>> 6dac050dfea34aa46fb88b7a1e0dc04eae9af060
   ) {
     var quizCtrl = this;
     //bind quiz resolved to controller
@@ -704,21 +698,6 @@
         var lesson = lessonutils.getLocalLesson();
         $scope.modal.hide().then(function() {
           analytics.log({
-<<<<<<< HEAD
-                name: $stateParams.type == 'litmus' ? 'LITMUS' : 'PRACTICE',
-                type: 'END',
-                id: quizCtrl.quiz.node.id
-              }, {
-                time: new Date()
-              },
-              User.getActiveProfileSync()._id
-            ) &&
-            $state.go('quiz.summary', {
-              report: (quizCtrl.report),
-              summary: (quizCtrl.summary),
-              type: 'practice'
-            })
-=======
               name: $stateParams.type == 'litmus' ? 'LITMUS' : 'PRACTICE',
               type: 'END',
               id: quizCtrl.quiz.node.id
@@ -761,30 +740,66 @@
               })
               .then(function() {
                 if (quiz.node.requiresSuggestion) {
-                  ml.setLessonResultMapping().then(function() {
+                  return ml.setLessonResultMapping().then(function() {
                     var suggestion = ml.getLessonSuggestion({
                       "event": "assessment",
                       "score": summary.score.marks,
                       "totalScore": quiz.node.type.score,
                       "skill": quiz.node.tag.toLowerCase(),
-                      "sr": quiz.node.parentHindiLessonId
+                      "sr": quiz.node.parentHindiLessonId,
+                      "miss": quiz.node.miss
                     });
+                    //save cache if present
+                    $log.debug("caching quiz suggestion 1", suggestion);
+                    if (network.isOnline() || JSON.parse(localStorage.getItem('cachedList')).indexOf(suggestion["suggestedLesson"]) >= 0) {
+                      suggestion = {
+                        "suggestedLesson": suggestion["suggestedLesson"],
+                        "dependencyData": suggestion["dependencyData"],
+                        "cache": suggestion["cache"],
+                        "miss": false
+                      };
+                      $log.debug('caching quiz hit', network.isOnline(), suggestion);
+                    } else {
+                      $log.debug('caching quiz miss', network.isOnline(), suggestion);
+                      suggestion = {
+                        "suggestedLesson": suggestion["miss"],
+                        "dependencyData": suggestion["missDependencyData"],
+                        "cache": suggestion["cache"],
+                        "miss": true
+                      };
+                      if (suggestion["suggestedLesson"] == null) {
+                        $log.debug('caching quiz miss and null', network.isOnline(), suggestion);
+                        suggestion = ml.getLessonSuggestion({
+                          "event": "assessment",
+                          "miss": true
+                        });
+                        suggestion = {
+                          "suggestedLesson": suggestion["suggestedLesson"],
+                          "dependencyData": suggestion["dependencyData"],
+                          "cache": suggestion["cache"],
+                          "miss": false
+                        };
+                      }
+                    }
+                    if (suggestion.cache) {
+                      localStorage.setItem('cachingList', JSON.stringify(suggestion.cache));
+                    }
                     $log.debug("got sugggestion", suggestion);
                     return User.profile.updateRoadMapData(ml.roadMapData, User.getActiveProfileSync()._id).then(function() {
                       return User.playlist.add(User.getActiveProfileSync()._id, suggestion)
                     })
                   })
                 } else {
-                  ml.setLessonResultMapping().then(function() {
+                  return ml.setLessonResultMapping().then(function() {
                     $log.debug('deleteSuccessfulNodeFromRoadmap');
                     ml.deleteSuccessfulNodeFromRoadmap(quiz.node.parent, summary.score.marks / quiz.node.type.score);
-                  })
+                  });
                 }
               })
               .then(function(success) {
                 $log.debug("playlist added user can go back to map")
                 $scope.enableGoToMapButton = true;
-                  // var report_id = success.id;
+                // var report_id = success.id;
                 var attempts = [];
                 angular.forEach(report.attempts, function(value, key) {
                   attempts.push({
@@ -810,7 +825,6 @@
           //   summary: (quizCtrl.summary),
           //   type: 'practice'
           // })
->>>>>>> 6dac050dfea34aa46fb88b7a1e0dc04eae9af060
         });
       } else if (quizType === 'assessment') {
         $ionicPopup.confirm({
@@ -980,10 +994,10 @@
       $ionicLoading.show({
         hideOnStateChange: true
       });
-      $scope.resultMenu.hide().then(function(){
-         $state.go('map.navigate', {
-        "activatedLesson": quizCtrl.quiz
-      });
+      $scope.resultMenu.hide().then(function() {
+        $state.go('map.navigate', {
+          "activatedLesson": quizCtrl.quiz
+        });
       })
       analytics.log({
           name: 'LESSON',
@@ -995,19 +1009,18 @@
         User.getActiveProfileSync()._id
       )
       $stateParams.type == 'practice' && analytics.log({
-          name: 'PRACTICE',
-          type: 'SWITCH',
-          id: quizCtrl.quiz.node.id
-        }, {
-          time: new Date()
-        },
-        User.getActiveProfileSync()._id
-      )
-     
-      // }
-      // else {
-      //   $scope.showNodeMenu();
-      // }
+            name: 'PRACTICE',
+            type: 'SWITCH',
+            id: quizCtrl.quiz.node.id
+          }, {
+            time: new Date()
+          },
+          User.getActiveProfileSync()._id
+        )
+        // }
+        // else {
+        //   $scope.showNodeMenu();
+        // }
     }
     // intronext
     $scope.tour = {
