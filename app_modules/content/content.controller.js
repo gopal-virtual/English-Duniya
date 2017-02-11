@@ -1,10 +1,8 @@
 (function() {
   'use strict';
-
   angular
     .module('zaya-content')
     .controller('contentController', contentController);
-
   contentController.$inject = [
     '$stateParams',
     'orientation',
@@ -22,9 +20,9 @@
     '$q',
     'Utilities',
     '$state',
-    'localized'
+    'localized',
+    'challenge',
   ];
-
   /* @ngInject */
   function contentController(
     $stateParams,
@@ -43,7 +41,8 @@
     $q,
     Utilities,
     $state,
-    localized
+    localized,
+    challenge
   ) {
     var contentCtrl = this;
     $scope.audio = audio;
@@ -63,19 +62,24 @@
     $scope.goToMap = goToMap;
     contentCtrl.playStarSound = playStarSound;
     contentCtrl.videoCompleted = false;
-    $scope.analytics_quit_data = {name : 'VIDEO', type : 'QUIT', id : $stateParams.video.id};
-    $scope.logResume = function(){
-        analytics.log({
-            name: 'VIDEO',
-            type: 'RESUME',
-            id: $stateParams.video.id
-          }, {
-            time: new Date()
-          },
-          User.getActiveProfileSync()._id
-        )
+    $scope.analytics_quit_data = {
+      name: 'VIDEO',
+      type: 'QUIT',
+      id: $stateParams.video.id
+    };
+    $scope.isPlayed = $stateParams.video.resource.isPlayed;
+    $scope.hasUserJoinedChallenge = User.hasJoinedChallenge();
+    $scope.logResume = function() {
+      analytics.log({
+          name: 'VIDEO',
+          type: 'RESUME',
+          id: $stateParams.video.id
+        }, {
+          time: new Date()
+        },
+        User.getActiveProfileSync()._id
+      )
     }
-
     var timeout = '';
     $log.debug('$stateParams', $stateParams)
     contentCtrl.config = {
@@ -99,7 +103,6 @@
     //       ;
     //     }
     // }, 101);
-
     // $log.debug("selectednode",$scope.selectedNode)
     // $log.debug("Hello from the other side")
     // $log.debug("User USER",User.getActiveProfileSync().data.profile.gender);
@@ -116,15 +119,12 @@
     //     star = 0;
     //   }
     //   for (var i = 0; i < star.length; i++) {
-
     //   }
     //   angular.element("#audioplayer")[0].pause();
     //   angular.element("#audioSource")[0].src = $stateParams.video.resource.node.parsed_sound;
     //   angular.element("#audioplayer")[0].load();
     //   angular.element("#audioplayer")[0].play();
     // }
-
-
     function playStarSound() {
       var starSound = ["one_star", "two_star", "three_star"];
       var star = 0;
@@ -149,23 +149,20 @@
             }
           }, (count + 1) * 1000);
         })(i)
-
       }
-
     }
-
     $log.debug('video object', $stateParams.video.resource)
 
     function goToMap() {
-        analytics.log({
-            name: 'VIDEO',
-            type: 'SWITCH',
-            id: $stateParams.video.id
-          }, {
-            time: new Date()
-          },
-          User.getActiveProfileSync()._id
-        )
+      analytics.log({
+          name: 'VIDEO',
+          type: 'SWITCH',
+          id: $stateParams.video.id
+        }, {
+          time: new Date()
+        },
+        User.getActiveProfileSync()._id
+      )
       $ionicLoading.show({
         hideOnStateChange: true
       });
@@ -178,7 +175,6 @@
     function toggleControls() {
       contentCtrl.config.plugins.controls.showControl = !contentCtrl.config.plugins.controls.showControl;;
     }
-
     // $ionicPlatform.onHardwareBackButton(function(event) {
     $scope.$on('backButton', function() {
         try {
@@ -188,12 +184,10 @@
             $scope.openNodeMenu();
           }
           $log.debug("HERE2")
-
         } catch (error) {;
         }
       })
       // })
-
     function onVideoComplete() {
       $log.debug("onvideocompleted");
       contentCtrl.config.plugins.controls.showControl = false;
@@ -203,13 +197,13 @@
       }
       orientation.setPortrait();
       submitReport();
-      audio.player.play(CONSTANT.PATH.LOCALIZED_AUDIO+localized.audio.Video.LearnedFromVideo.lang[User.getActiveProfileSync().data.profile.language], function() {
+      audio.player.play(CONSTANT.PATH.LOCALIZED_AUDIO + localized.audio.Video.LearnedFromVideo.lang[User.getActiveProfileSync().data.profile.language], function() {
         contentCtrl.playStarSound();
       })
       timeout = $timeout(function() {
         $scope.resultPageNextShow = false;
         $scope.ribbon_modal.hide();
-        !$scope.resultMenu.isShown() && $scope.resultMenu.show().then(function(){
+        !$scope.resultMenu.isShown() && $scope.resultMenu.show().then(function() {
           $log.debug('ANIMATION. result menu was open');
           resultButtonAnimation();
         });
@@ -227,10 +221,12 @@
 
     function submitReport() {
       $log.debug("video in submitReport", $stateParams.video)
+      if (!$stateParams.video.resource.isPlayed) {
+        challenge.addPoints(User.getActiveProfileSync()._id, 50, 'node_complete',$stateParams.video.resource.node.id);
+      }
       var lesson = lessonutils.getLocalLesson();
       var promise = null;
       if (!lesson.score || !lesson.score[$stateParams.video.resource.node.id]) {
-
         promise = User.skills.update({
           profileId: User.getActiveProfileSync()._id,
           lessonId: $stateParams.video.resource.node.parent,
@@ -243,7 +239,6 @@
       }
       promise
         .then(function() {
-
           return User.scores.update({
             profileId: User.getActiveProfileSync()._id,
             lessonId: $stateParams.video.resource.node.parent,
@@ -271,14 +266,12 @@
       audio.player.removeCallback();
       // angular.element("#audioSource")[0].src = '';
       // $log.debug("Remove even listener video");
-
       // angular.element("#audioplayer")[0].removeEventListener('ended',intro_end_video,false);
     }
 
     function onPlayerReady(API) {
       $log.debug("API", API)
       contentCtrl.API = API;
-
       $ionicModal.fromTemplateUrl(CONSTANT.PATH.CONTENT + '/content.modal-ribbon' + CONSTANT.VIEW, {
         scope: $scope,
         // animation: 'slide-in-up',
@@ -287,7 +280,6 @@
       }).then(function(modal) {
         $scope.ribbon_modal = modal;
         modal.show();
-
         if ($stateParams.video.resource.node.parsed_sound) {
           $scope.nodeRibbonFlag = true;
           audio.player.play($stateParams.video.resource.node.parsed_sound);
@@ -311,7 +303,6 @@
     }
 
     function play() {
-
       contentCtrl.API.play();
     }
 
@@ -327,21 +318,20 @@
       //     })
       //   }
     }
-
     $scope.openNodeMenu = function() {
-        analytics.log({
-            name: 'VIDEO',
-            type: 'PAUSE',
-            id: $stateParams.video.id
-          }, {
-            time: new Date()
-          },
-          User.getActiveProfileSync()._id
-        )
+      analytics.log({
+          name: 'VIDEO',
+          type: 'PAUSE',
+          id: $stateParams.video.id
+        }, {
+          time: new Date()
+        },
+        User.getActiveProfileSync()._id
+      )
       if (contentCtrl.API.currentState == 'pause') {
         // orientation.setPortrait()        ;
         $scope.nodeMenu.show().then(function() {
-        audio.player.play(CONSTANT.PATH.LOCALIZED_AUDIO+localized.audio.app.ExitResource.lang[User.getActiveProfileSync().data.profile.language]);
+          audio.player.play(CONSTANT.PATH.LOCALIZED_AUDIO + localized.audio.app.ExitResource.lang[User.getActiveProfileSync().data.profile.language]);
         });
       }
       return true;
@@ -362,7 +352,7 @@
     $scope.openResult = function() {
       if (contentCtrl.API.currentState == 'pause') {
         orientation.setPortrait();
-        $scope.resultMenu.show().then(function(){
+        $scope.resultMenu.show().then(function() {
           $log.debug('ANIMATION. result menu was open');
           resultButtonAnimation();
         });
@@ -380,36 +370,32 @@
     }).then(function(modal) {
       $scope.resultMenu = modal;
     });
-
     $scope.$on('appResume', function() {
-        if (!$scope.ribbon_modal.isShown() && !$scope.resultMenu.isShown()) {
-          contentCtrl.API.pause();
-          $scope.openNodeMenu();
-        } else if ($scope.ribbon_modal.isShown()) {
-          audio.player.resume();
-          angular.element("#audioplayer")[0].onended = intro_end_video;
-        } else if ($scope.resultMenu.isShown()) {
-            // contentCtrl.onVideoComplete();
-        }
-        else{}
-      })
-      $scope.$on('appPause', function() {
-        audio.player.removeCallback();
-        audio.player.stop();
-        $timeout.cancel(timeout);
-      })
+      if (!$scope.ribbon_modal.isShown() && !$scope.resultMenu.isShown()) {
+        contentCtrl.API.pause();
+        $scope.openNodeMenu();
+      } else if ($scope.ribbon_modal.isShown()) {
+        audio.player.resume();
+        angular.element("#audioplayer")[0].onended = intro_end_video;
+      } else if ($scope.resultMenu.isShown()) {
+        // contentCtrl.onVideoComplete();
+      } else {}
+    })
+    $scope.$on('appPause', function() {
+      audio.player.removeCallback();
+      audio.player.stop();
+      $timeout.cancel(timeout);
+    })
 
     function resultButtonAnimation() {
       $log.debug("ANIMATION. Inside button animation")
       $timeout(function() {
         $scope.resultButtonAnimationFlag = 1;
-      },3000).then(function(){
-        $timeout(function(){
+      }, 3000).then(function() {
+        $timeout(function() {
           $scope.resultButtonAnimationFlag = 2;
-        },400)
+        }, 400)
       })
     }
-
   }
-
 })();

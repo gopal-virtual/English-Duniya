@@ -2,7 +2,7 @@ content_type=non-bundled
 is_bundled=false
 node_locked=true
 languages=hi
-keep_crosswalk=true
+keep_crosswalk=keep-and-make-seperate-builds
 build_architecture=arm
 
 

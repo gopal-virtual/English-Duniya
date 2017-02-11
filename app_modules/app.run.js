@@ -26,7 +26,10 @@
     pouchDB,
     $ionicLoading,
     notification,
-    $ionicPopup
+    $ionicPopup,
+    $document,
+    $cordovaSocialSharing,
+    Rest
   ) {
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
     $ionicPlatform.registerBackButtonAction(function(event) {
@@ -38,28 +41,28 @@
     //$http.defaults.headers.common['Access-Control-Request-Headers'] = 'accept, auth-token, content-type, xsrfcookiename';
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
       $log.debug("play resource state change", toState, toParams)
-      // analytics.log({
-      //   name: 'STATE',
-      //   type: 'CHANGE_START'
-      // }, {
-      //   toState: toState,
-      //   toParams: toParams,
-      //   fromState: fromState,
-      //   fromParams: fromParams
-      // },User.getActiveProfileSync() && User.getActiveProfileSync()._id)
+        // analytics.log({
+        //   name: 'STATE',
+        //   type: 'CHANGE_START'
+        // }, {
+        //   toState: toState,
+        //   toParams: toParams,
+        //   fromState: fromState,
+        //   fromParams: fromParams
+        // },User.getActiveProfileSync() && User.getActiveProfileSync()._id)
       if (localStorage.version !== CONSTANT.APP.VERSION) {
         event.preventDefault();
         $log.debug("tag First tim entering the app")
         $log.debug("Local storage !== ", CONSTANT.APP.VERSION);
         $ionicLoading.show({
-          hideOnStateChange: true
-        })
-        // content.deleteLessonDB().then(function() {
-        //     $log.debug("tag Deleted lesson db");
-        //     return content.createDependentDBs();
-        //   })
+            hideOnStateChange: true
+          })
+          // content.deleteLessonDB().then(function() {
+          //     $log.debug("tag Deleted lesson db");
+          //     return content.createDependentDBs();
+          //   })
         content.createDependentDBs()
-        .then(function() {
+          .then(function() {
             $log.debug("tag Created lessondb", toState, toParams);
             localStorage.setItem('version', CONSTANT.APP.VERSION);
             $state.go(toState.name, toParams);
@@ -75,6 +78,7 @@
         // content.createOrUpdateLessonDB()
       } else {
         content.replicateLessonDB();
+        notification.db.replicate();
         $log.debug("tag here");
         if (localStorage.first_time !== undefined) {
           User.startProfileSync();
@@ -99,8 +103,8 @@
                   $state.go('user.chooseProfile', {
                     'profiles': profiles
                   });
-                  $log.debug("CHECK 5")
-                  notification.online.set();
+                  // $log.debug("CHECK 5")
+                  // notification.online.set();
                 }
               });
             });
@@ -195,42 +199,112 @@
     //     },User.getActiveProfileSync() && User.getActiveProfileSync()._id)
     //   })
     $ionicPlatform.ready(function() {
+
+
+
+      // $log.debug('CLEVERTAP. document',$document)
+      // document.addEventListener('onPushNotification', function(e) {
+      //   $rootScope.$apply(function(){
+      //     $log.debug('CLEVERTAP. Notification',e.notification);
+      //   })
+      // }, false);
+      notification.online.clevertapRegister();
+
+
+    $rootScope.showChallengeModal = true;
+
+      window.addEventListener('message', function(event) {
+        $log.debug(event);
+        if (event.data.name === 'backToMap') {
+          $log.debug("Here")
+          $ionicLoading.show({
+            hideOnStateChange: true
+          });
+          $state.go('map.navigate');
+        }
+        if (typeof event.data.name === 'string') {
+          var shareoptions = {
+            message: 'I won ' + event.data.points + ' points in the English Duniya Scholarship Competition! You can win too!  Download the app now to participate ', // not supported on some apps (Facebook, Instagram)
+            subject: 'English Duniya Scholarship Challenge', // fi. for email
+            // files: ['img/assets/scholarship_share_image.png'], // an array of filenames either locally or remotely
+            // url: 'https://play.google.com/store/apps/details?id=com.ionicframework.zayamobile694033'
+              // chooserTitle: 'Pick an app' // Android only, you can override the default share sheet title
+          };
+          // var onSuccess = function(result) {
+          //   $log.debug("Share completed? " + result.completed); // On Android apps mostly return false even while it's true
+          //   $log.debug("Shared to app: " + result.app); // On Android result.app is currently empty. On iOS it's empty when sharing is cancelled (result.completed=false)
+          // }
+          // var onError = function(msg) {
+          //   $log.debug("Sharing failed with message: " + msg);
+          // }
+          // $log.debug("share", shareoptions, onSuccess, onError);
+          $cordovaSocialSharing
+            .share(shareoptions.message, shareoptions.subject, 'https://s3-ap-southeast-1.amazonaws.com/zaya-builds/production-images/englishduniya-scholarship-challenge.png', 'http://referral.englishduniya.com/?referral='+event.data.referal_code+'&campaign_name=scholarship_challenge') // Share via native share sheet
+            .then(function(result) {
+              if (result) {
+                $http.post('http://challenge.englishduniya.in/points/', {
+                  profile_id: User.getActiveProfileSync()._id,
+                  points: [{
+                    action: 'share',
+                    score: 5
+                  }]
+                });
+              }
+              $log.debug("Share completed? " + result); // On Android apps mostly return false even while it's true
+              // Success!
+            }, function(err) {
+              $log.debug("Sharing failed with message: ", err);
+              // An error occured. Show a message to the user
+            });
+          // window.plugins.socialsharing.shareWithOptions(shareoptions, onSuccess, onError);
+        }
+      });
+
       analytics.getLocation().then(function(location) {
         $log.debug("Location", location);
       })
       $rootScope.inBackground = false;
       if (User.getActiveProfileSync()) {
-        $log.debug("CHECK 2")
-        notification.online.set();
+
+        
+        notification.online.clevertapProfile();
+        
+
+        // $log.debug("CHECK 2")
+        //DO NOT REMOVE THIS CODE IT IS THERE INCASE CLEVERTAP IS REMOVED
+        // notification.online.set();
       }
-      $rootScope.$on('$cordovaPushV5:notificationReceived', function(event, data) {
-        event.preventDefault();
-        $log.warn("NOTIFICATION. Some notification arrived. This is the data", event, data);
-        // $log.warn("ROCK YOU2 event", event);
-        notification.online.log('received');
-        // notification.schedule({
-        //   id: 'notif-online-1',
-        //   text: data.message,
-        //   title: data.title,
-        //   icon: 'res://icon',
-        //   smallIcon: 'res: //ic_stat_english_duniya'
-        // });
-        if (data.additionalData.coldstart) {
-          $log.debug("NOTIFICATION. App was started by tapping on notification");
-          notification.online.log('tapped');
-          if(data.additionalData.extra_params.redirect){
-            $state.go(data.additionalData.extra_params.redirect);
-          }
-        }else{
-          $log.debug("NOTIFICATION. Though notification was received, app wasn\'t started by clicking on notification")
-          // localStorage.setItem("Hello2","Hello coldstart false")
-        }
+
+      //DO NOT REMOVE THIS CODE IT IS THERE INCASE CLEVERTAP IS REMOVED
+      // $rootScope.$on('$cordovaPushV5:notificationReceived', function(event, data) {
+      //   event.preventDefault();
+      //   $log.warn("NOTIFICATION. Some notification arrived. This is the data", event, data);
+      //   // $log.warn("ROCK YOU2 event", event);
+      //   notification.online.log('received');
+      //   // notification.schedule({
+      //   //   id: 'notif-online-1',
+      //   //   text: data.message,
+      //   //   title: data.title,
+      //   //   icon: 'res://icon',
+      //   //   smallIcon: 'res: //ic_stat_english_duniya'
+      //   // });
+      //   if (data.additionalData.coldstart) {
+      //     $log.debug("NOTIFICATION. App was started by tapping on notification");
+      //     notification.online.log('tapped');
+      //     if(data.additionalData.extra_params.redirect){
+      //       $state.go(data.additionalData.extra_params.redirect);
+      //     }
+      //   }else{
+      //     $log.debug("NOTIFICATION. Though notification was received, app wasn\'t started by clicking on notification")
+      //     // localStorage.setItem("Hello2","Hello coldstart false")
+      //   }
 
 
-      });
-      $rootScope.$on('$cordovaPushV5:errorOcurred', function(event, error) {
-          $log.error("Error occured online notification", event, error);
-        })
+      // });
+      // $rootScope.$on('$cordovaPushV5:errorOcurred', function(event, error) {
+      //     $log.error("Error occured online notification", event, error);
+      //   })
+
         //
       $rootScope.mediaSyncStatus = {
         size: null,
@@ -250,15 +324,16 @@
         id: null
       }, {
         time: new Date()
-      });
+      }, User.getActiveProfileSync() ? User.getActiveProfileSync()._id : User.user.getIdSync());
       network.isOnline() && queue.startSync();
       $rootScope.$on('$cordovaNetwork:online', function(event, networkState) {
         // data.queueSync()
         $log.debug("This app is online dude")
         queue.startSync();
         if (User.getActiveProfileSync()) {
-          $log.debug("CHECK 1");
-          notification.online.set();
+          //DON NOT REMOVE THIS CODE IT IS THERE INCASE CLEVERTAP IS REMOVED
+          // $log.debug("CHECK 1");
+          // notification.online.set();
         }
         if (localStorage.profiles_fetched === undefined) {
           $log.debug("User online fetching profiles now");
@@ -339,16 +414,24 @@
         id: null
       }, {
         time: new Date()
-      })
+      },User.getActiveProfileSync() ? User.getActiveProfileSync()._id : User.user.getIdSync())
     });
     $ionicPlatform.on('pause', function() {
       $rootScope.$broadcast('appPause');
+      $log.debug('OFFLINE, hello')
+      if($rootScope.toBeScheduled){
+        $log.debug('OFFLINE. notification set')
+        notification.offline.scheduleMulti($rootScope.toBeScheduled);
+      }else{
+        $log.warn('OFFLINE. no offline notification in queue');
+      }
       $rootScope.inBackground = true;
-      try{
+      try {
         notification.schedule(JSON.parse(localStorage.scheduleNotification), JSON.parse(localStorage.scheduleNotification).at);
-      }catch(err){
+      } catch (err) {
         $log.warn("Looks like offline notifications haven\'t been set yet")
       }
+
       // content.getActiveResource().then(function(resource){
       //   $log.debug("LOGGING ACTIVE",resource)
       //   activeResource = resource;
@@ -367,7 +450,7 @@
         id: null
       }, {
         time: new Date()
-      })
+      },User.getActiveProfileSync() ? User.getActiveProfileSync()._id : User.user.getIdSync())
     });
   }
 })();
