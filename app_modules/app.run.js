@@ -198,23 +198,6 @@
     //   })
     $ionicPlatform.ready(function() {
 
-      $http.get('https://cc-test.zaya.in/api/v1/profiles/?client_uid='+User.getActiveProfileSync()._id).then(function(response){
-        if (response.data) {
-          $log.debug('CLEVERTAP. profile',response);
-          var profileId = response.data[0].id;
-          $log.debug('CLEVERTAP. Profile id',profileId);
-          try{
-            $log.debug('CLEVERTAP',CleverTap);
-            $log.debug('CLEVERTAP2');
-            CleverTap.registerPush();
-            CleverTap.profileSet({"Identity": profileId});
-            // $log.debug('CLEVERTAP3',registerPush);
-          }catch(err){
-            $log.warn('CLEVERTAP. Error with CleverTap',err);
-          }
-          
-        }
-      })
 
       // $log.debug('CLEVERTAP. document',$document)
       // document.addEventListener('onPushNotification', function(e) {
@@ -222,12 +205,35 @@
       //     $log.debug('CLEVERTAP. Notification',e.notification);
       //   })
       // }, false);
+      try{
+        CleverTap.registerPush();
+      }catch(err){
+        $log.warn('Cant work with clevertap',err);
+      }
 
       analytics.getLocation().then(function(location) {
         $log.debug("Location", location);
       })
       $rootScope.inBackground = false;
       if (User.getActiveProfileSync()) {
+        
+        $http.get('https://cc-test.zaya.in/api/v1/profiles/?client_uid='+User.getActiveProfileSync()._id).then(function(response){
+          if (response.data) {
+            $log.debug('CLEVERTAP. profile',response);
+            var profileId = response.data[0].id;
+            $log.debug('CLEVERTAP. Profile id',profileId);
+            try{
+              $log.debug('CLEVERTAP',CleverTap);
+              $log.debug('CLEVERTAP2');
+              CleverTap.profileSet({"Identity": profileId});
+              // $log.debug('CLEVERTAP3',registerPush);
+            }catch(err){
+              $log.warn('CLEVERTAP. Error with CleverTap',err);
+            }
+            
+          }
+        })
+
         $log.debug("CHECK 2")
         notification.online.set();
       }
