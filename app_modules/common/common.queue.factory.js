@@ -147,17 +147,17 @@
       }
       var promise;
       if (record.doc.method === 'post') {
-        promise = Rest.all(record.doc.url).post(record.doc.body)
+        promise = Rest.all(record.doc.url).post(record.doc.body);
       } else {
-        promise = Rest.all(record.doc.url).patch(record.doc.body)
+        promise = Rest.all(record.doc.url).patch(record.doc.body);
       }
       return promise.then(function() {
-          $log.debug("queue", "upload success", record)
-          return queueDB.remove(record.doc)
+          $log.debug("queue", "upload success", record);
+          return queueDB.remove(record.doc);
         })
         .catch(function(error) {
           if (error.status !== 0) {
-            $log.debug("upload failed", record)
+            $log.debug("upload failed", record);
             var e = {
               "error": error,
               "function": "queue_push"
@@ -170,7 +170,7 @@
           } else {
             return $q.reject();
           }
-        })
+        });
     }
     return queueProperties;
     

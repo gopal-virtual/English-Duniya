@@ -18,14 +18,15 @@
         "CLEVERTAP_ACCOUNT_ID" : "R5K-RK5-684Z",
         "CLEVERTAP_TOKEN" : "ETM-IWZ-OIAL",
         "GCM_PROJECT_NUMBER" : "150596025418" 
-    }
+    },
+    "CHALLENGE_START": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 20 }
   },
   "TESTING": {
     "CONTENT_TEST":false,
     "LOCK": true,
     "FAKE_LOGIN": false,
     "FAKE_DEVICE": false,
-    "BACKEND_SERVICE_DOMAIN": "https://cc-test.zaya.in/",
+    "BACKEND_SERVICE_DOMAIN": "https://cc-test-2.zaya.in/",
     "RESOURCE_SERVER": "https://cc-test.zaya.in/",
     "ANALYTICS": true,
     "PROFILES_DB_SERVER": "https://ci-couch.zaya.in/device",
@@ -39,8 +40,8 @@
         "CLEVERTAP_ACCOUNT_ID" : "TEST-K5K-RK5-684Z",
         "CLEVERTAP_TOKEN" : "CTM-IWZ-OIAL",
         "GCM_PROJECT_NUMBER" : "150596025418" 
-    }
-
+    },
+    "CHALLENGE_START": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 10 }
   },
   "DEVELOPMENT": {
     "CONTENT_TEST":false,
@@ -48,7 +49,7 @@
     "FAKE_LOGIN": true,
     "FAKE_ID_DEVICE": "rudra-is-back",
     "FAKE_DEVICE": true,
-    "BACKEND_SERVICE_DOMAIN": "https://cc-test.zaya.in/",
+    "BACKEND_SERVICE_DOMAIN": "https://cc-test-2.zaya.in/",
     "RESOURCE_SERVER": "https://cc-test.zaya.in",
     "ANALYTICS": true,
     "PROFILES_DB_SERVER": "https://ci-couch.zaya.in/device",
@@ -62,7 +63,8 @@
         "CLEVERTAP_ACCOUNT_ID" : "TEST-K5K-RK5-684Z",
         "CLEVERTAP_TOKEN" : "CTM-IWZ-OIAL",
         "GCM_PROJECT_NUMBER" : "150596025418" 
-    }
+    },
+    "CHALLENGE_START": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 20 }
   },
   "CONTENT": {
     "CONTENT_TEST":true,
@@ -84,7 +86,8 @@
         "CLEVERTAP_ACCOUNT_ID" : "TEST-K5K-RK5-684Z",
         "CLEVERTAP_TOKEN" : "CTM-IWZ-OIAL",
         "GCM_PROJECT_NUMBER" : "150596025418" 
-    }
+    },
+    "CHALLENGE_START": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 20 }
 
   }
 }

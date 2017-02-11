@@ -29,8 +29,6 @@
       // auto_compaction : true,
       revs_limit: 1,
     });
-
-  
     // $log.debug(profilesDB.info());
     // var remoteProfilesDb = pouchDB('http://anna:secret@127.0.0.1:5984/device'+device.uuid);
     // var myIndex = {
@@ -118,14 +116,15 @@
     User.user = {
       getDetails: getUserDetails,
       getIdSync: getUserIdSync,
-      patchPhoneNumber : patchPhoneNumber,
-      getPhoneNumber : getPhoneNumber,
-      resendOtp : resendOtp,
-      verifyOtp : verifyOtp,
-      updatePhoneLocal : updatePhoneLocal,
-      setIsVerified : setIsVerified,
-      setNotifyPhone : setNotifyPhone,
-      getNotifyPhone : getNotifyPhone
+      patchPhoneNumber: patchPhoneNumber,
+      getPhoneNumber: getPhoneNumber,
+      resendOtp: resendOtp,
+      verifyOtp: verifyOtp,
+      updatePhoneLocal: updatePhoneLocal,
+      setIsVerified: setIsVerified,
+      getIsVerified: getIsVerified,
+      setNotifyPhone: setNotifyPhone,
+      getNotifyPhone: getNotifyPhone
     };
     User.profile = {
       add: addNewProfile,
@@ -164,82 +163,95 @@
     }
     User.checkIfProfileOnline = checkIfProfileOnline;
     User.startProfileSync = startProfileSync;
-    User.compactDB = function(){
-        return profilesDB.compact().then(function(result){
-          $log.debug("Compaction done",result);
+    User.compactDB = function() {
+      return profilesDB.compact().then(function(result) {
+          $log.debug("Compaction done", result);
         })
-        .catch(function(err){
-          $log.debug("Compaction error",err);
+        .catch(function(err) {
+          $log.debug("Compaction error", err);
         });
-      }
-      User.info = function () {
-          profilesDB.info().then(function(result){
-      $log.debug("profilesDB info",result);
-    })
-      }
+    }
+    User.info = function() {
+      profilesDB.info().then(function(result) {
+        $log.debug("profilesDB info", result);
+      })
+    }
+    User.hasJoinedChallenge = function(profileID) {
+      return localStorage.getItem('challengeJoined' + (profileID || getActiveProfileSync()._id)) || false;
+    }
+    User.joinChallenge = function(profileID) {
+      localStorage.setItem('challengeJoined' + (profileID || getActiveProfileSync()._id), 'true');
+    }
+    User.isChallengeVisited = function(profileID) {
+      return localStorage.getItem('challengeVisited' + (profileID || getActiveProfileSync()._id)) || false;
+    }
+    User.setChallengeVisited = function(profileID) {
+      localStorage.setItem('challengeVisited' + (profileID || getActiveProfileSync()._id), 'true');
+    }
 
-
-    function setNotifyPhone(val){
+    function setNotifyPhone(val) {
       $log.debug("Setting notifyPhone")
       if (val == 0 || val == 1) {
-        localStorage.setItem('notifyPhone',val);
+        localStorage.setItem('notifyPhone', val);
         // return true;
-      }else{
+      } else {
         $log.error('Can\'t assign any other value except 0 or 1');
         // return false;
       }
-
     }
 
-    function getNotifyPhone(){
+    function getNotifyPhone() {
       return parseInt(localStorage.getItem('notifyPhone'));
     }
 
     function patchPhoneNumber(num) {
       return $http({
-        method : 'PATCH',
-        url : CONSTANT.BACKEND_SERVICE_DOMAIN+'/rest-auth/user/',
-        data : {
-          phone_number : num
+        method: 'PATCH',
+        url: CONSTANT.BACKEND_SERVICE_DOMAIN + '/rest-auth/user/',
+        data: {
+          phone_number: num
         }
       })
     }
 
     function verifyOtp(otp) {
       return $http({
-        method : 'POST',
-        url : CONSTANT.BACKEND_SERVICE_DOMAIN+'/rest-auth/sms-verification/',
-        data : {
-          code : otp
+        method: 'POST',
+        url: CONSTANT.BACKEND_SERVICE_DOMAIN + '/rest-auth/sms-verification/',
+        data: {
+          code: otp
         }
-      }) 
+      })
     }
-
 
     function resendOtp(num) {
       return $http({
-        method : 'POST',
-        url : CONSTANT.BACKEND_SERVICE_DOMAIN+'/rest-auth/resend-sms-verification/',
-        data : {
-          phone_number : num
+        method: 'POST',
+        url: CONSTANT.BACKEND_SERVICE_DOMAIN + '/rest-auth/resend-sms-verification/',
+        data: {
+          phone_number: num
         }
-      }) 
+      })
     }
 
-    function updatePhoneLocal(num){
+    function updatePhoneLocal(num) {
       var tempUserDetails = JSON.parse(localStorage.getItem('user_details'));
       tempUserDetails.phone_number = num;
-      localStorage.setItem('user_details',JSON.stringify(tempUserDetails));
+      localStorage.setItem('user_details', JSON.stringify(tempUserDetails));
     }
 
-    function setIsVerified(flag){
+    function setIsVerified(flag) {
       var tempUserDetails = JSON.parse(localStorage.getItem('user_details'));
       tempUserDetails.is_verified = flag;
-      localStorage.setItem('user_details',JSON.stringify(tempUserDetails)); 
+      localStorage.setItem('user_details', JSON.stringify(tempUserDetails));
     }
 
-    function getPhoneNumber(){
-      var tempUserDetails = localStorage.getItem('user_details'); 
+    function getIsVerified() {
+      return JSON.parse(localStorage.getItem('user_details')).is_verified
+    }
+
+    function getPhoneNumber() {
+      var tempUserDetails = localStorage.getItem('user_details');
       // return getUserDetails().phone_number.replace('+91','')
       if (tempUserDetails) {
         return getUserDetails().phone_number;
@@ -250,13 +262,13 @@
 
     function getUserDetails() {
       // if (localStorage.getItem('user_details')) {
-        return JSON.parse(localStorage.getItem('user_details'))
-      // }else{
+      return JSON.parse(localStorage.getItem('user_details'))
+        // }else{
         // $log.warn("Can\'t find user_details in localstorage. Are you sure app is online?")
-      // }
+        // }
     }
 
-   	function startProfileSync() {
+    function startProfileSync() {
       if (!$rootScope.profilesDBeplicationStarted) {
         $rootScope.profilesDBeplicationStarted = true;
         profilesDB.replicate.to(CONSTANT.PROFILES_DB_SERVER + device.uuid, {
@@ -370,8 +382,6 @@
         }
       };
       profile.client_uid = record._id;
-      
-      
       $log.debug("Adding new profile", record);
       return profilesDB.put(record)
         .then(function() {
@@ -542,7 +552,7 @@
     }
 
     function saveReport(report) {
-      $log.debug("queue","pushing report")
+      $log.debug("queue", "pushing report")
       return queue.push('reports', {
         'client_uid': report.profileId,
         'node': report.node,
@@ -587,13 +597,10 @@
     function getUserPlaylist(profileId) {
       $log.debug("In user playlist");
       return profilesDB.get(profileId).then(function(response) {
-        if (response.data.playlist){
-      $log.debug("In user playlist resolving"+JSON.stringify(response.data.playlist));
-
+        if (response.data.playlist) {
+          $log.debug("In user playlist resolving" + JSON.stringify(response.data.playlist));
           return response.data.playlist;
-          
-        }
-        else
+        } else
           return getPatchedUserPlaylist(profileId);
       })
     }
@@ -653,10 +660,10 @@
     }
 
     function addNodeToPlaylist(profileId, nodeData) {
-      $log.debug("addNodetOplaylist",nodeData.suggestedLesson,getActiveProfileSync().data.profile.language)
-      return $injector.get('content').getLocalizedNode(nodeData.suggestedLesson,getActiveProfileSync().data.profile.language).then(function(localizedNode) {
+      $log.debug("addNodetOplaylist", nodeData.suggestedLesson, getActiveProfileSync().data.profile.language)
+      return $injector.get('content').getLocalizedNode(nodeData.suggestedLesson, getActiveProfileSync().data.profile.language).then(function(localizedNode) {
         return profilesDB.get(profileId).then(function(response) {
-          $log.debug("pushing in playlist",localizedNode)
+          $log.debug("pushing in playlist", localizedNode)
           response.data.playlist.push({
             'lesson_id': localizedNode,
             'suggestedLesson': nodeData.suggestedLesson,

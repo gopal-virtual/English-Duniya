@@ -66,7 +66,9 @@
     "cordova-plugin-splashscreen",
     "cordova-plugin-statusbar",
     "ionic-plugin-keyboard",
-    "cordova-plugin-geolocation", {
+    "cordova-plugin-geolocation",
+    "cordova-plugin-x-socialsharing",
+    {
       "locator": "https://github.com/katzer/cordova-plugin-local-notifications",
       "id": "de.appplant.cordova.plugin.local-notification"
     },

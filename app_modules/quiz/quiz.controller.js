@@ -156,6 +156,7 @@
     $scope.groups = [];
     $scope.resultButtonAnimationFlag = 0;
     $scope.quizResultButtonAnimation = quizResultButtonAnimation;
+    quizCtrl.hasJoinedChallenge = User.hasJoinedChallenge();
     for (var i = 0; i < 10; i++) {
       $scope.groups[i] = {
         name: i,

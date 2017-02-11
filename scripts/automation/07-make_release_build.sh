@@ -15,7 +15,7 @@ if [ "$build_architecture" = 'arm' ]; then
   unsigned_build_name="android-armv7-release-unsigned.apk"
   BUILD_NAME="$BUILD_NAME-$build_architecture"
 fi
-if [ "$build_architecture" = 'armandx86' ]; then
+if [ "$build_architecture" = 'x86andarm' ]; then
   unsigned_build_name="android-release-unsigned.apk"
   BUILD_NAME="$BUILD_NAME-$build_architecture"
 fi

@@ -53,18 +53,16 @@
                 var suggestion = ml.getNextQSr(data.getTestParams(User.getActiveProfileSync().data.profile.grade), ml.mapping);
                 $log.debug(ml.dqJSON[suggestion.qSr]);
                 return content.getLocalizedQuestion(suggestion.qSr, User.getActiveProfileSync().data.profile.language).then(function(translatedQuestion) {
-                  var question ;
+                  var question;
                   if (translatedQuestion.node) {
-                     question = angular.copy(translatedQuestion);
+                    question = angular.copy(translatedQuestion);
                   } else {
-                     question = ml.dqJSON[suggestion.qSr];
+                    question = ml.dqJSON[suggestion.qSr];
                   }
-                    question.ml_node = angular.copy(question.node);
-                    question && litmus.objects.push(question);
-                  
-                    litmus['suggestion'] = suggestion;
-
-                    return content.getAssessment(litmus);
+                  question.ml_node = angular.copy(question.node);
+                  question && litmus.objects.push(question);
+                  litmus['suggestion'] = suggestion;
+                  return content.getAssessment(litmus);
                 });
                 // return litmus;
               });
@@ -84,7 +82,7 @@
               // }
               User.demo.isShown(5) && CONSTANT.QUESTION_DEMO && $stateParams.quiz.objects.unshift(content.demo_question);
               return content.getAssessment($stateParams.quiz).then(function(response) {
-                  return response;
+                return response;
               });
               // return $stateParams.quiz;
             }
@@ -143,11 +141,14 @@
       })
       .state('quiz.summary', {
         url: '/summary',
-        onEnter: ['$log', 'audio', 'content', '$stateParams', 'lessonutils', 'User', 'ml', function($log, audio, content, $stateParams, lessonutils, User, ml) {
+        onEnter: ['$log', 'audio', 'content', '$stateParams', 'lessonutils', 'User', 'ml','challenge', function($log, audio, content, $stateParams, lessonutils, User, ml, challenge) {
           var report = $stateParams.report;
           var quiz = $stateParams.quiz;
           var summary = $stateParams.summary;
           var lesson = lessonutils.getLocalLesson();
+          if (!$stateParams.quiz.isPlayed) {
+            challenge.addPoints(User.getActiveProfileSync()._id, 50,'node_complete',$stateParams.quiz.node.id);
+          }
           User.skills.update({
               profileId: User.getActiveProfileSync()._id,
               lessonId: quiz.parent,
@@ -183,7 +184,7 @@
                     "skill": quiz.node.tag.toLowerCase(),
                     "sr": quiz.node.parentHindiLessonId
                   });
-                  $log.debug("got sugggestion",suggestion);
+                  $log.debug("got sugggestion", suggestion);
                   return User.profile.updateRoadMapData(ml.roadMapData, User.getActiveProfileSync()._id).then(function() {
                     return User.playlist.add(User.getActiveProfileSync()._id, suggestion)
                   })
@@ -230,14 +231,21 @@
           average_level: null
         },
         templateUrl: CONSTANT.PATH.QUIZ + '/quiz.litmus_summary' + CONSTANT.VIEW,
-        controller: ['$log', 'User', 'audio', '$timeout', '$stateParams', '$scope', '$state', '$ionicLoading','analytics', function($log, User, audio, $timeout, $stateParams, $scope, $state, $ionicLoading, analytics) {
+        controller: ['$log', 'User', 'audio', '$timeout', '$stateParams', '$scope', '$state', '$ionicLoading', 'analytics', function($log, User, audio, $timeout, $stateParams, $scope, $state, $ionicLoading, analytics) {
           $scope.gender = User.getActiveProfileSync().data.profile.gender == 'M' ? 'boy' : 'girl';
           $scope.average_level = $stateParams.average_level ? $stateParams.average_level : 1;
-            analytics.log({name:'LITMUS',type:'SUMMARY'},{level:$scope.average_level},User.getActiveProfileSync()._id);
-          
+          analytics.log({
+            name: 'LITMUS',
+            type: 'SUMMARY'
+          }, {
+            level: $scope.average_level
+          }, User.getActiveProfileSync()._id);
           $scope.redirect = function() {
             audio.play('press');
-            analytics.log({name:'LITMUS',type:'EXIT'},{},User.getActiveProfileSync()._id);
+            analytics.log({
+              name: 'LITMUS',
+              type: 'EXIT'
+            }, {}, User.getActiveProfileSync()._id);
             $ionicLoading.show({
               hideOnStateChange: true
             });
@@ -268,21 +276,23 @@
       .state('litmus_start', {
         url: '/litmus_start',
         templateUrl: CONSTANT.PATH.QUIZ + '/quiz.litmus_start' + CONSTANT.VIEW,
-        controller: ['$log', 'User', '$scope', 'audio', 'localized','analytics','$state', function($log, User, $scope, audio, localized,analytics,$state) {
+        controller: ['$log', 'User', '$scope', 'audio', 'localized', 'analytics', '$state', function($log, User, $scope, audio, localized, analytics, $state) {
           $scope.audio = audio;
           $scope.name = User.getActiveProfileSync().data.profile.first_name;
           $scope.gender = User.getActiveProfileSync().data.profile.gender == 'M' ? 'boy' : 'girl';
           $scope.localizedContent = localized;
           $scope.language = User.getActiveProfileSync().data.profile.language;
           $log.debug('litmus start');
-          $scope.gotoLitmus = function(){
+          $scope.gotoLitmus = function() {
             $log.debug("inside go to litmus")
             audio.player.stop()
-            $state.go('quiz.questions',{'type':'litmus','id':'litmus_question'})
-
-            // ui-sref="quiz.questions()"
+            $state.go('quiz.questions', {
+                'type': 'litmus',
+                'id': 'litmus_question'
+              })
+              // ui-sref="quiz.questions()"
           }
-          audio.player.play(CONSTANT.PATH.LOCALIZED_AUDIO+localized.audio.diagnosis.landing.lang[$scope.language]);
+          audio.player.play(CONSTANT.PATH.LOCALIZED_AUDIO + localized.audio.diagnosis.landing.lang[$scope.language]);
         }]
       });
   }

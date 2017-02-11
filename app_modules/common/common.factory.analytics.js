@@ -145,6 +145,10 @@
         "PORT_NEXT" : "tap portal next",
         "PORT_PREV" : "tap portal prev",
         "REGION" : "on region"
+      },
+      "CHALLENGE" : {
+        "CLICKED" : "tap challenge",
+        "JOINED" : "join challenge"
       }
     };
 

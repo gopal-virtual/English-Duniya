@@ -47,7 +47,11 @@
     '$ionicSlideBoxDelegate',
     '$interval',
     'network',
-    'localized'
+    'localized',
+    '$cordovaInAppBrowser',
+    '$cordovaSocialSharing',
+    'challenge',
+    'pointsQueue'
   ];
 
   function mapController(
@@ -85,7 +89,11 @@
     $ionicSlideBoxDelegate,
     $interval,
     network,
-    localized
+    localized,
+    $cordovaInAppBrowser,
+    $cordovaSocialSharing,
+    challenge,
+    pointsQueue
   ) {
     $scope.audio = audio;
     $scope.settings = settings;
@@ -108,7 +116,8 @@
       // $state.current.data && lessonList.unshift($state.current.data.litmus);
     mapCtrl.User = User;
     mapCtrl.demo = User.demo;
-    // mapCtrl.loading = $ionicLoading;
+    mapCtrl.challenge = challenge
+      // mapCtrl.loading = $ionicLoading;
     mapCtrl.authFactory = Auth;
     mapCtrl.queue = queue;
     mapCtrl.lessons = lessonList;
@@ -145,8 +154,16 @@
       "listening": "darkblue",
       "reading": "orange"
     }
+    mapCtrl.goToChallenge = goToChallenge;
     mapCtrl.goToChooseProfile = goToChooseProfile;
     mapCtrl.onBackButtonPress = onBackButtonPress;
+    mapCtrl.share = share;
+    mapCtrl.pushPointsQueue = pushPointsQueue;
+    mapCtrl.syncPointsQueue = syncPointsQueue;
+    mapCtrl.syncPointsQueue2 = syncPointsQueue2;
+    mapCtrl.openChallenge = openChallenge;
+    mapCtrl.isUserEligibleForChallenge = challenge.isUserEligible();
+    mapCtrl.hasJoinedChallenge = User.hasJoinedChallenge()
     $scope.exitChooseProfile = exitChooseProfile;
     $scope.onProfileCardClick = onProfileCardClick;
     $scope.isOnline = network.isOnline();
@@ -195,6 +212,8 @@
     }).catch(function(err){
       $log.error('some error occured while fetching offline notification doc',err);
     })
+    
+    function openChallenge() {}
 
     function exitModalDismiss() {
       $log.debug('EXITING NOT SURELY')
@@ -466,9 +485,9 @@
       $log.error('INDEX', index)
       var src;
       if (index == -1) {
-        src = CONSTANT.PATH.LOCALIZED_AUDIO+localized.audio.phone.EnterPhoneNumber.lang[User.getActiveProfileSync().data.profile.language];
+        src = CONSTANT.PATH.LOCALIZED_AUDIO + localized.audio.phone.EnterPhoneNumber.lang[User.getActiveProfileSync().data.profile.language];
       } else if (index == 1) {
-        src = CONSTANT.PATH.LOCALIZED_AUDIO+localized.audio.phone.EnterOtp.lang[User.getActiveProfileSync().data.profile.language];
+        src = CONSTANT.PATH.LOCALIZED_AUDIO + localized.audio.phone.EnterOtp.lang[User.getActiveProfileSync().data.profile.language];
       }
       if (src) {
         audio.player.play(src);
@@ -612,6 +631,7 @@
       $scope.$emit('openNode', resource)
     }
     $scope.$on('openNode', function(event, node) {
+      $timeout.cancel(mapCtrl.openChallengeTimeout);
       $log.debug("Opennode Triggered");
       $ionicLoading.show({
         // noBackdrop: false
@@ -907,8 +927,8 @@
       if (User.demo.isShown() && User.demo.getStep() == '1') {
         $timeout(function() {
           $scope.demo.show().then(function() {
-            $log.debug("playdemoaudio",CONSTANT.PATH.LOCALIZED_AUDIO+ localized.audio.demo.startEnglish.lang[User.getActiveProfileSync().data.profile.language])
-            audio.player.play(CONSTANT.PATH.LOCALIZED_AUDIO+ localized.audio.demo.startEnglish.lang[User.getActiveProfileSync().data.profile.language]);
+            $log.debug("playdemoaudio", CONSTANT.PATH.LOCALIZED_AUDIO + localized.audio.demo.startEnglish.lang[User.getActiveProfileSync().data.profile.language])
+            audio.player.play(CONSTANT.PATH.LOCALIZED_AUDIO + localized.audio.demo.startEnglish.lang[User.getActiveProfileSync().data.profile.language]);
             User.demo.setStep(2)
           });
         })
@@ -987,5 +1007,155 @@
         time: new Date(),
       }, User.getActiveProfileSync()._id);
     }
+    // var options = {
+    //   location: 'no',
+    //   clearcache: 'yes',
+    //   toolbar: 'no',
+    //   zoom: 'no',
+    //   hardwareback: 'no',
+    //   hidden: 'yes'
+    // };
+    var options = 'location=no,hidden=yes,toolbar=no';
+    console.log("http://192.168.10.234:8062")
+      // window.location.href='http://192.168.10.234:8062';
+    var inAppBrowserRef;
+
+    function share() {
+      var shareoptions = {
+        message: 'share this', // not supported on some apps (Facebook, Instagram)
+        subject: 'the subject', // fi. for email
+        // files: ['', ''], // an array of filenames either locally or remotely
+        url: 'https://www.website.com/foo/#bar?a=b'
+          // chooserTitle: 'Pick an app' // Android only, you can override the default share sheet title
+      }
+      var onSuccess = function(result) {
+        $log.debug("Share completed? " + result.completed); // On Android apps mostly return false even while it's true
+        $log.debug("Shared to app: " + result.app); // On Android result.app is currently empty. On iOS it's empty when sharing is cancelled (result.completed=false)
+      }
+      var onError = function(msg) {
+        $log.debug("Sharing failed with message: " + msg);
+      }
+      $log.debug("share", shareoptions, onSuccess, onError);
+      window.plugins.socialsharing.shareWithOptions(shareoptions, onSuccess, onError);
+    }
+
+    function goToChallenge() {
+      analytics.log({
+        name: 'CHALLENGE',
+        type: 'CLICKED'
+      }, {
+        time: new Date()
+      }, User.getActiveProfileSync()._id);
+      if (network.isOnline()) {
+        if (User.hasJoinedChallenge()) {
+          $ionicLoading.show({
+            hideOnStateChange: true
+          })
+          pointsQueue.startSync().then(function() {
+            $log.debug("syncPointsQueue success")
+            $state.go('weekly-challenge', {
+              profileId: User.getActiveProfileSync()._id
+            })
+          });
+        } else {
+          $scope.challengeModal.show();
+        }
+      } else {
+        $ionicPopup.alert({
+          title: 'No Internet Connection',
+          template: 'You have to be online to play challenge'
+        })
+      }
+    }
+
+    function pushPointsQueue() {
+      $log.debug("pushPointsQueue")
+      pointsQueue.push({
+        client_id: User.getActiveProfileSync()._id,
+        points: [{
+          action: 'quiz_complete',
+          score: 500
+        }]
+      }).then(function() {
+        $log.debug("pushPointsQueue success")
+      })
+    }
+
+    function syncPointsQueue() {
+      // $log.debug("syncPointsQueue",pointsQueue.startSync())
+      pointsQueue.startSync().then(function() {
+        $log.debug("syncPointsQueue success")
+      });
+    }
+
+    function syncPointsQueue2() {
+      // $log.debug("syncPointsQueue",pointsQueue.startSync())
+      pointsQueue.startSync().then(function() {
+        $log.debug("syncPointsQueue success2")
+      });
+    }
+    $log.debug("challenge demo step is", User.demo.getStep())
+    $ionicModal.fromTemplateUrl(CONSTANT.PATH.COMMON + '/common.modal-challenge' + CONSTANT.VIEW, {
+      scope: $scope,
+      animation: 'slide-in-down',
+      hardwareBackButtonClose: false
+    }).then(function(challengeModal) {
+      $log.debug("challenge modal defined", User.hasJoinedChallenge())
+      $scope.challengeModal = challengeModal;
+      if (User.demo.getStep() != 1 && !User.hasJoinedChallenge() && challenge.isUserEligible() && $rootScope.showChallengeModal) {
+        $log.debug("showing challenge modal")
+        mapCtrl.openChallengeTimeout = $timeout(function() {
+          $scope.challengeModal.show().then(function() {
+            $rootScope.showChallengeModal = false;
+          });
+        }, 2000)
+      }
+    });
+    $scope.joinChallenge = function() {
+      $log.debug("join challenege");
+      if (User.user.getIsVerified()) {
+        User.joinChallenge();
+        analytics.log({
+          name: 'CHALLENGE',
+          type: 'JOINED'
+        }, {
+          time: new Date()
+        }, User.getActiveProfileSync()._id);
+        $scope.challengeModal.hide().then(function() {
+          goToChallenge()
+        });
+        $log.debug("Succesfully joined the challenge")
+      } else {
+        $scope.challengeModal.hide().then(function() {
+          goToPhoneNumber();
+        })
+      }
+    }
+    $scope.dismissJoinChallenge = function() {
+      $log.debug("dismiss join challenege");
+      $scope.challengeModal.hide().then(function() {
+        $log.debug("challenge modal hiden")
+          // goToChallenge();
+      });
+    }
+
+    function daysBetween(date1, date2) {
+      //Get 1 day in milliseconds
+      var one_day = 1000 * 60 * 60 * 24;
+      // Convert both dates to milliseconds
+      var date1_ms = date1.getTime();
+      var date2_ms = date2.getTime();
+      // Calculate the difference in milliseconds
+      var difference_ms = date2_ms - date1_ms;
+      // Convert back to days and return
+      return Math.round(difference_ms / one_day);
+    }
+    //Set the two dates
+    var challengeStartDate = new Date(CONSTANT.CHALLENGE_START.YEAR, CONSTANT.CHALLENGE_START.MONTH, CONSTANT.CHALLENGE_START.DATE);
+    var challengeStartDateText = new Date(challengeStartDate.getFullYear(), challengeStartDate.getMonth(), challengeStartDate.getDate());
+    var today = new Date();
+    var todayText = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    //displays 726
+    mapCtrl.daysRemaining = daysBetween(todayText, challengeStartDateText) > 0 ? daysBetween(todayText, challengeStartDateText) : 0;
   }
 })();
