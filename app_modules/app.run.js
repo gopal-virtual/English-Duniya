@@ -201,17 +201,16 @@
 
       window.addEventListener('message', function(event) {
         $log.debug(event);
-        if (event.data === 'backToMap') {
+        if (event.data.name === 'backToMap') {
           $log.debug("Here")
           $ionicLoading.show({
             hideOnStateChange: true
           });
           $state.go('map.navigate');
         }
-        if (typeof event.data === 'string' && event.data.indexOf('share') >= 0) {
-          $log.debug("sharing", event.data.split('-')[1]);
+        if (typeof event.data.name === 'string') {
           var shareoptions = {
-            message: 'Hi, I just won ' + event.data.split('-')[1] + ' points on English Duniya!!! You can win too!  Download the app now to participate ', // not supported on some apps (Facebook, Instagram)
+            message: 'I won ' + event.data.points + ' points in the English Duniya Scholarship Competition! You can win too!  Download the app now to participate ', // not supported on some apps (Facebook, Instagram)
             subject: 'English Duniya Scholarship Challenge', // fi. for email
             // files: ['img/assets/scholarship_share_image.png'], // an array of filenames either locally or remotely
             // url: 'https://play.google.com/store/apps/details?id=com.ionicframework.zayamobile694033'
@@ -226,7 +225,7 @@
           // }
           // $log.debug("share", shareoptions, onSuccess, onError);
           $cordovaSocialSharing
-            .share(shareoptions.message, shareoptions.subject, 'https://s3-ap-southeast-1.amazonaws.com/zaya-builds/production-images/englishduniya-scholarship-challenge.png', 'https://play.google.com/store/apps/details?id=com.ionicframework.zayamobile694033') // Share via native share sheet
+            .share(shareoptions.message, shareoptions.subject, 'https://s3-ap-southeast-1.amazonaws.com/zaya-builds/production-images/englishduniya-scholarship-challenge.png', 'http://referral.englishduniya.com/?referral='+event.data.referal_code+'&campaign_name=scholarship_challenge') // Share via native share sheet
             .then(function(result) {
               if (result) {
                 $http.post('http://challenge.englishduniya.in/points/', {
