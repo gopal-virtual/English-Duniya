@@ -159,7 +159,7 @@
             <!-- ng-show="multiUser.canAdd()" -->
             <!-- multiUser.goToCreateNewProfile() -->
             <!-- ng-show="::multiUser.canAdd()" -->
-            <div  class="profile-box profile-box-add" ng-tap="showCreateProfileModal();audio.play('click');" ng-click="showCreateProfileModal();audio.play('click');">
+            <div ng-show="multiUser.canAdd()" class="profile-box profile-box-add" ng-tap="showCreateProfileModal();audio.play('click');" ng-click="showCreateProfileModal();audio.play('click');">
                 <img src="img/assets_svg/add_sign.svg" alt="">
             </div>
         </div>
