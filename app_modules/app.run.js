@@ -243,7 +243,7 @@
             .then(function(result) {
               if (result) {
                 $http.post('http://challenge.englishduniya.in/points/', {
-                  profile_id: User.getActiveProfileSync()._id,
+                  client_id: User.getActiveProfileSync()._id,
                   points: [{
                     action: 'share',
                     score: 5
