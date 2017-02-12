@@ -46,7 +46,8 @@
         set : onlineSet,
         log : onlineLog,
         clevertapRegister : onlineClevertapRegister,
-        clevertapProfile : onlineClevertapProfile
+        clevertapProfile : onlineClevertapProfile,
+        CleverTapLocation : CleverTapLocation,
       },
       offline : {
         list : listOfflineNotifications,
@@ -574,6 +575,7 @@
 
     function onlineClevertapRegister(){
       try{
+        $log.debug('CLEVERTAP 3',CleverTap.registerPush());
         CleverTap.registerPush();
       }catch(err){
         $log.warn('Cant work with clevertap',err);
@@ -588,8 +590,18 @@
           $log.debug('CLEVERTAP. Profile id',profileId);
           try{
             $log.debug('CLEVERTAP',CleverTap);
-            $log.debug('CLEVERTAP2');
-            CleverTap.profileSet({"Identity": profileId});
+            // $log.debug('CLEVERTAP2');
+            var profile = User.getActiveProfileSync().data.profile;
+            CleverTap.profileSet({
+              "Identity": profileId,
+              "ts": Date.now().toString(),       // user creation date, or just leave this field out to set the time has current
+              "Name": profile.first_name+" "+profile.last_name,
+              "Gender": profile.gender,
+              "type": "profile",
+              "Phone": User.user.getPhoneNumber(),
+              // "profileData": {
+              // }
+            });
             // $log.debug('CLEVERTAP3',registerPush);
           }catch(err){
             $log.warn('CLEVERTAP. Error with CleverTap',err);
@@ -597,6 +609,20 @@
           
         }
       })
+    }
+
+    function CleverTapLocation(){
+      try{
+        CleverTap.getLocation(function(loc) {
+          $log.debug("CleverTapLocation is ",loc.lat,loc.lon);
+          CleverTap.setLocation(loc.lat, loc.lon);
+        },
+        function(error) {
+          $log.debug("CleverTapLocation error is ",error);
+        });
+      }catch(err){
+        $log.warn('Error with clevertap',err);
+      }
     }
   }
 })();

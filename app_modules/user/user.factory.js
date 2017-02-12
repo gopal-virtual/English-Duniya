@@ -135,7 +135,9 @@
       patch: patchProfile,
       updateRoadMapData: updateRoadMapData,
       select: selectProfile,
-      getLanguage: getLanguage
+      getLanguage: getLanguage,
+      setId: setProfileId,
+      clearId: clearProfileId
     };
     User.skills = {
       get: getSkills,
@@ -163,6 +165,7 @@
     }
     User.checkIfProfileOnline = checkIfProfileOnline;
     User.startProfileSync = startProfileSync;
+
     User.compactDB = function() {
       return profilesDB.compact().then(function(result) {
           $log.debug("Compaction done", result);
@@ -187,6 +190,32 @@
     }
     User.setChallengeVisited = function(profileID) {
       localStorage.setItem('challengeVisited' + (profileID || getActiveProfileSync()._id), 'true');
+    }
+
+
+    function setProfileId(clientUuid){
+      return new Promise(function(resolve,reject){
+        $http.get(CONSTANT.BACKEND_SERVICE_DOMAIN+'/api/v1/profiles/?client_uid='+clientUuid).then(function(response){
+          $log.debug('profileid',response)
+          if (response.data) {
+            $log.debug('profileid', response);
+            localStorage.setItem('profileid',response.data[0].id);
+            resolve(response.data[0].id)
+          }else{
+            $log.warn('response data is not defined');
+            reject('response data is not defined')
+          }
+        }).catch(function(err){
+          $log.warn('Error while getting id from server');
+          reject(err);
+        })
+        
+      })
+    }
+
+    function clearProfileId(){
+      localStorage.removeItem('profileId');
+      $log.debug('clearProfileId true');
     }
 
     function setNotifyPhone(val) {
