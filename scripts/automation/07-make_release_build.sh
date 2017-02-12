@@ -39,6 +39,8 @@ echo unsigned_build_name $unsigned_build_name
 echo BUILD_NAME $BUILD_NAME
 echo release_build_name $release_build_name
 
+echo $VERSION/zipalign 4 $REPO_PATH/platforms/android/build/outputs/apk/$unsigned_build_name $release_build_name
+
 $VERSION/zipalign 4 $REPO_PATH/platforms/android/build/outputs/apk/$unsigned_build_name $release_build_name
 
 echo "Release build made..now uploading.."
