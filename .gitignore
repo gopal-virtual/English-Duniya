@@ -41,3 +41,4 @@ www/data/diagnosis_translations.db
 www/data/notifications.db
 config.xml
 www/sound/localized/*
+localizedSounds*.zip
