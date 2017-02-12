@@ -758,6 +758,15 @@
                         "cache": suggestion["cache"],
                         "miss": false
                       };
+                      // Add this node to caching list
+                      var cachingList = localStorage.getItem('cachingList');
+                      if(cachingList){
+                        if(cachingList.indexOf(suggestion["suggestedLesson"]) < 0){
+                          cachingList.push(suggestion["suggestedLesson"]);
+                          $log.debug("New lesson recommended as user was online, adding it to caching list");
+                          localStorage.setItem('cachingList',cachingList);
+                        }
+                      }
                       $log.debug('caching quiz hit', network.isOnline(), suggestion);
                     } else {
                       $log.debug('caching quiz miss', network.isOnline(), suggestion);
