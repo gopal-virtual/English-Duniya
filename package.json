@@ -76,8 +76,8 @@
       "locator": "https://github.com/CleverTap/clevertap-cordova.git",
       "variables": {
         "CLEVERTAP_ACCOUNT_ID": "TEST-K5K-RK5-684Z",
-        "CLEVERTAP_TOKEN": "CTM-IWZ-OIAL",
-        "GCM_PROJECT_NUMBER": "150596025418"
+        "CLEVERTAP_TOKEN": "TEST-532-353",
+        "GCM_PROJECT_NUMBER": 150596025418
       }
     }
   ],

@@ -217,6 +217,11 @@
     function openChallenge() {}
 
     function exitModalDismiss() {
+      $log.debug('EXITING SURELY')
+      ionic.Platform.exitApp();
+    }
+
+    function exitModalConfirm() {
       $log.debug('EXITING NOT SURELY')
       $scope.exitApp.hide().then(function() {
         analytics.log({
@@ -227,11 +232,6 @@
         }, User.getActiveProfileSync()._id);
         $log.debug('You are not sure');
       });
-    }
-
-    function exitModalConfirm() {
-      $log.debug('EXITING SURELY')
-      ionic.Platform.exitApp();
     }
     $scope.showCreateProfileModal = function() {
       $scope.createProfileModal.show();

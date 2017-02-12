@@ -41,10 +41,11 @@
       },
       online: {
         register: onlineRegister,
-        set: onlineSet,
-        log: onlineLog,
-        clevertapRegister: onlineClevertapRegister,
-        clevertapProfile: onlineClevertapProfile
+        set : onlineSet,
+        log : onlineLog
+        // clevertapRegister : onlineClevertapRegister,
+        // clevertapProfile : onlineClevertapProfile,
+        // CleverTapLocation : CleverTapLocation,
       },
       offline: {
         list: listOfflineNotifications,
@@ -352,40 +353,6 @@
             }, function(error) {
               $log.error("NOTIFICATION. This is an error. Google is mibehaving. Contact Rudra")
             })
-            //this logic is not working
-            // getFromServer({
-            //   dev_id: device.uuid
-            // }).then(function(response) {
-            //   // if (!response.data[0]) {
-            //   //   $log.warn("NOTIFICATION. not registered with server. Will register")
-            //   //   $cordovaPushV5.onNotification();
-            //   //   $cordovaPushV5.onError();
-            //   //   $cordovaPushV5.register().then(function (resultreg) {
-            //   //     $log.warn('NOTIFICATION. Registered with FCM server',resultreg)
-            //   //     onlineRegister({
-            //   //       dev_id: device.uuid,
-            //   //       dev_type: "ANDROID",
-            //   //       reg_id: resultreg
-            //   //     });
-            //   //     localStorage.setItem('pushKey',resultreg);
-            //   //   },function(err){
-            //   //     $log.error('NOTIFICATION. Cant register with server \n',err)
-            //   //   });
-            //   // }else if(response.data[0] && !response.data[0].is_active){
-            //   //   $log.warn("NOTIFICATION. Your fcm token has expired. Getting you a new token")
-            //   //   $cordovaPushV5.onNotification();
-            //   //   $cordovaPushV5.onError();
-            //   //   $cordovaPushV5.register().then(function (resultreg) {
-            //   //     $log.warn('NOTIFICATION. Registered with FCM server',resultreg)
-            //   //     onlinePatch(resultreg);   
-            //   //     localStorage.setItem('pushKey',resultreg);
-            //   //   });
-            //   // }else{
-            //   //   $log.warn("NOTIFICATION. You are already registered with notificaton server and are active. No need for a new token\n", response)
-            //   // }
-            // }, function(response) {
-            //   $log.error("NOTIFICATION. We couldn't get", response)
-            // });
         });
       } catch (err) {
         $log.warn("NOTIFICATION. Need to run app on mobile to enable push notifications", err)
@@ -503,14 +470,38 @@
 
                   a[n] = a[1] + (ceil((a[n-approx] - a[1])/d))d
           */
-          var firstAt = new Date(notificationObject['first_at']).getTime() / 1000,
-            every = notificationObject['repeat_at'] * 60 * 60,
-            now = Math.floor(Date.now() / 1000);
-          schedulerObject['firstAt'] = new Date((firstAt + (Math.ceil((now - firstAt) / every)) * every) * 1000);
+
+          var base = new Date().getTime(),
+              firstAt = 0;
+
+          if(notificationObject['first_at'].charAt(0) == '+'){
+            firstAt = parseInt(new Date(base + parseInt(notificationObject['first_at'].substring(1))*3600000).getTime());
+          }else{
+            firstAt = new Date(notificationObject['first_at']);
+          }
+
+          
+          var every = notificationObject['repeat_at'] * 60 * 60,
+              now = Math.floor(Date.now() / 1000);
+          $log.debug('OFFLINE. firstAt',firstAt);
+          if ( firstAt > now) {
+            schedulerObject['firstAt'] = new Date(firstAt);
+          }else{
+            schedulerObject['firstAt'] = new Date((firstAt + (Math.ceil((now - firstAt) / every)) * every) * 1000);
+          }
           schedulerObject['every'] = every / 60;
         } else {
+          var at = 0,
+              base = new Date().getTime();
+
+          if(notificationObject['at'].charAt(0) == '+'){
+            at = new Date(base + parseInt(notificationObject['at'].substring(1))*3600000);
+          }else{
+            at = new Date(notificationObject['at']);
+          }
+
           $log.debug('OFFLINE. at', notificationObject['at'], new Date(notificationObject['at']))
-          schedulerObject['at'] = new Date(notificationObject['at']);
+          schedulerObject['at'] = new Date(at);
         }
         // console.log()
       } else {
@@ -551,32 +542,56 @@
       }
     }
 
-    function onlineClevertapRegister() {
-      try {
-        CleverTap.registerPush();
-      } catch (err) {
-        $log.warn('Cant work with clevertap', err);
-      }
-    }
 
-    function onlineClevertapProfile() {
-      $http.get(CONSTANT.BACKEND_SERVICE_DOMAIN + '/api/v1/profiles/?client_uid=' + User.getActiveProfileSync()._id).then(function(response) {
-        if (response.data) {
-          $log.debug('CLEVERTAP. profile', response);
-          var profileId = response.data[0].id;
-          $log.debug('CLEVERTAP. Profile id', profileId);
-          try {
-            $log.debug('CLEVERTAP', CleverTap);
-            $log.debug('CLEVERTAP2');
-            CleverTap.profileSet({
-              "Identity": profileId
-            });
-            // $log.debug('CLEVERTAP3',registerPush);
-          } catch (err) {
-            $log.warn('CLEVERTAP. Error with CleverTap', err);
-          }
-        }
-      })
-    }
+    // function onlineClevertapRegister(){
+    //   try{
+    //     $log.debug('CLEVERTAP 3',CleverTap.registerPush());
+    //     CleverTap.registerPush();
+    //   } catch (err) {
+    //     $log.warn('Cant work with clevertap', err);
+    //   }
+    // }
+
+    // function onlineClevertapProfile() {
+    //   $http.get(CONSTANT.BACKEND_SERVICE_DOMAIN + '/api/v1/profiles/?client_uid=' + User.getActiveProfileSync()._id).then(function(response) {
+    //     if (response.data) {
+    //       $log.debug('CLEVERTAP. profile', response);
+    //       var profileId = response.data[0].id;
+    //       $log.debug('CLEVERTAP. Profile id',profileId);
+    //       try{
+    //         $log.debug('CLEVERTAP',CleverTap);
+    //         // $log.debug('CLEVERTAP2');
+    //         var profile = User.getActiveProfileSync().data.profile;
+    //         CleverTap.profileSet({
+    //           "Identity": profileId,
+    //           "ts": Date.now().toString(),       // user creation date, or just leave this field out to set the time has current
+    //           "Name": profile.first_name+" "+profile.last_name,
+    //           "Gender": profile.gender,
+    //           "type": "profile",
+    //           "Phone": User.user.getPhoneNumber(),
+    //           // "profileData": {
+    //           // }
+    //         });
+    //         // $log.debug('CLEVERTAP3',registerPush);
+    //       } catch (err) {
+    //         $log.warn('CLEVERTAP. Error with CleverTap', err);
+    //       }
+    //     }
+    //   })
+    // }
+
+    // function CleverTapLocation(){
+    //   try{
+    //     CleverTap.getLocation(function(loc) {
+    //       $log.debug("CleverTapLocation is ",loc.lat,loc.lon);
+    //       CleverTap.setLocation(loc.lat, loc.lon);
+    //     },
+    //     function(error) {
+    //       $log.debug("CleverTapLocation error is ",error);
+    //     });
+    //   }catch(err){
+    //     $log.warn('Error with clevertap',err);
+    //   }
+    // }
   }
 })();
