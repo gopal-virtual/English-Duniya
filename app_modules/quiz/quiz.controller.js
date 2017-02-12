@@ -759,7 +759,7 @@
                         "miss": false
                       };
                       // Add this node to caching list
-                      var cachingList = localStorage.getItem('cachingList');
+                      var cachingList = JSON.parse(localStorage.getItem('cachingList'));
                       if(cachingList){
                         if(cachingList.indexOf(suggestion["suggestedLesson"]) < 0){
                           cachingList.push(suggestion["suggestedLesson"]);
