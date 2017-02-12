@@ -38,5 +38,7 @@ in_app_audio*
 verifyNodePresence.js
 www/data/lessons.db
 www/data/diagnosis_translations.db
+www/data/notifications.db
 config.xml
 www/sound/localized/*
+localizedSounds*.zip

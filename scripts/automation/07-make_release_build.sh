@@ -39,7 +39,11 @@ echo unsigned_build_name $unsigned_build_name
 echo BUILD_NAME $BUILD_NAME
 echo release_build_name $release_build_name
 
+echo $VERSION/zipalign 4 $REPO_PATH/platforms/android/build/outputs/apk/$unsigned_build_name $release_build_name
+
 $VERSION/zipalign 4 $REPO_PATH/platforms/android/build/outputs/apk/$unsigned_build_name $release_build_name
+
+echo "Release build made..now uploading.."
 
 release_build_upload_path=s3://zaya-builds/englishduniya-release-$campaign_owner_name-$campaign_name-$JOB_NAME-$BUILD_NUMBER-$environment-$build_architecture-$crosswalk_status-$content_type.apk
 release_build_upload_link=/englishduniya-release-$campaign_owner_name-$campaign_name-$JOB_NAME-$BUILD_NUMBER-$environment-$build_architecture-$crosswalk_status-$content_type.apk

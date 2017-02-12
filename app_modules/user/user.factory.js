@@ -696,7 +696,8 @@
           response.data.playlist.push({
             'lesson_id': localizedNode,
             'suggestedLesson': nodeData.suggestedLesson,
-            'dependencyData': nodeData.dependencyData
+            'dependencyData': nodeData.dependencyData,
+            'miss': nodeData.miss
           });
           return profilesDB.put({
             '_id': profileId,

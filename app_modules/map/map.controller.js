@@ -163,7 +163,8 @@
     mapCtrl.syncPointsQueue2 = syncPointsQueue2;
     mapCtrl.openChallenge = openChallenge;
     mapCtrl.isUserEligibleForChallenge = challenge.isUserEligible();
-    mapCtrl.hasJoinedChallenge = User.hasJoinedChallenge()
+    mapCtrl.hasJoinedChallenge = User.hasJoinedChallenge();
+    mapCtrl.isChallengeActive = challenge.isChallengeActive();
     $scope.exitChooseProfile = exitChooseProfile;
     $scope.onProfileCardClick = onProfileCardClick;
     $scope.isOnline = network.isOnline();
@@ -642,12 +643,16 @@
       //   $scope.demo.isShown() && $scope.demo.hide();
       var promise;
       $log.debug('intro sound', node.node.intro_sound, node)
-      if (node.node.intro_sound) {
-        promise = mediaManager.downloadIfNotExists(node.node.intro_sound)
-      } else {
-        promise = $q.resolve();
-      }
-      promise.then(function(s) {
+        // if (node.node.intro_sound) {
+        //   promise = mediaManager.downloadIfNotExists(node.node.intro_sound)
+        // } else {
+        //   promise = $q.resolve();
+        // }
+      lessonutils.cacheLessons()
+        .then(function() {
+          return mediaManager.getPath(node.node.intro_sound)
+        })
+        .then(function(s) {
           $log.debug("Intro sound downloaded if not exist", s);
           if (s) {
             node.node.parsed_sound = s;

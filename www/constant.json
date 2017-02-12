@@ -19,7 +19,8 @@
         "CLEVERTAP_TOKEN" : "532-352",
         "GCM_PROJECT_NUMBER" : 150596025418 
     },
-    "CHALLENGE_START": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 20 }
+    "CHALLENGE_START": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 20 },
+    "CHALLENGE_END": {"YEAR" : 2017, "MONTH" : 2 , "DATE": 13 }
   },
   "TESTING": {
     "CONTENT_TEST":false,
@@ -41,11 +42,17 @@
         "CLEVERTAP_TOKEN" : "TEST-532-353",
         "GCM_PROJECT_NUMBER" : 150596025418 
     },
-    "CHALLENGE_START": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 10 }
+    "CHALLENGE_START": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 10 },
+    "CHALLENGE_END": {"YEAR" : 2017, "MONTH" : 2 , "DATE": 3 }
+
   },
   "DEVELOPMENT": {
     "CONTENT_TEST":false,
     "LOCK": true,
+    "FAKE_LOGIN": false,
+    "FAKE_ID_DEVICE": "ayush37",
+    "FAKE_DEVICE": false,
+    "BACKEND_SERVICE_DOMAIN": "https://cc-test.zaya.in/",
     "FAKE_LOGIN": true,
     "FAKE_ID_DEVICE": "rudra-is-back-22",
     "FAKE_DEVICE": true,
@@ -64,7 +71,9 @@
         "CLEVERTAP_TOKEN" : "TEST-532-353",
         "GCM_PROJECT_NUMBER" : 150596025418
     },
-    "CHALLENGE_START": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 20 }
+    "CHALLENGE_START": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 20 },
+    "CHALLENGE_END": {"YEAR" : 2017, "MONTH" : 2 , "DATE": 13 }
+
   },
   "CONTENT": {
     "CONTENT_TEST":true,
@@ -87,7 +96,9 @@
         "CLEVERTAP_TOKEN" : "TEST-532-353",
         "GCM_PROJECT_NUMBER" : 150596025418 
     },
-    "CHALLENGE_START": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 20 }
+    "CHALLENGE_START": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 20 },
+    "CHALLENGE_END": {"YEAR" : 2017, "MONTH" : 2 , "DATE": 13 }
+
 
   }
 }

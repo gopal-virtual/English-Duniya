@@ -222,7 +222,7 @@
           });
           $state.go('map.navigate');
         }
-        if (typeof event.data.name === 'string') {
+        if (event.data.name === 'share') {
           var shareoptions = {
             message: 'I won ' + event.data.points + ' points in the English Duniya Scholarship Competition! You can win too!  Download the app now to participate ', // not supported on some apps (Facebook, Instagram)
             subject: 'English Duniya Scholarship Challenge', // fi. for email
@@ -243,7 +243,7 @@
             .then(function(result) {
               if (result) {
                 $http.post('http://challenge.englishduniya.in/points/', {
-                  profile_id: User.getActiveProfileSync()._id,
+                  client_id: User.getActiveProfileSync()._id,
                   points: [{
                     action: 'share',
                     score: 5
