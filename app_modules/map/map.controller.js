@@ -1107,7 +1107,7 @@
     }).then(function(challengeModal) {
       $log.debug("challenge modal defined", User.hasJoinedChallenge())
       $scope.challengeModal = challengeModal;
-      if (User.demo.getStep() != 1 && !User.hasJoinedChallenge() && challenge.isUserEligible() && $rootScope.showChallengeModal) {
+      if (User.demo.getStep() != 1 && !User.hasJoinedChallenge() && challenge.isUserEligible() && $rootScope.showChallengeModal && challenge.isChallengeActive()) {
         $log.debug("showing challenge modal")
         mapCtrl.openChallengeTimeout = $timeout(function() {
           $scope.challengeModal.show().then(function() {

@@ -120,14 +120,14 @@ var notifications_couch_db_server = constants[env]['NOTIFICATION_DB_SERVER'];
 var lesson_db_version = 'na';
 var diagnosis_media = [];
 var allowed_languages_list = [];
-var tasks_for_download_localized_audio = ['rm www/sound/localized/*',
-  'rm localizedSounds*.zip'
+var tasks_for_download_localized_audio = ['rm -f www/sound/localized/*',
+  'rm -f localizedSounds*.zip'
 ];
 for (i in languages_list) {
   if (allowed_languages.indexOf(languages_list[i].code) !== -1) {
     allowed_languages_list.push(languages_list[i]);
-    tasks_for_download_localized_audio.push('wget -O localizedSounds_' + languages_list[i].code + '.zip http://localization.englishduniya.in/download?lang=' + languages_list[i].code,
-      'unzip localizedSounds_' + languages_list[i].code + '.zip -d www/sound/localized/');
+    tasks_for_download_localized_audio.push('wget -O localizedSounds_' + languages_list[i].code + '.zip http://localization.englishduniya.in/download\?lang\=' + languages_list[i].code,
+      'unzip -o localizedSounds_' + languages_list[i].code + '.zip -d www/sound/localized/');
   }
 }
 console.log(tasks_for_download_localized_audio);
@@ -353,12 +353,7 @@ gulp.task('makeLocalizationFactory', function() {
     .pipe(gulp.dest(paths.localizationFactory.destination));
 });
 gulp.task('downloadLocalizedAudio', shell.task(
-  (env !== environments.dev) ? [
-    'rm www/sound/localized/*',
-    'rm localizedSounds*.zip',
-    'wget -O localizedSounds.zip http://localization.englishduniya.in/download',
-    'unzip localizedSounds.zip -d www/sound/localized'
-  ] : []
+  (env !== environments.dev) ? tasks_for_download_localized_audio : []
 ));
 gulp.task('watch', ['default'], function() {
   gulp.watch(paths.sass, ['sass']);
