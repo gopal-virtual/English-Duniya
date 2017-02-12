@@ -1,4 +1,4 @@
-# cat scripts/automation/01-common_setup.sh 		> scripts/automation/zaya-mobile-custom-builds-generated-script.sh 
+cat scripts/automation/01-common_setup.sh 		> scripts/automation/zaya-mobile-custom-builds-generated-script.sh 
 # cat scripts/automation/02-media_sync.sh 		>> scripts/automation/zaya-mobile-custom-builds-generated-script.sh
 # cat scripts/automation/03-bundle_content.sh 	>> scripts/automation/zaya-mobile-custom-builds-generated-script.sh
 # cat scripts/automation/04-run_gulp.sh		 	>> scripts/automation/zaya-mobile-custom-builds-generated-script.sh
