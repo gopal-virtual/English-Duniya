@@ -18,7 +18,7 @@
          <!-- {{enableGoToMapButton}} -->
         <!-- <p>IS THIS EVEN THE VIEW? {{resultButtonAnimationFlag}} HELLO</p> -->
         <!-- <p>{{resultButtonAnimationFlag}}</p> -->
-        <div ng-if="enableGoToMapButton" class="row padding-x-30 " ng-class="{ 0 : 'transparent', 1 : 'animation-fade-in-from-bottom', 2 : 'animation-repeat-bounce' }[resultButtonAnimationFlag]">
+        <div ng-style="{'visibility': enableGoToMapButton ? 'visible' : 'hidden'}"  class="row padding-x-30 " ng-class="{ 0 : 'transparent', 1 : 'animation-fade-in-from-bottom', 2 : 'animation-repeat-bounce' }[resultButtonAnimationFlag]">
           <center style="width: 100%;padding-top:20px;">
             <button  class="sbtn sbtn-next-yellow" on-tap="audio.play('press') ;quizCtrl.next()"></button>
           </center>
