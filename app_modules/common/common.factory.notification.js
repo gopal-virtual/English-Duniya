@@ -42,10 +42,10 @@
       online: {
         register: onlineRegister,
         set : onlineSet,
-        log : onlineLog,
-        clevertapRegister : onlineClevertapRegister,
-        clevertapProfile : onlineClevertapProfile,
-        CleverTapLocation : CleverTapLocation,
+        log : onlineLog
+        // clevertapRegister : onlineClevertapRegister,
+        // clevertapProfile : onlineClevertapProfile,
+        // CleverTapLocation : CleverTapLocation,
       },
       offline: {
         list: listOfflineNotifications,
@@ -552,57 +552,56 @@
       }
     }
 
-    }
 
-    function onlineClevertapRegister(){
-      try{
-        $log.debug('CLEVERTAP 3',CleverTap.registerPush());
-        CleverTap.registerPush();
-      } catch (err) {
-        $log.warn('Cant work with clevertap', err);
-      }
-    }
+    // function onlineClevertapRegister(){
+    //   try{
+    //     $log.debug('CLEVERTAP 3',CleverTap.registerPush());
+    //     CleverTap.registerPush();
+    //   } catch (err) {
+    //     $log.warn('Cant work with clevertap', err);
+    //   }
+    // }
 
-    function onlineClevertapProfile() {
-      $http.get(CONSTANT.BACKEND_SERVICE_DOMAIN + '/api/v1/profiles/?client_uid=' + User.getActiveProfileSync()._id).then(function(response) {
-        if (response.data) {
-          $log.debug('CLEVERTAP. profile', response);
-          var profileId = response.data[0].id;
-          $log.debug('CLEVERTAP. Profile id',profileId);
-          try{
-            $log.debug('CLEVERTAP',CleverTap);
-            // $log.debug('CLEVERTAP2');
-            var profile = User.getActiveProfileSync().data.profile;
-            CleverTap.profileSet({
-              "Identity": profileId,
-              "ts": Date.now().toString(),       // user creation date, or just leave this field out to set the time has current
-              "Name": profile.first_name+" "+profile.last_name,
-              "Gender": profile.gender,
-              "type": "profile",
-              "Phone": User.user.getPhoneNumber(),
-              // "profileData": {
-              // }
-            });
-            // $log.debug('CLEVERTAP3',registerPush);
-          } catch (err) {
-            $log.warn('CLEVERTAP. Error with CleverTap', err);
-          }
-        }
-      })
-    }
+    // function onlineClevertapProfile() {
+    //   $http.get(CONSTANT.BACKEND_SERVICE_DOMAIN + '/api/v1/profiles/?client_uid=' + User.getActiveProfileSync()._id).then(function(response) {
+    //     if (response.data) {
+    //       $log.debug('CLEVERTAP. profile', response);
+    //       var profileId = response.data[0].id;
+    //       $log.debug('CLEVERTAP. Profile id',profileId);
+    //       try{
+    //         $log.debug('CLEVERTAP',CleverTap);
+    //         // $log.debug('CLEVERTAP2');
+    //         var profile = User.getActiveProfileSync().data.profile;
+    //         CleverTap.profileSet({
+    //           "Identity": profileId,
+    //           "ts": Date.now().toString(),       // user creation date, or just leave this field out to set the time has current
+    //           "Name": profile.first_name+" "+profile.last_name,
+    //           "Gender": profile.gender,
+    //           "type": "profile",
+    //           "Phone": User.user.getPhoneNumber(),
+    //           // "profileData": {
+    //           // }
+    //         });
+    //         // $log.debug('CLEVERTAP3',registerPush);
+    //       } catch (err) {
+    //         $log.warn('CLEVERTAP. Error with CleverTap', err);
+    //       }
+    //     }
+    //   })
+    // }
 
-    function CleverTapLocation(){
-      try{
-        CleverTap.getLocation(function(loc) {
-          $log.debug("CleverTapLocation is ",loc.lat,loc.lon);
-          CleverTap.setLocation(loc.lat, loc.lon);
-        },
-        function(error) {
-          $log.debug("CleverTapLocation error is ",error);
-        });
-      }catch(err){
-        $log.warn('Error with clevertap',err);
-      }
-    }
+    // function CleverTapLocation(){
+    //   try{
+    //     CleverTap.getLocation(function(loc) {
+    //       $log.debug("CleverTapLocation is ",loc.lat,loc.lon);
+    //       CleverTap.setLocation(loc.lat, loc.lon);
+    //     },
+    //     function(error) {
+    //       $log.debug("CleverTapLocation error is ",error);
+    //     });
+    //   }catch(err){
+    //     $log.warn('Error with clevertap',err);
+    //   }
+    // }
   }
 })();
