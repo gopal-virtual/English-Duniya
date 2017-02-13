@@ -118,6 +118,7 @@
     mapCtrl.demo = User.demo;
     mapCtrl.challenge = challenge
       // mapCtrl.loading = $ionicLoading;
+    mapCtrl.loading = 0;
     mapCtrl.authFactory = Auth;
     mapCtrl.queue = queue;
     mapCtrl.lessons = lessonList;
@@ -506,49 +507,32 @@
     $scope.$on('backButton', mapCtrl.onBackButtonPress)
 
     function onBackButtonPress() {
-      // $log.debug('Do you want to exit?')
-      // if ($scope.profileScreen.isShown()) {
-      //   $scope.profileScreen.hide();
-      // } else {
-      //   analytics.log({
-      //     name: 'APP',
-      //     type: 'EXIT_MODAL_SHOW'
-      //   }, {},User.getActiveProfileSync()._id);
-      //   var confirmExit = $ionicPopup.confirm({
-      //     title: 'Exit',
-      //     template: 'Do you want to exit?'
-      //   });
-      //   confirmExit.then(function(res) {
-      //     if (res) {
-      //       ionic.Platform.exitApp();
-      //     } else {
-      //       analytics.log({
-      //     name: 'APP',
-      //     type: 'EXIT_MODAL_HIDE'
-      //   }, {},User.getActiveProfileSync()._id);
-      //       console.log('You are not sure');
-      //     }
-      //   });
-      // }
-      if ($scope.profileScreen.isShown()) {
-        // $scope.profileScreen.hide();
-        exitChooseProfile()
-      } else if ($scope.phoneNumberScreen.isShown()) {
-        $scope.phone.exit();
-      } else {
-        if (!$scope.exitApp.isShown()) {
-          $log.warn('Clicked on back button on map');
-          $scope.exitApp.show().then(function() {
-            analytics.log({
-              name: 'APP',
-              type: 'EXIT_MODAL_SHOW'
-            }, {
-              time: new Date()
-            }, User.getActiveProfileSync()._id);
-          });
+      $log.warn('LOADING',mapCtrl.loading)
+
+      //UNCOMMENT THIS      
+      if (mapCtrl.loading == 0) {
+        if ($scope.profileScreen.isShown()) {
+          exitChooseProfile()
+        } else if ($scope.phoneNumberScreen.isShown()) {
+          $scope.phone.exit();
+        } else {
+          if (!$scope.exitApp.isShown()) {
+            $log.warn('Clicked on back button on map');
+            $scope.exitApp.show().then(function() {
+              analytics.log({
+                name: 'APP',
+                type: 'EXIT_MODAL_SHOW'
+              }, {
+                time: new Date()
+              }, User.getActiveProfileSync()._id);
+            });
+          }
         }
+        
       }
+
     }
+
     notification.getFromServer({
       dev_id: device.uuid
     }).then(function(response) {
@@ -638,6 +622,18 @@
         // noBackdrop: false
         hideOnStateChange: true
       });
+      mapCtrl.loading = 1;
+      if($scope.exitApp.isShown()){
+        $scope.exitApp.hide().then(function() {
+          analytics.log({
+            name: 'APP',
+            type: 'EXIT_MODAL_HIDE'
+          }, {
+            time: new Date()
+          }, User.getActiveProfileSync()._id);
+          $log.debug('You are not sure');
+        });
+      }
       $scope.demo.isShown() && $scope.demo.hide();
       $scope.selectedNode = node;
       //   $scope.demo.isShown() && $scope.demo.hide();
@@ -948,6 +944,7 @@
         $ionicLoading.show({
           hideOnStateChange: true
         });
+        mapCtrl.loading = 1;
         localStorage.setItem("currentPosition", 4000);
         localStorage.removeItem("regionPage");
         User.profile.update(mapCtrl.User.getActiveProfileSync()._id, profileData).then(function() {
@@ -1056,6 +1053,7 @@
           $ionicLoading.show({
             hideOnStateChange: true
           })
+          mapCtrl.loading = 1;
           pointsQueue.startSync().then(function() {
             $log.debug("syncPointsQueue success")
             $state.go('weekly-challenge', {
