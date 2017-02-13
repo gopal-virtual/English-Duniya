@@ -166,6 +166,7 @@
     $scope.quizResultButtonAnimation = quizResultButtonAnimation;
     $scope.enableGoToMapButton = false;
     quizCtrl.hasJoinedChallenge = User.hasJoinedChallenge();
+    quizCtrl.loading = 0;
     for (var i = 0; i < 10; i++) {
       $scope.groups[i] = {
         name: i,
@@ -1003,6 +1004,7 @@
       $ionicLoading.show({
         hideOnStateChange: true
       });
+      quizCtrl.loading = 1;
       $scope.resultMenu.hide().then(function() {
         $state.go('map.navigate', {
           "activatedLesson": quizCtrl.quiz
@@ -1166,9 +1168,11 @@
     $scope.$on('backButton', function() {
       $log.debug('back button pressed')
         // $log.debug("nzTour",nzTour.current.step);
-      if (!quizCtrl.noPauseFlag) {
-        audio.player.stop();
-        $scope.showNodeMenu();
+      if(quizCtrl.loading == 0 ){
+        if (!quizCtrl.noPauseFlag) {
+          audio.player.stop();
+          $scope.showNodeMenu();
+        }
       }
     });
     $scope.$on('appResume', function() {
