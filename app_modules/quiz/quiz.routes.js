@@ -141,13 +141,13 @@
       })
       .state('quiz.summary', {
         url: '/summary',
-        onEnter: ['$log', 'audio', 'content', '$stateParams', 'lessonutils', 'User', 'ml','challenge', function($log, audio, content, $stateParams, lessonutils, User, ml, challenge) {
+        onEnter: ['$log', 'audio', 'content', '$stateParams', 'lessonutils', 'User', 'ml', 'network', 'challenge', function($log, audio, content, $stateParams, lessonutils, User, ml, network, challenge) {
           var report = $stateParams.report;
           var quiz = $stateParams.quiz;
           var summary = $stateParams.summary;
           var lesson = lessonutils.getLocalLesson();
-          if (!$stateParams.quiz.isPlayed) {
-            challenge.addPoints(User.getActiveProfileSync()._id, 50,'node_complete',$stateParams.quiz.node.id);
+          if (!$stateParams.quiz.isPlayed && User.hasJoinedChallenge() && challenge.isChallengeActive()) {
+            challenge.addPoints(User.getActiveProfileSync()._id, 50, 'node_complete', $stateParams.quiz.node.id);
           }
           User.skills.update({
               profileId: User.getActiveProfileSync()._id,
@@ -185,8 +185,41 @@
                     "sr": quiz.node.parentHindiLessonId,
                     "miss": quiz.node.miss
                   });
-                    "sr": quiz.node.parentHindiLessonId
-                  });
+                  //save cache if present
+                  $log.debug("caching quiz suggestion 1", suggestion);
+                  if (network.isOnline() || JSON.parse(localStorage.getItem('cachedList')).indexOf(suggestion["suggestedLesson"]) >= 0) {
+                    suggestion = {
+                      "suggestedLesson": suggestion["suggestedLesson"],
+                      "dependencyData": suggestion["dependencyData"],
+                      "cache": suggestion["cache"],
+                      "miss": false
+                    };
+                    $log.debug('caching quiz hit', network.isOnline(), suggestion);
+                  } else {
+                    $log.debug('caching quiz miss', network.isOnline(), suggestion);
+                    suggestion = {
+                      "suggestedLesson": suggestion["miss"],
+                      "dependencyData": suggestion["missDependencyData"],
+                      "cache": suggestion["cache"],
+                      "miss": true
+                    };
+                    if (suggestion["suggestedLesson"] == null) {
+                      $log.debug('caching quiz miss and null', network.isOnline(), suggestion);
+                      suggestion = ml.getLessonSuggestion({
+                        "event": "assessment",
+                        "miss": true
+                      });
+                      suggestion = {
+                        "suggestedLesson": suggestion["suggestedLesson"],
+                        "dependencyData": suggestion["dependencyData"],
+                        "cache": suggestion["cache"],
+                        "miss": false
+                      };
+                    }
+                  }
+                  if (suggestion.cache) {
+                    localStorage.setItem('cachingList', JSON.stringify(suggestion.cache));
+                  }
                   $log.debug("got sugggestion", suggestion);
                   return User.profile.updateRoadMapData(ml.roadMapData, User.getActiveProfileSync()._id).then(function() {
                     return User.playlist.add(User.getActiveProfileSync()._id, suggestion)

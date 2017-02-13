@@ -27,9 +27,10 @@
     $ionicLoading,
     notification,
     $ionicPopup,
-    $document,
+    // $document,
     $cordovaSocialSharing,
-    Rest
+    Rest,
+    clevertap
   ) {
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
     $ionicPlatform.registerBackButtonAction(function(event) {
@@ -208,7 +209,6 @@
       //     $log.debug('CLEVERTAP. Notification',e.notification);
       //   })
       // }, false);
-      notification.online.clevertapRegister();
 
 
     $rootScope.showChallengeModal = true;
@@ -222,7 +222,7 @@
           });
           $state.go('map.navigate');
         }
-        if (typeof event.data.name === 'string') {
+        if (event.data.name === 'share') {
           var shareoptions = {
             message: 'I won ' + event.data.points + ' points in the English Duniya Scholarship Competition! You can win too!  Download the app now to participate ', // not supported on some apps (Facebook, Instagram)
             subject: 'English Duniya Scholarship Challenge', // fi. for email
@@ -243,7 +243,7 @@
             .then(function(result) {
               if (result) {
                 $http.post('http://challenge.englishduniya.in/points/', {
-                  profile_id: User.getActiveProfileSync()._id,
+                  client_id: User.getActiveProfileSync()._id,
                   points: [{
                     action: 'share',
                     score: 5
@@ -264,12 +264,32 @@
         $log.debug("Location", location);
       })
       $rootScope.inBackground = false;
+      
+
+
+
+      // User.getActiveProfileSync
+      // notification.online.clevertapProfile();
+      // notification.online.CleverTapLocation();
+      clevertap.registerPush();      
       if (User.getActiveProfileSync()) {
-
-        
-        notification.online.clevertapProfile();
-        
-
+        User.profile.setId(User.getActiveProfileSync()._id).then(function(profileId){
+          $log.debug('profileId',profileId)
+          var profile = User.getActiveProfileSync().data.profile;
+          clevertap.profileSet({
+              "Identity": profileId,
+              "ts": Date.now().toString(),       // user creation date, or just leave this field out to set the time has current
+              "Name": profile.first_name+" "+profile.last_name,
+              "Gender": profile.gender,
+              "type": "profile",
+              "Phone": "+91"+User.user.getPhoneNumber(),
+              // "profileData": {
+              // }
+            })
+        }).catch(function(err){
+          $log.warn('error occured app run, getting profile id',err);
+        });
+        // notification.online.clevertapRegister();
         // $log.debug("CHECK 2")
         //DO NOT REMOVE THIS CODE IT IS THERE INCASE CLEVERTAP IS REMOVED
         // notification.online.set();

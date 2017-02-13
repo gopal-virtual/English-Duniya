@@ -25,7 +25,6 @@ var shell = require('gulp-shell');
 var request = require('sync-request');
 var grades = require('./grades');
 var jeditor = require("gulp-json-editor");
-
 var paths = {
   sass: [
     './scss/**/*.scss',
@@ -107,8 +106,7 @@ var languages_list = [{
 }, {
   name: 'kannada',
   code: 'kn'
-}
-];
+}];
 var env = argument.argv.env ? environments[argument.argv.env] : environments.default;
 var app_type = argument.argv.app_type ? argument.argv.app_type : 'na';
 var campaign_name = argument.argv.campaign_name ? argument.argv.campaign_name : 'playstore';
@@ -118,14 +116,21 @@ var app_version = 'na';
 var constants = JSON.parse(file.readFileSync(paths.constants.environment, 'utf8'));
 var lock = argument.argv.lock ? argument.argv.lock : constants[env]['LOCK'];
 var fake_id_device = constants[env]['FAKE_ID_DEVICE'] || 'na';
+var notifications_couch_db_server = constants[env]['NOTIFICATION_DB_SERVER'];
 var lesson_db_version = 'na';
 var diagnosis_media = [];
 var allowed_languages_list = [];
+var tasks_for_download_localized_audio = ['rm -f www/sound/localized/*',
+  'rm -f localizedSounds*.zip'
+];
 for (i in languages_list) {
   if (allowed_languages.indexOf(languages_list[i].code) !== -1) {
     allowed_languages_list.push(languages_list[i]);
+    tasks_for_download_localized_audio.push('wget -O localizedSounds_' + languages_list[i].code + '.zip http://localization.englishduniya.in/download\?lang\=' + languages_list[i].code,
+      'unzip -o localizedSounds_' + languages_list[i].code + '.zip -d www/sound/localized/');
   }
 }
+console.log(tasks_for_download_localized_audio);
 var lessonsdb_couch_server = argument.argv.lessonsdb;
 var diagnosis_couch_db_server = argument.argv.diagnosisdb;
 //Get app version
@@ -145,7 +150,8 @@ gulp.task('generate-lessondb', shell.task(
     // 'rm www/data/lessons.db',
     // 'rm www/data/diagnosis_translations.db',
     'pouchdb-dump ' + lessonsdb_couch_server + ' > www/data/lessons.db',
-    'pouchdb-dump ' + diagnosis_couch_db_server + ' > www/data/diagnosis_translations.db'
+    'pouchdb-dump ' + diagnosis_couch_db_server + ' > www/data/diagnosis_translations.db',
+    'pouchdb-dump ' + notifications_couch_db_server + ' > www/data/notifications.db'
   ] : []
 ));
 // gulp.task('optimize', function(cb) {
@@ -251,6 +257,9 @@ gulp.task('generate-constants', function() {
       }, {
         match: 'CHALLENGE_START',
         replacement: constants[env]['CHALLENGE_START']
+      }, {
+        match: 'CHALLENGE_END',
+        replacement: constants[env]['CHALLENGE_END']
       }]
     }))
     .pipe(rename(paths.constants.destination_filename))
@@ -344,12 +353,7 @@ gulp.task('makeLocalizationFactory', function() {
     .pipe(gulp.dest(paths.localizationFactory.destination));
 });
 gulp.task('downloadLocalizedAudio', shell.task(
-  (env !== environments.dev) ? [
-    'rm www/sound/localized/*',
-    'rm localizedSounds.zip',
-    'wget -O localizedSounds.zip http://localization.englishduniya.in/download',
-    'unzip localizedSounds.zip -d www/sound/localized'
-  ] : []
+  (env !== environments.dev) ? tasks_for_download_localized_audio : []
 ));
 gulp.task('watch', ['default'], function() {
   gulp.watch(paths.sass, ['sass']);
@@ -375,23 +379,22 @@ gulp.task('watch', ['default'], function() {
 //   }
 //   done();
 // });
-
 //Rudra wrote this foolish code
-gulp.task('editPackageJson', function(){
+gulp.task('editPackageJson', function() {
   return gulp.src("./package.json")
-  .pipe(jeditor(function(json) {
-    // json.version = "1.2.3";
-    // var cleverTapPlugin = json.cordovaPlugins.find(function(elem){
-    //   return elem.id == "com.clevertap.cordova.CleverTapPlugin";
-    // })
-    for (var i = 0; i < json.cordovaPlugins.length; i++) {
-      if(json.cordovaPlugins[i].id == "com.clevertap.cordova.CleverTapPlugin"){
-        json.cordovaPlugins[i].variables = constants[env]['CLEVERTAP_VARS'];
+    .pipe(jeditor(function(json) {
+      // json.version = "1.2.3";
+      // var cleverTapPlugin = json.cordovaPlugins.find(function(elem){
+      //   return elem.id == "com.clevertap.cordova.CleverTapPlugin";
+      // })
+      for (var i = 0; i < json.cordovaPlugins.length; i++) {
+        if (json.cordovaPlugins[i].id == "com.clevertap.cordova.CleverTapPlugin") {
+          json.cordovaPlugins[i].variables = constants[env]['CLEVERTAP_VARS'];
+        }
       }
-    }
-    console.log('cordova - plugins - available',json.cordovaPlugins);
-    // cleverTapPlugin.variables = constants
-    return json; // must return JSON object. 
-  }))
-  .pipe(gulp.dest("."));
+      console.log('cordova - plugins - available', json.cordovaPlugins);
+      // cleverTapPlugin.variables = constants
+      return json; // must return JSON object. 
+    }))
+    .pipe(gulp.dest("."));
 })

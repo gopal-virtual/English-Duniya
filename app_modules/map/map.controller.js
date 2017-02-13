@@ -163,7 +163,8 @@
     mapCtrl.syncPointsQueue2 = syncPointsQueue2;
     mapCtrl.openChallenge = openChallenge;
     mapCtrl.isUserEligibleForChallenge = challenge.isUserEligible();
-    mapCtrl.hasJoinedChallenge = User.hasJoinedChallenge()
+    mapCtrl.hasJoinedChallenge = User.hasJoinedChallenge();
+    mapCtrl.isChallengeActive = challenge.isChallengeActive();
     $scope.exitChooseProfile = exitChooseProfile;
     $scope.onProfileCardClick = onProfileCardClick;
     $scope.isOnline = network.isOnline();
@@ -200,22 +201,26 @@
       open: goToPhoneNumber,
     }
     $scope.exitModal = {
-      message: 'Do you want to leave the game?',
-      dismiss: exitModalDismiss,
-      confirm: exitModalConfirm
-    }
-
-    // notification.offline.list()
-    notification.offline.list().then(function(schedulerObjectArray){
+        message: 'Do you want to leave the game?',
+        dismiss: exitModalDismiss,
+        confirm: exitModalConfirm
+      }
+      // notification.offline.list()
+    notification.offline.list().then(function(schedulerObjectArray) {
       // notification.offline.scheduleMulti(schedulerObjectArray);
       $rootScope.toBeScheduled = schedulerObjectArray;
-    }).catch(function(err){
-      $log.error('some error occured while fetching offline notification doc',err);
+    }).catch(function(err) {
+      $log.error('some error occured while fetching offline notification doc', err);
     })
-    
+
     function openChallenge() {}
 
     function exitModalDismiss() {
+      $log.debug('EXITING SURELY')
+      ionic.Platform.exitApp();
+    }
+
+    function exitModalConfirm() {
       $log.debug('EXITING NOT SURELY')
       $scope.exitApp.hide().then(function() {
         analytics.log({
@@ -226,11 +231,6 @@
         }, User.getActiveProfileSync()._id);
         $log.debug('You are not sure');
       });
-    }
-
-    function exitModalConfirm() {
-      $log.debug('EXITING SURELY')
-      ionic.Platform.exitApp();
     }
     $scope.showCreateProfileModal = function() {
       $scope.createProfileModal.show();
@@ -642,13 +642,13 @@
       //   $scope.demo.isShown() && $scope.demo.hide();
       var promise;
       $log.debug('intro sound', node.node.intro_sound, node)
-        // if (node.node.intro_sound) {
-        //   promise = mediaManager.downloadIfNotExists(node.node.intro_sound)
-        // } else {
-        //   promise = $q.resolve();
-        // }
       lessonutils.cacheLessons()
-        .then(function() {
+      if (node.node.intro_sound) {
+        promise = mediaManager.downloadIfNotExists(node.node.intro_sound)
+      } else {
+        promise = $q.resolve();
+      }
+      promise.then(function() {
           return mediaManager.getPath(node.node.intro_sound)
         })
         .then(function(s) {
@@ -1106,7 +1106,7 @@
     }).then(function(challengeModal) {
       $log.debug("challenge modal defined", User.hasJoinedChallenge())
       $scope.challengeModal = challengeModal;
-      if (User.demo.getStep() != 1 && !User.hasJoinedChallenge() && challenge.isUserEligible() && $rootScope.showChallengeModal) {
+      if (User.demo.getStep() != 1 && !User.hasJoinedChallenge() && challenge.isUserEligible() && $rootScope.showChallengeModal && challenge.isChallengeActive()) {
         $log.debug("showing challenge modal")
         mapCtrl.openChallengeTimeout = $timeout(function() {
           $scope.challengeModal.show().then(function() {

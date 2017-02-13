@@ -57,41 +57,60 @@
     return utils;
 
     function cacheLessons() {
-      if (!localStorage.getItem('cachedList')) {
-        localStorage.setItem('cachedList', JSON.stringify([]));
-      }
-      if (!localStorage.getItem('cachingList')) {
-        // make a caching list from roadmap data
-        var cachingList = [];
+      //get road map array
+      // check if it is cached or not
+      // if not add it in caching list
+      // else ignore it
+      var roadMapList = [];
+      if (localStorage.roadMapData && JSON.parse(localStorage.roadMapData).roadMap) {
         angular.forEach(JSON.parse(localStorage.roadMapData).roadMap, function(data) {
-          cachingList.push(data.sr);
+          roadMapList.push(data.sr);
         });
-        localStorage.setItem('cachingList', JSON.stringify(cachingList));
       }
+      var cachedList = localStorage.getItem('cachedList') ? JSON.parse(localStorage.getItem('cachedList')) : [];
+      var cachingList = localStorage.getItem('cachingList') ? JSON.parse(localStorage.getItem('cachingList')) : [];
+      angular.forEach(roadMapList, function(roadMapListItem) {
+        if (cachedList.indexOf(roadMapListItem) < 0) {
+          cachingList.push(roadMapListItem);
+        }
+      });
+      localStorage.setItem('cachingList', JSON.stringify((cachingList)));
       var lessonList = JSON.parse(localStorage.cachingList);
       // var list = [];
       var promises = [];
-      var promises2 = [];
+      // var promises2 = []
       angular.forEach(lessonList, function(lesson) {
-        promises2.push(content.getLesson(lesson))
+        promises.push(content.getLesson(lesson).then(function(lessonData){
+          return content.downloadLesson(lessonData);
+        }).catch(function(e){
+          $log.debug("Errir in getting content",e)
+        }));        
       });
-      return $q.all(promises2).then(function(data) {
-        $log.debug("done 2", data);
-        angular.forEach(data, function(lessonData) {
-          promises.push(content.downloadLesson(lessonData))
-        })
-        return $q.all(promises).then(function(a) {
-          var cachedList = localStorage.getItem('cachedList') ? JSON.parse(localStorage.getItem('cachedList')) : [];
-          angular.forEach(JSON.parse(localStorage.getItem('cachingList')), function(item) {
-              if (cachedList.indexOf(item) < 0) {
-                cachedList.push(item);
-              }
-            })
-            // cachedList = cachedList.concat(JSON.parse(localStorage.getItem('cachingList')));
-          localStorage.setItem('cachedList', JSON.stringify(cachedList));
-          $log.debug("done", a);
-        });
-      });
+
+      $q.all(promises).then(function(s){
+        $log.debug("CACHING IS DONE===",s);
+        localStorage.setItem('cachedList',JSON.stringify(cachedList.concat(cachingList)));
+        localStorage.setItem('cachingList',JSON.stringify([]));
+      }).catch(function(e){
+        $log.debug("Error in cachng",e);
+      })
+      // return $q.all(promises2).then(function(data) {
+      //   $log.debug("done 2", data);
+      //   angular.forEach(data, function(lessonData) {
+      //     promises.push()
+      //   })
+      //   return $q.all(promises).then(function(a) {
+      //     var cachedList = localStorage.getItem('cachedList') ? JSON.parse(localStorage.getItem('cachedList')) : [];
+      //     angular.forEach(JSON.parse(localStorage.getItem('cachingList')), function(item) {
+      //         if (cachedList.indexOf(item) < 0) {
+      //           cachedList.push(item);
+      //         }
+      //       })
+      //       // cachedList = cachedList.concat(JSON.parse(localStorage.getItem('cachingList')));
+      //     localStorage.setItem('cachedList', JSON.stringify(cachedList));
+      //     $log.debug("done", a);
+      //   });
+      // });
     }
 
     function demoShown() {

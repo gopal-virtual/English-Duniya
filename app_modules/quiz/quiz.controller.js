@@ -32,6 +32,7 @@
     'User',
     'content',
     'localized',
+    'network',
     'challenge'
   ];
 
@@ -64,6 +65,7 @@
     User,
     content,
     localized,
+    network,
     challenge
   ) {
     var quizCtrl = this;
@@ -708,7 +710,7 @@
             $log.debug('ANIMATION. result menu was open');
             resultButtonAnimation();
             playStarSound();
-            if (!$stateParams.quiz.isPlayed) {
+            if (!$stateParams.quiz.isPlayed && quizCtrl.hasJoinedChallenge && challenge.isChallengeActive()) {
               challenge.addPoints(User.getActiveProfileSync()._id, 50, 'node_complete', $stateParams.quiz.node.id);
             }
             User.skills.update({
@@ -738,30 +740,79 @@
               })
               .then(function() {
                 if (quiz.node.requiresSuggestion) {
-                  ml.setLessonResultMapping().then(function() {
+                  return ml.setLessonResultMapping().then(function() {
                     var suggestion = ml.getLessonSuggestion({
                       "event": "assessment",
                       "score": summary.score.marks,
                       "totalScore": quiz.node.type.score,
                       "skill": quiz.node.tag.toLowerCase(),
-                      "sr": quiz.node.parentHindiLessonId
+                      "sr": quiz.node.parentHindiLessonId,
+                      "miss": quiz.node.miss
                     });
+                    //save cache if present
+                    // var cachingList = localStorage.getItem('cachingList') ? JSON.parse(localStorage.getItem('cachingList')) : [];
+                    var cachedList = localStorage.getItem('cachedList') ? JSON.parse(localStorage.getItem('cachedList')) : [];
+                    // $log.debug("caching quiz suggestion 1", suggestion);
+                    if (network.isOnline() || cachedList.indexOf(suggestion["suggestedLesson"]) >= 0) {
+                      suggestion = {
+                        "suggestedLesson": suggestion["suggestedLesson"],
+                        "dependencyData": suggestion["dependencyData"],
+                        "cache": suggestion["cache"],
+                        "miss": false
+                      };
+                      // Add this node to caching list
+                      // if (cachingList.indexOf(suggestion["suggestedLesson"]) < 0 && cachedList.indexOf(suggestion["suggestedLesson"]) < 0) {
+                      //   cachingList.push(suggestion["suggestedLesson"]);
+                      //   $log.debug("New lesson recommended as user was online, adding it to caching list");
+                      //   localStorage.setItem('cachingList', JSON.stringify(cachingList));
+                      // }
+                      $log.debug('caching quiz hit', network.isOnline(), suggestion);
+                    } else {
+                      $log.debug('caching quiz miss', network.isOnline(), suggestion);
+                      suggestion = {
+                        "suggestedLesson": suggestion["miss"],
+                        "dependencyData": suggestion["missDependencyData"],
+                        "cache": suggestion["cache"],
+                        "miss": true
+                      };
+                      if (suggestion["suggestedLesson"] == null) {
+                        $log.debug('caching quiz miss and null', network.isOnline(), suggestion);
+                        suggestion = ml.getLessonSuggestion({
+                          "event": "assessment",
+                          "miss": true
+                        });
+                        suggestion = {
+                          "suggestedLesson": suggestion["suggestedLesson"],
+                          "dependencyData": suggestion["dependencyData"],
+                          "cache": suggestion["cache"],
+                          "miss": false
+                        };
+                      }
+                    }
+                    // if (suggestion.cache) {
+                    //   for (var i = 0; i < suggestion.cache.length; i++) {
+                    //     if (cachingList.indexOf(suggestion["suggestedLesson"]) < 0 && cachedList.indexOf(suggestion["suggestedLesson"]) < 0) {
+                    //       cachingList.push(suggestion.cache[i])
+                    //     }
+                    //   }
+                    //   localStorage.setItem('cachingList', JSON.stringify(cachingList))
+                    // }
                     $log.debug("got sugggestion", suggestion);
                     return User.profile.updateRoadMapData(ml.roadMapData, User.getActiveProfileSync()._id).then(function() {
                       return User.playlist.add(User.getActiveProfileSync()._id, suggestion)
                     })
                   })
                 } else {
-                  ml.setLessonResultMapping().then(function() {
+                  return ml.setLessonResultMapping().then(function() {
                     $log.debug('deleteSuccessfulNodeFromRoadmap');
                     ml.deleteSuccessfulNodeFromRoadmap(quiz.node.parent, summary.score.marks / quiz.node.type.score);
-                  })
+                  });
                 }
               })
               .then(function(success) {
                 $log.debug("playlist added user can go back to map")
                 $scope.enableGoToMapButton = true;
-                  // var report_id = success.id;
+                // var report_id = success.id;
                 var attempts = [];
                 angular.forEach(report.attempts, function(value, key) {
                   attempts.push({
@@ -840,9 +891,17 @@
             "event": "diagnosisTest",
             "levelRec": levelRec
           });
-          localStorage.setItem('cachingList', JSON.stringify(suggestion.cache));
-          localStorage.setItem('cachedList', JSON.stringify([]));
-          $log.debug("caching diagnosis suggestion", suggestion);
+          // var cachingList = localStorage.getItem('cachingList') ? JSON.parse(localStorage.getItem('cachingList')) : [];
+          // var cachedList = localStorage.getItem('cachedList') ? JSON.parse(localStorage.getItem('cachedList')) : [];
+          // localStorage.setItem('cachedList', JSON.stringify(cachedList));
+          // localStorage.setItem('cachingList', JSON.stringify(cachingList));
+          // for (var i = 0; i < suggestion.cache.length; i++) {
+            // if (cachingList.indexOf(suggestion["suggestedLesson"]) < 0 && cachedList.indexOf(suggestion["suggestedLesson"]) < 0) {
+              // cachingList.push(suggestion.cache[i])
+            // }
+          // }
+          // localStorage.setItem('cachingList', JSON.stringify(cachingList))
+          // $log.debug("caching diagnosis suggestion", suggestion);
           suggestion = {
             "suggestedLesson": suggestion["suggestedLesson"],
             "dependencyData": suggestion["dependencyData"],
@@ -956,10 +1015,10 @@
       $ionicLoading.show({
         hideOnStateChange: true
       });
-      $scope.resultMenu.hide().then(function(){
-         $state.go('map.navigate', {
-        "activatedLesson": quizCtrl.quiz
-      });
+      $scope.resultMenu.hide().then(function() {
+        $state.go('map.navigate', {
+          "activatedLesson": quizCtrl.quiz
+        });
       })
       analytics.log({
           name: 'LESSON',
@@ -971,19 +1030,18 @@
         User.getActiveProfileSync()._id
       )
       $stateParams.type == 'practice' && analytics.log({
-          name: 'PRACTICE',
-          type: 'SWITCH',
-          id: quizCtrl.quiz.node.id
-        }, {
-          time: new Date()
-        },
-        User.getActiveProfileSync()._id
-      )
-     
-      // }
-      // else {
-      //   $scope.showNodeMenu();
-      // }
+            name: 'PRACTICE',
+            type: 'SWITCH',
+            id: quizCtrl.quiz.node.id
+          }, {
+            time: new Date()
+          },
+          User.getActiveProfileSync()._id
+        )
+        // }
+        // else {
+        //   $scope.showNodeMenu();
+        // }
     }
     // intronext
     $scope.tour = {
