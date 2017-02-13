@@ -896,9 +896,9 @@
           // localStorage.setItem('cachedList', JSON.stringify(cachedList));
           // localStorage.setItem('cachingList', JSON.stringify(cachingList));
           // for (var i = 0; i < suggestion.cache.length; i++) {
-            // if (cachingList.indexOf(suggestion["suggestedLesson"]) < 0 && cachedList.indexOf(suggestion["suggestedLesson"]) < 0) {
-              // cachingList.push(suggestion.cache[i])
-            // }
+          // if (cachingList.indexOf(suggestion["suggestedLesson"]) < 0 && cachedList.indexOf(suggestion["suggestedLesson"]) < 0) {
+          // cachingList.push(suggestion.cache[i])
+          // }
           // }
           // localStorage.setItem('cachingList', JSON.stringify(cachingList))
           // $log.debug("caching diagnosis suggestion", suggestion);
@@ -1012,10 +1012,12 @@
 
     function next() {
       // if (quizCtrl.summary.stars >= 1) {
+        $log.debug(new Date().toTimeString(),"debug-optimize", "next clicked")
       $ionicLoading.show({
         hideOnStateChange: true
       });
       $scope.resultMenu.hide().then(function() {
+        $log.debug(new Date().toTimeString(),"debug-optimize", "go to state map.navigate")
         $state.go('map.navigate', {
           "activatedLesson": quizCtrl.quiz
         });

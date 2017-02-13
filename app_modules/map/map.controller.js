@@ -95,6 +95,7 @@
     challenge,
     pointsQueue
   ) {
+    $log.debug(new Date().toTimeString(),"debug-optimize", "inside map controller")
     $scope.audio = audio;
     $scope.settings = settings;
     var temp = JSON.parse(localStorage.getItem('profile')).data.profile;
