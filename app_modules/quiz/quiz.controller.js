@@ -764,7 +764,7 @@
                         if(cachingList.indexOf(suggestion["suggestedLesson"]) < 0){
                           cachingList.push(suggestion["suggestedLesson"]);
                           $log.debug("New lesson recommended as user was online, adding it to caching list");
-                          localStorage.setItem('cachingList',cachingList);
+                          localStorage.setItem('cachingList',JSON.stringify(cachingList));
                         }
                       }
                       $log.debug('caching quiz hit', network.isOnline(), suggestion);
