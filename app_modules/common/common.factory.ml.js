@@ -527,7 +527,6 @@
 
       recommendationsWithPrereqs = recsWithPrereqsNSKills;
 
-      var roadMap = [];
       var roadMapSkills = [];
       var maxRecInSkill = 0;
 
@@ -539,8 +538,13 @@
       }
       roadMapSkills.sort();
 
+      var roadMapDivided = {
+        "vocabulary": [],
+        "non-vocabulary" : []
+      };
+      var pushedLessons = [];
       for(var i = 0; i < maxRecInSkill; i++){
-        if(roadMap.length >= ml.roadMapMax){
+        if(pushedLessons.length >= ml.roadMapMax){
           break;
         }
 
@@ -549,14 +553,40 @@
         // for(var skill in recommendationsWithPrereqs){
           if(recommendationsWithPrereqs[skill][i] != undefined){
             var lesson = recommendationsWithPrereqs[skill][i];
-            if(roadMap.indexOf(lesson["sr"]) == -1 && roadMap.length < ml.roadMapMax){
-              roadMap.push(lesson["sr"]);
+            if(pushedLessons.indexOf(lesson["sr"]) == -1 && pushedLessons.length < ml.roadMapMax){
+              pushedLessons.push(lesson["sr"]);
+              if(skill == "vocabulary"){
+                roadMapDivided["vocabulary"].push(lesson["sr"]);
+              }else{
+                roadMapDivided["non-vocabulary"].push(lesson["sr"]);
+              }
             }
           }
         }
       }
+
+      var vocabLength = roadMapDivided["vocabulary"].length;
+      var nonVocabLength = roadMapDivided["non-vocabulary"].length;
+
+      if(vocabLength == 0 || nonVocabLength == 0){
+        return pushedLessons;
+      }
+
+      var roadMap = []
+      var step = Math.ceil(vocabLength/nonVocabLength);
+      for(var i= 0; i < nonVocabLength; i++){
+        var nonVocab = roadMapDivided["non-vocabulary"][i];
+        roadMap.push(nonVocab);
+        var vocabLesson = roadMapDivided["vocabulary"].splice(0, step);
+        roadMap = roadMap.concat(vocabLesson); 
+      }
+      if(roadMapDivided["vocabulary"].length > 0){
+        roadMap = roadMap.concat(roadMapDivided["vocabulary"]);        
+      }
+
+
       // roadMap = rankPlaylist({ 0: roadMap }, undefined, 1); // This is making the first node same for all users.
-      roadMap = shuffleArray(roadMap);
+      // roadMap = shuffleArray(roadMap);
       return roadMap;
     }
 
@@ -1171,7 +1201,7 @@
 
         if (insufficientSkillSrs.length == 0) {
             // $log.debug('insufficientSkillSrs 0');
-            return skillBasedSuggestedSrs;
+            return [skillBasedSuggestedSrs, skillLevels];
         }
 
         // $log.debug('insufficientSkillSrs', insufficientSkillSrs);
@@ -1192,7 +1222,7 @@
       var skill = ml.kmapsJSON[sr]["unit"];
       if(skill == "vocabulary"){
         level = ml.kmapsJSON[sr]["level"];
-        if(ml.roadMapData["levelRec"]["skillLevel"][skill]){
+        if(ml.roadMapData["levelRec"]["skillLevel"][skill] != undefined){
           if(ml.roadMapData["levelRec"]["skillLevel"][skill] <= 3){
             maxLevel = ml.roadMapData["levelRec"]["skillLevel"][skill];
           }else{

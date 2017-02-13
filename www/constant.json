@@ -50,7 +50,7 @@
     "CONTENT_TEST":false,
     "LOCK": true,
     "FAKE_LOGIN": true,
-    "FAKE_ID_DEVICE": "rudra-is-back-232",
+    "FAKE_ID_DEVICE": "ayush70",
     "FAKE_DEVICE": true,
     "BACKEND_SERVICE_DOMAIN": "https://cc-test-2.zaya.in/",
     "RESOURCE_SERVER": "https://cc-test.zaya.in",
