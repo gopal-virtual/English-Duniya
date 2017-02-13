@@ -750,8 +750,10 @@
                       "miss": quiz.node.miss
                     });
                     //save cache if present
-                    $log.debug("caching quiz suggestion 1", suggestion);
-                    if (network.isOnline() || JSON.parse(localStorage.getItem('cachedList')).indexOf(suggestion["suggestedLesson"]) >= 0) {
+                    // var cachingList = localStorage.getItem('cachingList') ? JSON.parse(localStorage.getItem('cachingList')) : [];
+                    var cachedList = localStorage.getItem('cachedList') ? JSON.parse(localStorage.getItem('cachedList')) : [];
+                    // $log.debug("caching quiz suggestion 1", suggestion);
+                    if (network.isOnline() || cachedList.indexOf(suggestion["suggestedLesson"]) >= 0) {
                       suggestion = {
                         "suggestedLesson": suggestion["suggestedLesson"],
                         "dependencyData": suggestion["dependencyData"],
@@ -759,14 +761,11 @@
                         "miss": false
                       };
                       // Add this node to caching list
-                      var cachingList = JSON.parse(localStorage.getItem('cachingList'));
-                      if(cachingList){
-                        if(cachingList.indexOf(suggestion["suggestedLesson"]) < 0){
-                          cachingList.push(suggestion["suggestedLesson"]);
-                          $log.debug("New lesson recommended as user was online, adding it to caching list");
-                          localStorage.setItem('cachingList',JSON.stringify(cachingList));
-                        }
-                      }
+                      // if (cachingList.indexOf(suggestion["suggestedLesson"]) < 0 && cachedList.indexOf(suggestion["suggestedLesson"]) < 0) {
+                      //   cachingList.push(suggestion["suggestedLesson"]);
+                      //   $log.debug("New lesson recommended as user was online, adding it to caching list");
+                      //   localStorage.setItem('cachingList', JSON.stringify(cachingList));
+                      // }
                       $log.debug('caching quiz hit', network.isOnline(), suggestion);
                     } else {
                       $log.debug('caching quiz miss', network.isOnline(), suggestion);
@@ -790,9 +789,14 @@
                         };
                       }
                     }
-                    if (suggestion.cache) {
-                      localStorage.setItem('cachingList', JSON.stringify(suggestion.cache));
-                    }
+                    // if (suggestion.cache) {
+                    //   for (var i = 0; i < suggestion.cache.length; i++) {
+                    //     if (cachingList.indexOf(suggestion["suggestedLesson"]) < 0 && cachedList.indexOf(suggestion["suggestedLesson"]) < 0) {
+                    //       cachingList.push(suggestion.cache[i])
+                    //     }
+                    //   }
+                    //   localStorage.setItem('cachingList', JSON.stringify(cachingList))
+                    // }
                     $log.debug("got sugggestion", suggestion);
                     return User.profile.updateRoadMapData(ml.roadMapData, User.getActiveProfileSync()._id).then(function() {
                       return User.playlist.add(User.getActiveProfileSync()._id, suggestion)
@@ -887,9 +891,17 @@
             "event": "diagnosisTest",
             "levelRec": levelRec
           });
-          localStorage.setItem('cachingList', JSON.stringify(suggestion.cache));
-          localStorage.setItem('cachedList', JSON.stringify([]));
-          $log.debug("caching diagnosis suggestion", suggestion);
+          // var cachingList = localStorage.getItem('cachingList') ? JSON.parse(localStorage.getItem('cachingList')) : [];
+          // var cachedList = localStorage.getItem('cachedList') ? JSON.parse(localStorage.getItem('cachedList')) : [];
+          // localStorage.setItem('cachedList', JSON.stringify(cachedList));
+          // localStorage.setItem('cachingList', JSON.stringify(cachingList));
+          // for (var i = 0; i < suggestion.cache.length; i++) {
+            // if (cachingList.indexOf(suggestion["suggestedLesson"]) < 0 && cachedList.indexOf(suggestion["suggestedLesson"]) < 0) {
+              // cachingList.push(suggestion.cache[i])
+            // }
+          // }
+          // localStorage.setItem('cachingList', JSON.stringify(cachingList))
+          // $log.debug("caching diagnosis suggestion", suggestion);
           suggestion = {
             "suggestedLesson": suggestion["suggestedLesson"],
             "dependencyData": suggestion["dependencyData"],

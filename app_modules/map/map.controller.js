@@ -201,19 +201,18 @@
       open: goToPhoneNumber,
     }
     $scope.exitModal = {
-      message: 'Do you want to leave the game?',
-      dismiss: exitModalDismiss,
-      confirm: exitModalConfirm
-    }
-
-    // notification.offline.list()
-    notification.offline.list().then(function(schedulerObjectArray){
+        message: 'Do you want to leave the game?',
+        dismiss: exitModalDismiss,
+        confirm: exitModalConfirm
+      }
+      // notification.offline.list()
+    notification.offline.list().then(function(schedulerObjectArray) {
       // notification.offline.scheduleMulti(schedulerObjectArray);
       $rootScope.toBeScheduled = schedulerObjectArray;
-    }).catch(function(err){
-      $log.error('some error occured while fetching offline notification doc',err);
+    }).catch(function(err) {
+      $log.error('some error occured while fetching offline notification doc', err);
     })
-    
+
     function openChallenge() {}
 
     function exitModalDismiss() {
@@ -643,13 +642,13 @@
       //   $scope.demo.isShown() && $scope.demo.hide();
       var promise;
       $log.debug('intro sound', node.node.intro_sound, node)
-        // if (node.node.intro_sound) {
-        //   promise = mediaManager.downloadIfNotExists(node.node.intro_sound)
-        // } else {
-        //   promise = $q.resolve();
-        // }
       lessonutils.cacheLessons()
-        .then(function() {
+      if (node.node.intro_sound) {
+        promise = mediaManager.downloadIfNotExists(node.node.intro_sound)
+      } else {
+        promise = $q.resolve();
+      }
+      promise.then(function() {
           return mediaManager.getPath(node.node.intro_sound)
         })
         .then(function(s) {
