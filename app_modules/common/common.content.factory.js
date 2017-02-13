@@ -1,10 +1,8 @@
 (function() {
   'use strict';
-
   angular
     .module('common')
     .factory('content', content);
-
   content.$inject = [
     'pouchDB',
     '$log',
@@ -18,7 +16,6 @@
     '$http',
     '$rootScope'
   ];
-
   /* @ngInject */
   function content(pouchDB,
     $log,
@@ -30,16 +27,20 @@
     widgetParser,
     extendLesson,
     $http,
-    $rootScope) {
-
-    var lessonDB = null;
-
+    $rootScope
+  ) {
+    // var lessonDB = null;
     // if (User.getActiveProfileSync() && User.getActiveProfileSync().data) {
-    lessonDB = pouchDB('lessonsDB', {
-      revs_limit: 1
+    var lessonDB = pouchDB('lessonsDB', {
+      revs_limit: 1,
+      // auto_compaction : true
     });
+    var diagnosisTranslationsDB = pouchDB('diagnosisTranslationsDB', {
+      revs_limit: 1,
+      // auto_compaction : true
+    });
+    // createDiagnosisTranslationsDB();
     // }
-
     var contentProperties = {
       createLessonDBIfNotExists: createLessonDBIfNotExists,
       createOrUpdateLessonDB: createOrUpdateLessonDB,
@@ -48,16 +49,21 @@
       getResourceList: getResourceList,
       getAssessment: getAssessment,
       getLesson: getLesson,
-      getVocabulary : getVocabulary,
+      getVocabulary: getVocabulary,
       downloadVocabulary: downloadVocabulary,
       downloadAssessment: downloadAssessment,
       downloadVideo: downloadVideo,
+      downloadLesson: downloadLesson,
       findNewMediaToDownload: findNewMediaToDownload,
       downloadNewMedia: downloadNewMedia,
       getActiveResource: getActiveResource,
       getActiveLessonId: getActiveLessonId,
       replicateLessonDB: replicateLessonDB,
+      getLocalizedNode: getLocalizedNode,
+      getLocalizedQuestion: getLocalizedQuestion,
       getStatus: getStatus,
+      deleteLessonDB: deleteLessonDB,
+      createDependentDBs: createDependentDBs,
       demo_question: {
         "node": {
           "id": CONSTANT.QUESTION.DEMO,
@@ -121,28 +127,69 @@
         "objects": []
       }
     };
-
     return contentProperties;
 
-  function replicateLessonDB() {
+    function deleteLessonDB() {
+      $log.debug("tag deletelessondb")
+      return lessonDB.erase();
+    }
 
-   $log.debug("replicating lessondb",CONSTANT.LESSONS_DB_SERVER)
-    return lessonDB.replicate.from(CONSTANT.LESSONS_DB_SERVER,{
-      live: true,
-      retry: true,
-      heartbeat: false
-    }).on('paused',function (err) {
-      if(err.reason === 'QuotaExceededError'){
-        $rootScope.$broadcast('lowDiskSpace');
+    function createDiagnosisTranslationsDB() {
+      return diagnosisTranslationsDB.load(CONSTANT.PATH.DATA + '/diagnosis_translations.db');
+    }
+
+    function createDependentDBs() {
+      var createLessonsDB = createOrUpdateLessonDB();
+      var createtranslationsDB = createDiagnosisTranslationsDB()
+      return $q.all(createLessonsDB, createtranslationsDB);
+    }
+
+    function replicateLessonDB() {
+      if (!$rootScope.lessonDBReplicationStarted) {
+        $log.debug("Replication");
+        $rootScope.lessonDBReplicationStarted = true;
+        lessonDB.replicate.from(CONSTANT.LESSONS_DB_SERVER, {
+            retry: true,
+            timeout: 20000
+          }).$promise
+          .then(null, null, function(progress) {
+            $log.debug('lessondb replication status', progress);
+            if (progress.paused && (progress.paused.name === 'indexed_db_went_bad' || progress.paused.name == "InvalidStateError" || progress.paused.reason === "QuotaExceededError")) {
+              $rootScope.$broadcast('lowDiskSpace')
+            }
+          })
+          .then(function(result) {
+            $log.debug('lessondb replication resolved with', result);
+          })
+          .catch(function(reason) {
+            $log.debug('lessondb replication failed with', reason);
+          })
+          .finally(function() {
+            $log.debug('lessondb replication done');
+          });
       }
-      $log.debug("Paused in lessondb replicate",err)
-    }).on('change',function (a) {
-      $log.debug("change in lessondb replicate",a)
+    }
 
-    });
+    function getLocalizedNode(nodeId, targetLanguage) {
+      return lessonDB.get('localized_mapping').then(function(localizationMapping) {
+        return (localizationMapping.mapping[nodeId] && localizationMapping.mapping[nodeId][targetLanguage]) || nodeId;
+      });
+    }
 
- 
-  }
+    function getLocalizedQuestion(questionId, targetLanguage) {
+      return lessonDB.get('localized_mapping').then(function(localizationMapping) {
+
+        if(localizationMapping.mapping[questionId] && localizationMapping.mapping[questionId][targetLanguage]){
+        var translatedQuestionID = localizationMapping.mapping[questionId][targetLanguage];
+           return diagnosisTranslationsDB.get(translatedQuestionID).then(function(question) {
+          return question.question;
+        });
+         }else{
+          return questionId;
+         }
+
+      })
+    }
 
     function findNewMediaToDownload() {
       $rootScope.mediaSyncStatus.checkingMedia = true;
@@ -153,7 +200,6 @@
       return getResourceList().then(function(lessons) {
         return extendLesson.getLesson(lessons).then(function(result) {
           $log.debug("lessons extended", result);
-
           var lessonlist = [];
           angular.forEach(result, function(lesson) {
             $log.debug("lesson", lesson)
@@ -161,7 +207,6 @@
               lessonlist.push(lesson)
             }
           });
-
           var media = getMediaListfromResourceList(lessonlist);
           angular.forEach(media, function(url) {
             promises.push(mediaManager.getPath(url));
@@ -191,7 +236,6 @@
                   // $rootScope.$broadcast('showInfoIcon',true)
               } else {
                 // $rootScope.$broadcast('showInfoIcon',false)
-
               }
               return {
                 size: parseFloat(size / (1024 * 1024)).toFixed(1),
@@ -205,7 +249,6 @@
 
     function downloadNewMedia() {
       $rootScope.mediaSyncStatus.downloadingMedia = true;
-
       var promises = [];
       return findNewMediaToDownload().then(function(mediaSyncStatus) {
         $rootScope.mediaSyncStatus = mediaSyncStatus;
@@ -218,7 +261,6 @@
         $rootScope.mediaSyncStatus.size = 0;
         $rootScope.mediaSyncStatus.mediaToDownload = [];
         // $rootScope.$broadcast('showInfoIcon',false)
-
       })
     }
 
@@ -264,81 +306,60 @@
                     media.push(url);
                   }
                 }
-
               }
             }
           })
         }
-
-
       });
       return media;
     }
 
     function createLessonDBIfNotExists() {
       $log.debug("createLessonDBIfNotExists")
-
-      lessonDB = pouchDB('lessonsDB', {
-        revs_limit: 1
-      });
-
-      return lessonDB.get('_local/preloaded').then(function(doc) {
-
-
-      }).catch(function(err) {
+        // lessonDB = pouchDB('lessonsDB', {
+        //   revs_limit: 1
+        // });
+      return lessonDB.get('_local/preloaded').then(function(doc) {}).catch(function(err) {
         if (err.name !== 'not_found') {
           throw err;
         }
         $log.debug("NEW DB MADE 1");
         return lessonDB.load(CONSTANT.PATH.DATA + '/lessons.db').then(function() {
           $log.debug("NEW DB MADE 2");
-
           return lessonDB.put({
             _id: '_local/preloaded'
           });
         })
-
       })
     }
 
     function createOrUpdateLessonDB() {
       $log.debug("create or update lessondb")
-      lessonDB = pouchDB('lessonsDB', {
-        revs_limit: 1
-      });
+        // lessonDB = pouchDB('lessonsDB', {
+        //   revs_limit: 1
+        // });
       $log.debug("NEW DB MADE 1");
       return lessonDB.load(CONSTANT.PATH.DATA + '/lessons.db', {
-          proxy: CONSTANT.LESSONS_DB_SERVER
-        })
-        .then(function() {
-          return replicateLessonDB()
-        })
+        // proxy: CONSTANT.LESSONS_DB_SERVER
+      })
     }
 
     function createLessonDBIfNotExistsPatch() {
-      lessonDB = pouchDB('lessonsDB', {
-        revs_limit: 1
-      });
-
-
-      return lessonDB.get('_local/preloaded').then(function(doc) {
-
-
-      }).catch(function(err) {
+      // lessonDB = pouchDB('lessonsDB', {
+      //   revs_limit: 1
+      // });
+      return lessonDB.get('_local/preloaded').then(function(doc) {}).catch(function(err) {
         if (err.name !== 'not_found') {
           throw err;
         }
         $log.debug("NEW DB MADE 1");
         return lessonDB.load(CONSTANT.PATH.DATA + '/lessons.db').then(function() {
           $log.debug("NEW DB MADE 2");
-
           return lessonDB.put({
             _id: '_local/preloaded'
           });
         })
-
       })
-
     }
 
     function getLessonsList() {
@@ -346,14 +367,12 @@
       lessonDB.allDocs({
           include_docs: true
         }).then(function(data) {
-
-
           var lessons = [];
           var currentLesson = {}
           for (var i = 0; i < data.rows.length; i++) {
             //   data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key;
             $log.debug("====", data.rows[i].id)
-            if (data.rows[i].doc && data.rows[i].id !== '_design/_auth') {
+            if (data.rows[i].doc && data.rows[i].id !== '_design/_auth' && data.rows[i].id !== 'localized_mapping') {
               currentLesson = data.rows[i].doc.lesson
               $log.debug('modified lesson', data.rows[i])
               for (var c = 0; c < currentLesson.objects.length; c++) {
@@ -367,112 +386,106 @@
           }
           // for (var i = 0; i < lessons.length; i++) {
           // data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key;
-
           // }
           // lessons = _.sortBy(lessons, 'key');
-
           d.resolve(lessons)
         })
         .catch(function(error) {
           d.reject(error)
         });
-
       return d.promise;
     }
 
     function getResourceList() {
       var i;
-
       var d = $q.defer();
-
       User.playlist.get(User.getActiveProfileSync()._id).then(function(playlist) {
           lessonDB.allDocs({
             include_docs: true
           }).then(function(data) {
             // $log.debug("AAAAAAAA "+data+" END");
-
             var lessons = [];
             var resources = [];
             var playlist_ids = [];
             for (i = 0; i < playlist.length; i++) {
+              $log.debug("making playlist ids");
               playlist_ids.push(playlist[i].lesson_id);
             }
-
+            $log.debug("done making playlist ids" + JSON.stringify(playlist_ids));
             for (i = 0; i < data.rows.length; i++) {
+              $log.debug("making lessonlist");
               var index = -1;
               while ((index = playlist_ids.indexOf(data.rows[i].id, index + 1)) != -1) {
+                $log.debug("making lessonlist 1");
                 lessons[index] = data.rows[i];
+                lessons[index]['parentHindiLessonId'] = playlist[index]['suggestedLesson']
+                lessons[index]['miss'] = playlist[index]['miss'];
               }
             }
-              // if(playlist.indexOf(data.rows[i].id) >= 0){
-              //     lessons[playlist.indexOf(data.rows[i].id)] = data.rows[i]
-              //   }
-
-
+            // if(playlist.indexOf(data.rows[i].id) >= 0){
+            //     lessons[playlist.indexOf(data.rows[i].id)] = data.rows[i]
+            //   }
+            $log.debug("Modifying lessons list")
             for (i = 0; i < lessons.length; i++) {
-
-              // data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key;
+              $log.debug("Modifying lessons list 1")
+                // data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key;
               for (var c = 0; c < lessons[i].doc.lesson.objects.length; c++) {
+                $log.debug("Modifying lessons list 2")
                 if (lessons[i].doc.lesson.node.meta && lessons[i].doc.lesson.node.meta.intros && lessons[i].doc.lesson.node.meta.intros.sound && lessons[i].doc.lesson.node.meta.intros.sound[0]) {
                   lessons[i].doc.lesson.objects[c].node.intro_sound = lessons[i].doc.lesson.node.meta.intros.sound[0];
                 }
                 lessons[i].doc.lesson.objects[c].node.tag = lessons[i].doc.lesson.node.tag;
                 lessons[i].doc.lesson.objects[c].node.playlist_index = i;
+                $log.debug("parent hindi lesson is " + lessons[i]['parentHindiLessonId'])
+                lessons[i].doc.lesson.objects[c].node.parentHindiLessonId = lessons[i]['parentHindiLessonId'];
+                lessons[i].doc.lesson.objects[c].node.miss = lessons[i]['miss'];
               }
               // for(var c = 0; c < lessons[i].doc.lesson.objects.length; c++){
               // $log.debug("Iter ",lessons[i].doc.lesson.objects[c].node.playlist_index )
               // }
-                var include_video_flag = true;
-                var include_vocab_flag = true;
-                $log.debug("pre",playlist.length);
-                angular.forEach(CONSTANT.NODE_TYPE_LIST,function(node_type){
+              var include_video_flag = true;
+              var include_vocab_flag = true;
+              $log.debug("pre", playlist.length);
+              angular.forEach(CONSTANT.NODE_TYPE_LIST, function(node_type) {
                 for (var c = 0; c < lessons[i].doc.lesson.objects.length; c++) {
-                  $log.debug("pre playlist",playlist[i])
                   if (node_type == 'vocabulary' && lessons[i].doc.lesson.objects[c].node.content_type_name === 'vocabulary') {
-                    $log.debug("pre vocab found")
-                   for (var key in playlist[i]) {
-                       if (playlist[i].hasOwnProperty(key)) {
-                            $log.debug("Previously attempted ",playlist[i][key].type,key)
-                           if(playlist[i][key].type === 'resource'){
-                            $log.debug("previusly attempted Video found ");
-                            include_vocab_flag = false;
-                           }   
+                    for (var key in playlist[i]) {
+                      if (playlist[i].hasOwnProperty(key)) {
+                        if (playlist[i][key].type === 'resource') {
+                          include_vocab_flag = false;
+                        }
                       }
                     }
-                    if(include_vocab_flag){
-                    resources.push(angular.copy(lessons[i].doc.lesson.objects[c]));
-                    include_video_flag = false;
+                    if (include_vocab_flag) {
+                      resources.push(angular.copy(lessons[i].doc.lesson.objects[c]));
+                      include_video_flag = false;
                     }
                   }
-                  if (node_type == 'resource' && lessons[i].doc.lesson.objects[c].node.content_type_name  === 'resource' && include_video_flag === true) {
+                  if (node_type == 'resource' && lessons[i].doc.lesson.objects[c].node.content_type_name === 'resource' && include_video_flag === true) {
                     resources.push(angular.copy(lessons[i].doc.lesson.objects[c]));
                   }
-                  if (node_type == 'assessment' && lessons[i].doc.lesson.objects[c].node.content_type_name  === 'assessment') {
+                  if (node_type == 'assessment' && lessons[i].doc.lesson.objects[c].node.content_type_name === 'assessment') {
                     resources.push(angular.copy(lessons[i].doc.lesson.objects[c]));
                   }
                 }
-                })  
-
+              })
             }
-
             if (resources.length) {
               resources[resources.length - 1].node.requiresSuggestion = true;
             }
+            $log.debug("Resource list resolving" + $log.debug(resources));
             d.resolve(resources)
-
           });
           // $log.debug("data",data)
           // for (var i = 0; i < data.rows.length; i++) {
           //   data.rows[i].key = data.rows[i].doc.lesson.key;
           // }
           // data.rows = _.sortBy(data.rows, 'key');
-
           // $log.debug("lessons",lessons)
         })
         .catch(function(error) {
           d.reject(error)
         });
-
       return d.promise;
     }
 
@@ -490,9 +503,9 @@
             }(index)
           ))
         }
-
         promises.push(widgetParser.parseToDisplay(quiz.objects[index].node.title, index, quiz).then(
           function(index) {
+            $log.debug("play resource here");
             return function(result) {
               quiz.objects[index].node.widgetHtml = result;
             }
@@ -508,7 +521,6 @@
             }(index)
           ))
         }
-
         for (var j = 0; j < quiz.objects[index].node.type.content.options.length; j++) {
           promises.push(widgetParser.parseToDisplay(quiz.objects[index].node.type.content.options[j].option, index, quiz).then(
             function(index, j) {
@@ -518,7 +530,6 @@
             }(index, j)
           ));
           quiz.objects[index].node.type.content.options[j].widgetSound = null;
-
           if (widgetParser.getSoundId(quiz.objects[index].node.type.content.options[j].option)) {
             promises.push(widgetParser.getSoundSrc(widgetParser.getSoundId(quiz.objects[index].node.type.content.options[j].option), index, quiz).then(
               function(index, j) {
@@ -531,6 +542,7 @@
         }
       }
       $q.all(promises).then(function() {
+        $log.debug("play resource respoving assessment", quiz);
         d.resolve(quiz)
       });
       return d.promise;
@@ -543,16 +555,13 @@
     }
 
     function downloadVideo(video) {
-
       return mediaManager.downloadIfNotExists(video.node.type.path)
     }
 
     function downloadAssessment(assessment) {
-
       var d = $q.defer();
       var promises = [];
       var mediaArray = [];
-
       angular.forEach(assessment.objects, function(object) {
         if (object.node.meta.instructions && object.node.meta.instructions.sounds) {
           promises.push(
@@ -578,7 +587,6 @@
           d.reject(err)
         });
       return d.promise;
-
     }
 
     function getVocabulary(vocabulary) {
@@ -595,13 +603,13 @@
           )
         );
         angular.forEach(object.node.type.sound, function(sound) {
-            promises.push(
-                mediaManager.getPath(sound.path).then(
-                    function(path) {
-                        sound.path = path
-                    }
-                )
+          promises.push(
+            mediaManager.getPath(sound.path).then(
+              function(path) {
+                sound.path = path
+              }
             )
+          )
         })
       });
       $q.all(promises).then(function(success) {
@@ -615,7 +623,6 @@
     }
 
     function downloadVocabulary(vocabulary) {
-
       var d = $q.defer();
       var promises = [];
       var mediaArray = [];
@@ -641,7 +648,38 @@
           d.reject(err)
         });
       return d.promise;
+    }
 
+    function downloadLesson(lesson) {
+      var vocabulary;
+      var assessment;
+      var video;
+      angular.forEach(lesson.objects, function(resource) {
+          if (resource.node.content_type_name === 'resource') {
+            video = resource;
+          } else if (resource.node.content_type_name === 'vocabulary') {
+            vocabulary = resource;
+          } else if (resource.node.content_type_name === 'assessment') {
+            assessment = resource;
+          }
+        })
+        //include assessment
+      if (vocabulary) {
+        //include vocabulary
+      } else {
+        //include video
+      }
+      return mediaManager.downloadIfNotExists(lesson.node.meta.intros.sound[0]).then(function() {
+        return downloadAssessment(assessment)
+      }).then(function() {
+        if (vocabulary) {
+          return downloadVocabulary(vocabulary)
+        } else if (video) {
+          return downloadVideo(video)
+        } else {
+          return $q.when();
+        }
+      })
     }
 
     function getActiveResource() {
@@ -663,12 +701,10 @@
       return User.playlist.get(User.getActiveProfileSync()._id).then(function(playlist) {
         return playlist[0].lesson_id;
       });
-
     }
 
     function getStatus() {
       $log.debug("GOT STATUS");
     }
   }
-
 })();

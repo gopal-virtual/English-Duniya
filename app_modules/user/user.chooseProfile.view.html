@@ -37,7 +37,12 @@
         align-items: center;
         margin: 2vw 1.5vw;
         padding : 3vw;
-        min-height: 55vw;
+        min-height: 47vw;
+    }
+    .profile-box:active,
+    .profile-box:activated{
+        background-color: #223F97;
+        box-shadow: 0 6px #1A2B51;
     }
     .profile-box-blue{
         background-color: #A6CEEE;
@@ -57,8 +62,8 @@
         right : 6.5vw;
     }
     .profile-avatar {
-        width: 25vw;
-        height: 25vw;
+        width: 20vw;
+        height: 20vw;
         background-color: #F9E9D0;
         border-radius: 50%;
         border: 3px solid #FAF5EB;
@@ -86,8 +91,8 @@
         text-align: center;
         background-color: #CE202F;
         padding-top: 12px;
-        margin-top: -15px;
-        width: 40px;
+        margin-top: -19px;
+        width: 30px;
         margin-left: auto;
         margin-right: auto;
         color: white;
@@ -96,13 +101,17 @@
         width: 0px;
         margin-left: auto;
         margin-right: auto;
-        border-left: 20px solid #CE202F;
-        border-right: 20px solid #CE202F;
+        border-left: 15px solid #CE202F;
+        border-right: 15px solid #CE202F;
         border-bottom: 5px solid transparent;
         border-top: 0;
     }
+    .profile-username{
+        font-size: 1.5em;
+        line-height: 1;
+    }
     .header-fixed{
-        position: fixed;;
+        position: fixed;
     }
     .has-headers{
         top: 70px;
@@ -110,40 +119,54 @@
     .choose{
         width : 60vw;
     }
+    .button-container{
+        position: absolute;
+        width: 100%;
+        bottom: 0;
+    }
 </style>
 <ion-view class="bg-pale">
     <div class="row header-fixed animation-fade-in">
         <div class="col center">
-            <a ng-tap="profileCtrl.goToMap()" ng-click="profileCtrl.goToMap()" ng-show="profileCtrl.hasCurrentUser()"><img class="absolute-right" src="img/assets_svg/cross.svg" alt=""></a>
+            <a ng-tap="exitChooseProfile();audio.play('click');" ng-click="exitChooseProfile();audio.play('click');" ng-show="::multiUser.hasCurrentUser()"><img class="absolute-right" src="img/assets_svg/cross.svg" alt=""></a>
             <!-- <img src="img/assets_svg/profile_ribbon.svg" alt=""> -->
-            <img src="img/assets_svg/profile_ribbon.svg" alt="" ng-show="profileCtrl.hasCurrentUser()">
-            <img class="choose" src="img/assets_svg/chooseyourname_ribbon.svg" alt="" ng-show="!profileCtrl.hasCurrentUser()">
+            <!-- ng-show="multiUser.hasCurrentUser()" -->
+            <img src="img/assets_svg/profile_ribbon.svg" alt="" ng-show="::multiUser.hasCurrentUser()">
+            <img class="choose" src="img/assets_svg/chooseyourname_ribbon.svg" alt="" ng-show="::!multiUser.hasCurrentUser()">
         </div>
     </div>
     <ion-content class="has-headers">
         <div class="profile-box-container">
-            <div ng-tap="profileCtrl.selectProfile(profile)" ng-click="profileCtrl.selectProfile(profile)" class="profile-box animation-fade-in-from-top" style="-webkit-animation-delay: {{$index*100}}ms;" ng-class="{true : 'profile-box-darkblue', false : 'profile-box-blue'}[profileCtrl.getCurrentProfile() == profile.doc._id]" ng-repeat="profile in profileCtrl.profiles | limitTo : 4">
-                <div class="font-lg" ng-class="{true : 'font-pale' , false : 'font-blue'}[profileCtrl.getCurrentProfile() == profile.doc._id]">
+            <div ng-tap="profile.id != multiUser.getCurrentProfile() && multiUser.selectProfile(profile);onProfileCardClick();exitChooseProfile();audio.play('click');" ng-click="profile.id != multiUser.getCurrentProfile() && multiUser.selectProfile(profile);onProfileCardClick();exitChooseProfile();audio.play('click');" class="profile-box animation-fade-in-from-bottom" style="-webkit-animation-delay: {{$index*100}}ms" ng-class="::{true : 'profile-box-darkblue', false : 'profile-box-blue'}[multiUser.getCurrentProfile() == profile.doc._id]" ng-repeat="profile in multiUser.profiles | limitTo : 4">
+                <div class="profile-username" ng-class="::{true : 'font-pale' , false : 'font-blue'}[multiUser.getCurrentProfile() == profile.doc._id]">
                     {{::profile.doc.data.profile.first_name}}
                 </div>
                 <div>
-                    <img class="profile-avatar" ng-src="img/assets_svg/profile-{{profile.doc.data.profile.gender == 'M' ? 'boy' : 'girl'}}.svg">
+                    <img class="profile-avatar" ng-src="img/assets_svg/profile-{{::profile.doc.data.profile.gender == 'M' ? 'boy' : 'girl'}}.svg">
                     <div class="profile-level">
-                        <strong>{{::profile.levels}}</strong>
+                        <strong>{{profile.levels}}</strong>
                     </div>
                     <div class="profile-level-ribbon-tail">
                     </div>
                 </div>
                 <div class="profile-star-small">
                     <img src="img/assets_svg/star-yellow.svg" alt="">
-                    <span class="font-xl" ng-class="{true : 'font-bright-gold', false : 'font-off-gold'}[profileCtrl.getCurrentProfile() == profile.doc._id]">
-                        {{::profile.stars}}
+                    <span class="font-xl" ng-class="::{true : 'font-bright-gold', false : 'font-off-gold'}[multiUser.getCurrentProfile() == profile.doc._id]">
+                        {{profile.stars}}
                     </span>
                 </div>
             </div>
-            <div ng-show="profileCtrl.canAdd()" class="profile-box profile-box-add" ng-tap="profileCtrl.goToCreateNewProfile()" ng-click="profileCtrl.goToCreateNewProfile()">
+            <!-- ng-show="multiUser.canAdd()" -->
+            <!-- multiUser.goToCreateNewProfile() -->
+            <!-- ng-show="::multiUser.canAdd()" -->
+            <div ng-show="multiUser.canAdd()" class="profile-box profile-box-add" ng-tap="showCreateProfileModal();audio.play('click');" ng-click="showCreateProfileModal();audio.play('click');">
                 <img src="img/assets_svg/add_sign.svg" alt="">
             </div>
+        </div>
+        <div ng-if="currentState == 'map.navigate'"  class="padding-10 center button-container">
+            <!-- <button ng-click="phone.open();audio.play('press');" ng-class="{'sbtn-phone-change' : changeNumberFlag, 'sbtn-phone-add' : !changeNumberFlag, 'animation-repeat-bounce' : user.user.getNotifyPhone() == 1}" class="sbtn" disabled="disabled"></button> -->
+            <!-- Is online {{isOnline}} - {{(user.user.getDetails() == undefined)}} - {{!isOnline}} - {{(user.user.getDetails() == undefined) && !isOnline}} -->
+            <button ng-disabled="(user.user.getDetails() == undefined) || !isOnline" ng-click="phone.open();audio.play('press');" ng-class="{'sbtn-phone-change' : changeNumberFlag, 'sbtn-phone-add' : !changeNumberFlag, 'animation-repeat-bounce' : (notifyPhone == 1 && phone.number == '' && userDetails) && isOnline}" class="sbtn"></button>
         </div>
     </ion-content>
 </ion-view>

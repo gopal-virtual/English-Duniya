@@ -13,6 +13,7 @@
 }
 .popup-buttons > .button {
   background-color: $brand-green !important;
+  color : white !important;
   border-radius: $border-radius-round;
   box-shadow: none;
 }
@@ -29,4 +30,3 @@
 	padding-top: 10px;
 	color: lighten($dark-grey, 10%);
 }
-

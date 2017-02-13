@@ -1,0 +1,29 @@
+<ion-view class="modal-blue-stars"  >
+  <ion-content overflow-scroll="false">
+    <div style="height:100%" class="vertical-center">
+      <div>
+        <div class="center position-relative" style="height:100px">
+        <div class="col stars position-absolute">
+          <img ng-repeat="star in [1,2,3]" ng-src="img/assets_svg/star-grey.svg">
+        </div>
+        <div class="col stars position-absolute">
+          <img ng-repeat="star in [1,2,3]" class="transparent" ng-class="{'animation-zoom-out-{{$index+1}} opaque':resultStarFlag[$index]}" ng-src="{{ quizCtrl.utilities.starCount(quizCtrl.summary.stars, $index) ? 'img/assets_svg/star-yellow.svg' : 'img/assets_svg/star-grey.svg'}}">
+        </div>
+      </div>
+      <div class="hoverme" style="padding-top:40px;text-align:center;">
+        <img height="250" style="z-index: 5;position: relative;" ng-src="img/assets_svg/{{userGender=='M'?'boy':'girl'}}-{{quizCtrl.summary.stars>0?'win':'lose'}}-badge.svg">
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+      </div>
+         <p ng-if="quizCtrl.hasJoinedChallenge && !quizCtrl.quiz.isPlayed" style="font-size: 50px;margin-top: 20px;color: #e89623" class="center animation-delay animation-fade-in-from-top">+ 50 points </p>
+         <!-- {{enableGoToMapButton}} -->
+        <!-- <p>IS THIS EVEN THE VIEW? {{resultButtonAnimationFlag}} HELLO</p> -->
+        <!-- <p>{{resultButtonAnimationFlag}}</p> -->
+        <div ng-style="{'visibility': enableGoToMapButton ? 'visible' : 'hidden'}"  class="row padding-x-30 " ng-class="{ 0 : 'transparent', 1 : 'animation-fade-in-from-bottom', 2 : 'animation-repeat-bounce' }[resultButtonAnimationFlag]">
+          <center style="width: 100%;padding-top:20px;">
+            <button  class="sbtn sbtn-next-yellow" on-tap="audio.play('press') ;quizCtrl.next()"></button>
+          </center>
+        </div>
+      </div>
+    </div>
+  </ion-content>
+</ion-view>

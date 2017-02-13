@@ -7,7 +7,8 @@
     .constant('CONSTANT', {
       'APP':{
       'TYPE': '@@APP_TYPE',
-      'VERSION': '@@APP_VERSION'
+      'VERSION': '@@APP_VERSION',
+      'CAMPAIGN' : '@@CAMPAIGN_NAME'
       },
       'BUNDLED': @@BUNDLED,
       'LOCK': @@LOCK,
@@ -24,6 +25,8 @@
       'NOTIFICATION_DB_SERVER': '@@NOTIFICATION_DB_SERVER',
       'ANALYTICS' : @@ANALYTICS,
       'GRADE' : @@GRADE,
+      'CHALLENGE_START' : @@CHALLENGE_START,
+      'CHALLENGE_END' : @@CHALLENGE_END,
       'QUESTION_DEMO' : @@QUESTION_DEMO,
       'QUESTION' : {
         'DEMO' : '5ecf8ad5-4c3a-4a67-9758-dd7e3993c4d8'
@@ -42,7 +45,8 @@
         'COMMON': ROOT + '/common',
         'MAP': ROOT + '/map',
         'CONTENT': ROOT + '/content',
-        'DATA': 'data'
+        'DATA': 'data',
+        'LOCALIZED_AUDIO': 'sound/localized/'
       },
       'VIEW': '.view.html',
       'CONFIG': {
@@ -140,6 +144,7 @@
             'DISCOVERED': @@NOTIFICATION_DURATION_DISCOVERED,
             'UNDISCOVERED' : @@NOTIFICATION_DURATION_UNDISCOVERED 
           }
-        }
+        },
+        'LANGUAGES' : @@ALLOWED_LANGUAGES
     })
 })();

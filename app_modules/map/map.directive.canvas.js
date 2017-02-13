@@ -6,7 +6,7 @@
         .directive('mapCanvas', mapCanvas)
 
     /* @ngInject */
-    function mapCanvas($injector, $state, $timeout, $log, audio, CONSTANT, lessonutils, $ionicLoading) {
+    function mapCanvas($injector, $state, $timeout, $log, audio, CONSTANT, lessonutils, $ionicLoading, analytics, localized, User) {
         var mapCanvas = {
             restrict: 'A',
             templateUrl: CONSTANT.PATH.MAP + '/map.canvas' + CONSTANT.VIEW,
@@ -25,7 +25,8 @@
           $log.debug("Scoe Directive",scope);
             $timeout(
               function(){
-                  createGame(scope, scope.lessons, audio, $injector, $log, lessonutils, $ionicLoading)
+                var demoAudio  = CONSTANT.PATH.LOCALIZED_AUDIO+localized.audio.demo.StartEnglish.lang[User.getActiveProfileSync().data.profile.language];
+                  createGame(scope, scope.lessons, audio, $injector, $log, lessonutils, $ionicLoading, analytics, demoAudio)
               }
             );
         }

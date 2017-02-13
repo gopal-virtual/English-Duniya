@@ -59,7 +59,7 @@
           class=" center bg-pale"
           ng-init="optionsFontSize=quizCtrl.widgetParser.getOptionsFontSize(question.node.type.content.options)">
           <!-- SCQ -->
-          <div>
+          <div style="padding-bottom: 100px;">
             <div
               on-tap="audio.play('click')"
               ng-click="question.attempted=option.key;(quizCtrl.enable_litmus ) && !( quizCtrl.enable_litmus=false )&& quizCtrl.submitAttempt(quizCtrl.quiz.objects[quizCtrl.currentIndex].node.id,quizCtrl.quiz.objects[quizCtrl.currentIndex].attempted,'litmus') && quizCtrl.setSuggestion();quizCtrl.logQuestion(quizCtrl.currentIndex,'END');quizCtrl.stopAudio();"

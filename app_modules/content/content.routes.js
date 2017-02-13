@@ -57,21 +57,25 @@
                       $scope.vocab_data = $stateParams.vocab_data;
                       vocabIntroCtrl.playDelayed = playDelayed;
                       $scope.userGender = User.getActiveProfileSync().data.profile.gender;
-                      $log.debug("Rootscope",$rootScope);
+                      var timeout = '';
+
                       function playDelayed (url) {
-                          $timeout(function(){
+                          timeout = $timeout(function(){
                               audio.player.play(url, function(){
                                   $state.go('content.vocabulary.overview',{})
                               });
                           },100);
                       }
-                      $scope.$on('appResume',function(){
-                        audio.player.resume();
-                        audio.player.addCallback(function(){
-                                  $state.go('content.vocabulary.overview',{})
-                              });
-                      });
                       vocabIntroCtrl.playDelayed(vocabIntroCtrl.vocab_data.node.parsed_sound);
+
+                      $scope.$on('appResume', function(){
+                          vocabIntroCtrl.playDelayed(vocabIntroCtrl.vocab_data.node.parsed_sound);
+                      })
+                      $scope.$on('appPause', function(){
+                          audio.player.removeCallback();
+                          $timeout.cancel( timeout );
+                      })
+
                   }],
                   controllerAs : 'vocabIntroCtrl'
               }
@@ -109,21 +113,31 @@
           views : {
               'state-vocab' : {
                   templateUrl : CONSTANT.PATH.CONTENT + '/content.vocabulary.instruction' + CONSTANT.VIEW,
-                  controller : ['$stateParams','audio','$timeout','$state', '$scope', 'User','$log',function($stateParams,audio,$timeout,$state, $scope, User, $log){
+                  controller : ['$stateParams','audio','$timeout','$state', '$scope', 'User','$log','localized',function($stateParams,audio,$timeout,$state, $scope, User, $log,localized){
                       var vocabInstructionCtrl = this;
                       $log.debug("vocab instruction stateparams",$stateParams);
                       vocabInstructionCtrl.vocab_data = $stateParams.vocab_data.objects;
                       vocabInstructionCtrl.params = $stateParams;
                       vocabInstructionCtrl.playDelayed = playDelayed;
                       $scope.userGender = User.getActiveProfileSync().data.profile.gender;
+                      var timeout = '';
                       function playDelayed (url) {
-                          $timeout(function(){
+                          timeout = $timeout(function(){
                               audio.player.play(url, function(){
                                   $state.go('content.vocabulary.card',{})
                               })
                           },100)
                       }
-                      vocabInstructionCtrl.playDelayed('sound/now_its_your_turn.mp3')
+                      vocabInstructionCtrl.playDelayed(CONSTANT.PATH.LOCALIZED_AUDIO+localized.audio.Vocabulary.ItsYourTurn.lang[User.getActiveProfileSync().data.profile.language])
+
+                      $scope.$on('appResume', function(){
+                          vocabInstructionCtrl.playDelayed(CONSTANT.PATH.LOCALIZED_AUDIO+localized.audio.Vocabulary.ItsYourTurn.lang[User.getActiveProfileSync().data.profile.language])
+                      })
+                      $scope.$on('appPause', function(){
+                          vocabInstructionCtrl.audio.player.removeCallback();
+                          $timeout.cancel( timeout );
+                      })
+
                   }],
                   controllerAs : 'vocabInstructionCtrl'
               }

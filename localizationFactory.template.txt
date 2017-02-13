@@ -1,0 +1,16 @@
+(function() {
+  'use strict';
+  angular
+    .module('common')
+    .factory('localized', localized);
+  /* @ngInject */
+  function localized(
+  ) {
+    var localizedText = @@LOCALIZED_TEXT;
+    var localizedAudio = @@LOCALIZED_AUDIO;
+    return {
+      text: localizedText,
+      audio: localizedAudio
+    };
+  }
+})();

@@ -1,0 +1,49 @@
+<ion-view class="modal-extra-dark">
+<div  style="    margin-top: 15vh;
+	background-color: white;
+	width: 80vw;
+	margin-left: 10vw;
+	border-radius: 30px;">
+	<div class="row">
+		
+		<div class="col col-100 center">
+			<a  ng-click="dismissJoinChallenge()" ><img style="position: absolute;
+				top: 13vh;
+			right: 7.5vw;" src="img/assets_svg/cross.svg" alt=""></a>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col col-100 center" style="padding: 0px">
+			<img src="img/assets/scholarship.png">
+		</div>
+	</div>
+	<div class="row">
+		
+		<div class="col col-100 center">
+			<p style="
+				font-size: 28px;
+				line-height: 32px;
+				color: orange;
+			">Win scholarship worth <br> Rs 30,000/-</p>
+		</div>
+	</div>
+	<div class="row" style="
+		margin-top: -20px;
+		">
+		<div class="col col-100 center">
+			<span ng-if="mapCtrl.daysRemaining > 0" style="
+				font-size: 28px;
+				line-height: 32px;
+				color: #1d80c3;
+			">
+			<p>{{mapCtrl.daysRemaining}} days to go</p>
+			</span>
+			<button class="sbtn sbtn-join" ng-if="user.user.getIsVerified()  && mapCtrl.daysRemaining <= 0" ng-click="audio.play('press');joinChallenge()"></button>
+			<button class="sbtn sbtn-join disabled" ng-disabled="true" ng-if="user.user.getIsVerified() && mapCtrl.daysRemaining > 0"></button>
+			<button class="sbtn sbtn-phone-add-small" ng-disabled="!isOnline" ng-if="!user.user.getIsVerified()" ng-click="audio.play('press');joinChallenge()"></button>
+			<!-- <button class="button" ng-click="" >Join Challenge</button> -->
+		</div>
+	</div>
+</div>
+<!-- <button class="button" ng-click="dismissJoinChallenge()" >Cancel</button> -->
+</ion-view>

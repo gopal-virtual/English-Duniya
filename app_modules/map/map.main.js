@@ -1,4 +1,4 @@
-window.createGame = function(scope, lessons, audio, injector, log, lessonutils, loading) {
+window.createGame = function(scope, lessons, audio, injector, log, lessonutils, loading, analytics,demoAudio) {
     'use strict';
 
     var Demo = scope.demo;
@@ -112,6 +112,16 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
         "forest2" : 18,
         "peru1" : 26
     }
+
+    // var regionNodes = {
+    //     "desert1" : 2,
+    //     "desert2" : 2,
+    //     "ice1" : 2,
+    //     "ice2" : 2,
+    //     "forest1" : 2,
+    //     "forest2" : 2,
+    //     "peru1" : 2
+    // }
     var regionPathOffset = {
         "desert1" : 320,
         "desert2" : 625,
@@ -202,11 +212,20 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                 totalRegionHeight += regionHeight[key];
             }
 
+
+
             if (localStorage.getItem("regionPage")) {
                 var regionPage = localStorage.getItem("regionPage");
             }else{
-                localStorage.setItem("regionPage",0);
-                var regionPage = 0;
+                for (var count = 0, residue = lessons.length; count < regions.length; count++) {
+                    if(residue < regionNodes[regions[count]]){
+                        localStorage.setItem("regionPage",count);
+                        var regionPage = count;
+                        break;
+                    }
+                    residue = residue - regionNodes[regions[count]]
+                }
+                // log.debug('regionPage')
             }
             renderedRegion[0] = regions[regionPage];
 
@@ -342,7 +361,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                 graphics.drawRect(0,0,game.camera.width,game.camera.height);
                 graphics.endFill();
                 groups.nonRegion.demoOverlay.add(graphics);
-                temp['demoFinger'] = groups.nonRegion.demoNodeOverlay.create(0.5*game.camera.width, 0.5*game.camera.height, 'finger');
+                temp['demoFinger'] = groups.nonRegion.demoNodeOverlay.create(0.5*game.camera.width, 0.3*game.camera.height, 'finger');
                 temp.demoFinger.anchor.setTo(0.5);
                 temp.demoFinger.scale.setTo(-0.5,0.5);
                 temp.demoFinger.angle = 180;
@@ -353,7 +372,8 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                 // game.add.tween(demoFinger).to({x: [0.5*game.camera.width,0.5*game.camera.width], y: [0.6*game.camera.height,0.5*game.camera.height] }, 1000, Phaser.Easing.Back.Out, true).loop(true);
                 // game.add.tween(demoFinger).to({angle: "270", x: [0.5*game.camera.width,0.8*game.camera.width], y: [0.6*game.camera.height,0.5*game.camera.height] }, 1000, Phaser.Easing.Linear.None, true).loop(true);
                 //log.debug("SOUND",audio)
-                audio.player.play('sound/voice_letstart.mp3')
+                log.debug("demoAudio",demoAudio);
+                audio.player.play(demoAudio)
             }
 
             function renderWorld(region){
@@ -376,6 +396,13 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
             }
 
             function renderRegion(region){
+                analytics.log({
+                  name : 'MAP',
+                  type : 'REGION',
+                },{
+                  time : new Date(),
+                  region : regions[localStorage.getItem("regionPage")]
+                },JSON.parse(localStorage.getItem('profile'))._id);
                 log.info("Rendering Regions ...")
                 for (var i = region.length - 1; i >= 0; i--) {
                     groups.regionBg[region[i]].position.set(0, 0 + regionOffset[region[i]]);
@@ -626,7 +653,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                         if (Demo.getStep() != 1) {
                             temp["nodeWobbleTween"] = game.add.tween(node.scale).to({ x: [0.8,1,0.8], y: [0.8,1,0.8] }, 1500, Phaser.Easing.Back.Out, true, 400).loop(true);
                         }else{
-                            var fingerTween = game.add.tween(temp.demoFinger).to({x: [0.5*game.camera.width,0.5*game.camera.width], y: [0.58*game.camera.height,0.5*game.camera.height] }, 2000, Phaser.Easing.Back.Out, true).loop(true);
+                            var fingerTween = game.add.tween(temp.demoFinger).to({x: [0.5*game.camera.width,0.5*game.camera.width, 0.5*game.camera.width], y: [0.3*game.camera.height,0.5*game.camera.height, 0.3*game.camera.height] }, 1000, Phaser.Easing.Back.Out, true).loop(true);
                             log.debug("Not a demo I guess", fingerTween)
                             fingerTween.onStart.add(pressButton,this);
                             fingerTween.onLoop.add(pressButton,this);
@@ -749,6 +776,12 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                 }
                 var port = game.add.button(game.world.centerX, portType=="prev"?game.world.height-80:150, 'node-port', function(){
                     loading.show();
+                    analytics.log({
+                      name : 'MAP',
+                      type : portType == "prev"?"PORT_PREV":"PORT_NEXT",
+                    },{
+                      time : new Date(),
+                    },JSON.parse(localStorage.getItem('profile'))._id);
                     if (portType =="next" && regionPage < regions.length) {
                         localStorage.setItem('regionPage',parseInt(regionPage)+1);
                         localStorage.setItem('currentPosition', 4000);
@@ -869,7 +902,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                 renderRegion(renderedRegion);
                 var fetchMapRequest = fetchMapPath(renderedRegion,points);
                 fetchMapRequest.then(function(){
-                    scope.$emit('removeLoader');
+                    scope.$emit('removeLoader', true);
                     if (Demo.getStep() == 1) {
                         renderDemoOverlay();
                     }
@@ -1082,11 +1115,6 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
         var canvas = document.querySelector('#map_canvas');
         canvas.parentNode.removeChild(canvas);
     });
-    scope.$on('reloadMap',function(){
-
-      // game.destroy();
-      // location.reload();
-    })
   // scope.$on('showInfoIcon',function (flag) {
   //   log.debug("showInfoIcon event recieved",flag);
   //   showInfoIcon = flag;
