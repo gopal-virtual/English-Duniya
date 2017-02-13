@@ -421,22 +421,30 @@
           ).then(function(data) {
             $log.debug(new Date().toTimeString(), "debug-optimize", "lessons db got", data)
               // $log.debug("AAAAAAAA "+data+" END");
-              data.rows = []
+              data.rows = {}
               for(i = 0; i < data.results.length ; i++){
                 if(data.results[i].docs[0].ok){
-                  data.rows.push({doc:data.results[i].docs[0].ok});
+                  data.rows[data.results[i].docs[0].ok.lesson.node.id] = {doc:data.results[i].docs[0].ok};
+                  // data.rows.push({doc:data.results[i].docs[0].ok});
                 }
                 // var docs = data.reults[i].docs[0].ok;
               }
             $log.debug(new Date().toTimeString(), "debug-optimize", "lessons db processed data", data)
 
-            lessons = data.rows;
+            lessons = [];
 
-            for(var i = 0; i < lessons.length; i++){
-                lessons[i]['parentHindiLessonId'] = playlist[i]['suggestedLesson']
-                lessons[i]['miss'] = playlist[i]['miss'];
-
+            for(var i =0 ; i< playlist_ids.length; i++){
+              var temp = data.rows[playlist_ids[i]];
+              temp.parentHindiLessonId = playlist[i]['suggestedLesson'];
+              temp.miss = playlist[i]['miss'];
+              lessons.push(temp)
             }
+
+            // for(var i = 0; i < lessons.length; i++){
+            //     lessons[i]['parentHindiLessonId'] = playlist[i]['suggestedLesson']
+            //     lessons[i]['miss'] = playlist[i]['miss'];
+
+            // }
             // for (i = 0; i < data.rows.length; i++) {
             //   $log.debug("making lessonlist");
             //   var index = -1;
