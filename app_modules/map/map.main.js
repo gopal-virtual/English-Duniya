@@ -77,7 +77,10 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
     var sprites = {};
     var temp = {};
     // var desertRegion, regionGroups.tundra, regionGroups.forest;
-    var regions = ["desert1","desert2","ice1","ice2","forest1","forest2","peru1","desert1","desert2","ice1","ice2","forest1","forest2","peru1"];
+    var origRegions = ["desert1","desert2","ice1","ice2","forest1","forest2","peru1"];
+        
+
+    var regions = [];
 
     var groups = {
         "region" : {},
@@ -141,6 +144,15 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
     var renderedRegion = [];
 
 
+        var count = 0;
+        var tempTotalLesson = totalLesson;
+        do{
+            var index = count%origRegions.length;
+            regions.push(origRegions[index]);
+            tempTotalLesson -= regionNodes[origRegions[index]];
+            count++;
+        }while(tempTotalLesson > 0)
+        log.warn('REGION needed',regions,count,tempTotalLesson);
 
     // var renderedRegion = [];
     // for (var key in regionNodes) {
@@ -246,14 +258,13 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                     if (i==0) {
                         first_node_index = 0;
                     }else {
-                        first_node_index += regionNodes[regions[i-1]] - 1;
+                        first_node_index += regionNodes[regions[i-1]] ;
                     }
-                    last_node_index += regionNodes[regions[i]] - 1;
                 }
-
-                if (regionPage != 0) {
-                    first_node_index = first_node_index+1;
-                }
+                last_node_index = first_node_index + regionNodes[regions[regionPage]] - 1;
+                // if (regionPage != 0) {
+                //     first_node_index = first_node_index+1;
+                // }
 
             }
 
