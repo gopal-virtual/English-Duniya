@@ -30,7 +30,8 @@
     // $document,
     $cordovaSocialSharing,
     Rest,
-    clevertap
+    clevertap,
+    lessonutils
   ) {
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
     $ionicPlatform.registerBackButtonAction(function(event) {
@@ -200,7 +201,6 @@
     //     },User.getActiveProfileSync() && User.getActiveProfileSync()._id)
     //   })
     $ionicPlatform.ready(function() {
-
 
 
       // $log.debug('CLEVERTAP. document',$document)
