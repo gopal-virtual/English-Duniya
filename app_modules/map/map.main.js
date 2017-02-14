@@ -5,8 +5,8 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
     var showInfoIcon = false;
     //log.debug("LESSONS ARE AMAZING",lessons);
 
-    var DEBUG = false;
-    var DEBUG2 = false;
+    var DEBUG = true;
+    var DEBUG2 = true;
 
     if(DEBUG){
         lessons = [];
@@ -954,6 +954,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                                 log.debug("animateStar condition timeout");
                                 animateStar(animateStarFlag.clickedNode).then(function(){
                                     if (temp["activeLessonKey"] == -1) {
+                                        log.debug('active lesson kry out of bounds');
                                         scrollTo(0);
                                     }
                                     localStorage.removeItem("animateStarFlag");
