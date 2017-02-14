@@ -49,11 +49,7 @@ if (lessons == 'all') {
           media = media.concat(lesson_doc.node.meta.intros.sound);
         }
         for (var j = 0; j < lesson_doc.objects.length; j++) {
-          //if Video
-          if (lesson_doc.objects[j].node.content_type_name == 'resource') {
-            // add video to media[]
-            media.push(lesson_doc.objects[j].node.type.path)
-          }
+          var skip_video = false;
           // If assessment
           if (lesson_doc.objects[j].node.content_type_name == 'assessment') {
             //Iterate questions
@@ -86,6 +82,14 @@ if (lessons == 'all') {
               if (lesson_doc.objects[j].objects[l].node.type.image) {
                 media.push(lesson_doc.objects[j].objects[l].node.type.image.path)
               }
+            }
+            skip_video = true;
+          }
+          //if Video
+          if (lesson_doc.objects[j].node.content_type_name == 'resource') {
+            // add video to media[]
+            if (!skip_video) {
+              media.push(lesson_doc.objects[j].node.type.path)
             }
           }
         }
