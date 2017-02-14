@@ -120,12 +120,12 @@ var mediaSize = 0;
 var mediaAudio = 0;
 var mediaVideo = 0;
 var mediaImage = 0;
-console.log("Please wait while we bundle " + media.length + " media files");
+console.log("Please wait while we analyze " + media.length + " media files");
 for (i in media) {
   var filename = getFileNameFromURl(media[i]);
   var directory = gerDirectoryFromURL(media[i]);
   var size = request('HEAD', 'http://cc-test.zaya.in/' + filename).headers['content-length'];
-  console.log('Size of ', filename, ' is ', size);
+  console.log('Size of ',i ,'out of ',media.length ,'media files : ', filename, ' is ', size);
   if (parseInt(size)) {
     mediaSize += parseInt(size);
     if (filename.indexOf('mp3') >= 0) {
@@ -148,4 +148,4 @@ for (i in media) {
   // }
   // });
 }
-console.log("Total Media", mediaSize, "Sounds", mediaAudio, "Images", mediaImage, "Videos", mediaVideo);
+console.log("Size calculation Done : Total Media", mediaSize, "Sounds", mediaAudio, "Images", mediaImage, "Videos", mediaVideo);
