@@ -241,7 +241,7 @@
           $cordovaSocialSharing
             .share(shareoptions.message, shareoptions.subject, 'https://s3-ap-southeast-1.amazonaws.com/zaya-builds/production-images/englishduniya-scholarship-challenge.png', 'http://referral.englishduniya.com/?referral='+event.data.referal_code+'&campaign_name=scholarship_challenge') // Share via native share sheet
             .then(function(result) {
-              if (result) {
+              if (result && challenge.isChallengeActive()) {
                 $http.post('http://challenge.englishduniya.in/points/', {
                   client_id: User.getActiveProfileSync()._id,
                   points: [{

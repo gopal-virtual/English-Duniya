@@ -71,8 +71,8 @@
         "CLEVERTAP_TOKEN" : "TEST-532-353",
         "GCM_PROJECT_NUMBER" : 150596025418
     },
-    "CHALLENGE_START": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 20 },
-    "CHALLENGE_END": {"YEAR" : 2017, "MONTH" : 2 , "DATE": 13 }
+    "CHALLENGE_START": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 13 },
+    "CHALLENGE_END": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 14 }
 
   },
   "CONTENT": {

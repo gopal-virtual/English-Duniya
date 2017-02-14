@@ -35,6 +35,7 @@
       points: parseInt(localStorage.getItem('points' + User.getActiveProfileSync()._id)) | 0,
       isUserEligible: isUserEligible,
       isChallengeActive: isChallengeActive,
+      showChallengeButton: showChallengeButton
     };
 
     function addPoints(profileID, points, action, nodeId) {
@@ -71,16 +72,30 @@
     }
 
     function isChallengeActive() {
-
-    var challengeEndDate = new Date(CONSTANT.CHALLENGE_END.YEAR, CONSTANT.CHALLENGE_END.MONTH, CONSTANT.CHALLENGE_END.DATE);
-    var challengeEndDateText = new Date(challengeEndDate.getFullYear(), challengeEndDate.getMonth(), challengeEndDate.getDate());
-    var today = new Date();
-    var todayText = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    var daysRemaining = daysBetween(todayText, challengeEndDateText);
-      if(daysRemaining<0){
+      var challengeEndDate = new Date(CONSTANT.CHALLENGE_END.YEAR, CONSTANT.CHALLENGE_END.MONTH, CONSTANT.CHALLENGE_END.DATE);
+      var challengeEndDateText = new Date(challengeEndDate.getFullYear(), challengeEndDate.getMonth(), challengeEndDate.getDate());
+      var today = new Date();
+      var todayText = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      var daysRemaining = daysBetween(todayText, challengeEndDateText);
+      if (daysRemaining < 0) {
         return false;
-      }else{
+      } else {
         return true;
+      }
+    }
+
+    function showChallengeButton() {
+      var challengeEndDate = new Date(CONSTANT.CHALLENGE_END.YEAR, CONSTANT.CHALLENGE_END.MONTH, CONSTANT.CHALLENGE_END.DATE);
+      var challengeEndDateText = new Date(challengeEndDate.getFullYear(), challengeEndDate.getMonth(), challengeEndDate.getDate());
+      var today = new Date();
+      var todayText = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      var daysRemaining = daysBetween( challengeEndDateText, todayText);
+      
+      $log.debug("show challenge button",daysRemaining,challengeEndDateText);
+      if (daysRemaining < 14) {
+        return true;
+      } else {
+        return false;
       }
     }
 

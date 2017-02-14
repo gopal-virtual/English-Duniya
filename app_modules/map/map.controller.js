@@ -167,6 +167,7 @@
     mapCtrl.isUserEligibleForChallenge = challenge.isUserEligible();
     mapCtrl.hasJoinedChallenge = User.hasJoinedChallenge();
     mapCtrl.isChallengeActive = challenge.isChallengeActive();
+    mapCtrl.showChallengeButton = challenge.showChallengeButton();
     $scope.exitChooseProfile = exitChooseProfile;
     $scope.onProfileCardClick = onProfileCardClick;
     $scope.isOnline = network.isOnline();
