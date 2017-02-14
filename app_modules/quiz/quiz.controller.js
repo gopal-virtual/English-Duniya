@@ -799,9 +799,10 @@
                     //   localStorage.setItem('cachingList', JSON.stringify(cachingList))
                     // }
                     $log.debug("got sugggestion", suggestion);
+                    lessonutils.cacheLessons([suggestion["suggestedLesson"]]);
                     return User.profile.updateRoadMapData(ml.roadMapData, User.getActiveProfileSync()._id).then(function() {
                       return User.playlist.add(User.getActiveProfileSync()._id, suggestion)
-                    })
+                    });
                   })
                 } else {
                   return ml.setLessonResultMapping().then(function() {

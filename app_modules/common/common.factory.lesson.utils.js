@@ -56,7 +56,7 @@
     // utils. = User.demo.isShown();
     return utils;
 
-    function cacheLessons() {
+    function cacheLessons(additionalList) {
       //get road map array
       // check if it is cached or not
       // if not add it in caching list
@@ -67,10 +67,20 @@
           roadMapList.push(data.sr);
         });
       }
+
+
+      if(additionalList && additionalList.length >= 0){
+        for(var i=0; i< additionalList.length; i++){
+          if(roadMapList.indexOf(additionalList[i]) < 0){
+            roadMapList.unshift(additionalList[i]);
+          }
+        }
+      }
+
       var cachedList = localStorage.getItem('cachedList') ? JSON.parse(localStorage.getItem('cachedList')) : [];
       var cachingList = localStorage.getItem('cachingList') ? JSON.parse(localStorage.getItem('cachingList')) : [];
       angular.forEach(roadMapList, function(roadMapListItem) {
-        if (cachedList.indexOf(roadMapListItem) < 0) {
+        if (cachedList.indexOf(roadMapListItem) < 0 && cachingList.indexOf(roadMapListItem) < 0) {
           cachingList.push(roadMapListItem);
         }
       });
@@ -88,7 +98,7 @@
       });
 
       $q.all(promises).then(function(s){
-        $log.debug("CACHING IS DONE===",s);
+        $log.debug("CACHING IS DONE.cached list ="+JSON.stringify(cachedList));
         localStorage.setItem('cachedList',JSON.stringify(cachedList.concat(cachingList)));
         localStorage.setItem('cachingList',JSON.stringify([]));
       }).catch(function(e){

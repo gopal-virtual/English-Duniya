@@ -95,6 +95,8 @@
     challenge,
     pointsQueue
   ) {
+      lessonutils.cacheLessons();
+    
     $log.debug(new Date().toTimeString(),"debug-optimize", "inside map controller")
     $scope.audio = audio;
     $scope.settings = settings;
@@ -167,6 +169,7 @@
     mapCtrl.isUserEligibleForChallenge = challenge.isUserEligible();
     mapCtrl.hasJoinedChallenge = User.hasJoinedChallenge();
     mapCtrl.isChallengeActive = challenge.isChallengeActive();
+    mapCtrl.showChallengeButton = challenge.showChallengeButton();
     $scope.exitChooseProfile = exitChooseProfile;
     $scope.onProfileCardClick = onProfileCardClick;
     $scope.isOnline = network.isOnline();
@@ -176,7 +179,7 @@
     $scope.$on('$cordovaNetwork:offline', function(event, networkState) {
       $scope.isOnline = network.isOnline();
     })
-    $scope.changeNumberFlag = User.user.getPhoneNumber()
+    $scope.changeNumberFlag = User.user.getPhoneNumber();
     $scope.currentState = $state.current.name;
     $scope.userDetails = User.user.getDetails();
     $scope.notifyPhone = User.user.getNotifyPhone();
@@ -214,6 +217,7 @@
     }).catch(function(err) {
       $log.error('some error occured while fetching offline notification doc', err);
     })
+
 
     function openChallenge() {}
 
@@ -639,7 +643,7 @@
       //   $scope.demo.isShown() && $scope.demo.hide();
       var promise;
       $log.debug('intro sound', node.node.intro_sound, node)
-      lessonutils.cacheLessons()
+      // lessonutils.cacheLessons()
       if (node.node.intro_sound) {
         promise = mediaManager.downloadIfNotExists(node.node.intro_sound)
       } else {

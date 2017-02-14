@@ -114,7 +114,6 @@ div.challenge > div.meta {
     line-height: 4.5vh;
     font-size: 2.5vh;
     box-shadow: 0 0 8px rgba(0,0,0,0.6);
-    
 }
 </style>
 <div class="profile-star" ng-class="::{'animation-fade-in-from-top animation-delay-more' : mapCtrl.demo.getStep() != 1}" ng-hide="::mapCtrl.demo.getStep() == 1">
@@ -134,12 +133,13 @@ div.challenge > div.meta {
     <!-- <button ng-click="mapCtrl.pushPointsQueue()" class="button">Push</button> -->
     <!-- <a href="intent:#Intent;action=android.intent.action.SEND;type=text/plain;S.android.intent.extra.TEXT=https%3A%2F%2Fpaul.kinlan.me%2F;S.android.intent.extra.SUBJECT=Amazing;S.browser_fallback_url=https:%3A%2F%2Ftwitter.com%2Fintent%2Ftweet;end">Share</a> -->
  </div>
-<div ng-if="::mapCtrl.demo.getStep() >= 2 && mapCtrl.isUserEligibleForChallenge && mapCtrl.isChallengeActive && mapCtrl.isChallengeActive" class="challenge animation-fade-in-from-top animation-delay-more" ng-click="mapCtrl.goToChallenge()">
+
+<div ng-if="::mapCtrl.demo.getStep() >= 2 && mapCtrl.isUserEligibleForChallenge && mapCtrl.showChallengeButton" class="challenge animation-fade-in-from-top animation-delay-more" ng-click="mapCtrl.goToChallenge()">
     <div class="avatar">
         <img  ng-src="img/assets_svg/scholar-{{::mapCtrl.gender == 'M' ? 'boy' : 'girl'}}.svg"  alt="">
     </div>
     <div class="header">Challenge </div>
-    <div class="meta" ng-if="::mapCtrl.daysRemaining">{{mapCtrl.daysRemaining}} days to go</div>
+    <div class="meta" ng-if="::mapCtrl.daysRemaining">{{mapCtrl.daysRemaining}} day<span ng-if="::mapCtrl.daysRemaining != 1">s</span> to go</div>
     <div class="meta" ng-if="::!mapCtrl.hasJoinedChallenge && mapCtrl.daysRemaining <= 0">Tap to join</div>
     <div class="meta" ng-if="::mapCtrl.hasJoinedChallenge && mapCtrl.daysRemaining <= 0">Tap to play</div>
 </div>
