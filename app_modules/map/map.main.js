@@ -10,7 +10,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
 
     if(DEBUG){
         lessons = [];
-        var lessonNumber = 200,
+        var lessonNumber = 400,
         // var lesson_data = {
             content_type = [{
                                 name: "resource",
@@ -77,7 +77,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
     var sprites = {};
     var temp = {};
     // var desertRegion, regionGroups.tundra, regionGroups.forest;
-    var regions = ["desert1","desert2","ice1","ice2","forest1","forest2","peru1"];
+    var regions = ["desert1","desert2","ice1","ice2","forest1","forest2","peru1","desert1","desert2","ice1","ice2","forest1","forest2","peru1"];
 
     var groups = {
         "region" : {},
@@ -590,12 +590,13 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                     var nodeTagText = game.add.text(posx, posy+50, i+1, { font: "18px kg_primary_penmanship_2Rg", fill: "#FFFFFF", wordWrap: true, wordWrapWidth: nodeTag.width, align: "center"});
                     nodeTagText.anchor.set(0.5);
                     groups.nonRegion.nodeTags.add(nodeTagText);
-
+  
 
 
 
 
                     var node = game.make.button(posx, posy, 'node-' +nodeColors[lessons[i].node.tag.toLowerCase()]+'-'+ lessonutils.resourceType(lessons[i]), false, this, 1,0,1,0);
+                    
                     node.anchor.setTo(0.5);
                     node.scale.setTo(0.8);
                     node.inputEnabled = true;
@@ -612,7 +613,8 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
 
                                 var displacement = game.kineticScrolling.velocityY > -30 && game.kineticScrolling.velocityY < 30;
                                 if (!currentLesson.locked && displacement) {
-                                    localStorage.setItem('currentPosition', (posy - game.height / 2));
+                                    log.debug('POSITION',posy,node.y+node.height)
+                                    localStorage.setItem('currentPosition', node.y - node.height/2);
                                     var currentPosition = {
                                         "x": game.input._x,
                                         "y": game.input._y,
@@ -639,6 +641,11 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                         temp["activeLessonKey"] = i;
                         temp["activeLessonPosY"] = posy;
                         temp["activeLessonPosX"] = posx;
+
+                        log.debug('ACTIVE LESSON')
+                        scrollTo(posy - game.height/2);
+                        log.debug('ACTIVE LESSON')
+
 
                         if (DEBUG2 == true){
                             log.debug()
@@ -869,8 +876,9 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
             // }
 
             function scrollTo(limitY){
-                log.info("Auto Scrolling ...")
-                game.add.tween(game.camera).to({y:limitY},800,Phaser.Easing.Quadratic.InOut,true,800);
+                log.info("ACTIVE Auto Scrolling ...",limitY)
+
+                game.add.tween(game.camera).to({y:limitY},300,Phaser.Easing.Quadratic.InOut,true,800);
             }
 
             function cameraInit(){
@@ -888,9 +896,9 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                 game.kineticScrolling.start();
             }
 
-            function scrollTo() {
-                game.camera.y = localStorage.getItem('currentPosition') ? parseInt(localStorage.getItem('currentPosition')) : parseInt(((~~game.world.height / game.height) - 1) * game.height);
-            }
+            // function scrollTo() {
+            //     game.camera.y = localStorage.getItem('currentPosition') ? parseInt(localStorage.getItem('currentPosition')) : parseInt(((~~game.world.height / game.height) - 1) * game.height);
+            // }
 
             function gameStart(){
                 log.info("Powering Up PHASER BAM! BAM! ...")
@@ -911,7 +919,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                     }
                     renderNodesByML(renderedRegion);
                     renderNodePath(renderedRegion,points);
-                    scrollTo();
+                    // scrollTo();
                     log.debug("Port Node Flag",regionPage,regions.length-1,temp.activeLessonKey,regionPage < regions.length-1,regionPage < regions.length-1 && temp.activeLessonKey == -1)
                     if(regionPage < regions.length-1 && temp.activeLessonKey > last_node_index){
                         renderPortNodes("next");
