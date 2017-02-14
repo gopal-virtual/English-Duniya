@@ -5,8 +5,8 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
     var showInfoIcon = false;
     //log.debug("LESSONS ARE AMAZING",lessons);
 
-    var DEBUG = true;
-    var DEBUG2 = true;
+    var DEBUG = false;
+    var DEBUG2 = false;
 
     if(DEBUG){
         lessons = [];
