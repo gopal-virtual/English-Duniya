@@ -276,7 +276,11 @@
     }
 
     function getIsVerified() {
-      return JSON.parse(localStorage.getItem('user_details')).is_verified
+      if(localStorage.getItem('user_details')){
+      return JSON.parse(localStorage.getItem('user_details')).is_verified;
+      }else{
+        return false;
+      }
     }
 
     function getPhoneNumber() {
