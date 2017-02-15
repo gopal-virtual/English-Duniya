@@ -572,6 +572,8 @@
         return pushedLessons;
       }
 
+      roadMapDivided["vocabulary"] = shuffleArray(roadMapDivided["vocabulary"]);
+      roadMapDivided["non-vocabulary"] = shuffleArray(roadMapDivided["non-vocabulary"]);
       var roadMap = []
       var step = Math.ceil(vocabLength/nonVocabLength);
       for(var i= 0; i < nonVocabLength; i++){
@@ -1244,6 +1246,45 @@
 
     }
 
+    function decreaseLevel(){
+      var tempRoadMap = angular.copy(ml.roadMapData);
+      var maxLevel = 0;
+      for(var skill in ml.roadMapData["levelRec"]["skillLevel"]){
+        if(ml.roadMapData["levelRec"]["skillLevel"][skill] != undefined){
+          if(ml.roadMapData["levelRec"]["skillLevel"][skill] >= 2){
+            ml.roadMapData["levelRec"]["skillLevel"][skill] -= 2;
+          }else{
+            ml.roadMapData["levelRec"]["skillLevel"][skill] = 0;            
+          }          
+        }else{
+          ml.roadMapData["levelRec"]["skillLevel"][skill] = 0;
+        }
+        if(maxLevel < ml.roadMapData["levelRec"]["skillLevel"][skill]){
+          maxLevel = ml.roadMapData["levelRec"]["skillLevel"][skill];
+        }
+      }
+
+      for(var skill in ml.roadMapData["levelRec"]["kmap_level"]){
+        if(ml.roadMapData["levelRec"]["kmap_level"][skill] != undefined){
+          if(ml.roadMapData["levelRec"]["kmap_level"][skill] >= 2){
+            ml.roadMapData["levelRec"]["kmap_level"][skill] -= 2;
+          }else{
+            ml.roadMapData["levelRec"]["kmap_level"][skill] = 0;            
+          }          
+        }else{
+          ml.roadMapData["levelRec"]["kmap_level"][skill] = 0;
+        }
+        if(maxLevel < ml.roadMapData["levelRec"]["kmap_level"][skill]){
+          maxLevel = ml.roadMapData["levelRec"]["kmap_level"][skill];
+        }
+      }
+
+      tempRoadMap["levelRec"] = ml.roadMapData["levelRec"];
+      localStorage.setItem("roadMapData", JSON.stringify(tempRoadMap));
+      return maxLevel;
+
+    }
+
 
     function ifInsufficientSrs(uniqueSuggestedSrs) {
       if (uniqueSuggestedSrs == undefined || uniqueSuggestedSrs.length == 0) {
@@ -1394,7 +1435,10 @@
     }
 
 
-    function lastResort(insufficientSkill) {
+    function lastResort(insufficientSkill, lastResortCount) {
+        if(lastResortCount == undefined){
+          lastResortCount = 0;
+        }
         $log.debug('in LR', insufficientSkill);
         // StudentLessonData has the mapping of student to lessons result
         var lessonResultMapping = ml.lessonResultMapping;
@@ -1477,6 +1521,14 @@
                 var rankedLessons = rankPlaylist({ 0: srParentCount[keysSorted[i]] }, undefined, 1);
                 // suggestedSrs = suggestedSrs.concat(rankedLessons);
                 suggestedSrs = pushIfAbsent(suggestedSrs, rankedLessons);
+            }
+
+            if(suggestedSrs.length == 0 && lastResortCount == 0){
+              var maxLevel = decreaseLevel();
+              if(maxLevel == 0){
+                lastResortCount = 1;                
+              }
+              return lastResort(insufficientSkill, lastResortCount);
             }
 
           }
