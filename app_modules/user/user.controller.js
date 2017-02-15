@@ -95,6 +95,14 @@
     userCtrl.selectProfile = selectProfile;
     userCtrl.audioPlayer = audio.player;
     userCtrl.user = {};
+        if(CONSTANT.LANGUAGES.length == 1){
+      userCtrl.skipLanguage = true;
+      userCtrl.user.language = 'hi';
+
+    }else{
+      userCtrl.skipLanguage = false;
+
+    }
     userCtrl.playAudio(-1);
     $scope.audio = audio;
     // $timeout(function () {
@@ -112,7 +120,9 @@
 
     function playAudio(index) {
       var src;
-      if (index == -1) {
+
+      if(!userCtrl.skipLanguage){
+        if (index == -1) {
         // src = userCtrl.localizedContent.audio.registration.Welcome.lang[userCtrl.user.language || 'hi'];
       }
       if (index == 1) {
@@ -124,7 +134,20 @@
       if (index == 3) {
         src = userCtrl.localizedContent.audio.registration.SelectClass.lang[userCtrl.user.language];
       }
-      $log.debug("playaudio", index, src);
+      }else{
+
+      if (index == -1) {
+        src = userCtrl.localizedContent.audio.registration.WriteName.lang[userCtrl.user.language];
+      }
+      if (index == 1) {
+        src = userCtrl.localizedContent.audio.registration.SelectGender.lang[userCtrl.user.language];
+      }
+      if (index == 2) {
+        src = userCtrl.localizedContent.audio.registration.SelectClass.lang[userCtrl.user.language];
+      }
+      }
+      
+      $log.debug("playaudio", index, src,userCtrl.skipLanguage);
       if (src) {
         audio.player.play('sound/localized/' + src);
       } else {
@@ -283,5 +306,8 @@
         userCtrl.user.name = userCtrl.user.name.replace(/  +/g, ' ');
       } catch (err) {}
     });
+
+    $log.debug("languages length",CONSTANT.LANGUAGES.length)
+
   }
 })();
