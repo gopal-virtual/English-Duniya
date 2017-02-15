@@ -82,8 +82,11 @@
         }
       };
 
-      if(ml.roadMapData != undefined && ml.roadMapData["levelRec"] != undefined){
-        levelRec = ml.roadMapData["levelRec"];
+      if(ml.roadMapData != undefined && ml.roadMapData["levelRec"] != undefined && ml.roadMapData["levelRec"]["skillLevel"] != undefined){
+        levelRec["skillLevel"] = ml.roadMapData["levelRec"]["skillLevel"];
+      }
+      if(ml.roadMapData != undefined && ml.roadMapData["levelRec"] != undefined && ml.roadMapData["levelRec"]["kmap_level"] != undefined){
+        levelRec["kmap_level"] = ml.roadMapData["levelRec"]["kmap_level"];
       }
 
       ml.roadMapData = {"roadMap": [], "recommendationsWithPrereqs": recommendationsWithPrereqs, "batch": batch, "levelRec": levelRec};
@@ -333,29 +336,30 @@
         ml.roadMapData = JSON.parse(localStorage.roadMapData);
       }
 
-      $log.debug('lililililoili', ml.roadMapData["levelRec"]);
       if(ml.roadMapData["levelRec"] == undefined){
-        $log.debug('lili here', JSON.stringify(ml.roadMapData));
-        ml.roadMapData["levelRec"] = {
-            "avgLevel": ml.defaultSkillLevel,
-            "skillLevel": {
-                "vocabulary": ml.defaultSkillLevel,
-                "listening": ml.defaultSkillLevel,
-                "grammar": ml.defaultSkillLevel
-            },
-            "kmap_level": {
-                "vocabulary": ml.defaultKmapLevel,
-                "listening": ml.defaultKmapLevel,
-                "reading": ml.defaultKmapLevel,
-                "grammar": ml.defaultKmapLevel
-            }
+        ml.roadMapData["levelRec"] = {};
+      }
+      if(ml.roadMapData["levelRec"]["skillLevel"] == undefined){
+        ml.roadMapData["levelRec"]["skillLevel"] = {
+            "vocabulary": ml.defaultSkillLevel,
+            "listening": ml.defaultSkillLevel,
+            "grammar": ml.defaultSkillLevel
         };
       }
+      if(ml.roadMapData["levelRec"]["kmap_level"] == undefined){
+        ml.roadMapData["levelRec"]["kmap_level"] = {
+            "vocabulary": ml.defaultSkillLevel,
+            "listening": ml.defaultSkillLevel,
+            "grammar": ml.defaultSkillLevel
+        };
+      }
+      localStorage.setItem("roadMapData", JSON.stringify(ml.roadMapData));
 
       $log.debug('ml.roadMapData, data', ml.roadMapData, data);
       if(data["event"] == "diagnosisTest"){
         if(data["levelRec"]){
             ml.roadMapData["levelRec"] = data["levelRec"];
+            localStorage.setItem("roadMapData", JSON.stringify(ml.roadMapData));
         }
         var recommendationsWithPrereqs = runDiagnostic()[0];
         setNewRoadMap(recommendationsWithPrereqs);
