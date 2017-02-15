@@ -50,6 +50,7 @@
     }
     $scope.isPlayed = $stateParams.vocab_data.isPlayed;
     $scope.hasUserJoinedChallenge = User.hasJoinedChallenge();
+    $scope.isChallengeActive = challenge.isChallengeActive();
     $scope.resultButtonAnimationFlag = 0;
     // $scope.resultButtonAnimation = resultButtonAnimation;
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.COMMON + '/common.modal-result' + CONSTANT.VIEW, {
@@ -188,7 +189,7 @@
       $log.debug("$stateParams.vocab_data.isPlayed", $stateParams.vocab_data.isPlayed)
       if (!$stateParams.vocab_data.isPlayed && $scope.hasUserJoinedChallenge && challenge.isChallengeActive()) {
               $log.debug("points add points called quiz")
-        
+
         challenge.addPoints(User.getActiveProfileSync()._id, 50, 'node_complete', $stateParams.vocab_data.node.id);
       }
       $log.debug('vocab parent lesson : ', lesson)

@@ -166,6 +166,7 @@
     $scope.quizResultButtonAnimation = quizResultButtonAnimation;
     $scope.enableGoToMapButton = false;
     quizCtrl.hasJoinedChallenge = User.hasJoinedChallenge();
+    quizCtrl.isChallengeActive = challenge.isChallengeActive();
     quizCtrl.loading = 0;
     for (var i = 0; i < 10; i++) {
       $scope.groups[i] = {
