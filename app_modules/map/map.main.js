@@ -888,8 +888,8 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
 
             function scrollTo(limitY){
                 log.info("ACTIVE Auto Scrolling ...",limitY)
-
-                game.add.tween(game.camera).to({y:limitY},300,Phaser.Easing.Quadratic.InOut,true,800);
+                game.camera.y = limitY;
+                // game.add.tween(game.camera).to({y:limitY},300,Phaser.Easing.Quadratic.InOut,true,800);
             }
 
             function cameraInit(){
