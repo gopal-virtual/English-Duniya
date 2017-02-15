@@ -4,46 +4,45 @@
     .module('zaya-auth')
     .controller('authController', authController)
   authController.$inject = [
-                '$q',
-                '$ionicModal',
-                '$state',
-                'Auth',
-                'audio',
-                '$rootScope',
-                '$ionicPopup',
-                '$log',
-                '$cordovaOauth',
-                'CONSTANT',
-                '$interval',
-                '$scope',
-                '$ionicLoading',
-                'formHelper',
-                '$ionicPlatform',
-                'data',
-                'network'
-            ];
+    '$q',
+    '$ionicModal',
+    '$state',
+    'Auth',
+    'audio',
+    '$rootScope',
+    '$ionicPopup',
+    '$log',
+    '$cordovaOauth',
+    'CONSTANT',
+    '$interval',
+    '$scope',
+    '$ionicLoading',
+    'formHelper',
+    '$ionicPlatform',
+    'data',
+    'network'
+  ];
 
   function authController(
-                    $q,
-                    $ionicModal,
-                    $state,
-                    Auth,
-                    audio,
-                    $rootScope,
-                    $ionicPopup,
-                    $log,
-                    $cordovaOauth,
-                    CONSTANT,
-                    $interval,
-                    $scope,
-                    $ionicLoading,
-                    formHelper,
-                    $ionicPlatform,
-                    dataService,
-                    network
-                   ) {
+    $q,
+    $ionicModal,
+    $state,
+    Auth,
+    audio,
+    $rootScope,
+    $ionicPopup,
+    $log,
+    $cordovaOauth,
+    CONSTANT,
+    $interval,
+    $scope,
+    $ionicLoading,
+    formHelper,
+    $ionicPlatform,
+    dataService,
+    network
+  ) {
     var authCtrl = this;
-
     authCtrl.formHelper = formHelper;
     authCtrl.exitApp = exitApp;
     authCtrl.network = network;
@@ -66,7 +65,7 @@
     authCtrl.recoverAccount = recoverAccount;
     authCtrl.cleanLocalStorage = cleanLocalStorage;
     authCtrl.signUpFormValidations = {
-    //   'emailAddress': ['emailAddress'],
+      //   'emailAddress': ['emailAddress'],
       'phoneNumber': ['required', 'phoneNumber'],
       'password': ['required', 'password']
     }; // {fieldname: [validations]}
@@ -86,10 +85,12 @@
     };
 
     function recoverAccount(formData) {
-      if(!network.isOnline()){
+      if (!network.isOnline()) {
         $ionicPopup.alert({
-          title: 'Please try again',
-          template: "No internet conection found"
+          template: '<error-popup message="\'' + CONSTANT.ERROR_MESSAGES.OFFLINE.DEFAULT + '\'"></error-popup>',
+          cssClass: 'custom-alert',
+          okType: 'sbtn sbtn-ok',
+          okText: ' '
         })
         return;
       }
@@ -114,7 +115,6 @@
               });
             });
           }
-
         })
         .catch(function(error) {
           authCtrl.showError("Invalid Details", error || "Please try again");
@@ -123,27 +123,25 @@
           $ionicLoading.hide()
         })
     }
-
-
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.AUTH + '/auth.forgot.social' + CONSTANT.VIEW, {
       scope: $scope,
       animation: 'slide-in-up',
     }).then(function(recoveryModal) {
-
       authCtrl.recoveryModal = recoveryModal;
     });
 
     function signin(url, data) {
-
-      if(!network.isOnline()){
+      if (!network.isOnline()) {
         $ionicPopup.alert({
-          title: 'Please try again',
-          template: "No internet conection found"
+          template: '<error-popup message="\'' + CONSTANT.ERROR_MESSAGES.OFFLINE.DEFAULT + '\'"></error-popup>',
+          cssClass: 'custom-alert',
+          okType: 'sbtn sbtn-ok',
+          okText: ' '
         })
         return;
       }
       $ionicLoading.show({
-         hideOnStateChange: true
+        hideOnStateChange: true
       });
       var getCredentials;
       if (url === 'login') {
@@ -153,7 +151,6 @@
         var d = $q.defer();
         window.plugins.googleplus.login(CONSTANT.CONFIG.AUTH.GOOGLEPLUS,
           function(response) {
-
             d.resolve({
               "access_token": response.serverAuthCode
             });
@@ -167,12 +164,10 @@
       if (url === 'facebook') {
         var d = $q.defer();
         facebookConnectPlugin.login(CONSTANT.CONFIG.AUTH.FB, function(response) {
-
           d.resolve({
             "access_token": response.authResponse.accessToken
           });
         }, function(error) {
-
           d.reject(error);
         });
         getCredentials = d.promise;
@@ -186,45 +181,40 @@
         .then(function() {
           return Auth.getProfile();
         })
-        .then(function(){
+        .then(function() {
           return dataService.putUserifNotExist({
             'userId': Auth.getProfileId()
           })
         })
-        .then(function(){
+        .then(function() {
           return dataService.createLessonDBIfNotExists()
-
         })
-
-        .then(function(){
-          if(!user.demo.isShown()){
-            !localStorage.getItem('demo_flag') && localStorage.setItem('demo_flag',5);
-          }else{
-            !localStorage.getItem('demo_flag') && localStorage.setItem('demo_flag',1);
+        .then(function() {
+          if (!user.demo.isShown()) {
+            !localStorage.getItem('demo_flag') && localStorage.setItem('demo_flag', 5);
+          } else {
+            !localStorage.getItem('demo_flag') && localStorage.setItem('demo_flag', 1);
           }
           $state.go('map.navigate', {});
         })
-
         .catch(function(error) {
           $ionicLoading.hide()
-
-          if(error.message === 'no_profile'){
+          if (error.message === 'no_profile') {
             $state.go('user.personalise')
-          }
-          else{
+          } else {
             authCtrl.showError("Could not login", error || "Please try again");
             authCtrl.audio.play('wrong');
           }
-        }).finally(function() {
-
-        })
+        }).finally(function() {})
     }
 
     function signup(formData) {
-      if(!network.isOnline()){
+      if (!network.isOnline()) {
         $ionicPopup.alert({
-          title: 'Please try again',
-          template: "No internet conection found"
+          template: '<error-popup message="\'' + CONSTANT.ERROR_MESSAGES.OFFLINE.DEFAULT + '\'"></error-popup>',
+          cssClass: 'custom-alert',
+          okType: 'sbtn sbtn-ok',
+          okText: ' '
         })
         return;
       }
@@ -235,7 +225,7 @@
           return Auth.signup(credentials);
         })
         .then(function() {
-          localStorage.setItem('demo_flag',1);
+          localStorage.setItem('demo_flag', 1);
           $state.go('auth.verify.phone', {});
         })
         .catch(function(error) {
@@ -257,38 +247,33 @@
 
     function showError(title, msg) {
       $ionicPopup.alert({
-        title: title,
-        template: msg
+        template: '<error-popup message="\'' + CONSTANT.ERROR_MESSAGES.OFFLINE.DEFAULT + '\'"></error-popup>',
+        cssClass: 'custom-alert',
+        okType: 'sbtn sbtn-ok',
+        okText: ' '
       });
     }
 
     function showAlert(title, msg) {
       var d = $q.defer();
       $ionicPopup.alert({
-        title: title,
-        template: msg
+        template: '<error-popup message="\'' + CONSTANT.ERROR_MESSAGES.OFFLINE.DEFAULT + '\'"></error-popup>',
+        cssClass: 'custom-alert',
+        okType: 'sbtn sbtn-ok',
+        okText: ' '
       }).then(function(response) {
         d.resolve(response)
       }, function(error) {
         d.reject(error)
       });
-
       return d.promise;
     }
-
-
 
     function verifyOtp(data) {
       $ionicLoading.show();
       try {
-        if (SMS) SMS.stopWatch(function() {
-        }, function() {
-        });
-      } catch(e) {
-
-      }
-
-
+        if (SMS) SMS.stopWatch(function() {}, function() {});
+      } catch (e) {}
       authCtrl.formHelper.validateForm(data, authCtrl.OtpFormValidations)
         .then(function(response) {
           return Auth.verifyOtp(response)
@@ -305,20 +290,13 @@
         .catch(function(error) {
           authCtrl.showError("Could not verify", error);
           try {
-            if (SMS) SMS.startWatch(function() {
-            }, function() {
-            });
-          } catch(e) {
-
-          }
+            if (SMS) SMS.startWatch(function() {}, function() {});
+          } catch (e) {}
         })
         .finally(function() {
           $ionicLoading.hide();
         });
     }
-
-
-
 
     function resendOTP() {
       Auth.resendOTP().then(function() {
@@ -350,10 +328,7 @@
     function closeKeyboard() {
       try {
         cordova.plugins.Keyboard.close();
-      }
-      catch(e){
-
-      }
+      } catch (e) {}
     }
 
     function verifyOtpResetPassword(formData) {
@@ -371,7 +346,6 @@
           $ionicLoading.hide();
         })
     }
-
 
     function changePassword(formData) {
       $ionicLoading.show();
@@ -400,25 +374,21 @@
       Auth.cleanLocalStorage();
       $state.go('auth.signup', {});
     }
-    function exitApp(){
-        try{
-            navigator.app.exitApp();
-        }
-        catch(error){
-            ;
-        }
+
+    function exitApp() {
+      try {
+        navigator.app.exitApp();
+      } catch (error) {;
+      }
     }
-
-
-  $scope.$on('smsArrived',function(e,sms){
-
-    Auth.getOTPFromSMS(sms)
-    .then(function(otp){
-
-      authCtrl.verification = {'otp':otp};
-      document.getElementById('verifyOtpFormSubmit').click()
+    $scope.$on('smsArrived', function(e, sms) {
+      Auth.getOTPFromSMS(sms)
+        .then(function(otp) {
+          authCtrl.verification = {
+            'otp': otp
+          };
+          document.getElementById('verifyOtpFormSubmit').click()
+        })
     })
-
-  })
   }
 })();

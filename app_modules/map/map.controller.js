@@ -662,7 +662,6 @@
           $ionicLoading.hide()
           $log.debug("error is here");
           $ionicPopup.alert({
-            // title: CONSTANT.ERROR_MESSAGES.DEFAULT_TITLE,
             template: '<error-popup message="\'Connect to the internet to keep playing\'"></error-popup>',
             cssClass: 'custom-alert',
             okType: 'sbtn sbtn-ok',

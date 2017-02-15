@@ -58,7 +58,7 @@
     userCtrl.tabIndex = 0;
     userCtrl.CONSTANT = CONSTANT;
     userCtrl.localizedContent = localized;
-    userCtrl.analytics  = analytics;
+    userCtrl.analytics = analytics;
     userCtrl.personaliseFormValidations = {
       // 'gender': ['required'],
       // 'firstName': ['required'],
@@ -110,7 +110,6 @@
       });
     }
 
-
     function playAudio(index) {
       var src;
       if (index == -1) {
@@ -125,7 +124,7 @@
       if (index == 3) {
         src = userCtrl.localizedContent.audio.registration.SelectClass.lang[userCtrl.user.language];
       }
-        $log.debug("playaudio",index,src);
+      $log.debug("playaudio", index, src);
       if (src) {
         audio.player.play('sound/localized/' + src);
       } else {
@@ -193,7 +192,6 @@
           $log.debug("CREATING USER");
           localStorage.setItem('demo_flag', 1);
           localStorage.setItem('diagnosis_flag', false);
-          
           $state.go('litmus_start');
           // $state.go('quiz.questions', {'type':'litmus','id':'litmus_question'});
           $log.debug("CHECK 4")
@@ -228,16 +226,20 @@
 
     function showError(title, msg) {
       $ionicPopup.alert({
-        title: title,
-        template: msg
+        template: '<error-popup message="\'' + msg + '\'"></error-popup>',
+        cssClass: 'custom-alert',
+        okType: 'sbtn sbtn-ok',
+        okText: ' '
       });
     }
 
     function showAlert(title, msg) {
       var d = $q.defer();
       $ionicPopup.alert({
-        title: title,
-        template: msg
+        template: '<error-popup message="\'' + msg + '\'"></error-popup>',
+        cssClass: 'custom-alert',
+        okType: 'sbtn sbtn-ok',
+        okText: ' '
       }).then(function(response) {
         d.resolve(response)
       }, function(error) {

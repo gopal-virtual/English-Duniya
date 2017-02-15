@@ -67,16 +67,13 @@
           roadMapList.push(data.sr);
         });
       }
-
-
-      if(additionalList && additionalList.length >= 0){
-        for(var i=0; i< additionalList.length; i++){
-          if(roadMapList.indexOf(additionalList[i]) < 0){
+      if (additionalList && additionalList.length >= 0) {
+        for (var i = 0; i < additionalList.length; i++) {
+          if (roadMapList.indexOf(additionalList[i]) < 0) {
             roadMapList.unshift(additionalList[i]);
           }
         }
       }
-
       var cachedList = localStorage.getItem('cachedList') ? JSON.parse(localStorage.getItem('cachedList')) : [];
       var cachingList = localStorage.getItem('cachingList') ? JSON.parse(localStorage.getItem('cachingList')) : [];
       angular.forEach(roadMapList, function(roadMapListItem) {
@@ -90,37 +87,36 @@
       var promises = [];
       // var promises2 = []
       angular.forEach(lessonList, function(lesson) {
-        promises.push(content.getLesson(lesson).then(function(lessonData){
+        promises.push(content.getLesson(lesson).then(function(lessonData) {
           return content.downloadLesson(lessonData);
-        }).catch(function(e){
-          $log.debug("Errir in getting content",e)
-        }));        
+        }).catch(function(e) {
+          $log.debug("Errir in getting content", e)
+        }));
       });
-
-      $q.all(promises).then(function(s){
-        $log.debug("CACHING IS DONE.cached list ="+JSON.stringify(cachedList));
-        localStorage.setItem('cachedList',JSON.stringify(cachedList.concat(cachingList)));
-        localStorage.setItem('cachingList',JSON.stringify([]));
-      }).catch(function(e){
-        $log.debug("Error in cachng",e);
-      })
-      // return $q.all(promises2).then(function(data) {
-      //   $log.debug("done 2", data);
-      //   angular.forEach(data, function(lessonData) {
-      //     promises.push()
-      //   })
-      //   return $q.all(promises).then(function(a) {
-      //     var cachedList = localStorage.getItem('cachedList') ? JSON.parse(localStorage.getItem('cachedList')) : [];
-      //     angular.forEach(JSON.parse(localStorage.getItem('cachingList')), function(item) {
-      //         if (cachedList.indexOf(item) < 0) {
-      //           cachedList.push(item);
-      //         }
-      //       })
-      //       // cachedList = cachedList.concat(JSON.parse(localStorage.getItem('cachingList')));
-      //     localStorage.setItem('cachedList', JSON.stringify(cachedList));
-      //     $log.debug("done", a);
-      //   });
-      // });
+      $q.all(promises).then(function(s) {
+          $log.debug("CACHING IS DONE.cached list =" + JSON.stringify(cachedList));
+          localStorage.setItem('cachedList', JSON.stringify(cachedList.concat(cachingList)));
+          localStorage.setItem('cachingList', JSON.stringify([]));
+        }).catch(function(e) {
+          $log.debug("Error in cachng", e);
+        })
+        // return $q.all(promises2).then(function(data) {
+        //   $log.debug("done 2", data);
+        //   angular.forEach(data, function(lessonData) {
+        //     promises.push()
+        //   })
+        //   return $q.all(promises).then(function(a) {
+        //     var cachedList = localStorage.getItem('cachedList') ? JSON.parse(localStorage.getItem('cachedList')) : [];
+        //     angular.forEach(JSON.parse(localStorage.getItem('cachingList')), function(item) {
+        //         if (cachedList.indexOf(item) < 0) {
+        //           cachedList.push(item);
+        //         }
+        //       })
+        //       // cachedList = cachedList.concat(JSON.parse(localStorage.getItem('cachingList')));
+        //     localStorage.setItem('cachedList', JSON.stringify(cachedList));
+        //     $log.debug("done", a);
+        //   });
+        // });
     }
 
     function demoShown() {
@@ -198,8 +194,10 @@
         .catch(function(e) {
           // $ionicLoading.hide();
           $ionicPopup.alert({
-            title: CONSTANT.ERROR_MESSAGES.DEFAULT_TITLE,
-            template: e.message ? e.message : CONSTANT.ERROR_MESSAGES.DEFAULT
+            template: '<error-popup message="\'' + e.message ? e.message : CONSTANT.ERROR_MESSAGES.DEFAULT + '\'"></error-popup>',
+            cssClass: 'custom-alert',
+            okType: 'sbtn sbtn-ok',
+            okText: ' '
           });
         })
     }
@@ -276,8 +274,10 @@
               }).catch(function(e) {
                 $log.debug("We need to check", e)
                 $ionicPopup.alert({
-                  title: CONSTANT.ERROR_MESSAGES.DEFAULT_TITLE,
-                  template: e.message ? e.message : CONSTANT.ERROR_MESSAGES.DEFAULT
+                  template: '<error-popup message="\'' + e.message ? e.message : CONSTANT.ERROR_MESSAGES.DEFAULT + '\'"></error-popup>',
+                  cssClass: 'custom-alert',
+                  okType: 'sbtn sbtn-ok',
+                  okText: ' '
                 }).then(function() {
                   if (callback) {
                     callback();
@@ -337,8 +337,10 @@
           }).catch(function(e) {
             $log.debug("play resource error", e)
             $ionicPopup.alert({
-              title: CONSTANT.ERROR_MESSAGES.DEFAULT_TITLE,
-              template: e.message ? e.message : CONSTANT.ERROR_MESSAGES.DEFAULT
+              template: '<error-popup message="\'' + e.message ? e.message : CONSTANT.ERROR_MESSAGES.DEFAULT + '\'"></error-popup>',
+              cssClass: 'custom-alert',
+              okType: 'sbtn sbtn-ok',
+              okText: ' '
             }).then(function() {
               if (callback) {
                 callback();
@@ -380,8 +382,10 @@
           })
           .catch(function(e) {
             $ionicPopup.alert({
-              title: CONSTANT.ERROR_MESSAGES.DEFAULT_TITLE,
-              template: e.message ? e.message : CONSTANT.ERROR_MESSAGES.DEFAULT
+              template: '<error-popup message="\'' + e.message ? e.message : CONSTANT.ERROR_MESSAGES.DEFAULT + '\'"></error-popup>',
+              cssClass: 'custom-alert',
+              okType: 'sbtn sbtn-ok',
+              okText: ' '
             }).then(function() {
               if (callback) {
                 callback();
