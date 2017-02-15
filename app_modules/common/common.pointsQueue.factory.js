@@ -50,6 +50,7 @@
         'body': JSON.parse(JSON.stringify(body)),
         'method': 'post'
       }).then(function() {
+        $log.debug("points queue", "push");
         if (localStorage.getItem('syncingPoints') !== 'true' && network.isOnline()) {
           // $log.debug("pointsQueue", "push success start sync")
           // startSync();
@@ -58,7 +59,7 @@
         }
         return $q.resolve();
       }).catch(function(err) {
-        $log.debug("queue", "push error ", err)
+        $log.debug("points queue", "push error ", err)
       })
     }
     // return queueDB.allDocs({
@@ -90,6 +91,7 @@
     }
 
     function startSync(d) {
+      $log.debug("points queue", "start sync");
       localStorage.setItem('syncingPoints', true)
       if (!d) {
         var d = $q.defer();
@@ -98,14 +100,17 @@
           include_docs: true
         })
         .then(function(response) {
+          $log.debug("points queue", "uplaod if record");
           return uploadIfRecord(response.rows)
         })
         .then(function(response) {
+          $log.debug("points queue", "uplaod if record completed");
           if (response === 'no_data') {
-            $log.debug("no_data")
+            $log.debug("points queue", "in start sync no data");
             localStorage.setItem('syncingPoints', false);
             d.resolve();
           } else {
+            $log.debug("points queue", "in start sync start sync again");
             return startSync(d);
           }
         })
@@ -114,35 +119,36 @@
 
     function uploadAndDelete(record) {
       var promise;
+        $log.debug("points queue","uplaod and delete");
+
       return $http.post('http://challenge.englishduniya.in/points/', record.doc.body).then(
-        function success() {
-          $log.debug("queue", "upload success", record);
-          return queueDB.remove(record.doc);
-        },
-        function fail(error) {
-           if (error.status !== 0) {
-            $log.debug("upload failed", record);
-            var e = {
-              "error": error,
-              "function": "queue_push"
-            };
-            // Raven.captureException("Error with queue push",{
-            //   extra: {error:e}
-            // });
-            // $log.debug("ERROR with queue",error.status)
+          function success() {
+            $log.debug("points queue", "upload success", record);
             return queueDB.remove(record.doc);
-          } else {
-            return $q.reject();
+          },
+          function fail(error) {
+            if (error.status !== 0) {
+              $log.debug("points upload failed", record);
+              var e = {
+                "error": error,
+                "function": "queue_push"
+              };
+              // Raven.captureException("Error with queue push",{
+              //   extra: {error:e}
+              // });
+              // $log.debug("ERROR with queue",error.status)
+              return queueDB.remove(record.doc);
+            } else {
+              return $q.reject();
+            }
           }
-        }
-      )
-      // if (record.doc.method === 'post') {
-      //   promise = Rest.all('/profiles/' + User.getActiveProfileSync()._id + '/points/').post(record.doc.body);
-      // }
-      // return promise.then(function() {})
-      //   .catch(function(error) {
-         
-      //   });
+        )
+        // if (record.doc.method === 'post') {
+        //   promise = Rest.all('/profiles/' + User.getActiveProfileSync()._id + '/points/').post(record.doc.body);
+        // }
+        // return promise.then(function() {})
+        //   .catch(function(error) {
+        //   });
     }
     return queueProperties;
   }

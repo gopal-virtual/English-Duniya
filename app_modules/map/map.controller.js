@@ -1061,7 +1061,7 @@
             hideOnStateChange: true
           })
           mapCtrl.loading = 1;
-          pointsQueue.startSync().then(function() {
+          challenge.postPoints().then(function() {
             $log.debug("syncPointsQueue success")
             $state.go('weekly-challenge', {
               profileId: User.getActiveProfileSync()._id

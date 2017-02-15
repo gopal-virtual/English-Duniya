@@ -187,6 +187,8 @@
       var promise = null;
       $log.debug("$stateParams.vocab_data.isPlayed", $stateParams.vocab_data.isPlayed)
       if (!$stateParams.vocab_data.isPlayed && $scope.hasUserJoinedChallenge && challenge.isChallengeActive()) {
+              $log.debug("points add points called quiz")
+        
         challenge.addPoints(User.getActiveProfileSync()._id, 50, 'node_complete', $stateParams.vocab_data.node.id);
       }
       $log.debug('vocab parent lesson : ', lesson)

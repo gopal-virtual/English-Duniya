@@ -712,6 +712,7 @@
             resultButtonAnimation();
             playStarSound();
             if (!$stateParams.quiz.isPlayed && quizCtrl.hasJoinedChallenge && challenge.isChallengeActive()) {
+              $log.debug("points add points called quiz")
               challenge.addPoints(User.getActiveProfileSync()._id, 50, 'node_complete', $stateParams.quiz.node.id);
             }
             User.skills.update({
