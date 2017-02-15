@@ -59,6 +59,7 @@
         $ionicLoading.show({
             hideOnStateChange: true
           })
+        localStorage.removeItem('regionPage');
           // content.deleteLessonDB().then(function() {
           //     $log.debug("tag Deleted lesson db");
           //     return content.createDependentDBs();
