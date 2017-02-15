@@ -1118,12 +1118,10 @@
       if (User.demo.getStep() != 1 && !User.hasJoinedChallenge() && challenge.isUserEligible() && $rootScope.showChallengeModal && challenge.isChallengeActive()) {
         $log.debug("showing challenge modal")
         mapCtrl.openChallengeTimeout = $timeout(function() {
-          if (network.isOnline()) {
             audio.player.play('sound/challenge_starting_now.mp3');
             $scope.challengeModal.show().then(function() {
               $rootScope.showChallengeModal = false;
             });
-          }
         }, 2000)
       }
     });
