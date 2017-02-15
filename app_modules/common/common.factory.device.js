@@ -25,7 +25,7 @@
       "serial": CONSTANT.FAKE_DEVICE ? 'fake_serial' : window && window.device ? window.device.serial : 'na',
       "manufacturer": CONSTANT.FAKE_DEVICE ? 'fake_manufacturer' : window && window.device ? window.device.manufacturer : 'na'
     };
-    $log.debug("THIS IS THE DEVICE Details"+devicePropeties);
+    $log.debug("THIS IS THE DEVICE PROPERTIES",devicePropeties);
     return devicePropeties;
 
   }
