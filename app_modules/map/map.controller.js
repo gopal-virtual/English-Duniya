@@ -1065,13 +1065,19 @@
             })
           });
         } else {
+          audio.player.play('sound/challenge_starting_now.mp3');
           $scope.challengeModal.show();
         }
       } else {
-        $ionicPopup.alert({
+        audio.player.play('sound/challenge_starting_now_offline.mp3');
+
+       var noInternetChallengeAlert = $ionicPopup.alert({
           title: 'No Internet Connection',
           template: 'You have to be online to play challenge'
         })
+       noInternetChallengeAlert.then(function(){
+        audio.player.stop();
+       })
       }
     }
 
@@ -1111,11 +1117,16 @@
       $scope.challengeModal = challengeModal;
       if (User.demo.getStep() != 1 && !User.hasJoinedChallenge() && challenge.isUserEligible() && $rootScope.showChallengeModal && challenge.isChallengeActive()) {
         $log.debug("showing challenge modal")
+        if(network.isOnline()){
         mapCtrl.openChallengeTimeout = $timeout(function() {
+          audio.player.play('sound/challenge_starting_now.mp3');
           $scope.challengeModal.show().then(function() {
             $rootScope.showChallengeModal = false;
           });
         }, 2000)
+        }else{
+          
+        }
       }
     });
     $scope.joinChallenge = function() {
@@ -1140,6 +1151,7 @@
     }
     $scope.dismissJoinChallenge = function() {
       $log.debug("dismiss join challenege");
+      audio.player.stop();
       $scope.challengeModal.hide().then(function() {
         $log.debug("challenge modal hiden")
           // goToChallenge();
