@@ -95,9 +95,8 @@
     challenge,
     pointsQueue
   ) {
-      lessonutils.cacheLessons();
-    
-    $log.debug(new Date().toTimeString(),"debug-optimize", "inside map controller")
+    lessonutils.cacheLessons();
+    $log.debug(new Date().toTimeString(), "debug-optimize", "inside map controller")
     $scope.audio = audio;
     $scope.settings = settings;
     var temp = JSON.parse(localStorage.getItem('profile')).data.profile;
@@ -218,7 +217,6 @@
     }).catch(function(err) {
       $log.error('some error occured while fetching offline notification doc', err);
     })
-
 
     function openChallenge() {}
 
@@ -512,9 +510,8 @@
     $scope.$on('backButton', mapCtrl.onBackButtonPress)
 
     function onBackButtonPress() {
-      $log.warn('LOADING',mapCtrl.loading)
-
-      //UNCOMMENT THIS      
+      $log.warn('LOADING', mapCtrl.loading)
+        //UNCOMMENT THIS      
       if (mapCtrl.loading == 0) {
         if ($scope.profileScreen.isShown()) {
           exitChooseProfile()
@@ -533,11 +530,8 @@
             });
           }
         }
-        
       }
-
     }
-
     notification.getFromServer({
       dev_id: device.uuid
     }).then(function(response) {
@@ -628,7 +622,7 @@
         hideOnStateChange: true
       });
       mapCtrl.loading = 1;
-      if($scope.exitApp.isShown()){
+      if ($scope.exitApp.isShown()) {
         $scope.exitApp.hide().then(function() {
           analytics.log({
             name: 'APP',
@@ -644,7 +638,7 @@
       //   $scope.demo.isShown() && $scope.demo.hide();
       var promise;
       $log.debug('intro sound', node.node.intro_sound, node)
-      // lessonutils.cacheLessons()
+        // lessonutils.cacheLessons()
       if (node.node.intro_sound) {
         promise = mediaManager.downloadIfNotExists(node.node.intro_sound)
       } else {
@@ -1074,14 +1068,17 @@
         }
       } else {
         audio.player.play('sound/challenge_starting_now_offline.mp3');
-
-       var noInternetChallengeAlert = $ionicPopup.alert({
-          title: 'No Internet Connection',
-          template: 'You have to be online to play challenge'
+        var noInternetChallengeAlert = 
+            $ionicPopup.alert({
+              // title: CONSTANT.ERROR_MESSAGES.DEFAULT_TITLE,
+              template: '<error-popup message="\'Connect to the internet to keep playing\'"></error-popup>',
+              cssClass: 'custom-alert',
+              okType: 'sbtn sbtn-ok',
+              okText: ' '
+            })
+        noInternetChallengeAlert.then(function() {
+          audio.player.stop();
         })
-       noInternetChallengeAlert.then(function(){
-        audio.player.stop();
-       })
       }
     }
 
@@ -1121,16 +1118,14 @@
       $scope.challengeModal = challengeModal;
       if (User.demo.getStep() != 1 && !User.hasJoinedChallenge() && challenge.isUserEligible() && $rootScope.showChallengeModal && challenge.isChallengeActive()) {
         $log.debug("showing challenge modal")
-        if(network.isOnline()){
         mapCtrl.openChallengeTimeout = $timeout(function() {
-          audio.player.play('sound/challenge_starting_now.mp3');
-          $scope.challengeModal.show().then(function() {
-            $rootScope.showChallengeModal = false;
-          });
+          if (network.isOnline()) {
+            audio.player.play('sound/challenge_starting_now.mp3');
+            $scope.challengeModal.show().then(function() {
+              $rootScope.showChallengeModal = false;
+            });
+          }
         }, 2000)
-        }else{
-          
-        }
       }
     });
     $scope.joinChallenge = function() {
