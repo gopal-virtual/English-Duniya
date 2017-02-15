@@ -1062,8 +1062,10 @@
             })
           });
         } else {
-          audio.player.play('sound/challenge_starting_now.mp3');
-          $scope.challengeModal.show();
+          
+          $scope.challengeModal.show().then(function(){
+            audio.player.play('sound/challenge_starting_now.mp3');
+          })
         }
       } else {
         audio.player.play('sound/challenge_starting_now_offline.mp3');
@@ -1118,8 +1120,8 @@
       if (User.demo.getStep() != 1 && !User.hasJoinedChallenge() && challenge.isUserEligible() && $rootScope.showChallengeModal && challenge.isChallengeActive()) {
         $log.debug("showing challenge modal")
         mapCtrl.openChallengeTimeout = $timeout(function() {
-            audio.player.play('sound/challenge_starting_now.mp3');
             $scope.challengeModal.show().then(function() {
+            audio.player.play('sound/challenge_starting_now.mp3');
               $rootScope.showChallengeModal = false;
             });
         }, 2000)
