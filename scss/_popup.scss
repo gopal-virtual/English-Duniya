@@ -1,9 +1,9 @@
 .popup-container{
-  background-color: rgba(255,255,255,.9);
+  background-color: rgba(0,0,0,0.8);
   color : #5e5e5e !important;
 }
 .popup-container .popup{
-  background-color: $pale !important;
+  background-color: #FFF !important;
   border-radius: $border-radius;
   box-shadow: 2px 3px 4px 0 rgba(119,119,119,.5)
 }
@@ -11,12 +11,28 @@
   border: 0px;
   color : #5e5e5e !important;
 }
-.popup-buttons > .button {
-  background-color: $brand-green !important;
-  color : white !important;
-  border-radius: $border-radius-round;
-  box-shadow: none;
+
+.popup-buttons{
+  display: flex;
+  justify-content: center;
 }
+.popup-buttons > .button {
+  // background-color: $brand-green !important;
+  // color : white !important;
+  // border-radius: $border-radius-round;
+  box-shadow: none;
+  flex: initial !important;
+}
+
+.popup-buttons > .button.activated {
+  // background-color: $brand-green !important;
+  // color : white !important;
+  // border-radius: $border-radius-round;
+  // box-shadow: none;
+  // flex: initial !important;
+  background-color: transparent; 
+}
+
 
 .popup-body{
 	font-size: 1.5em;
@@ -30,3 +46,16 @@
 	padding-top: 10px;
 	color: lighten($dark-grey, 10%);
 }
+
+.popup-container.custom-alert .popup-head{
+  display: none;
+}
+
+
+.popup-body p{
+  font-size: 1.1em;
+  color: #1E80C3;
+}
+// .popup-container.custom-alert .popup-body .avatar{
+//   height: 150px;
+// }

@@ -110,6 +110,7 @@
     $scope.activatedLesson = $stateParams.activatedLesson;
     $scope.progress = localStorage.getItem('progress');
     var mapCtrl = this;
+    $scope.gender = User.getActiveProfileSync() ? User.getActiveProfileSync().data.profile.gender : 'M'
     mapCtrl.gender = JSON.parse(localStorage.getItem('profile')).data.profile.gender;
     mapCtrl.rootScope = $rootScope;
     $log.debug("map ctrl scope", $scope.mediaSyncStatus)
@@ -667,8 +668,11 @@
           $ionicLoading.hide()
           $log.debug("error is here");
           $ionicPopup.alert({
-            title: CONSTANT.ERROR_MESSAGES.DEFAULT_TITLE,
-            template: e.message ? e.message : CONSTANT.ERROR_MESSAGES.DEFAULT
+            // title: CONSTANT.ERROR_MESSAGES.DEFAULT_TITLE,
+            template: '<error-popup message="\'Connect to the internet to keep playing\'"></error-popup>',
+            cssClass: 'custom-alert',
+            okType: 'sbtn sbtn-ok',
+            okText: ' '
           })
         });
       //   if (currentPos)
