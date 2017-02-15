@@ -17,7 +17,6 @@
     return network;
 
     function isOnline() {
-      return false;
 
       if (window.Connection) {
         if (navigator.connection.type == Connection.NONE) {
