@@ -48,6 +48,7 @@
         }
 
         function goToCreateNewProfile() {
+            $rootScope.showChallengeModal = true;
             localStorage.removeItem('currentPosition');
             localStorage.removeItem('regionPage');
             localStorage.removeItem('profile');
@@ -61,6 +62,7 @@
         }
 
         function selectProfile(profile, scope) {
+            $rootScope.showChallengeModal = true;
             localStorage.removeItem('currentPosition');
             localStorage.removeItem('regionPage');
             analytics.log({
