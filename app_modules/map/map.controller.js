@@ -208,7 +208,8 @@
     $scope.exitModal = {
         message: 'Do you want to leave the game?',
         dismiss: exitModalDismiss,
-        confirm: exitModalConfirm
+        confirm: exitModalConfirm,
+        leftIcon: 'sbtn-play'
       }
       // notification.offline.list()
     notification.offline.list().then(function(schedulerObjectArray) {
@@ -300,6 +301,8 @@
         $scope.exitModal.message = "Do you want to leave the game?";
         $scope.exitModal.dismiss = exitModalDismiss;
         $scope.exitModal.confirm = exitModalConfirm;
+        $scope.exitModal.leftIcon = 'sbtn-play';
+
         resetPhoneValues();
         $ionicSlideBoxDelegate.slide(0);
         $scope.phone.otp = '';
@@ -965,6 +968,8 @@
       $scope.exitModal.message = "Do you want to create<br>a new profile";
       $scope.exitModal.dismiss = createProfileModalDismiss;
       $scope.exitModal.confirm = createProfileModalConfirm;
+      $scope.exitModal.leftIcon = 'sbtn-correct';
+      $log.debug('$scope',$scope.exitModal)
       $log.debug("PHONE. changed number flag", $scope.changeNumberFlag);
       analytics.log({
         name: 'CHOOSEPROFILE',
@@ -991,6 +996,7 @@
       $scope.exitModal.message = "Do you want to leave the game?";
       $scope.exitModal.dismiss = exitModalDismiss;
       $scope.exitModal.confirm = exitModalConfirm;
+      $scope.exitModal.leftIcon = 'sbtn-play';
       $scope.profileScreen.hide().then(function() {
         audio.loop('background');
         analytics.log({
