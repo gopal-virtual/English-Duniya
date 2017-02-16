@@ -32,7 +32,7 @@
     var challengeProperties = {
       addPoints: addPoints,
       getPoints: getPoints,
-      points: parseInt(localStorage.getItem('points' + User.getActiveProfileSync()._id)) | 0,
+      // points: parseInt(localStorage.getItem('points' + User.getActiveProfileSync()._id)) | 0,
       isUserEligible: isUserEligible,
       isChallengeActive: isChallengeActive,
       showChallengeButton: showChallengeButton,
@@ -40,9 +40,9 @@
     };
 
     function addPoints(profileID, points, action, nodeId) {
-      var oldPoints = parseInt(localStorage.getItem('points' + profileID)) | 0;
-      localStorage.setItem('points' + profileID, parseInt(points) + oldPoints);
-      getPoints(profileID);
+      // var oldPoints = parseInt(localStorage.getItem('points' + profileID)) | 0;
+      // localStorage.setItem('points' + profileID, parseInt(points) + oldPoints);
+      // getPoints(profileID);
 
       var pointsArray = localStorage.getItem('pointsArray') ? JSON.parse(localStorage.getItem('pointsArray')) : [];
 
