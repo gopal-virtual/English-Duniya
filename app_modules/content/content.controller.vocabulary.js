@@ -190,7 +190,7 @@
       if (!$stateParams.vocab_data.isPlayed && $scope.hasUserJoinedChallenge && challenge.isChallengeActive()) {
               $log.debug("points add points called quiz")
 
-        challenge.addPoints(User.getActiveProfileSync()._id, 50, 'node_complete', $stateParams.vocab_data.node.id);
+        challenge.addPoints(User.getActiveProfileSync()._id, 50, 'node_complete', $stateParams.vocab_data.node.id,'vocabulary');
       }
       $log.debug('vocab parent lesson : ', lesson)
       if (!lesson.score || !lesson.score[$stateParams.vocab_data.node.id]) {

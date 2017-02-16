@@ -714,7 +714,7 @@
             playStarSound();
             if (!$stateParams.quiz.isPlayed && quizCtrl.hasJoinedChallenge && challenge.isChallengeActive()) {
               $log.debug("points add points called quiz")
-              challenge.addPoints(User.getActiveProfileSync()._id, 50, 'node_complete', $stateParams.quiz.node.id);
+              challenge.addPoints(User.getActiveProfileSync()._id, 50, 'node_complete', $stateParams.quiz.node.id,'assessment');
             }
             User.skills.update({
                 profileId: User.getActiveProfileSync()._id,
