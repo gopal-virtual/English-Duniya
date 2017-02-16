@@ -11,6 +11,9 @@ var diagnosis_db = argv.diagnosis_db;
 var lessons_db = argv.lessons_db;
 var diagnosis_docs_list = JSON.parse(request('GET', diagnosis_db + '_all_docs').getBody().toString());
 var lesson_docs_list = JSON.parse(request('GET', lessons_db + '_all_docs').getBody().toString()).rows;
+var vocabulary_list = [];
+var video_list = [];
+var assessment_list = []
 var languages = argv.languages;
 
 function getFileNameFromURl(url) {
@@ -41,17 +44,24 @@ var counter = [0, 0, 0, 0];
 if (lessons == 'all') {
   for (var i = 0; i < lesson_docs_list.length; i++) {
     if (lesson_docs_list[i].id !== 'localized_mapping' && lesson_docs_list[i].id !== '_design/_auth') {
-      console.log(lesson_docs_list[i].id)
+      console.log(lesson_docs_list[i].id, lessons_db + lesson_docs_list[i].id)
       var lesson_doc = JSON.parse(request('GET', lessons_db + lesson_docs_list[i].id).getBody().toString()).lesson;
       if (languages.indexOf(lesson_doc.node.localize.source) >= 0) {
         // Add Intros to media[]
         if (lesson_doc.node.meta && lesson_doc.node.meta.intros && lesson_doc.node.meta.intros.sound) {
           media = media.concat(lesson_doc.node.meta.intros.sound);
         }
-        for (var j = 0; j < lesson_doc.objects.length; j++) {
           var skip_video = false;
+        for (var j = 0; j < lesson_doc.objects.length; j++) {
+          if (lesson_doc.objects[j].node.content_type_name == 'vocabulary') {
+            skip_video = true;
+            console.log("vocab found should skip video");
+          }
+        }
+        for (var j = 0; j < lesson_doc.objects.length; j++) {
           // If assessment
           if (lesson_doc.objects[j].node.content_type_name == 'assessment') {
+            assessment_list.push(lesson_doc.objects[j].node.id);
             //Iterate questions
             for (var k = 0; k < lesson_doc.objects[j].objects.length; k++) {
               // add widgets to media[]
@@ -71,6 +81,7 @@ if (lessons == 'all') {
             }
           }
           if (lesson_doc.objects[j].node.content_type_name == 'vocabulary') {
+            vocabulary_list.push(lesson_doc.objects[j].node.id);
             for (var l = 0; l < lesson_doc.objects[j].objects.length; l++) {
               // vocab sounds
               if (lesson_doc.objects[j].objects[l].node.type.sound) {
@@ -83,12 +94,13 @@ if (lessons == 'all') {
                 media.push(lesson_doc.objects[j].objects[l].node.type.image.path)
               }
             }
-            skip_video = true;
           }
           //if Video
           if (lesson_doc.objects[j].node.content_type_name == 'resource') {
             // add video to media[]
             if (!skip_video) {
+            video_list.push(lesson_doc.objects[j].node.id);
+              console.log("video included");
               media.push(lesson_doc.objects[j].node.type.path);
             }
           }
@@ -122,10 +134,11 @@ var mediaVideo = 0;
 var mediaImage = 0;
 console.log("Please wait while we analyze " + media.length + " media files");
 for (i in media) {
+  break;
   var filename = getFileNameFromURl(media[i]);
   var directory = gerDirectoryFromURL(media[i]);
   var size = request('HEAD', 'http://cc-test.zaya.in/' + filename).headers['content-length'];
-  console.log('Size of ',i ,'out of ',media.length ,'media files : ', filename, ' is ', size);
+  console.log('Size of ', i, 'out of ', media.length, 'media files : ', filename, ' is ', size);
   if (parseInt(size)) {
     mediaSize += parseInt(size);
     if (filename.indexOf('mp3') >= 0) {
@@ -149,3 +162,7 @@ for (i in media) {
   // });
 }
 console.log("Size calculation Done : Total Media", mediaSize, "Sounds", mediaAudio, "Images", mediaImage, "Videos", mediaVideo);
+console.log("Total Vocabulary", vocabulary_list.length, " Assessment ", assessment_list.length, " Videos ", video_list.length);
+console.log("Vocabulary List", vocabulary_list);
+console.log("Video List", video_list);
+console.log("Assessment List", assessment_list);
