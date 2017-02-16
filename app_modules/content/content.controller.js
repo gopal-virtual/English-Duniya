@@ -223,7 +223,7 @@
     function submitReport() {
       $log.debug("video in submitReport", $stateParams.video)
       if (!$stateParams.video.resource.isPlayed && $scope.hasUserJoinedChallenge && challenge.isChallengeActive()) {
-        challenge.addPoints(User.getActiveProfileSync()._id, 50, 'node_complete',$stateParams.video.resource.node.id);
+        challenge.addPoints(User.getActiveProfileSync()._id, 50, 'node_complete',$stateParams.video.resource.node.id,'resource');
       }
       var lesson = lessonutils.getLocalLesson();
       var promise = null;

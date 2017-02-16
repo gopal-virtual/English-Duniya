@@ -39,14 +39,14 @@
       postPoints: postPoints
     };
 
-    function addPoints(profileID, points, action, nodeId) {
+    function addPoints(profileID, points, action, nodeId,contentType) {
       // var oldPoints = parseInt(localStorage.getItem('points' + profileID)) | 0;
       // localStorage.setItem('points' + profileID, parseInt(points) + oldPoints);
       // getPoints(profileID);
 
       var pointsArray = localStorage.getItem('pointsArray') ? JSON.parse(localStorage.getItem('pointsArray')) : [];
 
-      pointsArray.push({profileID:profileID,points:points,action:action,nodeId:nodeId});
+      pointsArray.push({profileID:profileID,points:points,action:action,nodeId:nodeId,contentType:contentType});
       localStorage.setItem('pointsArray',JSON.stringify(pointsArray));
 
       // pointsQueue.push({
@@ -79,7 +79,7 @@
           request.points.push({
                 "action": pointsArray[i].action,
                 "score": pointsArray[i].points,
-                "content_type": "node",
+                "content_type": pointsArray[i].contentType,
                 "object_id": pointsArray[i].nodeId   
           })
         }else{
