@@ -69,6 +69,7 @@
     };
     $scope.isPlayed = $stateParams.video.resource.isPlayed;
     $scope.hasUserJoinedChallenge = User.hasJoinedChallenge();
+    $scope.resultButtonAnimationFlag = 0;
     $scope.logResume = function() {
       analytics.log({
           name: 'VIDEO',
@@ -147,7 +148,7 @@
             if (count == star - 1) {
               $scope.resultPageNextShow = true;
             }
-          }, (count + 1) * 1000);
+          }, (count) * 1000);
         })(i)
       }
     }
