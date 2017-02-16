@@ -134,7 +134,6 @@ var mediaVideo = 0;
 var mediaImage = 0;
 console.log("Please wait while we analyze " + media.length + " media files");
 for (i in media) {
-  break;
   var filename = getFileNameFromURl(media[i]);
   var directory = gerDirectoryFromURL(media[i]);
   var size = request('HEAD', 'http://cc-test.zaya.in/' + filename).headers['content-length'];
