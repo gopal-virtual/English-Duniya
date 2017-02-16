@@ -6,7 +6,7 @@
     .directive('diagnosis', diagnosis)
 
   /* @ngInject */
-  function diagnosis(CONSTANT, audio, localized, User) {
+  function diagnosis(CONSTANT, audio, localized, User, $log) {
     var diagnosis = {
       restrict: 'E',
       templateUrl: CONSTANT.PATH.COMMON + '/common.diagnosis.animation' + CONSTANT.VIEW,
@@ -21,8 +21,11 @@
     return diagnosis;
 
     function linkFunc(scope, el, attr, ctrl) {
+
+      $log.debug('SCOPE GENDER', scope)
+
       var loader_items = document.querySelector('#loader_item')
-      var avatar = document.querySelector('#boy')
+      var avatar = document.querySelector('#'+scope.gender)
       var badge = document.querySelector('#badge')
       var ribbon = document.querySelector('#ribbon')
       var level = document.querySelectorAll('#level-text tspan')
