@@ -1061,15 +1061,17 @@
             hideOnStateChange: true
           })
           mapCtrl.loading = 1;
-          pointsQueue.startSync().then(function() {
+          challenge.postPoints().then(function() {
             $log.debug("syncPointsQueue success")
             $state.go('weekly-challenge', {
               profileId: User.getActiveProfileSync()._id
             })
           });
         } else {
-          audio.player.play('sound/challenge_starting_now.mp3');
-          $scope.challengeModal.show();
+          
+          $scope.challengeModal.show().then(function(){
+            audio.player.play('sound/challenge_starting_now.mp3');
+          })
         }
       } else {
         audio.player.play('sound/challenge_starting_now_offline.mp3');
@@ -1121,14 +1123,15 @@
     }).then(function(challengeModal) {
       $log.debug("challenge modal defined", User.hasJoinedChallenge())
       $scope.challengeModal = challengeModal;
+      $log.debug(User.demo.getStep() != 1 ,!User.hasJoinedChallenge() , challenge.isUserEligible() , $rootScope.showChallengeModal , challenge.isChallengeActive())
       if (User.demo.getStep() != 1 && !User.hasJoinedChallenge() && challenge.isUserEligible() && $rootScope.showChallengeModal && challenge.isChallengeActive()) {
         $log.debug("showing challenge modal")
         mapCtrl.openChallengeTimeout = $timeout(function() {
-            audio.player.play('sound/challenge_starting_now.mp3');
             $scope.challengeModal.show().then(function() {
+            audio.player.play('sound/challenge_starting_now.mp3');
               $rootScope.showChallengeModal = false;
             });
-        }, 2000)
+        }, 4000)
       }
     });
     $scope.joinChallenge = function() {

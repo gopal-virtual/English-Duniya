@@ -70,6 +70,7 @@
     $scope.isPlayed = $stateParams.video.resource.isPlayed;
     $scope.hasUserJoinedChallenge = User.hasJoinedChallenge();
     $scope.resultButtonAnimationFlag = 0;
+    $scope.isChallengeActive = challenge.isChallengeActive();
     $scope.logResume = function() {
       analytics.log({
           name: 'VIDEO',

@@ -32,29 +32,87 @@
     var challengeProperties = {
       addPoints: addPoints,
       getPoints: getPoints,
-      points: parseInt(localStorage.getItem('points' + User.getActiveProfileSync()._id)) | 0,
+      // points: parseInt(localStorage.getItem('points' + User.getActiveProfileSync()._id)) | 0,
       isUserEligible: isUserEligible,
       isChallengeActive: isChallengeActive,
-      showChallengeButton: showChallengeButton
+      showChallengeButton: showChallengeButton,
+      postPoints: postPoints
     };
 
     function addPoints(profileID, points, action, nodeId) {
-      var oldPoints = parseInt(localStorage.getItem('points' + profileID)) | 0;
-      localStorage.setItem('points' + profileID, parseInt(points) + oldPoints);
-      getPoints(profileID);
-      pointsQueue.push({
-        client_id: User.getActiveProfileSync()._id,
-        points: [{
-          action: action,
-          score: points,
-          object_id: nodeId,
-          content_type: 'node'
-        }]
-      }).then(function() {
-        $log.debug("pushPointsQueue success")
-      });
+      // var oldPoints = parseInt(localStorage.getItem('points' + profileID)) | 0;
+      // localStorage.setItem('points' + profileID, parseInt(points) + oldPoints);
+      // getPoints(profileID);
+
+      var pointsArray = localStorage.getItem('pointsArray') ? JSON.parse(localStorage.getItem('pointsArray')) : [];
+
+      pointsArray.push({profileID:profileID,points:points,action:action,nodeId:nodeId});
+      localStorage.setItem('pointsArray',JSON.stringify(pointsArray));
+
+      // pointsQueue.push({
+      //   client_id: User.getActiveProfileSync()._id,
+      //   points: [{
+      //     action: action,
+      //     score: points,
+      //     object_id: nodeId,
+      //     content_type: 'node'
+      //   }]
+      // }).then(function() {
+      //   $log.debug("pushPointsQueue success")
+      // });
     }
 
+    function postPoints(){
+      var d = $q.defer();
+      var pointsArray = localStorage.getItem('pointsArray') ? JSON.parse(localStorage.getItem('pointsArray')) : [];
+      var remainingPoints = [];
+      $log.debug("pointsrray",pointsArray);
+      var request = {
+        client_id: User.getActiveProfileSync()._id,
+        points: []
+      }
+      for(var i=0; i < pointsArray.length; i++){
+          $log.debug("points array ",i,pointsArray[i],request.client_id)
+
+        if(pointsArray[i].profileID == request.client_id){
+          $log.debug("points array pushing in request")
+          request.points.push({
+                "action": pointsArray[i].action,
+                "score": pointsArray[i].points,
+                "content_type": "node",
+                "object_id": pointsArray[i].nodeId   
+          })
+        }else{
+          remainingPoints.push(pointsArray[i]);
+        }
+      }
+      localStorage.setItem('pointsArray',JSON.stringify(remainingPoints))
+      $log.debug("points array request is",request);
+      $http.post('http://challenge.englishduniya.in/points/', request).then(
+          function success() {
+            $log.debug("points array", "upload success");
+            d.resolve();
+          },
+          function fail(error) {
+            if (error.status !== 0) {
+              $log.debug("points upload failed", record);
+              var e = {
+                "error": error,
+                "function": "queue_push"
+              };
+              // Raven.captureException("Error with queue push",{
+              //   extra: {error:e}
+              // });
+              // $log.debug("ERROR with queue",error.status)
+              return queueDB.remove(record.doc);
+            } else {
+              return d.reject();
+            }
+          }
+        )
+      return d.promise;
+
+    }
     function getPoints(profileID) {
       // return User.scores.getScoreList().then(function(scoresList){
       //   $log.debug()
