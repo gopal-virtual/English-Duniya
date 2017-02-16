@@ -98,7 +98,7 @@
                 $ionicLoading.show({
                     templateUrl: 'templates/common/common.loader.view.html'
                 });
-                $state.go('repaint', {})
+                $state.go('repaint',{})
             } else {
                 $ionicLoading.show({
                     noBackdrop: false,

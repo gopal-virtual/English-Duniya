@@ -543,7 +543,7 @@
     function getScoreOfResource(lessonId, resourceId, profileId, playlistIndex) {
       $log.debug("getScoreOfResource", lessonId, resourceId, profileId, playlistIndex)
       return profilesDB.get(profileId).then(function(response) {
-        $log.debug("RESO", response.data.playlist[playlistIndex], response.data.playlist[playlistIndex][resourceId], response.data.playlist[playlistIndex]['lesson_id'])
+        // $log.debug("RESO", response.data.playlist[playlistIndex], response.data.playlist[playlistIndex][resourceId], response.data.playlist[playlistIndex]['lesson_id'])
         if (response.data.playlist[playlistIndex]['lesson_id'] == lessonId && response.data.playlist[playlistIndex][resourceId]) {
           return response.data.playlist[playlistIndex][resourceId];
         } else {

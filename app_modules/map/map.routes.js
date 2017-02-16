@@ -8,6 +8,7 @@
     $stateProvider
       .state('map', {
         url: '/map',
+        cache: false,
         abstract: true,
         resolve: {
           lessons: ['$log', 'content', 'User', function($log, content, User) {
@@ -59,6 +60,7 @@
       })
       .state('map.navigate', {
         url: '/navigate',
+        cache: false,
         nativeTransitions: {
           "type": "fade",
           "duration": 1000,
@@ -116,6 +118,7 @@
         }
       })
       .state('repaint', {
+        cache: false,
         url: '/repaint',
         onEnter: ['$state', '$timeout', '$log', '$ionicLoading', function($state, $timeout, $log, $ionicLoading) {
           $timeout(function() {
@@ -126,6 +129,7 @@
       })
       .state('weekly-challenge', {
         url: '/weekly-challenge',
+        cache: false,
         templateProvider: function($timeout, $stateParams, $log, User) {
           $log.debug("weekly challenge template provider");
           return $timeout(function() {
