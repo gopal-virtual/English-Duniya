@@ -1066,7 +1066,16 @@
             $state.go('weekly-challenge', {
               profileId: User.getActiveProfileSync()._id
             })
-          });
+          }).catch(function(){
+            $ionicLoading.hide();
+             $ionicPopup.alert({
+              // title: CONSTANT.ERROR_MESSAGES.DEFAULT_TITLE,
+              template: '<error-popup message="\'Please try again\'"></error-popup>',
+              cssClass: 'custom-alert',
+              okType: 'sbtn sbtn-ok',
+              okText: ' '
+            })
+          })
         } else {
           
           $scope.challengeModal.show().then(function(){

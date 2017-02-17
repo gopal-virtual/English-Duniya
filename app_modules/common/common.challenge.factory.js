@@ -86,28 +86,16 @@
           remainingPoints.push(pointsArray[i]);
         }
       }
-      localStorage.setItem('pointsArray',JSON.stringify(remainingPoints))
       $log.debug("points array request is",request);
       $http.post('http://challenge.englishduniya.in/points/', request).then(
           function success() {
+          localStorage.setItem('pointsArray',JSON.stringify(remainingPoints))
             $log.debug("points array", "upload success");
             d.resolve();
           },
           function fail(error) {
-            if (error.status !== 0) {
-              $log.debug("points upload failed", record);
-              var e = {
-                "error": error,
-                "function": "queue_push"
-              };
-              // Raven.captureException("Error with queue push",{
-              //   extra: {error:e}
-              // });
-              // $log.debug("ERROR with queue",error.status)
-              return queueDB.remove(record.doc);
-            } else {
-              return d.reject();
-            }
+          localStorage.setItem('pointsArray',JSON.stringify(pointsArray))
+           d.reject();
           }
         )
       return d.promise;
