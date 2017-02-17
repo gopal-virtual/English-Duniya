@@ -42,10 +42,10 @@
                 });
               })
             }
-            return content.getResourceList(User.getActiveProfileSync().data.profile.grade).then(function(result){
-              $log.debug("HERE",result);
-                  return result;
-            })
+            // return content.getResourceList(User.getActiveProfileSync().data.profile.grade).then(function(result){
+            //   $log.debug("HERE",result);
+            //       return result;
+            // })
           }],
           scores: ['Rest', '$log', 'content', function(Rest, $log, content) {
             return [];
