@@ -504,7 +504,11 @@
       return true;
     }
 
-    function get(profileId) {}
+    function get(profileId) {
+      return profilesDB.get(profileId).then(function(response){
+        return response.data;
+      })
+    }
 
     function getSkills(profileId) {
       return profilesDB.get(profileId).then(function(response) {

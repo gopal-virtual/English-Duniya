@@ -10,8 +10,11 @@
     'CONSTANT',
     '$q',
     'Auth',
-    'network'
-  ];
+    'network',
+    '$http',
+    '$timeout',
+    '$injector'
+      ];
   /* @ngInject */
   function queue(pouchDB,
     $log,
@@ -19,7 +22,11 @@
     CONSTANT,
     $q,
     Auth,
-    network) {
+    network,
+    $http,
+    $timeout,
+    $injector
+    ) {
     var queueDB = pouchDB('queueDB', {
       revs_limit: 1,
       // auto_compaction: true
@@ -131,9 +138,37 @@
         })
     }
 
+    function patchProfile(clientUid) {
+      var d = $q.defer();
+      $log.debug("profile patched", clientUid);
+      $injector.get('User')
+        .profile.get(clientUid).then(function(profileData) {
+          $log.debug("patch profile ", profileData)
+          if (profileData) {
+            var profile = {
+              first_name: profileData.profile.first_name,
+              last_name: profileData.profile.last_name,
+              gender: profileData.profile.gender,
+              grade: profileData.profile.grade,
+              language: profileData.profile.language,
+              client_uid: profileData.profile.client_uid
+            }
+          }
+          $http.post(CONSTANT.BACKEND_SERVICE_DOMAIN + '/api/v1/profiles/', profile).then(function(success) {
+            d.resolve();
+          },function(Error){
+            d.reject();
+          })
+        });
+    };
+    return d.promise;
+    // return $http.get('http://google.com/activity-log');
+  }
+
+
     function uploadAndDelete(record) {
       //patch
-      $log.debug("queue", "upload amd delete", record)
+      $log.debug("queue", "upload and delete", record)
       if (!record.doc.body) {
         record.doc.body = record.doc.data.data;
         record.doc.method = 'post';
@@ -156,17 +191,27 @@
           return queueDB.remove(record.doc);
         })
         .catch(function(error) {
+           Raven.captureException("Error with queue push",{
+              extra: {error:e,record,record}
+            });
           if (error.status !== 0) {
             $log.debug("upload failed", record);
+            if(error.status === 400){
+              if(record.doc.url === 'activity-log'){
+              $log.debug("400 request in activity log",record);
+                // patch profile
+                return patchProfile(record.doc.body.client_uid);
+              }
+            }else if(error.status === 500){
+              // log to sentry and do not delete the request
+            }
             var e = {
               "error": error,
               "function": "queue_push"
             };
-            // Raven.captureException("Error with queue push",{
-            //   extra: {error:e}
-            // });
+           
             // $log.debug("ERROR with queue",error.status)
-            return queueDB.remove(record.doc);
+            // return queueDB.remove(record.doc);
           } else {
             return $q.reject();
           }
