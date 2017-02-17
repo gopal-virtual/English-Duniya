@@ -87,7 +87,7 @@
         }
       }
       $log.debug("points array request is",request);
-      $http.post('http://challenge.englishduniya.in/points/', request).then(
+      $http.post(CONSTANT.CHALLENGE_SERVER+'points/', request).then(
           function success() {
           localStorage.setItem('pointsArray',JSON.stringify(remainingPoints))
             $log.debug("points array", "upload success");

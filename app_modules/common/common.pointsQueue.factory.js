@@ -121,7 +121,7 @@
       var promise;
         $log.debug("points queue","uplaod and delete");
 
-      return $http.post('http://challenge.englishduniya.in/points/', record.doc.body).then(
+      return $http.post(CONSTANT.CHALLENGE_SERVER+'points/', record.doc.body).then(
           function success() {
             $log.debug("points queue", "upload success", record);
             return queueDB.remove(record.doc);

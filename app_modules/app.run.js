@@ -245,7 +245,7 @@
             .then(function(result) {
               $log.debug(challenge.isChallengeActive());
               if (result && challenge.isChallengeActive()) {
-                $http.post('http://challenge.englishduniya.in/points/', {
+                $http.post(CONSTANT.CHALLENGE_SERVER+'points/', {
                   client_id: User.getActiveProfileSync()._id,
                   points: [{
                     action: 'share',
