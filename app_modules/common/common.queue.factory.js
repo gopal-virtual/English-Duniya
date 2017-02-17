@@ -10,8 +10,11 @@
     'CONSTANT',
     '$q',
     'Auth',
-    'network'
-  ];
+    'network',
+    '$http',
+    '$timeout',
+    '$injector'
+      ];
   /* @ngInject */
   function queue(pouchDB,
     $log,
@@ -19,7 +22,11 @@
     CONSTANT,
     $q,
     Auth,
-    network) {
+    network,
+    $http,
+    $timeout,
+    $injector
+    ) {
     var queueDB = pouchDB('queueDB', {
       revs_limit: 1,
       // auto_compaction: true
@@ -131,9 +138,25 @@
         })
     }
 
+    function patchProfile(clientUid){
+
+      var d = $q.defer();
+      $timeout(function() {
+        $log.debug("profile patched", clientUid);
+        $injector.get('User')
+          .profile.get(clientUid).then(function(profileData) {
+        d.resolve();
+            $log.debug("patch profile ",profileData)
+          });
+      }, 4000);
+      return d.promise;
+      // return $http.get('http://google.com/activity-log');
+    }
+
+
     function uploadAndDelete(record) {
       //patch
-      $log.debug("queue", "upload amd delete", record)
+      $log.debug("queue", "upload and delete", record)
       if (!record.doc.body) {
         record.doc.body = record.doc.data.data;
         record.doc.method = 'post';
@@ -158,6 +181,19 @@
         .catch(function(error) {
           if (error.status !== 0) {
             $log.debug("upload failed", record);
+            if(error.status === 400){
+              if(record.doc.url === 'activity-log'){
+              $log.debug("400 request in activity log",record);
+                return patchProfile(record.doc.body.client_uid);
+                // patch profile
+              }
+              // check the url of request
+              // if url is activity-log - make a request to patch profile and then continue log to sentry the exception
+              // if url is profiles then do not delete the request and log to sentry
+              // 
+            }else if(error.status === 500){
+              // log to sentry and do not delete the request
+            }
             var e = {
               "error": error,
               "function": "queue_push"
@@ -166,7 +202,7 @@
             //   extra: {error:e}
             // });
             // $log.debug("ERROR with queue",error.status)
-            return queueDB.remove(record.doc);
+            // return queueDB.remove(record.doc);
           } else {
             return $q.reject();
           }
