@@ -277,6 +277,7 @@
     }
 
     function deleteMissedNodeFromRoadmap(sr){
+      localStorage.setItem("roadMapData", JSON.stringify(ml.roadMapData));
       var roadMap = ml.roadMapData["roadMap"];
       if(roadMap){
         for(var i = 0;i<roadMap.length;i++){
@@ -300,7 +301,8 @@
       if(localStorage.roadMapData == undefined){
         ml.roadMapData = {};
       }else{
-        ml.roadMapData = JSON.parse(localStorage.roadMapData);
+        localStorage.setItem("roadMapData", JSON.stringify(ml.roadMapData));
+        // ml.roadMapData = JSON.parse(localStorage.roadMapData);
       }
       var roadMap = ml.roadMapData["roadMap"];
       if(roadMap){
@@ -468,46 +470,48 @@
           // if not roadMap lessons
           $log.debug('if not roadMap lessons');
           ml.roadMapData["roadMap"][0]["suggestionCount"] += 1;
+
+          if(ml.roadMapData["roadMap"][0]["suggestionCount"] >= ml.maxSuggestionCount){
+            // if not roadMap lessons fail, if overcount suggestioncount
+            $log.debug('if not roadMap lessons fail, if overcount suggestioncount');
+            ml.roadMapData["roadMap"][0]["suggestionCount"] = 0;
+            ml.roadMapData["roadMap"][0]["resultTrack"] = {};
+            if(ml.roadMapData["roadMap"][0]["sr"] == data["sr"]){
+              $log.debug('most exceptional condition');
+              var suggestions = suggestBridge(data["skill"], data["sr"], ml.roadMapData["recommendationsWithPrereqs"]);
+              ml.roadMapData["roadMap"][0]["previousNode"] = null;
+              ml.roadMapData["roadMap"][0]["currentNode"] = ml.roadMapData["roadMap"][0]["sr"];
+              ml.roadMapData["roadMap"][0]["resultTrack"][ml.roadMapData["roadMap"][0]["sr"]] = suggestions;
+              return handleMultipleSuggestions();
+            }else{
+              $log.debug('returning suggesiton 2');
+              ml.roadMapData["roadMap"][0]["previousNode"] = null;
+              ml.roadMapData["roadMap"][0]["currentNode"] = ml.roadMapData["roadMap"][0]["sr"];
+              ml.roadMapData["roadMap"][0]["resultTrack"] = {};
+              var dependencyData = {"dependency": "root", "batch": ml.roadMapData["batch"]};
+              $log.debug('dependencyData root 4', dependencyData);
+              return {"suggestedLesson": ml.roadMapData["roadMap"][0]["sr"], "dependencyData": dependencyData};
+            }
+          }
+
+
           if(result >= ml.passingThreshold){
             // if not roadMap lessons pass
             $log.debug('if not roadMap lessons pass');
             // ml.roadMapData["roadMap"][0]["resultTrack"][ml.roadMapData["roadMap"][0]["currentNode"]].splice(0,1);
-            deleteSuccessfulNodeFromRoadmap(data["sr"]);
+            deleteSuccessfulNodeFromRoadmap(data["sr"]);            
             return handleMultipleSuggestions();
           }else{
             // if not roadMap lessons fail
             $log.debug('if not roadMap lessons fail');
-            if(ml.roadMapData["roadMap"][0]["suggestionCount"] > ml.maxSuggestionCount){
-              // if not roadMap lessons fail, if overcount suggestioncount
-              $log.debug('if not roadMap lessons fail, if overcount suggestioncount');
-              ml.roadMapData["roadMap"][0]["suggestionCount"] = 0;
-              ml.roadMapData["roadMap"][0]["resultTrack"] = {};
-              if(ml.roadMapData["roadMap"][0]["sr"] == data["sr"]){
-                $log.debug('most exceptional condition');
-                var suggestions = suggestBridge(data["skill"], data["sr"], ml.roadMapData["recommendationsWithPrereqs"]);
-                ml.roadMapData["roadMap"][0]["previousNode"] = null;
-                ml.roadMapData["roadMap"][0]["currentNode"] = ml.roadMapData["roadMap"][0]["sr"];
-                ml.roadMapData["roadMap"][0]["resultTrack"][ml.roadMapData["roadMap"][0]["sr"]] = suggestions;
-                return handleMultipleSuggestions();
-              }else{
-                $log.debug('returning suggesiton 2');
-                ml.roadMapData["roadMap"][0]["previousNode"] = null;
-                ml.roadMapData["roadMap"][0]["currentNode"] = ml.roadMapData["roadMap"][0]["sr"];
-                ml.roadMapData["roadMap"][0]["resultTrack"] = {};
-                var dependencyData = {"dependency": "root", "batch": ml.roadMapData["batch"]};
-                $log.debug('dependencyData root 4', dependencyData);
-                return {"suggestedLesson": ml.roadMapData["roadMap"][0]["sr"], "dependencyData": dependencyData};
-              }
-            }else{
-              // if not roadMap lessons fail, if not overcount suggestioncount
-              var suggestions = suggestBridge(data["skill"], data["sr"], ml.roadMapData["recommendationsWithPrereqs"]);
-              $log.debug('if not roadMap lessons fail, if not overcount suggestioncount', suggestions);
+            // if not roadMap lessons fail, if not overcount suggestioncount
+            var suggestions = suggestBridge(data["skill"], data["sr"], ml.roadMapData["recommendationsWithPrereqs"]);
+            $log.debug('if not roadMap lessons fail, if not overcount suggestioncount', suggestions);
 
-              ml.roadMapData["roadMap"][0]["previousNode"] = ml.roadMapData["roadMap"][0]["currentNode"];
-              ml.roadMapData["roadMap"][0]["currentNode"] = data["sr"];
-              ml.roadMapData["roadMap"][0]["resultTrack"][data["sr"]] = suggestions;
-              return handleMultipleSuggestions();
-            }
+            ml.roadMapData["roadMap"][0]["previousNode"] = ml.roadMapData["roadMap"][0]["currentNode"];
+            ml.roadMapData["roadMap"][0]["currentNode"] = data["sr"];
+            ml.roadMapData["roadMap"][0]["resultTrack"][data["sr"]] = suggestions;
+            return handleMultipleSuggestions();
           }
         }
       }
