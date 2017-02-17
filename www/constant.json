@@ -28,7 +28,7 @@
     "FAKE_LOGIN": false,
     "FAKE_DEVICE": false,
     "BACKEND_SERVICE_DOMAIN": "https://cc-test-2.zaya.in/",
-    "RESOURCE_SERVER": "https://cc-test.zaya.in/",
+    "RESOURCE_SERVER": "https://cc-test-2.zaya.in/",
     "ANALYTICS": true,
     "PROFILES_DB_SERVER": "https://ci-couch.zaya.in/device",
     "LESSONS_DB_SERVER":"https://ci-couch.zaya.in/lessonsdb",
@@ -42,8 +42,8 @@
         "CLEVERTAP_TOKEN" : "TEST-532-353",
         "GCM_PROJECT_NUMBER" : 150596025418 
     },
-    "CHALLENGE_START": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 12 },
-    "CHALLENGE_END": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 13 }
+    "CHALLENGE_START": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 15 },
+    "CHALLENGE_END": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 16 }
 
   },
   "DEVELOPMENT": {
@@ -53,7 +53,7 @@
     "FAKE_ID_DEVICE": "ayush77",
     "FAKE_DEVICE": true,
     "BACKEND_SERVICE_DOMAIN": "https://cc-test-2.zaya.in/",
-    "RESOURCE_SERVER": "https://cc-test.zaya.in",
+    "RESOURCE_SERVER": "https://cc-test-2.zaya.in",
     "ANALYTICS": true,
     "PROFILES_DB_SERVER": "https://ci-couch.zaya.in/device",
     "LESSONS_DB_SERVER":"https://ci-couch.zaya.in/lessonsdb",
@@ -67,8 +67,8 @@
         "CLEVERTAP_TOKEN" : "TEST-532-353",
         "GCM_PROJECT_NUMBER" : 150596025418
     },
-    "CHALLENGE_START": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 20 },
-    "CHALLENGE_END": {"YEAR" : 2017, "MONTH" : 2 , "DATE": 13 }
+    "CHALLENGE_START": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 13 },
+    "CHALLENGE_END": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 14 }
 
   },
   "CONTENT": {

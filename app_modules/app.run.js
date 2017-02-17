@@ -30,7 +30,9 @@
     // $document,
     $cordovaSocialSharing,
     Rest,
-    clevertap
+    clevertap,
+    lessonutils,
+    challenge
   ) {
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
     $ionicPlatform.registerBackButtonAction(function(event) {
@@ -58,6 +60,7 @@
         $ionicLoading.show({
             hideOnStateChange: true
           })
+        localStorage.removeItem('regionPage');
           // content.deleteLessonDB().then(function() {
           //     $log.debug("tag Deleted lesson db");
           //     return content.createDependentDBs();
@@ -201,8 +204,7 @@
     //   })
     $ionicPlatform.ready(function() {
 
-
-
+      // $ionicLoading.show({hideOnStateChange:true});
       // $log.debug('CLEVERTAP. document',$document)
       // document.addEventListener('onPushNotification', function(e) {
       //   $rootScope.$apply(function(){
@@ -241,7 +243,8 @@
           $cordovaSocialSharing
             .share(shareoptions.message, shareoptions.subject, 'https://s3-ap-southeast-1.amazonaws.com/zaya-builds/production-images/englishduniya-scholarship-challenge.png', 'http://referral.englishduniya.com/?referral='+event.data.referal_code+'&campaign_name=scholarship_challenge') // Share via native share sheet
             .then(function(result) {
-              if (result) {
+              $log.debug(challenge.isChallengeActive());
+              if (result && challenge.isChallengeActive()) {
                 $http.post('http://challenge.englishduniya.in/points/', {
                   client_id: User.getActiveProfileSync()._id,
                   points: [{

@@ -166,6 +166,8 @@
     $scope.quizResultButtonAnimation = quizResultButtonAnimation;
     $scope.enableGoToMapButton = false;
     quizCtrl.hasJoinedChallenge = User.hasJoinedChallenge();
+    quizCtrl.isChallengeActive = challenge.isChallengeActive();
+    quizCtrl.loading = 0;
     for (var i = 0; i < 10; i++) {
       $scope.groups[i] = {
         name: i,
@@ -711,7 +713,8 @@
             resultButtonAnimation();
             playStarSound();
             if (!$stateParams.quiz.isPlayed && quizCtrl.hasJoinedChallenge && challenge.isChallengeActive()) {
-              challenge.addPoints(User.getActiveProfileSync()._id, 50, 'node_complete', $stateParams.quiz.node.id);
+              $log.debug("points add points called quiz")
+              challenge.addPoints(User.getActiveProfileSync()._id, 50, 'node_complete', $stateParams.quiz.node.id,'assessment');
             }
             User.skills.update({
                 profileId: User.getActiveProfileSync()._id,
@@ -798,9 +801,10 @@
                     //   localStorage.setItem('cachingList', JSON.stringify(cachingList))
                     // }
                     $log.debug("got sugggestion", suggestion);
+                    lessonutils.cacheLessons([suggestion["suggestedLesson"]]);
                     return User.profile.updateRoadMapData(ml.roadMapData, User.getActiveProfileSync()._id).then(function() {
                       return User.playlist.add(User.getActiveProfileSync()._id, suggestion)
-                    })
+                    });
                   })
                 } else {
                   return ml.setLessonResultMapping().then(function() {
@@ -896,9 +900,9 @@
           // localStorage.setItem('cachedList', JSON.stringify(cachedList));
           // localStorage.setItem('cachingList', JSON.stringify(cachingList));
           // for (var i = 0; i < suggestion.cache.length; i++) {
-            // if (cachingList.indexOf(suggestion["suggestedLesson"]) < 0 && cachedList.indexOf(suggestion["suggestedLesson"]) < 0) {
-              // cachingList.push(suggestion.cache[i])
-            // }
+          // if (cachingList.indexOf(suggestion["suggestedLesson"]) < 0 && cachedList.indexOf(suggestion["suggestedLesson"]) < 0) {
+          // cachingList.push(suggestion.cache[i])
+          // }
           // }
           // localStorage.setItem('cachingList', JSON.stringify(cachingList))
           // $log.debug("caching diagnosis suggestion", suggestion);
@@ -1012,10 +1016,13 @@
 
     function next() {
       // if (quizCtrl.summary.stars >= 1) {
+        $log.debug(new Date().toTimeString(),"debug-optimize", "next clicked")
       $ionicLoading.show({
         hideOnStateChange: true
       });
+      quizCtrl.loading = 1;
       $scope.resultMenu.hide().then(function() {
+        $log.debug(new Date().toTimeString(),"debug-optimize", "go to state map.navigate")
         $state.go('map.navigate', {
           "activatedLesson": quizCtrl.quiz
         });
@@ -1178,9 +1185,11 @@
     $scope.$on('backButton', function() {
       $log.debug('back button pressed')
         // $log.debug("nzTour",nzTour.current.step);
-      if (!quizCtrl.noPauseFlag) {
-        audio.player.stop();
-        $scope.showNodeMenu();
+      if(quizCtrl.loading == 0 ){
+        if (!quizCtrl.noPauseFlag) {
+          audio.player.stop();
+          $scope.showNodeMenu();
+        }
       }
     });
     $scope.$on('appResume', function() {

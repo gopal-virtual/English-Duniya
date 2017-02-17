@@ -5,7 +5,7 @@
                 <h5 style="position: absolute;top: 104px;width: 100%;line-height:14px;display: flex;align-items: center;height: 45px;    justify-content: center;" class="margin-0 padding-y-10 padding-x-20 text-center color-white font-md" ng-bind-html="ribbonCnfCtrl.message"></h5>
             <div>
                 <div style="display: inline-block;" class="padding-x-10">
-                    <button class="sbtn sbtn-correct" on-tap="audio.play('press');ribbonCnfCtrl.confirm();"></button>
+                    <button class="sbtn" ng-class="ribbonCnfCtrl.lefticon" on-tap="audio.play('press');ribbonCnfCtrl.confirm();"></button>
                 </div>
                 <div style="display: inline-block;" class="padding-x-10">
                 </div>

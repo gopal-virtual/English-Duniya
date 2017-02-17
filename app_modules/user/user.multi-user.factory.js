@@ -48,6 +48,7 @@
         }
 
         function goToCreateNewProfile() {
+            $rootScope.showChallengeModal = true;
             localStorage.removeItem('currentPosition');
             localStorage.removeItem('regionPage');
             localStorage.removeItem('profile');
@@ -61,6 +62,7 @@
         }
 
         function selectProfile(profile, scope) {
+            $rootScope.showChallengeModal = true;
             localStorage.removeItem('currentPosition');
             localStorage.removeItem('regionPage');
             analytics.log({
@@ -94,7 +96,7 @@
                 $ionicLoading.show({
                     templateUrl: 'templates/common/common.loader.view.html'
                 });
-                $state.go('repaint', {})
+                $state.go('repaint',{})
             } else {
                 $ionicLoading.show({
                     noBackdrop: false,

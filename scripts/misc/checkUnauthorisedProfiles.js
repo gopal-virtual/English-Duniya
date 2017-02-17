@@ -1,33 +1,29 @@
 var request = require('sync-request');
 var requestAysync = require('request');
-var couchdbserver = 'https://ci-couch.zaya.in';
-var ellserver = 'http://cc-test.zaya.in';
+var couchdbserver = 'https://ed-couch.zaya.in';
+var ellserver = 'http://eg-api.zaya.in';
 // Find a list of all the devices in couch
 var devicelist = [];
 var totalprofiles = 0;
 var skippedprofiles = 0;
-var nonexistentprofiles = 0;
-var existentprofiles = 0;
-var nonexistentprofileslist = [];
+var nonexistentprofiles = [];
+var existentprofiles = [];
 var profileslist = [];
 
 function update() {
-	console.log("Nonexistent Profiles : ", nonexistentprofiles, "Existent profiles : ", existentprofiles, "Total Profiles : ", profileslist.length, "Skipped Profiles : ", skippedprofiles);
+	console.log("Nonexistent Profiles : ", nonexistentprofiles.length, "Existent profiles : ", existentprofiles.length, "Total Profiles : ", profileslist.length, "Skipped Profiles : ", skippedprofiles);
 }
 
-function createNewProfile(profile){
+function createNewProfile(profile) {
 	token = getToken(profile);
-	
-	
 }
-
 var dblist = JSON.parse(request('GET', couchdbserver + '/_all_dbs').getBody().toString())
-for (var i in dblist) {
+for (var i = 0; i < 200; i++) {
 	if (dblist[i].indexOf('device') >= 0) {
 		devicelist.push(dblist[i]);
 	}
 }
-for (var i in devicelist) {
+for (var i = 0; i < devicelist.length; i++) {
 	var docslist = JSON.parse(request('GET', couchdbserver + '/' + devicelist[i] + '/_all_docs?include_docs=true').getBody().toString())
 	for (var j in docslist.rows) {
 		profileslist.push({
@@ -38,9 +34,6 @@ for (var i in devicelist) {
 	}
 	// console.log(docslist.rows)
 	update();
-	if (profileslist.length > 5) {
-		break;
-	}
 }
 // for (var i in profileslist) {
 // 	requestAysync({
@@ -57,18 +50,22 @@ for (var i in profileslist) {
 	requestAysync({
 			url: ellserver + '/api/v1/profiles?client_uid=' + profileslist[j].client_uid,
 			headers: {
-				'Authorization': 'Token c8450c7bef3198a8f9ae6fdcffc472ecb5115190'
-					// 'Authorization': 'Token 550bb2c0a1d2fa17ab40dda8eb7107a217b14cf4'
+				// 'Authorization': 'Token c8450c7bef3198a8f9ae6fdcffc472ecb5115190'
+				'Authorization': 'Token 550bb2c0a1d2fa17ab40dda8eb7107a217b14cf4'
 			}
 		},
 		function(profile) {
 			return function(error, response, body) {
 				body = JSON.parse(body);
-				console.log("profile id", profile.client_uid, error, body)
-				if(body.length === 0){
-					console.log("found ")
-					// createNewProfile()
+				// console.log("profile id", profile.client_uid, error, body)
+				if (body.length === 0) {
+					nonexistentprofiles.push(profile.client_uid);
+					console.log(profile.client_uid)
+						// createNewProfile()
+				} else {
+					existentprofiles.push(profile.client_uid)
 				}
+				// update();
 			}
 		}(profileslist[i])
 	);

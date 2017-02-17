@@ -97,7 +97,7 @@
             controller: ['$stateParams', 'audio', '$timeout', '$state', '$scope', 'User', 'quiz', '$log', function($stateParams, audio, $timeout, $state, $scope, User, quiz, $log) {
               // $scope.ribbon_text = $stateParams.vocab_data;
               $scope.userGender = User.getActiveProfileSync().data.profile.gender;
-              $scope.ribbonText = quiz.node.title.split('-', 2).join('-');
+              $scope.ribbonText = quiz.node.title;
               // function playDelayed (url) {
               //    $timeout(function(){
               //    },100)

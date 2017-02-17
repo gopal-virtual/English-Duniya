@@ -1,14 +1,11 @@
 (function() {
   'use strict';
-
   angular
     .module('zaya-content')
     .controller('vocabularyCardController', vocabularyCardController);
-
-  vocabularyCardController.$inject = ['$log', '$state', 'audio', '$timeout', '$interval', '$scope', '$stateParams', 'CONSTANT', 'lessonutils', 'User', 'analytics', 'orientation', '$ionicModal', 'Utilities', '$ionicLoading','challenge'];
-
+  vocabularyCardController.$inject = ['$log', '$state', 'audio', '$timeout', '$interval', '$scope', '$stateParams', 'CONSTANT', 'lessonutils', 'User', 'analytics', 'orientation', '$ionicModal', 'Utilities', '$ionicLoading', 'challenge','localized'];
   /* @ngInject */
-  function vocabularyCardController($log, $state, audio, $timeout, $interval, $scope, $stateParams, CONSTANT, lessonutils, User, analytics, orientation, $ionicModal, Utilities, $ionicLoading, challenge) {
+  function vocabularyCardController($log, $state, audio, $timeout, $interval, $scope, $stateParams, CONSTANT, lessonutils, User, analytics, orientation, $ionicModal, Utilities, $ionicLoading, challenge, localized) {
     var vocabCardCtrl = this;
     var timeout = '';
     vocabCardCtrl.prev = prev;
@@ -34,32 +31,35 @@
     $scope.closePauseMenu = closePauseMenu;
     $scope.closeNodeMenu = closePauseMenu;
     $scope.lessonutils = lessonutils;
-    $scope.analytics_quit_data = {name : 'VOCABULARY', type : 'QUIT', id : $stateParams.vocab_data.node.id};
+    $scope.analytics_quit_data = {
+      name: 'VOCABULARY',
+      type: 'QUIT',
+      id: $stateParams.vocab_data.node.id
+    };
     $scope.$on('backButton', backButton);
-    $scope.logResume = function(){
-        analytics.log({
-            name: 'VOCABULARY',
-            type: 'RESUME',
-            id: $stateParams.vocab_data.node.id
-          }, {
-            time: new Date()
-          },
-          User.getActiveProfileSync()._id
-        )
+    $scope.logResume = function() {
+      analytics.log({
+          name: 'VOCABULARY',
+          type: 'RESUME',
+          id: $stateParams.vocab_data.node.id
+        }, {
+          time: new Date()
+        },
+        User.getActiveProfileSync()._id
+      )
     }
-
     $scope.isPlayed = $stateParams.vocab_data.isPlayed;
     $scope.hasUserJoinedChallenge = User.hasJoinedChallenge();
+    $scope.isChallengeActive = challenge.isChallengeActive();
     $scope.resultButtonAnimationFlag = 0;
     // $scope.resultButtonAnimation = resultButtonAnimation;
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.COMMON + '/common.modal-result' + CONSTANT.VIEW, {
-        scope: $scope,
-        animation: 'slide-in-down',
-        hardwareBackButtonClose: false
+      scope: $scope,
+      animation: 'slide-in-down',
+      hardwareBackButtonClose: false
     }).then(function(modal) {
-        $scope.resultMenu = modal;
+      $scope.resultMenu = modal;
     });
-
     $ionicModal.fromTemplateUrl(CONSTANT.PATH.MAP + '/map.modal-rope' + CONSTANT.VIEW, {
       scope: $scope,
       animation: 'slide-in-down',
@@ -77,36 +77,36 @@
     }
 
     function openPauseMenu() {
-        analytics.log({
-            name: 'VOCABULARY',
-            type: 'PAUSE',
-            id: $stateParams.vocab_data.node.id
-          }, {
-            time: new Date()
-          },
-          User.getActiveProfileSync()._id
-        )
-      $scope.pauseMenu.show().then(function(){
-        audio.player.play('sound/'+localized.audio.app.ExitResource.lang[User.getActiveProfileSync().data.profile.language]);
+      analytics.log({
+          name: 'VOCABULARY',
+          type: 'PAUSE',
+          id: $stateParams.vocab_data.node.id
+        }, {
+          time: new Date()
+        },
+        User.getActiveProfileSync()._id
+      )
+      $scope.pauseMenu.show().then(function() {
+        audio.player.play('sound/localized/' + localized.audio.app.ExitResource.lang[User.getActiveProfileSync().data.profile.language]);
       });
     }
 
     function closePauseMenu() {
-      $scope.pauseMenu.hide().then(function(){
+      $scope.pauseMenu.hide().then(function() {
         audio.player.stop();
       });
     }
 
     function goToMap() {
-        analytics.log({
-            name: 'VOCABULARY',
-            type: 'SWITCH',
-            id: $stateParams.vocab_data.node.id
-          }, {
-            time: new Date()
-          },
-          User.getActiveProfileSync()._id
-        )
+      analytics.log({
+          name: 'VOCABULARY',
+          type: 'SWITCH',
+          id: $stateParams.vocab_data.node.id
+        }, {
+          time: new Date()
+        },
+        User.getActiveProfileSync()._id
+      )
       $log.debug('going to map.navigate');
       $ionicLoading.show({
         hideOnStateChange: true
@@ -117,6 +117,7 @@
       });
     }
     vocabCardCtrl.logCard(0, 'START');
+
     function logCard(index, type) {
       analytics.log({
           name: 'VOCABULARY_CARD',
@@ -128,12 +129,13 @@
         User.getActiveProfileSync()._id
       )
     }
+
     function prev() {
       $log.debug('Clicked : Prev')
       vocabCardCtrl.enable = false;
-      if(vocabCardCtrl.currentIndex > 0){
-          vocabCardCtrl.logCard(vocabCardCtrl.currentIndex, 'END');
-          vocabCardCtrl.logCard(vocabCardCtrl.currentIndex - 1, 'START');
+      if (vocabCardCtrl.currentIndex > 0) {
+        vocabCardCtrl.logCard(vocabCardCtrl.currentIndex, 'END');
+        vocabCardCtrl.logCard(vocabCardCtrl.currentIndex - 1, 'START');
       }
       vocabCardCtrl.currentIndex = (vocabCardCtrl.currentIndex > 0) ? --vocabCardCtrl.currentIndex : vocabCardCtrl.currentIndex;
     }
@@ -141,9 +143,9 @@
     function next() {
       $log.debug('Clicked : Next')
       vocabCardCtrl.enable = false;
-      if((vocabCardCtrl.currentIndex < vocabCardCtrl.vocab_data.length - 1)){
-          vocabCardCtrl.logCard(vocabCardCtrl.currentIndex, 'END');
-          vocabCardCtrl.logCard(vocabCardCtrl.currentIndex + 1, 'START');
+      if ((vocabCardCtrl.currentIndex < vocabCardCtrl.vocab_data.length - 1)) {
+        vocabCardCtrl.logCard(vocabCardCtrl.currentIndex, 'END');
+        vocabCardCtrl.logCard(vocabCardCtrl.currentIndex + 1, 'START');
       }
       vocabCardCtrl.currentIndex = (vocabCardCtrl.currentIndex < vocabCardCtrl.vocab_data.length - 1) ? ++vocabCardCtrl.currentIndex : vocabCardCtrl.currentIndex;
     }
@@ -157,26 +159,26 @@
     }
 
     function getLastSound(soundArr) {
-        var soundArrPath = [];
-        soundArrPath.push(soundArr[soundArr.length - 1].path);
-        return soundArrPath;
+      var soundArrPath = [];
+      soundArrPath.push(soundArr[soundArr.length - 1].path);
+      return soundArrPath;
     }
 
     function playDelayed(sound, userinput, index) {
-        userinput && analytics.log({
-            name: 'VOCABULARY_CARD',
-            type: 'PLAY',
-            id: vocabCardCtrl.vocab_data[index].node.id
-          }, {
-            time: new Date(),
-            file : getLastSound(sound)
-          },
-          User.getActiveProfileSync()._id
-        )
+      userinput && analytics.log({
+          name: 'VOCABULARY_CARD',
+          type: 'PLAY',
+          id: vocabCardCtrl.vocab_data[index].node.id
+        }, {
+          time: new Date(),
+          file: getLastSound(sound)
+        },
+        User.getActiveProfileSync()._id
+      )
       vocabCardCtrl.enable = false;
       timeout = $timeout(function() {
-        vocabCardCtrl.audio.player.chain(0, getLastSound(sound), function(){
-            vocabCardCtrl.enable = true;
+        vocabCardCtrl.audio.player.chain(0, getLastSound(sound), function() {
+          vocabCardCtrl.enable = true;
         })
       }, 100)
     }
@@ -184,11 +186,12 @@
     function submitReport() {
       var lesson = lessonutils.getLocalLesson();
       var promise = null;
-      $log.debug("$stateParams.vocab_data.isPlayed",$stateParams.vocab_data.isPlayed)
-      if(!$stateParams.vocab_data.isPlayed && $scope.hasUserJoinedChallenge && challenge.isChallengeActive()){
-      challenge.addPoints(User.getActiveProfileSync()._id,50,'node_complete',$stateParams.vocab_data.node.id);
-      }
+      $log.debug("$stateParams.vocab_data.isPlayed", $stateParams.vocab_data.isPlayed)
+      if (!$stateParams.vocab_data.isPlayed && $scope.hasUserJoinedChallenge && challenge.isChallengeActive()) {
+              $log.debug("points add points called quiz")
 
+        challenge.addPoints(User.getActiveProfileSync()._id, 50, 'node_complete', $stateParams.vocab_data.node.id,'vocabulary');
+      }
       $log.debug('vocab parent lesson : ', lesson)
       if (!lesson.score || !lesson.score[$stateParams.vocab_data.node.id]) {
         promise = User.skills.update({
@@ -203,7 +206,6 @@
       }
       promise
         .then(function() {
-
           return User.scores.update({
             profileId: User.getActiveProfileSync()._id,
             lessonId: lesson.node.id,
@@ -237,12 +239,12 @@
       for (var i = 0; i < star; i++) {
         // $log.debug("sound source", starSound[i]);
         (function(count) {
-             timeout = $timeout(function() {
+          timeout = $timeout(function() {
             $scope.resultStarFlag[count] = true;
             $log.debug("sound source", starSound, count, starSound[count]);
-            $log.debug("count,star,count==star-1",count,star,count == star-1);
+            $log.debug("count,star,count==star-1", count, star, count == star - 1);
             audio.player.play("sound/" + starSound[count] + ".mp3");
-            if(count == star-1){
+            if (count == star - 1) {
               $scope.resultPageNextShow = true;
             }
           }, (count + 1) * 1000);
@@ -253,57 +255,54 @@
     function onVocabComplete() {
       vocabCardCtrl.logCard(vocabCardCtrl.currentIndex, 'END');
       analytics.log({
-          name: 'VOCABULARY',
-          type: 'END',
-          id: $stateParams.vocab_data.node.id
-        }, {
-          time: new Date()
+            name: 'VOCABULARY',
+            type: 'END',
+            id: $stateParams.vocab_data.node.id
+          }, {
+            time: new Date()
+          },
+          User.getActiveProfileSync()._id
+        ),
+        $scope.summary = {
+          stars: 3
         },
-        User.getActiveProfileSync()._id
-      ),
-      $scope.summary = {
-        stars: 3
-      },
-      vocabCardCtrl.playStarSound();
+        vocabCardCtrl.playStarSound();
       submitReport()
       timeout = $timeout(function() {
         orientation.setPortrait();
         //   $scope.ribbon_modal.hide();
         $scope.resultPageNextShow = false;
-        $scope.resultMenu.show().then(function(){
+        $scope.resultMenu.show().then(function() {
           resultButtonAnimation()
         });
       })
     }
-
     playDelayed(vocabCardCtrl.vocab_data[vocabCardCtrl.currentIndex].node.type.sound, false);
-
-    $scope.$on('appResume', function(){
-        // show pause menu
-        vocabCardCtrl.audio.player.removeCallback();
-        vocabCardCtrl.audio.player.stop();
-        vocabCardCtrl.enable = true;
-        if(!$scope.resultMenu.isShown()){
-            openPauseMenu();
-        }
+    $scope.$on('appResume', function() {
+      // show pause menu
+      vocabCardCtrl.audio.player.removeCallback();
+      vocabCardCtrl.audio.player.stop();
+      vocabCardCtrl.enable = true;
+      if (!$scope.resultMenu.isShown()) {
+        openPauseMenu();
+      }
     })
-    $scope.$on('appPause', function(){
-        vocabCardCtrl.audio.player.removeCallback();
-        vocabCardCtrl.audio.player.stop();
-        vocabCardCtrl.enable = true;
-        $timeout.cancel( timeout );
+    $scope.$on('appPause', function() {
+      vocabCardCtrl.audio.player.removeCallback();
+      vocabCardCtrl.audio.player.stop();
+      vocabCardCtrl.enable = true;
+      $timeout.cancel(timeout);
     })
 
     function resultButtonAnimation() {
       $log.debug("ANIMATION. Inside button animation")
       $timeout(function() {
         $scope.resultButtonAnimationFlag = 1;
-      },3000).then(function(){
-        $timeout(function(){
+      }, 3000).then(function() {
+        $timeout(function() {
           $scope.resultButtonAnimationFlag = 2;
-        },400)
+        }, 400)
       })
     }
-
   }
 })();
