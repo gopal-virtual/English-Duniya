@@ -204,7 +204,7 @@
     //   })
     $ionicPlatform.ready(function() {
 
-      $ionicLoading.show({hideOnStateChange:true});
+      // $ionicLoading.show({hideOnStateChange:true});
       // $log.debug('CLEVERTAP. document',$document)
       // document.addEventListener('onPushNotification', function(e) {
       //   $rootScope.$apply(function(){

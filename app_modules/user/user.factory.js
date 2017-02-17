@@ -195,16 +195,22 @@
 
     function setProfileId(clientUuid){
       return new Promise(function(resolve,reject){
-        $http.get(CONSTANT.BACKEND_SERVICE_DOMAIN+'/api/v1/profiles/?client_uid='+clientUuid).then(function(response){
+        $http.get(CONSTANT.BACKEND_SERVICE_DOMAIN+'/api/v1/profiles/?client_uid=f80c905743369140_9aa6cd1e-b899-4edd-b161-d1a2da556e38').then(function(response){
           $log.debug('profileid',response)
-          if (response.data) {
-            $log.debug('profileid', response);
-            localStorage.setItem('profileid',response.data[0].id);
-            resolve(response.data[0].id)
-          }else{
-            $log.warn('response data is not defined');
-            reject('response data is not defined')
-          }
+          // if (response.data) {
+          //   $log.debug('profileid', response);
+
+            if (response.data.length) {
+              localStorage.setItem('profileid',response.data[0].id);
+              resolve(response.data[0].id)
+            }else{
+              reject('No profile returned');
+            }
+
+          // }else{
+          //   $log.warn('response data is not defined');
+          //   reject('response data is not defined')
+          // }
         }).catch(function(err){
           $log.warn('Error while getting id from server');
           reject(err);
@@ -543,7 +549,7 @@
     function getScoreOfResource(lessonId, resourceId, profileId, playlistIndex) {
       $log.debug("getScoreOfResource", lessonId, resourceId, profileId, playlistIndex)
       return profilesDB.get(profileId).then(function(response) {
-        $log.debug("RESO", response.data.playlist[playlistIndex], response.data.playlist[playlistIndex][resourceId], response.data.playlist[playlistIndex]['lesson_id'])
+        // $log.debug("RESO", response.data.playlist[playlistIndex], response.data.playlist[playlistIndex][resourceId], response.data.playlist[playlistIndex]['lesson_id'])
         if (response.data.playlist[playlistIndex]['lesson_id'] == lessonId && response.data.playlist[playlistIndex][resourceId]) {
           return response.data.playlist[playlistIndex][resourceId];
         } else {
