@@ -1,9 +1,31 @@
+<style type="text/css">
+	.intro-title-container{
+    min-height: 60px;
+    padding: 15px;
+    padding-top: 20px;
+    font-size: 1.4em;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    background: #CC202E;
+    box-shadow: -5px -5px #5f1b22 inset;
+    border-radius: 15px;
+    color: #FFF;
+    /* letter-spacing: 1px; */
+    line-height: 1;
+    /* bottom: -20px; */
+    position: relative;
+    top: -20px;
+    z-index: 1;
+	}
+</style>
 <ion-modal-view style="height:100%;"  class="modal-blue-stars" >
     <div style="height:100%;" class="vertical-center">
         <div style="text-align: center;position: relative;width: 100%;">
-            <img height="180" ng-src="img/assets_svg/{{userGender=='M'? 'boy' : 'girl'}}-ribbon.svg">
+            <img style="position: relative; z-index: 2" height="120" ng-src="img/assets/upperbody-{{userGender=='M'? 'boy' : 'girl'}}.png">
+            <div class="intro-title-container">{{ribbonText}}</div>
             <!-- {{lessonutils.getGender()}} -->
-            <h5 style="position: absolute;top: 105px;width: 100%;" class="margin-0 padding-y-10 padding-x-20 text-center color-white font-md">{{ribbonText}}</h5>
+            <!-- <h5 style="position: absolute;top: 105px;width: 100%;" class="margin-0 padding-y-10 padding-x-20 text-center color-white font-md">{{ribbonText}}</h5> -->
             <!-- <h5 style="position: absolute;top: 105px;width: 100%;" class="margin-0 padding-y-10 padding-x-20 text-center color-white font-md">{{userGender}}</h5> -->
         </div>
     </div>
