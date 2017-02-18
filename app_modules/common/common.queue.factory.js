@@ -160,7 +160,7 @@
           },function(Error){
             $log.debug(Error)
                Raven.captureException("Error with queue profile patch",{
-              extra: {error:e,profileData:profileData,profile:profile}
+              extra: {error:Error,profileData:profileData,profile:profile}
             });
             d.reject();
           })
