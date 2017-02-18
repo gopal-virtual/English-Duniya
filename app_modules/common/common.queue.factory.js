@@ -195,18 +195,24 @@
           return queueDB.remove(record.doc);
         })
         .catch(function(error) {
-           Raven.captureException("Error with queue push",{
-              extra: {error:e,record:record}
-            });
-          if (error.status !== 0) {
-            $log.debug("upload failed", record);
-            if(error.status === 400){
-
-              if(record.doc.url === 'activity-log'){
-              $log.debug("400 request in activity log",record);
-                // patch profile
-                return patchProfile(record.doc.body.client_uid);
-              }
+           var e = {
+              "error": error,
+              "function": "queue_push"
+            };
+        Raven.captureException("Error with queue push", {
+          extra: {
+            error: e,
+            record: record
+          }
+        });
+        if (error.status !== 0) {
+          $log.debug("upload failed", record);
+          if (error.status === 400) {
+            if (record.doc.url === 'activity-log') {
+              $log.debug("400 request in activity log", record);
+              // patch profile
+              return patchProfile(record.doc.body.client_uid);
+            }
             if (record.doc.url === 'profiles') {
               if (error.data && error.data.non_field_errors && error.data.non_field_errors.length > 0 && error.data.non_field_errors[0] && error.data.non_field_errors[0] === 'client_id and user set must be unqiue') {
                 Raven.captureException("Duplicate profiles found deleting them", {
@@ -217,14 +223,11 @@
                 });
                 return queueDB.remove(record.doc);
               }
-              }
-            }else if(error.status === 500){
-              // log to sentry and do not delete the request
             }
-            var e = {
-              "error": error,
-              "function": "queue_push"
-            };
+            return queueDB.remove(record.doc);
+          } else if (error.status === 500) {
+            // log to sentry and do not delete the request
+          }
            
             // $log.debug("ERROR with queue",error.status)
             // return queueDB.remove(record.doc);
