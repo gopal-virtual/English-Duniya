@@ -260,6 +260,9 @@ gulp.task('generate-constants', function() {
       }, {
         match: 'CHALLENGE_END',
         replacement: constants[env]['CHALLENGE_END']
+      }, {
+        match: 'CHALLENGE_SERVER',
+        replacement: constants[env]['CHALLENGE_SERVER']
       }]
     }))
     .pipe(rename(paths.constants.destination_filename))

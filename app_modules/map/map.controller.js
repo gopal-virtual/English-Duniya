@@ -95,6 +95,8 @@
     challenge,
     pointsQueue
   ) {
+    lessonutils.cacheLessons();
+    $log.debug(new Date().toTimeString(), "debug-optimize", "inside map controller")
     $scope.audio = audio;
     $scope.settings = settings;
     var temp = JSON.parse(localStorage.getItem('profile')).data.profile;
@@ -107,6 +109,7 @@
     $scope.activatedLesson = $stateParams.activatedLesson;
     $scope.progress = localStorage.getItem('progress');
     var mapCtrl = this;
+    $scope.gender = User.getActiveProfileSync() ? User.getActiveProfileSync().data.profile.gender : 'M'
     mapCtrl.gender = JSON.parse(localStorage.getItem('profile')).data.profile.gender;
     mapCtrl.rootScope = $rootScope;
     $log.debug("map ctrl scope", $scope.mediaSyncStatus)
@@ -118,6 +121,7 @@
     mapCtrl.demo = User.demo;
     mapCtrl.challenge = challenge
       // mapCtrl.loading = $ionicLoading;
+    mapCtrl.loading = 0;
     mapCtrl.authFactory = Auth;
     mapCtrl.queue = queue;
     mapCtrl.lessons = lessonList;
@@ -165,6 +169,7 @@
     mapCtrl.isUserEligibleForChallenge = challenge.isUserEligible();
     mapCtrl.hasJoinedChallenge = User.hasJoinedChallenge();
     mapCtrl.isChallengeActive = challenge.isChallengeActive();
+    mapCtrl.showChallengeButton = challenge.showChallengeButton();
     $scope.exitChooseProfile = exitChooseProfile;
     $scope.onProfileCardClick = onProfileCardClick;
     $scope.isOnline = network.isOnline();
@@ -174,7 +179,7 @@
     $scope.$on('$cordovaNetwork:offline', function(event, networkState) {
       $scope.isOnline = network.isOnline();
     })
-    $scope.changeNumberFlag = User.user.getPhoneNumber()
+    $scope.changeNumberFlag = User.user.getPhoneNumber();
     $scope.currentState = $state.current.name;
     $scope.userDetails = User.user.getDetails();
     $scope.notifyPhone = User.user.getNotifyPhone();
@@ -201,19 +206,19 @@
       open: goToPhoneNumber,
     }
     $scope.exitModal = {
-      message: 'Do you want to leave the game?',
-      dismiss: exitModalDismiss,
-      confirm: exitModalConfirm
-    }
-
-    // notification.offline.list()
-    notification.offline.list().then(function(schedulerObjectArray){
+        message: 'Do you want to leave the game?',
+        dismiss: exitModalDismiss,
+        confirm: exitModalConfirm,
+        leftIcon: 'sbtn-play'
+      }
+      // notification.offline.list()
+    notification.offline.list().then(function(schedulerObjectArray) {
       // notification.offline.scheduleMulti(schedulerObjectArray);
       $rootScope.toBeScheduled = schedulerObjectArray;
-    }).catch(function(err){
-      $log.error('some error occured while fetching offline notification doc',err);
+    }).catch(function(err) {
+      $log.error('some error occured while fetching offline notification doc', err);
     })
-    
+
     function openChallenge() {}
 
     function exitModalDismiss() {
@@ -296,6 +301,8 @@
         $scope.exitModal.message = "Do you want to leave the game?";
         $scope.exitModal.dismiss = exitModalDismiss;
         $scope.exitModal.confirm = exitModalConfirm;
+        $scope.exitModal.leftIcon = 'sbtn-play';
+
         resetPhoneValues();
         $ionicSlideBoxDelegate.slide(0);
         $scope.phone.otp = '';
@@ -506,46 +513,25 @@
     $scope.$on('backButton', mapCtrl.onBackButtonPress)
 
     function onBackButtonPress() {
-      // $log.debug('Do you want to exit?')
-      // if ($scope.profileScreen.isShown()) {
-      //   $scope.profileScreen.hide();
-      // } else {
-      //   analytics.log({
-      //     name: 'APP',
-      //     type: 'EXIT_MODAL_SHOW'
-      //   }, {},User.getActiveProfileSync()._id);
-      //   var confirmExit = $ionicPopup.confirm({
-      //     title: 'Exit',
-      //     template: 'Do you want to exit?'
-      //   });
-      //   confirmExit.then(function(res) {
-      //     if (res) {
-      //       ionic.Platform.exitApp();
-      //     } else {
-      //       analytics.log({
-      //     name: 'APP',
-      //     type: 'EXIT_MODAL_HIDE'
-      //   }, {},User.getActiveProfileSync()._id);
-      //       console.log('You are not sure');
-      //     }
-      //   });
-      // }
-      if ($scope.profileScreen.isShown()) {
-        // $scope.profileScreen.hide();
-        exitChooseProfile()
-      } else if ($scope.phoneNumberScreen.isShown()) {
-        $scope.phone.exit();
-      } else {
-        if (!$scope.exitApp.isShown()) {
-          $log.warn('Clicked on back button on map');
-          $scope.exitApp.show().then(function() {
-            analytics.log({
-              name: 'APP',
-              type: 'EXIT_MODAL_SHOW'
-            }, {
-              time: new Date()
-            }, User.getActiveProfileSync()._id);
-          });
+      $log.warn('LOADING', mapCtrl.loading)
+        //UNCOMMENT THIS      
+      if (mapCtrl.loading == 0) {
+        if ($scope.profileScreen.isShown()) {
+          exitChooseProfile()
+        } else if ($scope.phoneNumberScreen.isShown()) {
+          $scope.phone.exit();
+        } else {
+          if (!$scope.exitApp.isShown()) {
+            $log.warn('Clicked on back button on map');
+            $scope.exitApp.show().then(function() {
+              analytics.log({
+                name: 'APP',
+                type: 'EXIT_MODAL_SHOW'
+              }, {
+                time: new Date()
+              }, User.getActiveProfileSync()._id);
+            });
+          }
         }
       }
     }
@@ -638,18 +624,30 @@
         // noBackdrop: false
         hideOnStateChange: true
       });
+      mapCtrl.loading = 1;
+      if ($scope.exitApp.isShown()) {
+        $scope.exitApp.hide().then(function() {
+          analytics.log({
+            name: 'APP',
+            type: 'EXIT_MODAL_HIDE'
+          }, {
+            time: new Date()
+          }, User.getActiveProfileSync()._id);
+          $log.debug('You are not sure');
+        });
+      }
       $scope.demo.isShown() && $scope.demo.hide();
       $scope.selectedNode = node;
       //   $scope.demo.isShown() && $scope.demo.hide();
       var promise;
       $log.debug('intro sound', node.node.intro_sound, node)
-        // if (node.node.intro_sound) {
-        //   promise = mediaManager.downloadIfNotExists(node.node.intro_sound)
-        // } else {
-        //   promise = $q.resolve();
-        // }
-      lessonutils.cacheLessons()
-        .then(function() {
+        // lessonutils.cacheLessons()
+      if (node.node.intro_sound) {
+        promise = mediaManager.downloadIfNotExists(node.node.intro_sound)
+      } else {
+        promise = $q.resolve();
+      }
+      promise.then(function() {
           return mediaManager.getPath(node.node.intro_sound)
         })
         .then(function(s) {
@@ -667,8 +665,10 @@
           $ionicLoading.hide()
           $log.debug("error is here");
           $ionicPopup.alert({
-            title: CONSTANT.ERROR_MESSAGES.DEFAULT_TITLE,
-            template: e.message ? e.message : CONSTANT.ERROR_MESSAGES.DEFAULT
+            template: '<error-popup message="\'Connect to the internet to keep playing\'"></error-popup>',
+            cssClass: 'custom-alert',
+            okType: 'sbtn sbtn-ok',
+            okText: ' '
           })
         });
       //   if (currentPos)
@@ -948,6 +948,7 @@
         $ionicLoading.show({
           hideOnStateChange: true
         });
+        mapCtrl.loading = 1;
         localStorage.setItem("currentPosition", 4000);
         localStorage.removeItem("regionPage");
         User.profile.update(mapCtrl.User.getActiveProfileSync()._id, profileData).then(function() {
@@ -967,6 +968,8 @@
       $scope.exitModal.message = "Do you want to create<br>a new profile";
       $scope.exitModal.dismiss = createProfileModalDismiss;
       $scope.exitModal.confirm = createProfileModalConfirm;
+      $scope.exitModal.leftIcon = 'sbtn-correct';
+      $log.debug('$scope',$scope.exitModal)
       $log.debug("PHONE. changed number flag", $scope.changeNumberFlag);
       analytics.log({
         name: 'CHOOSEPROFILE',
@@ -993,6 +996,7 @@
       $scope.exitModal.message = "Do you want to leave the game?";
       $scope.exitModal.dismiss = exitModalDismiss;
       $scope.exitModal.confirm = exitModalConfirm;
+      $scope.exitModal.leftIcon = 'sbtn-play';
       $scope.profileScreen.hide().then(function() {
         audio.loop('background');
         analytics.log({
@@ -1056,19 +1060,40 @@
           $ionicLoading.show({
             hideOnStateChange: true
           })
-          pointsQueue.startSync().then(function() {
+          mapCtrl.loading = 1;
+          challenge.postPoints().then(function() {
             $log.debug("syncPointsQueue success")
             $state.go('weekly-challenge', {
               profileId: User.getActiveProfileSync()._id
             })
-          });
+          }).catch(function(){
+            $ionicLoading.hide();
+             $ionicPopup.alert({
+              // title: CONSTANT.ERROR_MESSAGES.DEFAULT_TITLE,
+              template: '<error-popup message="\'Please try again\'"></error-popup>',
+              cssClass: 'custom-alert',
+              okType: 'sbtn sbtn-ok',
+              okText: ' '
+            })
+          })
         } else {
-          $scope.challengeModal.show();
+          
+          $scope.challengeModal.show().then(function(){
+            audio.player.play('sound/challenge_starting_now.mp3');
+          })
         }
       } else {
-        $ionicPopup.alert({
-          title: 'No Internet Connection',
-          template: 'You have to be online to play challenge'
+        audio.player.play('sound/challenge_starting_now_offline.mp3');
+        var noInternetChallengeAlert = 
+            $ionicPopup.alert({
+              // title: CONSTANT.ERROR_MESSAGES.DEFAULT_TITLE,
+              template: '<error-popup message="\'Connect to the internet to keep playing\'"></error-popup>',
+              cssClass: 'custom-alert',
+              okType: 'sbtn sbtn-ok',
+              okText: ' '
+            })
+        noInternetChallengeAlert.then(function() {
+          audio.player.stop();
         })
       }
     }
@@ -1107,13 +1132,15 @@
     }).then(function(challengeModal) {
       $log.debug("challenge modal defined", User.hasJoinedChallenge())
       $scope.challengeModal = challengeModal;
+      $log.debug(User.demo.getStep() != 1 ,!User.hasJoinedChallenge() , challenge.isUserEligible() , $rootScope.showChallengeModal , challenge.isChallengeActive())
       if (User.demo.getStep() != 1 && !User.hasJoinedChallenge() && challenge.isUserEligible() && $rootScope.showChallengeModal && challenge.isChallengeActive()) {
         $log.debug("showing challenge modal")
         mapCtrl.openChallengeTimeout = $timeout(function() {
-          $scope.challengeModal.show().then(function() {
-            $rootScope.showChallengeModal = false;
-          });
-        }, 2000)
+            $scope.challengeModal.show().then(function() {
+            audio.player.play('sound/challenge_starting_now.mp3');
+              $rootScope.showChallengeModal = false;
+            });
+        }, 4000)
       }
     });
     $scope.joinChallenge = function() {
@@ -1138,6 +1165,7 @@
     }
     $scope.dismissJoinChallenge = function() {
       $log.debug("dismiss join challenege");
+      audio.player.stop();
       $scope.challengeModal.hide().then(function() {
         $log.debug("challenge modal hiden")
           // goToChallenge();

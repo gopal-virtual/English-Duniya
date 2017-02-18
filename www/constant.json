@@ -20,7 +20,8 @@
         "GCM_PROJECT_NUMBER" : 150596025418 
     },
     "CHALLENGE_START": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 20 },
-    "CHALLENGE_END": {"YEAR" : 2017, "MONTH" : 2 , "DATE": 13 }
+    "CHALLENGE_END": {"YEAR" : 2017, "MONTH" : 3 , "DATE": 2 },
+    "CHALLENGE_SERVER": "http://challenge-prod.englishduniya.in/"
   },
   "TESTING": {
     "CONTENT_TEST":false,
@@ -28,7 +29,7 @@
     "FAKE_LOGIN": false,
     "FAKE_DEVICE": false,
     "BACKEND_SERVICE_DOMAIN": "https://cc-test-2.zaya.in/",
-    "RESOURCE_SERVER": "https://cc-test.zaya.in/",
+    "RESOURCE_SERVER": "https://cc-test-2.zaya.in/",
     "ANALYTICS": true,
     "PROFILES_DB_SERVER": "https://ci-couch.zaya.in/device",
     "LESSONS_DB_SERVER":"https://ci-couch.zaya.in/lessonsdb",
@@ -42,22 +43,19 @@
         "CLEVERTAP_TOKEN" : "TEST-532-353",
         "GCM_PROJECT_NUMBER" : 150596025418 
     },
-    "CHALLENGE_START": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 13 },
-    "CHALLENGE_END": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 14 }
+    "CHALLENGE_START": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 15 },
+    "CHALLENGE_END": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 28 },
+    "CHALLENGE_SERVER": "http://challenge.englishduniya.in/"
 
   },
   "DEVELOPMENT": {
     "CONTENT_TEST":false,
     "LOCK": true,
-    "FAKE_LOGIN": false,
-    "FAKE_ID_DEVICE": "ayush37",
-    "FAKE_DEVICE": false,
-    "BACKEND_SERVICE_DOMAIN": "https://cc-test.zaya.in/",
     "FAKE_LOGIN": true,
-    "FAKE_ID_DEVICE": "rudra-is-back-232",
+    "FAKE_ID_DEVICE": "chrome123456",
     "FAKE_DEVICE": true,
     "BACKEND_SERVICE_DOMAIN": "https://cc-test-2.zaya.in/",
-    "RESOURCE_SERVER": "https://cc-test.zaya.in",
+    "RESOURCE_SERVER": "https://cc-test-2.zaya.in",
     "ANALYTICS": true,
     "PROFILES_DB_SERVER": "https://ci-couch.zaya.in/device",
     "LESSONS_DB_SERVER":"https://ci-couch.zaya.in/lessonsdb",
@@ -71,8 +69,9 @@
         "CLEVERTAP_TOKEN" : "TEST-532-353",
         "GCM_PROJECT_NUMBER" : 150596025418
     },
-    "CHALLENGE_START": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 20 },
-    "CHALLENGE_END": {"YEAR" : 2017, "MONTH" : 2 , "DATE": 13 }
+    "CHALLENGE_START": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 13 },
+    "CHALLENGE_END": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 20 },
+    "CHALLENGE_SERVER": "http://challenge.englishduniya.in/"
 
   },
   "CONTENT": {
@@ -97,7 +96,8 @@
         "GCM_PROJECT_NUMBER" : 150596025418 
     },
     "CHALLENGE_START": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 20 },
-    "CHALLENGE_END": {"YEAR" : 2017, "MONTH" : 2 , "DATE": 13 }
+    "CHALLENGE_END": {"YEAR" : 2017, "MONTH" : 2 , "DATE": 13 },
+    "CHALLENGE_SERVER": "http://challenge.englishduniya.in/"
 
 
   }

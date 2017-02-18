@@ -10,7 +10,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
 
     if(DEBUG){
         lessons = [];
-        var lessonNumber = 200,
+        var lessonNumber = 400,
         // var lesson_data = {
             content_type = [{
                                 name: "resource",
@@ -77,7 +77,10 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
     var sprites = {};
     var temp = {};
     // var desertRegion, regionGroups.tundra, regionGroups.forest;
-    var regions = ["desert1","desert2","ice1","ice2","forest1","forest2","peru1"];
+    var origRegions = ["desert1","desert2","ice1","ice2","forest1","forest2","peru1"];
+        
+
+    var regions = [];
 
     var groups = {
         "region" : {},
@@ -141,6 +144,15 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
     var renderedRegion = [];
 
 
+        var count = 0;
+        var tempTotalLesson = totalLesson;
+        do{
+            var index = count%origRegions.length;
+            regions.push(origRegions[index]);
+            tempTotalLesson -= regionNodes[origRegions[index]];
+            count++;
+        }while(tempTotalLesson > 0)
+        log.warn('REGION needed',regions,count,tempTotalLesson);
 
     // var renderedRegion = [];
     // for (var key in regionNodes) {
@@ -185,6 +197,9 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
             this.load.spritesheet('node-darkblue-video', 'img/assets/button-darkblue-video.png',88,91);
             this.load.spritesheet('node-blue-practice', 'img/assets/button-blue-practice.png',88,91);
             this.load.spritesheet('node-blue-vocabulary', 'img/assets/button-blue-vocabulary.png',88,91);
+            this.load.spritesheet('node-orange-vocabulary', 'img/assets/button-orange-vocabulary.png',88,91);
+            this.load.spritesheet('node-darkblue-vocabulary', 'img/assets/button-darkblue-vocabulary.png',88,91);
+            this.load.spritesheet('node-green-vocabulary', 'img/assets/button-green-vocabulary.png',88,91);
             this.load.spritesheet('node-orange-practice', 'img/assets/button-orange-practice.png',88,91);
             this.load.spritesheet('node-green-practice', 'img/assets/button-green-practice.png',88,91);
             this.load.spritesheet('node-darkblue-practice', 'img/assets/button-darkblue-practice.png',88,91);
@@ -243,14 +258,13 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                     if (i==0) {
                         first_node_index = 0;
                     }else {
-                        first_node_index += regionNodes[regions[i-1]] - 1;
+                        first_node_index += regionNodes[regions[i-1]] ;
                     }
-                    last_node_index += regionNodes[regions[i]] - 1;
                 }
-
-                if (regionPage != 0) {
-                    first_node_index = first_node_index+1;
-                }
+                last_node_index = first_node_index + regionNodes[regions[regionPage]] - 1;
+                // if (regionPage != 0) {
+                //     first_node_index = first_node_index+1;
+                // }
 
             }
 
@@ -587,12 +601,13 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                     var nodeTagText = game.add.text(posx, posy+50, i+1, { font: "18px kg_primary_penmanship_2Rg", fill: "#FFFFFF", wordWrap: true, wordWrapWidth: nodeTag.width, align: "center"});
                     nodeTagText.anchor.set(0.5);
                     groups.nonRegion.nodeTags.add(nodeTagText);
-
+  
 
 
 
 
                     var node = game.make.button(posx, posy, 'node-' +nodeColors[lessons[i].node.tag.toLowerCase()]+'-'+ lessonutils.resourceType(lessons[i]), false, this, 1,0,1,0);
+                    
                     node.anchor.setTo(0.5);
                     node.scale.setTo(0.8);
                     node.inputEnabled = true;
@@ -609,7 +624,8 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
 
                                 var displacement = game.kineticScrolling.velocityY > -30 && game.kineticScrolling.velocityY < 30;
                                 if (!currentLesson.locked && displacement) {
-                                    localStorage.setItem('currentPosition', (posy - game.height / 2));
+                                    log.debug('POSITION',posy,node.y+node.height)
+                                    localStorage.setItem('currentPosition', node.y - node.height/2);
                                     var currentPosition = {
                                         "x": game.input._x,
                                         "y": game.input._y,
@@ -636,6 +652,11 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                         temp["activeLessonKey"] = i;
                         temp["activeLessonPosY"] = posy;
                         temp["activeLessonPosX"] = posx;
+
+                        log.debug('ACTIVE LESSON')
+                        scrollTo(posy - game.height/2);
+                        log.debug('ACTIVE LESSON')
+
 
                         if (DEBUG2 == true){
                             log.debug()
@@ -866,8 +887,9 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
             // }
 
             function scrollTo(limitY){
-                log.info("Auto Scrolling ...")
-                game.add.tween(game.camera).to({y:limitY},800,Phaser.Easing.Quadratic.InOut,true,800);
+                log.info("ACTIVE Auto Scrolling ...",limitY)
+                game.camera.y = limitY;
+                // game.add.tween(game.camera).to({y:limitY},300,Phaser.Easing.Quadratic.InOut,true,800);
             }
 
             function cameraInit(){
@@ -885,9 +907,9 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                 game.kineticScrolling.start();
             }
 
-            function scrollTo() {
-                game.camera.y = localStorage.getItem('currentPosition') ? parseInt(localStorage.getItem('currentPosition')) : parseInt(((~~game.world.height / game.height) - 1) * game.height);
-            }
+            // function scrollTo() {
+            //     game.camera.y = localStorage.getItem('currentPosition') ? parseInt(localStorage.getItem('currentPosition')) : parseInt(((~~game.world.height / game.height) - 1) * game.height);
+            // }
 
             function gameStart(){
                 log.info("Powering Up PHASER BAM! BAM! ...")
@@ -908,7 +930,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                     }
                     renderNodesByML(renderedRegion);
                     renderNodePath(renderedRegion,points);
-                    scrollTo();
+                    // scrollTo();
                     log.debug("Port Node Flag",regionPage,regions.length-1,temp.activeLessonKey,regionPage < regions.length-1,regionPage < regions.length-1 && temp.activeLessonKey == -1)
                     if(regionPage < regions.length-1 && temp.activeLessonKey > last_node_index){
                         renderPortNodes("next");
@@ -932,6 +954,7 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                                 log.debug("animateStar condition timeout");
                                 animateStar(animateStarFlag.clickedNode).then(function(){
                                     if (temp["activeLessonKey"] == -1) {
+                                        log.debug('active lesson kry out of bounds');
                                         scrollTo(0);
                                     }
                                     localStorage.removeItem("animateStarFlag");

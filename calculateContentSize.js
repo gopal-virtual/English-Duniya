@@ -11,6 +11,10 @@ var diagnosis_db = argv.diagnosis_db;
 var lessons_db = argv.lessons_db;
 var diagnosis_docs_list = JSON.parse(request('GET', diagnosis_db + '_all_docs').getBody().toString());
 var lesson_docs_list = JSON.parse(request('GET', lessons_db + '_all_docs').getBody().toString()).rows;
+var vocabulary_list = [];
+var video_list = [];
+var assessment_list = []
+var languages = argv.languages;
 
 function getFileNameFromURl(url) {
   var a = url.split('/');
@@ -40,31 +44,64 @@ var counter = [0, 0, 0, 0];
 if (lessons == 'all') {
   for (var i = 0; i < lesson_docs_list.length; i++) {
     if (lesson_docs_list[i].id !== 'localized_mapping' && lesson_docs_list[i].id !== '_design/_auth') {
-      console.log(lesson_docs_list[i].id)
+      console.log(lesson_docs_list[i].id, lessons_db + lesson_docs_list[i].id)
       var lesson_doc = JSON.parse(request('GET', lessons_db + lesson_docs_list[i].id).getBody().toString()).lesson;
-      for (var j = 0; j < lesson_doc.objects.length; j++) {
-        //if Video
-        if (lesson_doc.objects[j].node.content_type_name == 'resource') {
-          // add video to media[]
-          media.push(lesson_doc.objects[j].node.type.path)
+      if (languages.indexOf(lesson_doc.node.localize.source) >= 0) {
+        // Add Intros to media[]
+        if (lesson_doc.node.meta && lesson_doc.node.meta.intros && lesson_doc.node.meta.intros.sound) {
+          media = media.concat(lesson_doc.node.meta.intros.sound);
         }
-        // If assessment
-        if (lesson_doc.objects[j].node.content_type_name == 'assessment') {
-          //Iterate questions
-          for (var k = 0; k < lesson_doc.objects[j].objects.length; k++) {
-            // add widgets to media[]
-            if (lesson_doc.objects[j].objects[k].node.type.content && lesson_doc.objects[j].objects[k].node.type.content.widgets) {
-              for (var mediaType in lesson_doc.objects[j].objects[k].node.type.content.widgets) {
-                if (lesson_doc.objects[j].objects[k].node.type.content.widgets.hasOwnProperty(mediaType)) {
-                  for (var file in lesson_doc.objects[j].objects[k].node.type.content.widgets[mediaType]) {
-                    media.push(lesson_doc.objects[j].objects[k].node.type.content.widgets[mediaType][file]);
+          var skip_video = false;
+        for (var j = 0; j < lesson_doc.objects.length; j++) {
+          if (lesson_doc.objects[j].node.content_type_name == 'vocabulary') {
+            skip_video = true;
+            console.log("vocab found should skip video");
+          }
+        }
+        for (var j = 0; j < lesson_doc.objects.length; j++) {
+          // If assessment
+          if (lesson_doc.objects[j].node.content_type_name == 'assessment') {
+            assessment_list.push(lesson_doc.objects[j].node.id);
+            //Iterate questions
+            for (var k = 0; k < lesson_doc.objects[j].objects.length; k++) {
+              // add widgets to media[]
+              if (lesson_doc.objects[j].objects[k].node.type.content && lesson_doc.objects[j].objects[k].node.type.content.widgets) {
+                for (var mediaType in lesson_doc.objects[j].objects[k].node.type.content.widgets) {
+                  if (lesson_doc.objects[j].objects[k].node.type.content.widgets.hasOwnProperty(mediaType)) {
+                    for (var file in lesson_doc.objects[j].objects[k].node.type.content.widgets[mediaType]) {
+                      media.push(lesson_doc.objects[j].objects[k].node.type.content.widgets[mediaType][file]);
+                    }
                   }
                 }
               }
+              //add instructions to media[]
+              if (lesson_doc.objects[j].objects[k].node.meta && lesson_doc.objects[j].objects[k].node.meta.instructions && lesson_doc.objects[j].objects[k].node.meta.instructions.sounds) {
+                media = media.concat(lesson_doc.objects[j].objects[k].node.meta.instructions.sounds);
+              }
             }
-            //add instructions to media[]
-            if (lesson_doc.objects[j].objects[k].node.meta && lesson_doc.objects[j].objects[k].node.meta.instructions && lesson_doc.objects[j].objects[k].node.meta.instructions.sounds) {
-              media = media.concat(lesson_doc.objects[j].objects[k].node.meta.instructions.sounds);
+          }
+          if (lesson_doc.objects[j].node.content_type_name == 'vocabulary') {
+            vocabulary_list.push(lesson_doc.objects[j].node.id);
+            for (var l = 0; l < lesson_doc.objects[j].objects.length; l++) {
+              // vocab sounds
+              if (lesson_doc.objects[j].objects[l].node.type.sound) {
+                for (var soundIndex in lesson_doc.objects[j].objects[l].node.type.sound) {
+                  media.push(lesson_doc.objects[j].objects[l].node.type.sound[soundIndex].path)
+                }
+              }
+              //vocab images
+              if (lesson_doc.objects[j].objects[l].node.type.image) {
+                media.push(lesson_doc.objects[j].objects[l].node.type.image.path)
+              }
+            }
+          }
+          //if Video
+          if (lesson_doc.objects[j].node.content_type_name == 'resource') {
+            // add video to media[]
+            if (!skip_video) {
+            video_list.push(lesson_doc.objects[j].node.id);
+              console.log("video included");
+              media.push(lesson_doc.objects[j].node.type.path);
             }
           }
         }
@@ -92,19 +129,39 @@ media = media.reduce(function(a, b) {
   return a;
 }, []);
 var mediaSize = 0;
-console.log("Please wait while we bundle " + media.length + " media files");
+var mediaAudio = 0;
+var mediaVideo = 0;
+var mediaImage = 0;
+console.log("Please wait while we analyze " + media.length + " media files");
 for (i in media) {
   var filename = getFileNameFromURl(media[i]);
   var directory = gerDirectoryFromURL(media[i]);
-
-mediaSize += request('HEAD', 'http://cc-test.zaya.in/'+filename).headers['content-length'];
+  var size = request('HEAD', 'http://cc-test.zaya.in/' + filename).headers['content-length'];
+  console.log('Size of ', i, 'out of ', media.length, 'media files : ', filename, ' is ', size);
+  if (parseInt(size)) {
+    mediaSize += parseInt(size);
+    if (filename.indexOf('mp3') >= 0) {
+      mediaAudio += parseInt(size);
+    }
+    if (filename.indexOf('mp4') >= 0) {
+      mediaVideo += parseInt(size);
+    }
+    if (filename.indexOf('png') >= 0) {
+      mediaImage += parseInt(size)
+    }
+  }
+  console.log("Total Media", mediaSize, "Sounds", mediaAudio, "Images", mediaImage, "Videos", mediaVideo);
   // var result = request('HEAD','http://cc-test.zaya.in/'+filename).
   // fs_extra.ensureDirSync(directory)
   // console.log(getSourceNameFromURL(media[i]), ' to ', target_folder + filename);
   // ncp(getSourceNameFromURL(media[i]), target_folder + filename, function(error) {
-    // if (error) {
-      // console.log("Error Occured", error);
-    // }
+  // if (error) {
+  // console.log("Error Occured", error);
+  // }
   // });
 }
-console.log(mediaSize);
+console.log("Size calculation Done : Total Media", mediaSize, "Sounds", mediaAudio, "Images", mediaImage, "Videos", mediaVideo);
+console.log("Total Vocabulary", vocabulary_list.length, " Assessment ", assessment_list.length, " Videos ", video_list.length);
+console.log("Vocabulary List", vocabulary_list);
+console.log("Video List", video_list);
+console.log("Assessment List", assessment_list);

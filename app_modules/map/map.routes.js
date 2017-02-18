@@ -8,6 +8,7 @@
     $stateProvider
       .state('map', {
         url: '/map',
+        cache: false,
         abstract: true,
         resolve: {
           lessons: ['$log', 'content', 'User', function($log, content, User) {
@@ -17,6 +18,8 @@
               // })
           }],
           lessonLocked: ['$log', 'content', 'extendLesson', 'User', function($log, content, extendLesson, User) {
+            $log.debug(new Date().toTimeString(),"debug-optimize", "inside lessonLocked of mapNavigate")
+            // return 
             extendLesson.initStar();
             if (CONSTANT.CONTENT_TEST) {
               return content.getLessonsList().then(function(lessons) {
@@ -27,9 +30,11 @@
                 };
               })
             } else {
+            $log.debug(new Date().toTimeString(),"debug-optimize", "inside lessonLocked of mapNavigate starting")
+
               return content.getResourceList(User.getActiveProfileSync().data.profile.grade).then(function(lessons) {
                 return extendLesson.getLesson(lessons).then(function(result) {
-                  $log.debug("Result is ", result)
+                  $log.debug(new Date().toTimeString(),"debug-optimize", "returning from lessonLocked of mapNavigate",result)
                   return {
                     lockedLesson: result,
                     total_star: extendLesson.getTotalStar()
@@ -55,6 +60,7 @@
       })
       .state('map.navigate', {
         url: '/navigate',
+        cache: false,
         nativeTransitions: {
           "type": "fade",
           "duration": 1000,
@@ -68,6 +74,7 @@
           },
         },
         onEnter: ['$state', 'lessons', 'audio', '$ionicLoading', 'orientation', 'CONSTANT', '$log', function($state, lessons, audio, $ionicLoading, orientation, CONSTANT, $log) {
+          $log.debug(new Date().toTimeString(),"debug-optimize", "inside enEnter of mapNavigate")
           orientation.setPortrait();
           $ionicLoading.show({
             templateUrl: 'templates/common/common.loader.view.html',
@@ -111,6 +118,7 @@
         }
       })
       .state('repaint', {
+        cache: false,
         url: '/repaint',
         onEnter: ['$state', '$timeout', '$log', '$ionicLoading', function($state, $timeout, $log, $ionicLoading) {
           $timeout(function() {
@@ -121,16 +129,15 @@
       })
       .state('weekly-challenge', {
         url: '/weekly-challenge',
+        cache: false,
         templateProvider: function($timeout, $stateParams, $log, User) {
           $log.debug("weekly challenge template provider");
           return $timeout(function() {
-            return "<ion-nav-view><iframe style='width:100vw;height:100vh' src='http://challenge.englishduniya.in/#!/0429fb91-4f3c-47de-9adb-609996962188/" + User.getActiveProfileSync()._id + "/" + localStorage.getItem('Authorization') + "/?first_time="+!User.isChallengeVisited()+"&grade="+User.getActiveProfileSync().data.profile.grade+  "'></iframe></ion-nav-view>"
+            return "<ion-nav-view><iframe style='width:100vw;height:100vh' src='"+CONSTANT.CHALLENGE_SERVER+"#!/0429fb91-4f3c-47de-9adb-609996962188/" + User.getActiveProfileSync()._id + "/" + localStorage.getItem('Authorization') + "/?first_time=" + !User.isChallengeVisited() + "&grade=" + User.getActiveProfileSync().data.profile.grade + "'></iframe></ion-nav-view>"
           }, 100);
         },
-        controller: ['$state','$log', function($state,$log) {
-
-        }],
-         onEnter: ['$state', '$timeout', '$log', '$ionicLoading','User', function($state, $timeout, $log, $ionicLoading,User) {
+        controller: ['$state', '$log', function($state, $log) {}],
+        onEnter: ['$state', '$timeout', '$log', '$ionicLoading', 'User', function($state, $timeout, $log, $ionicLoading, User) {
           User.setChallengeVisited();
         }],
       });

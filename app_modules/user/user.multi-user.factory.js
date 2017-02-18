@@ -48,6 +48,7 @@
         }
 
         function goToCreateNewProfile() {
+            $rootScope.showChallengeModal = true;
             localStorage.removeItem('currentPosition');
             localStorage.removeItem('regionPage');
             localStorage.removeItem('profile');
@@ -61,6 +62,7 @@
         }
 
         function selectProfile(profile, scope) {
+            $rootScope.showChallengeModal = true;
             localStorage.removeItem('currentPosition');
             localStorage.removeItem('regionPage');
             analytics.log({
@@ -71,32 +73,30 @@
                 from: multiUser.getCurrentProfile(),
                 to: profile
             }, multiUser.getCurrentProfile());
-
-            $log.debug('CLEVERTAP profile',profile.doc._id)
-            User.profile.setId(profile.doc._id).then(function(profileId){
-              $log.debug('profileId',profileId)
-              var profile = User.getActiveProfileSync().data.profile;
-              clevertap.profileSet({
-                  "Identity": profileId,
-                  "ts": Date.now().toString(),       // user creation date, or just leave this field out to set the time has current
-                  "Name": profile.first_name+" "+profile.last_name,
-                  "Gender": profile.gender,
-                  "type": "profile",
-                  "Phone": "+91"+User.user.getPhoneNumber(),
-                  // "profileData": {
-                  // }
+            $log.debug('CLEVERTAP profile', profile.doc._id)
+            User.profile.setId(profile.doc._id).then(function(profileId) {
+                $log.debug('profileId', profileId)
+                var profile = User.getActiveProfileSync().data.profile;
+                clevertap.profileSet({
+                    "Identity": profileId,
+                    "ts": Date.now().toString(), // user creation date, or just leave this field out to set the time has current
+                    "Name": profile.first_name + " " + profile.last_name,
+                    "Gender": profile.gender,
+                    "type": "profile",
+                    "Phone": "+91" + User.user.getPhoneNumber(),
+                    // "profileData": {
+                    // }
                 })
-            }).catch(function(err){
-              $log.warn('error occured app run, getting profile id',err);
+            }).catch(function(err) {
+                $log.warn('error occured app run, getting profile id', err);
             });
-
             User.profile.select(profile);
             $log.debug('selected profile', profile.id, multiUser.getCurrentProfile())
             if ($state.current.name == 'map.navigate') {
                 $ionicLoading.show({
                     templateUrl: 'templates/common/common.loader.view.html'
                 });
-                $state.go('repaint', {})
+                $state.go('repaint',{})
             } else {
                 $ionicLoading.show({
                     noBackdrop: false,

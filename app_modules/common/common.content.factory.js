@@ -35,6 +35,7 @@
       revs_limit: 1,
       // auto_compaction : true
     });
+    var cachedLessonDocs = [];
     var diagnosisTranslationsDB = pouchDB('diagnosisTranslationsDB', {
       revs_limit: 1,
       // auto_compaction : true
@@ -178,16 +179,14 @@
 
     function getLocalizedQuestion(questionId, targetLanguage) {
       return lessonDB.get('localized_mapping').then(function(localizationMapping) {
-
-        if(localizationMapping.mapping[questionId] && localizationMapping.mapping[questionId][targetLanguage]){
-        var translatedQuestionID = localizationMapping.mapping[questionId][targetLanguage];
-           return diagnosisTranslationsDB.get(translatedQuestionID).then(function(question) {
-          return question.question;
-        });
-         }else{
+        if (localizationMapping.mapping[questionId] && localizationMapping.mapping[questionId][targetLanguage]) {
+          var translatedQuestionID = localizationMapping.mapping[questionId][targetLanguage];
+          return diagnosisTranslationsDB.get(translatedQuestionID).then(function(question) {
+            return question.question;
+          });
+        } else {
           return questionId;
-         }
-
+        }
       })
     }
 
@@ -367,6 +366,7 @@
       lessonDB.allDocs({
           include_docs: true
         }).then(function(data) {
+          $log.debug(new Date().toTimeString(), "debug-optimize", "lessons db returns", data)
           var lessons = [];
           var currentLesson = {}
           for (var i = 0; i < data.rows.length; i++) {
@@ -388,6 +388,7 @@
           // data.rows[i].doc.lesson.node.key = data.rows[i].doc.lesson.key;
           // }
           // lessons = _.sortBy(lessons, 'key');
+          $log.debug(new Date().toTimeString(), "debug-optimize", "get lesson list returns", data)
           d.resolve(lessons)
         })
         .catch(function(error) {
@@ -399,32 +400,65 @@
     function getResourceList() {
       var i;
       var d = $q.defer();
+      $log.debug(new Date().toTimeString(), "debug-optimize", "inside getResourceList")
       User.playlist.get(User.getActiveProfileSync()._id).then(function(playlist) {
-          lessonDB.allDocs({
-            include_docs: true
-          }).then(function(data) {
-            // $log.debug("AAAAAAAA "+data+" END");
-            var lessons = [];
-            var resources = [];
-            var playlist_ids = [];
-            for (i = 0; i < playlist.length; i++) {
-              $log.debug("making playlist ids");
-              playlist_ids.push(playlist[i].lesson_id);
-            }
-            $log.debug("done making playlist ids" + JSON.stringify(playlist_ids));
-            for (i = 0; i < data.rows.length; i++) {
-              $log.debug("making lessonlist");
-              var index = -1;
-              while ((index = playlist_ids.indexOf(data.rows[i].id, index + 1)) != -1) {
-                $log.debug("making lessonlist 1");
-                lessons[index] = data.rows[i];
-                lessons[index]['parentHindiLessonId'] = playlist[index]['suggestedLesson']
-                lessons[index]['miss'] = playlist[index]['miss'];
+          $log.debug(new Date().toTimeString(), "debug-optimize", "user playlist got");
+          var lessons = [];
+          var resources = [];
+          var playlist_ids = [];
+          var docs_to_fetch = [];
+          for (i = 0; i < playlist.length; i++) {
+            $log.debug("making playlist ids");
+            playlist_ids.push(playlist[i].lesson_id);
+            docs_to_fetch.push({
+              id: playlist[i].lesson_id
+            });
+          }
+          $log.debug("done making playlist ids", playlist_ids);
+          $log.debug(new Date().toTimeString(), "debug-optimize", "docs to fetch", docs_to_fetch)
+          lessonDB.bulkGet(
+            {docs:docs_to_fetch}
+          ).then(function(data) {
+            $log.debug(new Date().toTimeString(), "debug-optimize", "lessons db got", data)
+              // $log.debug("AAAAAAAA "+data+" END");
+              data.rows = {}
+              for(i = 0; i < data.results.length ; i++){
+                if(data.results[i].docs[0].ok){
+                  data.rows[data.results[i].docs[0].ok.lesson.node.id] = {doc:data.results[i].docs[0].ok};
+                  // data.rows.push({doc:data.results[i].docs[0].ok});
+                }
+                // var docs = data.reults[i].docs[0].ok;
               }
+            $log.debug(new Date().toTimeString(), "debug-optimize", "lessons db processed data", data)
+
+            lessons = [];
+
+            for(var i =0 ; i< playlist_ids.length; i++){
+              var temp = data.rows[playlist_ids[i]];
+              temp.parentHindiLessonId = playlist[i]['suggestedLesson'];
+              temp.miss = playlist[i]['miss'];
+              lessons.push(temp)
             }
+
+            // for(var i = 0; i < lessons.length; i++){
+            //     lessons[i]['parentHindiLessonId'] = playlist[i]['suggestedLesson']
+            //     lessons[i]['miss'] = playlist[i]['miss'];
+
+            // }
+            // for (i = 0; i < data.rows.length; i++) {
+            //   $log.debug("making lessonlist");
+            //   var index = -1;
+            //   while ((index = playlist_ids.indexOf(data.rows[i].id, index + 1)) != -1) {
+            //     $log.debug("making lessonlist 1");
+            //     lessons[index] = data.rows[i];
+            //     lessons[index]['parentHindiLessonId'] = playlist[index]['suggestedLesson']
+            //     lessons[index]['miss'] = playlist[index]['miss'];
+            //   }
+            // }
             // if(playlist.indexOf(data.rows[i].id) >= 0){
             //     lessons[playlist.indexOf(data.rows[i].id)] = data.rows[i]
             //   }
+
             $log.debug("Modifying lessons list")
             for (i = 0; i < lessons.length; i++) {
               $log.debug("Modifying lessons list 1")
@@ -473,7 +507,8 @@
             if (resources.length) {
               resources[resources.length - 1].node.requiresSuggestion = true;
             }
-            $log.debug("Resource list resolving" + $log.debug(resources));
+            $log.debug("Resource list resolving" ,resources);
+            $log.debug(new Date().toTimeString(), "debug-optimize", "lessons db processed")
             d.resolve(resources)
           });
           // $log.debug("data",data)
@@ -484,6 +519,7 @@
           // $log.debug("lessons",lessons)
         })
         .catch(function(error) {
+          $log.debug(new Date().toTimeString(), "debug-optimize", "lessons db fetch error", error)
           d.reject(error)
         });
       return d.promise;

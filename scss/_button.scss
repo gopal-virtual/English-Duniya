@@ -367,6 +367,15 @@
    -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
     filter: grayscale(100%);
 }
+
+.sbtn-ok{
+  background: url('../img/assets_svg/button-ok.svg');
+  background-size: cover;
+  background-position: 0 0 !important;
+  background-repeat:no-repeat;
+  width: 155px;
+  height: 50px; 
+}
 // .sbtn:disabled{
 //   background: url('../img/assets_svg/button-grey.svg');
 //   width: 175px;

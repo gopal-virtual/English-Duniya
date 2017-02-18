@@ -102,7 +102,7 @@
         views: {
           'state-user': {
             templateUrl: CONSTANT.PATH.USER + '/user.phoneNumber' + CONSTANT.VIEW,
-            controller: ['$scope', '$timeout', '$log', 'User', '$ionicSlideBoxDelegate', '$state', '$ionicLoading', 'analytics', 'audio','localized', function($scope, $timeout, $log, User, $ionicSlideBoxDelegate, $state, $ionicLoading, analytics, audio, localized) {
+            controller: ['$scope', '$timeout', '$log', 'User', '$ionicSlideBoxDelegate', '$state', '$ionicLoading', 'analytics', 'audio','localized','network', function($scope, $timeout, $log, User, $ionicSlideBoxDelegate, $state, $ionicLoading, analytics, audio, localized, network) {
               $scope.audio = audio;
               $scope.isOnline = network.isOnline();
               $scope.$on('$cordovaNetwork:online', function(event, networkState) {

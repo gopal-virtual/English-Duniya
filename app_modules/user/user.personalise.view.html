@@ -50,7 +50,7 @@
 <ion-view class="bg-pale">
 <ion-content>
 <ion-slide-box delegate-handle="slide" show-pager="false" ng-init="userCtrl.disableSwipe();" on-slide-changed="userCtrl.playAudio($index)">
-<ion-slide >
+<ion-slide ng-if="!userCtrl.skipLanguage">
 <div class="name-avatar">
     <h2 style="top:25vh" class="center full-width absolute personalize-title">Choose Language </h2>
     <div style="top:38vh;display: flex;flex-wrap: wrap; justify-content: center;" class="center full-width absolute ">
