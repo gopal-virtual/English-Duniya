@@ -14,7 +14,8 @@
     'extendLesson',
     '$http',
     '$rootScope',
-    'pointsQueue'
+    'pointsQueue',
+    'queue'
   ];
   /* @ngInject */
   function challenge(pouchDB,
@@ -27,7 +28,8 @@
     extendLesson,
     $http,
     $rootScope,
-    pointsQueue
+    pointsQueue,
+    queue
   ) {
     var challengeProperties = {
       addPoints: addPoints,
@@ -86,18 +88,34 @@
           remainingPoints.push(pointsArray[i]);
         }
       }
-      $log.debug("points array request is",request);
-      $http.post(CONSTANT.CHALLENGE_SERVER+'points/', request).then(
-          function success() {
-          localStorage.setItem('pointsArray',JSON.stringify(remainingPoints))
-            $log.debug("points array", "upload success");
-            d.resolve();
-          },
-          function fail(error) {
-          localStorage.setItem('pointsArray',JSON.stringify(pointsArray))
-           d.reject();
-          }
-        )
+      $log.debug("points array request is", request);
+      $http.post(CONSTANT.CHALLENGE_SERVER + 'points/', request).then(
+        function success() {
+          localStorage.setItem('pointsArray', JSON.stringify(remainingPoints))
+          $log.debug("points array", "upload success");
+          d.resolve();
+        },
+      function fail(error) {
+        Raven.captureException("Error with points api trying patch",{
+              extra: {error:e,profileData:profileData,profile:profile}
+            });
+        localStorage.setItem('pointsArray', JSON.stringify(pointsArray))
+        queue.patchProfile(request.client_id).then(function() {
+          $http.post(CONSTANT.CHALLENGE_SERVER + 'points/', request).then(function(success) {
+              localStorage.setItem('pointsArray', JSON.stringify(remainingPoints))
+              $log.debug("points array", "upload success");
+              d.resolve();
+            }, function(error) {
+                Raven.captureException("Error with points api patch failed",{
+              extra: {error:e,profileData:profileData,profile:profile}
+            });
+              localStorage.setItem('pointsArray', JSON.stringify(pointsArray))
+              d.resolve(); // Resolve this so that user is still able to go to sc view              
+            })
+            // try to post points again
+        })
+        }
+      )
       return d.promise;
 
     }
