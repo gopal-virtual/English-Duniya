@@ -347,7 +347,7 @@
         id: null
       }, {
         time: new Date()
-      }, User.getActiveProfileSync() ? User.getActiveProfileSync()._id : User.user.getIdSync());
+      });
       network.isOnline() && queue.startSync();
       $rootScope.$on('$cordovaNetwork:online', function(event, networkState) {
         // data.queueSync()
@@ -437,7 +437,7 @@
         id: null
       }, {
         time: new Date()
-      },User.getActiveProfileSync() ? User.getActiveProfileSync()._id : User.user.getIdSync())
+      })
     });
     $ionicPlatform.on('pause', function() {
       $rootScope.$broadcast('appPause');
@@ -473,7 +473,7 @@
         id: null
       }, {
         time: new Date()
-      },User.getActiveProfileSync() ? User.getActiveProfileSync()._id : User.user.getIdSync())
+      })
     });
   }
 })();
