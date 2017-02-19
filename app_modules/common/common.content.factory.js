@@ -529,7 +529,7 @@
       var d = $q.defer();
       var promises = [];
       for (var index = 0; index < quiz.objects.length; index++) {
-        if (quiz.objects[index].node.meta && quiz.objects[index].node.meta.instructions && quiz.objects[index].node.meta.instructions.sounds[0] && localStorage.getItem(quiz.objects[index].node.meta.instructions.sounds[0]) != 'played') {
+        if (quiz.objects[index].node.meta && quiz.objects[index].node.meta.instructions && quiz.objects[index].node.meta.instructions.sounds && quiz.objects[index].node.meta.instructions.sounds[0] && localStorage.getItem(quiz.objects[index].node.meta.instructions.sounds[0]) != 'played') {
           localStorage.setItem(quiz.objects[index].node.meta.instructions.sounds[0], 'played');
           promises.push(mediaManager.getPath(quiz.objects[index].node.meta.instructions.sounds[0]).then(
             function(index) {
@@ -599,7 +599,7 @@
       var promises = [];
       var mediaArray = [];
       angular.forEach(assessment.objects, function(object) {
-        if (object.node.meta.instructions && object.node.meta.instructions.sounds) {
+        if (object.node.meta.instructions && object.node.meta.instructions.sounds && object.node.meta.instructions.sounds[0]) {
           promises.push(
             mediaManager.downloadIfNotExists(object.node.meta.instructions.sounds[0])
           );

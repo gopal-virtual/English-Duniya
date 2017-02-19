@@ -160,7 +160,7 @@
           },function(Error){
             $log.debug(Error)
                Raven.captureException("Error with queue profile patch",{
-              extra: {error:e,profileData:profileData,profile:profile}
+              extra: {error:Error,profileData:profileData,profile:profile}
             });
             d.reject();
           })
@@ -180,7 +180,7 @@
       }
       //patch end
       if (record.doc.url === 'activity-log') {
-        if (record.doc.body.client_uid === undefined && record.doc.body.actor_object_id === undefined) {
+        if (!record.doc.body.client_uid && !record.doc.body.actor_object_id) {
           record.doc.body.actor_object_id = localStorage.user_details ? JSON.parse(localStorage.getItem('user_details')).id : null;
         }
       }

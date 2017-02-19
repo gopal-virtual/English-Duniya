@@ -241,7 +241,7 @@
       if (profile_id) {
         post_param.client_uid = profile_id;
       } else {
-        post_param.actor_object_id = user_id;
+        post_param.actor_object_id = User.user.getIdSync();
       }
 
       if (CONSTANT.ANALYTICS) {

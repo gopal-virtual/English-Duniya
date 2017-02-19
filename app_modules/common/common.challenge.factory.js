@@ -97,7 +97,7 @@
         },
       function fail(error) {
         Raven.captureException("Error with points api trying patch",{
-              extra: {error:e,profileData:profileData,profile:profile}
+              extra: {error:error,profileData:profileData,profile:profile}
             });
         localStorage.setItem('pointsArray', JSON.stringify(pointsArray))
         queue.patchProfile(request.client_id).then(function() {
@@ -107,7 +107,7 @@
               d.resolve();
             }, function(error) {
                 Raven.captureException("Error with points api patch failed",{
-              extra: {error:e,profileData:profileData,profile:profile}
+              extra: {error:error,profileData:profileData,profile:profile}
             });
               localStorage.setItem('pointsArray', JSON.stringify(pointsArray))
               d.resolve(); // Resolve this so that user is still able to go to sc view              
