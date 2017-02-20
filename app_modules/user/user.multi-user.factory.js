@@ -83,7 +83,7 @@
                     "Name": profile.first_name + " " + profile.last_name,
                     "Gender": profile.gender,
                     "type": "profile",
-                    "Phone": "+91" + User.user.getPhoneNumber(),
+                    "Phone": User.user.getPhoneNumber(),
                     // "profileData": {
                     // }
                 })
