@@ -6,13 +6,11 @@
     </label>
   </div>
   <ion-content class="has-header">
-    <ion-item collection-repeat="lesson in mapCtrl.lessons | filter:search track by lesson.node.id">
-      {{$index + 1}} -  {{ ::lesson.node.title}}
-      <ul>
-        <li ng-repeat="resource in lesson.objects">
-          <a ng-click="mapCtrl.emitNode(resource)">{{ ::resource.node.title}}</a>
-        </li>
-      </ul>
+    <ion-item collection-repeat="lesson in mapCtrl.lessons | filter:search:strict track by lesson.node.id">
+      <h5>{{$index + 1}} -  {{lesson.node.title}}</h5>
+      <button class="button button-balanced" ng-repeat="resource in lesson.objects" ng-click="mapCtrl.emitNode(resource)">
+        {{resource.node.content_type_name == 'resource' ? 'video' : resource.node.content_type_name }}
+      </button>
     </ion-item>
   </ion-content>
 </ion-view>
