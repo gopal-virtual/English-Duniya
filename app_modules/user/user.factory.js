@@ -195,7 +195,7 @@
 
     function setProfileId(clientUuid){
       return new Promise(function(resolve,reject){
-        $http.get(CONSTANT.BACKEND_SERVICE_DOMAIN+'/api/v1/profiles/?client_uid=f80c905743369140_9aa6cd1e-b899-4edd-b161-d1a2da556e38').then(function(response){
+        $http.get(CONSTANT.BACKEND_SERVICE_DOMAIN+'/api/v1/profiles/?client_uid='+clientUuid).then(function(response){
           $log.debug('profileid',response)
           // if (response.data) {
           //   $log.debug('profileid', response);
