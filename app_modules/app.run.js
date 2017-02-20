@@ -277,7 +277,7 @@
       clevertap.registerPush();      
       if (User.getActiveProfileSync()) {
         User.profile.setId(User.getActiveProfileSync()._id).then(function(profileId){
-          $log.debug('profileId',profileId)
+          $log.debug('profileId ' + profileId)
           var profile = User.getActiveProfileSync().data.profile;
           clevertap.profileSet({
               "Identity": profileId,
@@ -285,7 +285,7 @@
               "Name": profile.first_name+" "+profile.last_name,
               "Gender": profile.gender,
               "type": "profile",
-              "Phone": "+91"+User.user.getPhoneNumber(),
+              "Phone": User.user.getPhoneNumber(),
               // "profileData": {
               // }
             })
