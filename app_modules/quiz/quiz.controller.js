@@ -749,7 +749,7 @@
                       "score": summary.score.marks,
                       "totalScore": quiz.node.type.score,
                       "skill": quiz.node.tag.toLowerCase(),
-                      "sr": quiz.node.parentHindiLessonId,
+                      "sr": quiz.node.parentHindiLessonId ? quiz.node.parentHindiLessonId : lesson.node.id,
                       "miss": quiz.node.miss
                     });
                     //save cache if present
