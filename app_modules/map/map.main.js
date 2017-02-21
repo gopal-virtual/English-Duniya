@@ -227,13 +227,18 @@ window.createGame = function(scope, lessons, audio, injector, log, lessonutils, 
                 totalRegionHeight += regionHeight[key];
             }
 
-
+            var activeLessonsLength = lessons[lessons.length - 1].locked ? lessons.length - 1 : lessons.length; 
+            // if(lessons[lessons.length - 1].locked) {
+            //     activeLessonsLength = lessons.length - 1;
+            // }else{
+            //     activeLessonsLength = lessons.length;
+            // }
 
             if (localStorage.getItem("regionPage")) {
                 var regionPage = localStorage.getItem("regionPage");
             }else{
-                for (var count = 0, residue = lessons.length; count < regions.length; count++) {
-                    if(residue < regionNodes[regions[count]]){
+                for (var count = 0, residue = activeLessonsLength; count < regions.length; count++) {
+                    if(residue <= regionNodes[regions[count]]){
                         localStorage.setItem("regionPage",count);
                         var regionPage = count;
                         break;
