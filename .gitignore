@@ -42,3 +42,4 @@ www/data/notifications.db
 config.xml
 www/sound/localized/*
 localizedSounds*.zip
+temp/
