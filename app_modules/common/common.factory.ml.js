@@ -517,7 +517,10 @@
             }
           }
         }catch(err){
-          $log.debug('ML ERROR', err);
+          $log.debug('ML ERROR', err);          
+          Raven.captureException("ML Error Handled - Roadmap Empty",{
+              extra: {roadmap:ml.roadMapData}
+            });
           var previousRecommendationsWithPrereqs = angular.copy(ml.roadMapData.recommendationsWithPrereqs);
           var recommendationsWithPrereqs = getNewBatchNodes()[0];
           setNewRoadMap(recommendationsWithPrereqs);
