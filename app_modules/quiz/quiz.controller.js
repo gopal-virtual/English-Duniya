@@ -1203,7 +1203,6 @@
     $scope.$on('appPause', function() {
       audio.player.removeCallback();
       audio.player.stop();
-      $timeout.cancel(timeout);
     })
 
     function quizResultButtonAnimation() {
