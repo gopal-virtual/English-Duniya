@@ -475,7 +475,7 @@
         return profile;
       }
       else{
-        return {};
+        return false;
       }
     }
 
