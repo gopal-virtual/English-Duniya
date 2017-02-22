@@ -467,7 +467,7 @@
     }
 
     function getActiveProfileSync() {
-      if (localstorage.getItem('profile')) {
+      if (localStorage.getItem('profile')) {
         var profile = JSON.parse(localStorage.getItem('profile'));
         if (profile && profile.data && profile.data.profile && !profile.data.profile.language) {
           profile.data.profile.language = 'hi';
