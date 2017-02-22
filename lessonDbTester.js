@@ -71,7 +71,7 @@ class Test{
 			// console.log('No test to run');
 		// } else {
 			for(let testName in this.tests){
-				printTs("Test Case : "+testName);
+				console.log(chalk.yellow("[Test] " + testName));
 				this.tests[testName](this.pass, this.fail);
 			}
 		// }
@@ -86,68 +86,107 @@ class Test{
 	}
 }
 
-function checkLesson(lessonsObj){
-	// console.log(lessonsObj);
-	// console.log(lessonsObj);
-	let i=0
+function checkLessons(lessonsObj){
+	// let i=0
 	for (let lessonId in lessonsObj) {
-		let test = new Test();
-		let lesson = lessonsObj[lessonId];
+		testLesson(lessonsObj[lessonId]);
+	}
+}
 
-		printTs('Lesson #' + (i++) + " - " + lesson.node.id);
+function testLesson(lesson, detail = false){
+	if (!lesson) {
+		printTs('lesson doesnt exist');
+		return;
+	}
 
-		test.createTests('lesson structure',(pass, fail) => {
-			log("Skill : "+lesson.node.tag.toLowerCase());
-			switch(lesson.node.tag.toLowerCase()){
-				case 'reading':
-				case 'listening':
-					if (lesson.objects.length == 1) {
-						lesson.objects[0].node.content_type_name  == 'assessment' && lesson.objects[0].node.type.type == 'practice' ? pass() : fail('node is not practice');
-					} else {
-						fail('more than one nodes in lesson');
-					}
-					break;
-				case 'vocabulary':
-				case 'grammar':
-					if (lesson.objects.length == 2 || lesson.objects.length == 3) {
-						// lesson.objects[0].node.content_type_name == 'resources' || lesson.objects[0].node.content_type_name == 'vocabulary' ? pass() : fail('first node is neither vocabui nor video');
-						let practice = false;
-						let video = false;
-						let vocabui = false;
-						for (let i = 0; i < lesson.objects.length; i++) {
-							if(lesson.objects[i].node.content_type_name == 'resources') {
-								video = true;
-							}
+	if (detail){
+		console.log(JSON.stringify(lesson,null,2))
+	}
 
-							if (lesson.objects[i].node.content_type_name == 'vocabulary') {
-								vocabui = true;
-							}
+	let test = new Test();
+	printTs('Lesson  - ' + lesson.node.id);
 
-							if(lesson.objects[i].node.content_type_name == 'assessment' && lesson.objects[i].node.type.type == 'practice'){
-								practice = true;
-							}
-						}
+	test.createTests('Validate Lesson Structure',(pass, fail) => {
+		testLessonStructure(pass, fail, lesson);
+	});
 
-						if (vocabui && practice) {
-							pass();
-						}else{
-							fail(vocabui || video ? 'no practice found' : 'no vocabui or video found');
-						}
-					} else {
-						fail('more than two nodes in lesson');
-					}
-					break;
-				default:
-					console.log(chalk.red("Lesson of unknown skill"))
-					fail('lesson does not have a valid skill');
+	test.createTests('Intro Sound Present', (pass, fail) => {
+		testIntroSound(pass, fail, lesson);
+	});
+
+	test.runTests();
+}
+
+function testIntroSound(pass, fail, lesson){
+	if (lesson.node.meta) {
+		if (lesson.node.meta.intros) {
+			if (lesson.node.meta.intros.sound) {
+				if (lesson.node.meta.intros.sound.length != 0) {
+	// console.log(lesson.node.meta);
+					pass();
+				}else{
+					fail('sound in lesson meta intro is empty');
+				}
+			} else {
+				fail('sound not present in lesson meta intro');
 			}
-		});
+		} else {
+			fail('intros not found in lesson meta');
+		}
+	} else {
+		fail('meta not found in lesson');
+	}
 
+}
 
-		test.runTests();
+function testLessonStructure(pass, fail, lesson){
+	log("Skill : " + lesson.node.tag);
+	switch(lesson.node.tag ? lesson.node.tag.toLowerCase() : null){
+		case 'reading':
+		case 'listening':
+			if (lesson.objects.length == 1) {
+				lesson.objects[0].node.content_type_name  == 'assessment' && lesson.objects[0].node.type.type == 'practice' ? pass() : fail('node is not practice');
+			} else {
+				fail('more than one nodes in lesson');
+			}
+			break;
+		case 'vocabulary':
+		case 'grammar':
+			if (lesson.objects.length == 2 || lesson.objects.length == 3) {
+				// lesson.objects[0].node.content_type_name == 'resources' || lesson.objects[0].node.content_type_name == 'vocabulary' ? pass() : fail('first node is neither vocabui nor video');
+				let practice = false;
+				let video = false;
+				let vocabui = false;
+				for (let i = 0; i < lesson.objects.length; i++) {
+					if(lesson.objects[i].node.content_type_name == 'resource') {
+						video = true;
+					}
 
-		// remove this
-		break;
+					if (lesson.objects[i].node.content_type_name == 'vocabulary') {
+						vocabui = true;
+					}
+
+					if(lesson.objects[i].node.content_type_name == 'assessment' && lesson.objects[i].node.type.type == 'practice'){
+						practice = true;
+					}
+				}
+
+				log('Video : '+video)
+				log('VocabUI : '+vocabui)
+				log('Practice : '+practice)
+
+				if (practice) {
+					pass();
+				}else{
+					fail(vocabui || video ? 'no practice found' : 'no vocabui or video found');
+				}
+			} else {
+				fail('more than two/three nodes in lesson');
+			}
+			break;
+		default:
+			// console.log(chalk.red("Lesson of unknown skill"))
+			fail('lesson does not have a valid skill');
 	}
 }
 
@@ -158,21 +197,18 @@ function main(){
 		loadLessons(),	
 		readFromLocalData('kmapsJSON.json')
 	]).then((data) => {
-		compareLessonKmaps(data[0],data[1])
-		// lessonData = data[0];
-		// kmapsData = data[1];
-		// console.log(kmapsData);
+		if (argv.lessonId) {
+			testLesson(data[0][argv.lessonId], true);
+		}else{
+			compareLessonKmaps(data[0],data[1]);
+			checkLessons(data[0]);
+		}
+	
 	})
 	.catch((err) => {
 		console.log(err);
 	})
-
-	// .then((kmapsData) => {
-	// 	console.log(kmapsData);
-	// })
-	// loadLessons().then((lessonsObj) => {
-	// 	checkLesson(lessonsObj)
-	// });
+	
 }
 
 function compareLessonKmaps(lessonData, kmapsData){
@@ -184,14 +220,11 @@ function compareLessonKmaps(lessonData, kmapsData){
 		for (let lessonId in kmapsData) {
 			if(!lessonData[lessonId]){
 				isLessonMissing = true;
-				log("lessonId");
+				log("Missing Id : " + lessonId);
 			}
-			// console.log(lessonData[lessonId]);
-			// console.log(kmapsData[lessonId])
-			// kmapsData[i]
 		}
 		if (isLessonMissing) {
-			fail();
+			fail('Some lessons are missing');
 		}else{
 			pass();
 		}
