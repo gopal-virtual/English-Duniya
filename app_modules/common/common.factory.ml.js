@@ -377,8 +377,6 @@
 
         try{
 
-          d = sdf;
-
           if(data["miss"] == true){
             $log.debug('in miss');
             // deleteSuccessfulNodeFromRoadmap(ml.roadMapData["roadMap"][0]["sr"]);
