@@ -134,7 +134,8 @@
                           vocabInstructionCtrl.playDelayed(CONSTANT.PATH.LOCALIZED_AUDIO+localized.audio.Vocabulary.ItsYourTurn.lang[User.getActiveProfileSync().data.profile.language])
                       })
                       $scope.$on('appPause', function(){
-                          vocabInstructionCtrl.audio.player.removeCallback();
+                          // removing this [Sentry Log Event 2b380b179d4342d885daa4c2ac649db5]
+                          // vocabInstructionCtrl.audio.player.removeCallback();
                           $timeout.cancel( timeout );
                       })
 
