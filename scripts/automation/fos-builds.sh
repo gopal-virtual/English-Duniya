@@ -24,5 +24,13 @@ printf '\n'build_architecture=x86andarm'\n'			>> scripts/automation/fos-builds-g
 cat scripts/automation/05-ionic_setup.sh 			>> scripts/automation/fos-builds-generated-script.sh
 cat scripts/automation/07-make_release_build.sh 	>> scripts/automation/fos-builds-generated-script.sh
 cat scripts/automation/08-update_firebase.sh  		>> scripts/automation/fos-builds-generated-script.sh
+printf '\n'crosswalk='keep-and-make-single-build'	>> scripts/automation/fos-builds-generated-script.sh 
+printf '\n'build_architecture=x86andarm'\n'			>> scripts/automation/fos-builds-generated-script.sh 
+printf '\n'content_type='bundled''\n'				>> scripts/automation/fos-builds-generated-script.sh 
+cat scripts/automation/03-bundle_content.sh			>> scripts/automation/fos-builds-generated-script.sh
+cat scripts/automation/04-run_gulp.sh				>> scripts/automation/fos-builds-generated-script.sh
+cat scripts/automation/05-ionic_setup.sh 			>> scripts/automation/fos-builds-generated-script.sh
+cat scripts/automation/07-make_release_build.sh 	>> scripts/automation/fos-builds-generated-script.sh
+cat scripts/automation/08-update_firebase.sh  		>> scripts/automation/fos-builds-generated-script.sh
 
 bash scripts/automation/fos-builds-generated-script.sh
