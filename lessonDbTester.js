@@ -6,7 +6,7 @@ var chalk = require('chalk');
 // console.log('Arguments',argv);
 
 function getDbFromCouch(dbName){
-	var db = new PouchDB('https://ci-couch.zaya.in/lessonsdb');
+	var db = new PouchDB('https://ed-couch.zaya.in/lessonsdb');
 	return db.allDocs({
 		include_docs: true
 	})
@@ -131,7 +131,7 @@ function testIntroSound(pass, fail, lesson){
 				fail('sound not present in lesson meta intro');
 			}
 		} else {
-			fail('intros not found in lesson meta');
+			fail('intros not found in lesson meta '+ lesson.node.id);
 		}
 	} else {
 		fail('meta not found in lesson');
@@ -147,7 +147,7 @@ function testLessonStructure(pass, fail, lesson){
 			if (lesson.objects.length == 1) {
 				lesson.objects[0].node.content_type_name  == 'assessment' && lesson.objects[0].node.type.type == 'practice' ? pass() : fail('node is not practice');
 			} else {
-				fail('more than one nodes in lesson');
+				fail('more than one nodes in lesson '+ lesson.node.id);
 			}
 			break;
 		case 'vocabulary':
@@ -181,12 +181,12 @@ function testLessonStructure(pass, fail, lesson){
 					fail(vocabui || video ? 'no practice found' : 'no vocabui or video found');
 				}
 			} else {
-				fail('more than two/three nodes in lesson');
+				fail('number of nodes are neither two nor three ' + lesson.node.id);
 			}
 			break;
 		default:
 			// console.log(chalk.red("Lesson of unknown skill"))
-			fail('lesson does not have a valid skill');
+			fail('lesson does not have a valid skill '+ lesson.node.id);
 	}
 }
 
