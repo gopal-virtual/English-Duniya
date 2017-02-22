@@ -6,7 +6,7 @@ var chalk = require('chalk');
 // console.log('Arguments',argv);
 
 function getDbFromCouch(dbName){
-	var db = new PouchDB('https://ed-couch.zaya.in/lessonsdb');
+	let db = new PouchDB('https://ed-couch.zaya.in/lessonsdb');
 	return db.allDocs({
 		include_docs: true
 	})
@@ -54,7 +54,7 @@ function printTs(msg){
 }
 
 function log(msg){
-	console.log(chalk.blue("[log] ") + msg)
+	console.log(chalk.blue("[log] ") + chalk.dim(msg))
 }
 
 class Test{
@@ -71,25 +71,32 @@ class Test{
 			// console.log('No test to run');
 		// } else {
 			for(let testName in this.tests){
-				console.log(chalk.yellow("[Test] " + testName));
-				this.tests[testName](this.pass, this.fail);
+				console.log(chalk.blue("[Test] " + chalk.bold(testName)));
+				this.tests[testName]({ pass : this.pass, fail : this.fail, warn : this.warn});
 			}
 		// }
 	}
 
 	pass(msg = ''){
-		console.log(chalk.blue("[status] ")+chalk.green('Passed ')+msg);
+		console.log(chalk.blue("[status] ")+chalk.green('Passed ') + chalk.dim(msg));
 	}
 
 	fail(msg = ''){
-		console.log(chalk.blue("[status] ")+chalk.red('Failed ')+msg);
+		console.log(chalk.blue("[status] ")+chalk.red('Failed ')+chalk.dim(msg));
+	}
+
+	warn(msg = ''){
+		console.log(chalk.blue("[status] ")+chalk.yellow('Warning ')+chalk.dim(msg))
 	}
 }
 
 function checkLessons(lessonsObj){
-	// let i=0
+	let i=0;
 	for (let lessonId in lessonsObj) {
+		console.log(chalk.bold('[Lesson] #'+ (++i) + ' ' + lessonId));
 		testLesson(lessonsObj[lessonId]);
+
+		break;
 	}
 }
 
@@ -104,56 +111,85 @@ function testLesson(lesson, detail = false){
 	}
 
 	let test = new Test();
-	printTs('Lesson  - ' + lesson.node.id);
 
-	test.createTests('Validate Lesson Structure',(pass, fail) => {
-		testLessonStructure(pass, fail, lesson);
+	test.createTests('Validate Lesson Structure',(logger) => {
+		testLessonStructure(logger, lesson);
 	});
 
-	test.createTests('Intro Sound Present', (pass, fail) => {
-		testIntroSound(pass, fail, lesson);
+	test.createTests('Intro Sound Present', (logger) => {
+		testIntroSound(logger, lesson);
 	});
+
+	test.createTests('Duplicate Nodes', (logger) => {
+		testDuplicatePresent(logger, lesson);
+	})
 
 	test.runTests();
 }
 
-function testIntroSound(pass, fail, lesson){
+function testDuplicatePresent(logger, lesson){
+	let objectTypes = [];
+	let duplicateTypes = [];
+	for (let i = 0; i < lesson.objects.length; i++) {
+		let contentType = lesson.objects[i].node.content_type_name;
+		if (objectTypes.indexOf(contentType) != -1) {
+			duplicateTypes.push(contentType)
+		}
+		objectTypes.push(contentType);
+	}
+
+	// log(objectTypes);
+
+	if (duplicateTypes.length) {
+		log('Duplicates - '+duplicateTypes);
+		logger.fail('duplicate nodes detected ')
+	} else {
+		logger.pass();
+	}
+	// objectTypes.sort();
+	// for (var i = 0; i < objectTypes.length; i++) {
+				
+	// }
+}
+
+
+function testIntroSound(logger, lesson){
 	if (lesson.node.meta) {
 		if (lesson.node.meta.intros) {
 			if (lesson.node.meta.intros.sound) {
 				if (lesson.node.meta.intros.sound.length != 0) {
 	// console.log(lesson.node.meta);
-					pass();
+					logger.pass();
 				}else{
-					fail('sound in lesson meta intro is empty');
+					logger.fail('sound in lesson meta intro is empty');
 				}
 			} else {
-				fail('sound not present in lesson meta intro');
+				logger.fail('sound not present in lesson meta intro');
 			}
 		} else {
-			fail('intros not found in lesson meta '+ lesson.node.id);
+			logger.fail('intros not found in lesson meta '+ lesson.node.id);
 		}
 	} else {
-		fail('meta not found in lesson');
+		logger.fail('meta not found in lesson');
 	}
 
 }
 
-function testLessonStructure(pass, fail, lesson){
+function testLessonStructure(logger, lesson){
 	log("Skill : " + lesson.node.tag);
 	switch(lesson.node.tag ? lesson.node.tag.toLowerCase() : null){
 		case 'reading':
 		case 'listening':
 			if (lesson.objects.length == 1) {
-				lesson.objects[0].node.content_type_name  == 'assessment' && lesson.objects[0].node.type.type == 'practice' ? pass() : fail('node is not practice');
+				lesson.objects[0].node.content_type_name  == 'assessment' && lesson.objects[0].node.type.type == 'practice' ? logger.pass() : logger.fail('node is not practice');
 			} else {
-				fail('more than one nodes in lesson '+ lesson.node.id);
+				logger.warn('more than one nodes in lesson ');
 			}
 			break;
 		case 'vocabulary':
 		case 'grammar':
-			if (lesson.objects.length == 2 || lesson.objects.length == 3) {
-				// lesson.objects[0].node.content_type_name == 'resources' || lesson.objects[0].node.content_type_name == 'vocabulary' ? pass() : fail('first node is neither vocabui nor video');
+			if (lesson.objects.length >= 2 && lesson.objects.length <= 3) {
+				// lesson.objects[0].node.content_type_name == 'resources' || lesson.objects[0].node.content_type_name == 'vocabulary' ? logger.pass() : logger.fail('first node is neither vocabui nor video');
 				let practice = false;
 				let video = false;
 				let vocabui = false;
@@ -176,17 +212,19 @@ function testLessonStructure(pass, fail, lesson){
 				log('Practice : '+practice)
 
 				if (practice) {
-					pass();
+					logger.pass();
 				}else{
-					fail(vocabui || video ? 'no practice found' : 'no vocabui or video found');
+					logger.fail(vocabui || video ? 'no practice found '+lesson.node.id : 'no vocabui or video found '+lesson.node.id);
 				}
+			} else if(lesson.objects.length < 2) {
+				logger.fail('less than one node in this lesson ' + lesson.node.id);
 			} else {
-				fail('number of nodes are neither two nor three ' + lesson.node.id);
+				logger.fail('more than three nodes in this lesson ' + lesson.node.id);
 			}
 			break;
 		default:
 			// console.log(chalk.red("Lesson of unknown skill"))
-			fail('lesson does not have a valid skill '+ lesson.node.id);
+			logger.fail('lesson does not have a valid skill '+ lesson.node.id);
 	}
 }
 
@@ -215,7 +253,7 @@ function compareLessonKmaps(lessonData, kmapsData){
 	kmapsData = kmapsData[0];
 	let test = new Test();
 
-	test.createTests('Compare Kmaps with lessonsdb', (pass, fail) => {
+	test.createTests('Compare Kmaps with lessonsdb', (logger) => {
 		let isLessonMissing = false;
 		for (let lessonId in kmapsData) {
 			if(!lessonData[lessonId]){
@@ -224,9 +262,9 @@ function compareLessonKmaps(lessonData, kmapsData){
 			}
 		}
 		if (isLessonMissing) {
-			fail('Some lessons are missing');
+			logger.fail('Some lessons are missing');
 		}else{
-			pass();
+			logger.pass();
 		}
 	})
 
@@ -250,7 +288,7 @@ function loadLessons(){
 function createLessonJson(){
 	return readJsonFile('lessonsdb.json').then((data) => {
 		let lessonsObj = {};
-		for (var i = 0; i < data.length; i++) {
+		for (let i = 0; i < data.length; i++) {
 			lessonsObj[data[i].id] = data[i].doc.lesson;
 		}
 		return writeJsonFile('lessons.json',lessonsObj)
