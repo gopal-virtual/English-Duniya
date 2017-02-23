@@ -212,7 +212,7 @@
       //   })
       // }, false);
 
-
+      $rootScope.helpline = CONSTANT.HELPLINE;
     $rootScope.showChallengeModal = true;
 
       window.addEventListener('message', function(event) {
