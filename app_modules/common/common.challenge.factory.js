@@ -83,7 +83,7 @@
                 "score": pointsArray[i].points,
                 "content_type": pointsArray[i].contentType,
                 "object_id": pointsArray[i].nodeId   
-          })
+          });
         }else{
           remainingPoints.push(pointsArray[i]);
         }
@@ -97,7 +97,7 @@
         },
       function fail(error) {
         Raven.captureException("Error with points api trying patch",{
-              extra: {error:error,profileData:profileData,profile:profile}
+              extra: {error:error,request:request}
             });
         localStorage.setItem('pointsArray', JSON.stringify(pointsArray))
         queue.patchProfile(request.client_id).then(function() {
@@ -113,6 +113,8 @@
               d.resolve(); // Resolve this so that user is still able to go to sc view              
             })
             // try to post points again
+        }).catch(function(){
+          d.reject();
         })
         }
       )
