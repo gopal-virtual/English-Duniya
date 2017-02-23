@@ -181,7 +181,7 @@ div.challenge > div.meta {
     <div ng-if="notifyPhone == 1 && phone.number == '' && userDetails && isOnline" class="symbol animation-repeat-bounce">i</div>
 </div>
 
-<a ng-href="tel:{{::helpline}}" class="call-us-container">
+<a ng-href="tel:{{::helpline}}" class="call-us-container" ng-class="::{'animation-fade-in-from-top animation-delay-more' : mapCtrl.demo.getStep() != 1}" ng-hide="::mapCtrl.demo.getStep() == 1">
     <div class="call-us-icon">
         <img src="img/assets_svg/call-us.svg">
     </div>
