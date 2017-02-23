@@ -66,6 +66,10 @@
       if(ml.roadMapData != undefined && ml.roadMapData["batch"] != undefined){
         batch = ml.roadMapData["batch"] + 1;
       }
+      var diagnosisQuiz = null;
+      if(ml.roadMapData != undefined && ml.roadMapData["diagnosisQuiz"] != undefined){
+        diagnosisQuiz = ml.roadMapData["diagnosisQuiz"];
+      }
 
       var levelRec = {
         "avgLevel": ml.defaultSkillLevel,
@@ -89,7 +93,7 @@
         levelRec["kmap_level"] = ml.roadMapData["levelRec"]["kmap_level"];
       }
 
-      ml.roadMapData = {"roadMap": [], "recommendationsWithPrereqs": recommendationsWithPrereqs, "batch": batch, "levelRec": levelRec};
+      ml.roadMapData = {"roadMap": [], "recommendationsWithPrereqs": recommendationsWithPrereqs, "batch": batch, "levelRec": levelRec, "diagnosisQuiz": diagnosisQuiz};
       for(var i = 0; i< roadMap.length;i++){
         ml.roadMapData["roadMap"].push({"sr": roadMap[i], "suggestionCount": 0, "resultTrack": {}, "previousNode": null, "currentNode": null});
       }
@@ -357,25 +361,24 @@
       }
       localStorage.setItem("roadMapData", JSON.stringify(ml.roadMapData));
 
-      $log.debug('ml.roadMapData, data', ml.roadMapData, data);
-      if(data["event"] == "diagnosisTest"){
-        if(data["levelRec"]){
-            ml.roadMapData["levelRec"] = data["levelRec"];
-            localStorage.setItem("roadMapData", JSON.stringify(ml.roadMapData));
+      try{
+        $log.debug('ml.roadMapData, data', ml.roadMapData, data);
+        if(data["event"] == "diagnosisTest"){
+          if(data["levelRec"]){
+              ml.roadMapData["levelRec"] = data["levelRec"];
+              localStorage.setItem("roadMapData", JSON.stringify(ml.roadMapData));
+          }
+          var recommendationsWithPrereqs = runDiagnostic()[0];
+          setNewRoadMap(recommendationsWithPrereqs);
+          $log.debug('ml.roadMapData 1', ml.roadMapData);
+          ml.roadMapData["roadMap"][0]["previousNode"] = null;
+          ml.roadMapData["roadMap"][0]["currentNode"] = ml.roadMapData["roadMap"][0]["sr"];
+          ml.roadMapData["roadMap"][0]["resultTrack"] = {};
+          var dependencyData = {"dependency": "root", "batch": ml.roadMapData["batch"]};
+          $log.debug('dependencyData root 1', dependencyData);
+          return handleMultipleSuggestions();
         }
-        var recommendationsWithPrereqs = runDiagnostic()[0];
-        setNewRoadMap(recommendationsWithPrereqs);
-        $log.debug('ml.roadMapData 1', ml.roadMapData);
-        ml.roadMapData["roadMap"][0]["previousNode"] = null;
-        ml.roadMapData["roadMap"][0]["currentNode"] = ml.roadMapData["roadMap"][0]["sr"];
-        ml.roadMapData["roadMap"][0]["resultTrack"] = {};
-        var dependencyData = {"dependency": "root", "batch": ml.roadMapData["batch"]};
-        $log.debug('dependencyData root 1', dependencyData);
-        return handleMultipleSuggestions();
-      }
-      else if(data["event"] == "assessment"){
-
-        try{
+        else if(data["event"] == "assessment"){
 
           if(data["miss"] == true){
             $log.debug('in miss');
@@ -516,26 +519,41 @@
               return handleMultipleSuggestions();
             }
           }
-        }catch(err){
-          $log.debug('ML ERROR', err);          
-          Raven.captureException("ML Error Handled - Roadmap Empty",{
-              extra: {roadmap:ml.roadMapData}
-            });
-          var previousRecommendationsWithPrereqs = angular.copy(ml.roadMapData.recommendationsWithPrereqs);
-          var recommendationsWithPrereqs = getNewBatchNodes()[0];
-          setNewRoadMap(recommendationsWithPrereqs);
-          if(ml.roadMapData["roadMap"].length == 0){
-            $log.debug('no history developed', previousRecommendationsWithPrereqs);
-            recommendationsWithPrereqs = previousRecommendationsWithPrereqs;
-            setNewRoadMap(recommendationsWithPrereqs);
-          }
-          ml.roadMapData["roadMap"][0]["previousNode"] = null;
-          ml.roadMapData["roadMap"][0]["currentNode"] = ml.roadMapData["roadMap"][0]["sr"];
-          ml.roadMapData["roadMap"][0]["resultTrack"] = {};
-          var dependencyData = {"dependency": "root", "batch": ml.roadMapData["batch"]};
-          $log.debug('dependencyData root 3 ML ERROR', dependencyData);
-          return handleMultipleSuggestions();
         }
+      }catch(err){
+        $log.debug('ML ERROR', err);          
+        Raven.captureException("ML Error Handled - Roadmap Empty",{
+          extra: {roadmap:ml.roadMapData}
+        });
+
+        var previousRecommendationsWithPrereqs;
+        if(ml.roadMapData && ml.roadMapData.recommendationsWithPrereqs){
+          previousRecommendationsWithPrereqs = angular.copy(ml.roadMapData.recommendationsWithPrereqs);          
+        }else if(ml.roadMapData && ml.roadMapData.diagnosisQuiz){
+          ml.dqQuiz = angular.copy(ml.roadMapData.diagnosisQuiz);
+        }
+
+        var recommendationsWithPrereqs = getNewBatchNodes()[0];
+        setNewRoadMap(recommendationsWithPrereqs);
+        if(ml.roadMapData["roadMap"].length == 0){
+          if(previousRecommendationsWithPrereqs){
+            $log.debug('no history developed 1', previousRecommendationsWithPrereqs);
+          }else if(ml.dqQuiz.length > 0){
+            previousRecommendationsWithPrereqs = runDiagnostic()[0];
+            $log.debug('no history developed 2', previousRecommendationsWithPrereqs);
+          }else{
+            var recommendations = {"vocabulary": ["5932d80e-dce2-4091-b5ac-655aa6f5fafd", "6b63b393-8fb9-4c24-82ea-11eabc875438", "f48bcad4-d484-48e9-b32e-2ddca246f9c2", "b9b8570a-e06e-42fd-873d-d269f84253f8"]};
+            previousRecommendationsWithPrereqs = structureRecommendations(recommendations);
+            $log.debug('no history developed 3', previousRecommendationsWithPrereqs);
+          }
+          setNewRoadMap(previousRecommendationsWithPrereqs); 
+        }
+        ml.roadMapData["roadMap"][0]["previousNode"] = null;
+        ml.roadMapData["roadMap"][0]["currentNode"] = ml.roadMapData["roadMap"][0]["sr"];
+        ml.roadMapData["roadMap"][0]["resultTrack"] = {};
+        var dependencyData = {"dependency": "root", "batch": ml.roadMapData["batch"]};
+        $log.debug('dependencyData root 3 ML ERROR', dependencyData);
+        return handleMultipleSuggestions();
       }
     }
 
@@ -717,6 +735,7 @@
 
     function runDiagnostic() {
         var quiz = ml.dqQuiz;
+        ml.roadMapData.diagnosisQuiz = angular.copy(quiz);
         var recommendationFromDiagnosticTest = ml.getRecommendationFromDiagnosticTest(quiz);
         var recommendations = recommendationFromDiagnosticTest[0];
         var skillLevels = recommendationFromDiagnosticTest[1];
