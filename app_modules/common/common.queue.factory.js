@@ -164,6 +164,8 @@
             });
             d.reject();
           })
+        }).catch(function(){
+          d.reject();
         });
     return d.promise;
     // return $http.get('http://google.com/activity-log');
