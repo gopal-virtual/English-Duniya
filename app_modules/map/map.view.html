@@ -115,6 +115,39 @@ div.challenge > div.meta {
     font-size: 2.5vh;
     box-shadow: 0 0 8px rgba(0,0,0,0.6);
 }
+
+.call-us-container{
+    position: absolute;
+    z-index: 3000;
+    position: absolute;
+    right: 3vw;
+    top: calc(6vw + 12vh);
+    text-decoration: none !important;
+}
+
+.call-us-container > .call-us-icon{
+    height: 11.5vh;
+    width: 11.5vh;
+    border-radius: 50%;
+    background-color: #459DCC;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 8px rgba(0,0,0,0.6);
+    border: 3px solid #FFF;
+}
+
+.call-us-container > .caption{
+    color: #FFF;
+    background: #CD202F;
+    border-radius: 5px;
+    padding: 5px;
+    padding-bottom: 2px; 
+    box-shadow: 0 0 8px rgba(0,0,0,0.6);
+    font-size: 1.4em;
+    text-align: center;
+}
+
 </style>
 <div class="profile-star" ng-class="::{'animation-fade-in-from-top animation-delay-more' : mapCtrl.demo.getStep() != 1}" ng-hide="::mapCtrl.demo.getStep() == 1">
     <!-- <div class="profile-star" ng-hide="::mapCtrl.demo.getStep() == 1"> -->
@@ -147,6 +180,15 @@ div.challenge > div.meta {
     <img class="profile-avatar" ng-src="img/assets_svg/profile-{{::mapCtrl.gender == 'M' ? 'boy' : 'girl'}}.svg">
     <div ng-if="notifyPhone == 1 && phone.number == '' && userDetails && isOnline" class="symbol animation-repeat-bounce">i</div>
 </div>
+
+<a ng-href="tel:{{::helpline}}" class="call-us-container" ng-class="::{'animation-fade-in-from-top animation-delay-more' : mapCtrl.demo.getStep() != 1}" ng-hide="::mapCtrl.demo.getStep() == 1">
+    <div class="call-us-icon">
+        <img src="img/assets_svg/call-us.svg">
+    </div>
+    <div class="caption">Helpline</div>
+</a>
+
+
 <!-- <div style="top: 100px; left: 100px; position: absolute;z-index: 100;" ng-click="mapCtrl.onBackButtonPress()">
     <h1>BACK BUTTON SIMULATOR</h1>
 </div> -->
