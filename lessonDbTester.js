@@ -132,10 +132,62 @@ function testLesson(lesson, kmapsData, detail = false){
 		test.createTests('Duplicate Nodes', (logger) => {
 			testDuplicatePresent(logger, lesson);
 		})
+
+		test.createTests('Score Consistency', (logger) => {
+			testScoreConsistency(logger, lesson);
+		})
 	}
 
 	test.runTests();
 }
+
+function testScoreConsistency(logger, lesson){
+	let errorContentTypes = [];
+	// let noScoreArray = [];
+
+	for (var i = 0; i < lesson.objects.length; i++) {
+		let nodeObject = lesson.objects[i].node;
+		let contentType = nodeObject.content_type_name.toLowerCase();
+
+		switch(contentType){
+			case 'resource': 
+				log('video : '+nodeObject.type.score+'/'+nodeObject.type.score)
+				break;
+			case 'vocabulary': 
+			case 'assessment':
+				// let lessonObjectObject = lesson.objects[i].objects
+				let summedScore = 0;
+				for (var j = 0; j < lesson.objects[i].objects.length; j++) {
+					let optionScore = lesson.objects[i].objects[j].node.type.score;
+					// console.log(lesson.objects[i].objects[j].node.type.score);
+					if (!optionScore) {
+						log('option has no score');
+						errorContentTypes.push(contentType+' option #'+ (j+1));
+						// break;
+					}
+					summedScore += parseInt(optionScore);
+				}
+				// log('Video : '+nodeObject.type.score+'/'+nodeObject.type.score)
+				log(contentType+' : '+nodeObject.type.score+'/'+summedScore);
+				
+				if (nodeObject.type.score != summedScore) {
+					errorContentTypes.push(contentType);
+				}
+				// log('Video : '+nodeObject.type.score+':'+nodeObject.type.score)
+				break;
+			default:
+				logger.fail('not a valid content type');
+		}
+
+	}
+
+	if (errorContentTypes.length == 0) {
+		logger.pass();
+	} else {
+		logger.fail(JSON.stringify(errorContentTypes)+' score consistenct fail');
+	}
+
+} 
 
 function testKmapsPresent(logger, kmapsData){
 	if (kmapsData) {
@@ -160,7 +212,13 @@ function testDuplicatePresent(logger, lesson){
 
 	if (duplicateTypes.length) {
 		log('Duplicates - '+duplicateTypes);
-		logger.fail('duplicate nodes detected '+lesson.node.id)
+		// log(JSON.stringify(duplicateTypes))
+		// log(JSON.stringify(objectTypes))
+		if (duplicateTypes.indexOf('resource') != -1 && objectTypes.indexOf('vocabulary') != -1) {
+			logger.pass();
+		} else {
+			logger.fail('duplicate nodes detected '+lesson.node.id)
+		}
 	} else {
 		logger.pass();
 	}
@@ -232,12 +290,17 @@ function testLessonStructure(logger, lesson){
 				if (practice) {
 					logger.pass();
 				}else{
-					logger.fail(vocabui || video ? 'no practice found '+lesson.node.id : 'no vocabui or video found '+lesson.node.id);
+					if (vocabui) {
+						// logger.fail(vocabui || video ? 'no practice found '+lesson.node.id : 'no vocabui or video found '+lesson.node.id);
+						logger.pass()
+					} else {
+						video ? logger.pass() : logger.fail('neither video nor vocab present');
+					}
 				}
 			} else if(lesson.objects.length < 2) {
 				logger.fail('less than one node in this lesson ' + lesson.node.id);
 			} else {
-				logger.fail('more than three nodes in this lesson ' + lesson.node.id);
+				logger.warn('more than three nodes in this lesson ' + lesson.node.id);
 			}
 			break;
 		default:
