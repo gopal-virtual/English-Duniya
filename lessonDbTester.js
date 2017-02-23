@@ -90,17 +90,18 @@ class Test{
 	}
 }
 
-function checkLessons(lessonsObj){
+function checkLessons(lessonsObj, kmapsData){
 	let i=0;
 	for (let lessonId in lessonsObj) {
 		console.log(chalk.bold('[Lesson] #'+ (++i) + ' ' + lessonId));
-		testLesson(lessonsObj[lessonId]);
+		testLesson(lessonsObj[lessonId], kmapsData[0][lessonId]);
 
-		break;
+		// remove this
+		// break;
 	}
 }
 
-function testLesson(lesson, detail = false){
+function testLesson(lesson, kmapsData, detail = false){
 	if (!lesson) {
 		printTs('lesson doesnt exist');
 		return;
@@ -111,20 +112,37 @@ function testLesson(lesson, detail = false){
 	}
 
 	let test = new Test();
+	let isKmapsPresent = kmapsData ? true : false;
 
-	test.createTests('Validate Lesson Structure',(logger) => {
-		testLessonStructure(logger, lesson);
-	});
-
-	test.createTests('Intro Sound Present', (logger) => {
-		testIntroSound(logger, lesson);
-	});
-
-	test.createTests('Duplicate Nodes', (logger) => {
-		testDuplicatePresent(logger, lesson);
+	test.createTests('Present in Kmaps', (logger) => {
+		isKmapsPresent ? logger.pass() : logger.warn('lesson not present in kmaps')
 	})
 
+	// log('ouside'+isKmapsPresent);
+
+	if (isKmapsPresent) {
+		test.createTests('Validate Lesson Structure', (logger) => {
+			testLessonStructure(logger, lesson);
+		});
+
+		test.createTests('Intro Sound Present', (logger) => {
+			testIntroSound(logger, lesson);
+		});
+
+		test.createTests('Duplicate Nodes', (logger) => {
+			testDuplicatePresent(logger, lesson);
+		})
+	}
+
 	test.runTests();
+}
+
+function testKmapsPresent(logger, kmapsData){
+	if (kmapsData) {
+		return true;
+	} else {
+		return false;
+	}
 }
 
 function testDuplicatePresent(logger, lesson){
@@ -142,7 +160,7 @@ function testDuplicatePresent(logger, lesson){
 
 	if (duplicateTypes.length) {
 		log('Duplicates - '+duplicateTypes);
-		logger.fail('duplicate nodes detected ')
+		logger.fail('duplicate nodes detected '+lesson.node.id)
 	} else {
 		logger.pass();
 	}
@@ -228,26 +246,6 @@ function testLessonStructure(logger, lesson){
 	}
 }
 
-function main(){
-	let lessonData;
-	let kmapsData;
-	Promise.all([
-		loadLessons(),	
-		readFromLocalData('kmapsJSON.json')
-	]).then((data) => {
-		if (argv.lessonId) {
-			testLesson(data[0][argv.lessonId], true);
-		}else{
-			compareLessonKmaps(data[0],data[1]);
-			checkLessons(data[0]);
-		}
-	
-	})
-	.catch((err) => {
-		console.log(err);
-	})
-	
-}
 
 function compareLessonKmaps(lessonData, kmapsData){
 	kmapsData = kmapsData[0];
@@ -299,6 +297,27 @@ function createLessonDb(){
 	return getDbFromCouch('lessonsdb').then((data) => {
 		return writeJsonFile('lessonsdb.json',data.rows)
 	})
+}
+
+function main(){
+	let lessonData;
+	let kmapsData;
+	Promise.all([
+		loadLessons(),	
+		readFromLocalData('kmapsJSON.json')
+	]).then((data) => {
+		if (argv.lessonId) {
+			testLesson(data[0][argv.lessonId], data[1][0][argv.lessonId], true);
+		}else{
+			compareLessonKmaps(data[0],data[1]);
+			checkLessons(data[0],data[1]);
+		}
+	
+	})
+	.catch((err) => {
+		console.log(err);
+	})
+	
 }
 
 main();
