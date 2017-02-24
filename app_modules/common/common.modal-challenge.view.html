@@ -38,9 +38,9 @@
 			">
 			<p>{{mapCtrl.daysRemaining}} day<span ng-if="::mapCtrl.daysRemaining != 1">s</span> to go</p>
 			</span>
-			<button class="sbtn sbtn-join" ng-if="user.user.getIsVerified()  && mapCtrl.daysRemaining <= 0" ng-click="audio.play('press');joinChallenge()"></button>
-			<button class="sbtn sbtn-join disabled" ng-disabled="true" ng-if="user.user.getIsVerified() && mapCtrl.daysRemaining > 0"></button>
-			<button class="sbtn sbtn-phone-add-small" ng-disabled="!isOnline" ng-if="!user.user.getIsVerified()" ng-click="audio.play('press');joinChallenge()"></button>
+			<button class="sbtn sbtn-join" ng-if="mapCtrl.daysRemaining <= 0" ng-click="audio.play('press');joinChallenge()"></button>
+			<button class="sbtn sbtn-join disabled" ng-disabled="true" ng-if="mapCtrl.daysRemaining > 0"></button>
+			<button class="sbtn sbtn-phone-add-small" ng-disabled="!isOnline" ng-if="!user.user.getPhoneNumber()" ng-click="audio.play('press');joinChallenge()"></button>
 			<!-- <button class="button" ng-click="" >Join Challenge</button> -->
 		</div>
 	</div>

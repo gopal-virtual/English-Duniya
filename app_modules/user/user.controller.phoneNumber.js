@@ -30,7 +30,8 @@
         var phoneCtrl = this;
         phoneCtrl.number = User.user.getPhoneNumber();
         phoneCtrl.numberErrorText = '';
-        phoneCtrl.isVerified = User.user.getDetails() ? User.user.getDetails().is_verified : false;
+        // phoneCtrl.isVerified = User.user.getDetails() ? User.user.getDetails().is_verified : false;
+        phoneCtrl.isVerified = true;
         phoneCtrl.otp = '';
         phoneCtrl.otpErrorText = '';
         phoneCtrl.otpInterval = 90000;
@@ -57,7 +58,8 @@
             $log.warn('resetting phone values')
             phoneCtrl.number = User.user.getPhoneNumber();
             phoneCtrl.numberErrorText = '';
-            phoneCtrl.isVerified = User.user.getDetails() ? User.user.getDetails().is_verified : false;
+            // phoneCtrl.isVerified = User.user.getDetails() ? User.user.getDetails().is_verified : false;
+            phoneCtrl.isVerified = true;
             phoneCtrl.otp = '';
             phoneCtrl.otpErrorText = '';
             phoneCtrl.number = User.user.getPhoneNumber();
