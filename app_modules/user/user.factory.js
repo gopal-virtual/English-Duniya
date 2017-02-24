@@ -113,6 +113,8 @@
     User.getActiveProfileSync = getActiveProfileSync;
     User.setActiveProfileSync = setActiveProfileSync;
     User.updateActiveProfileSync = updateActiveProfileSync;
+    User.addNodeCompleted = addNodeCompleted;
+    User.showChallengeModal = showChallengeModal;
     User.user = {
       getDetails: getUserDetails,
       getIdSync: getUserIdSync,
@@ -730,6 +732,26 @@
         })
       })
     }
+
+    function addNodeCompleted(){
+      var nodes = 0;
+      if(localStorage.getItem('nodesCompletedAfterChallenge'+getActiveProfileSync()._id)){
+        nodes = parseInt(localStorage.getItem('nodesCompletedAfterChallenge'+getActiveProfileSync()._id))
+      }
+        nodes = nodes+1;
+        localStorage.setItem('nodesCompletedAfterChallenge'+getActiveProfileSync()._id,nodes);
+    }
+
+    function showChallengeModal(){
+      if(localStorage.getItem('nodesCompletedAfterChallenge'+getActiveProfileSync()._id)){
+        var nodes = parseInt(localStorage.getItem('nodesCompletedAfterChallenge'+getActiveProfileSync()._id))
+        if(nodes % 5 == 0){
+          return true;
+        }
+      }
+      return false;
+    }
+
     return User;
   }
 })();
