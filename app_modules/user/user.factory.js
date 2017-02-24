@@ -561,6 +561,7 @@
 
     function getScoreOfResource(lessonId, resourceId, profileId, playlistIndex) {
       $log.debug("getScoreOfResource", lessonId, resourceId, profileId, playlistIndex)
+      $log.debug('STAR. score', 'getScoreOfResource')
       return profilesDB.get(profileId).then(function(response) {
         // $log.debug("RESO", response.data.playlist[playlistIndex], response.data.playlist[playlistIndex][resourceId], response.data.playlist[playlistIndex]['lesson_id'])
         if (response.data.playlist[playlistIndex]['lesson_id'] == lessonId && response.data.playlist[playlistIndex][resourceId]) {

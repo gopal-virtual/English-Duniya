@@ -23,7 +23,7 @@
             extendLesson.initStar();
             if (CONSTANT.CONTENT_TEST) {
               return content.getLessonsList().then(function(lessons) {
-                $log.debug('modified lesson list', lessons)
+                $log.debug('STAR. lessons', lessons)
                 return {
                   lockedLesson: lessons,
                   total_star: 999
@@ -33,8 +33,14 @@
             $log.debug(new Date().toTimeString(),"debug-optimize", "inside lessonLocked of mapNavigate starting")
 
               return content.getResourceList(User.getActiveProfileSync().data.profile.grade).then(function(lessons) {
+                $log.debug('STAR. lessons', lessons)
                 return extendLesson.getLesson(lessons).then(function(result) {
-                  $log.debug(new Date().toTimeString(),"debug-optimize", "returning from lessonLocked of mapNavigate",result)
+                // $log.debug('STAR. result', result)
+                  // $log.debug(new Date().toTimeString(),"debug-optimize", "returning from lessonLocked of mapNavigate",result)
+                  // $log.debug('STAR.returnval',{
+                  //   lockedLesson: result,
+                  //   total_star: extendLesson.getTotalStar()
+                  // })
                   return {
                     lockedLesson: result,
                     total_star: extendLesson.getTotalStar()
@@ -123,7 +129,7 @@
         onEnter: ['$state', '$timeout', '$log', '$ionicLoading', function($state, $timeout, $log, $ionicLoading) {
           $timeout(function() {
             $state.go('map.navigate', {});
-          }, 1000)
+          }, 3000)
         }],
         template: "<ion-nav-view></ion-nav-view>"
       })
