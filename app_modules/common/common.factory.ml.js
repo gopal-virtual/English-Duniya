@@ -556,7 +556,7 @@
                 if (ml.roadMapData["roadMap"].length == 0) {
                     if (previousRecommendationsWithPrereqs) {
                         $log.debug('no history developed 1', previousRecommendationsWithPrereqs);
-                    } else if (ml.dqQuiz.length > 0) {
+                    } else if (ml.dqQuiz && ml.dqQuiz.length > 0) {
                         previousRecommendationsWithPrereqs = runDiagnostic()[0];
                         $log.debug('no history developed 2', previousRecommendationsWithPrereqs);
                     } else {
