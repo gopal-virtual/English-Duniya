@@ -162,7 +162,7 @@ gulp.task('generate-lessondb', shell.task(
 gulp.task('preen', function(cb) {
   preen.preen({}, cb);
 });
-console.log('raven key', raven_key[argument.argv.env]);
+console.log('raven key and env', raven_key[argument.argv.env],env);
 gulp.task('make-main', function() {
   gulp.src(paths.main_template)
     .pipe(replace_task({
@@ -170,7 +170,7 @@ gulp.task('make-main', function() {
         match: /\/\*raven_release_start\*\/[\'\'\.0-9a-z]+\/\*raven_release_end\*\//g,
         replacement: '/*raven_release_start*/\'' + app_version + '\'/*raven_release_end*/'
       }, {
-        match: /\/\*rtaven_environment_start\*\/[\'\'\.0-9a-zA-Z]+\/\*raven_environment_end\*\//g,
+        match: /\/\*raven_environment_start\*\/[\'\'\.0-9a-zA-Z]+\/\*raven_environment_end\*\//g,
         replacement: '/*raven_environment_start*/\'' + env + '\'/*raven_environment_end*/'
       }, {
         match: /\/\*raven_key_start\*\/'https?:\/\/[:a-zA-Z0-9@.\/']+\/\*raven_key_end\*\//g,
