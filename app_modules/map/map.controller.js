@@ -885,26 +885,31 @@
         }, 4000)
       }
     });
-    $scope.joinChallenge = function() {
-      $log.debug("join challenege");
-      if (User.user.getIsVerified()) {
-        User.joinChallenge();
-        analytics.log({
-          name: 'CHALLENGE',
-          type: 'JOINED'
-        }, {
-          time: new Date()
-        }, User.getActiveProfileSync()._id);
-        $scope.challengeModal.hide().then(function() {
-          goToChallenge()
-        });
-        $log.debug("Succesfully joined the challenge")
-      } else {
-        $scope.challengeModal.hide().then(function() {
-          goToPhoneNumber();
-        })
-      }
+    // $scope.joinChallenge = function() {
+    //   $log.debug("join challenege");
+    //   // if (User.user.getIsVerified()) {
+    //     User.joinChallenge();
+    //     analytics.log({
+    //       name: 'CHALLENGE',
+    //       type: 'JOINED'
+    //     }, {
+    //       time: new Date()
+    //     }, User.getActiveProfileSync()._id);
+    //     $scope.challengeModal.hide().then(function() {
+    //       goToChallenge()
+    //     });
+    //     $log.debug("Succesfully joined the challenge")
+    //   // } else {
+    //   //   $scope.challengeModal.hide().then(function() {
+    //   //     goToPhoneNumber();
+    //   //   })
+    //   // }
+    // }
+
+    $scope.goToChallenge = function(){
+      
     }
+
     $scope.dismissJoinChallenge = function() {
       $log.debug("dismiss join challenege");
       audio.player.stop();

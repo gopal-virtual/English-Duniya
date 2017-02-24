@@ -40,7 +40,7 @@
 			</span>
 			<button class="sbtn sbtn-join" ng-if="mapCtrl.daysRemaining <= 0" ng-click="audio.play('press');joinChallenge()"></button>
 			<button class="sbtn sbtn-join disabled" ng-disabled="true" ng-if="mapCtrl.daysRemaining > 0"></button>
-			<button class="sbtn sbtn-phone-add-small" ng-disabled="!isOnline" ng-if="!user.user.getPhoneNumber()" ng-click="audio.play('press');joinChallenge()"></button>
+			<button class="sbtn sbtn-phone-add-small" ng-disabled="!isOnline" ng-if="!user.user.getPhoneNumber()" ng-click="audio.play('press');goToChallenge()"></button>
 			<!-- <button class="button" ng-click="" >Join Challenge</button> -->
 		</div>
 	</div>

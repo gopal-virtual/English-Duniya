@@ -75,6 +75,7 @@
                     </div>
                     <div style="top:88vh; text-align: center;" class="full-width absolute">
                         <!-- <button ng-disabled="phoneCtrl.number.length < 9" class="sbtn sbtn-next sbtn-next-blue" ng-class="{'animation-repeat-bounce': userCtrl.user.grade}" ng-click="audio.play('press');phoneCtrl.sendNumber(phoneCtrl.number)"></button> -->
+                        <!-- {{phoneCtrl.number == user.user.getPhoneNumber()}} -->
                         <button ng-disabled="phoneCtrl.number.length < 10 || phoneCtrl.number == user.user.getPhoneNumber()" class="sbtn sbtn-next sbtn-next-blue" ng-click="audio.play('press');phoneCtrl.submitNumber(phoneCtrl.number)"></button>
                     </div>
                 </div>

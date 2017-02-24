@@ -12,7 +12,10 @@
         '$ionicSlideBoxDelegate',
         'analytics',
         '$timeout',
-        'audio'
+        'audio',
+        'challenge',
+        'network',
+        '$ionicLoading'
     ];
 
     function userPhoneNumberController(
@@ -24,9 +27,13 @@
         $ionicSlideBoxDelegate,
         analytics,
         $timeout,
-        audio 
+        audio,
+        challenge,
+        network,
+        $ionicLoading
     ){
 
+        $scope.user = User;
         var phoneCtrl = this;
         phoneCtrl.number = User.user.getPhoneNumber();
         phoneCtrl.numberErrorText = '';
@@ -104,7 +111,22 @@
                 }, {
                     time: new Date()
                 }, User.getActiveProfileSync()._id);
-                $state.go('map.navigate')                
+                if(User.hasJoinedChallenge()){
+                    $state.go('map.navigate');
+                    $log.debug('CHANGE TO MAP');              
+                } else {
+                    User.joinChallenge();
+                    analytics.log({
+                          name: 'CHALLENGE',
+                          type: 'JOINED'
+                    }, {
+                      time: new Date()
+                    }, User.getActiveProfileSync()._id);
+                    
+                    // $scope.challengeModal.hide().then(function() {
+                    goToChallenge()
+                    // });
+                }
 
                 // resetPhoneValues();
                 // $ionicSlideBoxDelegate.slide(0);
@@ -113,6 +135,56 @@
                 // tempCount = 1;
                 // audio.loop('background');
             // });
+        }
+
+        function goToChallenge() {
+          analytics.log({
+            name: 'CHALLENGE',
+            type: 'CLICKED'
+          }, {
+            time: new Date()
+          }, User.getActiveProfileSync()._id);
+          if (network.isOnline()) {
+            if (User.hasJoinedChallenge()) {
+              $ionicLoading.show({
+                hideOnStateChange: true
+              })
+              // mapCtrl.loading = 1;
+              challenge.postPoints().then(function() {
+                $log.debug("syncPointsQueue success")
+                $state.go('weekly-challenge', {
+                  profileId: User.getActiveProfileSync()._id
+                })
+              }).catch(function(){
+                $ionicLoading.hide();
+                 $ionicPopup.alert({
+                  // title: CONSTANT.ERROR_MESSAGES.DEFAULT_TITLE,
+                  template: '<error-popup message="\'Please try again\'"></error-popup>',
+                  cssClass: 'custom-alert',
+                  okType: 'sbtn sbtn-ok',
+                  okText: ' '
+                })
+              })
+            } else {
+              
+              $scope.challengeModal.show().then(function(){
+                audio.player.play('sound/challenge_starting_now.mp3');
+              })
+            }
+          } else {
+            audio.player.play('sound/challenge_starting_now_offline.mp3');
+            var noInternetChallengeAlert = 
+                $ionicPopup.alert({
+                  // title: CONSTANT.ERROR_MESSAGES.DEFAULT_TITLE,
+                  template: '<error-popup message="\'Connect to the internet to keep playing\'"></error-popup>',
+                  cssClass: 'custom-alert',
+                  okType: 'sbtn sbtn-ok',
+                  okText: ' '
+                })
+            noInternetChallengeAlert.then(function() {
+              audio.player.stop();
+            })
+          }
         }
 
         function submitPhoneNumber(num) {
@@ -130,6 +202,8 @@
                 }, User.getActiveProfileSync()._id)
                 // $log.debug("not in rejection")
             phoneCtrl.numberErrorText = "";
+
+
             // if (!phoneCtrl.isVerified && phoneCtrl.number == User.user.getPhoneNumber()) {
             //     $log.debug('PHONE. asking for otp')
             //     resendOtp(num, phoneCtrl.otpInterval);
