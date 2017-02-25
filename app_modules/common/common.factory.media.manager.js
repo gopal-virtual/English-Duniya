@@ -7,12 +7,19 @@
 
   function mediaManager( $log, $cordovaFile, $cordovaFileTransfer, $q, CONSTANT, network) {
 
-    var mediaManager = {};
+    var mediaManager = {
+      getFreeDiskSpace : getFreeDiskSpace
+    };
 
     mediaManager.getPath = getPath;
     mediaManager.downloadIfNotExists = downloadIfNotExists;
     mediaManager.bundledMedia = CONSTANT.DIAGNOSIS_MEDIA;
 
+
+    function  getFreeDiskSpace() {
+      return $cordovaFile.getFreeDiskSpace()
+      
+    }
 
     function getFileNameFromURl(url) {
       var a = url.split('/');

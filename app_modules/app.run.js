@@ -32,7 +32,8 @@
     Rest,
     clevertap,
     lessonutils,
-    challenge
+    challenge,
+    mediaManager
   ) {
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
     $ionicPlatform.registerBackButtonAction(function(event) {
@@ -211,6 +212,12 @@
       //     $log.debug('CLEVERTAP. Notification',e.notification);
       //   })
       // }, false);
+
+      mediaManager.getFreeDiskSpace().then(function (success) {
+         $log.debug("DISK. Free diskspace is",success);
+      }, function (error) {
+          $log.error('DISK. Error while freeing ',error);
+      });
 
       $rootScope.helpline = CONSTANT.HELPLINE;
     $rootScope.showChallengeModal = true;

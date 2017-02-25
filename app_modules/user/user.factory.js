@@ -242,7 +242,7 @@
     function patchPhoneNumber(num) {
       return $http({
         method: 'PATCH',
-        url: CONSTANT.BACKEND_SERVICE_DOMAIN + '/rest-auth/user/',
+        url: CONSTANT.BACKEND_SERVICE_DOMAIN + '/rest-auth/user/?verify_otp=false',
         data: {
           phone_number: num
         }
