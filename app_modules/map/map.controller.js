@@ -191,10 +191,10 @@
     $scope.goToPhoneNumber = goToPhoneNumber;
 
     function goToPhoneNumber(){
-      $state.go('user.phoneNumber');
       if ($scope.profileScreen.isShown()) {
           $scope.profileScreen.hide()
       }
+      $state.go('user.phoneNumber');
     }
 
     $scope.exitModal = {
@@ -885,26 +885,26 @@
         }, 4000)
       }
     });
-    // $scope.joinChallenge = function() {
-    //   $log.debug("join challenege");
-    //   // if (User.user.getIsVerified()) {
-    //     User.joinChallenge();
-    //     analytics.log({
-    //       name: 'CHALLENGE',
-    //       type: 'JOINED'
-    //     }, {
-    //       time: new Date()
-    //     }, User.getActiveProfileSync()._id);
-    //     $scope.challengeModal.hide().then(function() {
-    //       goToChallenge()
-    //     });
-    //     $log.debug("Succesfully joined the challenge")
-    //   // } else {
-    //   //   $scope.challengeModal.hide().then(function() {
-    //   //     goToPhoneNumber();
-    //   //   })
-    //   // }
-    // }
+    $scope.joinChallenge = function() {
+      $log.debug("join challenege");
+      if (User.user.getPhoneNumber()) {
+        User.joinChallenge();
+        analytics.log({
+          name: 'CHALLENGE',
+          type: 'JOINED'
+        }, {
+          time: new Date()
+        }, User.getActiveProfileSync()._id);
+        $scope.challengeModal.hide().then(function() {
+          goToChallenge()
+        });
+        $log.debug("Succesfully joined the challenge")
+      } else {
+        $scope.challengeModal.hide().then(function() {
+          goToPhoneNumber();
+        })
+      }
+    }
 
     $scope.goToChallenge = function(){
       
