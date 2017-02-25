@@ -52,6 +52,7 @@
         phoneCtrl.playAudio = playAudio;
         phoneCtrl.exit = exitPhoneNumber;
         phoneCtrl.open = goToPhoneNumber;
+        phoneCtrl.goToMap = goToMap;
 
         
 
@@ -100,6 +101,10 @@
             User.user.setNotifyPhone(0);
         }
 
+        function goToMap() {
+            $state.go('map.navigate');
+        }
+
         function exitPhoneNumber() {
             // if ($scope.profileScreen.isShown()) {
                 // $scope.profileScreen.hide()
@@ -111,10 +116,7 @@
                 }, {
                     time: new Date()
                 }, User.getActiveProfileSync()._id);
-                if(User.hasJoinedChallenge()){
-                    $state.go('map.navigate');
-                    $log.debug('CHANGE TO MAP');              
-                } else {
+                if(!User.hasJoinedChallenge() && challenge.isUserEligible()){
                     User.joinChallenge();
                     analytics.log({
                           name: 'CHALLENGE',
@@ -126,6 +128,9 @@
                     // $scope.challengeModal.hide().then(function() {
                     goToChallenge()
                     // });
+                } else {
+                    $state.go('map.navigate');
+                    $log.debug('CHANGE TO MAP');              
                 }
 
                 // resetPhoneValues();
