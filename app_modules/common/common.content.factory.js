@@ -401,12 +401,14 @@
       var i;
       var d = $q.defer();
       $log.debug(new Date().toTimeString(), "debug-optimize", "inside getResourceList")
+      $log.debug('STAR. get Active profile sync',User.getActiveProfileSync());
       User.playlist.get(User.getActiveProfileSync()._id).then(function(playlist) {
           $log.debug(new Date().toTimeString(), "debug-optimize", "user playlist got");
           var lessons = [];
           var resources = [];
           var playlist_ids = [];
           var docs_to_fetch = [];
+          $log.debug('STAR. details', lessons, resources, playlist_ids, docs_to_fetch);
           for (i = 0; i < playlist.length; i++) {
             $log.debug("making playlist ids");
             playlist_ids.push(playlist[i].lesson_id);
@@ -414,8 +416,8 @@
               id: playlist[i].lesson_id
             });
           }
-          $log.debug("done making playlist ids", playlist_ids);
-          $log.debug(new Date().toTimeString(), "debug-optimize", "docs to fetch", docs_to_fetch)
+          $log.debug("STAR. done making playlist ids", playlist_ids);
+          // $log.debug(new Date().toTimeString(), "debug-optimize", "docs to fetch", docs_to_fetch)
           lessonDB.bulkGet(
             {docs:docs_to_fetch}
           ).then(function(data) {
@@ -439,7 +441,7 @@
               temp.miss = playlist[i]['miss'];
               lessons.push(temp)
             }
-
+            $log.debug('STAR. Hello world', lessons)
             // for(var i = 0; i < lessons.length; i++){
             //     lessons[i]['parentHindiLessonId'] = playlist[i]['suggestedLesson']
             //     lessons[i]['miss'] = playlist[i]['miss'];
@@ -509,6 +511,7 @@
             }
             $log.debug("Resource list resolving" ,resources);
             $log.debug(new Date().toTimeString(), "debug-optimize", "lessons db processed")
+            $log.debug("STAR. resources" ,resources);
             d.resolve(resources)
           });
           // $log.debug("data",data)
@@ -522,6 +525,9 @@
           $log.debug(new Date().toTimeString(), "debug-optimize", "lessons db fetch error", error)
           d.reject(error)
         });
+
+      $log.debug('STAR. promise of return',d.promise);
+
       return d.promise;
     }
 
