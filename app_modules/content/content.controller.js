@@ -191,6 +191,9 @@
       })
       // })
     function onVideoComplete() {
+      if(!$scope.isPlayed && $scope.hasUserJoinedChallenge && $scope.isChallengeActive){
+        User.addNodeCompleted();
+      }
       $log.debug("onvideocompleted");
       contentCtrl.config.plugins.controls.showControl = false;
       contentCtrl.videoCompleted = true;

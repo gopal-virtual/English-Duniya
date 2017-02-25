@@ -689,6 +689,10 @@
     }
 
     function submitQuiz(quizType) {
+      if(!quizCtrl.isPlayed && quizCtrl.hasJoinedChallenge && quizCtrl.isChallengeActive){
+        User.addNodeCompleted();
+      }
+      
       if (quizCtrl.summary.analysis[CONSTANT.QUESTION.DEMO])
         delete quizCtrl.summary.analysis[CONSTANT.QUESTION.DEMO];
       if (quizCtrl.report.attempts[CONSTANT.QUESTION.DEMO])

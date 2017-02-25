@@ -253,6 +253,9 @@
     }
 
     function onVocabComplete() {
+      if(!$scope.isPlayed && $scope.hasUserJoinedChallenge && $scope.isChallengeActive){
+        User.addNodeCompleted();
+      }
       vocabCardCtrl.logCard(vocabCardCtrl.currentIndex, 'END');
       analytics.log({
             name: 'VOCABULARY',
