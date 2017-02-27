@@ -216,7 +216,7 @@
       mediaManager.getFreeDiskSpace().then(function (success) {
          $log.debug("DISK. Free diskspace is",success);
       }, function (error) {
-          $log.error('DISK. Error while freeing ',error);
+          $log.error('DISK. Cannot read free disk space ',error);
       });
 
       $rootScope.helpline = CONSTANT.HELPLINE;
