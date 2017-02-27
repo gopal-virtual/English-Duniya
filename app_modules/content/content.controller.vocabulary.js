@@ -253,6 +253,7 @@
     }
 
     function onVocabComplete() {
+      vocabCardCtrl.enable = false;
       if(!$scope.isPlayed && $scope.hasUserJoinedChallenge && $scope.isChallengeActive){
         User.addNodeCompleted();
       }
