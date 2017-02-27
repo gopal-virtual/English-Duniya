@@ -97,7 +97,7 @@
     userCtrl.user = {};
         if(CONSTANT.LANGUAGES.length == 1){
       userCtrl.skipLanguage = true;
-      userCtrl.user.language = 'hi';
+      userCtrl.user.language = CONSTANT.LANGUAGES[0].code;
 
     }else{
       userCtrl.skipLanguage = false;
