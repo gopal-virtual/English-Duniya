@@ -44,7 +44,7 @@
         "GCM_PROJECT_NUMBER" : 150596025418 
     },
     "CHALLENGE_START": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 15 },
-    "CHALLENGE_END": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 28 },
+    "CHALLENGE_END": {"YEAR" : 2017, "MONTH" : 2 , "DATE": 28 },
     "CHALLENGE_SERVER": "http://challenge.englishduniya.in/"
 
   },
@@ -70,7 +70,7 @@
         "GCM_PROJECT_NUMBER" : 150596025418
     },
     "CHALLENGE_START": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 13 },
-    "CHALLENGE_END": {"YEAR" : 2017, "MONTH" : 1 , "DATE": 20 },
+    "CHALLENGE_END": {"YEAR" : 2017, "MONTH" : 2 , "DATE": 28 },
     "CHALLENGE_SERVER": "http://challenge.englishduniya.in/"
 
   },
