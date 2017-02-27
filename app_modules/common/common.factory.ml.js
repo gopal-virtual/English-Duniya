@@ -342,32 +342,32 @@
 
 
         function updateRoadMapSuggestion(data) {
-            if (localStorage.roadMapData == undefined) {
-                ml.roadMapData = {};
-            } else {
-                ml.roadMapData = JSON.parse(localStorage.roadMapData);
-            }
-
-            if (ml.roadMapData["levelRec"] == undefined) {
-                ml.roadMapData["levelRec"] = {};
-            }
-            if (ml.roadMapData["levelRec"]["skillLevel"] == undefined) {
-                ml.roadMapData["levelRec"]["skillLevel"] = {
-                    "vocabulary": ml.defaultSkillLevel,
-                    "listening": ml.defaultSkillLevel,
-                    "grammar": ml.defaultSkillLevel
-                };
-            }
-            if (ml.roadMapData["levelRec"]["kmap_level"] == undefined) {
-                ml.roadMapData["levelRec"]["kmap_level"] = {
-                    "vocabulary": ml.defaultSkillLevel,
-                    "listening": ml.defaultSkillLevel,
-                    "grammar": ml.defaultSkillLevel
-                };
-            }
-            localStorage.setItem("roadMapData", JSON.stringify(ml.roadMapData));
-
             try {
+                if (localStorage.roadMapData == undefined) {
+                    ml.roadMapData = {};
+                } else {
+                    ml.roadMapData = JSON.parse(localStorage.roadMapData);
+                }
+
+                if (ml.roadMapData["levelRec"] == undefined) {
+                    ml.roadMapData["levelRec"] = {};
+                }
+                if (ml.roadMapData["levelRec"]["skillLevel"] == undefined) {
+                    ml.roadMapData["levelRec"]["skillLevel"] = {
+                        "vocabulary": ml.defaultSkillLevel,
+                        "listening": ml.defaultSkillLevel,
+                        "grammar": ml.defaultSkillLevel
+                    };
+                }
+                if (ml.roadMapData["levelRec"]["kmap_level"] == undefined) {
+                    ml.roadMapData["levelRec"]["kmap_level"] = {
+                        "vocabulary": ml.defaultSkillLevel,
+                        "listening": ml.defaultSkillLevel,
+                        "grammar": ml.defaultSkillLevel
+                    };
+                }
+                localStorage.setItem("roadMapData", JSON.stringify(ml.roadMapData));
+
                 $log.debug('ml.roadMapData, data', ml.roadMapData, data);
                 if (data["event"] == "diagnosisTest") {
                     if (data["levelRec"]) {
@@ -540,9 +540,7 @@
                 }
             } catch (err) {
                 $log.debug('ML ERROR', err);
-                Raven.captureException("ML Error Handled - Roadmap Empty", {
-                    extra: { roadmap: ml.roadMapData }
-                });
+                var roadMapDataBeforeError = angular.copy(ml.roadMapData);
 
                 var previousRecommendationsWithPrereqs;
                 if (ml.roadMapData && ml.roadMapData.recommendationsWithPrereqs) {
@@ -560,7 +558,7 @@
                         previousRecommendationsWithPrereqs = runDiagnostic()[0];
                         $log.debug('no history developed 2', previousRecommendationsWithPrereqs);
                     } else {
-                        var recommendations = { "vocabulary": ["5932d80e-dce2-4091-b5ac-655aa6f5fafd", "6b63b393-8fb9-4c24-82ea-11eabc875438", "f48bcad4-d484-48e9-b32e-2ddca246f9c2", "b9b8570a-e06e-42fd-873d-d269f84253f8"] };
+                        var recommendations = { "vocabulary": ["5932d80e-dce2-4091-b5ac-655aa6f5fafd", "6b63b393-8fb9-4c24-82ea-11eabc875438", "f48bcad4-d484-48e9-b32e-2ddca246f9c2", "b9b8570a-e06e-42fd-873d-d269f84253f8", "75f0fcf4-c11b-4fac-8895-8db7bae44ff7", "dce6f547-4815-44df-b05a-b91dfa8f9f57", "417fee98-0f70-470c-b26f-1758c443180f", "02c46cce-74d9-4fbc-877d-d993eb9427f5"] };
                         previousRecommendationsWithPrereqs = structureRecommendations(recommendations);
                         $log.debug('no history developed 3', previousRecommendationsWithPrereqs);
                     }
@@ -571,6 +569,9 @@
                 ml.roadMapData["roadMap"][0]["resultTrack"] = {};
                 var dependencyData = { "dependency": "root", "batch": ml.roadMapData["batch"] };
                 $log.debug('dependencyData root 3 ML ERROR', dependencyData);
+                Raven.captureException("ML Error Handled - Roadmap Empty", {
+                    extra: { roadMapDataBeforeError: roadMapDataBeforeError, roadMapDataHandled: ml.roadMapData }
+                });
                 return handleMultipleSuggestions();
             }
         }
