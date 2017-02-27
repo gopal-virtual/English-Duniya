@@ -708,6 +708,7 @@
     }
 
     function goToChooseProfile() {
+      mapCtrl.openChallengeTimeout && $timeout.cancel(mapCtrl.openChallengeTimeout);
       $scope.exitModal.message = "Do you want to create<br>a new profile";
       $scope.exitModal.dismiss = createProfileModalDismiss;
       $scope.exitModal.confirm = createProfileModalConfirm;
