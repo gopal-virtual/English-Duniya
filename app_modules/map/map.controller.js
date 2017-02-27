@@ -183,6 +183,7 @@
     $scope.currentState = $state.current.name;
     $scope.userDetails = User.user.getDetails();
     $scope.notifyPhone = User.user.getNotifyPhone();
+    mapCtrl.challengeButtonDisabled = false;
     // $scope.goToPhoneNumber = goToPhoneNumber;
     // $scope.exitPhoneNumber = exitPhoneNumber;
     // mapCtrl.notification = notification;
@@ -791,6 +792,7 @@
     }
 
     function goToChallenge() {
+      mapCtrl.challengeButtonDisabled = true;
       analytics.log({
         name: 'CHALLENGE',
         type: 'CLICKED'
@@ -810,6 +812,7 @@
             })
           }).catch(function(){
             $ionicLoading.hide();
+            mapCtrl.challengeButtonDisabled = false;
              $ionicPopup.alert({
               // title: CONSTANT.ERROR_MESSAGES.DEFAULT_TITLE,
               template: '<error-popup message="\'Please try again\'"></error-popup>',
