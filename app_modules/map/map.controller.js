@@ -95,6 +95,8 @@
     challenge,
     pointsQueue
   ) {
+    lessonutils.cacheLessons();
+    $log.debug(new Date().toTimeString(), "debug-optimize", "inside map controller")
     $scope.audio = audio;
     $scope.settings = settings;
     var temp = JSON.parse(localStorage.getItem('profile')).data.profile;
@@ -107,6 +109,7 @@
     $scope.activatedLesson = $stateParams.activatedLesson;
     $scope.progress = localStorage.getItem('progress');
     var mapCtrl = this;
+    $scope.gender = User.getActiveProfileSync() ? User.getActiveProfileSync().data.profile.gender : 'M'
     mapCtrl.gender = JSON.parse(localStorage.getItem('profile')).data.profile.gender;
     mapCtrl.rootScope = $rootScope;
     $log.debug("map ctrl scope", $scope.mediaSyncStatus)
@@ -118,6 +121,7 @@
     mapCtrl.demo = User.demo;
     mapCtrl.challenge = challenge
       // mapCtrl.loading = $ionicLoading;
+    mapCtrl.loading = 0;
     mapCtrl.authFactory = Auth;
     mapCtrl.queue = queue;
     mapCtrl.lessons = lessonList;
@@ -165,6 +169,7 @@
     mapCtrl.isUserEligibleForChallenge = challenge.isUserEligible();
     mapCtrl.hasJoinedChallenge = User.hasJoinedChallenge();
     mapCtrl.isChallengeActive = challenge.isChallengeActive();
+    mapCtrl.showChallengeButton = challenge.showChallengeButton();
     $scope.exitChooseProfile = exitChooseProfile;
     $scope.onProfileCardClick = onProfileCardClick;
     $scope.isOnline = network.isOnline();
@@ -174,46 +179,39 @@
     $scope.$on('$cordovaNetwork:offline', function(event, networkState) {
       $scope.isOnline = network.isOnline();
     })
-    $scope.changeNumberFlag = User.user.getPhoneNumber()
+    $scope.changeNumberFlag = User.user.getPhoneNumber();
     $scope.currentState = $state.current.name;
     $scope.userDetails = User.user.getDetails();
     $scope.notifyPhone = User.user.getNotifyPhone();
+    mapCtrl.challengeButtonDisabled = false;
     // $scope.goToPhoneNumber = goToPhoneNumber;
     // $scope.exitPhoneNumber = exitPhoneNumber;
     // mapCtrl.notification = notification;
     $log.error('ThiS is notify phone', User.user.getNotifyPhone());
-    $scope.phone = {
-      number: User.user.getPhoneNumber(),
-      numberErrorText: '',
-      isVerified: User.user.getDetails() ? User.user.getDetails().is_verified : false,
-      otp: '',
-      otpErrorText: '',
-      otpInterval: 90000,
-      otpResendCount: 3,
-      otpResendFlag: 0,
-      resendOtp: resendOtp,
-      submitNumber: submitPhoneNumber,
-      disableSwipe: disableSwipe,
-      verifyOtp: verifyOtp,
-      nextSlide: nextSlide,
-      playAudio: playAudio,
-      exit: exitPhoneNumber,
-      open: goToPhoneNumber,
-    }
-    $scope.exitModal = {
-      message: 'Do you want to leave the game?',
-      dismiss: exitModalDismiss,
-      confirm: exitModalConfirm
+    
+    $scope.goToPhoneNumber = goToPhoneNumber;
+
+    function goToPhoneNumber(){
+      if ($scope.profileScreen.isShown()) {
+          $scope.profileScreen.hide()
+      }
+      $state.go('user.phoneNumber');
     }
 
-    // notification.offline.list()
-    notification.offline.list().then(function(schedulerObjectArray){
+    $scope.exitModal = {
+        message: 'Do you want to leave the game?',
+        dismiss: exitModalDismiss,
+        confirm: exitModalConfirm,
+        leftIcon: 'sbtn-play'
+      }
+      // notification.offline.list()
+    notification.offline.list().then(function(schedulerObjectArray) {
       // notification.offline.scheduleMulti(schedulerObjectArray);
       $rootScope.toBeScheduled = schedulerObjectArray;
-    }).catch(function(err){
-      $log.error('some error occured while fetching offline notification doc',err);
+    }).catch(function(err) {
+      $log.error('some error occured while fetching offline notification doc', err);
     })
-    
+
     function openChallenge() {}
 
     function exitModalDismiss() {
@@ -247,255 +245,7 @@
       $scope.multiUser.goToCreateNewProfile();
     }
     // $log.debug("ISVERIFIED",$scope.phone.number.length < 10,$scope.phone.number == User.user.getPhoneNumber(), $scope.phone.isVerified)
-    $log.debug("PHONE. changed number flag", $scope.changeNumberFlag);
-    var tempCount = 1;
-
-    function resetPhoneValues() {
-      $log.warn('resetting phone values')
-      $scope.phone.number = User.user.getPhoneNumber();
-      $scope.phone.numberErrorText = '';
-      $scope.phone.isVerified = User.user.getDetails() ? User.user.getDetails().is_verified : false;
-      $scope.phone.otp = '';
-      $scope.phone.otpErrorText = '';
-      $scope.phone.number = User.user.getPhoneNumber();
-      $scope.userDetails = User.user.getDetails();
-      $scope.notifyPhone = User.user.getNotifyPhone();
-      $scope.changeNumberFlag = User.user.getPhoneNumber()
-    }
-
-    function goToPhoneNumber() {
-      if ($scope.profileScreen.isShown()) {
-        $scope.profileScreen.hide()
-      }
-      $scope.phoneNumberScreen.show().then(function() {
-        playAudio(-1);
-        analytics.log({
-          name: 'PHONENUMBER',
-          type: 'OPEN',
-        }, {
-          time: new Date(),
-        }, User.getActiveProfileSync()._id);
-      });
-      // $scope.phone.isVerified = User.user.getDetails().is_verified;
-      // $log.debug("PHONE.is verified",$scope.phone.isVerified);
-      analytics.log({
-        name: 'PHONENUMBER',
-        type: $scope.changeNumberFlag == true ? 'TAP_CHANGE' : 'TAP_ADD',
-        id: null
-      }, {
-        time: new Date()
-      }, User.getActiveProfileSync()._id);
-      User.user.setNotifyPhone(0);
-    }
-
-    function exitPhoneNumber() {
-      if ($scope.profileScreen.isShown()) {
-        $scope.profileScreen.hide()
-      }
-      $scope.phoneNumberScreen.hide().then(function() {
-        $scope.exitModal.message = "Do you want to leave the game?";
-        $scope.exitModal.dismiss = exitModalDismiss;
-        $scope.exitModal.confirm = exitModalConfirm;
-        resetPhoneValues();
-        $ionicSlideBoxDelegate.slide(0);
-        $scope.phone.otp = '';
-        $scope.phone.otpErrorText = '';
-        tempCount = 1;
-        audio.loop('background');
-        analytics.log({
-          name: 'PHONENUMBER',
-          type: 'CLOSE'
-        }, {
-          time: new Date()
-        }, User.getActiveProfileSync()._id);
-      });
-    }
-
-    function submitPhoneNumber(num) {
-      if (num[0] != '9' && num[0] != '8' && num[0] != '7') {
-        $log.debug("in rejection")
-        $scope.phone.numberErrorText = "Please enter a valid mobile number";
-        return;
-      }
-      analytics.log({
-          name: 'PHONENUMBER',
-          type: 'NUMBER_SUBMIT'
-        }, {
-          time: new Date(),
-          number: num
-        }, User.getActiveProfileSync()._id)
-        // $log.debug("not in rejection")
-      $scope.phone.numberErrorText = "";
-      if (!$scope.phone.isVerified && $scope.phone.number == User.user.getPhoneNumber()) {
-        $log.debug('PHONE. asking for otp')
-        resendOtp(num, $scope.phone.otpInterval);
-        var currentIndex = $ionicSlideBoxDelegate.$getByHandle('slide-phone').currentIndex();
-        if (currentIndex == 0) {
-          nextSlide(1);
-        }
-      } else {
-        $log.debug('PHONE. Patching phone')
-        sendPhoneNumber(num);
-      }
-    }
-
-    function sendPhoneNumber(num) {
-      // $log.debug(num[0]);
-      // $log.debug(num[0] != '9',num[0] != '8',num[0] != '7');
-      // $log.debug(num[0] != '9' && num[0] != '8' && num[0] != '7');
-      User.user.patchPhoneNumber(num).then(function(response) {
-        $log.debug("We successfully added the phone number. Requesting otp", response, num);
-        var currentIndex = $ionicSlideBoxDelegate.$getByHandle('slide-phone').currentIndex();
-        if (currentIndex == 0) {
-          nextSlide(1);
-        }
-        resetResendFlag();
-        User.user.updatePhoneLocal(response.data.phone_number);
-        User.user.setIsVerified(response.data.is_verified);
-        // $scope.changeNumberFlag = User.user.getPhoneNumber() == '';
-        analytics.log({
-          name: 'PHONENUMBER',
-          type: 'NUMBER_SUCCESS',
-        }, {
-          time: new Date()
-        }, User.getActiveProfileSync()._id);
-      }, function(err) {
-        if (err.status == 400) {
-          $scope.phone.numberErrorText = err.data.details;
-        } else {
-          $scope.phone.numberErrorText = JSON.stringify(err.data);
-        }
-        analytics.log({
-          name: 'PHONENUMBER',
-          type: 'NUMBER_ERROR',
-        }, {
-          time: new Date()
-        }, User.getActiveProfileSync()._id);
-      })
-    }
-
-    function resendOtp(num, interval) {
-      $log.debug("Asking for otp again")
-      User.user.resendOtp(num).then(function(response) {
-        analytics.log({
-          name: 'PHONENUMBER',
-          type: 'OTP_RESEND',
-        }, {
-          time: new Date()
-        }, User.getActiveProfileSync()._id);
-        $log.debug("Otp request was sent", response)
-      })
-      resetResendFlag();
-    }
-
-    function resetResendFlag() {
-      $log.debug('disabling resend');
-      $scope.phone.otpResendFlag = 0
-      if (tempCount > $scope.phone.otpResendCount - 1) {
-        return;
-      }
-      tempCount++;
-      $timeout(function() {
-        $log.debug('activating resend')
-        $scope.phone.otpResendFlag = 1;
-      }, $scope.phone.otpInterval);
-    }
-    // function askForOtpCycle(num, interval, count){
-    //   var tempCount = 1;
-    //   var lastOtpCycle;
-    //   var otpCycle = $interval(function(){
-    //     $log.debug("Asking for otp again")
-    //     if($ionicSlideBoxDelegate.$getByHandle('slide-phone').currentIndex() != 1){
-    //       $interval.cancel(otpCycle);
-    //       $log.debug('Killed otp request cycle',$interval.cancel(otpCycle))
-    //     }
-    //     if (tempCount == count) {
-    //       $log.debug("timeout inside interval")
-    //       lastOtpCycle = $timeout(function() {
-    //         $ionicPopup.alert({
-    //           title: 'Sorry about that!',
-    //           template: 'Hey, looks like some error occured with sms server. Please try later'
-    //         }).then(function(){
-    //           exitPhoneNumber();
-    //         });
-    //       }, interval);
-    //     }
-    //     tempCount++;
-    //     // User.user.resendOtp(num).then(function(response){
-    //     //   $log.debug("Otp request was sent",response)
-    //     // })
-    //   },interval,count);
-    // }
-    function verifyOtp(otp, successInterval) {
-      analytics.log({
-        name: 'PHONENUMBER',
-        type: 'OTP_SUBMIT',
-      }, {
-        time: new Date(),
-        otp: otp
-      }, User.getActiveProfileSync()._id);
-      User.user.verifyOtp(otp).then(function(response) {
-        $log.debug("Verified otp", response);
-        // $log.debug("Please cancel interval",$interval.cancel(otpCycle));
-        User.user.setIsVerified(true);
-        // $scope.phone.isVerified = User.user.getDetails().is_verified
-        var currentIndex = $ionicSlideBoxDelegate.$getByHandle('slide-phone').currentIndex();
-        if (currentIndex == 0) {
-          nextSlide(2);
-        }
-        if (!successInterval) {
-          successInterval = 1000;
-        }
-        $log.debug("Before timeout")
-        $timeout(function() {
-          $log.debug("In timeout")
-          exitPhoneNumber();
-        }, successInterval);
-        analytics.log({
-          name: 'PHONENUMBER',
-          type: 'OTP_SUCCESS',
-        }, {
-          time: new Date(),
-          otp: otp
-        }, User.getActiveProfileSync()._id);
-      }, function(err) {
-        if (err.status == 400) {
-          $scope.phone.otpErrorText = err.data.details
-        } else {
-          $log.error(err)
-        }
-        analytics.log({
-          name: 'PHONENUMBER',
-          type: 'OTP_ERROR',
-        }, {
-          time: new Date(),
-          otp: otp
-        }, User.getActiveProfileSync()._id);
-      })
-    }
-
-    function disableSwipe() {
-      $ionicSlideBoxDelegate.enableSlide(false);
-    }
-
-    function nextSlide(index) {
-      $ionicSlideBoxDelegate.$getByHandle('slide-phone').slide(index);
-    }
-
-    function playAudio(index) {
-      $log.error('INDEX', index)
-      var src;
-      if (index == -1) {
-        src = CONSTANT.PATH.LOCALIZED_AUDIO + localized.audio.phone.EnterPhoneNumber.lang[User.getActiveProfileSync().data.profile.language];
-      } else if (index == 1) {
-        src = CONSTANT.PATH.LOCALIZED_AUDIO + localized.audio.phone.EnterOtp.lang[User.getActiveProfileSync().data.profile.language];
-      }
-      if (src) {
-        audio.player.play(src);
-      } else {
-        audio.player.stop();
-      }
-    }
+    
     // notification.createDb();
     // notification.init();
     // notification.defineTypes();
@@ -506,46 +256,25 @@
     $scope.$on('backButton', mapCtrl.onBackButtonPress)
 
     function onBackButtonPress() {
-      // $log.debug('Do you want to exit?')
-      // if ($scope.profileScreen.isShown()) {
-      //   $scope.profileScreen.hide();
-      // } else {
-      //   analytics.log({
-      //     name: 'APP',
-      //     type: 'EXIT_MODAL_SHOW'
-      //   }, {},User.getActiveProfileSync()._id);
-      //   var confirmExit = $ionicPopup.confirm({
-      //     title: 'Exit',
-      //     template: 'Do you want to exit?'
-      //   });
-      //   confirmExit.then(function(res) {
-      //     if (res) {
-      //       ionic.Platform.exitApp();
-      //     } else {
-      //       analytics.log({
-      //     name: 'APP',
-      //     type: 'EXIT_MODAL_HIDE'
-      //   }, {},User.getActiveProfileSync()._id);
-      //       console.log('You are not sure');
-      //     }
-      //   });
-      // }
-      if ($scope.profileScreen.isShown()) {
-        // $scope.profileScreen.hide();
-        exitChooseProfile()
-      } else if ($scope.phoneNumberScreen.isShown()) {
-        $scope.phone.exit();
-      } else {
-        if (!$scope.exitApp.isShown()) {
-          $log.warn('Clicked on back button on map');
-          $scope.exitApp.show().then(function() {
-            analytics.log({
-              name: 'APP',
-              type: 'EXIT_MODAL_SHOW'
-            }, {
-              time: new Date()
-            }, User.getActiveProfileSync()._id);
-          });
+      $log.warn('LOADING', mapCtrl.loading)
+        //UNCOMMENT THIS      
+      if (mapCtrl.loading == 0) {
+        if ($scope.profileScreen.isShown()) {
+          exitChooseProfile()
+        } else if ($scope.phoneNumberScreen.isShown()) {
+          $scope.phone.exit();
+        } else {
+          if (!$scope.exitApp.isShown()) {
+            $log.warn('Clicked on back button on map');
+            $scope.exitApp.show().then(function() {
+              analytics.log({
+                name: 'APP',
+                type: 'EXIT_MODAL_SHOW'
+              }, {
+                time: new Date()
+              }, User.getActiveProfileSync()._id);
+            });
+          }
         }
       }
     }
@@ -638,18 +367,30 @@
         // noBackdrop: false
         hideOnStateChange: true
       });
+      mapCtrl.loading = 1;
+      if ($scope.exitApp.isShown()) {
+        $scope.exitApp.hide().then(function() {
+          analytics.log({
+            name: 'APP',
+            type: 'EXIT_MODAL_HIDE'
+          }, {
+            time: new Date()
+          }, User.getActiveProfileSync()._id);
+          $log.debug('You are not sure');
+        });
+      }
       $scope.demo.isShown() && $scope.demo.hide();
       $scope.selectedNode = node;
       //   $scope.demo.isShown() && $scope.demo.hide();
       var promise;
       $log.debug('intro sound', node.node.intro_sound, node)
-        // if (node.node.intro_sound) {
-        //   promise = mediaManager.downloadIfNotExists(node.node.intro_sound)
-        // } else {
-        //   promise = $q.resolve();
-        // }
-      lessonutils.cacheLessons()
-        .then(function() {
+        // lessonutils.cacheLessons()
+      if (node.node.intro_sound) {
+        promise = mediaManager.downloadIfNotExists(node.node.intro_sound)
+      } else {
+        promise = $q.resolve();
+      }
+      promise.then(function() {
           return mediaManager.getPath(node.node.intro_sound)
         })
         .then(function(s) {
@@ -667,8 +408,10 @@
           $ionicLoading.hide()
           $log.debug("error is here");
           $ionicPopup.alert({
-            title: CONSTANT.ERROR_MESSAGES.DEFAULT_TITLE,
-            template: e.message ? e.message : CONSTANT.ERROR_MESSAGES.DEFAULT
+            template: '<error-popup message="\'Connect to the internet to keep playing\'"></error-popup>',
+            cssClass: 'custom-alert',
+            okType: 'sbtn sbtn-ok',
+            okText: ' '
           })
         });
       //   if (currentPos)
@@ -948,6 +691,7 @@
         $ionicLoading.show({
           hideOnStateChange: true
         });
+        mapCtrl.loading = 1;
         localStorage.setItem("currentPosition", 4000);
         localStorage.removeItem("regionPage");
         User.profile.update(mapCtrl.User.getActiveProfileSync()._id, profileData).then(function() {
@@ -964,9 +708,12 @@
     }
 
     function goToChooseProfile() {
+      mapCtrl.openChallengeTimeout && $timeout.cancel(mapCtrl.openChallengeTimeout);
       $scope.exitModal.message = "Do you want to create<br>a new profile";
       $scope.exitModal.dismiss = createProfileModalDismiss;
       $scope.exitModal.confirm = createProfileModalConfirm;
+      $scope.exitModal.leftIcon = 'sbtn-correct';
+      $log.debug('$scope',$scope.exitModal)
       $log.debug("PHONE. changed number flag", $scope.changeNumberFlag);
       analytics.log({
         name: 'CHOOSEPROFILE',
@@ -993,6 +740,7 @@
       $scope.exitModal.message = "Do you want to leave the game?";
       $scope.exitModal.dismiss = exitModalDismiss;
       $scope.exitModal.confirm = exitModalConfirm;
+      $scope.exitModal.leftIcon = 'sbtn-play';
       $scope.profileScreen.hide().then(function() {
         audio.loop('background');
         analytics.log({
@@ -1045,6 +793,7 @@
     }
 
     function goToChallenge() {
+      mapCtrl.challengeButtonDisabled = true;
       analytics.log({
         name: 'CHALLENGE',
         type: 'CLICKED'
@@ -1056,19 +805,42 @@
           $ionicLoading.show({
             hideOnStateChange: true
           })
-          pointsQueue.startSync().then(function() {
+          mapCtrl.loading = 1;
+          challenge.postPoints().then(function() {
             $log.debug("syncPointsQueue success")
             $state.go('weekly-challenge', {
               profileId: User.getActiveProfileSync()._id
             })
-          });
+          }).catch(function(){
+            $ionicLoading.hide();
+            mapCtrl.challengeButtonDisabled = false;
+             $ionicPopup.alert({
+              // title: CONSTANT.ERROR_MESSAGES.DEFAULT_TITLE,
+              template: '<error-popup message="\'Please try again\'"></error-popup>',
+              cssClass: 'custom-alert',
+              okType: 'sbtn sbtn-ok',
+              okText: ' '
+            })
+          })
         } else {
-          $scope.challengeModal.show();
+            mapCtrl.challengeButtonDisabled = false;
+          $scope.challengeModal.show().then(function(){
+            audio.player.play('sound/challenge_starting_now.mp3');
+          })
         }
       } else {
-        $ionicPopup.alert({
-          title: 'No Internet Connection',
-          template: 'You have to be online to play challenge'
+            mapCtrl.challengeButtonDisabled = false;
+        audio.player.play('sound/challenge_starting_now_offline.mp3');
+        var noInternetChallengeAlert = 
+            $ionicPopup.alert({
+              // title: CONSTANT.ERROR_MESSAGES.DEFAULT_TITLE,
+              template: '<error-popup message="\'Connect to the internet to keep playing\'"></error-popup>',
+              cssClass: 'custom-alert',
+              okType: 'sbtn sbtn-ok',
+              okText: ' '
+            })
+        noInternetChallengeAlert.then(function() {
+          audio.player.stop();
         })
       }
     }
@@ -1107,18 +879,20 @@
     }).then(function(challengeModal) {
       $log.debug("challenge modal defined", User.hasJoinedChallenge())
       $scope.challengeModal = challengeModal;
+      $log.debug(User.demo.getStep() != 1 ,!User.hasJoinedChallenge() , challenge.isUserEligible() , $rootScope.showChallengeModal , challenge.isChallengeActive())
       if (User.demo.getStep() != 1 && !User.hasJoinedChallenge() && challenge.isUserEligible() && $rootScope.showChallengeModal && challenge.isChallengeActive()) {
         $log.debug("showing challenge modal")
         mapCtrl.openChallengeTimeout = $timeout(function() {
-          $scope.challengeModal.show().then(function() {
-            $rootScope.showChallengeModal = false;
-          });
-        }, 2000)
+            $scope.challengeModal.show().then(function() {
+            audio.player.play('sound/challenge_starting_now.mp3');
+              $rootScope.showChallengeModal = false;
+            });
+        }, 4000)
       }
     });
     $scope.joinChallenge = function() {
       $log.debug("join challenege");
-      if (User.user.getIsVerified()) {
+      if (User.user.getPhoneNumber()) {
         User.joinChallenge();
         analytics.log({
           name: 'CHALLENGE',
@@ -1136,8 +910,14 @@
         })
       }
     }
+
+    $scope.goToChallenge = function(){
+      
+    }
+
     $scope.dismissJoinChallenge = function() {
       $log.debug("dismiss join challenege");
+      audio.player.stop();
       $scope.challengeModal.hide().then(function() {
         $log.debug("challenge modal hiden")
           // goToChallenge();

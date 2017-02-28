@@ -52,61 +52,60 @@
         </div>
     </div> -->
     <ion-content>
-        <ion-slide-box delegate-handle="slide-phone" show-pager="false" ng-init="phone.disableSwipe()" on-slide-changed="phone.playAudio($index)">
+        <ion-slide-box delegate-handle="slide-phone" show-pager="false" ng-init="phoneCtrl.disableSwipe()" on-slide-changed="phoneCtrl.playAudio($index)">
             <ion-slide>
                 <div>
                     <div style="top:2vh" class="full-width absolute center">
                         <img style="height:20vh" ng-src="{{user.getActiveProfileSync().data.profile.gender == 'M'?'img/assets/upperbody-boy.png':'img/assets/upperbody-girl.png'}}" alt="">
                     </div>
                     <div style="top:2vh" class="full-width absolute">
-                        <a  style="right: 2vh;" class="absolute" on-tap="phone.exit();audio.play('click');"><img src="img/assets_svg/cross.svg" alt=""></a>
+                        <a  style="right: 2vh;" class="absolute" on-tap="phoneCtrl.goToMap();audio.play('click');"><img src="img/assets_svg/cross.svg" alt=""></a>
                     </div>
                     <div style="top:22vh" class="full-width absolute padding-x-20">
                         <h2 class="center phone-title">Enter your Mobile Number to stay connected</h2>
                     </div>
                     <div style="top:38vh" class="full-width absolute padding-x-20">
-                        <p class="center phone-error-text">{{phone.numberErrorText}}</p>
+                        <p class="center phone-error-text">{{phoneCtrl.numberErrorText}}</p>
                     </div>
                     <div style="top:42vh" class="phone-input-container full-width absolute padding-x-10">
-                        <div class="col font-md phone-input center"><span class="phone-input-placeholder">+91</span><span>{{phone.number}}</span></div>
+                        <div class="col font-md phone-input center"><span class="phone-input-placeholder">+91</span><span>{{phoneCtrl.number}}</span></div>
                     </div>
                     <div style="top:52vh" class="full-width absolute numpad-container">
-                        <virtual-numpad ng-click="phone.numberErrorText = ''" reference="phone.number" limit="9"></virtual-numpad>
+                        <virtual-numpad ng-click="phoneCtrl.numberErrorText = ''" reference="phoneCtrl.number" limit="9"></virtual-numpad>
                     </div>
                     <div style="top:88vh; text-align: center;" class="full-width absolute">
-                        <!-- <button ng-disabled="phone.number.length < 9" class="sbtn sbtn-next sbtn-next-blue" ng-class="{'animation-repeat-bounce': userCtrl.user.grade}" ng-click="audio.play('press');phone.sendNumber(phone.number)"></button> -->
-                        <button ng-disabled="phone.number.length < 10 || (phone.number == user.user.getPhoneNumber() && phone.isVerified)" class="sbtn sbtn-next sbtn-next-blue" ng-click="audio.play('press');phone.submitNumber(phone.number)"></button>
+                        <!-- <button ng-disabled="phoneCtrl.number.length < 9" class="sbtn sbtn-next sbtn-next-blue" ng-class="{'animation-repeat-bounce': userCtrl.user.grade}" ng-click="audio.play('press');phoneCtrl.sendNumber(phoneCtrl.number)"></button> -->
+                        <!-- {{phoneCtrl.number == user.user.getPhoneNumber()}} -->
+                        <button ng-disabled="phoneCtrl.number.length < 10 || phoneCtrl.number == user.user.getPhoneNumber()" class="sbtn sbtn-next sbtn-next-blue" ng-click="audio.play('press');phoneCtrl.submitNumber(phoneCtrl.number)"></button>
                     </div>
                 </div>
             </ion-slide>
-            <ion-slide>
+            <!-- <ion-slide>
                 <div>
                     <div style="top:2vh" class="full-width absolute center">
                         <img style="height:20vh" ng-src="{{user.getActiveProfileSync().data.profile.gender == 'M'?'img/assets/upperbody-boy.png':'img/assets/upperbody-girl.png'}}" alt="">
                     </div>
                     <div style="top:2vh" class="full-width absolute">
-                        <a  style="right: 2vh;" class="absolute" on-tap="phone.exit();audio.play('click');"><img src="img/assets_svg/cross.svg" alt=""></a>
+                        <a  style="right: 2vh;" class="absolute" on-tap="phoneCtrl.exit();audio.play('click');"><img src="img/assets_svg/cross.svg" alt=""></a>
                     </div>
                     <div style="top:22vh" class="full-width absolute padding-x-20">
                         <h2 class="center phone-title">To verify your number<br />Enter the number sent on your phone</h2>
                     </div>
                     <div style="top:38vh" class="full-width absolute padding-x-20">
-                        <p class="center phone-error-text">{{phone.otpErrorText}}</p>
+                        <p class="center phone-error-text">{{phoneCtrl.otpErrorText}}</p>
                     </div>
                     <div style="top:42vh" class="phone-input-container full-width absolute padding-x-10">
-                        <div class="col font-md phone-input center"><span>{{phone.otp}}</span></div>
+                        <div class="col font-md phone-input center"><span>{{phoneCtrl.otp}}</span></div>
                     </div>
                     <div style="top:52vh" class="full-width absolute numpad-container">
-                        <virtual-numpad ng-click="phone.otpErrorText = ''" reference="phone.otp" limit="5"></virtual-numpad>
+                        <virtual-numpad ng-click="phoneCtrl.otpErrorText = ''" reference="phoneCtrl.otp" limit="5"></virtual-numpad>
                     </div>
                     <div style="top:88vh; text-align: center;" class="full-width absolute">
-                        <button ng-disabled="phone.otpResendFlag == 0" class="sbtn sbtn-resend" ng-click="audio.play('press');phone.resendOtp(phone.number)"></button>
-                        <button ng-disabled="phone.otp.length < 6" class="sbtn sbtn-done" ng-click="audio.play('press');phone.verifyOtp(phone.otp)"></button>
+                        <button ng-disabled="phoneCtrl.otpResendFlag == 0" class="sbtn sbtn-resend" ng-click="audio.play('press');phoneCtrl.resendOtp(phoneCtrl.number)"></button>
+                        <button ng-disabled="phoneCtrl.otp.length < 6" class="sbtn sbtn-done" ng-click="audio.play('press');phoneCtrl.verifyOtp(phoneCtrl.otp)"></button>
                     </div>
-<!--                     <div style="top:88vh; text-align: center;" class="full-width absolute">
-                    </div> -->
                 </div>
-            </ion-slide>
+            </ion-slide> -->
             <ion-slide>
                 <div>
                     <div style="top:14vh" class="center absolute full-width">

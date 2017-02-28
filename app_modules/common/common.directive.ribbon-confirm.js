@@ -13,7 +13,8 @@
             scope: {
                 'message' : '=',
                 'confirm' : '=',
-                'dismiss' : '='
+                'dismiss' : '=',
+                'lefticon' : '='
             },
             link: linkFunc,
             controller: ribbonConfirmController,
@@ -46,5 +47,9 @@
         function dismiss(){
             $log.warn('CONFIRM2',$scope)
         }
+
+
+        $log.debug('RIBBON CONFIRM', ribbonCnfCtrl)
+        ribbonCnfCtrl.lefticon = ribbonCnfCtrl.lefticon ? ribbonCnfCtrl.lefticon : 'sbtn-correct';
     }
 })();

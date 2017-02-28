@@ -113,6 +113,8 @@
     User.getActiveProfileSync = getActiveProfileSync;
     User.setActiveProfileSync = setActiveProfileSync;
     User.updateActiveProfileSync = updateActiveProfileSync;
+    User.addNodeCompleted = addNodeCompleted;
+    User.showChallengeModal = showChallengeModal;
     User.user = {
       getDetails: getUserDetails,
       getIdSync: getUserIdSync,
@@ -197,14 +199,20 @@
       return new Promise(function(resolve,reject){
         $http.get(CONSTANT.BACKEND_SERVICE_DOMAIN+'/api/v1/profiles/?client_uid='+clientUuid).then(function(response){
           $log.debug('profileid',response)
-          if (response.data) {
-            $log.debug('profileid', response);
-            localStorage.setItem('profileid',response.data[0].id);
-            resolve(response.data[0].id)
-          }else{
-            $log.warn('response data is not defined');
-            reject('response data is not defined')
-          }
+          // if (response.data) {
+          //   $log.debug('profileid', response);
+
+            if (response.data.length) {
+              localStorage.setItem('profileid',response.data[0].id);
+              resolve(response.data[0].id)
+            }else{
+              reject('No profile returned');
+            }
+
+          // }else{
+          //   $log.warn('response data is not defined');
+          //   reject('response data is not defined')
+          // }
         }).catch(function(err){
           $log.warn('Error while getting id from server');
           reject(err);
@@ -236,7 +244,7 @@
     function patchPhoneNumber(num) {
       return $http({
         method: 'PATCH',
-        url: CONSTANT.BACKEND_SERVICE_DOMAIN + '/rest-auth/user/',
+        url: CONSTANT.BACKEND_SERVICE_DOMAIN + '/rest-auth/user/?verify_otp=false',
         data: {
           phone_number: num
         }
@@ -276,7 +284,11 @@
     }
 
     function getIsVerified() {
-      return JSON.parse(localStorage.getItem('user_details')).is_verified
+      if(localStorage.getItem('user_details')){
+      return JSON.parse(localStorage.getItem('user_details')).is_verified;
+      }else{
+        return false;
+      }
     }
 
     function getPhoneNumber() {
@@ -457,7 +469,16 @@
     }
 
     function getActiveProfileSync() {
-      return JSON.parse(localStorage.getItem('profile'));
+      if (localStorage.getItem('profile')) {
+        var profile = JSON.parse(localStorage.getItem('profile'));
+        if (profile && profile.data && profile.data.profile && !profile.data.profile.language) {
+          profile.data.profile.language = 'hi';
+        }
+        return profile;
+      }
+      else{
+        return false;
+      }
     }
 
     function updateActiveProfileSync(profile) {
@@ -494,7 +515,11 @@
       return true;
     }
 
-    function get(profileId) {}
+    function get(profileId) {
+      return profilesDB.get(profileId).then(function(response){
+        return response.data;
+      })
+    }
 
     function getSkills(profileId) {
       return profilesDB.get(profileId).then(function(response) {
@@ -538,8 +563,9 @@
 
     function getScoreOfResource(lessonId, resourceId, profileId, playlistIndex) {
       $log.debug("getScoreOfResource", lessonId, resourceId, profileId, playlistIndex)
+      $log.debug('STAR. score', 'getScoreOfResource')
       return profilesDB.get(profileId).then(function(response) {
-        $log.debug("RESO", response.data.playlist[playlistIndex], response.data.playlist[playlistIndex][resourceId], response.data.playlist[playlistIndex]['lesson_id'])
+        // $log.debug("RESO", response.data.playlist[playlistIndex], response.data.playlist[playlistIndex][resourceId], response.data.playlist[playlistIndex]['lesson_id'])
         if (response.data.playlist[playlistIndex]['lesson_id'] == lessonId && response.data.playlist[playlistIndex][resourceId]) {
           return response.data.playlist[playlistIndex][resourceId];
         } else {
@@ -707,6 +733,26 @@
         })
       })
     }
+
+    function addNodeCompleted(){
+      var nodes = 0;
+      if(localStorage.getItem('nodesCompletedAfterChallenge'+getActiveProfileSync()._id)){
+        nodes = parseInt(localStorage.getItem('nodesCompletedAfterChallenge'+getActiveProfileSync()._id))
+      }
+        nodes = nodes+1;
+        localStorage.setItem('nodesCompletedAfterChallenge'+getActiveProfileSync()._id,nodes);
+    }
+
+    function showChallengeModal(){
+      if(localStorage.getItem('nodesCompletedAfterChallenge'+getActiveProfileSync()._id)){
+        var nodes = parseInt(localStorage.getItem('nodesCompletedAfterChallenge'+getActiveProfileSync()._id))
+        if(nodes % 5 == 0){
+          return true;
+        }
+      }
+      return false;
+    }
+
     return User;
   }
 })();

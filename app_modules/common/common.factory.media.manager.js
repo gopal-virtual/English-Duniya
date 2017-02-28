@@ -7,12 +7,19 @@
 
   function mediaManager( $log, $cordovaFile, $cordovaFileTransfer, $q, CONSTANT, network) {
 
-    var mediaManager = {};
 
     mediaManager.getPath = getPath;
     mediaManager.downloadIfNotExists = downloadIfNotExists;
     mediaManager.bundledMedia = CONSTANT.DIAGNOSIS_MEDIA;
+    mediaManager.getFreeDiskSpace = getFreeDiskSpace
 
+    function getFreeDiskSpace() {
+      try {
+        return $cordovaFile.getFreeDiskSpace();
+      } catch (err) {
+        return $q.reject('Cordova Plugin not Found');
+      }
+    }
 
     function getFileNameFromURl(url) {
       var a = url.split('/');

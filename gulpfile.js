@@ -133,13 +133,13 @@ for (i in languages_list) {
 console.log(tasks_for_download_localized_audio);
 var lessonsdb_couch_server = argument.argv.lessonsdb;
 var diagnosis_couch_db_server = argument.argv.diagnosisdb;
-//Get app version
-// var xml = file.readFileSync('./config.xml');
-// var content = cheerio.load(xml, {
-//   xmlMode: true
-// });
-// app_version = content('widget')[0].attribs.version;
-// console.log("VERSION", app_version);
+// Get app version
+var xml = file.readFileSync('./config.xml');
+var content = cheerio.load(xml, {
+  xmlMode: true
+});
+app_version = content('widget')[0].attribs.version;
+console.log("VERSION", app_version);
 console.log("envi", raven_key[argument.argv.env])
 gulp.task('default', function(callback) {
   // runSequence('generate-lessondb','get-diagnosis-media','make-main','generate-constants', 'sass', 'html', 'scripts',callback);
@@ -162,7 +162,7 @@ gulp.task('generate-lessondb', shell.task(
 gulp.task('preen', function(cb) {
   preen.preen({}, cb);
 });
-console.log('raven key', raven_key[argument.argv.env]);
+console.log('raven key and env', raven_key[argument.argv.env],env);
 gulp.task('make-main', function() {
   gulp.src(paths.main_template)
     .pipe(replace_task({
@@ -170,7 +170,7 @@ gulp.task('make-main', function() {
         match: /\/\*raven_release_start\*\/[\'\'\.0-9a-z]+\/\*raven_release_end\*\//g,
         replacement: '/*raven_release_start*/\'' + app_version + '\'/*raven_release_end*/'
       }, {
-        match: /\/\*rtaven_environment_start\*\/[\'\'\.0-9a-zA-Z]+\/\*raven_environment_end\*\//g,
+        match: /\/\*raven_environment_start\*\/[\'\'\.0-9a-zA-Z]+\/\*raven_environment_end\*\//g,
         replacement: '/*raven_environment_start*/\'' + env + '\'/*raven_environment_end*/'
       }, {
         match: /\/\*raven_key_start\*\/'https?:\/\/[:a-zA-Z0-9@.\/']+\/\*raven_key_end\*\//g,
@@ -260,6 +260,9 @@ gulp.task('generate-constants', function() {
       }, {
         match: 'CHALLENGE_END',
         replacement: constants[env]['CHALLENGE_END']
+      }, {
+        match: 'CHALLENGE_SERVER',
+        replacement: constants[env]['CHALLENGE_SERVER']
       }]
     }))
     .pipe(rename(paths.constants.destination_filename))

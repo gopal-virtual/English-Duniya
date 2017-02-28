@@ -10,8 +10,11 @@
     'CONSTANT',
     '$q',
     'Auth',
-    'network'
-  ];
+    'network',
+    '$http',
+    '$timeout',
+    '$injector'
+      ];
   /* @ngInject */
   function queue(pouchDB,
     $log,
@@ -19,7 +22,11 @@
     CONSTANT,
     $q,
     Auth,
-    network) {
+    network,
+    $http,
+    $timeout,
+    $injector
+    ) {
     var queueDB = pouchDB('queueDB', {
       revs_limit: 1,
       // auto_compaction: true
@@ -32,6 +39,7 @@
           include_docs: true
         });
       },
+      patchProfile: patchProfile
       // compactDB : function(){
       //   return queueDB.compact().then(function(result){
       //     $log.debug("Compaction done",result);
@@ -131,9 +139,42 @@
         })
     }
 
+    function patchProfile(clientUid) {
+      var d = $q.defer();
+      $log.debug("profile patched", clientUid);
+      $injector.get('User')
+        .profile.get(clientUid).then(function(profileData) {
+          $log.debug("patch profile ", profileData)
+          if (profileData) {
+            var profile = {
+              first_name: profileData.profile.first_name,
+              last_name: profileData.profile.last_name,
+              gender: profileData.profile.gender,
+              grade: profileData.profile.grade,
+              language: profileData.profile.language,
+              client_uid: profileData.profile.client_uid
+            }
+          }
+          $http.post(CONSTANT.BACKEND_SERVICE_DOMAIN + '/api/v1/profiles/', profile).then(function(success) {
+            d.resolve();
+          },function(Error){
+            $log.debug(Error)
+               Raven.captureException("Error with queue profile patch",{
+              extra: {error:Error,profileData:profileData,profile:profile}
+            });
+            d.reject();
+          })
+        }).catch(function(){
+          d.reject();
+        });
+    return d.promise;
+    // return $http.get('http://google.com/activity-log');
+  }
+
+
     function uploadAndDelete(record) {
       //patch
-      $log.debug("queue", "upload amd delete", record)
+      $log.debug("queue", "upload and delete", record)
       if (!record.doc.body) {
         record.doc.body = record.doc.data.data;
         record.doc.method = 'post';
@@ -141,7 +182,7 @@
       }
       //patch end
       if (record.doc.url === 'activity-log') {
-        if (record.doc.body.client_uid === undefined && record.doc.body.actor_object_id === undefined) {
+        if (!record.doc.body.client_uid && !record.doc.body.actor_object_id) {
           record.doc.body.actor_object_id = localStorage.user_details ? JSON.parse(localStorage.getItem('user_details')).id : null;
         }
       }
@@ -156,17 +197,42 @@
           return queueDB.remove(record.doc);
         })
         .catch(function(error) {
-          if (error.status !== 0) {
-            $log.debug("upload failed", record);
-            var e = {
+           var e = {
               "error": error,
               "function": "queue_push"
             };
-            // Raven.captureException("Error with queue push",{
-            //   extra: {error:e}
-            // });
-            // $log.debug("ERROR with queue",error.status)
+        Raven.captureException("Error with queue push", {
+          extra: {
+            error: e,
+            record: record
+          }
+        });
+        if (error.status !== 0) {
+          $log.debug("upload failed", record);
+          if (error.status === 400) {
+            if (record.doc.url === 'activity-log') {
+              $log.debug("400 request in activity log", record);
+              // patch profile
+              return patchProfile(record.doc.body.client_uid);
+            }
+            if (record.doc.url === 'profiles') {
+              if (error.data && error.data.non_field_errors && error.data.non_field_errors.length > 0 && error.data.non_field_errors[0] && error.data.non_field_errors[0] === 'client_id and user set must be unqiue') {
+                Raven.captureException("Duplicate profiles found deleting them", {
+                  extra: {
+                    error: e,
+                    record: record
+                  }
+                });
+                return queueDB.remove(record.doc);
+              }
+            }
             return queueDB.remove(record.doc);
+          } else if (error.status === 500) {
+            // log to sentry and do not delete the request
+          }
+           
+            // $log.debug("ERROR with queue",error.status)
+            // return queueDB.remove(record.doc);
           } else {
             return $q.reject();
           }

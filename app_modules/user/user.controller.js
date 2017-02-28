@@ -58,7 +58,7 @@
     userCtrl.tabIndex = 0;
     userCtrl.CONSTANT = CONSTANT;
     userCtrl.localizedContent = localized;
-    userCtrl.analytics  = analytics;
+    userCtrl.analytics = analytics;
     userCtrl.personaliseFormValidations = {
       // 'gender': ['required'],
       // 'firstName': ['required'],
@@ -95,6 +95,14 @@
     userCtrl.selectProfile = selectProfile;
     userCtrl.audioPlayer = audio.player;
     userCtrl.user = {};
+        if(CONSTANT.LANGUAGES.length == 1){
+      userCtrl.skipLanguage = true;
+      userCtrl.user.language = CONSTANT.LANGUAGES[0].code;
+
+    }else{
+      userCtrl.skipLanguage = false;
+
+    }
     userCtrl.playAudio(-1);
     $scope.audio = audio;
     // $timeout(function () {
@@ -110,10 +118,11 @@
       });
     }
 
-
     function playAudio(index) {
       var src;
-      if (index == -1) {
+
+      if(!userCtrl.skipLanguage){
+        if (index == -1) {
         // src = userCtrl.localizedContent.audio.registration.Welcome.lang[userCtrl.user.language || 'hi'];
       }
       if (index == 1) {
@@ -125,7 +134,20 @@
       if (index == 3) {
         src = userCtrl.localizedContent.audio.registration.SelectClass.lang[userCtrl.user.language];
       }
-        $log.debug("playaudio",index,src);
+      }else{
+
+      if (index == -1) {
+        src = userCtrl.localizedContent.audio.registration.WriteName.lang[userCtrl.user.language];
+      }
+      if (index == 1) {
+        src = userCtrl.localizedContent.audio.registration.SelectGender.lang[userCtrl.user.language];
+      }
+      if (index == 2) {
+        src = userCtrl.localizedContent.audio.registration.SelectClass.lang[userCtrl.user.language];
+      }
+      }
+      
+      $log.debug("playaudio", index, src,userCtrl.skipLanguage);
       if (src) {
         audio.player.play('sound/localized/' + src);
       } else {
@@ -193,7 +215,6 @@
           $log.debug("CREATING USER");
           localStorage.setItem('demo_flag', 1);
           localStorage.setItem('diagnosis_flag', false);
-          
           $state.go('litmus_start');
           // $state.go('quiz.questions', {'type':'litmus','id':'litmus_question'});
           $log.debug("CHECK 4")
@@ -228,16 +249,20 @@
 
     function showError(title, msg) {
       $ionicPopup.alert({
-        title: title,
-        template: msg
+        template: '<error-popup message="\'' + msg + '\'"></error-popup>',
+        cssClass: 'custom-alert',
+        okType: 'sbtn sbtn-ok',
+        okText: ' '
       });
     }
 
     function showAlert(title, msg) {
       var d = $q.defer();
       $ionicPopup.alert({
-        title: title,
-        template: msg
+        template: '<error-popup message="\'' + msg + '\'"></error-popup>',
+        cssClass: 'custom-alert',
+        okType: 'sbtn sbtn-ok',
+        okText: ' '
       }).then(function(response) {
         d.resolve(response)
       }, function(error) {
@@ -281,5 +306,8 @@
         userCtrl.user.name = userCtrl.user.name.replace(/  +/g, ' ');
       } catch (err) {}
     });
+
+    $log.debug("languages length",CONSTANT.LANGUAGES.length)
+
   }
 })();

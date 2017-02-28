@@ -22,3 +22,4 @@ build_architecture=arm
 
 echo Campaign name $campaign_name
 echo Campaign owner name $campaign_owner_name
+echo campaignid $campaign_id 

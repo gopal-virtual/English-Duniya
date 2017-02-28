@@ -14,7 +14,8 @@
     'extendLesson',
     '$http',
     '$rootScope',
-    'pointsQueue'
+    'pointsQueue',
+    'queue'
   ];
   /* @ngInject */
   function challenge(pouchDB,
@@ -27,33 +28,99 @@
     extendLesson,
     $http,
     $rootScope,
-    pointsQueue
+    pointsQueue,
+    queue
   ) {
     var challengeProperties = {
       addPoints: addPoints,
       getPoints: getPoints,
-      points: parseInt(localStorage.getItem('points' + User.getActiveProfileSync()._id)) | 0,
+      // points: parseInt(localStorage.getItem('points' + User.getActiveProfileSync()._id)) | 0,
       isUserEligible: isUserEligible,
       isChallengeActive: isChallengeActive,
+      showChallengeButton: showChallengeButton,
+      postPoints: postPoints
     };
 
-    function addPoints(profileID, points, action, nodeId) {
-      var oldPoints = parseInt(localStorage.getItem('points' + profileID)) | 0;
-      localStorage.setItem('points' + profileID, parseInt(points) + oldPoints);
-      getPoints(profileID);
-      pointsQueue.push({
-        client_id: User.getActiveProfileSync()._id,
-        points: [{
-          action: action,
-          score: points,
-          object_id: nodeId,
-          content_type: 'node'
-        }]
-      }).then(function() {
-        $log.debug("pushPointsQueue success")
-      });
+    function addPoints(profileID, points, action, nodeId,contentType) {
+      // var oldPoints = parseInt(localStorage.getItem('points' + profileID)) | 0;
+      // localStorage.setItem('points' + profileID, parseInt(points) + oldPoints);
+      // getPoints(profileID);
+
+      var pointsArray = localStorage.getItem('pointsArray') ? JSON.parse(localStorage.getItem('pointsArray')) : [];
+
+      pointsArray.push({profileID:profileID,points:points,action:action,nodeId:nodeId,contentType:contentType});
+      localStorage.setItem('pointsArray',JSON.stringify(pointsArray));
+
+      // pointsQueue.push({
+      //   client_id: User.getActiveProfileSync()._id,
+      //   points: [{
+      //     action: action,
+      //     score: points,
+      //     object_id: nodeId,
+      //     content_type: 'node'
+      //   }]
+      // }).then(function() {
+      //   $log.debug("pushPointsQueue success")
+      // });
     }
 
+    function postPoints(){
+      var d = $q.defer();
+      var pointsArray = localStorage.getItem('pointsArray') ? JSON.parse(localStorage.getItem('pointsArray')) : [];
+      var remainingPoints = [];
+      $log.debug("pointsrray",pointsArray);
+      var request = {
+        client_id: User.getActiveProfileSync()._id,
+        points: []
+      }
+      for(var i=0; i < pointsArray.length; i++){
+          $log.debug("points array ",i,pointsArray[i],request.client_id)
+
+        if(pointsArray[i].profileID == request.client_id){
+          $log.debug("points array pushing in request")
+          request.points.push({
+                "action": pointsArray[i].action,
+                "score": pointsArray[i].points,
+                "content_type": pointsArray[i].contentType,
+                "object_id": pointsArray[i].nodeId   
+          });
+        }else{
+          remainingPoints.push(pointsArray[i]);
+        }
+      }
+      $log.debug("points array request is", request);
+      $http.post(CONSTANT.CHALLENGE_SERVER + 'points/', request).then(
+        function success() {
+          localStorage.setItem('pointsArray', JSON.stringify(remainingPoints))
+          $log.debug("points array", "upload success");
+          d.resolve();
+        },
+      function fail(error) {
+        Raven.captureException("Error with points api trying patch",{
+              extra: {error:error,request:request}
+            });
+        localStorage.setItem('pointsArray', JSON.stringify(pointsArray))
+        queue.patchProfile(request.client_id).then(function() {
+          $http.post(CONSTANT.CHALLENGE_SERVER + 'points/', request).then(function(success) {
+              localStorage.setItem('pointsArray', JSON.stringify(remainingPoints))
+              $log.debug("points array", "upload success");
+              d.resolve();
+            }, function(error) {
+                Raven.captureException("Error with points api patch failed",{
+              extra: {error:error,profileData:profileData,profile:profile}
+            });
+              localStorage.setItem('pointsArray', JSON.stringify(pointsArray))
+              d.resolve(); // Resolve this so that user is still able to go to sc view              
+            })
+            // try to post points again
+        }).catch(function(){
+          d.reject();
+        })
+        }
+      )
+      return d.promise;
+
+    }
     function getPoints(profileID) {
       // return User.scores.getScoreList().then(function(scoresList){
       //   $log.debug()
@@ -71,16 +138,30 @@
     }
 
     function isChallengeActive() {
-
-    var challengeEndDate = new Date(CONSTANT.CHALLENGE_END.YEAR, CONSTANT.CHALLENGE_END.MONTH, CONSTANT.CHALLENGE_END.DATE);
-    var challengeEndDateText = new Date(challengeEndDate.getFullYear(), challengeEndDate.getMonth(), challengeEndDate.getDate());
-    var today = new Date();
-    var todayText = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    var daysRemaining = daysBetween(todayText, challengeEndDateText);
-      if(daysRemaining<0){
+      var challengeEndDate = new Date(CONSTANT.CHALLENGE_END.YEAR, CONSTANT.CHALLENGE_END.MONTH, CONSTANT.CHALLENGE_END.DATE);
+      var challengeEndDateText = new Date(challengeEndDate.getFullYear(), challengeEndDate.getMonth(), challengeEndDate.getDate());
+      var today = new Date();
+      var todayText = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      var daysRemaining = daysBetween(todayText, challengeEndDateText);
+      if (daysRemaining < 0) {
         return false;
-      }else{
+      } else {
         return true;
+      }
+    }
+
+    function showChallengeButton() {
+      var challengeEndDate = new Date(CONSTANT.CHALLENGE_END.YEAR, CONSTANT.CHALLENGE_END.MONTH, CONSTANT.CHALLENGE_END.DATE);
+      var challengeEndDateText = new Date(challengeEndDate.getFullYear(), challengeEndDate.getMonth(), challengeEndDate.getDate());
+      var today = new Date();
+      var todayText = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      var daysRemaining = daysBetween( challengeEndDateText, todayText);
+      
+      $log.debug("show challenge button",daysRemaining,challengeEndDateText);
+      if (daysRemaining < 14) {
+        return true;
+      } else {
+        return false;
       }
     }
 

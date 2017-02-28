@@ -5,6 +5,9 @@
 #   remove-and-make-single-build
 #   keep-and-make-single-build
 	
+gulp editPackageJson --env=$environment --app_type=$content_type --campaign_name=$campaign_name --is_bundled=$is_bundled --lock=$node_locked --languages=$languages --lessonsdb=$lessonsdb --diagnosisdb=$diagnosis_translationsdb
+
+
 ionic state reset
 
 #ionic platform rm android

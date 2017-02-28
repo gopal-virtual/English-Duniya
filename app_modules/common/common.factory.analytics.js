@@ -213,6 +213,7 @@
     function log(action, data, profile_id, user_id) {
       // $log.debug("Analytics", action, data);
       $log.info('action',action.name+"."+action.type);
+      $log.debug('ACTIVEPROFILE',User.getActiveProfileSync())
       if (User.getActiveProfileSync()) {
         appstate.set(action.name+"."+action.type,1).then(function(res){
           $log.debug('STATE',res);
@@ -241,7 +242,7 @@
       if (profile_id) {
         post_param.client_uid = profile_id;
       } else {
-        post_param.actor_object_id = user_id;
+        post_param.actor_object_id = User.user.getIdSync();
       }
 
       if (CONSTANT.ANALYTICS) {

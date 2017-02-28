@@ -30,7 +30,10 @@
     // $document,
     $cordovaSocialSharing,
     Rest,
-    clevertap
+    clevertap,
+    lessonutils,
+    challenge,
+    mediaManager
   ) {
     $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
     $ionicPlatform.registerBackButtonAction(function(event) {
@@ -58,6 +61,7 @@
         $ionicLoading.show({
             hideOnStateChange: true
           })
+        localStorage.removeItem('regionPage');
           // content.deleteLessonDB().then(function() {
           //     $log.debug("tag Deleted lesson db");
           //     return content.createDependentDBs();
@@ -201,8 +205,7 @@
     //   })
     $ionicPlatform.ready(function() {
 
-
-
+      // $ionicLoading.show({hideOnStateChange:true});
       // $log.debug('CLEVERTAP. document',$document)
       // document.addEventListener('onPushNotification', function(e) {
       //   $rootScope.$apply(function(){
@@ -210,7 +213,13 @@
       //   })
       // }, false);
 
+      mediaManager.getFreeDiskSpace().then(function (success) {
+         $log.debug("DISK. Free diskspace is",success);
+      }, function (error) {
+          $log.error('DISK. Cannot read free disk space ',error);
+      });
 
+      $rootScope.helpline = CONSTANT.HELPLINE;
     $rootScope.showChallengeModal = true;
 
       window.addEventListener('message', function(event) {
@@ -241,8 +250,9 @@
           $cordovaSocialSharing
             .share(shareoptions.message, shareoptions.subject, 'https://s3-ap-southeast-1.amazonaws.com/zaya-builds/production-images/englishduniya-scholarship-challenge.png', 'http://referral.englishduniya.com/?referral='+event.data.referal_code+'&campaign_name=scholarship_challenge') // Share via native share sheet
             .then(function(result) {
-              if (result) {
-                $http.post('http://challenge.englishduniya.in/points/', {
+              $log.debug(challenge.isChallengeActive());
+              if (result && challenge.isChallengeActive()) {
+                $http.post(CONSTANT.CHALLENGE_SERVER+'points/', {
                   client_id: User.getActiveProfileSync()._id,
                   points: [{
                     action: 'share',
@@ -274,7 +284,7 @@
       clevertap.registerPush();      
       if (User.getActiveProfileSync()) {
         User.profile.setId(User.getActiveProfileSync()._id).then(function(profileId){
-          $log.debug('profileId',profileId)
+          $log.debug('profileId ' + profileId)
           var profile = User.getActiveProfileSync().data.profile;
           clevertap.profileSet({
               "Identity": profileId,
@@ -282,7 +292,7 @@
               "Name": profile.first_name+" "+profile.last_name,
               "Gender": profile.gender,
               "type": "profile",
-              "Phone": "+91"+User.user.getPhoneNumber(),
+              "Phone": User.user.getPhoneNumber(),
               // "profileData": {
               // }
             })
@@ -344,7 +354,7 @@
         id: null
       }, {
         time: new Date()
-      }, User.getActiveProfileSync() ? User.getActiveProfileSync()._id : User.user.getIdSync());
+      });
       network.isOnline() && queue.startSync();
       $rootScope.$on('$cordovaNetwork:online', function(event, networkState) {
         // data.queueSync()
@@ -434,7 +444,7 @@
         id: null
       }, {
         time: new Date()
-      },User.getActiveProfileSync() ? User.getActiveProfileSync()._id : User.user.getIdSync())
+      })
     });
     $ionicPlatform.on('pause', function() {
       $rootScope.$broadcast('appPause');
@@ -470,7 +480,7 @@
         id: null
       }, {
         time: new Date()
-      },User.getActiveProfileSync() ? User.getActiveProfileSync()._id : User.user.getIdSync())
+      })
     });
   }
 })();

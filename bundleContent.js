@@ -7,11 +7,14 @@ var target_folder = 'www/bundled/';
 var ncp = require('ncp').ncp;
 var source_folder = argv.source_folder;
 var request = require('sync-request');
-var diagnosis_db = argv.diagnosis_db;
-var lessons_db = argv.lessons_db;
+var diagnosis_db = argv.diagnosis_db + '/';
+var lessons_db = argv.lessons_db + '/';
 var diagnosis_docs_list = JSON.parse(request('GET', diagnosis_db + '_all_docs').getBody().toString());
 var lesson_docs_list = JSON.parse(request('GET', lessons_db + '_all_docs').getBody().toString()).rows;
 var languages = argv.languages;
+var vocabulary_list = [];
+var video_list = [];
+var assessment_list = []
 
 function getFileNameFromURl(url) {
   var a = url.split('/');
@@ -43,47 +46,66 @@ if (lessons == 'all') {
     if (lesson_docs_list[i].id !== 'localized_mapping' && lesson_docs_list[i].id !== '_design/_auth') {
       console.log(lesson_docs_list[i].id)
       var lesson_doc = JSON.parse(request('GET', lessons_db + lesson_docs_list[i].id).getBody().toString()).lesson;
-      // Add Intros to media[]
-      if (lesson_doc.node.meta && lesson_doc.node.meta.intros && lesson_doc.node.meta.intros.sound) {
-        media = media.concat(lesson_doc.node.meta.intros.sound);
-      }
-      for (var j = 0; j < lesson_doc.objects.length; j++) {
-        //if Video
-        if (lesson_doc.objects[j].node.content_type_name == 'resource') {
-          // add video to media[]
-          media.push(lesson_doc.objects[j].node.type.path)
+      if (languages.indexOf(lesson_doc.node.localize.source) >= 0) {
+        // Add Intros to media[]
+        if (lesson_doc.node.meta && lesson_doc.node.meta.intros && lesson_doc.node.meta.intros.sound) {
+          media = media.concat(lesson_doc.node.meta.intros.sound);
         }
-        // If assessment
-        if (lesson_doc.objects[j].node.content_type_name == 'assessment') {
-          //Iterate questions
-          for (var k = 0; k < lesson_doc.objects[j].objects.length; k++) {
-            // add widgets to media[]
-            if (lesson_doc.objects[j].objects[k].node.type.content && lesson_doc.objects[j].objects[k].node.type.content.widgets) {
-              for (var mediaType in lesson_doc.objects[j].objects[k].node.type.content.widgets) {
-                if (lesson_doc.objects[j].objects[k].node.type.content.widgets.hasOwnProperty(mediaType)) {
-                  for (var file in lesson_doc.objects[j].objects[k].node.type.content.widgets[mediaType]) {
-                    media.push(lesson_doc.objects[j].objects[k].node.type.content.widgets[mediaType][file]);
+         var skip_video = false;
+        for (var j = 0; j < lesson_doc.objects.length; j++) {
+          if (lesson_doc.objects[j].node.content_type_name == 'vocabulary') {
+            skip_video = true;
+            console.log("vocab found should skip video");
+          }
+        }
+        for (var j = 0; j < lesson_doc.objects.length; j++) {
+          // If assessment
+          if (lesson_doc.objects[j].node.content_type_name == 'assessment') {
+            assessment_list.push(lesson_doc.objects[j].node.id);
+
+            //Iterate questions
+            for (var k = 0; k < lesson_doc.objects[j].objects.length; k++) {
+              // add widgets to media[]
+              if (lesson_doc.objects[j].objects[k].node.type.content && lesson_doc.objects[j].objects[k].node.type.content.widgets) {
+                for (var mediaType in lesson_doc.objects[j].objects[k].node.type.content.widgets) {
+                  if (lesson_doc.objects[j].objects[k].node.type.content.widgets.hasOwnProperty(mediaType)) {
+                    for (var file in lesson_doc.objects[j].objects[k].node.type.content.widgets[mediaType]) {
+                      media.push(lesson_doc.objects[j].objects[k].node.type.content.widgets[mediaType][file]);
+                    }
                   }
                 }
               }
-            }
-            //add instructions to media[]
-            if (lesson_doc.objects[j].objects[k].node.meta && lesson_doc.objects[j].objects[k].node.meta.instructions && lesson_doc.objects[j].objects[k].node.meta.instructions.sounds) {
-              media = media.concat(lesson_doc.objects[j].objects[k].node.meta.instructions.sounds);
-            }
-          }
-        }
-        if (lesson_doc.objects[j].node.content_type_name == 'vocabulary') {
-          for (var l = 0; l < lesson_doc.objects[j].objects.length; l++) {
-            // vocab sounds
-            if (lesson_doc.objects[j].objects[l].node.type.sound) {
-              for (var soundIndex in lesson_doc.objects[j].objects[l].node.type.sound) {
-                media.push(lesson_doc.objects[j].objects[l].node.type.sound[soundIndex].path)
+              //add instructions to media[]
+              if (lesson_doc.objects[j].objects[k].node.meta && lesson_doc.objects[j].objects[k].node.meta.instructions && lesson_doc.objects[j].objects[k].node.meta.instructions.sounds) {
+                media = media.concat(lesson_doc.objects[j].objects[k].node.meta.instructions.sounds);
               }
             }
-            //vocab images
-            if (lesson_doc.objects[j].objects[l].node.type.image) {
-              media.push(lesson_doc.objects[j].objects[l].node.type.image.path)
+          }
+          if (lesson_doc.objects[j].node.content_type_name == 'vocabulary') {
+            vocabulary_list.push(lesson_doc.objects[j].node.id);
+
+            for (var l = 0; l < lesson_doc.objects[j].objects.length; l++) {
+              // vocab sounds
+              if (lesson_doc.objects[j].objects[l].node.type.sound) {
+                for (var soundIndex in lesson_doc.objects[j].objects[l].node.type.sound) {
+                  media.push(lesson_doc.objects[j].objects[l].node.type.sound[soundIndex].path)
+                }
+              }
+              //vocab images
+              if (lesson_doc.objects[j].objects[l].node.type.image) {
+                media.push(lesson_doc.objects[j].objects[l].node.type.image.path)
+              }
+            }
+            skip_video = true;
+          }
+          //if Video
+          if (lesson_doc.objects[j].node.content_type_name == 'resource') {
+            // add video to media[]
+            if (!skip_video) {
+              console.log("video included");
+            video_list.push(lesson_doc.objects[j].node.id);
+
+              media.push(lesson_doc.objects[j].node.type.path)
             }
           }
         }
@@ -125,3 +147,7 @@ for (i in media) {
     }
   });
 }
+console.log("Total Vocabulary", vocabulary_list.length, " Assessment ", assessment_list.length, " Videos ", video_list.length);
+console.log("Vocabulary List", vocabulary_list);
+console.log("Video List", video_list);
+console.log("Assessment List", assessment_list);
