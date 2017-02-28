@@ -823,12 +823,13 @@
             })
           })
         } else {
-          
+            mapCtrl.challengeButtonDisabled = false;
           $scope.challengeModal.show().then(function(){
             audio.player.play('sound/challenge_starting_now.mp3');
           })
         }
       } else {
+            mapCtrl.challengeButtonDisabled = false;
         audio.player.play('sound/challenge_starting_now_offline.mp3');
         var noInternetChallengeAlert = 
             $ionicPopup.alert({
